@@ -184,6 +184,12 @@
   height: 100%;
   padding: 0 var(--k-s3);
   cursor: pointer;
+  /* v0.7.9 (A3, Teil A): der Tab ist jetzt selbst ein Ziehgriff
+     (`DockPanel.tsx`s `tabPointerDown`) — touch-action:none NUR hier (auf dem
+     Tab selbst, s. Auftrag), damit eine Touch-Drag-Geste nicht mit einer
+     Scroll-Geste konkurriert. Gegenstück zu `.k-dock-panel-kopf`s
+     touch-action-Regel oben. */
+  touch-action: none;
   font-family: var(--k-font-mono);
   /* F5: der sichtbare Titeltext im eingeklappten Tab ist `.k-dock-panel-
      titel` (dieselbe Klasse, s.o.) und überschreibt diese Werte bereits —

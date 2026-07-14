@@ -26,6 +26,16 @@ export interface DockSnapZonenProps {
   rightW: number;
   modus: DockModus;
   geist: DockGeistZustand;
+  /**
+   * v0.7.9 (A3, Teil B — Snap-Zonen für Schwebende, ROADMAP-359-Restpunkt) —
+   * beim Ziehen eines BEREITS schwebenden Panels (`DockFlaeche.tsx`s
+   * `floatDragStart`) gibt es keine sinnvolle "wieder schwebend lassen"-Zone
+   * (das Panel IST schon schwebend, ein Drop dort setzt einfach das
+   * bisherige `floatmove` fort) — nur LINKS/RECHTS sind dort echte
+   * Andock-Ziele. Default `true` (unverändertes Verhalten beim Redock-Drag
+   * eines angedockten Panels, das die mittlere Zone weiterhin braucht, um
+   * überhaupt schwebend werden zu können). */
+  mitSchwebendZone?: boolean;
 }
 
 /** Muss 1:1 dem `SNAP_ZONE_STRAHL` in `DockFlaeche.tsx`s `hitZone()`
@@ -36,7 +46,7 @@ export interface DockSnapZonenProps {
  *  Ordner, eine Abweichung fiele in `dock-interaktion.spec.ts` sofort auf. */
 const SNAP_ZONE_STRAHL = 70;
 
-export function DockSnapZonen({ feld, leftW, rightW, modus, geist }: DockSnapZonenProps) {
+export function DockSnapZonen({ feld, leftW, rightW, modus, geist, mitSchwebendZone = true }: DockSnapZonenProps) {
   const linksBreite = Math.min(feld.w, leftW + SNAP_ZONE_STRAHL);
   const rechtsBreite = Math.min(feld.w, rightW + SNAP_ZONE_STRAHL);
 
@@ -54,7 +64,7 @@ export function DockSnapZonen({ feld, leftW, rightW, modus, geist }: DockSnapZon
         data-aktiv={geist.zone === 'right'}
         style={{ left: feld.x + feld.w - rechtsBreite, top: feld.y, width: rechtsBreite, height: feld.h }}
       />
-      {modus === 'A' && (
+      {modus === 'A' && mitSchwebendZone && (
         <div
           className="k-dock-snap-zone k-dock-snap-zone-schwebend"
           data-testid="dock-snap-schwebend"

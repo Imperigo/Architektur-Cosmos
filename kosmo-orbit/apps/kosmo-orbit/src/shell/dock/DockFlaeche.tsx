@@ -244,6 +244,12 @@ interface RedockDatensatz {
   h: number;
   offsetX: number;
   offsetY: number;
+  /** v0.7.9 (A3, Teil A) — war das gezogene Panel beim Drag-Start ein
+   *  eingeklappter Tab (`DockPanel.tsx`s `tabPointerDown` ruft denselben
+   *  `onRedockDragStart` wie der volle Kopf)? Entscheidet beim Loslassen,
+   *  ob ein Spaltenwechsel den Tab-Zustand mitnimmt (s. `redockStart`s
+   *  `loslassen`-Kommentar unten). */
+  warEingeklappt: boolean;
 }
 
 interface FloatDragDatensatz {
@@ -503,7 +509,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   const redockStart = (id: string, rect: DockRect, clientX: number, clientY: number) => {
     const offsetX = clientX - rect.x;
     const offsetY = clientY - rect.y;
-    redockDatenRef.current = { id, w: rect.w, h: rect.h, offsetX, offsetY };
+    redockDatenRef.current = { id, w: rect.w, h: rect.h, offsetX, offsetY, warEingeklappt: rect.eingeklappt };
     const zone = hitZone(zuContainerX(clientX), feld, leftW, rightW, dockModus);
     setRedockGeist({ id, x: rect.x, y: rect.y, w: rect.w, h: rect.h, zone });
     setRedockAktivId(id);
@@ -532,6 +538,12 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       const x = ev.clientX - daten.offsetX;
       const y = ev.clientY - daten.offsetY;
       if (zone === 'float') {
+        // v0.7.9 (A3, Teil A) — Drop-Semantik-Entscheid (Auftrag): die Zone
+        // SCHWEBEND öffnet IMMER als volles Float, auch wenn ein Tab
+        // (`warEingeklappt`) gezogen wurde — «eingeklappte Floats» existieren
+        // im Modell nicht (`placeFloats()` setzt `eingeklappt` hart auf
+        // `false`, s. `dock-kern.ts`), Aufklappen ist hier die einzig
+        // sinnvolle Semantik.
         panelOverrideSetzen(station, daten.id, {
           dock: 'float',
           anker: 'top',
@@ -551,7 +563,14 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
           fw: undefined,
           fh: undefined,
           groesse: undefined,
-          eingeklappt: undefined,
+          // v0.7.9 (A3, Teil A) — Drop-Semantik-Entscheid (Auftrag): ein
+          // Spaltenwechsel (links↔rechts) lässt einen eingeklappten Tab
+          // eingeklappt («least surprise» — er poppt beim blossen Verschieben
+          // in eine andere Spalte nicht überraschend zum vollen Panel auf).
+          // War das gezogene Panel VOR dem Drag kein Tab (voller Kopf
+          // gezogen), bleibt das Verhalten wie zuvor unverändert
+          // (`undefined` → Solver-Default `false`, aufgeklappt).
+          eingeklappt: daten.warEingeklappt ? true : undefined,
         });
       }
     };
@@ -569,6 +588,16 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   const [floatDragId, setFloatDragId] = useState<string | undefined>(undefined);
   const floatDatenRef = useRef<FloatDragDatensatz | null>(null);
   const floatAufraeumenRef = useRef<(() => void) | null>(null);
+  /** v0.7.9 (A3, Teil B — Snap-Zonen für Schwebende, ROADMAP-359-Restpunkt) —
+   *  NUR gesetzt, solange ein schwebendes Panel gezogen wird UND der Zeiger
+   *  gerade in einer Andock-Zone (links/rechts) steht — anders als
+   *  `redockGeist` (der die ganze Drag-Dauer über sichtbar ist) blendet
+   *  dieser Geist ausserhalb der Zonen-Nähe komplett aus: das bisherige
+   *  freie `floatmove` (Magnet/Snap-zurück) bleibt dort optisch unverändert,
+   *  kein Overlay stört. Wiederverwendet dieselbe `DockSnapZonen`-Anzeige
+   *  wie der Redock-Drag, aber mit `mitSchwebendZone={false}` (ein bereits
+   *  schwebendes Panel hat keine sinnvolle "schwebend bleiben"-Zone). */
+  const [floatSnapGeist, setFloatSnapGeist] = useState<DockGeistZustand | null>(null);
 
   // v0.7.9 (A1, Regressions-Fix am P4-Bestand): die window-Listener werden
   // SYNCHRON hier im Start-Handler registriert, nicht mehr über einen
@@ -597,6 +626,13 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       vp: ergebnis.viewport,
     };
     setFloatDragId(id);
+    // v0.7.9 (A3, Teil B) — welche Andock-Zone der Zeiger beim letzten `bewege`
+    // getroffen hat; `loslassen` liest sie, um zu entscheiden, ob dieser Drop
+    // andockt oder das bisherige `floatmove` (Magnet/Snap-zurück) greift. Als
+    // `let` in DIESER `floatDragStart`-Invokation gehalten (nicht State) —
+    // beide Closures (`bewege`/`loslassen`) werden pro Drag frisch gebaut,
+    // kein Stale-Value-Risiko über mehrere Drags hinweg.
+    let aktuelleZone: DockZone = 'float';
 
     const bewege = (ev: PointerEvent) => {
       const daten = floatDatenRef.current;
@@ -609,6 +645,34 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       nx = magnet(nx, [vp.x, vp.x + (vp.w - daten.w) / 2, vp.x + vp.w - daten.w], FLOAT_MAGNET_T);
       ny = magnet(ny, [vp.y, vp.y + (vp.h - daten.h) / 2, vp.y + vp.h - daten.h], FLOAT_MAGNET_T);
       panelOverrideSetzen(station, daten.id, { fx: Math.round(nx), fy: Math.round(ny) });
+
+      // Snap-Zonen für Schwebende — SCHWELLE (dokumentierter Entscheid):
+      // «Zonen-Nähe» heisst hier «der Zeiger steht SEITLICH AUSSERHALB des
+      // zentralen Viewports» (px < vp.x bzw. px > vp.x+vp.w, Container-
+      // Koordinaten wie bei `hitZone()`), NICHT das ±70px-`hitZone()`-Band
+      // des Redock-Drags. Grund (real gemessen, nicht theoretisch): das
+      // hitZone-Band reicht `SNAP_ZONE_STRAHL` über die Spaltenbreite hinaus
+      // IN den Viewport hinein — bei leerer linker Spalte (lw=0, vp.x =
+      // feld.x) frässe es die komplette linke Magnet-Kante des bisherigen
+      // floatmove (T=16 < 70): ein an die Viewport-Kante gezogenes Panel
+      // würde beim Loslassen andocken statt magnetisch liegen zu bleiben
+      // (genau so brachen die Bestands-Specs «Pop-out»/«HUD frei ziehen»).
+      // Da Floats ohnehin auf den Viewport GEKLEMMT sind (Klemmung oben),
+      // ist «Zeiger verlässt den Viewport seitlich Richtung Spalte/Chrome»
+      // das natürliche Andock-Signal — und strikt ENGER als `hitZone()`
+      // (px < vp.x ⇒ hitZone 'left', weil vp.x = feld.x+railW+lw ≤
+      // feld.x+leftW+STRAHL; rechts analog): jede hier aktive Zone zeigt
+      // auch das Overlay (`DockSnapZonen`, ±70-Rechtecke) als aktiv an.
+      // Mitten im Feld bleibt das Overlay aus — das bisherige freie
+      // Verschieben (Magnet/Snap-zurück) bleibt optisch wie semantisch
+      // unangetastet.
+      const px = zuContainerX(ev.clientX);
+      aktuelleZone = px < vp.x ? 'left' : px > vp.x + vp.w ? 'right' : 'float';
+      if (aktuelleZone === 'left' || aktuelleZone === 'right') {
+        setFloatSnapGeist({ id: daten.id, x: nx, y: ny, w: daten.w, h: daten.h, zone: aktuelleZone });
+      } else {
+        setFloatSnapGeist(null);
+      }
     };
     const aufraeumen = () => {
       window.removeEventListener('pointermove', bewege);
@@ -618,10 +682,31 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     };
     const loslassen = () => {
       aufraeumen();
+      setFloatSnapGeist(null);
       const daten = floatDatenRef.current;
       floatDatenRef.current = null;
       setFloatDragId(undefined);
       if (!daten) return;
+      if (aktuelleZone === 'left' || aktuelleZone === 'right') {
+        // Drop in einer Andock-Zone: dockt an — dieselbe Override-Form wie
+        // ein Redock-Drop auf links/rechts (`redockStart`s `loslassen`
+        // oben), `fx`/`fy`/`fw`/`fh` werden gelöscht (der Solver misst die
+        // Spalten-Grösse selbst).
+        panelOverrideSetzen(station, daten.id, {
+          dock: aktuelleZone,
+          anker: undefined,
+          fx: undefined,
+          fy: undefined,
+          fw: undefined,
+          fh: undefined,
+          groesse: undefined,
+          eingeklappt: undefined,
+        });
+        return;
+      }
+      // Bisheriges Verhalten unverändert: nahe der Ausgangsanker-Position
+      // (< 30px) löscht `fx`/`fy` wieder (Snap-zurück), sonst bleibt das
+      // Panel an der frei gezogenen Position liegen.
       const anker2 = ankerAutoPosition(daten.anker, daten.w, daten.h, daten.vp);
       const aktuellesLayout = useDockZustand.getState().layoutFuer(station);
       const aktuellesOverride = aktuellesLayout.panels[daten.id];
@@ -792,6 +877,17 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   // Der eigentliche Diff — 40ms-Defer, EXAKT EINMAL je tatsächlicher
   // Änderung der eingeklappten Menge (`eingeklapptKey`), nicht je Render.
   useEffect(() => {
+    // v0.7.9 (A3, Teil A) — während eines Redock-Drags PAUSIERT der Diff:
+    // das gezogene Panel fehlt in `ergebnis.rects` (`gedraggtId`, nur der
+    // Geist ist unterwegs) — ein gezogener EINGEKLAPPTER Tab verschwände
+    // damit aus der eingeklappten Menge und der Chip meldete fälschlich
+    // «… wieder geöffnet» mitten in der Geste (real im A3-Beleg-Screenshot
+    // aufgefallen; vor A3 unerreichbar, weil Tabs keine Drag-Handles waren).
+    // `eingeklapptVorherRef` bleibt dabei bewusst STEHEN — der nächste Lauf
+    // nach dem Drop (redockAktivId in den Deps) vergleicht gegen den
+    // Vor-Drag-Stand: Spaltenwechsel eingeklappt→eingeklappt = kein Chip,
+    // Drop in der Schwebend-Zone = korrekt «wieder geöffnet».
+    if (redockAktivId !== undefined) return;
     const timer = window.setTimeout(() => {
       const vorher = eingeklapptVorherRef.current;
       const nachher = eingeklapptKey ? eingeklapptKey.split(',') : [];
@@ -808,7 +904,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     }, HINWEIS_DEFER_MS);
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eingeklapptKey, defs]);
+  }, [eingeklapptKey, defs, redockAktivId]);
   useEffect(
     () => () => {
       if (hinweisAblaufRef.current) window.clearTimeout(hinweisAblaufRef.current);
@@ -860,6 +956,9 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
         />
       ))}
       {redockGeist && <DockSnapZonen feld={feld} leftW={leftW} rightW={rightW} modus={dockModus} geist={redockGeist} />}
+      {floatSnapGeist && (
+        <DockSnapZonen feld={feld} leftW={leftW} rightW={rightW} modus={dockModus} geist={floatSnapGeist} mitSchwebendZone={false} />
+      )}
       <KosmoOrdnetOrb />
     </div>
   );

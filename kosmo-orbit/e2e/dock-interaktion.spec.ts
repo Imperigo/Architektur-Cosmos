@@ -396,14 +396,24 @@ test('Pop-out: Panel schwebt frei, lässt sich ziehen (Magnet an Kante) und snap
   const w = geschwebt.width;
 
   // Die Klemm-Grenzen des floatmove sind der SOLVER-Viewport (zentraler
-  // Bereich zwischen den Spalten), nicht das `viewport3d`-DOM-Element — der
-  // Test SONDIERT sie deshalb mit Extrem-Drags, statt sie aus einem anderen
-  // Element zu raten: weit links/oben/rechts ziehen → die geklemmte Position
-  // IST die jeweilige Viewport-Kante.
-  await ziehePanelNach(page, 'kvOffen', 0, 300);
-  const vpX = (await stabileBox(panel)).x;
-  await ziehePanelNach(page, 'kvOffen', 5000, 300);
-  const vpRechts = (await stabileBox(panel)).x + w; // rechte Viewport-Kante
+  // Bereich zwischen den Spalten), nicht das `viewport3d`-DOM-Element.
+  // v0.7.9 (A3, Teil B): die früheren Extrem-Drags nach GANZ links/rechts
+  // sind seit den Snap-Zonen für Schwebende keine reinen Klemm-Proben mehr —
+  // ein Zeiger seitlich AUSSERHALB des Viewports dockt jetzt bewusst an
+  // (eigener Beweis «Schwebend (d)» unten). Die x-Kanten werden darum
+  // MESSEND bestimmt, exakt wie `DockFlaeche.tsx` sie selbst herleitet:
+  // links = rechte Kante von Geschossleiste/EntwurfsDock + GAP(10) (die
+  // linke Spalte ist nach dem Pop-out leer, lw=0 → vp.x = feld.x), rechts =
+  // linke Kante der immer offenen Kennzahlen-Spalte. Nur die OBERE Kante
+  // bleibt eine Extrem-Drag-Probe — nach oben gibt es keine Zone.
+  const chromeKanten: number[] = [];
+  for (const tid of ['geschossleiste', 'entwurf-dock']) {
+    const b = await page.locator(`[data-testid="${tid}"]`).boundingBox();
+    if (b) chromeKanten.push(b.x + b.width);
+  }
+  expect(chromeKanten.length).toBeGreaterThan(0);
+  const vpX = Math.max(...chromeKanten) + 10;
+  const vpRechts = (await stabileBox(page.locator('[data-testid="dock-panel-kennzahlen"]'))).x;
   await ziehePanelNach(page, 'kvOffen', 500, 0);
   const vpY = (await stabileBox(panel)).y;
   expect(vpRechts - vpX).toBeGreaterThan(300); // Sanity: echter Zwischenraum
@@ -539,4 +549,195 @@ test('Auto-Reaktions-Hinweis (C6): drittes Panel öffnen lässt das ANDERE (wede
 
   // Verschwindet nach ~2,9s von selbst wieder (Auftrag).
   await expect(chip).toHaveCount(0, { timeout: 4500 });
+});
+
+// ---------------------------------------------------------------------------
+// v0.7.9 (A3, Owner-Kern) — Tabs als Drag-Handles + Snap-Zonen für
+// Schwebende (ROADMAP-359-Restpunkte). Fünf Beweise gemäss Auftrag:
+//  (a) Tab-Klick öffnet weiterhin (auch mit Zitter-Bewegung unter der
+//      5px-Schwelle, `DockPanel.tsx`s `TAB_DRAG_SCHWELLE`) — ergänzt die
+//      bereits bestehende «Tab-Klick öffnet ein eingeklapptes Panel wieder»-
+//      Probe oben (die deckt den reinen `page.click()`-Fall ab, hier kommt
+//      gezielt der Grenzfall knapp unter der Schwelle dazu).
+//  (b) Tab-Drag über die Schwelle in die RECHTS-Zone: Spaltenwechsel, der Tab
+//      BLEIBT eingeklappt (Owner-Entscheid «least surprise»).
+//  (c) Tab-Drag in die SCHWEBEND-Zone (nur Modus A): öffnet als Float —
+//      eingeklappte Floats existieren im Modell nicht (`placeFloats()`,
+//      `dock-kern.ts`, setzt `eingeklappt` für JEDES Float-Rechteck hart auf
+//      `false`), Aufklappen ist die einzig sinnvolle Semantik.
+//  (d) Ein bereits schwebendes Panel in die LINKS-Zone gezogen dockt an
+//      (`dock:'left'`, `fx`/`fy` gelöscht) — die neuen Snap-Zonen für
+//      Schwebende (`DockFlaeche.tsx`s `floatDragStart`).
+//  (e) Touch-Variante von (b).
+// ---------------------------------------------------------------------------
+
+test('Tab (a): Klick öffnet weiterhin — auch mit Zitter-Bewegung unter der 5px-Schwelle', async ({ page }) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="kv-oeffnen"]');
+  await page.click('[data-testid="dock-panel-kvOffen-einklappen"]');
+  const tab = page.locator('[data-testid="dock-panel-kvOffen-tab"]');
+  await expect(tab).toBeVisible();
+
+  // WICHTIG: `stabileBox` statt rohem `boundingBox` — direkt nach dem
+  // Einklappen läuft die .28s-Reflow-Motion noch (real gemessen: die rohe
+  // Box war 580px hoch statt 34, mitten im Schrumpfen). Ein Klick auf die
+  // VERALTETE Mitte träfe nach dem Fertig-Schrumpfen den Viewport statt den
+  // Tab — pointerup/click gingen am Tab vorbei, nichts öffnete (deterministisch
+  // reproduziert). Dasselbe Muster wie `zieheHudGriffNach()` oben.
+  const box = await stabileBox(tab);
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  // Bewegung deutlich UNTER der 5px-Schwelle — kein Drag, der Klick öffnet
+  // ganz normal (kein Redock-Geist, keine Snap-Zonen).
+  await page.mouse.move(cx + 2, cy + 1, { steps: 2 });
+  await page.mouse.up();
+
+  await expect(page.locator('[data-testid="dock-drag-geist"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
+  await expect(tab).toHaveCount(0);
+});
+
+test('Tab (b): Drag über die Schwelle in die RECHTS-Zone verschiebt den Tab EINGEKLAPPT in die rechte Spalte', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="kv-oeffnen"]');
+  const panel = page.locator('[data-testid="dock-panel-kvOffen"]');
+  await expect(panel).toBeVisible();
+  await page.click('[data-testid="dock-panel-kvOffen-einklappen"]');
+  const tab = page.locator('[data-testid="dock-panel-kvOffen-tab"]');
+  await expect(tab).toBeVisible();
+
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  // kvOffen sitzt anfangs links (dock:'left').
+  const vorher = await stabileBox(panel);
+  expect(vorher.x).toBeLessThan(feldBox.x + feldBox.width / 2);
+
+  // `stabileBox` — Reflow-Motion nach dem Einklappen abwarten (s. Tab (a)).
+  const box = await stabileBox(tab);
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  // Deutlich über die 5px-Schwelle hinaus in die rechte Snap-Zone ziehen.
+  await page.mouse.move(feldBox.x + feldBox.width - 20, feldBox.y + 60, { steps: 10 });
+  await expect(page.locator('[data-testid="dock-snap-rechts"]')).toHaveAttribute('data-aktiv', 'true');
+  await expect(page.locator('[data-testid="dock-drag-geist"]')).toBeVisible();
+  await page.mouse.up();
+
+  const override = await leseOverride(page, 'kvOffen');
+  expect(override?.dock).toBe('right');
+
+  // BLEIBT eingeklappt (Owner-Entscheid «least surprise») — der Tab ist nach
+  // dem Spaltenwechsel weiterhin ein Tab, kein aufgeklapptes Panel.
+  await expect(tab).toBeVisible();
+  await expect(page.locator('[data-testid="kv-panel"]')).toHaveCount(0);
+
+  const nachher = await stabileBox(panel);
+  expect(nachher.x).toBeGreaterThan(feldBox.x + feldBox.width / 2);
+});
+
+test('Tab (c): Drag in die SCHWEBEND-Zone öffnet als Float (eingeklappte Floats existieren im Modell nicht)', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="kv-oeffnen"]');
+  await page.click('[data-testid="dock-panel-kvOffen-einklappen"]');
+  const tab = page.locator('[data-testid="dock-panel-kvOffen-tab"]');
+  await expect(tab).toBeVisible();
+
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  // `stabileBox` — Reflow-Motion nach dem Einklappen abwarten (s. Tab (a)).
+  const box = await stabileBox(tab);
+  const cx = box.x + box.width / 2;
+  const cy = box.y + box.height / 2;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  // Feld-Mitte — weit von beiden Rand-Zonen entfernt, trifft die SCHWEBEND-Zone.
+  await page.mouse.move(feldBox.x + feldBox.width / 2, feldBox.y + feldBox.height / 2, { steps: 10 });
+  await expect(page.locator('[data-testid="dock-snap-schwebend"]')).toHaveAttribute('data-aktiv', 'true');
+  await page.mouse.up();
+
+  const panel = page.locator('[data-testid="dock-panel-kvOffen"]');
+  await expect(panel).toHaveAttribute('data-schwebend', 'true');
+  // Öffnet vollständig — kein Tab mehr, der volle Kopf + Inhalt sind da.
+  await expect(tab).toHaveCount(0);
+  await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
+  await expect(page.locator('[data-testid="dock-panel-kvOffen-redock"]')).toBeVisible();
+
+  const override = await leseOverride(page, 'kvOffen');
+  expect(override?.dock).toBe('float');
+});
+
+test('Schwebend (d): Kopf-Drag eines bereits schwebenden Panels in die LINKS-Zone dockt an — fx/fy werden gelöscht', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="kv-oeffnen"]');
+  const panel = page.locator('[data-testid="dock-panel-kvOffen"]');
+  await expect(panel).toBeVisible();
+  await expect(panel).toHaveAttribute('data-schwebend', 'false');
+
+  await page.click('[data-testid="dock-panel-kvOffen-popout"]');
+  await expect(panel).toHaveAttribute('data-schwebend', 'true');
+  const geschwebt = await stabileBox(panel);
+
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  const startX = geschwebt.x + 20; // Rollenpunkt/Titel, nie ein Kopf-Knopf.
+  const startY = geschwebt.y + 17;
+
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  // Nahe der linken Feldkante — die Snap-Zone links muss erscheinen und aktiv
+  // werden; die SCHWEBEND-Zone gibt es hier bewusst NICHT (`mitSchwebendZone
+  // ={false}`, `DockFlaeche.tsx` — ein bereits schwebendes Panel hat keine
+  // sinnvolle "schwebend bleiben"-Zone).
+  await page.mouse.move(feldBox.x + 20, feldBox.y + 60, { steps: 10 });
+  await expect(page.locator('[data-testid="dock-snap-links"]')).toHaveAttribute('data-aktiv', 'true');
+  await expect(page.locator('[data-testid="dock-snap-schwebend"]')).toHaveCount(0);
+  await page.mouse.up();
+
+  await expect(panel).toHaveAttribute('data-schwebend', 'false');
+  const override = await leseOverride(page, 'kvOffen');
+  expect(override?.dock).toBe('left');
+  expect(override?.fx).toBeUndefined();
+  expect(override?.fy).toBeUndefined();
+
+  const nachher = await stabileBox(panel);
+  expect(nachher.x).toBeLessThan(feldBox.x + feldBox.width / 2);
+});
+
+test('Touch-Variante (e): Tab-Drag über die Schwelle dockt eingeklappt in die rechte Spalte', async ({ page }) => {
+  await oeffneDesignMitTkb(page);
+  await page.click('[data-testid="kv-oeffnen"]');
+  await page.click('[data-testid="dock-panel-kvOffen-einklappen"]');
+  const tab = page.locator('[data-testid="dock-panel-kvOffen-tab"]');
+  await expect(tab).toBeVisible();
+
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  // `stabileBox` — Reflow-Motion nach dem Einklappen abwarten (s. Tab (a)).
+  const box = await stabileBox(tab);
+  const startX = box.x + box.width / 2;
+  const startY = box.y + box.height / 2;
+  const zielX = feldBox.x + feldBox.width - 20;
+  const zielY = feldBox.y + 60;
+  const init = { pointerId: 13, pointerType: 'touch', bubbles: true, clientX: startX, clientY: startY };
+
+  // Nur der pointerdown geht an den Tab — sobald die Schwelle überschritten
+  // ist, entfernt `tabPointerDown` seine eigenen Listener und startet
+  // denselben Redock-Drag wie beim vollen Kopf (`DockFlaeche.tsx` hört ab
+  // dann auf window-Listener, s. die Touch-Variante des Header-Drag-Tests
+  // oben für dieselbe dispatchEvent-auf-<body>-Begründung).
+  await tab.dispatchEvent('pointerdown', init);
+  const body = page.locator('body');
+  await body.dispatchEvent('pointermove', { ...init, clientX: zielX, clientY: zielY });
+  await expect(page.locator('[data-testid="dock-snap-rechts"]')).toHaveAttribute('data-aktiv', 'true');
+  await body.dispatchEvent('pointerup', { ...init, clientX: zielX, clientY: zielY });
+
+  const override = await leseOverride(page, 'kvOffen');
+  expect(override?.dock).toBe('right');
+  await expect(tab).toBeVisible();
+  await expect(page.locator('[data-testid="kv-panel"]')).toHaveCount(0);
 });

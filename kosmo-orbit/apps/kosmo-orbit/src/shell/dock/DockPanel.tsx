@@ -1,9 +1,19 @@
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { KIcon } from '@kosmo/ui';
 import { DOCK_KONSTANTEN, type DockModus, type DockRect, type PanelDef } from '../../state/dock-kern';
 import type { DockStation } from '../../state/dock-stationen';
 import { useDockZustand } from '../../state/dock-zustand';
 import { useDockOrbRuntime } from '../../state/dock-orb-runtime';
+
+/** v0.7.9 (A3, Teil A — Tabs als Drag-Handles, ROADMAP-359-Restpunkt) —
+ *  Bewegungs-Schwellwert für den eingeklappten Tab als Ziehgriff: ein
+ *  Pointerdown DARAUF muss weiterhin einen reinen Klick (Öffnen) erlauben,
+ *  erst eine Bewegung >= 5px startet den Redock-Drag (Geist + Zonen,
+ *  identisch zum vollen Kopf-Griff). 5px hält Antipp-Jitter sicher unter der
+ *  Schwelle (Maus-/Finger-Zittern beim Loslassen eines Klicks bewegt sich
+ *  erfahrungsgemäss um 1-2px), ist aber klein genug, dass eine echte
+ *  Zieh-Absicht sofort erkannt wird — keine spürbare Verzögerung. */
+const TAB_DRAG_SCHWELLE = 5;
 
 /**
  * DockPanel (v0.7.8 Welle 1 / Paket P3 — «Intelligente Werkzeugtabs»,
@@ -95,6 +105,64 @@ export function DockPanel({
   const einklappenUmschalten = () => panelOverrideSetzen(station, def.id, { eingeklappt: !rect.eingeklappt });
   const anheftenUmschalten = () => panelOverrideSetzen(station, def.id, { angeheftet: !angeheftet });
 
+  /**
+   * v0.7.9 (A3, Teil A) — der eingeklappte Tab ist NEBEN dem Öffnen-Klick
+   * jetzt auch ein Redock-Ziehgriff, genau wie der volle Kopf
+   * (`kopfPointerDown` unten, `onRedockDragStart`). Anders als der Kopf kennt
+   * der Tab NUR diesen einen Zweig: `dock-kern.ts`s `placeFloats()` setzt bei
+   * JEDEM Float-Rechteck `eingeklappt` hart auf `false` (verifiziert,
+   * Kopfkommentar dort) — «eingeklappte Floats» existieren im Modell schlicht
+   * nicht, ein eingeklappter Tab ist darum NIE `rect.schwebend`, und
+   * `onFloatDragStart` wäre hier toter Code.
+   *
+   * Drop-Semantik (Owner-Entscheid, s. Auftrag):
+   *  - Zone LINKS/RECHTS (Spaltenwechsel): der Tab BLEIBT eingeklappt
+   *    («least surprise» — in eine andere Spalte gezogen bleibt er ein Tab
+   *    dort, er poppt nicht überraschend zum vollen Panel auf). Umgesetzt in
+   *    `DockFlaeche.tsx`s `redockStart`/`loslassen`: das Override trägt
+   *    `eingeklappt:true` weiter, wenn das gezogene Panel beim Drag-Start
+   *    bereits eingeklappt war (`RedockDatensatz.warEingeklappt`).
+   *  - Zone SCHWEBEND (nur Modus A): der Tab öffnet als Float — einen
+   *    eingeklappten Float-Zustand, in dem er "bleiben" könnte, gibt es ja
+   *    nicht (s.o.), Aufklappen ist hier die einzig sinnvolle Semantik.
+   */
+  const tabZugRef = useRef<{ x: number; y: number; hatGezogen: boolean } | null>(null);
+
+  const tabPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!def.bewegbar || e.button !== 0) return;
+    const start = { x: e.clientX, y: e.clientY, hatGezogen: false };
+    tabZugRef.current = start;
+    const bewege = (ev: PointerEvent) => {
+      if (start.hatGezogen) return;
+      const dx = ev.clientX - start.x;
+      const dy = ev.clientY - start.y;
+      if (Math.hypot(dx, dy) < TAB_DRAG_SCHWELLE) return;
+      start.hatGezogen = true;
+      abmelden();
+      onRedockDragStart(def.id, rect, ev.clientX, ev.clientY);
+    };
+    const loslassen = () => abmelden();
+    const abmelden = () => {
+      window.removeEventListener('pointermove', bewege);
+      window.removeEventListener('pointerup', loslassen);
+      window.removeEventListener('pointercancel', loslassen);
+    };
+    window.addEventListener('pointermove', bewege);
+    window.addEventListener('pointerup', loslassen);
+    window.addEventListener('pointercancel', loslassen);
+  };
+
+  const tabKlick = () => {
+    // Die 5px-Schwelle wurde bereits beim Pointerdown/-move überschritten —
+    // ein Redock-Drag läuft (oder ist gerade zu Ende gegangen). Der
+    // nachfolgende Klick (falls der Browser ihn überhaupt noch feuert, s.
+    // Kopfkommentar `TAB_DRAG_SCHWELLE`) darf NICHT zusätzlich öffnen.
+    const gezogen = tabZugRef.current?.hatGezogen;
+    tabZugRef.current = null;
+    if (gezogen) return;
+    einklappenUmschalten();
+  };
+
   const kopfPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!def.bewegbar) return;
     // WICHTIG: `instanceof HTMLElement` wäre hier ein Bug — die Kopf-Knöpfe
@@ -178,9 +246,11 @@ export function DockPanel({
           type="button"
           className="k-dock-panel-tab"
           data-testid={`dock-panel-${def.id}-tab`}
+          data-drag
           title={`${def.titel} — wieder öffnen`}
           aria-label={`${def.titel} — wieder öffnen`}
-          onClick={einklappenUmschalten}
+          onPointerDown={tabPointerDown}
+          onClick={tabKlick}
         >
           <span
             className="k-dock-panel-rollenpunkt"
