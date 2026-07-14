@@ -270,3 +270,96 @@
   background: color-mix(in srgb, var(--k-accent) 18%, transparent);
   box-shadow: var(--k-shadow-overlay);
 }
+
+/* v0.7.8 Welle 3 (P7, «Kosmo ordnet») — der goldene Orb, der zur Kopfleiste
+   des zuletzt von Kosmo bedienten Panels wandert (`KosmoOrdnetOrb.tsx`).
+   `left`/`top` sind Solver-Rechteck-Koordinaten (dieselbe Welt wie
+   `DockPanel.tsx`s Rechtecke) — die `.55s ease-out`-Transition (Auftrag)
+   lässt den Orb dorthin GLEITEN statt zu springen. Farbe `--k-rolle-agent`
+   (bereits vorhandenes Rollenfarben-Token, `aura.css`) statt einer neuen
+   Farbe. */
+.k-dock-kosmo-orb {
+  position: absolute;
+  z-index: 50;
+  pointer-events: none;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  transition:
+    left 0.55s var(--k-ease-standard, ease-out),
+    top 0.55s var(--k-ease-standard, ease-out);
+}
+.k-dock-kosmo-orb-kern {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--k-rolle-agent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--k-rolle-agent) 70%, transparent);
+}
+.k-dock-kosmo-orb-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--k-rolle-agent) 35%, transparent);
+  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--k-rolle-agent) 45%, transparent);
+  animation: k-dock-kosmo-orb-puls 1.6s ease-in-out infinite;
+}
+@keyframes k-dock-kosmo-orb-puls {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* Die «KOSMO»-Kopf-Badge (`DockPanel.tsx`) — additiv neben dem Titel, zeigt
+   welches Panel Kosmo GERADE bedient hat. Selbe Goldfarbe wie der Orb. */
+.k-dock-kosmo-badge {
+  flex: 0 0 auto;
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--k-rolle-agent);
+  background: color-mix(in srgb, var(--k-rolle-agent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--k-rolle-agent) 45%, transparent);
+  border-radius: var(--k-radius-pill, 999px);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+/* STOPP-Chip (Auftrag: sichtbar solange `laeuft`) — Muster `.kz-bedienung`
+   (`kosmo-zeichnet.css`): `position:fixed`, unten mittig, ausserhalb der
+   Dock-Koordinatenwelt (bleibt an einer stabilen Stelle, wandert NICHT mit
+   dem Orb mit). */
+.k-dock-kosmo-stopp-huelle {
+  position: fixed;
+  left: 50%;
+  bottom: 190px;
+  transform: translateX(-50%);
+  z-index: 109;
+  pointer-events: none;
+}
+.k-dock-kosmo-stopp {
+  all: unset;
+  box-sizing: border-box;
+  pointer-events: auto;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: var(--k-radius-pill);
+  font-family: var(--k-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--k-rolle-agent);
+  background: var(--k-surface);
+  border: 1px solid color-mix(in srgb, var(--k-rolle-agent) 55%, transparent);
+  box-shadow: var(--k-shadow-overlay);
+}
+.k-dock-kosmo-stopp:hover,
+.k-dock-kosmo-stopp:focus-visible {
+  background: color-mix(in srgb, var(--k-rolle-agent) 14%, var(--k-surface));
+}

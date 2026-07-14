@@ -248,6 +248,14 @@ export class MockProvider implements ChatProvider {
         } catch {
           delta = 'Konnte den UI-Zustand nicht lesen.';
         }
+      } else if (lastMsg.content.startsWith('FEHLER:')) {
+        // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — ehrliche Fehler eines
+        // `ui.*`-Werkzeugs (z.B. `ui.dockSetzen` mit `dock:'float'` im
+        // Modus B, `dock-befehle.ts`) dürfen im Mock-Modus nicht hinter der
+        // generischen "Verstanden, ich lasse es."-Bestätigung verschwinden —
+        // sonst könnte kein E2E-Test (`dock-kosmo.spec.ts`) beweisen, dass
+        // die Fehlermeldung wirklich im Chat ankommt.
+        delta = `Das ging nicht: ${lastMsg.content.replace(/^FEHLER:\s*/, '')}`;
       } else {
         delta = lastMsg.content.startsWith('AUSGEFÜHRT')
           ? 'Erledigt — die Wand steht. Soll ich gleich Fenster setzen?'
@@ -288,6 +296,30 @@ export class MockProvider implements ChatProvider {
     if (text.includes('ui-zustand') || text.includes('ui zustand')) {
       yield { type: 'text', delta: 'Ich lese den aktuellen UI-Zustand. ' };
       yield { type: 'tool_call', call: { id: 'call_mock_ui_lesen', name: 'ui_zustandLesen', arguments: {} } };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — deterministische Trigger für die
+    // `ui.dock*`-Werkzeuge, ausschliesslich für E2E/Demo (`dock-kosmo.spec.
+    // ts`); ein echtes Modell entscheidet das selbst anhand der Tool-
+    // Beschreibungen (Muster wie die `ui.*`-Trigger direkt unterhalb).
+    if (text.includes('dock') && (text.includes('einklapp') || text.includes('klapp'))) {
+      const panelId = text.includes('inspector') ? 'inspector' : 'kennzahlen';
+      yield { type: 'text', delta: 'Ich klappe das Panel im Dock ein. ' };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_mock_dock_einklappen', name: 'ui_dockEinklappen', arguments: { panelId, eingeklappt: true } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
+    if (text.includes('dock') && text.includes('schweb')) {
+      const panelId = text.includes('inspector') ? 'inspector' : 'kennzahlen';
+      yield { type: 'text', delta: 'Ich docke das Panel schwebend. ' };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_mock_dock_setzen', name: 'ui_dockSetzen', arguments: { panelId, dock: 'float' } },
+      };
       yield { type: 'done', stopReason: 'tool_calls' };
       return;
     }

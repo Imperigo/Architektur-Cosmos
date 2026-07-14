@@ -3,6 +3,7 @@ import { KIcon } from '@kosmo/ui';
 import { DOCK_KONSTANTEN, type DockModus, type DockRect, type PanelDef } from '../../state/dock-kern';
 import type { DockStation } from '../../state/dock-stationen';
 import { useDockZustand } from '../../state/dock-zustand';
+import { useDockOrbRuntime } from '../../state/dock-orb-runtime';
 
 /**
  * DockPanel (v0.7.8 Welle 1 / Paket P3 — «Intelligente Werkzeugtabs»,
@@ -82,6 +83,14 @@ export function DockPanel({
   children,
 }: DockPanelProps) {
   const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+
+  // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — die «KOSMO»-Kopf-Badge: sichtbar
+  // NUR solange `useDockOrbRuntime`s Steuerungs-Anzeige läuft UND genau
+  // DIESES Panel das zuletzt von Kosmo bediente ist (`badgePanelId`,
+  // `dock-befehle.ts`s `meldeAktion()`). Additive Test-ID, kein Ersatz für
+  // den goldenen Orb (`KosmoOrdnetOrb.tsx`) — Orb UND Badge zusammen zeigen,
+  // WOHIN Kosmo gerade greift.
+  const kosmoBadgeSichtbar = useDockOrbRuntime((s) => s.laeuft && s.badgePanelId === def.id);
 
   const einklappenUmschalten = () => panelOverrideSetzen(station, def.id, { eingeklappt: !rect.eingeklappt });
   const anheftenUmschalten = () => panelOverrideSetzen(station, def.id, { angeheftet: !angeheftet });
@@ -164,6 +173,11 @@ export function DockPanel({
             style={{ background: `var(--k-rolle-${def.rolle})` }}
           />
           <span className="k-dock-panel-titel">{def.titel}</span>
+          {kosmoBadgeSichtbar && (
+            <span className="k-dock-kosmo-badge" data-testid={`dock-panel-${def.id}-kosmo-badge`} aria-hidden="true">
+              KOSMO
+            </span>
+          )}
         </button>
       </div>
     );
@@ -181,6 +195,11 @@ export function DockPanel({
         <span className="k-dock-panel-titel" title={def.titel}>
           {def.titel}
         </span>
+        {kosmoBadgeSichtbar && (
+          <span className="k-dock-kosmo-badge" data-testid={`dock-panel-${def.id}-kosmo-badge`} aria-hidden="true">
+            KOSMO
+          </span>
+        )}
         {modus === 'A' && def.bewegbar && !rect.schwebend && (
           <button
             type="button"

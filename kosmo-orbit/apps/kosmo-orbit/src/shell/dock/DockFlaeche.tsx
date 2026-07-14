@@ -11,10 +11,13 @@ import {
 } from '../../state/dock-kern';
 import { stationsPanels, type DockStation } from '../../state/dock-stationen';
 import { eingeklappteDiff, useDockZustand } from '../../state/dock-zustand';
+import { useAktiveDockStation } from '../../state/dock-aktive-station';
+import { useDockOrbRuntime } from '../../state/dock-orb-runtime';
 import { DockPanel } from './DockPanel';
 import { DockSplitter } from './DockSplitter';
 import { DockSnapZonen, type DockGeistZustand } from './DockSnapZonen';
 import { DockAutoHinweisChip } from './DockAutoHinweisChip';
+import { KosmoOrdnetOrb } from './KosmoOrdnetOrb';
 import './dock-flaeche.css';
 
 /**
@@ -257,6 +260,15 @@ interface FloatDragDatensatz {
 
 export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   const defs = useMemo(() => stationsPanels(station), [station]);
+
+  // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — diese Instanz IST die aktive
+  // Dock-Station, solange sie gemountet ist (nur eine `DockFlaeche` läuft je
+  // Screen, s. `dock-aktive-station.ts`-Kopfkommentar). `ui.dock*`-Befehle
+  // validieren ihre `panelId` gegen genau diesen Wert.
+  const setzeAktiveStation = useAktiveDockStation((s) => s.setzeAktiveStation);
+  useEffect(() => {
+    setzeAktiveStation(station);
+  }, [station, setzeAktiveStation]);
 
   const wurzelRef = useRef<HTMLDivElement>(null);
   const [feld, setFeld] = useState<FeldRechteck>(LEER_FELD);
@@ -651,6 +663,20 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     return { rects, viewport: haupt.viewport, splitters };
   }, [defs, feld, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId]);
 
+  // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — exponiert die aktuellen Panel-
+  // Kopf-Rechtecke an `useDockOrbRuntime`, NACH jedem `solve()`-Lauf (also
+  // bei jeder Layout-Änderung, egal ob durch Menschen oder `ui.dock*`
+  // ausgelöst) — `KosmoOrdnetOrb.tsx` liest nur diesen Store, kennt den
+  // Solver selbst nicht.
+  const setzeOrbRects = useDockOrbRuntime((s) => s.setzeRects);
+  useEffect(() => {
+    const naechste: Record<string, { x: number; y: number; w: number; h: number }> = {};
+    for (const [id, r] of Object.entries(ergebnis.rects)) {
+      naechste[id] = { x: r.x, y: r.y, w: r.w, h: r.h };
+    }
+    setzeOrbRects(naechste);
+  }, [ergebnis, setzeOrbRects]);
+
   // -----------------------------------------------------------------------
   // C6 — Auto-Reaktions-Hinweis (P5): vergleicht die Menge eingeklappter
   // Panel-IDs vor/nach jeder Layout-verändernden Aktion (Panel geöffnet,
@@ -769,6 +795,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
         />
       ))}
       {redockGeist && <DockSnapZonen feld={feld} leftW={leftW} rightW={rightW} modus={dockModus} geist={redockGeist} />}
+      <KosmoOrdnetOrb />
     </div>
   );
 }

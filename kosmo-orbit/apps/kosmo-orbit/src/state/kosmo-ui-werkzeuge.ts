@@ -3,6 +3,21 @@ import { externalTools, type ReadTool } from '@kosmo/ai';
 import { alleUiBefehle, fuehreUiBefehlAus, type UiBefehl } from './ui-befehle';
 import { ARBEITSMODUS_LABEL, type Arbeitsmodus } from './arbeitsmodi-kern';
 import type { PanelId, ToolId, ViewMode } from './ui-zustand';
+// v0.7.8 Welle 3 (P7, «Kosmo ordnet») — statischer Seiteneffekt-Import wie
+// `ui-befehle` selbst: `dock-befehle.ts` registriert seine sieben `ui.dock*`-
+// Befehle bei `registriereUiBefehl()` NUR, wenn ihr Modul tatsächlich einmal
+// geladen wurde. Ohne diesen Import bliebe die Registry (`alleUiBefehle()`
+// unten) leer für sie — dieselbe Machart wie jeder andere reine
+// Seiteneffekt-Import in dieser Codebasis.
+import type {
+  UiDockAnheftenErgebnis,
+  UiDockEinklappenErgebnis,
+  UiDockErgebnis,
+  UiDockGroesseErgebnis,
+  UiDockSetzenErgebnis,
+  UiDockZuruecksetzenErgebnis,
+} from './dock-befehle';
+import './dock-befehle';
 
 /**
  * Kosmo-UI-Brücke (v0.6.6 BEWEGUNGSKONZEPT §6, Stream E) — macht die
@@ -94,11 +109,20 @@ const VIEW_LABEL: Record<ViewMode, string> = {
 };
 
 export interface UiAktionMeldung {
-  /** Für `data-testid="kosmo-ui-aktion-${art}"` (Aufgabe 3, Sichtbare Ehrlichkeit). */
-  art: 'panel' | 'werkzeug' | 'ansicht' | 'modus' | 'automatik' | 'geschoss';
+  /** Für `data-testid="kosmo-ui-aktion-${art}"` (Aufgabe 3, Sichtbare Ehrlichkeit).
+   *  `'dock'` (P7, «Kosmo ordnet») deckt ALLE sechs schreibenden `ui.dock*`-
+   *  Befehle ab — eine gemeinsame Test-ID, weil sie alle dieselbe Fläche
+   *  (das Dock) betreffen, nicht sieben einzelne. */
+  art: 'panel' | 'werkzeug' | 'ansicht' | 'modus' | 'automatik' | 'geschoss' | 'dock';
   /** Die Chat-Systemzeile, z.B. «Kosmo hat auf ‹PDF exportieren› gestellt — auf Wunsch.» */
   text: string;
 }
+
+const DOCK_ZIEL_LABEL: Record<'left' | 'right' | 'float', string> = {
+  left: 'links angedockt',
+  right: 'rechts angedockt',
+  float: 'schweben lassen',
+};
 
 /**
  * Baut die Chat-Systemzeile für einen erfolgreich ausgeführten SCHREIBENDEN
@@ -154,8 +178,52 @@ function beschreibeAktion(befehlId: string, params: unknown, ergebnis?: unknown)
         text: `Kosmo hat das aktive Geschoss auf «${r?.name ?? '?'}» gestellt.`,
       };
     }
+    // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — die sechs schreibenden
+    // `ui.dock*`-Befehle, alle `art:'dock'`. Wie bei `ui.geschossSetzen`
+    // (H-33) liest jeder Fall den ECHTEN Titel aus dem `ergebnis` (Rückgabe
+    // von `dock-befehle.ts`s `run()`), nie aus den rohen `params` — ein LLM
+    // kennt oft nur die `panelId`, nicht den menschenlesbaren Titel.
+    case 'ui.dockSetzen': {
+      const r = ergebnis as UiDockSetzenErgebnis | undefined;
+      return {
+        art: 'dock',
+        text: `Kosmo hat ‹${r?.titel ?? '?'}› ${r ? DOCK_ZIEL_LABEL[r.dock] : 'umgedockt'}.`,
+      };
+    }
+    case 'ui.dockGroesseSetzen': {
+      const r = ergebnis as UiDockGroesseErgebnis | undefined;
+      return {
+        art: 'dock',
+        text: `Kosmo hat die Grösse von ‹${r?.titel ?? '?'}› auf ${r?.groesse ?? '?'}px gesetzt.`,
+      };
+    }
+    case 'ui.dockAnheften': {
+      const r = ergebnis as UiDockAnheftenErgebnis | undefined;
+      return {
+        art: 'dock',
+        text: `Kosmo hat ‹${r?.titel ?? '?'}› ${r?.angeheftet ? 'angeheftet' : 'losgelöst'}.`,
+      };
+    }
+    case 'ui.dockEinklappen': {
+      const r = ergebnis as UiDockEinklappenErgebnis | undefined;
+      return {
+        art: 'dock',
+        text: `Kosmo hat ‹${r?.titel ?? '?'}› ${r?.eingeklappt ? 'eingeklappt' : 'wieder geöffnet'}.`,
+      };
+    }
+    case 'ui.dockZurueckLegen': {
+      const r = ergebnis as UiDockErgebnis | undefined;
+      return { art: 'dock', text: `Kosmo hat ‹${r?.titel ?? '?'}› zurück angedockt.` };
+    }
+    case 'ui.dockZuruecksetzen': {
+      const r = ergebnis as UiDockZuruecksetzenErgebnis | undefined;
+      return {
+        art: 'dock',
+        text: `Kosmo hat das Dock-Layout${r ? ` (${r.station})` : ''} zurückgesetzt.`,
+      };
+    }
     default:
-      return null; // ui.zustandLesen — lesend, keine Meldung.
+      return null; // ui.zustandLesen / ui.dockLayoutLesen — lesend, keine Meldung.
   }
 }
 
