@@ -107,31 +107,36 @@ function ueberlappenSich(a: Box, b: Box, toleranz = 1): boolean {
 
 /** BEKANNTE, VORBESTEHENDE Kollisionen ausserhalb dieses Pakets —
  *  reproduzierbar auch auf dem unveränderten `main`, PER Probe-Skript
- *  nachgemessen, unabhängig vom Dock:
- *   1. Bei genug Geschossen (die TKB-Demo hat 7, `demo-tkb.ts`) wächst die
- *      Geschossleiste (`top:0`, Karteikarten-Liste) so weit nach unten, dass
- *      sie den vertikal MITTIG verankerten EntwurfsDock (`orbit065-dock`,
- *      `top:50%`) überlappt (1400×900: Geschossleiste y 139-476,
- *      EntwurfsDock y 386-653).
- *  (Der frühere zweite Eintrag — `kennzahlen`×`statusleiste`, der alte
+ *  nachgemessen, unabhängig vom Dock. Historisch gab es hier bis zu drei
+ *  Einträge; alle drei sind inzwischen GESCHLOSSEN, die Liste bleibt als
+ *  Mechanismus stehen (leer), falls ein künftiger Fall sie wieder braucht:
+ *   (Der frühere erste Eintrag — `kennzahlen`×`statusleiste`, der alte
  *  absolute Overlay mit `maxHeight:calc(100% - 56px)` — ist seit P4
  *  GEGENSTANDSLOS: Kennzahlen ist jetzt ein Dock-Panel, dessen Rechteck der
  *  Solver oberhalb der Statusleiste hält; gemessen wird das Panel-Rechteck,
  *  s. `FIXE_ELEMENTE`-Kommentar.)
- *  v0.7.9 (A1): die DRITTE dokumentierte Ausnahme-Klasse — die fixen
- *  ViewportChrome-Säulen (HUD-Statuskarte + Eigenschaften), die bis v0.7.8
- *  gar nicht erst mitgemessen wurden (ROADMAP 357/358: «enge Split-Ansicht
- *  kann Orientierungs-Float ↔ fixe Eigenschaften-Säule überlappen») — ist
+ *  v0.7.9 (A1): die zweite Ausnahme-Klasse — die fixen ViewportChrome-Säulen
+ *  (HUD-Statuskarte + Eigenschaften), die bis v0.7.8 gar nicht erst
+ *  mitgemessen wurden (ROADMAP 357/358: «enge Split-Ansicht kann
+ *  Orientierungs-Float ↔ fixe Eigenschaften-Säule überlappen») — ist
  *  GESCHLOSSEN: beide sind jetzt Dock-Floats (`viewportHudStatuskarte`/
  *  `viewportEigenschaften`, `dock-stationen.ts`) und stehen unten in
  *  `HUD_FLOAT_IDS`, werden also in JEDER Disjunktions-Prüfung hart
  *  mitgeprüft statt ausgeklammert.
- *  Das verbleibende Paar (1.) besteht aus Elementen, die «NICHT ins Dock
- *  wandern» — B2-Stretch der v0.7.9-Planung, bewusst NICHT Teil von A1.
- *  JEDES andere Paar wird weiterhin hart geprüft. */
-const BEKANNTE_VORBESTEHENDE_KOLLISIONEN: readonly [string, string][] = [
-  ['geschossleiste', 'entwurf-dock'],
-];
+ *  v0.7.9 (B2, Owner-Stretch): der dritte und letzte Eintrag — bei genug
+ *  Geschossen (die TKB-Demo hat 7, `demo-tkb.ts`) wuchs die Geschossleiste
+ *  (`top:0`, Karteikarten-Liste) so weit nach unten, dass sie den vertikal
+ *  MITTIG verankerten EntwurfsDock (`orbit065-dock`, `top:50%`) überlappte
+ *  (1400×900: Geschossleiste y 139-476, EntwurfsDock y 386-653) — ist
+ *  GESCHLOSSEN: die Geschossleiste misst jetzt selbst die Oberkante des
+ *  EntwurfsDock (`DesignWorkspace.tsx`, ResizeObserver-Effekt gleich dem
+ *  Muster in `DockFlaeche.tsx`) und klemmt ihre `maxHeight` strikt davor —
+ *  sie scrollte ohnehin schon (Hochhaus-Grenze), scrollt jetzt nur früher.
+ *  Der EntwurfsDock selbst bleibt unverändert vertikal mittig (kein
+ *  Layout-Sprung seiner Position). Test unten («viele Geschosse: die
+ *  Geschossleiste endet über dem EntwurfsDock»).
+ *  JEDES Paar wird jetzt ausnahmslos hart geprüft. */
+const BEKANNTE_VORBESTEHENDE_KOLLISIONEN: readonly [string, string][] = [];
 
 /** Sammelt die STABILE BoundingBox jedes sichtbaren Selektors aus
  *  `namenUndSelektoren` (übersprungen, falls nicht im DOM/nicht sichtbar)
@@ -733,3 +738,61 @@ for (const modus of ['A', 'B'] as const) {
     }
   });
 }
+
+// ---------------------------------------------------------------------------
+// v0.7.9 (B2, Owner-Stretch) — die letzte, bis eben in
+// `BEKANNTE_VORBESTEHENDE_KOLLISIONEN` ausgeklammerte Alt-Kollision: bei
+// vielen Geschossen wuchs die Geschossleiste (`top:0`, Karteikarten-Liste)
+// über die vertikale Mitte hinaus in den dort fest verankerten EntwurfsDock
+// (`top:50%`) hinein. Fix in `DesignWorkspace.tsx`: die Geschossleiste misst
+// jetzt per ResizeObserver (Muster wie `DockFlaeche.tsx`s Feld-Messung) die
+// Oberkante des EntwurfsDock und klemmt ihre `maxHeight` strikt davor — sie
+// scrollte ohnehin schon (Hochhaus-Grenze), scrollt jetzt nur früher. Dieser
+// Test stapelt genug Geschosse, um den historischen Fall zuverlässig
+// nachzustellen (7 aus der TKB-Demo + 15 zusätzliche, `design.
+// geschossKopieren` in EINER `__kosmo.run`-Schleife statt UI-Klicks — gleiches
+// Muster wie `sim-hochhaus.spec.ts`), und prüft danach BBox-Disjunktion
+// Geschossleiste ↔ EntwurfsDock ↔ Statusleiste.
+// ---------------------------------------------------------------------------
+
+test('viele Geschosse (Hochhaus-Fall): die Geschossleiste endet über dem EntwurfsDock, keine Überlappung', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+
+  const storeyId = (await page.evaluate(() => window.__kosmo.state().activeStoreyId))!;
+  await page.evaluate(
+    ({ storeyId, n }) => {
+      const k = window.__kosmo;
+      for (let i = 0; i < n; i++) {
+        k.run('design.geschossKopieren', { storeyId, anzahl: 1 });
+      }
+    },
+    { storeyId, n: 15 },
+  );
+  // TKB startet mit 7 Geschossen (`demo-tkb.ts`) — +15 gestapelte macht 22,
+  // deutlich über der Schwelle, an der der historische Fall real gemessen
+  // wurde (1400×900, 7 Geschosse reichten dafür bereits knapp).
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmo.state().doc.storeysOrdered().length))
+    .toBe(22);
+
+  const geschossleiste = await stabileBox(page.locator('[data-testid="geschossleiste"]'));
+  const entwurfDock = await stabileBox(page.locator('[data-testid="entwurf-dock"]'));
+  const statusleiste = await stabileBox(page.locator('[data-testid="statusleiste"]'));
+
+  expect(
+    ueberlappenSich(geschossleiste, entwurfDock),
+    'Geschossleiste überlappt den EntwurfsDock (der ehemalige B2-Altfall)',
+  ).toBe(false);
+  expect(ueberlappenSich(geschossleiste, statusleiste), 'Geschossleiste überlappt die Statusleiste').toBe(false);
+  expect(ueberlappenSich(entwurfDock, statusleiste), 'EntwurfsDock überlappt die Statusleiste').toBe(false);
+
+  // Nicht nur "disjunkt durch Zufall": die Leiste endet klar OBERHALB der
+  // Dock-Oberkante — der eigentliche Beweis der Klemme, nicht nur ihr Effekt.
+  expect(geschossleiste.y + geschossleiste.height).toBeLessThanOrEqual(entwurfDock.y + 1);
+
+  // Volle Standard-Prüfung (inkl. `kennzahlen`, das FIXE_ELEMENTE-Trio) —
+  // derselbe Weg wie jeder andere Test in dieser Datei.
+  await pruefeDisjunktion(page, selektorMap(['kennzahlen']));
+});

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Hairline, KButton, KIcon, type KIconName, KSelect, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { LearningJournal } from '@kosmo/ai';
 import {
@@ -580,6 +580,61 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // sicher (misst die Geschossleiste selbst per `data-testid`-Abfrage). Die
   // frühere lokale `offsetHeight`-Messung (Ref + State + Effekt) entfällt
   // ersatzlos, s. `shell/dock/DockFlaeche.tsx` Kopfkommentar.
+
+  // v0.7.9 (B2, Owner-Stretch): letzte bekannte Alt-Kollision, seit P3 in
+  // `BEKANNTE_VORBESTEHENDE_KOLLISIONEN` (e2e/dock-layout.spec.ts) ausgeklammert
+  // — Geschossleiste ↔ EntwurfsDock. Beide sind FIXE Chrome-Blöcke ausserhalb
+  // des Dock-Solvers (`FIXE_ELEMENTE`, ebd.): `DockFlaeche` misst die
+  // Geschossleiste zwar (s. Kommentar oben) und hält Panels rechts davon frei,
+  // schützt die Geschossleiste aber NICHT vor dem vertikal MITTIG verankerten
+  // `EntwurfsDock` (`top:50%`, `EntwurfsDock.tsx`/`orbit-065.css`) — bei genug
+  // Geschossen (TKB: EG+5 OG+Dach = 7, `demo-tkb.ts`) wächst die Karteikarten-Liste
+  // über die Mitte hinaus und überlappt ihn.
+  //
+  // Abwägung: die Leiste scrollt bereits (`overflowY:auto`, s. `maxHeight`
+  // unten) — sie einfach FRÜHER scrollen zu lassen ist die kleinere Änderung
+  // als den Dock bei langer Leiste nach unten ausweichen zu lassen (das gäbe
+  // dem Dock eine zweite, von der Geschossanzahl abhängige Positionsquelle
+  // und einen Layout-Sprung, sobald ein Geschoss dazukommt/wegfällt). Also
+  // Weg 1: dasselbe Mess-Muster wie `DockFlaeche`s Feld-Messung (ResizeObserver
+  // + rAF-debounced, `querySelector` auf den testid-Anker des Nachbarn) —
+  // die Leiste klemmt ihre eigene `maxHeight` so, dass sie strikt VOR der
+  // Oberkante des EntwurfsDock endet, zusätzlich zur bisherigen
+  // Hochhaus-Grenze (`calc(100% - 24px)`, jetzt in JS nachgebildet, damit
+  // beide Grenzen als ein gemeinsames `Math.min` gelten).
+  const geschossleisteRef = useRef<HTMLDivElement>(null);
+  const [geschossMaxHoehe, setGeschossMaxHoehe] = useState<number | null>(null);
+  useLayoutEffect(() => {
+    const wurzel = geschossleisteRef.current;
+    const container = wurzel?.parentElement;
+    const entwurfsDock = container?.querySelector('[data-testid="entwurf-dock"]');
+    if (!container || !entwurfsDock) return;
+
+    const GAP = 12; // gleiche Kante-Konstante wie die übrigen absolute-Overlays hier (mesh-edit-panel etc.)
+    let rafHandle = 0;
+    const jetztMessen = () => {
+      rafHandle = 0;
+      const c = container.getBoundingClientRect();
+      if (c.height === 0) return;
+      const dockOberkante = entwurfsDock.getBoundingClientRect().top - c.top - GAP;
+      const hochhausGrenze = c.height - 24; // bisherige Grenze, s. Kommentar am `maxHeight` unten
+      setGeschossMaxHoehe(Math.max(0, Math.min(dockOberkante, hochhausGrenze)));
+    };
+    const messenDebounced = () => {
+      if (rafHandle) return;
+      rafHandle = requestAnimationFrame(jetztMessen);
+    };
+    const ro = new ResizeObserver(messenDebounced);
+    ro.observe(container);
+    ro.observe(entwurfsDock);
+    window.addEventListener('resize', messenDebounced);
+    jetztMessen();
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', messenDebounced);
+      if (rafHandle) cancelAnimationFrame(rafHandle);
+    };
+  }, []);
 
   // D1: Deep-Links der Zentrale — KosmoDraw/KosmoSketch öffnen die Werkstatt
   // mit dem passenden Panel bzw. Werkzeug (einmaliger Merker)
@@ -3221,6 +3276,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             hier ist es keine Werkplan-Karte). Dockt jetzt bündig an die
             Viewport-Kante (0/0 statt 12/12), testids/Texte unverändert. */}
         <div
+          ref={geschossleisteRef}
           data-testid="geschossleiste"
           className="k-karte"
           style={{
@@ -3235,7 +3291,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             boxShadow: 'var(--k-shadow-raised)',
             // Testlauf-Befund: bei Hochhäusern (20+ Geschossen) lief die Liste
             // sonst unten aus dem Viewport — Höhe deckeln, dann scrollt sie.
-            maxHeight: 'calc(100% - 24px)',
+            // v0.7.9 (B2): zusätzlich gegen die Oberkante des EntwurfsDock
+            // geklemmt (gemessen, s. `geschossMaxHoehe`-Effekt oben) — bis zur
+            // ersten Messung (Erstmount) gilt die alte reine Prozent-Grenze
+            // als Fallback, danach gewinnt stets das engere `Math.min` beider
+            // Grenzen.
+            maxHeight: geschossMaxHoehe != null ? `${geschossMaxHoehe}px` : 'calc(100% - 24px)',
             overflowY: 'auto',
           }}
         >

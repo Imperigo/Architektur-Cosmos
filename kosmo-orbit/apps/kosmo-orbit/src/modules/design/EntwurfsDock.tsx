@@ -14,6 +14,14 @@ import { STATION_ZU_TOOLID, toolNutzungMelden } from '../../state/orbit-rang';
  * Statusleiste; links nur situativ Geschossleiste oben/Nav unten) — bewusst
  * vertikal MITTIG, damit er weder die Geschossleiste (oben) noch die
  * NavLeiste/Statuszeile (unten) überlappt (K3-Regel: Blöcke kollisionsfrei).
+ * Das galt nur, solange die Geschossleiste kurz blieb — bei genug Geschossen
+ * (Hochhaus-Fall) wuchs ihre Karteikarten-Liste über die Mitte hinaus in
+ * diesen Dock hinein (v0.7.9 B2, ehemals in `BEKANNTE_VORBESTEHENDE_
+ * KOLLISIONEN`, `e2e/dock-layout.spec.ts`, ausgeklammert). Behoben NICHT
+ * hier, sondern in `DesignWorkspace.tsx` (die Geschossleiste misst diesen
+ * Dock per `data-testid="entwurf-dock"` und klemmt ihre eigene `maxHeight`
+ * davor) — dieser Dock bleibt unverändert vertikal mittig, weicht selbst
+ * nicht aus.
  *
  * Understatement statt Modal: drei kompakte Icon-Kacheln, keine Kachel-Wand,
  * kein Onboarding-Screen. Der aktive Modus bekommt `tone="accent"` +
