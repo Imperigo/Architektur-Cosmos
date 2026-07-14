@@ -172,14 +172,31 @@ export interface KDialogProps {
   /** Rechtsbündige Aktionen, z.B. Abbrechen/Bestätigen-Knöpfe. */
   fusszeile?: ReactNode;
   breite?: number;
+  /** Überschreibt den Default-Stapelwert (215) — z.B. wenn ein Aufrufer über
+   *  einem ANDEREN, bereits gestapelten Overlay dieser App sitzen muss (s.
+   *  Kopfkommentar). */
+  zIndex?: number;
   'data-testid'?: string;
 }
 
 /** Gestalteter Dialog — Kopf in Plakat-Versalien + Schliessen-KIcon +
  * Hairline; Scrim (`.k-dialog-scrim`, bestehend) + Höhen-/Umbruch-Regeln
  * (`.k-dialog`, bestehend) werden wiederverwendet, nicht neu erfunden.
- * Esc + Scrim-Klick schliessen. KEINE 45°-Ecke (die gehört den Karteikarten). */
-export function KDialog({ titel, onClose, children, fusszeile, breite = 560, ...rest }: KDialogProps) {
+ * Esc + Scrim-Klick schliessen. KEINE 45°-Ecke (die gehört den Karteikarten).
+ *
+ * **`zIndex` (Default 215)**: `.k-dialog-scrim` selbst trägt bewusst KEIN
+ * `z-index` (aura.css) — jeder bisherige Scrim-Konsument in dieser App setzt
+ * es von Hand inline, in einer gewachsenen Stapel-Reihenfolge (`Kurzbefehle`
+ * 205 < `meldungen`/`KBestaetigung` 210 < `WerkzeugSetup` 220 <
+ * `AppDeinstallieren` 230 < `Einstellungen` 250). `KDialog` war bisher der
+ * EINZIGE Scrim-Konsument OHNE eigenes `z-index` — von einer tief
+ * verschachtelten Stelle aus gerendert (z.B. `DockRegeln.tsx`, selbst über
+ * `createPortal` nach `document.body`), verlor sein Scrim gegen JEDES
+ * andere `z-index>0`-Element der App (Dock-Panels z14+, Boden-Dock z108,
+ * …) — sichtbar unsichtbar: `getBoundingClientRect()`/`toBeVisible()`
+ * meldeten eine volle Viewport-Box, aber im Screenshot war nichts zu sehen.
+ * 215 reiht sich zwischen `meldungen` und `WerkzeugSetup` ein. */
+export function KDialog({ titel, onClose, children, fusszeile, breite = 560, zIndex = 215, ...rest }: KDialogProps) {
   const boxRef = useRef<HTMLDivElement | null>(null);
   // KDialog ist immer "offen", solange gemountet (kein internes offen/zu wie
   // KMenu) — die Falle ist darum durchgehend aktiv, gebunden an die Lebens-
@@ -201,6 +218,7 @@ export function KDialog({ titel, onClose, children, fusszeile, breite = 560, ...
       aria-label={titel}
       className="k-dialog-scrim"
       onClick={() => onClose()}
+      style={{ zIndex }}
       {...rest}
     >
       <div

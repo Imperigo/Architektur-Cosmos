@@ -280,6 +280,14 @@ export interface DockZustand {
   /** Gemergte Overrides für die aktive `modus`+`station`-Kombination — IMMER
    *  vollständig (leftW/rightW aufgelöst mit `DOCK_KONSTANTEN`-Defaults). */
   layoutFuer: (station: DockStation) => DockLayoutAufgeloest;
+  /** v0.7.8 Welle 3 (P8, Geführte Tour): setzt `modus`+`layouts` EXAKT auf die
+   *  übergebenen Werte (und persistiert danach) — für `DockTour.tsx`, das
+   *  beim Beenden den kompletten Vor-Tour-Zustand wiederherstellen muss.
+   *  Bewusst additiv statt über die einzelnen Patch-Aktionen (die kennen nur
+   *  "aktuellen Override ändern", kein "auf genau DIESEN Schnappschuss
+   *  zurücksetzen") — ein Rundgang, der 7 Demo-Layouts durchläuft, müsste
+   *  sonst jedes einzelne Feld von Hand zurückrechnen. */
+  zustandWiederherstellen: (modus: DockModus, layouts: Record<string, DockStationLayout>) => void;
 }
 
 function anfangsZustand(): Pick<DockZustand, 'modus' | 'layouts'> {
@@ -353,6 +361,11 @@ export const useDockZustand = create<DockZustand>((set, get) => ({
       rightW: bestehend?.rightW ?? DOCK_KONSTANTEN.DEF_RIGHT,
       panels: bestehend?.panels ?? {},
     };
+  },
+
+  zustandWiederherstellen: (modus, layouts) => {
+    set({ modus, layouts });
+    persistiere(get());
   },
 }));
 

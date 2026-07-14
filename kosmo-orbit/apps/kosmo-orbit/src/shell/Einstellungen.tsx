@@ -24,6 +24,8 @@ import { eigencursorAktiv, setEigencursorEingestellt } from '../state/cursor-zus
 import { abspielenEingestellt, setAbspielenEingestellt } from '../state/abspiel-ebene';
 import { useDockZustand } from '../state/dock-zustand';
 import type { DockModus } from '../state/dock-kern';
+import { useAktiveDockStation } from '../state/dock-aktive-station';
+import { useDockTourZustand } from '../state/dock-tour-zustand';
 
 /**
  * Zentrales Einstellungs-Panel (Serie K / Batch A4, Owner-Befund K14, wörtlich:
@@ -112,6 +114,27 @@ export function Einstellungen({
   // Speicherweg nötig.
   const dockModus = useDockZustand((s) => s.modus);
   const dockModusSetzen = useDockZustand((s) => s.modusSetzen);
+
+  // v0.7.8 Welle 3 (P8, Geführte Tour): Einstieg «Werkzeug-Dock kennenlernen»
+  // — die Tour selbst (`shell/dock/DockTour.tsx`) manipuliert Dock-/UI-
+  // Zustand der DESIGN-Station direkt (kein Doc/Undo) und braucht darum eine
+  // tatsächlich gemountete `DockFlaeche` dort, nicht bloss "irgendeinen
+  // Screen". `useAktiveDockStation` ist genau der Zeiger, den `DockFlaeche.
+  // tsx` bei jedem Mount auf sich selbst setzt (s. dessen Kopfkommentar) —
+  // ausserhalb der Design-Station bleibt der Knopf klickbar, zeigt aber
+  // einen ehrlichen Hinweis statt eine Tour zu starten, die nichts fände.
+  const aktiveDockStation = useAktiveDockStation((s) => s.station);
+  const dockTourStarten = useDockTourZustand((s) => s.starten);
+  const [dockTourHinweis, setDockTourHinweis] = useState(false);
+  const aufDockTourStarten = () => {
+    if (aktiveDockStation !== 'design') {
+      setDockTourHinweis(true);
+      return;
+    }
+    setDockTourHinweis(false);
+    onClose();
+    dockTourStarten();
+  };
 
   // A9 (Owner-Befund K19, Leistungs-Autotuning): Zustimmung, letztes Ergebnis
   // und Override leben in leistung.ts (localStorage kosmo.leistung.v1) — hier
@@ -420,11 +443,22 @@ export function Einstellungen({
 
         <section data-testid="einstellungen-rundgang" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Rundgang &amp; Hilfe</div>
-          <div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <KButton size="sm" tone="quiet" data-testid="einstellung-rundgang" onClick={aufRundgangStarten}>
               Rundgang erneut zeigen
             </KButton>
+            <KButton size="sm" tone="quiet" data-testid="einstellungen-dock-tour" onClick={aufDockTourStarten}>
+              Werkzeug-Dock kennenlernen
+            </KButton>
           </div>
+          {dockTourHinweis && (
+            <div
+              data-testid="einstellungen-dock-tour-hinweis"
+              style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', marginTop: 6 }}
+            >
+              Nur in der KosmoDesign-Station verfügbar — dorthin wechseln und erneut versuchen.
+            </div>
+          )}
         </section>
         <Hairline />
 

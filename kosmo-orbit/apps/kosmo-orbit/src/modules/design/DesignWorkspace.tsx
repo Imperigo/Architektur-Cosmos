@@ -95,7 +95,9 @@ import { journalStore } from '../../state/journal-store';
 import { requestKosmoFokus } from '../../state/kosmo-focus';
 import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
 import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
+import { DockRegeln } from '../../shell/dock/DockRegeln';
 import { useDockZustand } from '../../state/dock-zustand';
+import { useDockTourZustand } from '../../state/dock-tour-zustand';
 // v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): die vier
 // gefloateten Viewport-HUDs — Modus-Leiste/-Karte/-Werkzeug-Rail/
 // -Orientierungskreuz, s. `dock-stationen.ts` — sind selbst-genügsame
@@ -536,6 +538,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // Panel-Overrides dieser Station+diesem Modus (dock-zustand.ts) — die
   // Sichtbarkeit (ui-zustand.ts) bleibt unberührt.
   const dockLayoutZuruecksetzen = useDockZustand((s) => s.layoutZuruecksetzen);
+  // v0.7.8 Welle 3 (P8): dezenter Einstieg für Regeln-Panel + Geführte Tour,
+  // direkt neben «Layout zurücksetzen» (Auftrag Teil B Punkt 5 bzw. Teil A
+  // Punkt 3 «im Dock-Bereich ggf. dezent»). Die Tour selbst startet hier
+  // IMMER direkt (kein Hinweis nötig — diese Komponente IST die Design-
+  // Station, anders als der Einstieg in `Einstellungen.tsx`, der von
+  // überall geöffnet werden kann).
+  const [dockRegelnOffen, setDockRegelnOffen] = useState(false);
+  const dockTourStarten = useDockTourZustand((s) => s.starten);
   const [splatCloud, setSplatCloudState] = useState<SplatCloud | null>(null);
   // T7: Projekt-Lebenszyklus — Phase/Bemassungsstil sind projektspezifisch und
   // wechseln über Jahre selten; sie stehen nicht mehr dauerhaft in der Werk-
@@ -2549,8 +2559,31 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           >
             Layout zurücksetzen
           </KButton>
+          {/* v0.7.8 Welle 3 (P8): Regeln-Panel — erklärt die Rangfolge/die drei
+              Solver-Regeln (`DockRegeln.tsx`, aus der Registry generiert). */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="dock-regeln-oeffnen"
+            title="Erklärt, nach welchen Regeln das Dock Platz vergibt"
+            onClick={() => setDockRegelnOffen(true)}
+          >
+            Regeln
+          </KButton>
+          {/* Dezenter Einstieg in die geführte Tour (`DockTour.tsx`) — Auftrag
+              Teil A Punkt 3: «im Dock-Bereich ggf. dezent». */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="dock-tour-oeffnen"
+            title="Geführte Tour durchs Werkzeug-Dock starten"
+            onClick={() => dockTourStarten()}
+          >
+            Tour
+          </KButton>
         </div>
       </div>
+      {dockRegelnOffen && <DockRegeln station="design" onClose={() => setDockRegelnOffen(false)} />}
 
       {projektMenuOffen && (
         <div

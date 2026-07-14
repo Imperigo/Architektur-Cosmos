@@ -1,0 +1,71 @@
+/* DockTour (v0.7.8 Welle 3 / Paket P8 — «Geführte Tour») — Spotlight-Maske
+   (4-Banden-Technik: dunkle Rechtecke rings um ein "Loch" statt eines
+   clip-path/mask-Tricks, damit die Maske in JEDEM Browser gleich aussieht)
+   + die feste Schritt-Karte. Reduced-motion (Auftrag: «Spotlight ohne
+   Fade»): bewusst KEINE `transition` hier — die Maske/Karte erscheint durch
+   Mounten/Unmounten (bedingtes Rendern in `DockTour.tsx`), nicht durch eine
+   CSS-Transition, die eine `prefers-reduced-motion`-Ausnahme bräuchte
+   (gleiches Muster wie `.k-dock-auto-hinweis`, `dock-flaeche.css`). */
+
+/* Reine Gruppierungs-Wurzel (`data-testid="dock-tour"`, `DockTour.tsx`) —
+   BEIDE Kinder (Maske, Karte) sind selbst `position:fixed` und tragen
+   darum NICHTS zur normalen Fluss-Box eines unpositionierten Elternteils
+   bei (dessen Box kollabiert sonst auf 0×0 → Playwright wertet das fälschlich
+   als "hidden"). `position:fixed;inset:0` gibt der Wurzel selbst eine echte,
+   volle Box; `pointer-events:none` lässt sie unsichtbar für Klicks bleiben,
+   die Kinder schalten es für sich selbst gezielt wieder an. */
+.k-dock-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 128;
+  pointer-events: none;
+}
+
+.k-dock-tour-spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 129;
+  pointer-events: none;
+}
+
+.k-dock-tour-maske {
+  position: absolute;
+  background: color-mix(in srgb, var(--k-ink) 58%, transparent);
+}
+
+.k-dock-tour-ring {
+  position: absolute;
+  box-sizing: border-box;
+  border: 2px solid var(--k-accent);
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-glow-cyan-sm, 0 0 14px rgba(87, 182, 194, 0.45));
+}
+
+.k-dock-tour-karte {
+  position: fixed;
+  left: 60px;
+  bottom: 100px;
+  width: 360px;
+  z-index: 130;
+  pointer-events: none;
+}
+.k-dock-tour-karte > * {
+  pointer-events: auto;
+}
+
+/* G2 (Auftrag: «Portrait/schmale Fenster») — unter ~700px Fensterbreite
+   rendert `DockTour.tsx` KEINE Spotlight-Maske (kein Spotlight-Zwang) und
+   diese Karte als volle Bottom-Sheet-Leiste mit grossen Tap-Zielen. */
+.k-dock-tour-karte--sheet {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+}
+.k-dock-tour-karte--sheet > * {
+  border-radius: 12px 12px 0 0 !important;
+}
+.k-dock-tour-karte--sheet button {
+  min-height: 44px;
+  font-size: 14px;
+}

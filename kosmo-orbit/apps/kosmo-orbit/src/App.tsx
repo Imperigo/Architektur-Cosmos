@@ -41,6 +41,7 @@ import { TrainWorkspace } from './modules/train/TrainWorkspace';
 import { AssetWorkspace } from './modules/asset/AssetWorkspace';
 import { DevWorkspace } from './modules/dev/DevWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
+import { DockTour } from './shell/dock/DockTour';
 import { PhasenLeiste } from './shell/PhasenLeiste';
 import { registerActions } from './shell/palette';
 import { Kurzbefehle } from './shell/Kurzbefehle';
@@ -928,6 +929,12 @@ export function App() {
         />
       )}
       <CommandPalette />
+      {/* v0.7.8 Welle 3 (P8, Geführte Tour): unconditionally gemountet, liest
+          nur `dock-tour-zustand.ts`s `offen` — Einstieg über `Einstellungen.
+          tsx` («Werkzeug-Dock kennenlernen») oder `DesignWorkspace.tsx`
+          (dezenter Knopf neben «Layout zurücksetzen»), s. `DockTour.tsx`s
+          Kopfkommentar. */}
+      <DockTour />
       <Kurzbefehle stationen={stationen} zurZentrale={() => gehZu('home')} />
       <KMeldungen />
       <KBestaetigung />
