@@ -251,3 +251,24 @@ Auf-Verdacht-Bauen, das die Ehrlichkeitsregel ausschliesst.
 
 Die finale Priorisierung und Reihenfolge liegt beim Owner bzw. bei Fable als
 Orchestrator — dieses Dokument liefert die belegte Auswahl, keine Entscheidung.
+
+---
+
+## Anhang: B3-Fundliste (Vorarbeits-Scan, 14.07.2026 — Fixes folgen in der v0.7.9-Welle)
+
+Klasse: case-sensitive Assertions gegen `versal()`-gesetzte Blatt-Texte
+(`derive/stilblatt.ts:227`, seit v0.7.3 D4/`447e598`) — dieselbe wie die zwei
+gefixten Fälle (ROADMAP 344, 356). Fix je 1 Zeile (`.toLowerCase()`-Muster).
+
+| Prio | Fundort | Assertion | Notiz |
+|---|---|---|---|
+| 1 | `e2e/sim-vollprojekt-phase3.spec.ts:148` | `toContain('Bauablaufplan')` | übersehener Zwilling des 356er-Fixes |
+| 2 | `e2e/studienbericht.spec.ts:82-83` | `'Grundlagenstudie'` + `'Teppich'` | zwei Brüche in einer Testfunktion (seit v0.6.2) |
+| 3 | `e2e/sim-vollprojekt-phase1.spec.ts:120` | `toContain('Grundlagenstudie')` | Zwilling von 2 |
+| 4 | `e2e/baugesuch.spec.ts:92` | `toContainText('Ausnützungsnachweis')` | in ROADMAP 347 dokumentiert, nie gefixt |
+| 5 | `e2e/sim-vollprojekt-phase4.spec.ts:120` | wie 4 | bisher nirgends dokumentierter Zwilling |
+
+Fragil (zufällig grün, nur Beobachtung): `maengel.spec.ts:79` + `sim-vollprojekt-phase6.spec.ts:79`
+(`'Abnahmeprotokoll'` matcht den nicht-versal'ten Disclaimer, nicht den Titel).
+Geprüft & unauffällig: `getByText('Axonometrie')` (case-insensitives Substring-Matching),
+Toast-/Chat-Freitexte (laufen nie durch `versal()`).
