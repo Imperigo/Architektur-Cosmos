@@ -1,6 +1,6 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
-> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.7.7** (Stand 13.07.2026);
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.7.8** (Stand 14.07.2026);
 > alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
 > älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
 > (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal

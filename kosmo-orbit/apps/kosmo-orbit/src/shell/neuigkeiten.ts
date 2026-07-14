@@ -35,6 +35,42 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.8',
+    datum: '2026-07-14',
+    punkte: [
+      {
+        text: 'Die Werkzeug-Panels überlappen sich nicht mehr: ein neues Dock-System gibt jedem Panel seinen Platz — links, rechts oder schwebend im Viewport. Öffnet ein Panel, schrumpfen die Nachbarn automatisch; wird es zu eng, klappt das unwichtigste zu einem Tab ein (ein Klick öffnet es wieder). Ein kurzer Hinweis erklärt jede automatische Umordnung.',
+        station: 'design',
+      },
+      {
+        text: 'Alles ist von Hand übersteuerbar — mit Maus und Finger: Trennbalken ziehen, Panels am Kopf greifen und neu andocken, anheften (behält seine Grösse), herauslösen als schwebendes Fenster mit magnetischem Einrasten, und «Layout zurücksetzen» stellt das schlaue Standard-Layout wieder her. Die Anordnung überlebt den Neustart.',
+        station: 'design',
+      },
+      {
+        text: 'Auch die Visualisierungs-Station ist gedockt: Node-Palette, Ausrichten-Leiste, Minimap und Legende folgen denselben Regeln.',
+        station: 'vis',
+      },
+      {
+        text: 'Neu wählbar in den Einstellungen: «Raster-Kachel» — die zweite Anordnungs-Art, bei der nichts schwebt und sich alle Flächen den Platz teilen. «Orbit-Zonen» bleibt der Standard.',
+      },
+      {
+        text: 'Kosmo ordnet selbst: sieben neue Werkzeuge lassen Kosmo Panels docken, anheften, einklappen und zurücksetzen — jede Aktion sichtbar quittiert im Chat, mit einem goldenen Orb und «KOSMO»-Ring am bedienten Panel und jederzeit STOPP.',
+      },
+      {
+        text: 'Eine geführte 7-Schritte-Tour erklärt die Dock-Regeln am lebenden Layout (Einstellungen → «Werkzeug-Dock kennenlernen») und stellt danach alles exakt wieder her; ein Regeln-Panel zeigt die Rangfolge.',
+      },
+      {
+        text: 'Governance ehrlicher: Eine Vis-Freigabe endet jetzt automatisch, sobald ihr Lauf wirklich abgeschlossen ist (sichtbar quittiert); einen ganzen Auftrag beendet der neue Knopf «Auftrag beendet». Kein erfundenes Verfallsdatum.',
+      },
+      {
+        text: 'Der Kosmos-Look reicht jetzt in die Inhalte von Publish, Grundlagen, Bibliothek, Training und Diagnose (Glass-Karten mit Stations-Tönung) — rein optisch.',
+      },
+      {
+        text: 'Aufgeräumt & ehrlich: die zwei früher als «headless-WebGL-Grenze» geführten Render-Tests laufen nachweislich grün (die alte Diagnose war falsch — der Export braucht gar kein WebGL); mehrere schlummernde Test-Fehlalarme und echte kleine Bugs (Icon-Drag, Dialog-Stapelordnung, verschluckte Fehlermeldungen) wurden dabei gefunden und behoben.',
+      },
+    ],
+  },
+  {
     version: '0.7.7',
     datum: '2026-07-13',
     punkte: [

@@ -1,6 +1,6 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.7.7 «Verankerung & Feinschliff»** (Stand 13.07.2026, ROADMAP 348).
+**Aktuelle Version: v0.7.8 «Intelligente Werkzeugtabs»** (Stand 14.07.2026, ROADMAP 362).
 **Alle Versionen davor (≤ v0.7.6) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 - **Entwicklungs-Branch:** `claude/kosmo-orbit-v1-build-pzxkbj`
