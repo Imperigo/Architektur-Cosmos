@@ -35,6 +35,30 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.7.9',
+    datum: '2026-07-14',
+    punkte: [
+      {
+        text: 'Die letzte feste Fläche ist ins Dock gezogen: die Viewport-Statuskarte und die Eigenschaften-Säule sind jetzt schwebende Panels, die automatisch ausweichen — damit ist die letzte bekannte Überlappungs-Klasse geschlossen; die Kollisions-Ausnahmeliste der Tests ist leer.',
+        station: 'design',
+      },
+      {
+        text: 'Eingeklappte Panel-Tabs lassen sich jetzt greifen und umdocken (Klick öffnet weiterhin), und schwebende Panels docken per Ziehen in die Seiten-Zonen an. Ein frisch geöffnetes Panel klappt ausserdem nie mehr sofort selbst ein.',
+        station: 'design',
+      },
+      {
+        text: 'Die Geschossleiste endet bei vielen Geschossen jetzt sauber über dem Entwurfs-Dock (sie scrollt einfach früher) — die letzte Alt-Überlappung ist behoben.',
+        station: 'design',
+      },
+      {
+        text: 'Testpflege, ehrlich: sieben schlummernde Fehlalarme derselben Klasse (Gross-/Kleinschreibung gegen versal gesetzte Blatt-Titel) wurden durchgekämmt und behoben — zwei davon waren bereits rot, ohne dass es auffiel. Dazu zwei echte kleine Bugs aus dem Dock-Bestand (Stapelordnung frei abgelegter Panels, ein Drag-Rennfenster).',
+      },
+      {
+        text: 'Fürs echte iPad liegt ein Test-Drehbuch bereit (Einstellungen-Doku) — die Touch-Gesten sind bisher nur synthetisch bewiesen; der Test am Gerät ist eine offene Owner-Aktion.',
+      },
+    ],
+  },
+  {
     version: '0.7.8',
     datum: '2026-07-14',
     punkte: [
