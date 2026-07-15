@@ -296,3 +296,70 @@ export const BILDSCHIRM_SCHNITT = {
   schraffurMassstab: 50,
   terrainDash: '200 120',
 } as const;
+
+// ───────────────────────────────────────────────────────────────────────────
+// Plankopf-Framework (v0.8.0 P3, `docs/V080-PLANKOPF-SPEZ.md` §1.5/§2.1) —
+// additive Erweiterung des Stilblatts: die Phasen-Akzentfarben und die
+// Plankopf-mm-Typoleiter. Reine Token-Tabellen (keine Logik) — die Ableitung
+// (Abbildung SiaPhase→Matrix-Stufe, Renderer) lebt in `derive/plankopf.ts`.
+// ───────────────────────────────────────────────────────────────────────────
+
+/**
+ * Phasen-Akzentfarben (Spez §2.1, Akzentfarben-Entscheid): identisch zu den
+ * bestehenden Light-Mode-Rollenfarben (`--role-*`-Tokens) — KEINE neuen, nur
+ * im Plankopf gültigen Hexwerte. `agent` übernimmt bewusst den Token-Wert
+ * `#A8893F`, NICHT den abweichenden Prototyp-Wert `#9A7C34` (Token gewinnt,
+ * Spez-Entscheid P0). `manual` ist Teil der bestehenden Sieben-Rollen-Palette,
+ * wird von keiner Plankopf-Matrix-Stufe referenziert (keine Rolle nutzt sie
+ * als Akzent), bleibt hier aber der Vollständigkeit halber neben den sechs
+ * tatsächlich genutzten Tönen geführt.
+ */
+export const PHASEN_AKZENTE = {
+  manual: '#3F9B79',
+  pn: '#4B7BB3',
+  pna: '#A65E97',
+  agent: '#A8893F',
+  memory: '#B0703F',
+  database: '#94704F',
+  system: '#2E8794',
+} as const;
+
+/**
+ * mm-Typoleiter des Plankopfs (Spez §1.5 Tabelle, Zielwerte aus der Vorlage).
+ * Bereich 1.3–5.6 mm — die Spez benennt diesen vollen Bereich als
+ * NORMATIVE Zielwerte, gegen svg-qa-Containment zu verifizieren (Ellipsen-
+ * Kürzung statt Überlauf, `derive/plankopf.ts`); die kürzere Spanne
+ * "1.3–2.9 mm", die Abschnitt 6.1 im Kontext des Golden-Verfahrens nennt,
+ * ist dort keine eigene, widersprechende Fixierung, sondern eine unvollständige
+ * Kurzreferenz auf denselben Abschnitt — diese Tabelle hier (§1.5, explizit
+ * "additiv in `derive/stilblatt.ts` als `PLANKOPF_TYPO_MM`") ist die
+ * bindende Quelle.
+ */
+export const PLANKOPF_TYPO_MM = {
+  /** Feldlabel (mono, VERSAL, Tracking .1em) — auch Logo-Label «BÜRO-LOGO». */
+  feldlabel: 1.3,
+  /** Token-Annotation (nur Muster-Editor-Ansicht, kein Produktionsrenderer-Feld). */
+  tokenAnnotation: 1.4,
+  /** Rev-Zeile (Datum + Revisionstext + Kürzel). */
+  revZeile: 1.7,
+  /** Büroadresse. */
+  bueroAdresse: 1.8,
+  /** Standort (Adresse · Parzelle). */
+  standort: 1.85,
+  /** Bauherrschaft. */
+  bauherrschaft: 2.0,
+  /** Halbzellen-Paare (Massstab|Format, Phase|Datum, Gezeichnet|Geprüft). */
+  halbzelle: 2.0,
+  /** Büroname (bold). */
+  bueroName: 2.1,
+  /** Rev-Buchstabe (in Phasenfarbe). */
+  revBuchstabe: 2.2,
+  /** Projekt. */
+  projekt: 2.4,
+  /** Planinhalt. */
+  planinhalt: 2.9,
+  /** Plan-Nr. (mono bold). */
+  planNr: 3.0,
+  /** Logo-Initialen (mono bold, Phasenfarbe). */
+  logoInitialen: 5.6,
+} as const;

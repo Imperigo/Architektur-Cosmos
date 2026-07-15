@@ -74,3 +74,4 @@ export * from './derive/grundrissgenerator';
 export * from './derive/zonenwaende';
 export * from './geometry/skeleton';
 export * from './derive/dossier';
+export * from './derive/plankopf';

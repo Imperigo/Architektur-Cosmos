@@ -511,7 +511,10 @@ Diskrepanz.
    modulo `<g data-teil="plankopf|blattlayout">` = 0» für jeden erwarteten Blatt-Golden (beweist,
    dass sich NUR der Plankopf-/Blattlayout-Teil ändert, nicht die Zeichnungsgeometrie).
 4. `npm run svg-qa` — Text-Containment ist die härteste Nebenbedingung bei der mm-Typoleiter
-   (1.3–2.9 mm, Versalien + Tracking, D4-Präzedenz «Titel-Overflow»); Ellipsen-Kürzung im
+   (1.3–5.6 mm gemäss der §1.5-Tabelle `PLANKOPF_TYPO_MM` — die früher hier genannte
+   Obergrenze 2.9 mm war ein Widerspruch zu §1.5 und ist mit P3 zugunsten der Tabelle
+   korrigiert; svg-qa kennt keinen Schriftgrössen-Deckel, nur Containment —
+   Versalien + Tracking, D4-Präzedenz «Titel-Overflow»); Ellipsen-Kürzung im
    Renderer statt Überlauf; die additiven Goldens (`plankopf-framework.svg`,
    `blatt-framework.svg`) nutzen bewusst lange Musterwerte, um Overflow früh zu zeigen.
 5. Harte Substring-Tests bewusst mitgezogen und kommentiert: `projekt-stammdaten.test.ts:131–191`,
