@@ -107,6 +107,13 @@ export function DockRegeln({ station, onClose }: DockRegelnProps) {
           <strong>Konzept B (Raster-Kachel)</strong> lässt nichts schweben und nichts einklappen — alle teilen sich
           stattdessen proportional den Raum.
         </section>
+        {/* v0.8.0 / Paket PD2 (Default-Oberflächen) — additiver Hinweis, kein
+            Umbau: wer diese Rangfolge nicht von Hand nachbauen will, findet
+            in den Einstellungen fertig kuratierte Presets. */}
+        <section style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+          <strong>Presets</strong> (Einstellungen → Darstellung: Fokus/Arbeiten/Prüfen) wenden eine kuratierte
+          Auswahl dieser Regeln fertig an, statt jedes Panel einzeln einzurichten.
+        </section>
       </div>
     </KDialog>,
     document.body,

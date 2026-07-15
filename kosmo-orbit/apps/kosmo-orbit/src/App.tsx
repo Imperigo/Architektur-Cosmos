@@ -42,6 +42,7 @@ import { AssetWorkspace } from './modules/asset/AssetWorkspace';
 import { DevWorkspace } from './modules/dev/DevWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { DockTour } from './shell/dock/DockTour';
+import { wendeErststartPresetFallsNoetigAn } from './state/dock-preset-anwendung';
 import { PhasenLeiste } from './shell/PhasenLeiste';
 import { registerActions } from './shell/palette';
 import { Kurzbefehle } from './shell/Kurzbefehle';
@@ -286,6 +287,16 @@ export function App() {
     });
     void initVault();
     void hydriereJournal();
+  }, []);
+
+  // v0.8.0 / Paket PD2 (Default-Oberflächen, Abschnitt 7.2): Erststart = Fokus
+  // — NUR wenn weder `kosmo.dock.v1` noch der Erststart-Marker existieren
+  // (Bestandsschutz, s. `dock-preset-anwendung.ts`s Kopfkommentar). Läuft
+  // einmal beim App-Mount, unabhängig davon, welche Station zuerst sichtbar
+  // wird (Presets für BEIDE Stationen `design`/`vis` werden hier vorsorglich
+  // gesetzt, s. dortige Begründung).
+  useEffect(() => {
+    wendeErststartPresetFallsNoetigAn();
   }, []);
 
   // P4: QR-Pairing — die gescannte URL trägt die Verbindung im FRAGMENT

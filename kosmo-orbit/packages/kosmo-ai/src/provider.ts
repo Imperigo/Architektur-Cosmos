@@ -323,6 +323,23 @@ export class MockProvider implements ChatProvider {
       yield { type: 'done', stopReason: 'tool_calls' };
       return;
     }
+    // v0.8.0 / Paket PD2 («Default-Oberflächen») — deterministischer Trigger
+    // für `ui.dockPresetSetzen`, ausschliesslich für E2E/Demo
+    // (`dock-presets.spec.ts`); ein echtes Modell entscheidet das selbst
+    // anhand der Tool-Beschreibung. «Oberfläche aufräumen» ohne weitere
+    // Nennung meint das aufgeräumteste Preset (Fokus); eine explizite Nennung
+    // von «arbeiten»/«prüfen» wählt das jeweils genannte Preset stattdessen.
+    if (text.includes('oberfläche') && (text.includes('aufräum') || text.includes('räum'))) {
+      const station = text.includes('vis') ? 'vis' : 'design';
+      const preset = text.includes('prüf') ? 'pruefen' : text.includes('arbeit') ? 'arbeiten' : 'fokus';
+      yield { type: 'text', delta: `Ich stelle die Oberfläche auf ${preset === 'fokus' ? 'Fokus' : preset === 'arbeiten' ? 'Arbeiten' : 'Prüfen'}. ` };
+      yield {
+        type: 'tool_call',
+        call: { id: 'call_mock_dock_preset', name: 'ui_dockPresetSetzen', arguments: { station, preset } },
+      };
+      yield { type: 'done', stopReason: 'tool_calls' };
+      return;
+    }
     if (text.includes('automatik')) {
       const aus = text.includes('aus');
       yield { type: 'text', delta: `Ich schalte die Arbeitsmodus-Automatik ${aus ? 'aus' : 'ein'}. ` };

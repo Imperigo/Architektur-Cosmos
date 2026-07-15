@@ -21,6 +21,9 @@ import { useProject } from '../../state/project-store';
 import { basisNodeHoehe, NODE_W, NodeCanvas } from './NodeCanvas';
 import { bridgeToken } from './vis-jobs';
 import { BridgeBild } from './BridgeBild';
+import { presetAnwenden } from '../../state/dock-preset-anwendung';
+import { PRESET_IDS, type PresetId } from '../../state/dock-presets';
+import { useDockZustand } from '../../state/dock-zustand';
 
 /**
  * HS3: jeder Bridge-Fetch trägt den Token (falls gesetzt) — sonst sperrt eine
@@ -74,6 +77,10 @@ interface Serie {
 // packages/kosmo-kernel/src/derive/visgraph.ts) — byte-gleiche Werte, eine Quelle.
 const STIMMUNGEN = Object.values(VIS_STIMMUNGEN);
 
+/** v0.8.0 / Paket PD2 (Default-Oberflächen) — kurze Beschriftung der drei
+ *  Dock-Presets (`state/dock-presets.ts`), identisch zu deren `titel`. */
+const PRESET_KURZLABEL: Record<PresetId, string> = { fokus: 'Fokus', arbeiten: 'Arbeiten', pruefen: 'Prüfen' };
+
 function loadBridgeUrl(): string {
   return localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600';
 }
@@ -109,6 +116,9 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   const graphen = doc.byKind<VisGraph>('visgraph');
   const [aktiverGraph, setAktiverGraph] = useState<string>('');
   const graphId = graphen.some((g) => g.id === aktiverGraph) ? aktiverGraph : (graphen[0]?.id ?? '');
+  // v0.8.0 / Paket PD2 (Default-Oberflächen) — Preset-Schnellzugriff in der
+  // Toolbar-Kontextzeile (s. dortige `KToolGruppe «Oberfläche»` unten).
+  const aktivesPresetVis = useDockZustand((s) => s.aktivesPreset['vis']);
 
   const neuerGraph = () => {
     try {
@@ -343,6 +353,47 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
           <KButton size="sm" tone="quiet" data-testid="vis-auto-kamera" onClick={kameraVorschlagen}>
             Kamera vorschlagen
           </KButton>
+        </KToolGruppe>
+        <Hairline vertical />
+        {/* v0.8.0 / Paket PD2 (Default-Oberflächen) — derselbe Preset-
+            Schnellzugriff wie die Design-Statusleiste/Einstellungen, hier als
+            eigene Toolbar-Gruppe (KosmoVis hat keine Zero-Click-Statusleiste
+            wie die Design-Station). `presetAnwenden()` ist die EINE geteilte
+            Anwend-Funktion — kein zweiter Weg, kein Abweichen. */}
+        <KToolGruppe label="Oberfläche">
+          <span
+            data-testid="dock-preset-schnellzugriff"
+            role="group"
+            aria-label="Oberflächen-Preset"
+            title="Fokus/Arbeiten/Prüfen — kuratierte Layout-Presets (auch in Einstellungen → Darstellung)"
+            style={{
+              display: 'inline-flex',
+              border: '1px solid var(--k-line)',
+              borderRadius: 999,
+              overflow: 'hidden',
+            }}
+          >
+            {PRESET_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                data-testid={`dock-preset-${id}`}
+                aria-pressed={aktivesPresetVis === id}
+                onClick={() => presetAnwenden('vis', id)}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  padding: '3px 8px',
+                  fontSize: 11.5,
+                  fontWeight: aktivesPresetVis === id ? 650 : 500,
+                  color: aktivesPresetVis === id ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
+                  background: aktivesPresetVis === id ? 'var(--k-accent)' : 'var(--k-surface)',
+                }}
+              >
+                {PRESET_KURZLABEL[id]}
+              </button>
+            ))}
+          </span>
         </KToolGruppe>
       </VisTabs>
       <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>

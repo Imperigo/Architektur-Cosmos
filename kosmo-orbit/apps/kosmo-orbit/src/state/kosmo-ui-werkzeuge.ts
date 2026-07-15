@@ -14,6 +14,7 @@ import type {
   UiDockEinklappenErgebnis,
   UiDockErgebnis,
   UiDockGroesseErgebnis,
+  UiDockPresetErgebnis,
   UiDockSetzenErgebnis,
   UiDockZuruecksetzenErgebnis,
 } from './dock-befehle';
@@ -110,9 +111,10 @@ const VIEW_LABEL: Record<ViewMode, string> = {
 
 export interface UiAktionMeldung {
   /** Für `data-testid="kosmo-ui-aktion-${art}"` (Aufgabe 3, Sichtbare Ehrlichkeit).
-   *  `'dock'` (P7, «Kosmo ordnet») deckt ALLE sechs schreibenden `ui.dock*`-
-   *  Befehle ab — eine gemeinsame Test-ID, weil sie alle dieselbe Fläche
-   *  (das Dock) betreffen, nicht sieben einzelne. */
+   *  `'dock'` (P7, «Kosmo ordnet»; v0.8.0/PD2 erweitert um `ui.dockPresetSetzen`)
+   *  deckt ALLE sieben schreibenden `ui.dock*`-Befehle ab — eine gemeinsame
+   *  Test-ID, weil sie alle dieselbe Fläche (das Dock) betreffen, nicht sieben
+   *  einzelne. */
   art: 'panel' | 'werkzeug' | 'ansicht' | 'modus' | 'automatik' | 'geschoss' | 'dock';
   /** Die Chat-Systemzeile, z.B. «Kosmo hat auf ‹PDF exportieren› gestellt — auf Wunsch.» */
   text: string;
@@ -178,11 +180,12 @@ function beschreibeAktion(befehlId: string, params: unknown, ergebnis?: unknown)
         text: `Kosmo hat das aktive Geschoss auf «${r?.name ?? '?'}» gestellt.`,
       };
     }
-    // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — die sechs schreibenden
-    // `ui.dock*`-Befehle, alle `art:'dock'`. Wie bei `ui.geschossSetzen`
-    // (H-33) liest jeder Fall den ECHTEN Titel aus dem `ergebnis` (Rückgabe
-    // von `dock-befehle.ts`s `run()`), nie aus den rohen `params` — ein LLM
-    // kennt oft nur die `panelId`, nicht den menschenlesbaren Titel.
+    // v0.7.8 Welle 3 (P7, «Kosmo ordnet») + v0.8.0 (PD2) — die sieben
+    // schreibenden `ui.dock*`-Befehle, alle `art:'dock'`. Wie bei
+    // `ui.geschossSetzen` (H-33) liest jeder Fall den ECHTEN Titel aus dem
+    // `ergebnis` (Rückgabe von `dock-befehle.ts`s `run()`), nie aus den rohen
+    // `params` — ein LLM kennt oft nur die `panelId`, nicht den
+    // menschenlesbaren Titel.
     case 'ui.dockSetzen': {
       const r = ergebnis as UiDockSetzenErgebnis | undefined;
       return {
@@ -220,6 +223,13 @@ function beschreibeAktion(befehlId: string, params: unknown, ergebnis?: unknown)
       return {
         art: 'dock',
         text: `Kosmo hat das Dock-Layout${r ? ` (${r.station})` : ''} zurückgesetzt.`,
+      };
+    }
+    case 'ui.dockPresetSetzen': {
+      const r = ergebnis as UiDockPresetErgebnis | undefined;
+      return {
+        art: 'dock',
+        text: `Kosmo hat die Oberfläche${r ? ` (${r.station})` : ''} auf ‹${r?.titel ?? '?'}› gestellt.`,
       };
     }
     default:

@@ -26,6 +26,8 @@ import { useDockZustand } from '../state/dock-zustand';
 import type { DockModus } from '../state/dock-kern';
 import { useAktiveDockStation } from '../state/dock-aktive-station';
 import { useDockTourZustand } from '../state/dock-tour-zustand';
+import { presetAnwenden } from '../state/dock-preset-anwendung';
+import { PRESET_IDS, presetFuer, type PresetId, type PresetStation } from '../state/dock-presets';
 
 /**
  * Zentrales Einstellungs-Panel (Serie K / Batch A4, Owner-Befund K14, wörtlich:
@@ -92,6 +94,16 @@ function oeffneCompanion(): void {
   window.location.reload();
 }
 
+/** Preset-Titel sind stationsunabhängig identisch (`dock-presets.ts`: «Fokus»/
+ *  «Arbeiten»/«Prüfen» heissen in `design` UND `vis` gleich) — eine einzige
+ *  Beschriftungstabelle statt `presetFuer(station, id).titel` bei jedem
+ *  Render neu aufzulösen. */
+const PRESET_TITEL: Record<PresetId, string> = {
+  fokus: 'Fokus',
+  arbeiten: 'Arbeiten',
+  pruefen: 'Prüfen',
+};
+
 export function Einstellungen({
   theme,
   setTheme,
@@ -114,6 +126,15 @@ export function Einstellungen({
   // Speicherweg nötig.
   const dockModus = useDockZustand((s) => s.modus);
   const dockModusSetzen = useDockZustand((s) => s.modusSetzen);
+
+  // v0.8.0 / Paket PD2 (Default-Oberflächen): Presets existieren nur für
+  // Stationen mit echter Panel-Registry (`design`/`vis`, s. `dock-presets.ts`
+  // `PresetStation`) — `aktiveDockStation` wird weiter unten (Dock-Tour) schon
+  // gebraucht, hier nur zusätzlich für die Preset-Ziel-Station ausgewertet.
+  const aktiveDockStationFuerPreset = useAktiveDockStation((s) => s.station);
+  const presetStation: PresetStation | undefined =
+    aktiveDockStationFuerPreset === 'design' || aktiveDockStationFuerPreset === 'vis' ? aktiveDockStationFuerPreset : undefined;
+  const aktivesPreset = useDockZustand((s) => (presetStation ? s.aktivesPreset[presetStation] : undefined));
 
   // v0.7.8 Welle 3 (P8, Geführte Tour): Einstieg «Werkzeug-Dock kennenlernen»
   // — die Tour selbst (`shell/dock/DockTour.tsx`) manipuliert Dock-/UI-
@@ -365,6 +386,63 @@ export function Einstellungen({
                 ? 'A: Panels können frei schweben (Pop-out möglich), Kollisionen löst der Solver automatisch.'
                 : 'B: nichts schwebt, alle teilen sich den Platz — Panels erscheinen als Streifen ohne Pop-out.'}
             </span>
+          </div>
+
+          {/* v0.8.0 / Paket PD2 (Default-Oberflächen, Owner-Anforderung 3):
+              Preset-Wähler NEBEN dem A/B-Dock-Wähler oben (Auftrag: «Einstellungen
+              → Darstellung») — dieselben drei Presets (`state/dock-presets.ts`),
+              angewendet über `presetAnwenden()` (EINE Quelle mit der Kontextzeile
+              und `ui.dockPresetSetzen`). Presets gibt es nur für die Stationen mit
+              echter Panel-Registry (`design`/`vis`, s. `dock-presets.ts`
+              `PresetStation`) — ohne eine der beiden aktiv gemountet (z. B. beim
+              Öffnen aus der Zentrale), bleiben die Knöpfe sichtbar, aber
+              deaktiviert, mit demselben ehrlichen Hinweis-Muster wie der
+              Dock-Tour-Einstieg oben. */}
+          <div style={{ marginTop: 12, display: 'grid', gap: 6 }}>
+            <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+              Oberflächen-Preset{presetStation ? ` — ${presetStation === 'design' ? 'KosmoDesign' : 'KosmoVis'}` : ''}
+            </span>
+            <span
+              data-testid="dock-preset-waehler"
+              role="group"
+              aria-label="Oberflächen-Preset"
+              style={{
+                display: 'inline-flex',
+                width: 'fit-content',
+                border: '1px solid var(--k-line-strong)',
+                borderRadius: 'var(--k-radius-pill, 999px)',
+                overflow: 'hidden',
+              }}
+            >
+              {PRESET_IDS.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  data-testid={`dock-preset-${id}`}
+                  aria-pressed={aktivesPreset === id}
+                  disabled={!presetStation}
+                  title={presetStation ? presetFuer(presetStation, id).beschreibung : undefined}
+                  onClick={() => presetStation && presetAnwenden(presetStation, id)}
+                  style={{
+                    all: 'unset',
+                    cursor: presetStation ? 'pointer' : 'not-allowed',
+                    opacity: presetStation ? 1 : 0.5,
+                    padding: '5px 12px',
+                    fontSize: 12.5,
+                    fontWeight: aktivesPreset === id ? 650 : 500,
+                    color: aktivesPreset === id ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
+                    background: aktivesPreset === id ? 'var(--k-accent)' : 'transparent',
+                  }}
+                >
+                  {PRESET_TITEL[id]}
+                </button>
+              ))}
+            </span>
+            {!presetStation && (
+              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+                Nur in KosmoDesign oder KosmoVis verfügbar — dorthin wechseln und erneut versuchen.
+              </span>
+            )}
           </div>
         </section>
         <Hairline />

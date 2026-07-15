@@ -68,6 +68,22 @@ export default defineConfig({
               name: 'kosmo.leistung.v1',
               value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
             },
+            // v0.8.0 / Paket PD2 (Default-Oberflächen): der Erststart-Marker
+            // (`state/dock-preset-anwendung.ts`) sorgt dafür, dass ein
+            // ECHTER Erststart (kein `kosmo.dock.v1`, kein Marker) einmalig
+            // «Fokus» auf beide Preset-Stationen anwendet. Ohne diesen Seed
+            // sähe JEDE der ~90 bestehenden Dock-Specs (die alle mit einem
+            // leeren `localStorage` starten) bei jedem `page.goto('/')`
+            // plötzlich das Fokus-Layout statt der heutigen Voll-UI-Defaults
+            // — exakt dieselbe Schutzlogik wie bei `kosmo.ui.v1`/`kosmo.
+            // leistung.v1` oben. Der Marker allein (ohne `kosmo.dock.v1`)
+            // bildet exakt den «Bestandsnutzer, dessen Entscheidung schon
+            // gefallen ist»-Fall ab — nur `e2e/dock-presets.spec.ts`s
+            // Erststart-Test entfernt ihn gezielt wieder.
+            {
+              name: 'kosmo.dock.presetInit.v1',
+              value: '1',
+            },
           ],
         },
       ],

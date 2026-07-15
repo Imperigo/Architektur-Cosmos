@@ -124,7 +124,7 @@ const SCHRITTE: readonly DockTourSchritt[] = [
   },
   {
     titel: 'Kontrast · Konzept B: Raster-Kachel',
-    text: 'Das zweite Konzept: alles ist gekachelt, nichts schwebt. HUD und Dock werden zu Streifen, der Viewport ist eine Kachel — öffnet ein Panel, teilen sich alle den Platz, lückenlos und nie überlappend.',
+    text: 'Das zweite Konzept: alles ist gekachelt, nichts schwebt. HUD und Dock werden zu Streifen, der Viewport ist eine Kachel — öffnet ein Panel, teilen sich alle den Platz, lückenlos und nie überlappend. Wer nicht jedes Panel einzeln einrichten will: Fokus/Arbeiten/Prüfen (Einstellungen → Darstellung) stellen fertig kuratierte Layouts mit einem Klick her.',
     modus: 'B',
   },
 ];

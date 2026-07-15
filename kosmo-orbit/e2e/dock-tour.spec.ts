@@ -209,6 +209,15 @@ test('Dock-Tour: Beenden stellt den Vor-Tour-Zustand exakt wieder her (Dock-Stor
         },
       },
     },
+    // v0.8.0 / Paket PD1 hat `aktivesPreset` additiv ins `DockSpeicher`-Schema
+    // aufgenommen — `persistiere()` (dock-zustand.ts) schreibt dieses Feld
+    // seither IMMER mit (auch als leeres `{}`), u.a. wenn `zustandWiederherstellen`
+    // (diese Tour, «Beenden») am Ende erneut persistiert. Ohne dieses Feld hier
+    // im Vor-Tour-Seed wäre der `toEqual`-Vergleich unten strukturell schief:
+    // die Tour selbst rührt kein Preset an, das Feld bleibt beidseitig `{}` —
+    // nur der SEED muss das jetzt explizit tragen, damit «exakt wiederhergestellt»
+    // wirklich Gleiches mit Gleichem vergleicht.
+    aktivesPreset: {},
   };
   await page.goto('/');
   await page.evaluate((layout) => {

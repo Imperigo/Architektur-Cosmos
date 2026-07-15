@@ -98,6 +98,8 @@ import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche
 import { DockRegeln } from '../../shell/dock/DockRegeln';
 import { useDockZustand } from '../../state/dock-zustand';
 import { useDockTourZustand } from '../../state/dock-tour-zustand';
+import { presetAnwenden } from '../../state/dock-preset-anwendung';
+import { PRESET_IDS, type PresetId } from '../../state/dock-presets';
 // v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): die vier
 // gefloateten Viewport-HUDs — Modus-Leiste/-Karte/-Werkzeug-Rail/
 // -Orientierungskreuz, s. `dock-stationen.ts` — sind selbst-genügsame
@@ -287,6 +289,12 @@ const WERKZEUG_KURZLABEL: Record<ToolId, string> = {
 
 /** Statusleiste: kurzes deutsches Label je Plan-LOD-Stufe (`planLod.ts`, B2). */
 const LOD_KURZLABEL: Record<PlanLod, string> = { voll: 'voll', mittel: 'mittel', fern: 'fern' };
+
+/** v0.8.0 / Paket PD2 — kurze Beschriftung des Preset-Schnellzugriffs in der
+ *  Statusleiste (identisch zu `dock-presets.ts`s `DockPreset.titel`, hier als
+ *  eigene Konstante, damit die Kontextzeile nicht `presetFuer()` pro Render
+ *  aufrufen muss). */
+const PRESET_KURZLABEL: Record<PresetId, string> = { fokus: 'Fokus', arbeiten: 'Arbeiten', pruefen: 'Prüfen' };
 
 /**
  * v0.7.2 §5/W4-H (Restfix — Punkt-Burst-Verdrahtung): rein dekorativer
@@ -545,6 +553,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // Panel-Overrides dieser Station+diesem Modus (dock-zustand.ts) — die
   // Sichtbarkeit (ui-zustand.ts) bleibt unberührt.
   const dockLayoutZuruecksetzen = useDockZustand((s) => s.layoutZuruecksetzen);
+  // v0.8.0 / Paket PD2 (Default-Oberflächen) — Schnellzugriff auf die drei
+  // Presets in der Statusleiste (Kontextzeile), s. dortigen Kopfkommentar.
+  const aktivesPresetDesign = useDockZustand((s) => s.aktivesPreset['design']);
   // v0.7.8 Welle 3 (P8): dezenter Einstieg für Regeln-Panel + Geführte Tour,
   // direkt neben «Layout zurücksetzen» (Auftrag Teil B Punkt 5 bzw. Teil A
   // Punkt 3 «im Dock-Bereich ggf. dezent»). Die Tour selbst startet hier
@@ -3698,6 +3709,47 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               </span>
             );
           })()}
+          {/* v0.8.0 / Paket PD2 (Default-Oberflächen) — kompakter Preset-
+              Schnellzugriff in der Kontextzeile, neben den Zero-Click-
+              Kennzahlen. Dieselbe Anwend-Funktion wie der Einstellungen-Wähler
+              und `ui.dockPresetSetzen` (`presetAnwenden()`) — EIN Weg, drei
+              Zugänge. Die umgebende Statusleiste ist `pointerEvents:'none'`
+              (Zero-Click), darum wie beim Modus-Chip ein gezieltes
+              `pointerEvents:'auto'`-Override auf dieser einen Gruppe. */}
+          <span
+            data-testid="dock-preset-schnellzugriff"
+            role="group"
+            aria-label="Oberflächen-Preset"
+            title="Fokus/Arbeiten/Prüfen — kuratierte Layout-Presets (auch in Einstellungen → Darstellung)"
+            style={{
+              display: 'inline-flex',
+              pointerEvents: 'auto',
+              border: '1px solid var(--k-line)',
+              borderRadius: 999,
+              overflow: 'hidden',
+            }}
+          >
+            {PRESET_IDS.map((id) => (
+              <button
+                key={id}
+                type="button"
+                data-testid={`dock-preset-${id}`}
+                aria-pressed={aktivesPresetDesign === id}
+                onClick={() => presetAnwenden('design', id)}
+                style={{
+                  all: 'unset',
+                  cursor: 'pointer',
+                  padding: '3px 8px',
+                  fontSize: 11.5,
+                  fontWeight: aktivesPresetDesign === id ? 650 : 500,
+                  color: aktivesPresetDesign === id ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
+                  background: aktivesPresetDesign === id ? 'var(--k-accent)' : 'var(--k-surface)',
+                }}
+              >
+                {PRESET_KURZLABEL[id]}
+              </button>
+            ))}
+          </span>
         </div>
       </div>
     </div>

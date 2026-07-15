@@ -5,6 +5,8 @@ import { dockbarePanelIds, stationsPanels, type DockStation } from './dock-stati
 import { useDockZustand, type PanelOverridePatch } from './dock-zustand';
 import type { DockModus, DockZone, FloatAnker, PanelDef, PanelOverride } from './dock-kern';
 import { useDockOrbRuntime } from './dock-orb-runtime';
+import { presetAnwenden } from './dock-preset-anwendung';
+import { presetFuer, PRESET_IDS, type PresetId, type PresetStation } from './dock-presets';
 
 /**
  * `ui.dock*`-Command-Namensraum (v0.7.8 Welle 3 / Paket P7 — «Kosmo ordnet»)
@@ -279,6 +281,49 @@ export const uiDockZuruecksetzen = registriereUiBefehl({
     const station = holeAktiveStation('ui.dockZuruecksetzen');
     useDockZustand.getState().layoutZuruecksetzen(station);
     const ergebnis: UiDockZuruecksetzenErgebnis = { station };
+    return ergebnis;
+  },
+});
+
+// ---------------------------------------------------------------------------
+// ui.dockPresetSetzen (v0.8.0 / Paket PD2, «Default-Oberflächen») — wendet
+// eines der drei kuratierten Presets (`dock-presets.ts`) auf eine Station an.
+// EIN gemeinsamer Anwend-Weg (`presetAnwenden()`, `state/dock-preset-
+// anwendung.ts`) für diesen Befehl UND den UI-Preset-Wähler (Einstellungen +
+// Kontextzeile) — Kosmo und ein Klick landen darum IMMER beim exakt gleichen
+// Ergebnis. `station` ist EXPLIZIT (kein `holeAktiveStation()`-Fallback wie
+// bei den übrigen Befehlen oben): «räum die KosmoVis-Oberfläche auf», während
+// gerade die Design-Station offen ist, muss funktionieren — ein Preset ist
+// KEIN "nur auf die gerade sichtbare Fläche wirkender" Toggle wie
+// `ui.dockSetzen`/`ui.dockEinklappen`, sondern ein benannter Ziel-Zustand
+// einer beliebigen Station. Wie `ui.dockZuruecksetzen` (das strukturell
+// ähnlich ALLE Panels einer Station gleichzeitig trifft) bewusst KEINE
+// Orb-Meldung — ein einzelnes Orb-Ziel wäre bei einer Preset-weiten Änderung
+// zufällig und irreführend; die Chat-Quittung (`art:'dock'`,
+// `kosmo-ui-aktion-dock`) bleibt trotzdem die sichtbare Ehrlichkeits-Zeile.
+// ---------------------------------------------------------------------------
+
+export interface UiDockPresetErgebnis {
+  station: PresetStation;
+  preset: PresetId;
+  titel: string;
+}
+
+const PRESET_STATION_TUPLE = ['design', 'vis'] as const;
+const PRESET_ID_TUPLE = PRESET_IDS as [PresetId, ...PresetId[]];
+
+export const uiDockPresetSetzen = registriereUiBefehl({
+  id: 'ui.dockPresetSetzen',
+  params: z.object({
+    station: z.enum(PRESET_STATION_TUPLE),
+    preset: z.enum(PRESET_ID_TUPLE),
+  }),
+  beschreibung:
+    'Wendet eines der drei kuratierten Oberflächen-Presets («fokus»/«arbeiten»/«pruefen») auf eine Station (design/vis) an — «fokus» räumt auf, «pruefen» stellt Kontrolle/Kennzahlen in den Vordergrund. Wirkt auf die genannte Station, unabhängig davon, welche Station gerade sichtbar ist.',
+  run: ({ station, preset }) => {
+    presetAnwenden(station, preset);
+    const titel = presetFuer(station, preset).titel;
+    const ergebnis: UiDockPresetErgebnis = { station, preset, titel };
     return ergebnis;
   },
 });

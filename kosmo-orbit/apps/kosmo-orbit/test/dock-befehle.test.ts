@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { alleUiBefehle, fuehreUiBefehlAus, UiBefehlError } from '../src/state/ui-befehle';
-// Seiteneffekt-Import — registriert die sieben `ui.dock*`-Befehle bei der
+// Seiteneffekt-Import — registriert die acht `ui.dock*`-Befehle bei der
 // (eingefrorenen) `ui-befehle.ts`-Registry, exakt wie `kosmo-ui-werkzeuge.ts`
 // es für die echte App tut (s. dortigen Kommentar).
 import '../src/state/dock-befehle';
@@ -9,11 +9,13 @@ import { setzeAktiveDockStationFuerTest } from '../src/state/dock-aktive-station
 import { kosmoUiWerkzeuge, type UiAktionMeldung } from '../src/state/kosmo-ui-werkzeuge';
 
 /**
- * v0.7.8 Welle 3 / Paket P7 («Kosmo ordnet») — die sieben `ui.dock*`-Befehle
+ * v0.7.8 Welle 3 / Paket P7 («Kosmo ordnet») — die `ui.dock*`-Befehle
  * (`state/dock-befehle.ts`): Schema-Validierung, Aktive-Station-Auflösung
  * (`dock-aktive-station.ts`), Mutation von `useDockZustand`, der stille
  * Lese-Befehl, und die Chat-Quittungstexte (`kosmo-ui-werkzeuge.ts`s
  * `beschreibeAktion`). Muster wie `ui-befehle.test.ts`/`dock-zustand.test.ts`.
+ * v0.8.0 / Paket PD2 (Default-Oberflächen) fügt den achten Befehl
+ * `ui.dockPresetSetzen` additiv hinzu (eigener Block weiter unten).
  */
 
 beforeEach(() => {
@@ -23,7 +25,7 @@ beforeEach(() => {
 });
 
 describe('Registry', () => {
-  it('listet alle sieben ui.dock*-Befehle (additiv zu den bestehenden sieben ui.*-Befehlen)', () => {
+  it('listet alle acht ui.dock*-Befehle (additiv zu den bestehenden sieben ui.*-Befehlen)', () => {
     const ids = alleUiBefehle()
       .map((b) => b.id)
       .filter((id) => id.startsWith('ui.dock'))
@@ -33,6 +35,7 @@ describe('Registry', () => {
       'ui.dockEinklappen',
       'ui.dockGroesseSetzen',
       'ui.dockLayoutLesen',
+      'ui.dockPresetSetzen',
       'ui.dockSetzen',
       'ui.dockZurueckLegen',
       'ui.dockZuruecksetzen',
@@ -162,6 +165,30 @@ describe('ui.dockZuruecksetzen', () => {
   });
 });
 
+describe('ui.dockPresetSetzen (v0.8.0 / PD2)', () => {
+  it('wendet das Preset auf die GENANNTE Station an, unabhängig von der aktiven Station', () => {
+    setzeAktiveDockStationFuerTest('design');
+    fuehreUiBefehlAus('ui.dockPresetSetzen', { station: 'vis', preset: 'arbeiten' });
+    expect(useDockZustand.getState().aktivesPreset['vis']).toBe('arbeiten');
+    expect(useDockZustand.getState().aktivesPreset['design']).toBeUndefined();
+  });
+
+  it('liefert Station/Preset/Titel im Ergebnis', () => {
+    const ergebnis = fuehreUiBefehlAus('ui.dockPresetSetzen', { station: 'design', preset: 'pruefen' }) as {
+      station: string;
+      preset: string;
+      titel: string;
+    };
+    expect(ergebnis).toEqual({ station: 'design', preset: 'pruefen', titel: 'Prüfen' });
+    expect(useDockZustand.getState().layoutFuer('design').panels['kennzahlen']).toEqual({ groesse: 480, angeheftet: true });
+  });
+
+  it('ungültige station/preset-Werte werfen (zod)', () => {
+    expect(() => fuehreUiBefehlAus('ui.dockPresetSetzen', { station: 'plan', preset: 'fokus' })).toThrow(UiBefehlError);
+    expect(() => fuehreUiBefehlAus('ui.dockPresetSetzen', { station: 'design', preset: 'quatsch' })).toThrow(UiBefehlError);
+  });
+});
+
 describe('ui.dockLayoutLesen', () => {
   it('liefert einen vollständigen Schnappschuss (Modus, Spaltenbreiten, Overrides, eingeklappte Panels)', () => {
     fuehreUiBefehlAus('ui.dockEinklappen', { panelId: 'kennzahlen', eingeklappt: true });
@@ -204,6 +231,15 @@ describe('beschreibeAktion — Chat-Quittungstexte (kosmo-ui-werkzeuge.ts)', () 
     const dockZuruecksetzen = tools.find((t) => t.name === 'ui_dockZuruecksetzen')!;
     dockZuruecksetzen.execute({});
     expect(meldungen.at(-1)?.text).toContain('zurückgesetzt');
+  });
+
+  it('ui.dockPresetSetzen erzeugt eine art:"dock"-Meldung mit dem Preset-Titel (v0.8.0 / PD2)', () => {
+    const meldungen: UiAktionMeldung[] = [];
+    const tools = kosmoUiWerkzeuge((m) => meldungen.push(m));
+    const dockPresetSetzen = tools.find((t) => t.name === 'ui_dockPresetSetzen')!;
+    dockPresetSetzen.execute({ station: 'design', preset: 'fokus' });
+    expect(meldungen.at(-1)).toMatchObject({ art: 'dock' });
+    expect(meldungen.at(-1)?.text).toContain('Fokus');
   });
 
   it('ui.dockLayoutLesen bleibt still — keine Meldung für einen reinen Lesezugriff', () => {

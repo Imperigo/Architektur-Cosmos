@@ -24,13 +24,15 @@ describe('kosmoUiWerkzeuge()', () => {
     const namen = werkzeuge.map((w) => w.name).sort();
     expect(namen).toEqual([
       'ui_ansichtSetzen',
-      // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — die sieben additiven
-      // `ui.dock*`-Befehle (`state/dock-befehle.ts`), statisch importiert
-      // von `kosmo-ui-werkzeuge.ts` (s. dortigen Kommentar).
+      // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — die additiven `ui.dock*`-
+      // Befehle (`state/dock-befehle.ts`), statisch importiert von
+      // `kosmo-ui-werkzeuge.ts` (s. dortigen Kommentar). v0.8.0 (PD2) fügt
+      // `ui_dockPresetSetzen` hinzu (Default-Oberflächen).
       'ui_dockAnheften',
       'ui_dockEinklappen',
       'ui_dockGroesseSetzen',
       'ui_dockLayoutLesen',
+      'ui_dockPresetSetzen',
       'ui_dockSetzen',
       'ui_dockZurueckLegen',
       'ui_dockZuruecksetzen',

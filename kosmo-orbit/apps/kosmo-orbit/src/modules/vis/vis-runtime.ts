@@ -129,6 +129,13 @@ interface VisRuntime {
   fuegeAufnahmeHinzu: (a: Aufnahme) => void;
   paletteUmschalten: () => void;
   paletteSchliessen: () => void;
+  /** v0.8.0 (PD2, Dock-Presets) — expliziter Setter statt nur Toggle/Schliessen:
+   *  `dock-preset-anwendung.ts` kennt das ZIEL eines Presets (`offen`/`zu`),
+   *  nicht den aktuellen Zustand, kann also `paletteUmschalten()` nicht
+   *  sicher nutzen (das würde bei bereits passendem Zustand ins Gegenteil
+   *  kippen). Additiv, `paletteUmschalten`/`paletteSchliessen` bleiben
+   *  unverändert für ihre bestehenden Aufrufer (`NodeCanvas.tsx`). */
+  paletteOffenSetzen: (offen: boolean) => void;
 }
 
 export const useVisRuntime = create<VisRuntime>((set) => ({
@@ -156,6 +163,7 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
   fuegeAufnahmeHinzu: (a) => set((s) => ({ aufnahmen: { ...s.aufnahmen, [a.id]: a } })),
   paletteUmschalten: () => set((s) => ({ paletteOffen: !s.paletteOffen })),
   paletteSchliessen: () => set({ paletteOffen: false }),
+  paletteOffenSetzen: (offen) => set({ paletteOffen: offen }),
 }));
 
 /**
