@@ -137,18 +137,24 @@
 
 /* v0.8.0B / W3 (Spez §4, B-66) — Kosmo-Orb-Zielgestalt im Boden-Dock: 38px,
    1.5px gestrichelter Teal-Ring + 9px-Punkt, statt des generischen 52px-
-   Symbols. `KosmoSymbol.tsx` bleibt UNVERÄNDERT (bedient auch die
-   freistehende Home-Variante) — die Grössenkorrektur läuft rein über diese
-   Nachfahren-Selektoren MIT `!important`, weil `KosmoSymbol.tsx`s eigene
-   Inline-Styles (Breite/Höhe/Rand) sonst gewinnen würden (Inline schlägt
-   unwichtige externe Regeln immer). `position:relative` ist nötig, damit
-   der `::after`-Punkt (unten) relativ zum Knopf sitzt — die Home-Variante
-   ist bereits `position:fixed`-Kind eines Wrappers, nicht betroffen. */
+   Symbols. `KosmoSymbol.tsx` bleibt in Verhalten/testids UNVERÄNDERT
+   (bedient auch die freistehende Home-Variante) — die Grössenkorrektur
+   läuft über diese Nachfahren-Selektoren.
+   v0.8.0B / P7 (Stations-Welle Design + Shell-Rest): die `!important`-
+   Brücke ist aufgelöst — `KosmoSymbol.tsx`s Knopf trägt seine Basis-
+   Geometrie jetzt selbst als Klasse (`.ks-knopf`, `kosmo-symbol.css`,
+   Spezifität 0,1,0) statt als Inline-Style (das vorher IMMER gewann,
+   `!important` war die einzige Gegenwehr). Dieser Selektor hier (Klasse +
+   Attribut, Spezifität 0,2,0) gewinnt jetzt allein durch höhere
+   CSS-Spezifität — kein `!important` mehr nötig. `position:relative` ist
+   nötig, damit der `::after`-Punkt (unten) relativ zum Knopf sitzt — die
+   Home-Variante ist bereits `position:fixed`-Kind eines Wrappers, nicht
+   betroffen. */
 .boden-dock-kosmo-slot [data-testid='kosmo-symbol'] {
-  width: 38px !important;
-  height: 38px !important;
-  border: 1.5px dashed var(--k-signal) !important;
-  position: relative !important;
+  width: 38px;
+  height: 38px;
+  border: 1.5px dashed var(--k-signal);
+  position: relative;
 }
 .boden-dock-kosmo-slot [data-testid='kosmo-symbol']::after {
   content: '';

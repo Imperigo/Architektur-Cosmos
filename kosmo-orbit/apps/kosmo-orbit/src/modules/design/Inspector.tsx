@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import './design-panels.css';
 import {
   areaOf,
   assemblyThickness,
@@ -73,21 +74,11 @@ export function Inspector() {
       // BOT-Reserve) — der H-43-Sonderabstand entfällt ersatzlos. Doppel-
       // Chrome bewusst (wie `RasterPanel.tsx`): Hintergrund/Rahmen/Schatten
       // bleiben, Position/Breiten-/Höhen-Deckel entfallen.
-      className="k-dialog"
-      style={{
-        background: 'var(--k-surface)',
-        border: '1px solid var(--k-line)',
-        borderRadius: 'var(--k-radius-md)',
-        boxShadow: 'var(--k-shadow-raised)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s3)',
-        fontSize: 'var(--k-t-sm)',
-      }}
+      className="k-dialog dp-panel"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+      <div className="dp-kopf">
         <Badge hue={moduleHue.design}>{kindLabel[entity.kind] ?? entity.kind}</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={() => select([])} aria-label="Auswahl aufheben">
           <KIcon name="schliessen" size={14} />
         </KButton>
@@ -104,7 +95,7 @@ export function Inspector() {
               size="sm"
               value={entity.assemblyId}
               onChange={(e) => set('assemblyId', e.target.value)}
-              style={{ width: '100%' }}
+              className="dp-feld-voll"
             >
               {assemblies
                 .filter((a) => a.target === 'wall')
@@ -120,7 +111,7 @@ export function Inspector() {
               size="sm"
               value={entity.alignment}
               onChange={(e) => set('alignment', e.target.value)}
-              style={{ width: '100%' }}
+              className="dp-feld-voll"
             >
               <option value="zentrum">Zentrum</option>
               <option value="kern-aussen">Kern aussen</option>
@@ -132,7 +123,7 @@ export function Inspector() {
                 anklickbar (kein Hit-Test-Ziel, plan-hit-test.ts) — die Liste
                 hier ist der Einstieg, um ein einzelnes Fenster auszuwählen
                 und im eigenen Inspector-Zweig unten zu parametrieren. */}
-            <div style={{ display: 'grid', gap: 4, width: '100%' }}>
+            <div className="dp-oeffnungsliste">
               {doc.openingsOf(entity.id).length === 0 && <span>0</span>}
               {doc.openingsOf(entity.id).map((o) => (
                 <KButton
@@ -141,7 +132,7 @@ export function Inspector() {
                   tone="ghost"
                   data-testid="inspector-oeffnung"
                   onClick={() => select([o.id])}
-                  style={{ width: '100%', justifyContent: 'flex-start' }}
+                  className="dp-feld-links"
                 >
                   {o.openingType === 'fenster' ? 'Fenster' : o.openingType === 'tuer' ? 'Tür' : 'Leibung'}{' '}
                   {o.width}×{o.height}
@@ -205,12 +196,12 @@ export function Inspector() {
               defaultValue={entity.name}
               key={entity.id + entity.name}
               onBlur={(e) => e.target.value !== entity.name && set('name', e.target.value)}
-              style={{ width: '100%' }}
+              className="dp-feld-voll"
               data-testid="inspector-name"
             />
           </Row>
           <Row label="SIA 416">
-            <KSelect size="sm" value={entity.sia} onChange={(e) => set('sia', e.target.value)} style={{ width: '100%' }}>
+            <KSelect size="sm" value={entity.sia} onChange={(e) => set('sia', e.target.value)} className="dp-feld-voll">
               {['HNF', 'NNF', 'VF', 'FF', 'KF'].map((s) => (
                 <option key={s}>{s}</option>
               ))}
@@ -294,7 +285,7 @@ export function Inspector() {
               size="sm"
               tone="ghost"
               onClick={() => select([entity.wallId])}
-              style={{ width: '100%', justifyContent: 'flex-start' }}
+              className="dp-feld-links"
             >
               zur Wand ↑
             </KButton>
@@ -327,7 +318,7 @@ export function Inspector() {
                 meldeFehler(err);
               }
             }}
-            style={{ width: '100%' }}
+            className="dp-feld-voll"
             data-testid="inspector-renovation"
           >
             <option value="">—</option>
@@ -356,8 +347,8 @@ export function Inspector() {
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '84px 1fr', alignItems: 'center', gap: 'var(--k-s2)' }}>
-      <span style={{ color: 'var(--k-ink-faint)' }}>{label}</span>
+    <div className="dp-zeile">
+      <span className="dp-zeile-label">{label}</span>
       {children}
     </div>
   );
@@ -375,7 +366,7 @@ function NumberField({
   testid?: string;
 }) {
   return (
-    <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+    <span className="dp-zahlfeld">
       <KInput
         size="sm"
         mono
@@ -388,9 +379,9 @@ function NumberField({
           if (Number.isFinite(v) && v !== value) onCommit(v);
         }}
         onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-        style={{ width: 90 }}
+        className="dp-zahlfeld-input"
       />
-      <span style={{ color: 'var(--k-ink-faint)' }}>{suffix}</span>
+      <span className="dp-einheit">{suffix}</span>
     </span>
   );
 }
@@ -480,7 +471,7 @@ function FensterAbschnitt({
           data-testid="fenster-typ"
           value={typ}
           onChange={(e) => parametrieren({ fensterTyp: e.target.value as Opening['fensterTyp'] })}
-          style={{ width: '100%' }}
+          className="dp-feld-voll"
         >
           {FENSTERTYP_OPTIONEN.map((o) => (
             <option key={o.value} value={o.value}>
@@ -490,7 +481,7 @@ function FensterAbschnitt({
         </KSelect>
       </Row>
       <Row label="Teilung">
-        <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+        <span className="dp-zahlfeld">
           <KInput
             size="sm"
             mono
@@ -503,9 +494,9 @@ function FensterAbschnitt({
               if (Number.isFinite(v) && v !== n) parametrieren({ teilungN: v });
             }}
             onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-            style={{ width: 48 }}
+            className="dp-zahlfeld-schmal"
           />
-          <span style={{ color: 'var(--k-ink-faint)' }}>×</span>
+          <span className="dp-einheit">×</span>
           <KInput
             size="sm"
             mono
@@ -518,7 +509,7 @@ function FensterAbschnitt({
               if (Number.isFinite(v) && v !== m) parametrieren({ teilungM: v });
             }}
             onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
-            style={{ width: 48 }}
+            className="dp-zahlfeld-schmal"
           />
         </span>
       </Row>
@@ -536,7 +527,7 @@ function FensterAbschnitt({
           data-testid="fluegel-typ"
           value={fluegel}
           onChange={(e) => parametrieren({ fluegelTyp: e.target.value as Opening['fluegelTyp'] })}
-          style={{ width: '100%' }}
+          className="dp-feld-voll"
         >
           {FLUEGELTYP_OPTIONEN.map((o) => (
             <option key={o.value} value={o.value}>
@@ -546,14 +537,14 @@ function FensterAbschnitt({
         </KSelect>
       </Row>
       <Row label="Öffnet">
-        <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+        <label className="dp-checkbox-zeile">
           <input
             type="checkbox"
             data-testid="fluegel-oeffnet-aussen"
             checked={oeffnetNachAussen}
             onChange={(e) => parametrieren({ oeffnetNachAussen: e.target.checked })}
           />
-          <span style={{ color: 'var(--k-ink-faint)' }}>nach aussen (gestrichelt)</span>
+          <span className="dp-einheit">nach aussen (gestrichelt)</span>
         </label>
       </Row>
     </>
@@ -623,7 +614,7 @@ function BeschlagAbschnitt({
           data-testid="beschlag-band"
           value={opening.band ?? ''}
           onChange={(e) => setzen({ band: (e.target.value || undefined) as Opening['band'] })}
-          style={{ width: '100%' }}
+          className="dp-feld-voll"
         >
           <option value="">—</option>
           <option value="links">Links</option>
@@ -638,7 +629,7 @@ function BeschlagAbschnitt({
           data-testid="beschlag-griffseite"
           value={opening.griffseite ?? ''}
           onChange={(e) => setzen({ griffseite: (e.target.value || undefined) as Opening['griffseite'] })}
-          style={{ width: '100%' }}
+          className="dp-feld-voll"
         >
           <option value="">—</option>
           <option value="links">Links</option>
@@ -661,18 +652,18 @@ function BeschlagAbschnitt({
           onChange={(e) => setzen({ absturzsicherung: e.target.checked })}
         />
       </Row>
-      <div style={{ marginTop: 'var(--k-s2)' }}>
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-fs-sm, 0.8em)' }}>
+      <div className="dp-beschlag-katalog">
+        <span className="dp-beschlag-titel">
           Beschlag-Katalog
         </span>
         {BESCHLAG_KATEGORIEN.map((kategorie) => (
-          <div key={kategorie} style={{ marginTop: 'var(--k-s1)' }}>
-            <span style={{ color: 'var(--k-ink-faint)' }}>{BESCHLAG_KATEGORIE_LABEL[kategorie]}</span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--k-s2)', marginTop: 'var(--k-s1)' }}>
+          <div key={kategorie} className="dp-beschlag-kategorie">
+            <span className="dp-beschlag-kategorie-titel">{BESCHLAG_KATEGORIE_LABEL[kategorie]}</span>
+            <div className="dp-beschlag-typen">
               {BESCHLAG_KATALOG.filter((t) => t.kategorie === kategorie).map((typ) => (
                 <label
                   key={typ.key}
-                  style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s1)', fontSize: '0.9em' }}
+                  className="dp-beschlag-typ"
                 >
                   <input
                     type="checkbox"

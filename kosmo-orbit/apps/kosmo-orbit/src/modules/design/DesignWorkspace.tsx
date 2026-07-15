@@ -52,6 +52,7 @@ import type { PlanLod } from './planLod';
 // Burst ist ein rein dekorativer Overlay-Span (`aria-hidden`, keine
 // Textknoten, s. `PunktBurst` unten).
 import '../../shell/kosmo-feedback.css';
+import './design.css';
 import {
   IconAuswahl,
   IconDach,
@@ -186,27 +187,15 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
  * Akzent-Eckpunkt, nie beides, keine Vollfläche»). Diese Knöpfe bleiben
  * `tone="ghost"` (transparenter Grund) und bekommen im aktiven Zustand
  * NUR den betonten Tusche-Rahmen — Text/testid unverändert, reiner Stil.
+ * v0.8.0B / P7: die frühere `aktivRahmen()`-Laufzeitfunktion ist jetzt die
+ * reine CSS-Klasse `.dw-aktiv-rahmen` (design.css) — Aufrufer setzen
+ * `className={aktiv ? 'dw-aktiv-rahmen' : undefined}` statt eines
+ * Style-Objekt-Spreads.
  */
-function aktivRahmen(aktiv: boolean): React.CSSProperties {
-  return aktiv
-    ? { borderWidth: 1.5, borderStyle: 'solid', borderColor: 'var(--k-ink)', color: 'var(--k-ink)', fontWeight: 600 }
-    : {};
-}
 
 function Trennlabel({ children, icon }: { children: string; icon?: KIconName }) {
   return (
-    <span
-      className="k-selten"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 'var(--k-s1)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.08em',
-        color: 'var(--k-ink-faint)',
-        padding: '0 2px',
-      }}
-    >
+    <span className="k-selten dw-trennlabel">
       {icon !== undefined && <KIcon name={icon} size={14} />}
       {children}
     </span>
@@ -1981,7 +1970,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
   return (
     <div
-      style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}
+      className="dw-arbeitsflaeche"
       // Stream B (W1b, Aufgabe 3): pointerType-Signal für die Arbeitsmodi-
       // Erkennung («iPad-Skizzieren», Konzept §2) — Capture-Phase, damit das
       // Signal auch dann ankommt, wenn ein Kind-Element `stopPropagation()`
@@ -1999,21 +1988,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           UI-SELBSTKRITIK-064). Beide Reihen sind jetzt eigene Container mit
           `flexWrap:'nowrap'` (+ `overflowX:'auto'` als Sicherheitsventil bei
           sehr schmalem Viewport statt eines dritten Umbruchs). */}
-      <div data-testid="design-werkzeugleiste" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div data-testid="design-werkzeugleiste" className="dw-werkzeugleiste">
         {/* Hauptzeile */}
         <div
           data-testid="design-werkzeugleiste-haupt"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'nowrap',
-            overflowX: 'auto',
-            gap: 'var(--k-s3)',
-            padding: 'var(--k-s3) var(--k-s4)',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            zIndex: 2,
-          }}
+          className="dw-werkzeugleiste-haupt"
         >
           {/* K6 (Owner-Rundgang 0.6.2, S. 3): «KosmoDesign» stand hier UND in
               der App-Kopfzeile (App.tsx, dynamisches Modul-Badge, gilt für
@@ -2022,14 +2001,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               lokale Duplikat hier fällt weg. */}
           <span
             data-testid="leiste-gruppe-zeichnen"
-            className={fokusKlasse(stufeFuerGruppe('zeichnen'))}
-            style={{
-              display: 'inline-flex',
-              flexWrap: 'nowrap',
-              gap: 'var(--k-s3)',
-              alignItems: 'center',
-              ...(gruppeHatGehobenesElement('zeichnen') ? { opacity: 1 } : {}),
-            }}
+            className={`${fokusKlasse(stufeFuerGruppe('zeichnen'))} dw-gruppe-s3`}
+            style={gruppeHatGehobenesElement('zeichnen') ? { opacity: 1 } : undefined}
           >
             {ZEICHEN_WERKZEUGE_LEISTE.map(({ id, label, Icon, iconMitText }) => {
               // F5 (v0.6.4, Owner-Befund «Tastenkombination wie ArchiCAD»): der
@@ -2086,7 +2059,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               <IconMesh /> Mesh
             </KButton>
           </span>
-          <div style={{ flex: 1 }} />
+          <div className="dw-fuell" />
           {/* SK-D1 (Massnahme 1): Ansicht als kompakte, gerahmte Segment-Gruppe
               statt loser Ghost-Knöpfe — derselbe --k-field/--k-line-Ton wie
               die Kontextzeile signalisiert «hier wird umgeschaltet, nicht
@@ -2094,18 +2067,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               '4er'/'Grundriss'). */}
           <span
             data-testid="leiste-gruppe-ansicht"
-            className={fokusKlasse(stufeFuerGruppe('ansicht'))}
-            style={{
-              display: 'inline-flex',
-              flexWrap: 'nowrap',
-              gap: 2,
-              alignItems: 'center',
-              background: 'var(--k-field)',
-              border: '1px solid var(--k-line)',
-              borderRadius: 'var(--k-radius-md)',
-              padding: 'var(--k-s1)',
-              ...(gruppeHatGehobenesElement('ansicht') ? { opacity: 1 } : {}),
-            }}
+            className={`${fokusKlasse(stufeFuerGruppe('ansicht'))} dw-gruppe-ansicht`}
+            style={gruppeHatGehobenesElement('ansicht') ? { opacity: 1 } : undefined}
           >
             {(
               [
@@ -2125,7 +2088,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 }}
                 data-testid={`view-${id}`}
                 aria-pressed={viewMode === id}
-                style={{ ...aktivRahmen(viewMode === id), ...elementStil('ansicht', id).style }}
+                className={viewMode === id ? 'dw-aktiv-rahmen' : undefined}
+                style={elementStil('ansicht', id).style}
               >
                 {label}
               </KButton>
@@ -2137,8 +2101,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               beide am rechten Rand der Hauptzeile. */}
           <span
             data-testid="leiste-gruppe-projekt"
-            className={fokusKlasse(stufeFuerGruppe('projekt'))}
-            style={{ display: 'inline-flex', ...(gruppeHatGehobenesElement('projekt') ? { opacity: 1 } : {}) }}
+            className={`${fokusKlasse(stufeFuerGruppe('projekt'))} dw-gruppe-inline`}
+            style={gruppeHatGehobenesElement('projekt') ? { opacity: 1 } : undefined}
           >
             <KButton
               size="sm"
@@ -2193,16 +2157,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             blassen Inline-Sektion (dokumentierte Wahl, s. Bericht/Grenzen). */}
         <div
           data-testid="design-werkzeugleiste-kontext"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'nowrap',
-            gap: 'var(--k-s3)',
-            padding: 'var(--k-s2) var(--k-s4)',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-field)',
-            zIndex: 2,
-          }}
+          className="dw-werkzeugleiste-kontext"
         >
           {/* Kritik-065 Befund [A] «Export-Zeile verdrängt Rückgängig/
               Wiederholen»: die Kontextzeile ist EIN Flex-Container mit
@@ -2216,17 +2171,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               DANACH, ausserhalb des scrollenden Bereichs — bleibt bei jedem
               Öffnen-Zustand sichtbar, unabhängig vom Toggle. Bleibt
               EIN Y-Band (design-werkzeugleiste.spec.ts). */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'nowrap',
-              overflowX: 'auto',
-              gap: 'var(--k-s3)',
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
+          <div className="dw-kontext-scroll">
           {tool === 'wand' && assemblies.length > 0 && (
             <KSelect
               size="sm"
@@ -2260,7 +2205,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               (`ueberlaufWerkzeuge`) — nichts wird unerreichbar. */}
           {exportGruppeSichtbar && (
             <>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--k-s1)' }}>
+              <span className="dw-inline-s1">
                 <KButton
                   size="sm"
                   tone={exportMenuOffen ? 'accent' : 'ghost'}
@@ -2280,18 +2225,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                ohne die testids/Klickbarkeit der Kinder anzufassen. */
             <span
               data-testid="leiste-gruppe-export"
-              className={fokusKlasse(stufeFuerGruppe('export'))}
-              style={{
-                display: 'inline-flex',
-                flexWrap: 'nowrap',
-                gap: 'var(--k-s2)',
-                alignItems: 'center',
-                border: '1px solid var(--k-line-strong)',
-                background: 'var(--k-raised)',
-                borderRadius: 'var(--k-radius-sm)',
-                padding: '2px 6px',
-                ...(gruppeHatGehobenesElement('export') ? { opacity: 1 } : {}),
-              }}
+              className={`${fokusKlasse(stufeFuerGruppe('export'))} dw-gruppe-export`}
+              style={gruppeHatGehobenesElement('export') ? { opacity: 1 } : undefined}
             >
               <KButton size="sm" tone="ghost" onClick={klickExportPdf} data-testid="export-pdf" {...elementStil('export', 'pdf')}>
                 PDF
@@ -2349,14 +2284,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           <Trennlabel icon="ebenen">Ebenen</Trennlabel>
           <span
             data-testid="leiste-gruppe-ebenen"
-            className={fokusKlasse(stufeFuerGruppe('ebenen'))}
-            style={{
-              display: 'inline-flex',
-              flexWrap: 'nowrap',
-              gap: 'var(--k-s3)',
-              alignItems: 'center',
-              ...(gruppeHatGehobenesElement('ebenen') ? { opacity: 1 } : {}),
-            }}
+            className={`${fokusKlasse(stufeFuerGruppe('ebenen'))} dw-gruppe-s3`}
+            style={gruppeHatGehobenesElement('ebenen') ? { opacity: 1 } : undefined}
           >
             <KButton
               size="sm"
@@ -2364,7 +2293,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               data-testid="textur-toggle"
               onClick={klickTextur}
               aria-pressed={texturen}
-              style={{ ...aktivRahmen(texturen), ...elementStil('ebenen', 'textur').style }}
+              className={texturen ? 'dw-aktiv-rahmen' : undefined}
+              style={elementStil('ebenen', 'textur').style}
             >
               Textur
             </KButton>
@@ -2438,17 +2368,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               <Trennlabel>Fähigkeiten</Trennlabel>
               <span
                 data-testid="leiste-gruppe-faehigkeiten"
-                className={fokusKlasse(stufeFuerGruppe('faehigkeiten'))}
-                style={{
-                  display: 'inline-flex',
-                  flexWrap: 'nowrap',
-                  gap: 'var(--k-s2)',
-                  alignItems: 'center',
-                  ...(gruppeHatGehobenesElement('faehigkeiten') ? { opacity: 1 } : {}),
-                }}
+                className={`${fokusKlasse(stufeFuerGruppe('faehigkeiten'))} dw-gruppe-s2`}
+                style={gruppeHatGehobenesElement('faehigkeiten') ? { opacity: 1 } : undefined}
               >
                 {FAEHIGKEITEN.map(({ id, titel, Icon, aktiv, klick, voll }) => (
-              <span key={id} style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+              <span key={id} className="dw-faehigkeit-wrap">
                 <KButton
                   size="sm"
                   tone={aktiv ? 'accent' : 'ghost'}
@@ -2460,19 +2384,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                     e.preventDefault();
                     voll();
                   }}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    padding: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    // Reihenfolge bewusst: Nutzer-Adaption zuerst, ein
-                    // angewendetes Phasen-Preset (falls vorhanden) gewinnt
-                    // darüber — Owner-Kontrolle schlägt automatische Vermutung.
-                    ...elementStil('faehigkeiten', id).style,
-                    ...faehigkeitStil(id).style,
-                  }}
+                  className="dw-faehigkeit-btn"
+                  // Reihenfolge bewusst: Nutzer-Adaption zuerst, ein
+                  // angewendetes Phasen-Preset (falls vorhanden) gewinnt
+                  // darüber — Owner-Kontrolle schlägt automatische Vermutung.
+                  style={{ ...elementStil('faehigkeiten', id).style, ...faehigkeitStil(id).style }}
                 >
                   <Icon />
                 </KButton>
@@ -2482,14 +2398,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   title={`${titel} — Panel voll öffnen`}
                   aria-label={`${titel} — Panel voll öffnen`}
                   onClick={voll}
-                  style={{
-                    all: 'unset',
-                    cursor: 'pointer',
-                    fontSize: 9,
-                    lineHeight: 1,
-                    padding: '0 2px',
-                    color: 'var(--k-ink-faint)',
-                  }}
+                  className="dw-faehigkeit-voll"
                 >
                   ⌄
                 </button>
@@ -2523,16 +2432,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               Layout-Ruck, wenn der Hinweis erscheint/verschwindet. */}
           <span
             data-testid="adaption-hinweis"
-            className="k-selten"
+            className={`k-selten dw-adaption-hinweis${adaptionHinweisSichtbar ? '' : ' dw-versteckt'}`}
             title={adaptionHinweisTitel}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              fontSize: 11,
-              color: 'var(--k-ink-faint)',
-              whiteSpace: 'nowrap',
-              visibility: adaptionHinweisSichtbar ? 'visible' : 'hidden',
-            }}
           >
             ⓘ angepasst
           </span>
@@ -2540,14 +2441,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           {/* «Mehr…» + Dropdown: ausserhalb der Scroll-Zone (kein Clipping,
               immer sichtbar — Erreichbarkeits-Garantie der Arbeitsmodi),
               flexShrink:0 wie die Verlauf-Gruppe. */}
-          <span style={{ position: 'relative', display: 'inline-flex', flexShrink: 0 }}>
+          <span className="dw-mehr-wrap">
             <KButton
               size="sm"
               tone={mehrOffen ? 'accent' : 'ghost'}
               data-testid="werkzeuge-mehr"
               title="Weitere Werkzeuge — nach Nutzungshäufigkeit sortiert"
               aria-label="Weitere Werkzeuge"
-              style={{ visibility: ueberlaufWerkzeuge.length > 0 ? 'visible' : 'hidden' }}
+              className={ueberlaufWerkzeuge.length > 0 ? undefined : 'dw-versteckt'}
               onClick={() => setMehrOffen(!mehrOffen)}
             >
               Mehr…
@@ -2555,23 +2456,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             {mehrOffen && ueberlaufWerkzeuge.length > 0 && (
               <div
                 data-testid="werkzeuge-mehr-liste"
-                className="k-dialog"
-                style={{
-                  position: 'absolute',
-                  top: '100%',
-                  right: 0,
-                  marginTop: 4,
-                  zIndex: 5,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 3,
-                  padding: 6,
-                  minWidth: 140,
-                  background: 'var(--k-surface)',
-                  border: '1px solid var(--k-line)',
-                  borderRadius: 'var(--k-radius-md)',
-                  boxShadow: 'var(--k-shadow-raised)',
-                }}
+                className="k-dialog dw-dropdown dw-dropdown--unten"
               >
                 {ueberlaufWerkzeuge.map((w) => (
                   <KButton
@@ -2579,7 +2464,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                     size="sm"
                     tone="ghost"
                     data-testid={`werkzeuge-mehr-eintrag-${w.gruppe}-${w.id}`}
-                    style={{ justifyContent: 'flex-start' }}
+                    className="dw-justify-start"
                     onClick={() => {
                       w.aktion();
                       setMehrOffen(false);
@@ -2597,14 +2482,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           <Hairline vertical />
           <span
             data-testid="leiste-gruppe-verlauf"
-            className={fokusKlasse(stufeFuerGruppe('verlauf'))}
-            style={{
-              display: 'inline-flex',
-              gap: 'var(--k-s3)',
-              alignItems: 'center',
-              flexShrink: 0,
-              ...(gruppeHatGehobenesElement('verlauf') ? { opacity: 1 } : {}),
-            }}
+            className={`${fokusKlasse(stufeFuerGruppe('verlauf'))} dw-gruppe-verlauf`}
+            style={gruppeHatGehobenesElement('verlauf') ? { opacity: 1 } : undefined}
           >
             <KButton
               size="sm"
@@ -2676,29 +2555,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       {projektMenuOffen && (
         <div
           data-testid="projekt-menu"
-          style={{
-            display: 'flex',
-            gap: 16,
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            padding: '8px 14px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            fontSize: 12.5,
-          }}
+          className="dw-projekt-menu"
         >
-          <span className="k-sekundaer" style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <span className="k-sekundaer dw-uppercase-label">
             Projekt-Einstellungen
           </span>
           {/* v0.7.5 A2: Projekt-Stammdaten (Bauherr/Adresse/Parzellennr/
               Verfasser + Projektname-Umbenennen) — eigene Zeile vor den
               Phasen-/Darstellungs-Reglern, da inhaltlich am wenigsten mit
               der Plan-Darstellung zu tun hat. */}
-          <span style={{ display: 'flex', width: '100%', marginBottom: 2 }}>
+          <span className="dw-stammdaten-wrap">
             <StammdatenPanel />
           </span>
           {/* SIA-Phase (Owner 03.07.): Detaillierungsgrad der Pläne; koppelt den passenden Bemassungs-Stil */}
-          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          <label className="dw-label-g5">
             Phase
             <KSelect
               size="sm"
@@ -2744,7 +2614,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               Die Kosmo-Zusammenfassung des Commands nennt den passenden
               Detaillierungsgrad als reinen Vorschlag. */}
           <label
-            style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}
+            className="dw-label-g5"
             title="Aktuelle SIA-Teilphase des Projekts (Wettbewerb bis Abnahme) — reiner Projektstand, ändert den Plan-Detaillierungsgrad nicht."
           >
             Teilphase
@@ -2772,7 +2642,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             </KSelect>
           </label>
           {/* Bemassungs-Stil (V2-A5): Presets als Projekteinstellung, undo-fähig */}
-          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          <label className="dw-label-g5">
             Masse
             <KSelect
               size="sm"
@@ -2800,7 +2670,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               (weiss bis inkl. Baueingabe, Material ab Ausschreibung). Reine
               Projektsemantik (Yjs/Undo), der Textur-Toggle am Viewport
               bleibt separat lokal. */}
-          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          <label className="dw-label-g5">
             Darstellung
             <KSelect
               size="sm"
@@ -2819,7 +2689,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           </label>
           {/* v0.7.0 E2: Poché-Modus — Override zur Phasen-Automatik (Schwarz
               vom Wettbewerb bis zur Baueingabe, Werkplan bleibt Material). */}
-          <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 5 }}>
+          <label className="dw-label-g5">
             Poché
             <KSelect
               size="sm"
@@ -2838,7 +2708,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           {/* H-42: Öffnungsflügel-Bogen bei parametrischen Fenstern im
               Grundriss — Owner-Schalter, Default an (Bestandsverhalten). */}
           <label
-            style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}
+            className="dw-label-g6"
           >
             <input
               type="checkbox"
@@ -2848,7 +2718,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             />
             Fensterbögen im Grundriss
           </label>
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+          <span className="dw-hinweis-faint">
             Ändert sich mit der SIA-Phase des Projekts — bleibt über Jahre stabil, gehört nicht in die Dauerleiste.
           </span>
           {/* Serie J / J3c (Regel 2.3.4): Opt-out + Reset für die adaptive
@@ -2856,7 +2726,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               Fable-Review-2-Auflage J3c-1) — Reset löscht NUR das gelernte
               Profil, der Schalter bleibt in beiden Richtungen unangetastet. */}
           <label
-            style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}
+            className="dw-label-g6"
           >
             <input
               type="checkbox"
@@ -2879,18 +2749,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       )}
 
       {sonneOffen && (
-        <div
-          style={{
-            display: 'flex',
-            gap: 12,
-            alignItems: 'center',
-            padding: '6px 12px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            fontSize: 12.5,
-          }}
-        >
-          <span style={{ color: 'var(--k-ink-faint)' }} data-testid="sonne-standort-label">
+        <div className="dw-sonne-row">
+          <span className="dw-faint" data-testid="sonne-standort-label">
             Schattenstudie · {useProject.getState().doc.settings.standort?.label ?? 'Innerschweiz (Standard)'}
           </span>
           <StandortSuche />
@@ -2899,7 +2759,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             value={sonnenDatum}
             data-testid="sonne-datum"
             onChange={(e) => setSonnenDatum(e.target.value)}
-            style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)' }}
+            className="dw-input-datum"
           />
           <input
             type="range"
@@ -2909,12 +2769,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             value={sonnenStunde}
             data-testid="sonne-stunde"
             onChange={(e) => setSonnenStunde(Number(e.target.value))}
-            style={{ width: 260 }}
+            className="dw-slider-sonne"
           />
-          <span style={{ fontFamily: 'var(--k-mono, monospace)', minWidth: 48 }}>
+          <span className="dw-mono-zeit">
             {String(Math.floor(sonnenStunde)).padStart(2, '0')}:{String(Math.round((sonnenStunde % 1) * 60)).padStart(2, '0')}
           </span>
-          <span style={{ color: 'var(--k-ink-faint)' }}>
+          <span className="dw-faint">
             21.&nbsp;März/Sept. für den 2h-Nachweis, 21.&nbsp;Juni/Dez. für die Extreme.
           </span>
         </div>
@@ -2923,23 +2783,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       {bestand && (
         <div
           data-testid="bestand-angebot"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '6px 14px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-raised)',
-            fontSize: 12.5,
-            zIndex: 2,
-          }}
+          className="dw-banner"
         >
           <Badge hue={moduleHue.design}>Bestand</Badge>
           <span>
             Im IFC erkannt: {bestand.waende.length} Wände, {bestand.decken.length} Decken — als
             editierbare Bauteile übernehmen? (ein Undo-Schritt; Rest bleibt Kontext)
           </span>
-          <div style={{ flex: 1 }} />
+          <div className="dw-fuell" />
           <KButton size="sm" tone="accent" data-testid="bestand-uebernehmen" onClick={bestandUebernehmen}>
             Übernehmen
           </KButton>
@@ -2955,16 +2806,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       {phasenAngebot && (
         <div
           data-testid="phasen-preset-angebot"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '6px 14px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-raised)',
-            fontSize: 12.5,
-            zIndex: 2,
-          }}
+          className="dw-banner"
         >
           <Badge hue={moduleHue.design}>Phase</Badge>
           <span>
@@ -2976,7 +2818,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               : ''}
             )
           </span>
-          <div style={{ flex: 1 }} />
+          <div className="dw-fuell" />
           <KButton
             size="sm"
             tone="accent"
@@ -2996,20 +2838,11 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       {massstabHinweis && (
         <div
           data-testid="massstab-hinweis"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            padding: '5px 14px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-raised)',
-            fontSize: 12.5,
-            zIndex: 2,
-          }}
+          className="dw-banner dw-banner--knapp"
         >
           <Badge hue={moduleHue.design}>Massstab</Badge>
           <span>{massstabHinweis} Der Blatt-Editor (KosmoPublish) wählt weiterhin frei.</span>
-          <div style={{ flex: 1 }} />
+          <div className="dw-fuell" />
           <KButton size="sm" tone="ghost" data-testid="massstab-ok" onClick={() => setMassstabHinweis(null)}>
             Verstanden
           </KButton>
@@ -3017,7 +2850,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
       )}
       {/* Ansichten: synchron auf demselben Modell + denselben Werkzeugen */}
       <div
-        style={{ position: 'relative', flex: 1, display: 'flex' }}
+        className="dw-viewport-container"
         // K5 (Owner-Rundgang 0.6.2, S. 10): «beschreibende Textblöcke nutzlos
         // … Funktion, die als One-Click mit Upload-Oberfläche von Kosmo
         // komplett selbst erledigt wird» — die ganze Arbeitsfläche ist ein
@@ -3063,23 +2896,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               }
             }}
             onDragOver={(e) => e.preventDefault()}
-            style={{
-              position: 'absolute',
-              inset: 8,
-              zIndex: 60,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-              padding: 16,
-              border: '2px dashed var(--k-accent)',
-              borderRadius: 'var(--k-radius-md)',
-              background: 'var(--k-accent-wash)',
-              color: 'var(--k-accent)',
-              fontSize: 14,
-              fontWeight: 600,
-              pointerEvents: 'auto',
-            }}
+            className="dw-uplan-drop"
           >
             Unternehmerplan hier ablegen — DXF wird verglichen, PDF wird erkannt
           </div>
@@ -3115,42 +2932,31 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             reserviert, konsistent). */}
         {viewMode === 'quad' ? (
           <div
-            style={{
-              flex: 1,
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gridTemplateRows: '1fr 1fr',
-              gap: 1,
-              background: 'var(--k-line)',
-            }}
+            className="dw-quad-grid"
           >
-            <div style={{ position: 'relative', background: 'var(--k-field)' }}>
+            <div className="dw-quad-zelle--3d">
               <Viewport3D handlers={handlersRef} />
             </div>
-            <div style={{ position: 'relative' }}>
+            <div className="dw-quad-zelle">
               <PlanView handlers={handlersRef} onLod={setPlanLodStufe} />
             </div>
-            <div style={{ position: 'relative' }}>
+            <div className="dw-quad-zelle">
               <SectionView spec={sectionSpec} title="Schnitt" />
             </div>
-            <div style={{ position: 'relative' }}>
+            <div className="dw-quad-zelle">
               <SectionView spec={elevationSpec} title="Ansicht Süd" />
             </div>
           </div>
         ) : (
           <>
             {viewMode !== '2d' && (
-              <div style={{ position: 'relative', flex: 1 }}>
+              <div className="dw-viewport-flex">
                 <Viewport3D handlers={handlersRef} />
               </div>
             )}
             {viewMode !== '3d' && (
               <div
-                style={{
-                  position: 'relative',
-                  flex: 1,
-                  borderLeft: viewMode === 'split' ? '1px solid var(--k-line)' : 'none',
-                }}
+                className={`dw-viewport-flex${viewMode === 'split' ? ' dw-viewport-flex--getrennt' : ''}`}
               >
                 {/* SK-D4 (Massnahme 5) — Versuch verworfen, s. Bericht/Grenzen:
                     ein `key`-erzwungener Neu-Mount hier hätte PlanView bei
@@ -3183,48 +2989,26 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         {meshEditId && (
           <div
             data-testid="mesh-edit-panel"
-            className="k-dialog"
-            style={{
-              position: 'absolute',
-              left: 12,
-              bottom: 12,
-              width: 240,
-              background: 'var(--k-surface)',
-              border: '1px solid var(--k-line)',
-              borderRadius: 'var(--k-radius-md)',
-              boxShadow: 'var(--k-shadow-raised)',
-              padding: 12,
-              display: 'grid',
-              gap: 8,
-              fontSize: 12.5,
-              zIndex: 3,
-            }}
+            className="k-dialog dw-mesh-panel"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="dw-row-s3">
               <Badge hue={moduleHue.design}>Mesh bearbeiten</Badge>
             </div>
-            <span style={{ color: 'var(--k-ink-faint)' }}>
+            <span className="dw-faint">
               Handle ziehen verschiebt die Ecke (Shift = nur Höhe) · Klick auf eine Fläche wählt sie zum Extrudieren.
             </span>
             {meshFace !== null && (
-              <div style={{ display: 'grid', gap: 6 }}>
-                <span style={{ color: 'var(--k-ink-faint)' }}>Fläche {meshFace} ausgewählt</span>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div className="dw-stack-s2">
+                <span className="dw-faint">Fläche {meshFace} ausgewählt</span>
+                <label className="dw-label-inline">
                   <input
                     type="number"
                     value={meshDistanz}
                     data-testid="mesh-extrude-distanz"
                     onChange={(e) => setMeshDistanz(Number(e.target.value))}
-                    style={{
-                      width: 90,
-                      padding: '3px 7px',
-                      borderRadius: 6,
-                      border: '1px solid var(--k-line-strong)',
-                      background: 'var(--k-raised)',
-                      fontSize: 12.5,
-                    }}
+                    className="dw-input-mesh"
                   />
-                  <span style={{ color: 'var(--k-ink-faint)' }}>mm — negativ = einwärts</span>
+                  <span className="dw-faint">mm — negativ = einwärts</span>
                 </label>
                 <KButton
                   size="sm"
@@ -3289,27 +3073,15 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         <div
           ref={geschossleisteRef}
           data-testid="geschossleiste"
-          className="k-karte"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            display: 'flex',
-            flexDirection: 'column-reverse',
-            gap: 'var(--k-s2)',
-            border: '1px solid var(--k-line-strong)',
-            padding: 'var(--k-s2)',
-            boxShadow: 'var(--k-shadow-raised)',
-            // Testlauf-Befund: bei Hochhäusern (20+ Geschossen) lief die Liste
-            // sonst unten aus dem Viewport — Höhe deckeln, dann scrollt sie.
-            // v0.7.9 (B2): zusätzlich gegen die Oberkante des EntwurfsDock
-            // geklemmt (gemessen, s. `geschossMaxHoehe`-Effekt oben) — bis zur
-            // ersten Messung (Erstmount) gilt die alte reine Prozent-Grenze
-            // als Fallback, danach gewinnt stets das engere `Math.min` beider
-            // Grenzen.
-            maxHeight: geschossMaxHoehe != null ? `${geschossMaxHoehe}px` : 'calc(100% - 24px)',
-            overflowY: 'auto',
-          }}
+          className="k-karte dw-geschossleiste"
+          // Testlauf-Befund: bei Hochhäusern (20+ Geschossen) lief die Liste
+          // sonst unten aus dem Viewport — Höhe deckeln, dann scrollt sie.
+          // v0.7.9 (B2): zusätzlich gegen die Oberkante des EntwurfsDock
+          // geklemmt (gemessen, s. `geschossMaxHoehe`-Effekt oben) — bis zur
+          // ersten Messung (Erstmount) gilt die alte reine Prozent-Grenze
+          // als Fallback, danach gewinnt stets das engere `Math.min` beider
+          // Grenzen.
+          style={{ maxHeight: geschossMaxHoehe != null ? `${geschossMaxHoehe}px` : 'calc(100% - 24px)' }}
         >
           {storeys.map((s: Storey) => (
             <KButton
@@ -3319,7 +3091,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               onClick={() => setActiveStorey(s.id)}
               data-testid={`storey-${s.name}`}
               aria-pressed={s.id === activeStoreyId}
-              style={aktivRahmen(s.id === activeStoreyId)}
+              className={s.id === activeStoreyId ? 'dw-aktiv-rahmen' : undefined}
             >
               {s.name}
             </KButton>
@@ -3432,53 +3204,37 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             'Ausschreibung')`, `faehigkeiten-phasen.spec.ts`). */}
         <div
           data-testid="statusleiste"
-          style={{
-            position: 'absolute',
-            left: 12,
-            bottom: 12,
-            // Kritik-065 Befund [B] «Abgeschnittenes Label unten rechts»:
-            // `right:12` liess den letzten Eintrag («Klick: …») bis unter
-            // das fixe Kosmo-Symbol laufen (right:22/bottom:22, 54px,
-            // z-110 — s. Begründung in NavLeiste.tsx), das den Text
-            // optisch abschnitt. Dieselbe Klärung (right:88), die
-            // `NavLeiste.tsx` fürs `nav-fit`-Werkzeug schon nutzt.
-            right: 88,
-            minHeight: 30,
-            display: 'flex',
-            flexWrap: 'wrap',
-            rowGap: 4,
-            gap: 10,
-            alignItems: 'center',
-            pointerEvents: 'none',
-            fontFamily: 'var(--k-font-mono)',
-            fontSize: 11,
-            letterSpacing: '0.05em',
-            color: 'var(--k-ink-soft)',
-          }}
+          // Kritik-065 Befund [B] «Abgeschnittenes Label unten rechts»:
+          // `right:12` liess den letzten Eintrag («Klick: …») bis unter
+          // das fixe Kosmo-Symbol laufen (right:22/bottom:22, 54px,
+          // z-110 — s. Begründung in NavLeiste.tsx), das den Text
+          // optisch abschnitt. Dieselbe Klärung (right:88), die
+          // `NavLeiste.tsx` fürs `nav-fit`-Werkzeug schon nutzt (`dw-statusleiste`, design.css).
+          className="dw-statusleiste"
         >
           <span
             data-testid="statusleiste-werkzeug"
-            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
+            className="dw-status-chip"
           >
             {WERKZEUG_KURZLABEL[tool]}
           </span>
           <span
             data-testid="statusleiste-geschoss"
-            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
+            className="dw-status-chip"
           >
             {storeys.find((s: Storey) => s.id === activeStoreyId)?.name ?? '–'}
           </span>
           <span
             data-testid="statusleiste-lod"
             title="Plan-Detaillierungsgrad (zoomabhängig)"
-            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
+            className="dw-status-chip"
           >
             {LOD_KURZLABEL[planLodStufe]}
           </span>
           <span
             data-testid="statusleiste-flaeche"
             title="Ausgezogene SIA-Fläche (NGF) des aktiven Geschosses"
-            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
+            className="dw-status-chip"
           >
             {flaecheGeschossM2 !== null ? `${flaecheGeschossM2.toFixed(0)} m²` : '–'}
           </span>
@@ -3490,7 +3246,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           <span
             data-testid="statusleiste-phase"
             title="Aktuelle SIA-Teilphase des Projekts"
-            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
+            className="dw-status-chip"
           >
             {siaPhaseLabel(doc.settings.siaPhase)}
           </span>
@@ -3501,10 +3257,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               durch zum Viewport) — dieser EINE interaktive Chip braucht ein
               gezieltes `pointerEvents:'auto'`-Override, sonst wäre er unter
               der Maus unsichtbar unklickbar. */}
-          <span style={{ position: 'relative', display: 'inline-flex', pointerEvents: 'auto' }}>
+          <span className="dw-modus-chip-wrap">
             <button
               type="button"
-              className="k-druck"
+              className={`k-druck dw-modus-chip-btn${modusAkzent ? ' dw-modus-chip-btn--akzent' : ''}`}
               data-testid="modus-chip"
               title={
                 modusGrund.length > 0
@@ -3516,17 +3272,6 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               aria-haspopup="menu"
               aria-expanded={modusMenuOffen}
               onClick={() => setModusMenuOffen((o) => !o)}
-              style={{
-                background: 'var(--k-flaeche-zwischen, var(--k-surface))',
-                padding: '2px 8px',
-                borderRadius: 999,
-                border: modusAkzent ? '1px solid var(--k-accent)' : '1px solid var(--k-line-subtil, var(--k-line))',
-                transitionProperty: 'border-color',
-                transitionDuration: 'var(--k-feder)',
-                cursor: 'pointer',
-                font: 'inherit',
-                color: 'inherit',
-              }}
             >
               {/* C-Befund 0.6.6: der frühere Ein-Wort-Fallback «Voll» klang wie
                   ein Zustand ohne Erklärung («voll» wovon?) — «Alle Werkzeuge»
@@ -3540,23 +3285,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             {modusMenuOffen && (
               <div
                 data-testid="modus-menu"
-                className="k-dialog"
-                style={{
-                  position: 'absolute',
-                  bottom: '100%',
-                  left: 0,
-                  marginBottom: 4,
-                  zIndex: 5,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 3,
-                  padding: 6,
-                  minWidth: 170,
-                  background: 'var(--k-surface)',
-                  border: '1px solid var(--k-line)',
-                  borderRadius: 'var(--k-radius-md)',
-                  boxShadow: 'var(--k-shadow-raised)',
-                }}
+                className="k-dialog dw-dropdown dw-dropdown--oben dw-dropdown--breit"
               >
                 {MODI_VOLLSTAENDIG_0_6_6.map((m) => {
                   // D1 (0.6.7, C-Befund 0.6.6): Ehrlichkeits-Begründung je
@@ -3569,33 +3298,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                   // schlicht weg — nichts wird erfunden.
                   const begruendung = modusAutomatik ? begruendeModus(m, modusSignale) : [];
                   return (
-                    <div key={m} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div key={m} className="dw-stack">
                       <button
                         type="button"
-                        className="k-druck"
+                        className={`k-druck dw-menu-item-btn${arbeitsmodus === m ? ' dw-modus-item-btn--aktiv' : ''}`}
                         data-testid={`modus-item-${m}`}
                         aria-pressed={arbeitsmodus === m}
                         onClick={() => modusHandVonListeWaehlen(m)}
-                        style={{
-                          all: 'unset',
-                          cursor: 'pointer',
-                          padding: '4px 6px',
-                          borderRadius: 4,
-                          fontSize: 12.5,
-                          background: arbeitsmodus === m ? 'var(--k-accent-wash)' : 'transparent',
-                        }}
                       >
                         {ARBEITSMODUS_LABEL[m]}
                       </button>
                       {begruendung.length > 0 && (
                         <span
                           data-testid={`modus-chip-begruendung-${m}`}
-                          style={{
-                            fontSize: 10.5,
-                            lineHeight: 1.3,
-                            color: 'var(--k-ink-faint)',
-                            padding: '0 6px 3px',
-                          }}
+                          className="dw-begruendung"
                         >
                           erkannt: {begruendung.join(' · ')}
                         </span>
@@ -3606,21 +3322,19 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 <Hairline />
                 <button
                   type="button"
-                  className="k-druck"
+                  className="k-druck dw-menu-item-btn"
                   data-testid="modus-festhalten"
                   aria-pressed={modusFesthalten}
                   onClick={modusFesthaltenUmschalten}
-                  style={{ all: 'unset', cursor: 'pointer', padding: '4px 6px', borderRadius: 4, fontSize: 12.5 }}
                 >
                   {modusFesthalten ? 'Festhalten aufheben' : 'Festhalten'}
                 </button>
                 <button
                   type="button"
-                  className="k-druck"
+                  className="k-druck dw-menu-item-btn"
                   data-testid="modus-automatik"
                   aria-pressed={!modusAutomatik}
                   onClick={modusAutomatikUmschalten}
-                  style={{ all: 'unset', cursor: 'pointer', padding: '4px 6px', borderRadius: 4, fontSize: 12.5 }}
                 >
                   {modusAutomatik ? 'Automatik aus' : 'Automatik an'}
                 </button>
@@ -3641,25 +3355,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           {orthoAktiv && ZEICHEN_WERKZEUGE.has(tool) && (
             <span
               data-testid="ortho-badge"
-              style={{ background: 'var(--k-accent)', color: 'white', padding: '3px 8px', borderRadius: 6, fontWeight: 600 }}
+              className="dw-ortho-badge"
             >
               ⊥ Ortho
             </span>
           )}
           {lastEntry && (
             <span
-              style={{
-                background: 'var(--k-surface)',
-                padding: '3px 8px',
-                borderRadius: 6,
-                border: '1px solid var(--k-line)',
-              }}
+              className="dw-mono-chip"
               data-testid="last-action"
             >
               {lastEntry.summary}
             </span>
           )}
-          <span style={{ flex: 1 }} />
+          <span className="dw-fuell" />
           {/* SK-D5-Nachbarbefund (Massnahme 6): dieser Hinweistext ist der
               längste Statusleisten-Eintrag und sass ohne Platzbegrenzung
               unten rechts — bei schmalerem Viewport/mehr Nachbar-Badges lief
@@ -3680,16 +3389,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                         ? 'Klick: Eckpunkte · Shift: Winkel einrasten · Klick auf Start: schliessen'
                         : 'Klick: auswählen'
             }
-            style={{
-              background: 'var(--k-surface)',
-              padding: '3px 8px',
-              borderRadius: 6,
-              border: '1px solid var(--k-line)',
-              maxWidth: 'min(46vw, 480px)',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}
+            className="dw-hint-chip"
           >
             {tool === 'wand'
               ? 'Klick: Punkte setzen · Shift halten: Winkel einrasten (0/45/90°) · Shift-Klick: Kette beenden · Esc: abbrechen'
@@ -3715,7 +3415,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             const m2 = Math.abs(a2) / 2 / 1e6;
             const geschosse = Math.max(1, Math.floor(9000 / 3000));
             return (
-              <span data-testid="live-flaeche" style={{ fontWeight: 700, color: 'var(--k-accent)' }}>
+              <span data-testid="live-flaeche" className="dw-live-flaeche">
                 {m2.toFixed(0)} m²{tool === 'volumen' ? ` · GF ~${(m2 * geschosse).toFixed(0)} m²` : ''}
               </span>
             );
@@ -3732,13 +3432,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             role="group"
             aria-label="Oberflächen-Preset"
             title="Fokus/Arbeiten/Prüfen — kuratierte Layout-Presets (auch in Einstellungen → Darstellung)"
-            style={{
-              display: 'inline-flex',
-              pointerEvents: 'auto',
-              border: '1px solid var(--k-line)',
-              borderRadius: 999,
-              overflow: 'hidden',
-            }}
+            className="dw-preset-wrap"
           >
             {PRESET_IDS.map((id) => (
               <button
@@ -3747,15 +3441,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
                 data-testid={`dock-preset-${id}`}
                 aria-pressed={aktivesPresetDesign === id}
                 onClick={() => presetAnwenden('design', id)}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  padding: '3px 8px',
-                  fontSize: 11.5,
-                  fontWeight: aktivesPresetDesign === id ? 650 : 500,
-                  color: aktivesPresetDesign === id ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
-                  background: aktivesPresetDesign === id ? 'var(--k-accent)' : 'var(--k-surface)',
-                }}
+                className={`dw-preset-item${aktivesPresetDesign === id ? ' dw-preset-item--aktiv' : ''}`}
               >
                 {PRESET_KURZLABEL[id]}
               </button>
@@ -3905,78 +3591,58 @@ function StudienPanel({
     URL.revokeObjectURL(a.href);
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: 70,
-    padding: '3px 6px',
-    borderRadius: 6,
-    border: '1px solid var(--k-line-strong)',
-    background: 'var(--k-raised)',
-    fontSize: 12,
-  };
-
   return (
     <div
       data-testid="studien-panel"
-      className="k-dialog"
-      style={{
-        zIndex: 4,
-        background: 'var(--k-surface)',
-        border: '1px solid var(--k-line)',
-        borderRadius: 'var(--k-radius-md)',
-        boxShadow: 'var(--k-shadow-raised)',
-        fontSize: 12.5,
-        padding: 12,
-        display: 'grid',
-        gap: 9,
-      }}
+      className="k-dialog dw-studien-panel"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className="dw-row-s3">
         <Badge hue={moduleHue.design}>Volumenstudien</Badge>
-        <span style={{ flex: 1 }} />
+        <span className="dw-fuell" />
         <KButton size="sm" tone="ghost" onClick={onClose}>×</KButton>
       </div>
       {!parzelle ? (
-        <div style={{ color: 'var(--k-ink-faint)', lineHeight: 1.5 }}>
+        <div className="dw-hinweis-block">
           Zeichne zuerst die <b>Parzelle als Zone</b> (Werkzeug «Zone») — die zuletzt
           gezeichnete Zone des Geschosses gilt als Baufeld.
         </div>
       ) : (
         <>
-          <div style={{ color: 'var(--k-ink-faint)' }}>
+          <div className="dw-faint">
             Parzelle: «{parzelle.name}» · Grenzabstand {grenzabstandAnzeigeM} m
           </div>
           {zonenRegel &&
             (regelOptionen.maxHoehe !== undefined ||
               regelOptionen.zielGf !== undefined ||
               regelOptionen.grenzabstand !== undefined) && (
-              <div data-testid="studie-regel-hinweis" style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+              <div data-testid="studie-regel-hinweis" className="dw-faint-klein">
                 aus Zonenregel «{zonenRegel.name}»
               </div>
             )}
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
+          <div className="dw-row-s4">
+            <label className="dw-label-soft-g5">
               GF-Ziel
               <input
                 type="number"
                 value={zielEffektiv}
                 data-testid="studie-gf"
                 onChange={(e) => setZielGf(Number(e.target.value))}
-                style={inputStyle}
+                className="dw-input-studien"
               />
               m²
             </label>
-            <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
+            <label className="dw-label-soft-g5">
               max.
               <input
                 type="number"
                 value={maxHoeheM}
                 onChange={(e) => setMaxHoeheM(Number(e.target.value))}
-                style={{ ...inputStyle, width: 44 }}
+                className="dw-input-studien dw-input-studien--44"
               />
               m
             </label>
           </div>
-          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+          <div className="dw-row-wrap-s2">
             <KButton
               size="sm"
               tone="quiet"
@@ -4009,8 +3675,8 @@ function StudienPanel({
               spezifisch (Wettbewerbsvorgabe/Architekt/SIA-Minimum) — Panel-
               Eingabe + ehrliche Herkunfts-Beschriftung. Leeres Feld = kein
               Override, die Owner-Defaults oben gelten unverändert weiter. */}
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-            <label style={{ display: 'flex', gap: 5, alignItems: 'center', color: 'var(--k-ink-soft)' }}>
+          <div className="dw-row-s4-wrap">
+            <label className="dw-label-soft-g5">
               Geschosshöhe
               <input
                 type="number"
@@ -4023,7 +3689,7 @@ function StudienPanel({
                   const roh = e.target.value;
                   setGeschosshoeheM(roh === '' ? null : Number(roh));
                 }}
-                style={{ ...inputStyle, width: 56 }}
+                className="dw-input-studien dw-input-studien--56"
               />
               m
             </label>
@@ -4039,24 +3705,18 @@ function StudienPanel({
               <option value="sia-minimum">SIA-Minimum</option>
             </KSelect>
           </div>
-          <div data-testid="studie-geschosshoehe-anzeige" style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+          <div data-testid="studie-geschosshoehe-anzeige" className="dw-faint-klein">
             Geschosshöhe {geschosshoeheEffektivM.toFixed(2)} m — {geschosshoeheHerkunftLabel[geschosshoeheHerkunft]}
           </div>
           {varianten.map((v) => (
             <div
               key={v.id}
               data-testid={`variante-${v.id}`}
-              style={{
-                border: '1px solid var(--k-line)',
-                borderRadius: 8,
-                padding: '8px 10px',
-                display: 'grid',
-                gap: 4,
-              }}
+              className="dw-variante-karte"
             >
-              <div style={{ display: 'flex', gap: 6, alignItems: 'baseline' }}>
+              <div className="dw-row-baseline">
                 <b>{v.name}</b>
-                <span style={{ color: 'var(--k-ink-faint)' }}>
+                <span className="dw-faint">
                   {v.geschosse} Gesch. · {(v.hoehe / 1000).toFixed(0)} m · GF {v.gf.toLocaleString('de-CH')} m²
                 </span>
                 {!v.passt && <Badge hue="var(--k-warning)">sprengt Höhe</Badge>}
@@ -4067,9 +3727,9 @@ function StudienPanel({
                   </Badge>
                 )}
               </div>
-              <div style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>{v.beschrieb}</div>
+              <div className="dw-beschrieb">{v.beschrieb}</div>
               {v.hinweise.length > 0 && (
-                <div style={{ color: 'var(--k-ink-faint)', fontSize: 11, lineHeight: 1.4 }}>
+                <div className="dw-hinweise-klein">
                   {v.hinweise.join(' · ')}
                 </div>
               )}
@@ -4088,7 +3748,7 @@ function StudienPanel({
               Bericht (SVG)
             </KButton>
           )}
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+          <span className="dw-faint-klein">
             Anstoss, kein Entwurf — Übernahme ist ein Undo-Schritt.
           </span>
           <FassadenModulSektion />
@@ -4122,11 +3782,11 @@ function VariantenMatrixSvg({
     return H - RAND - t * (H - 2 * RAND);
   };
   return (
-    <div data-testid="varianten-matrix" style={{ display: 'grid', gap: 2 }}>
-      <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+    <div data-testid="varianten-matrix" className="dw-stack-s1">
+      <div className="dw-faint-klein">
         Vergleich (oben = besser){aktiv ? ` — ${matrix.zeilen.find((z) => z.id === aktiv)?.name}` : ''}
       </div>
-      <svg viewBox={`0 0 ${W} ${H + 14}`} style={{ width: '100%' }}>
+      <svg viewBox={`0 0 ${W} ${H + 14}`} className="dw-svg-voll">
         {matrix.achsen.map((a, i) => (
           <g key={a.key}>
             <line x1={x(i)} y1={RAND} x2={x(i)} y2={H - RAND} stroke="var(--k-line-strong)" strokeWidth={1} pointerEvents="none" />
@@ -4148,7 +3808,7 @@ function VariantenMatrixSvg({
               stroke={aktiv === z.id ? 'var(--k-accent)' : z.passt ? 'var(--k-ink-soft)' : 'var(--k-danger)'}
               strokeWidth={aktiv === z.id ? 2.4 : 1.3}
               opacity={aktiv && aktiv !== z.id ? 0.35 : 0.9}
-              style={{ cursor: 'pointer' }}
+              className="dw-cursor-pointer"
               onMouseEnter={() => setAktiv(z.id)}
               onMouseLeave={() => setAktiv(null)}
             />
@@ -4195,10 +3855,10 @@ function FassadenModulSektion() {
     URL.revokeObjectURL(a.href);
   };
   return (
-    <div style={{ display: 'grid', gap: 5, borderTop: '1px solid var(--k-line)', paddingTop: 8 }} data-testid="fassadenmodule">
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <span style={{ fontWeight: 600, fontSize: 12 }}>Fassaden-Module</span>
-        <div style={{ flex: 1 }} />
+    <div className="dw-fassaden-sektion" data-testid="fassadenmodule">
+      <div className="dw-row-s3">
+        <span className="dw-titel-klein">Fassaden-Module</span>
+        <div className="dw-fuell" />
         <KButton size="sm" tone="quiet" data-testid="modul-editor-toggle" onClick={() => setEditorOffen(true)}>
           Editor
         </KButton>
@@ -4210,14 +3870,14 @@ function FassadenModulSektion() {
         </KButton>
       </div>
       {module.length > 0 && (
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center', fontSize: 11.5 }}>
-          <span style={{ color: 'var(--k-ink-soft)' }}>Gezeichnet</span>
+        <div className="dw-row-s2-klein">
+          <span className="dw-soft">Gezeichnet</span>
           <KSelect
             size="sm"
             value={modulName ?? ''}
             data-testid="modul-wahl"
             onChange={(e) => setModulName(e.target.value || null)}
-            style={{ flex: 1 }}
+            className="dw-fuell"
           >
             <option value="">— freie Masse —</option>
             {module.map((m) => (
@@ -4227,22 +3887,22 @@ function FassadenModulSektion() {
         </div>
       )}
       {editorOffen && <ModulEditor onClose={() => setEditorOffen(false)} />}
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 11.5 }}>
-        <span style={{ color: 'var(--k-ink-soft)' }}>Modul</span>
-        <input type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} style={{ width: 64 }} data-testid="modul-b" />
+      <div className="dw-row-s3-klein">
+        <span className="dw-soft">Modul</span>
+        <input type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} className="dw-input-modul" data-testid="modul-b" />
         <span>×</span>
-        <input type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} style={{ width: 64 }} />
-        <span style={{ color: 'var(--k-ink-faint)' }}>mm</span>
+        <input type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} className="dw-input-modul" />
+        <span className="dw-faint">mm</span>
       </div>
-      <div style={{ fontSize: 11.5 }} data-testid="module-bilanz">
+      <div className="dw-text-klein" data-testid="module-bilanz">
         {studie.totalModule} Standardmodule · {studie.totalPassstuecke} Passstücke · Wiederholung{' '}
         {(studie.wiederholung * 100).toFixed(0)}%
       </div>
       {module.length > 0 && (
-        <div style={{ display: 'grid', gap: 3, fontSize: 11, maxHeight: 120, overflowY: 'auto' }} data-testid="fassaden-zuweisung">
+        <div className="dw-zuweisung-liste" data-testid="fassaden-zuweisung">
           {studie.zeilen.map((z) => (
-            <div key={`${z.massId}-${z.kante}`} style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              <span style={{ color: 'var(--k-ink-soft)', width: 120 }}>
+            <div key={`${z.massId}-${z.kante}`} className="dw-row-s2">
+              <span className="dw-kante-label">
                 {z.koerper} · K{z.kante} ({(z.laenge / 1000).toFixed(1)} m)
               </span>
               <KSelect
@@ -4256,7 +3916,7 @@ function FassadenModulSektion() {
                     modul: e.target.value || null,
                   })
                 }
-                style={{ flex: 1 }}
+                className="dw-fuell"
               >
                 <option value="">frei</option>
                 {module.map((m) => (
@@ -4267,7 +3927,7 @@ function FassadenModulSektion() {
           ))}
         </div>
       )}
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+      <span className="dw-faint-klein">
         Eckenregel: Module ab Ecke, Passstück am Kantenende — Vorfabrikation lebt von der Wiederholung.
       </span>
     </div>
@@ -4413,15 +4073,15 @@ function StandortSuche() {
 
   const standortGesetzt = !!useProject.getState().doc.settings.standort;
   return (
-    <span style={{ display: 'inline-flex', flexDirection: 'column', gap: 2 }}>
-      <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center', position: 'relative' }}>
+    <span className="dw-standort-stack">
+      <span className="dw-standort-row">
         <input
           placeholder="Adresse / Parzelle …"
           value={text}
           data-testid="standort-suche"
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && void suchen()}
-          style={{ padding: '3px 6px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 170 }}
+          className="dw-input-standort"
         />
         <KButton size="sm" tone="quiet" data-testid="standort-suchen" onClick={() => void suchen()}>
           Suchen
@@ -4438,17 +4098,13 @@ function StandortSuche() {
         )}
         {treffer.length > 0 && (
           <div
-            style={{
-              position: 'absolute', top: '110%', left: 0, zIndex: 40, minWidth: 260,
-              background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 8,
-              boxShadow: 'var(--k-shadow, 0 6px 18px rgba(0,0,0,0.18))', display: 'grid',
-            }}
+            className="dw-standort-treffer"
             data-testid="standort-treffer"
           >
             {treffer.map((t, i) => (
               <button
                 key={i}
-                style={{ textAlign: 'left', padding: '6px 10px', background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
+                className="dw-treffer-btn"
                 onClick={() => {
                   runCommand('design.standortSetzen', { label: t.label, lat: t.lat, lon: t.lon, e: t.e, n: t.n });
                   setTreffer([]);
@@ -4459,10 +4115,10 @@ function StandortSuche() {
             ))}
           </div>
         )}
-        {meldung && <span style={{ color: 'var(--k-ink-faint)', maxWidth: 340 }} data-testid="standort-meldung">{meldung}</span>}
+        {meldung && <span className="dw-standort-meldung" data-testid="standort-meldung">{meldung}</span>}
       </span>
       {parzellenZentrum && (
-        <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }} data-testid="nachbarn-fussnote">
+        <span className="dw-faint-klein" data-testid="nachbarn-fussnote">
           Quelle: swisstopo VECTOR25 — amtlich, Datenstand ~2008
         </span>
       )}

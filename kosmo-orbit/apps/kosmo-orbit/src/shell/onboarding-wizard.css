@@ -50,3 +50,65 @@
 .onboarding-stepper-zeile:hover .onboarding-stepper-titel {
   color: var(--k-ink);
 }
+
+/* v0.8.0B / P7 — Akzentpunkte-Audit (P3-Audit): der Rail-Nummernkreis
+   (fertig/aktiv/offen) und die Footer-Fortschrittspunkte bleiben zulässige
+   Akzent-Verwendung (Gesetz 1 «aktiv/Auswahl») — kleine Zustandsindikatoren,
+   kein flächiges Signal. Hier nur aus Inline-Styles in Klassen verschoben. */
+.onboarding-stepper-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  font-family: var(--k-font-mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1.5px solid var(--k-line-strong);
+  color: var(--k-ink-faint);
+  background: transparent;
+}
+.onboarding-stepper-badge--aktiv {
+  border-color: var(--_farbe, var(--k-accent));
+  color: var(--_farbe, var(--k-accent));
+  background: var(--_farbe-fill, transparent);
+}
+.onboarding-stepper-badge--fertig {
+  border-color: var(--k-accent);
+  color: var(--k-accent-ink);
+  background: var(--k-accent);
+}
+
+.onboarding-footer {
+  flex: none;
+  border-top: 1px solid var(--k-line);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.onboarding-footer-punkte {
+  display: flex;
+  gap: 6px;
+}
+.onboarding-footer-punkt {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--k-line-strong);
+  transition: width var(--k-motion-base, 200ms);
+}
+.onboarding-footer-punkt--erreicht {
+  background: var(--k-accent);
+}
+.onboarding-footer-punkt--aktiv {
+  width: 24px;
+}
+.onboarding-footer-punkt--inaktiv {
+  width: 7px;
+}
+.onboarding-footer-zaehler {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 11px;
+  color: var(--k-ink-faint);
+}

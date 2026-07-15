@@ -51,6 +51,7 @@ import {
   ergaenzendeBilderAusRing,
   type Blick,
 } from '../state/kosmo-blick';
+import './kosmo-panel.css';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -1258,21 +1259,14 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       // v0.6.6 Stream E — Motion-Politur (MOTION-KONZEPT §4): Feder-Eintritt
       // beim Erstaufbau, schneller Austritt sobald `handleClose()` ihn
       // einleitet (s. State oben) — rein additive Klassen, keine Struktur.
-      className={schliessend ? 'k-panel-austritt' : 'k-panel-eintritt'}
-      style={{
-        width: 340,
-        display: 'flex',
-        flexDirection: 'column',
-        borderLeft: '1px solid var(--k-line)',
-        background: 'var(--k-surface)',
-      }}
+      className={`${schliessend ? 'k-panel-austritt' : 'k-panel-eintritt'} kp-panel`}
     >
       {showSetup && (
         <WerkzeugSetup betriebsart={settings.betriebsart} onClose={() => setShowSetup(false)} />
       )}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px' }}>
+      <div className="kp-kopf">
         <OrbitMark module="kosmo" size={24} />
-        <div style={{ fontWeight: 550 }}>Kosmo</div>
+        <div className="kp-titel">Kosmo</div>
         {/* Kritik 0.6.8 (Runde 1, Shot 04): der ScriptedProvider zeigte das
             konfigurierte Ollama-Modell — ehrlich «Skript» statt Fremd-Label. */}
         <Badge hue={settings.provider === 'mock' || settings.provider === 'scripted' ? 'var(--k-warning)' : moduleHue.kosmo}>
@@ -1293,7 +1287,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             </Badge>
           </span>
         )}
-        <div style={{ flex: 1 }} />
+        <div className="kp-fuell" />
         <KButton size="sm" tone="ghost" onClick={() => setShowSettings(!showSettings)} aria-label="Einstellungen">
           <KIcon name="zahnrad" size={16} />
         </KButton>
@@ -1310,9 +1304,9 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       <Hairline />
 
       {showSettings && (
-        <div style={{ padding: 14, display: 'grid', gap: 8, borderBottom: '1px solid var(--k-line)' }}>
-          <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>Betriebsart</div>
-          <div data-testid="betriebsart" style={{ display: 'flex', gap: 4 }}>
+        <div className="kp-einstellungen">
+          <div className="kp-feld-titel">Betriebsart</div>
+          <div data-testid="betriebsart" className="kp-betriebsart-reihe">
             {([
               ['standard', 'Standard', 'HomePC — volle Leistung, alle Werkzeuge lokal'],
               ['remote', 'Remote', 'VPN-Client auf den HomePC'],
@@ -1325,7 +1319,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 data-testid={`betriebsart-${art}`}
                 title={titel}
                 onClick={() => wechsleBetriebsart(art)}
-                style={{ flex: 1 }}
+                className="kp-betriebsart-btn"
               >
                 {label}
               </KButton>
@@ -1339,7 +1333,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             />
           )}
           {settings.betriebsart === 'cloud' && (
-            <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+            <div className="kp-hinweis-soft">
               Voll über Claude (mind. Opus 4.8). Renders/Whisper laufen als
               Browser-Fallback — die HomeStation-Qualität kommt erst am HomePC.
             </div>
@@ -1362,8 +1356,8 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           {autoErlaubt.size > 0 && (
             <>
               <Hairline />
-              <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>Governance</div>
-              <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+              <div className="kp-feld-titel">Governance</div>
+              <div className="kp-hinweis-soft">
                 {autoErlaubt.size} Command{autoErlaubt.size === 1 ? '' : 's'}{' '}
                 {autoErlaubt.size === 1 ? 'läuft' : 'laufen'} aktuell automatisch durch
                 («Für den Job erlauben»). Ein Command-Typ hat kein eigenes «fertig»-
@@ -1385,7 +1379,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             </>
           )}
           <Hairline />
-          <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+          <label className="kp-feld-titel">
             Verbindung
             <KSelect
               size="sm"
@@ -1399,7 +1393,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 setSettings(s);
                 localStorage.setItem('kosmo.llm', JSON.stringify(s));
               }}
-              style={{ display: 'block', width: '100%', marginTop: 4 }}
+              className="kp-select-block"
             >
               <option value="ollama">Ollama (HomeStation)</option>
               <option value="lmstudio">LM Studio (HomeStation)</option>
@@ -1437,9 +1431,9 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           )}
           {settings.provider === 'anthropic' && (
             <>
-              <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+              <div className="kp-feld-titel">
                 Cloud-Anmeldung —{' '}
-                <span data-testid="cloud-login-status" style={{ color: 'var(--k-ink)' }}>
+                <span data-testid="cloud-login-status" className="kp-ink">
                   {settings.cloudAuth === 'abo' && settings.anthropicOauthToken.trim()
                     ? 'angemeldet als Abo'
                     : settings.anthropicKey.trim()
@@ -1459,7 +1453,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               ) : (
                 <div
                   data-testid="cloud-login-hinweis"
-                  style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}
+                  className="kp-hinweis-soft"
                 >
                   Mit-Claude-Anmeldung nur in der Desktop-App — im Browser bitte API-Schlüssel.
                 </div>
@@ -1480,17 +1474,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               {cliFehlt && (
                 <div
                   data-testid="cloud-login-anleitung"
-                  style={{
-                    fontSize: 11.5,
-                    color: 'var(--k-ink-soft)',
-                    lineHeight: 1.5,
-                    display: 'grid',
-                    gap: 4,
-                    padding: '8px 10px',
-                    borderRadius: 'var(--k-radius-sm)',
-                    border: '1px solid var(--k-line)',
-                    background: 'var(--k-raised)',
-                  }}
+                  className="kp-anleitung-box"
                 >
                   <div>
                     Die Anthropic-CLI (<code>ant</code>) fehlt lokal — sie ist das Werkzeug, über das
@@ -1511,7 +1495,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 typ="password"
                 onChange={(v) => speichere(mitApiSchluessel(settings, v))}
               />
-              <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+              <label className="kp-feld-titel">
                 Modell
                 <KSelect
                   size="sm"
@@ -1526,7 +1510,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                       speichere({ ...settings, anthropicModel: v });
                     }
                   }}
-                  style={{ display: 'block', width: '100%', marginTop: 4 }}
+                  className="kp-select-block"
                 >
                   {ANTHROPIC_MODELLE.map((m) => (
                     <option key={m.id} value={m.id}>
@@ -1545,7 +1529,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               )}
             </>
           )}
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', gap: 8, alignItems: 'center' }}>
+          <label className="kp-schalter-label">
             <input
               type="checkbox"
               data-testid="tts-toggle"
@@ -1557,7 +1541,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             />
             Antworten vorlesen (Stimme über die HomeStation-Bridge)
           </label>
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', gap: 8, alignItems: 'center' }}>
+          <label className="kp-schalter-label">
             <input
               type="checkbox"
               data-testid="blick-toggle"
@@ -1570,7 +1554,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               Betriebsart cloud, weil dort das Bild tatsächlich das Haus
               verlässt (Anthropic-API). HomePC/Remote bleiben unverändert. */}
           {settings.betriebsart === 'cloud' && (
-            <div data-testid="kosmo-blick-cloud-hinweis" style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+            <div data-testid="kosmo-blick-cloud-hinweis" className="kp-hinweis-faint">
               Blick geht als Bild an Claude (Cloud) — verkleinert auf ~1 MP
             </div>
           )}
@@ -1583,9 +1567,9 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               Stand. Text-Blicke (kein `bild`) bekommen einen Platzhalter
               statt eines erfundenen Bilds. */}
           {blickRingPuffer().length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>Kosmos letzte Blicke</span>
-              <div data-testid="kosmo-blick-ring" style={{ display: 'flex', gap: 8 }}>
+            <div className="kp-blick-stack">
+              <span className="kp-hinweis-faint">Kosmos letzte Blicke</span>
+              <div data-testid="kosmo-blick-ring" className="kp-blick-ring">
                 {blickRingPuffer()
                   .slice(-3)
                   .map((b) => (
@@ -1593,32 +1577,22 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                       key={b.zeit}
                       data-testid="kosmo-blick-ring-eintrag"
                       title={`${b.stationTitel} — erfasst ${formatiereZeit(b.zeit)}`}
-                      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, width: 52 }}
+                      className="kp-blick-eintrag"
                     >
                       {b.bild ? (
                         <img
                           src={`data:${b.bild.mediaType};base64,${b.bild.dataBase64}`}
                           alt=""
-                          style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover', border: '1px solid var(--k-line-strong)' }}
+                          className="kp-blick-bild"
                         />
                       ) : (
                         <div
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 6,
-                            border: '1px dashed var(--k-line-strong)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: 9,
-                            color: 'var(--k-ink-faint)',
-                          }}
+                          className="kp-blick-platzhalter"
                         >
                           Text
                         </div>
                       )}
-                      <span style={{ fontSize: 9, color: 'var(--k-ink-faint)', textAlign: 'center', lineHeight: 1.2 }}>
+                      <span className="kp-blick-label">
                         {b.stationTitel}
                         <br />
                         {formatiereZeit(b.zeit)}
@@ -1650,9 +1624,9 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           {lizenzPublicKey() && (
             <>
               <Hairline />
-              <div style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+              <div className="kp-feld-titel">
                 Lizenz —{' '}
-                <span data-testid="lizenz-status" style={{ color: 'var(--k-ink)' }}>
+                <span data-testid="lizenz-status" className="kp-ink">
                   {lizenz.status === 'gueltig'
                     ? 'gültig'
                     : lizenz.status === 'abgelaufen'
@@ -1662,7 +1636,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                         : 'fehlt'}
                 </span>
               </div>
-              <div style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+              <div className="kp-hinweis-soft">
                 {lizenz.status === 'gueltig'
                   ? 'Cloud/Sync/Render sind freigeschaltet.'
                   : 'Cloud/Sync/Render brauchen eine gültige Lizenz — die lokale Arbeit bleibt in jedem Fall möglich.'}
@@ -1679,7 +1653,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         </div>
       )}
 
-      <div ref={scrollRef} style={{ flex: 1, overflow: 'auto', padding: 14, display: 'grid', gap: 10, alignContent: 'start' }}>
+      <div ref={scrollRef} className="kp-verlauf">
         {bubbles.map((b) => {
           // v0.6.8 («Kosmo sieht mit»): die Auto-Blick-Zeile — dieselbe
           // dezente Form wie die ui.*-Zeilen unten, aber mit eigenem testid
@@ -1690,22 +1664,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               <div
                 key={b.id}
                 data-testid="kosmo-blick-zeile"
-                className="k-einblenden"
-                style={{
-                  justifySelf: 'center',
-                  maxWidth: '92%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  padding: '4px 11px',
-                  borderRadius: 999,
-                  fontSize: 11.5,
-                  lineHeight: 1.4,
-                  textAlign: 'center',
-                  color: 'var(--k-ink-faint)',
-                  background: 'var(--k-raised)',
-                  border: '1px solid var(--k-line)',
-                }}
+                className="k-einblenden kp-system-zeile kp-blick-zeile"
               >
                 {b.blickBild && (
                   <img
@@ -1715,14 +1674,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                     onClick={() =>
                       setVollbildBlick({ dataUrl: b.blickBild!, zeit: b.blickZeit ?? b.id, text: b.text })
                     }
-                    style={{
-                      width: 26,
-                      height: 26,
-                      borderRadius: 6,
-                      objectFit: 'cover',
-                      border: '1px solid var(--k-line-strong)',
-                      cursor: 'pointer',
-                    }}
+                    className="kp-blick-thumbnail"
                   />
                 )}
                 <span>{b.text}</span>
@@ -1737,19 +1689,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               <div
                 key={b.id}
                 data-testid={`kosmo-ui-aktion-${b.testidSuffix ?? 'aktion'}`}
-                className="k-einblenden"
-                style={{
-                  justifySelf: 'center',
-                  maxWidth: '92%',
-                  padding: '4px 11px',
-                  borderRadius: 999,
-                  fontSize: 11.5,
-                  lineHeight: 1.4,
-                  textAlign: 'center',
-                  color: 'var(--k-ink-faint)',
-                  background: 'var(--k-raised)',
-                  border: '1px solid var(--k-line)',
-                }}
+                className="k-einblenden kp-system-zeile"
               >
                 {b.text}
               </div>
@@ -1765,28 +1705,17 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           return (
           <div
             key={b.id}
-            className="k-einblenden"
-            style={{
-              justifySelf: b.who === 'du' ? 'end' : 'start',
-              maxWidth: '88%',
-              padding: '8px 12px',
-              borderRadius: 12,
-              fontSize: 13.5,
-              lineHeight: 1.5,
-              whiteSpace: 'pre-wrap',
-              background: b.who === 'du' ? 'var(--k-accent-wash)' : 'var(--k-raised)',
-              border: '1px solid var(--k-line)',
-            }}
+            className={`k-einblenden kp-bubble ${b.who === 'du' ? 'kp-bubble--du' : 'kp-bubble--kosmo'}`}
           >
             {b.text}
             {marken.length > 0 && (
-              <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+              <div className="kp-marken-reihe">
                 {marken.map((n) => {
                   const ref = quellenMap.current.get(n)!;
                   return (
                     <button
                       key={n}
-                      className="k-druck"
+                      className="k-druck kp-quelle-chip"
                       data-testid="quelle-chip"
                       title={`${ref.text.slice(0, 180)}${ref.text.length > 180 ? ' …' : ''}`}
                       onClick={() => {
@@ -1811,17 +1740,6 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                           ref.typ === 'journal' ? 'train' : ref.typ === 'referenz' ? 'data' : ref.typ === 'asset' ? 'asset' : 'prepare';
                         (window as never as { __kosmo?: { open: (s: string) => void } }).__kosmo?.open(ziel);
                       }}
-                      style={{
-                        all: 'unset',
-                        cursor: 'pointer',
-                        fontSize: 11,
-                        fontFamily: 'var(--k-font-mono)',
-                        padding: '2px 8px',
-                        borderRadius: 'var(--k-radius-sm)',
-                        border: '1px solid var(--k-line-strong)',
-                        background: 'var(--k-surface)',
-                        color: 'var(--k-ink-soft)',
-                      }}
                     >
                       Q{n} · {ref.titel}
                     </button>
@@ -1830,24 +1748,16 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               </div>
             )}
             {b.who === 'kosmo' && !b.text.startsWith('⚠') && (
-              <div style={{ display: 'flex', gap: 6, marginTop: 6, opacity: b.feedback ? 1 : 0.55 }}>
+              <div className={`kp-feedback-reihe${b.feedback ? ' kp-feedback-reihe--gegeben' : ''}`}>
                 {(['gut', 'schlecht'] as const).map((f) => (
                   <button
                     key={f}
-                    className="k-druck"
+                    className={`k-druck kp-feedback-btn${b.feedback === f ? ' kp-feedback-btn--aktiv' : ''}`}
                     aria-label={f === 'gut' ? 'Hilfreich' : 'Nicht hilfreich'}
                     data-testid={`fb-${f}`}
                     onClick={() => {
                       journal.add({ sentiment: f, context: b.text });
                       setBubbles((all) => all.map((x) => (x.id === b.id ? { ...x, feedback: f } : x)));
-                    }}
-                    style={{
-                      all: 'unset',
-                      cursor: 'pointer',
-                      fontSize: 12,
-                      padding: '1px 6px',
-                      borderRadius: 6,
-                      background: b.feedback === f ? 'var(--k-accent-wash)' : 'transparent',
                     }}
                   >
                     <KIcon name={f === 'gut' ? 'daumen-hoch' : 'daumen-runter'} size={14} />
@@ -1867,7 +1777,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           if (schritte.length === 0) return null;
           const offen = schritte.some((c) => c.state === 'offen');
           return (
-            <div key={pid} style={{ display: 'grid', gap: 6 }}>
+            <div key={pid} className="kp-paket-stack">
               {/* Paket-Zusammenfassung (Aufgabe 3): nur ab N≥2 — bei EINEM
                   Paket immer der Fall (chat.ts vergibt `paket` nur, wenn ein
                   Zug mehr als einen schreibenden Tool-Call enthielt), die
@@ -1875,24 +1785,17 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               {schritte.length >= 2 && (
                 <div
                   data-testid="diff-paket-zusammenfassung"
-                  style={{ fontSize: 12, color: 'var(--k-ink-soft)', padding: '0 2px' }}
+                  className="kp-paket-zusammenfassung"
                 >
                   {paketZusammenfassungsZeile(schritte)}
                 </div>
               )}
               <div
                 data-testid="paket-card"
-                style={{
-                  border: `1px solid ${offen ? 'var(--k-accent)' : 'var(--k-success)'}`,
-                  borderRadius: 10,
-                  padding: 10,
-                  display: 'grid',
-                  gap: 8,
-                  background: 'var(--k-raised)',
-                }}
+                className={`kp-karte ${offen ? 'kp-karte--offen' : 'kp-karte--fertig'}`}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
-                  <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div className="kp-karte-kopf-reihe">
+                  <div className="kp-eyebrow">
                     Aktionskette — {schritte.length} Schritte
                   </div>
                   {/* v0.7.6 Welle 2: Risk-Level NUR, weil hier real ableitbar
@@ -1915,13 +1818,13 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                     testid="paket-risiko"
                   />
                 </div>
-                <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 3, fontSize: 12.5 }}>
+                <ol className="kp-schritt-liste">
                   {schritte.map((c) => (
                     <li key={c.callId}>{c.summary}</li>
                   ))}
                 </ol>
                 {offen ? (
-                  <div style={{ display: 'flex', gap: 6 }}>
+                  <div className="kp-knopf-reihe">
                     <KButton size="sm" tone="accent" onClick={() => void applyPaket(pid)} data-testid="apply-paket">
                       Alle {schritte.length} anwenden
                     </KButton>
@@ -1943,57 +1846,39 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             <div
               key={c.callId}
               data-testid="proposal-card"
-              className={c.state === 'angewendet' ? 'k-puls' : 'k-einblenden'}
-              style={{
-                border: `1px solid ${c.state === 'angewendet' ? 'var(--k-success)' : 'var(--k-accent)'}`,
-                borderRadius: 10,
-                padding: 10,
-                display: 'grid',
-                gap: 8,
-                background: 'var(--k-raised)',
-              }}
+              className={`${c.state === 'angewendet' ? 'k-puls' : 'k-einblenden'} kp-karte ${c.state === 'angewendet' ? 'kp-karte--fertig' : 'kp-karte--offen'}`}
             >
-              <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div className="kp-eyebrow">
                 Vorschlag von Kosmo
               </div>
-              {c.state !== 'offen' && <div style={{ fontWeight: 550, fontSize: 13.5 }}>{c.summary}</div>}
+              {c.state !== 'offen' && <div className="kp-karte-titel">{c.summary}</div>}
               {c.vorschau && (
                 <>
                   {c.vorschau.typologieHinweis && (
-                    <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{c.vorschau.typologieHinweis}</div>
+                    <div className="kp-vorschau-hinweis">{c.vorschau.typologieHinweis}</div>
                   )}
-                  <div data-testid="proposal-vorschau" style={{ display: 'flex', gap: 6 }}>
-                    <div style={{ display: 'grid', gap: 2, flex: 1, minWidth: 0 }}>
+                  <div data-testid="proposal-vorschau" className="kp-vorschau-reihe">
+                    <div className="kp-vorschau-spalte">
                       <span
-                        style={{
-                          fontSize: 9.5,
-                          color: 'var(--k-ink-faint)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                        }}
+                        className="kp-vorschau-label"
                       >
                         Vorher
                       </span>
                       <div
-                        style={{ height: 90, background: 'var(--k-plan-paper)', borderRadius: 6, overflow: 'hidden' }}
+                        className="kp-vorschau-bild"
                         dangerouslySetInnerHTML={{
                           __html: c.vorschau.vorherSvg.replace('<svg ', '<svg style="width:100%;height:100%" '),
                         }}
                       />
                     </div>
-                    <div style={{ display: 'grid', gap: 2, flex: 1, minWidth: 0 }}>
+                    <div className="kp-vorschau-spalte">
                       <span
-                        style={{
-                          fontSize: 9.5,
-                          color: 'var(--k-ink-faint)',
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                        }}
+                        className="kp-vorschau-label"
                       >
                         Nachher
                       </span>
                       <div
-                        style={{ height: 90, background: 'var(--k-plan-paper)', borderRadius: 6, overflow: 'hidden' }}
+                        className="kp-vorschau-bild"
                         dangerouslySetInnerHTML={{
                           __html: c.vorschau.nachherSvg.replace('<svg ', '<svg style="width:100%;height:100%" '),
                         }}
@@ -2048,37 +1933,29 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             <div
               key={c.callId}
               data-testid="proposal-card-fehler"
-              className="k-einblenden"
-              style={{
-                border: '1px solid var(--k-warning)',
-                borderRadius: 10,
-                padding: 10,
-                display: 'grid',
-                gap: 6,
-                background: 'var(--k-raised)',
-              }}
+              className="k-einblenden kp-karte kp-karte--fehler"
             >
-              <div style={{ fontSize: 12, color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <div className="kp-eyebrow">
                 Vorschlag von Kosmo — nicht angewendet
               </div>
-              <div style={{ fontWeight: 550, fontSize: 13.5 }}>{c.summary}</div>
-              <div data-testid="diff-karte-fehler" style={{ fontSize: 11.5, color: 'var(--k-warning)' }}>
+              <div className="kp-karte-titel">{c.summary}</div>
+              <div data-testid="diff-karte-fehler" className="kp-fehler-zeile">
                 ⚠ {c.fehler}
               </div>
             </div>
           ))}
 
-        {busy && <div style={{ color: 'var(--k-ink-faint)', fontSize: 12.5 }}>Kosmo denkt …</div>}
+        {busy && <div className="kp-denkt">Kosmo denkt …</div>}
       </div>
 
-      <div style={{ padding: 12, borderTop: '1px solid var(--k-line)', display: 'flex', gap: 8 }}>
+      <div className="kp-eingabe-reihe">
         <KButton
           size="sm"
           tone={recording ? 'accent' : 'ghost'}
           onClick={() => void toggleMic()}
           aria-label="Speak to Kosmo"
           data-testid="kosmo-mic"
-          style={recording ? { animation: 'none' } : undefined}
+          className={recording ? 'kp-mic-aktiv' : undefined}
         >
           {recording ? '● Stopp' : <KIcon name="mikrofon" size={16} />}
         </KButton>
@@ -2111,7 +1988,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && send()}
           placeholder="Sprich mit Kosmo … (@kosmodoc für Hilfe)"
-          style={{ ...inputStyle, flex: 1, marginTop: 0 }}
+          className="kp-input kp-eingabe-feld"
         />
         <KButton tone="accent" size="sm" onClick={send} disabled={busy} data-testid="kosmo-send">
           Senden
@@ -2126,33 +2003,18 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         <div
           data-testid="kosmo-blick-vollbild"
           onClick={() => setVollbildBlick(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'color-mix(in srgb, var(--k-ink) 55%, transparent)',
-            display: 'grid',
-            justifyItems: 'center',
-            alignItems: 'center',
-            zIndex: 500,
-          }}
+          className="kp-vollbild-scrim"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 8,
-              maxWidth: '90vw',
-              maxHeight: '90vh',
-            }}
+            className="kp-vollbild-box"
           >
             <img
               src={vollbildBlick.dataUrl}
               alt="Kosmos erfasster Blick — Vollbild"
-              style={{ maxWidth: '90vw', maxHeight: '80vh', objectFit: 'contain', borderRadius: 8, border: '1px solid var(--k-line-strong)' }}
+              className="kp-vollbild-bild"
             />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#fff', fontSize: 12 }}>
+            <div className="kp-vollbild-fuss">
               <span>{vollbildBlick.text} — erfasst {formatiereZeit(vollbildBlick.zeit)}</span>
               <KButton
                 size="sm"
@@ -2182,24 +2044,14 @@ function SettingsFeld({
   typ?: string;
 }) {
   return (
-    <label style={{ fontSize: 12, color: 'var(--k-ink-soft)' }}>
+    <label className="kp-feld-titel">
       {label}
       <input
         type={typ ?? 'text'}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={inputStyle}
+        className="kp-input"
       />
     </label>
   );
 }
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  marginTop: 4,
-  padding: '6px 10px',
-  borderRadius: 'var(--k-radius-sm)',
-  border: '1px solid var(--k-line-strong)',
-  background: 'var(--k-raised)',
-  fontSize: 13,
-};

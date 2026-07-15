@@ -1,0 +1,65 @@
+/* PlanView (v0.8.0B / P7) — NUR das umliegende Chrome (Trace-Wähler,
+   U-Plan/Graph/Achsen-Toggles, Wurzel-Hintergrund, SVG-Cursor). Die
+   SVG-/Pointer-Interaktion, Fang- und LOD-Logik selbst (Capture-Weg,
+   Hit-Tests) bleiben unangetastet — kein Zeilen-Umbau in den
+   Pointer-Handlern, keine Änderung an den `plan-*`-LOD-Gruppen.
+
+   Die vier Toggle-Knöpfe trugen schon vorher literale Hex-Farben
+   (`#7a5c9e`/`#2455a4`), NICHT theme-reaktiv (Papier-Akzent hart codiert,
+   wirkt unverändert in Orbit) — das ist Bestandsverhalten, hier nur aus
+   Inline-Styles in Klassen verschoben, bewusst OHNE Farbwechsel (reiner
+   Hüllenumbau, keine Verhaltens-/Optik-Korrektur ausserhalb des Auftrags). */
+
+.pv-root {
+  position: absolute;
+  inset: 0;
+  background: var(--k-plan-paper);
+}
+
+.pv-trace-select {
+  position: absolute;
+  top: 8px;
+  right: 70px;
+  z-index: 5;
+  font-size: 11.5px;
+  background: var(--k-raised);
+  color: inherit;
+}
+.pv-trace-select--aktiv {
+  background: #7a5c9e;
+  color: white;
+}
+
+.pv-toggle-btn {
+  position: absolute;
+  top: 8px;
+  z-index: 5;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--k-line-strong);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  background: var(--k-raised);
+  color: inherit;
+}
+.pv-toggle-btn--aktiv {
+  background: #2455a4;
+  color: white;
+}
+.pv-toggle-btn--uplan {
+  right: 215px;
+}
+.pv-toggle-btn--graph {
+  right: 8px;
+}
+.pv-toggle-btn--achsen {
+  right: 140px;
+}
+
+.pv-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}

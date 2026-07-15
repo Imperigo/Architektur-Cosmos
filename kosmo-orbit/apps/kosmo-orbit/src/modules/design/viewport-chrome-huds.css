@@ -1,0 +1,142 @@
+/* ViewportChromeHuds (v0.8.0B / P7) — statische Layout-/Typo-Anteile der vier
+   HUD-Floats + der zwei Eigenschaften-/Statuskarten-Floats als Klassen statt
+   Inline; die datengetriebenen Rollenfarben (background/border/color nach
+   `rolle`/`aktiv`/Zustand) bleiben bewusst Inline-Carrier (Spez §1 «rohe
+   px/Hex-Literale … Ausnahme: datengetriebene Carrier»). Key-Value-Zeilen
+   (Statuskarte/Eigenschaften-Sektionen) laufen jetzt über `KKeyValue`
+   (Spez §3 B-41) statt handgebauter Zeilen-Divs. */
+
+.vch-tab-leiste {
+  display: flex;
+  gap: var(--k-s2);
+  padding: var(--k-s2);
+}
+
+.vch-modus-karte {
+  padding: 14px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.vch-modus-kopf {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: var(--k-s3);
+}
+.vch-modus-badge {
+  font-family: var(--k-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+.vch-fuell {
+  flex: 1;
+}
+.vch-modus-titel {
+  font-weight: 700;
+  font-size: var(--k-t-lg, 19px);
+  line-height: 1.15;
+  color: var(--k-ink);
+}
+.vch-modus-sub {
+  font-size: var(--k-t-md);
+  color: var(--k-ink-soft);
+  margin-top: 3px;
+}
+
+.vch-orientierung {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s4);
+  padding: 12px 14px 12px var(--k-s3);
+}
+.vch-orientierung-spalte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}
+.vch-label-micro {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs, 10px);
+  letter-spacing: 0.14em;
+  color: var(--k-ink-faint);
+}
+.vch-wert-mono {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-md);
+  color: var(--k-ink-soft);
+}
+.vch-achsen-zeile {
+  display: flex;
+  gap: var(--k-s3);
+  margin-top: 2px;
+}
+.vch-achsen-zeile span {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs, 10px);
+}
+
+.vch-hud-karte {
+  padding: 14px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.vch-hud-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--k-s4);
+}
+.vch-hud-kopf-label {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs, 10px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+
+.vch-eigenschaften {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.vch-eigenschaften-kopf {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--k-s3) var(--k-s4);
+  border-bottom: 1px solid var(--k-glass-stroke);
+}
+.vch-eigenschaften-koerper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--k-s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s4);
+}
+.vch-sektion-titel {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs, 10px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  margin-bottom: var(--k-s3);
+}
+.vch-eigenschaften-fuss {
+  flex: none;
+  padding: var(--k-s3) var(--k-s4);
+  border-top: 1px solid var(--k-glass-stroke);
+}
+.vch-aktion-inhalt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  justify-content: center;
+  width: 100%;
+}

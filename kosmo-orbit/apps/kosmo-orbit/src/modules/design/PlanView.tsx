@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect } from '@kosmo/ui';
+import './plan-view-chrome.css';
 import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUnternehmerplan } from './unternehmerplan';
@@ -592,20 +593,16 @@ export function PlanView({
   });
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: 'var(--k-plan-paper)' }}>
+    <div className="pv-root">
       <KSelect
         size="sm"
         data-testid="trace-select"
         value={traceId}
         onChange={(e) => setTraceId(e.target.value)}
         title="Trace: anderes Geschoss blass unterlegen (nur Bildschirm)"
-        style={{
-          // v0.6.9 KSelect-Split: position/top/right/zIndex tragen den Wrapper,
-          // Farbe/Schrift den Trigger — Optik wie zuvor (lila, solange aktiv).
-          position: 'absolute', top: 8, right: 70, zIndex: 5,
-          background: traceId ? '#7a5c9e' : 'var(--k-raised)', color: traceId ? 'white' : 'inherit',
-          fontSize: 11.5,
-        }}
+        // v0.6.9 KSelect-Split: position/top/right/zIndex tragen den Wrapper,
+        // Farbe/Schrift den Trigger — Optik wie zuvor (lila, solange aktiv).
+        className={`pv-trace-select${traceId ? ' pv-trace-select--aktiv' : ''}`}
       >
         <option value="">Trace</option>
         {doc.storeysOrdered().filter((s) => s.id !== activeStoreyId).map((s) => (
@@ -618,43 +615,25 @@ export function PlanView({
           // v0.6.6 / Welle 2 Stream C (Task 7, MOTION-KONZEPT-066 §3): .k-druck-
           // Rollout auf PlanView-eigene Leisten-Knöpfe — DOM/Props/testid/Text
           // byte-identisch, nur die Pressklasse kommt zusätzlich dazu.
-          className="k-druck"
+          className={`k-druck pv-toggle-btn pv-toggle-btn--uplan${overlaySichtbar ? ' pv-toggle-btn--aktiv' : ''}`}
           onClick={() => overlayUmschalten()}
           title="Unternehmerplan-Referenz ein-/ausblenden (Durchpaus-Layer, nur Bildschirm, C4b)"
-          style={{
-            position: 'absolute', top: 8, right: 215, zIndex: 5, padding: '3px 10px',
-            borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
-            background: overlaySichtbar ? '#2455a4' : 'var(--k-raised)', color: overlaySichtbar ? 'white' : 'inherit',
-            font: 'inherit', fontSize: 11.5,
-          }}
         >
           U-Plan
         </button>
       )}
       <button
         data-testid="graph-toggle"
-        className="k-druck"
+        className={`k-druck pv-toggle-btn pv-toggle-btn--graph${graphAn ? ' pv-toggle-btn--aktiv' : ''}`}
         onClick={() => setGraphAn(!graphAn)}
-        style={{
-          position: 'absolute', top: 8, right: 8, zIndex: 5, padding: '3px 10px',
-          borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
-          background: graphAn ? '#2455a4' : 'var(--k-raised)', color: graphAn ? 'white' : 'inherit',
-          font: 'inherit', fontSize: 11.5,
-        }}
       >
         Graph
       </button>
       <button
         data-testid="achsen-toggle"
-        className="k-druck"
+        className={`k-druck pv-toggle-btn pv-toggle-btn--achsen${achsenAn ? ' pv-toggle-btn--aktiv' : ''}`}
         onClick={() => setAchsenAn(!achsenAn)}
         title="Stützenraster-Achsen (Konstruktionslinien) ein-/ausblenden — nur Bildschirm, Druck/Export unverändert"
-        style={{
-          position: 'absolute', top: 8, right: 140, zIndex: 5, padding: '3px 10px',
-          borderRadius: 6, border: '1px solid var(--k-line-strong)', cursor: 'pointer',
-          background: achsenAn ? '#2455a4' : 'var(--k-raised)', color: achsenAn ? 'white' : 'inherit',
-          font: 'inherit', fontSize: 11.5,
-        }}
       >
         Achsen
       </button>
@@ -669,7 +648,8 @@ export function PlanView({
         // (precision) — der eigene `cursorStil` (Zeile oben) bleibt
         // unverändert bestehen (Spec §8, wörtlich «eigener cursorStil bleibt»).
         data-cursor-zone="praezision"
-        style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', cursor: cursorStil }}
+        className="pv-svg"
+        style={{ cursor: cursorStil }}
         onPointerDown={(e) => {
           // §5: JEDE neue Eingabe bricht einen laufenden Fling/Zoom-Anim sofort
           // ab — vor jeder Verzweigung, unabhängig von Taste/Pointer-Typ.

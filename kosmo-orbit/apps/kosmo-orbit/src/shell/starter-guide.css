@@ -1,0 +1,18 @@
+/* StarterGuide (v0.8.0B / P7) — Akzentpunkte-Audit (P3-Audit): der
+   Fortschrittsbalken-Fill ist der einzige echte Akzent-Fläche-Kandidat
+   dieser Datei; er bleibt zulässig (Gesetz 1 «Akzent nur Primäraktion/
+   aktiv/Auswahl/Link» — eine 3px-Fortschrittslinie ist kein «flächiges»
+   Signal). Hier nur aus Inline-Style in Klasse verschoben, Breite bleibt
+   der einzige datengetriebene Wert. */
+
+.sg-fortschritt-spur {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--k-line);
+  overflow: hidden;
+}
+.sg-fortschritt-fill {
+  height: 100%;
+  background: var(--k-accent);
+  transition: width var(--k-motion-base);
+}

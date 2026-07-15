@@ -1,0 +1,92 @@
+/* Viewport3D (v0.8.0B / P7) — NUR das umliegende Chrome (Render-Panel,
+   Skizze-Hinweise/-Batch/-Vorschlag, Wurzel-/Mount-Wrapper). Die three.js-
+   Szene, Kamera-Controls, Capture-Weg («offizieller Modus», D5) und
+   Hit-Tests selbst bleiben unangetastet — dieses CSS betrifft ausschliesslich
+   die React-Chrome-Divs rund um `mountRef`, nie den Szenenaufbau. */
+
+.v3d-root {
+  position: absolute;
+  inset: 0;
+}
+.v3d-mount {
+  position: absolute;
+  inset: 0;
+}
+
+.v3d-render-ecke {
+  position: absolute;
+  right: 88px;
+  bottom: 92px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--k-s2);
+}
+.v3d-render-panel {
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  padding: var(--k-s3);
+  box-shadow: var(--k-shadow-raised);
+  display: grid;
+  gap: var(--k-s2);
+  width: 200px;
+}
+.v3d-render-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.v3d-render-status {
+  font-size: 10px;
+  font-family: var(--k-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.v3d-render-bild {
+  width: 100%;
+  border: 1px solid var(--k-line);
+}
+.v3d-render-fehler {
+  font-size: var(--k-t-xs, 11px);
+  color: var(--k-danger);
+}
+.v3d-knopf-inhalt {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.v3d-sketch-hinweis {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  padding: var(--k-s3) var(--k-s4);
+  font-size: var(--k-t-md);
+  box-shadow: var(--k-shadow-overlay);
+}
+.v3d-sketch-batch {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  padding: var(--k-s3) var(--k-s4);
+  box-shadow: var(--k-shadow-overlay);
+}
+.v3d-sketch-batch--vorschlag {
+  border: 1px solid var(--k-accent);
+}
+.v3d-sketch-text {
+  font-size: var(--k-t-md);
+}

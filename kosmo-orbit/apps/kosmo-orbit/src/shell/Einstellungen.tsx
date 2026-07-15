@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Badge, Hairline, KButton, KIcon, moduleHue, type ModuleId, type ThemeName } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, KKeyValue, moduleHue, type ModuleId, type ThemeName } from '@kosmo/ui';
 import './orbit-065.css';
+import './einstellungen.css';
 import { AKZENTE } from './akzente';
 import { NEUIGKEITEN, neuigkeitenFuerStation } from './neuigkeiten';
 import { adaptionAktiv, adaptionZuruecksetzen, setAdaptionAktiv } from '../state/oberflaeche-adaption-kern';
@@ -207,20 +208,13 @@ export function Einstellungen({
       role="dialog"
       aria-modal
       aria-label="Einstellungen"
-      className="k-dialog-scrim"
-      style={{ zIndex: 250, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
+      className="k-dialog-scrim es-scrim"
       onClick={onClose}
     >
       <div
         data-testid="einstellungen-panel"
-        className="k-dialog-box k-dialog k-skalieren-ein"
+        className="k-dialog-box k-dialog k-skalieren-ein es-panel"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          width: 'min(640px, calc(100vw - 48px))',
-          maxHeight: 'calc(100vh - 48px)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
       >
         {werkzeugSetupOffen && (
           <WerkzeugSetup betriebsart={loadSettings().betriebsart} onClose={() => setWerkzeugSetupOffen(false)} />
@@ -234,19 +228,19 @@ export function Einstellungen({
           </button>
         </div>
 
-        <div className="k-dialog-koerper orbit065-einstellungen-koerper" style={{ overflowY: 'auto' }}>
+        <div className="k-dialog-koerper orbit065-einstellungen-koerper es-koerper-scroll">
           {station && (
             <section data-testid="einstellungen-neuigkeiten-station" className="orbit065-einstellungen-sektion">
               <div className="orbit065-einstellungen-sektionstitel">Neu in {stationName ?? station}</div>
               {stationPunkte.length === 0 ? (
-                <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>
+                <div className="es-station-leer">
                   Noch keine eigenen Einträge für diese Station — siehe «Funktionen &amp; Neues» unten.
                 </div>
               ) : (
-                <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 4, fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+                <ul className="es-station-liste">
                   {stationPunkte.map((t, i) => (
                     <li key={i}>
-                      <span style={{ color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)', fontSize: 11 }}>
+                      <span className="es-station-meta">
                         {t.version}
                         {t.inArbeit ? ' · in Arbeit' : ''}
                       </span>{' '}
@@ -261,7 +255,7 @@ export function Einstellungen({
 
           <section data-testid="einstellungen-darstellung" className="orbit065-einstellungen-sektion">
             <div className="orbit065-einstellungen-sektionstitel">Darstellung</div>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="es-darstellung-reihe">
             {/* v0.7.3 D7 (Owner-Entscheid, Gestaltungs-Spez): Tinte entfernt —
                 der 3-Segment-Wähler (0.7.2 §1) schrumpft zurück auf 2
                 Segmente PAPIER/KOSMOS. `data-testid="einstellung-thema"`
@@ -272,17 +266,7 @@ export function Einstellungen({
                 GENAU auf der Grenze zwischen beiden Buttons, ein
                 browserabhängig unklares Ziel statt des früheren, zuverlässig
                 mittleren «Tinte»-Segments. */}
-            <span
-              data-testid="einstellung-thema"
-              role="group"
-              aria-label="Thema"
-              style={{
-                display: 'inline-flex',
-                border: '1px solid var(--k-line-strong)',
-                borderRadius: 'var(--k-radius-pill, 999px)',
-                overflow: 'hidden',
-              }}
-            >
+            <span data-testid="einstellung-thema" role="group" aria-label="Thema" className="es-segment">
               {(
                 [
                   { key: 'paper' as const, label: 'Papier' },
@@ -295,21 +279,13 @@ export function Einstellungen({
                   data-testid={`einstellung-thema-${seg.key}`}
                   aria-pressed={theme === seg.key}
                   onClick={() => setTheme(seg.key)}
-                  style={{
-                    all: 'unset',
-                    cursor: 'pointer',
-                    padding: '5px 12px',
-                    fontSize: 12.5,
-                    fontWeight: theme === seg.key ? 650 : 500,
-                    color: theme === seg.key ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
-                    background: theme === seg.key ? 'var(--k-accent)' : 'transparent',
-                  }}
+                  className={`es-segment-item${theme === seg.key ? ' es-segment-item--aktiv' : ''}`}
                 >
                   {seg.label}
                 </button>
               ))}
             </span>
-            <span style={{ display: 'inline-flex', gap: 7, alignItems: 'center' }}>
+            <span className="es-akzent-reihe">
               {AKZENTE.map((a) => (
                 <button
                   key={a.key}
@@ -317,18 +293,8 @@ export function Einstellungen({
                   title={`Akzent ${a.name}`}
                   aria-label={`Akzent ${a.name}`}
                   data-testid={`einstellung-akzent-${a.key}`}
-                  style={{
-                    all: 'unset',
-                    cursor: 'pointer',
-                    width: 14,
-                    height: 14,
-                    borderRadius: 999,
-                    background: a.farbe ?? 'var(--k-technik)',
-                    boxShadow:
-                      akzent === a.key
-                        ? '0 0 0 1.5px var(--k-field), 0 0 0 3px var(--k-technik)'
-                        : '0 0 0 1px var(--k-line-strong)',
-                  }}
+                  className={`es-akzent-swatch${akzent === a.key ? ' es-akzent-swatch--aktiv' : ''}`}
+                  style={{ background: a.farbe ?? 'var(--k-technik)' }}
                 />
               ))}
             </span>
@@ -341,20 +307,9 @@ export function Einstellungen({
               teilen sich den Platz als Streifen/Spalten). Gleiches 2-Segment-
               Muster wie `einstellung-thema` oben (Container-Testid + je
               Segment ein eigener, additiver Testid). */}
-          <div style={{ marginTop: 12, display: 'grid', gap: 6 }}>
-            <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>Werkzeug-Anordnung</span>
-            <span
-              data-testid="einstellungen-dock-modus"
-              role="group"
-              aria-label="Werkzeug-Anordnung"
-              style={{
-                display: 'inline-flex',
-                width: 'fit-content',
-                border: '1px solid var(--k-line-strong)',
-                borderRadius: 'var(--k-radius-pill, 999px)',
-                overflow: 'hidden',
-              }}
-            >
+          <div className="es-feld-block">
+            <span className="es-feld-label">Werkzeug-Anordnung</span>
+            <span data-testid="einstellungen-dock-modus" role="group" aria-label="Werkzeug-Anordnung" className="es-segment">
               {(
                 [
                   { key: 'A' as const, label: 'Orbit-Zonen (A, Standard)' },
@@ -367,21 +322,13 @@ export function Einstellungen({
                   data-testid={`einstellungen-dock-modus-${seg.key}`}
                   aria-pressed={dockModus === seg.key}
                   onClick={() => dockModusSetzen(seg.key as DockModus)}
-                  style={{
-                    all: 'unset',
-                    cursor: 'pointer',
-                    padding: '5px 12px',
-                    fontSize: 12.5,
-                    fontWeight: dockModus === seg.key ? 650 : 500,
-                    color: dockModus === seg.key ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
-                    background: dockModus === seg.key ? 'var(--k-accent)' : 'transparent',
-                  }}
+                  className={`es-segment-item${dockModus === seg.key ? ' es-segment-item--aktiv' : ''}`}
                 >
                   {seg.label}
                 </button>
               ))}
             </span>
-            <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+            <span className="es-feld-hinweis">
               {dockModus === 'A'
                 ? 'A: Panels können frei schweben (Pop-out möglich), Kollisionen löst der Solver automatisch.'
                 : 'B: nichts schwebt, alle teilen sich den Platz — Panels erscheinen als Streifen ohne Pop-out.'}
@@ -398,22 +345,11 @@ export function Einstellungen({
               Öffnen aus der Zentrale), bleiben die Knöpfe sichtbar, aber
               deaktiviert, mit demselben ehrlichen Hinweis-Muster wie der
               Dock-Tour-Einstieg oben. */}
-          <div style={{ marginTop: 12, display: 'grid', gap: 6 }}>
-            <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+          <div className="es-feld-block">
+            <span className="es-feld-label">
               Oberflächen-Preset{presetStation ? ` — ${presetStation === 'design' ? 'KosmoDesign' : 'KosmoVis'}` : ''}
             </span>
-            <span
-              data-testid="dock-preset-waehler"
-              role="group"
-              aria-label="Oberflächen-Preset"
-              style={{
-                display: 'inline-flex',
-                width: 'fit-content',
-                border: '1px solid var(--k-line-strong)',
-                borderRadius: 'var(--k-radius-pill, 999px)',
-                overflow: 'hidden',
-              }}
-            >
+            <span data-testid="dock-preset-waehler" role="group" aria-label="Oberflächen-Preset" className="es-segment">
               {PRESET_IDS.map((id) => (
                 <button
                   key={id}
@@ -423,23 +359,14 @@ export function Einstellungen({
                   disabled={!presetStation}
                   title={presetStation ? presetFuer(presetStation, id).beschreibung : undefined}
                   onClick={() => presetStation && presetAnwenden(presetStation, id)}
-                  style={{
-                    all: 'unset',
-                    cursor: presetStation ? 'pointer' : 'not-allowed',
-                    opacity: presetStation ? 1 : 0.5,
-                    padding: '5px 12px',
-                    fontSize: 12.5,
-                    fontWeight: aktivesPreset === id ? 650 : 500,
-                    color: aktivesPreset === id ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
-                    background: aktivesPreset === id ? 'var(--k-accent)' : 'transparent',
-                  }}
+                  className={`es-segment-item${aktivesPreset === id ? ' es-segment-item--aktiv' : ''}`}
                 >
                   {PRESET_TITEL[id]}
                 </button>
               ))}
             </span>
             {!presetStation && (
-              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+              <span className="es-feld-hinweis">
                 Nur in KosmoDesign oder KosmoVis verfügbar — dorthin wechseln und erneut versuchen.
               </span>
             )}
@@ -454,7 +381,7 @@ export function Einstellungen({
         <section data-testid="einstellungen-bewegung-klang" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Bewegung &amp; Klang</div>
 
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label className="es-schalter-label">
             <input
               type="checkbox"
               data-testid="einstellung-sounds"
@@ -467,7 +394,7 @@ export function Einstellungen({
             Dezente Klick-/Bestätigungstöne (Default aus)
           </label>
 
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label className="es-schalter-label">
             <input
               type="checkbox"
               data-testid="einstellung-eigencursor"
@@ -480,7 +407,7 @@ export function Einstellungen({
             Eigener Zeiger (Default an bei Maus/Trackpad, aus bei reinem Touch)
           </label>
 
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label className="es-schalter-label">
             <input
               type="checkbox"
               data-testid="einstellung-abspielen"
@@ -494,14 +421,7 @@ export function Einstellungen({
           </label>
 
           <label
-            style={{
-              fontSize: 12.5,
-              color: tauriDesktop ? 'var(--k-ink-soft)' : 'var(--k-ink-faint)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              opacity: tauriDesktop ? 1 : 0.55,
-            }}
+            className={`es-schalter-label${tauriDesktop ? '' : ' es-schalter-label--deaktiviert'}`}
             title={tauriDesktop ? undefined : 'Nur in der Desktop-App verfügbar — im Browser/PWA gibt es kein Zweitfenster.'}
           >
             <input
@@ -514,14 +434,14 @@ export function Einstellungen({
             Kosmo-Charakter-Fenster anzeigen (nur Desktop-App)
           </label>
           {charakterFehler && (
-            <div style={{ fontSize: 11, color: 'var(--k-danger)' }}>{charakterFehler}</div>
+            <div className="es-fehler-text">{charakterFehler}</div>
           )}
         </section>
         <Hairline />
 
         <section data-testid="einstellungen-rundgang" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Rundgang &amp; Hilfe</div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="es-knopf-reihe">
             <KButton size="sm" tone="quiet" data-testid="einstellung-rundgang" onClick={aufRundgangStarten}>
               Rundgang erneut zeigen
             </KButton>
@@ -530,10 +450,7 @@ export function Einstellungen({
             </KButton>
           </div>
           {dockTourHinweis && (
-            <div
-              data-testid="einstellungen-dock-tour-hinweis"
-              style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', marginTop: 6 }}
-            >
+            <div data-testid="einstellungen-dock-tour-hinweis" className="es-hinweis-klein">
               Nur in der KosmoDesign-Station verfügbar — dorthin wechseln und erneut versuchen.
             </div>
           )}
@@ -542,7 +459,7 @@ export function Einstellungen({
 
         <section data-testid="einstellungen-kosmo" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Kosmo &amp; Betrieb</div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="es-knopf-reihe">
             <KButton size="sm" tone="quiet" data-testid="einstellung-kosmo-oeffnen" onClick={aufKosmoOeffnen}>
               Kosmo-Einstellungen öffnen
             </KButton>
@@ -559,7 +476,7 @@ export function Einstellungen({
               Companion öffnen
             </KButton>
           </div>
-          <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', lineHeight: 1.5 }}>
+          <div className="es-system-hinweis">
             Betriebsart, Sprachausgabe und Lizenz stehen im Kosmo-Panel selbst (⚙ dort) — kein zweiter Ort für dieselbe
             Einstellung.
           </div>
@@ -568,7 +485,7 @@ export function Einstellungen({
 
         <section data-testid="einstellungen-adaption" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Oberflächen-Anpassung</div>
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label className="es-schalter-label">
             <input
               type="checkbox"
               data-testid="einstellung-adaption-schalter"
@@ -596,7 +513,7 @@ export function Einstellungen({
 
         <section data-testid="einstellungen-leistung" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Leistung</div>
-          <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <label className="es-schalter-label">
             <input
               type="checkbox"
               data-testid="leistung-zustimmung"
@@ -624,37 +541,22 @@ export function Einstellungen({
               Systemleistung jetzt prüfen
             </KButton>
           </div>
-          {leistungErgebnis && (
-            <div
-              data-testid="leistung-bericht"
-              style={{
-                fontSize: 12,
-                color: 'var(--k-ink-soft)',
-                lineHeight: 1.6,
-                background: 'var(--k-surface)',
-                borderRadius: 8,
-                padding: '8px 10px',
-                display: 'grid',
-                gap: 2,
-              }}
-            >
-              {(() => {
-                const bericht = formatiereLeistungsBericht(leistungErgebnis);
-                return (
-                  <>
-                    <div>Kerne: {bericht.kerne}</div>
-                    <div>Speicher: {bericht.speicher}</div>
-                    <div>Grafiktreiber: {bericht.renderer}</div>
-                    <div>
-                      Stufe: <strong data-testid="leistung-stufe">{bericht.stufe}</strong>
-                    </div>
-                  </>
-                );
-              })()}
-            </div>
-          )}
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>Render-Qualität:</span>
+          {leistungErgebnis && (() => {
+            const bericht = formatiereLeistungsBericht(leistungErgebnis);
+            return (
+              <KKeyValue
+                data-testid="leistung-bericht"
+                zeilen={[
+                  { key: 'Kerne', wert: bericht.kerne },
+                  { key: 'Speicher', wert: bericht.speicher },
+                  { key: 'Grafiktreiber', wert: bericht.renderer },
+                  { key: 'Stufe', wert: <strong data-testid="leistung-stufe">{bericht.stufe}</strong> },
+                ]}
+              />
+            );
+          })()}
+          <div className="es-override-reihe">
+            <span className="es-override-label">Render-Qualität:</span>
             {(['auto', 'hoch', 'mittel', 'niedrig'] as const).map((stufe) => (
               <button
                 key={stufe}
@@ -663,22 +565,13 @@ export function Einstellungen({
                   setOverride(stufe);
                   setLeistungOverrideState(stufe);
                 }}
-                className="k-primaer"
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  fontSize: 11.5,
-                  padding: '3px 9px',
-                  borderRadius: 999,
-                  color: leistungOverride === stufe ? 'var(--k-field)' : 'var(--k-ink-soft)',
-                  background: leistungOverride === stufe ? 'var(--k-technik)' : 'var(--k-surface)',
-                }}
+                className={`k-primaer es-override-btn${leistungOverride === stufe ? ' es-override-btn--aktiv' : ''}`}
               >
                 {stufe === 'auto' ? `Automatisch (${effektiveLeistungsStufe()})` : stufe}
               </button>
             ))}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--k-ink-faint)', lineHeight: 1.5 }}>
+          <div className="es-system-hinweis">
             🔒 Cycles-Preview-Synchro, ein Host-PC-Client und die Wahl des lokalen LLM nach Leistung folgen erst mit der
             HomeStation — hier gibt es dafür bewusst keinen Regler.
           </div>
@@ -688,13 +581,13 @@ export function Einstellungen({
         <section data-testid="einstellungen-neuigkeiten" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">Funktionen &amp; Neues</div>
           {NEUIGKEITEN.map((eintrag) => (
-            <div key={eintrag.version} data-testid={`neuigkeiten-version-${eintrag.version}`} style={{ display: 'grid', gap: 4 }}>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                <span style={{ fontWeight: 600, fontSize: 13 }}>Version {eintrag.version}</span>
+            <div key={eintrag.version} data-testid={`neuigkeiten-version-${eintrag.version}`} className="es-neuigkeit">
+              <div className="es-neuigkeit-kopf">
+                <span className="es-neuigkeit-titel">Version {eintrag.version}</span>
                 {eintrag.inArbeit && <Badge hue={moduleHue.kosmo}>in Arbeit</Badge>}
-                <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>{eintrag.datum}</span>
+                <span className="es-neuigkeit-datum">{eintrag.datum}</span>
               </div>
-              <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.6 }}>
+              <ul className="es-neuigkeit-liste">
                 {eintrag.punkte.map((p, i) => (
                   <li key={i}>{p.text}</li>
                 ))}
@@ -709,11 +602,11 @@ export function Einstellungen({
             System-Einstellungen, nicht auf den teuersten Platz der App. */}
         <section data-testid="einstellungen-system" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">System</div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="es-system-reihe">
             <KButton size="sm" tone="quiet" data-testid="einstellung-deinstallieren" onClick={aufDeinstallieren}>
               App deinstallieren…
             </KButton>
-            <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+            <span className="es-feld-hinweis">
               öffnet die ehrliche Anleitung für dein Betriebssystem — nichts wird sofort gelöscht.
             </span>
           </div>

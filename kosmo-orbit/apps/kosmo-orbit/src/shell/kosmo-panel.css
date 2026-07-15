@@ -1,0 +1,363 @@
+/* KosmoPanel (v0.8.0B / P7, Stations-Welle Design + Shell-Rest) — visuelle
+   Hülle auf Glass-/Flächenstufen-Grammatik; die `window.__kosmoChat`/
+   `__kosmoBlick`/`__kosmoStatus`-Testbrücken und die Audio-/Chat-Logik
+   bleiben FORMIDENTISCH unangetastet (611 E2E-Referenzen) — dieses CSS
+   betrifft ausschliesslich Darstellung. Zustandsgetriebene Farben (aktiver
+   Sprecher/Bubble-Herkunft/Karten-Status) laufen über Modifier-Klassen statt
+   Inline-Style-Ternaries — dieselbe Auswahl-Zustand-Semantik wie
+   `einstellungen.css`/`design.css`. */
+
+.kp-panel {
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--k-line);
+  background: var(--k-surface);
+}
+
+.kp-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  padding: 10px 14px;
+}
+.kp-titel {
+  font-weight: 550;
+}
+.kp-fuell {
+  flex: 1;
+}
+
+.kp-einstellungen {
+  padding: 14px;
+  display: grid;
+  gap: var(--k-s3);
+  border-bottom: 1px solid var(--k-line);
+}
+.kp-feld-titel {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.kp-betriebsart-reihe {
+  display: flex;
+  gap: var(--k-s2);
+}
+.kp-betriebsart-btn {
+  flex: 1;
+}
+.kp-hinweis-soft {
+  font-size: 11.5px;
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+.kp-select-block {
+  display: block;
+  width: 100%;
+  margin-top: var(--k-s2);
+}
+.kp-ink {
+  color: var(--k-ink);
+}
+.kp-anleitung-box {
+  font-size: 11.5px;
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+  display: grid;
+  gap: var(--k-s2);
+  padding: 8px 10px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line);
+  background: var(--k-raised);
+}
+.kp-schalter-label {
+  font-size: 12.5px;
+  color: var(--k-ink-soft);
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+}
+.kp-hinweis-faint {
+  font-size: var(--k-t-xs, 11px);
+  color: var(--k-ink-faint);
+}
+.kp-blick-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}
+.kp-blick-ring {
+  display: flex;
+  gap: var(--k-s3);
+}
+.kp-blick-eintrag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 52px;
+}
+.kp-blick-bild {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--k-line-strong);
+}
+.kp-blick-platzhalter {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px dashed var(--k-line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--k-ink-faint);
+}
+.kp-blick-label {
+  font-size: 9px;
+  color: var(--k-ink-faint);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Chat-Verlauf ───────────────────────────────────────────────────────── */
+
+.kp-verlauf {
+  flex: 1;
+  overflow: auto;
+  padding: 14px;
+  display: grid;
+  gap: var(--k-s4);
+  align-content: start;
+}
+
+/* System-/Blick-Zeilen — dezente zentrierte Pill, kein Bubble-Charakter. */
+.kp-system-zeile {
+  justify-self: center;
+  max-width: 92%;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--k-ink-faint);
+  background: var(--k-raised);
+  border: 1px solid var(--k-line);
+}
+.kp-blick-zeile {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.kp-blick-thumbnail {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--k-line-strong);
+  cursor: pointer;
+}
+
+/* Chat-Bubble — Herkunft (du/kosmo) als Modifier statt Inline-Ternary. */
+.kp-bubble {
+  max-width: 88%;
+  padding: 8px 12px;
+  border-radius: var(--k-radius-md);
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  border: 1px solid var(--k-line);
+}
+.kp-bubble--du {
+  justify-self: end;
+  background: var(--k-accent-wash);
+}
+.kp-bubble--kosmo {
+  justify-self: start;
+  background: var(--k-raised);
+}
+.kp-marken-reihe {
+  display: flex;
+  gap: var(--k-s2);
+  margin-top: var(--k-s3);
+  flex-wrap: wrap;
+}
+.kp-quelle-chip {
+  all: unset;
+  cursor: pointer;
+  font-size: var(--k-t-xs, 11px);
+  font-family: var(--k-font-mono);
+  padding: 2px 8px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-surface);
+  color: var(--k-ink-soft);
+}
+.kp-feedback-reihe {
+  display: flex;
+  gap: var(--k-s2);
+  margin-top: var(--k-s2);
+  opacity: 0.55;
+}
+.kp-feedback-reihe--gegeben {
+  opacity: 1;
+}
+.kp-feedback-btn {
+  all: unset;
+  cursor: pointer;
+  font-size: var(--k-t-sm);
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: transparent;
+}
+.kp-feedback-btn--aktiv {
+  background: var(--k-accent-wash);
+}
+
+/* Aktionsketten-/Vorschlag-Karten. */
+.kp-paket-stack {
+  display: grid;
+  gap: var(--k-s2);
+}
+.kp-paket-zusammenfassung {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  padding: 0 2px;
+}
+.kp-karte {
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: var(--k-s3);
+  background: var(--k-raised);
+}
+.kp-karte--offen {
+  border: 1px solid var(--k-accent);
+}
+.kp-karte--fertig {
+  border: 1px solid var(--k-success);
+}
+.kp-karte--fehler {
+  border: 1px solid var(--k-warning);
+}
+.kp-karte-kopf-reihe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.kp-eyebrow {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.kp-schritt-liste {
+  margin: 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 3px;
+  font-size: 12.5px;
+}
+.kp-knopf-reihe {
+  display: flex;
+  gap: var(--k-s2);
+}
+.kp-karte-titel {
+  font-weight: 550;
+  font-size: 13.5px;
+}
+.kp-vorschau-hinweis {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.kp-vorschau-reihe {
+  display: flex;
+  gap: var(--k-s2);
+}
+.kp-vorschau-spalte {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.kp-vorschau-label {
+  font-size: 9.5px;
+  color: var(--k-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.kp-vorschau-bild {
+  height: 90px;
+  background: var(--k-plan-paper);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.kp-fehler-zeile {
+  font-size: 11.5px;
+  color: var(--k-warning);
+}
+.kp-denkt {
+  color: var(--k-ink-faint);
+  font-size: 12.5px;
+}
+
+/* ── Eingabezeile ───────────────────────────────────────────────────────── */
+
+.kp-eingabe-reihe {
+  padding: 12px;
+  border-top: 1px solid var(--k-line);
+  display: flex;
+  gap: var(--k-s3);
+}
+.kp-mic-aktiv {
+  animation: none;
+}
+.kp-input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 10px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+  font-size: 13px;
+}
+.kp-eingabe-feld {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* ── Blick-Vollbild-Vorschau ────────────────────────────────────────────── */
+
+.kp-vollbild-scrim {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--k-ink) 55%, transparent);
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  z-index: 500;
+}
+.kp-vollbild-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--k-s3);
+  max-width: 90vw;
+  max-height: 90vh;
+}
+.kp-vollbild-bild {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid var(--k-line-strong);
+}
+.kp-vollbild-fuss {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: var(--k-t-md);
+}

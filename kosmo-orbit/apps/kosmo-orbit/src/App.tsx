@@ -77,6 +77,7 @@ import { Einstellungen } from './shell/Einstellungen';
 import { CursorEbene } from './shell/CursorEbene';
 import { OnboardingWizard } from './shell/OnboardingWizard';
 import './shell/orbit-065.css';
+import './app.css';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
 
@@ -88,15 +89,9 @@ type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc'
  * `filter`/`transition` zurück, genau die drei Eigenschaften, über die
  * `.k-druck` (aura.css) den Knopfdruck simuliert. Ersatz durch gezielte
  * Resets — sichtbares Ergebnis (kein Browser-Rahmen/-Hintergrund/-Polster)
- * bleibt identisch, `.k-druck` kann aber greifen. */
-const K_DRUCK_KNOPF_RESET = {
-  background: 'none',
-  border: 'none',
-  padding: 0,
-  font: 'inherit',
-  color: 'inherit',
-  cursor: 'pointer',
-} as const;
+ * bleibt identisch, `.k-druck` kann aber greifen.
+ * v0.8.0B / P7: die Resets sind jetzt die Klasse `.app-druck-reset`
+ * (app.css) statt eines gespreadeten Style-Objekts. */
 
 function tagesgruss(): string {
   const h = new Date().getHours();
@@ -437,7 +432,7 @@ export function App() {
   }, []);
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-wurzel">
       {/* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest,
           `--k-sunken` (statt `--k-surface`) + subtile Trennlinie
           (`--k-line-subtil`, orbit-only — Papier fällt über den zweiten
@@ -445,21 +440,11 @@ export function App() {
           `data-testid`s/Reihenfolge bleiben WÖRTLICH unverändert, nur
           Höhe/Fläche/Rand wandern auf die neue Anatomie. */}
       <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 14,
-          height: 56,
-          padding: '0 16px',
-          borderBottom: '1px solid var(--k-line-subtil, var(--k-line))',
-          background: 'var(--k-sunken, var(--k-surface))',
-          zIndex: 3,
-        }}
+        className="app-header"
       >
         <button
           onClick={() => gehZu('home')}
-          className="k-druck"
-          style={{ ...K_DRUCK_KNOPF_RESET, display: 'flex', alignItems: 'center', gap: 12 }}
+          className="k-druck app-druck-reset app-wortmarke-knopf"
           aria-label="Zur Zentrale"
         >
           <OrbitMark module="orbit" size={24} />
@@ -478,7 +463,7 @@ export function App() {
             ergänzt `sia-phase-select` (fein, nur in KosmoDesign), schreibt
             über dieselbe `design.siaPhaseSetzen`-Quelle. */}
         <PhasenLeiste />
-        <div style={{ flex: 1 }} />
+        <div className="app-fuell" />
         {/* Fokus-Systematik (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md): die Stufe
             sitzt am umschliessenden Element — opacity wirkt so auf die ganze
             Gruppe, ohne die eigenen Inline-Styles der Kinder zu überschreiben. */}
@@ -488,12 +473,11 @@ export function App() {
             Dateibesitz, hier NICHT angefasst). `white-space` vererbt sich an
             Text-Nachfahren; `nowrap` auf diesem Wrapper genügt, ohne die
             gemeinsame `Badge`-Komponente zu verändern. */}
-        <span className={fokusKlasse(fokusStufe('sync'))} style={{ display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+        <span className={`${fokusKlasse(fokusStufe('sync'))} app-inline-nowrap`}>
           <button
             onClick={() => setSyncOpen(!syncOpen)}
             data-testid="sync-toggle"
-            className="k-druck"
-            style={K_DRUCK_KNOPF_RESET}
+            className="k-druck app-druck-reset"
           >
             <Badge
               hue={
@@ -509,7 +493,7 @@ export function App() {
           </button>
         </span>
         <Hairline vertical />
-        <span className={fokusKlasse(fokusStufe('speichern'))} style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+        <span className={`${fokusKlasse(fokusStufe('speichern'))} app-inline-reihe`}>
           <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
             Speichern
           </KButton>
@@ -538,12 +522,11 @@ export function App() {
           </KButton>
         </span>
         <Hairline vertical />
-        <span className={fokusKlasse(fokusStufe('kosmo'))} style={{ display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+        <span className={`${fokusKlasse(fokusStufe('kosmo'))} app-inline-nowrap`}>
           <button
             onClick={() => setKosmoOpen(!kosmoOpen)}
             data-testid="kosmo-toggle"
-            className="k-druck"
-            style={K_DRUCK_KNOPF_RESET}
+            className="k-druck app-druck-reset"
             aria-label="Kosmo öffnen/schliessen"
           >
             <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
@@ -553,17 +536,16 @@ export function App() {
         {/* V1.6 Block E: dezenter Rundgang-Knopf — jederzeit erreichbar, egal
             ob der Erststart-Guide schon lief. `guideLauf`-Inkrement erzwingt
             einen frischen Mount, damit «erneut» immer bei Schritt 0 beginnt. */}
-        <span className={fokusKlasse(fokusStufe('guide'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <span className={`${fokusKlasse(fokusStufe('guide'))} app-inline`}>
           <button
             onClick={() => {
               setGuideLauf((n) => n + 1);
               setStarterGuideOffen(true);
             }}
             data-testid="starter-guide-start"
-            className="k-druck"
+            className="k-druck app-druck-reset"
             title="Rundgang — Kosmo erklärt das Programm erneut"
             aria-label="Rundgang erneut starten"
-            style={K_DRUCK_KNOPF_RESET}
           >
             {/* Aufgabe 7 (0.6.6, C-Befund 6): `Badge` (kosmo-ui) zeichnet vor
                 jedem Text IMMER einen 6px-Punkt — passend für einen echten
@@ -578,14 +560,13 @@ export function App() {
         <Hairline vertical />
         {/* Serie K / A4 (Owner-Befund K14): zentrales Einstellungs-Panel —
             dezent neben dem «?» (Rundgang), immer erreichbar. */}
-        <span className={fokusKlasse(fokusStufe('einstellungen'))} style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <span className={`${fokusKlasse(fokusStufe('einstellungen'))} app-inline`}>
           <button
             onClick={() => oeffneEinstellungen()}
             data-testid="einstellungen-oeffnen"
-            className="k-druck"
+            className="k-druck app-druck-reset"
             title="Einstellungen"
             aria-label="Einstellungen öffnen"
-            style={K_DRUCK_KNOPF_RESET}
           >
             {/* Aufgabe 7: dieselbe Ehrlichkeitsregel wie beim «?» oben — das
                 Zahnrad trägt keinen echten Statuswert, also kein `Badge`-Punkt. */}
@@ -601,17 +582,9 @@ export function App() {
 
       {syncOpen && (
         <div
-          style={{
-            display: 'flex',
-            gap: 8,
-            alignItems: 'center',
-            padding: '8px 16px',
-            borderBottom: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            fontSize: 12.5,
-          }}
+          className="app-sync-leiste"
         >
-          <span style={{ color: 'var(--k-ink-faint)' }}>Sync-Server (HomeStation)</span>
+          <span className="app-faint">Sync-Server (HomeStation)</span>
           <input
             value={syncUrl}
             onChange={(e) => {
@@ -619,9 +592,9 @@ export function App() {
               localStorage.setItem('kosmo.sync.url', e.target.value);
             }}
             data-testid="sync-url"
-            style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 210 }}
+            className="app-sync-input app-sync-input--url"
           />
-          <span style={{ color: 'var(--k-ink-faint)' }}>Raum</span>
+          <span className="app-faint">Raum</span>
           <input
             value={syncRoom}
             onChange={(e) => {
@@ -629,9 +602,9 @@ export function App() {
               localStorage.setItem('kosmo.sync.room', e.target.value);
             }}
             data-testid="sync-room"
-            style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 130 }}
+            className="app-sync-input app-sync-input--raum"
           />
-          <span style={{ color: 'var(--k-ink-faint)' }}>Token</span>
+          <span className="app-faint">Token</span>
           <input
             value={syncToken}
             type="password"
@@ -641,7 +614,7 @@ export function App() {
             }}
             placeholder="optional"
             data-testid="sync-token"
-            style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--k-line-strong)', background: 'var(--k-raised)', width: 110 }}
+            className="app-sync-input app-sync-input--token"
           />
           {syncStatus === 'aus' || syncStatus === 'getrennt' || syncStatus === 'abgelehnt' ? (
             <KButton
@@ -658,41 +631,31 @@ export function App() {
             </KButton>
           )}
           {syncStatus === 'abgelehnt' && (
-            <span style={{ color: 'var(--k-danger)' }} data-testid="sync-abgelehnt">
+            <span className="app-danger" data-testid="sync-abgelehnt">
               Token abgelehnt — der Server verlangt den Büro-Token.
             </span>
           )}
           {syncStatus === 'getrennt' && wartend > 0 && (
-            <span style={{ color: 'var(--k-warning)' }} data-testid="sync-wartend">
+            <span className="app-warning" data-testid="sync-wartend">
               getrennt · {wartend} Änderung{wartend === 1 ? '' : 'en'} warten — fliessen beim Reconnect nach
             </span>
           )}
           {raeume && raeume.length > 0 && (
-            <span style={{ display: 'flex', gap: 5, alignItems: 'center', flexWrap: 'wrap' }} data-testid="sync-raeume">
-              <span style={{ color: 'var(--k-ink-faint)' }}>Aktive Räume:</span>
+            <span className="app-raeume-reihe" data-testid="sync-raeume">
+              <span className="app-faint">Aktive Räume:</span>
               {raeume.slice(0, 6).map((r) => (
                 <button
                   key={r.name}
-                  className="k-druck"
                   onClick={() => {
                     setSyncRoom(r.name);
                     localStorage.setItem('kosmo.sync.room', r.name);
                     connectSync(syncUrl, r.name, syncToken.trim() || undefined);
                   }}
-                  style={{
-                    // Aufgabe 3: `all:'unset'` entfernt (blockierte
-                    // `.k-druck`s transform/filter) — Rahmen/Hintergrund/
-                    // Polster stehen ohnehin explizit unten, Font/Color
-                    // erbt bereits global (aura.css `button{font:inherit}`).
-                    margin: 0,
-                    cursor: 'pointer',
-                    padding: '2px 8px',
-                    borderRadius: 'var(--k-radius-sm)',
-                    border: '1px solid var(--k-line-strong)',
-                    background: r.name === syncRoom ? 'var(--k-accent-wash)' : 'var(--k-surface)',
-                    fontFamily: 'var(--k-font-mono)',
-                    fontSize: 11.5,
-                  }}
+                  // Aufgabe 3: `.k-druck` statt `all:'unset'` (das blockierte
+                  // `.k-druck`s transform/filter) — Rahmen/Hintergrund/
+                  // Polster stehen als Klasse `app-raum-chip`, Font/Color
+                  // erbt bereits global (aura.css `button{font:inherit}`).
+                  className={`k-druck app-raum-chip${r.name === syncRoom ? ' app-raum-chip--aktiv' : ''}`}
                 >
                   {r.name} · {r.verbindungen}
                 </button>
@@ -700,7 +663,7 @@ export function App() {
             </span>
           )}
           {(!raeume || raeume.length === 0) && (
-            <span style={{ color: 'var(--k-ink-faint)' }}>
+            <span className="app-faint">
               Desktop und iPad im selben Raum arbeiten live am selben Modell.
             </span>
           )}
@@ -710,7 +673,7 @@ export function App() {
           {koppelnOffen && (
             <div
               data-testid="koppeln-karte"
-              style={{ flexBasis: '100%', display: 'flex', gap: 14, alignItems: 'center', paddingTop: 8 }}
+              className="app-koppeln-karte"
             >
               {(() => {
                 // P6-Review #3: qrEncode wirft bei Überlänge (>271 Bytes) —
@@ -721,19 +684,19 @@ export function App() {
                   );
                   return (
                     <div
-                      style={{ width: 164, height: 164, flexShrink: 0, border: '1px solid var(--k-line)' }}
+                      className="app-qr-bild"
                       dangerouslySetInnerHTML={{ __html: svg }}
                     />
                   );
                 } catch {
                   return (
-                    <div style={{ width: 164, flexShrink: 0, fontSize: 11.5, color: 'var(--k-danger)' }}>
+                    <div className="app-qr-fehler">
                       Adresse + Raum + Token sind zu lang für einen QR — Token kürzen oder /raeume-Beitritt nutzen.
                     </div>
                   );
                 }
               })()}
-              <span style={{ fontSize: 12, color: 'var(--k-ink-soft)', maxWidth: 420, lineHeight: 1.5 }}>
+              <span className="app-koppeln-hinweis">
                 Mit der iPad-Kamera scannen — KosmoOrbit öffnet sich und verbindet automatisch
                 mit Raum «{syncRoom}» (die Verbindung steckt im URL-Fragment, nie in Server-Logs).
                 Beide Geräte müssen den Sync-Server erreichen.
@@ -742,8 +705,8 @@ export function App() {
           )}
         </div>
       )}
-      <main style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <main className="app-main">
+        <div className="app-stationsflaeche">
         {/* P1: jede Station in ihrer Fehlerzone — ein Crash reisst nie die App */}
         {screen === 'design' ? (
           <KFehlerzone bereich="KosmoDesign" onDiagnose={() => gehZu('doc')}>
@@ -755,7 +718,7 @@ export function App() {
                 deshalb an diesem Stations-Container, `position:absolute;
                 inset:0` deckt sich mit dem bestehenden Wurzel-Div der beiden
                 Workspaces (dasselbe Muster wie Data/Asset/Dev). */}
-            <div className="k-einblenden" style={{ position: 'absolute', inset: 0 }}>
+            <div className="k-einblenden app-station-huelle">
               <Absturztest />
               <DesignWorkspace
                 onEinstellungen={() => oeffneEinstellungen({ id: 'design', name: 'KosmoDesign' })}
@@ -779,7 +742,7 @@ export function App() {
           </KFehlerzone>
         ) : screen === 'vis' ? (
           <KFehlerzone bereich="KosmoVis" onDiagnose={() => gehZu('doc')}>
-            <div className="k-einblenden" style={{ position: 'absolute', inset: 0 }}>
+            <div className="k-einblenden app-station-huelle">
               <VisWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'vis', name: 'KosmoVis' })} />
             </div>
           </KFehlerzone>
@@ -812,10 +775,9 @@ export function App() {
             <DevWorkspace />
           </KFehlerzone>
         ) : (
-          <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '48px 24px' }}>
+          <div className="app-zentrale-scroll">
             <div
-              className={`k-einblenden${dokumentVersteckt ? ' k-zentrale-pausiert' : ''}`}
-              style={{ maxWidth: 1120, margin: '0 auto', display: 'grid', gap: 28 }}
+              className={`k-einblenden${dokumentVersteckt ? ' k-zentrale-pausiert' : ''} app-zentrale-inhalt`}
             >
               {/* R2-N3 (0.6.5, docs/UI-SELBSTKRITIK-064.md): Begrüssung/
                   Projekte und Orbit teilten bisher zwei konkurrierende
@@ -829,7 +791,7 @@ export function App() {
                   (importiert von OrbitStart.tsx, gilt global). */}
               <div className="orbit065-home-grid">
                 {onboarding && (
-                  <div style={{ gridColumn: '1 / -1' }}>
+                  <div className="app-onboarding-spanne">
                     <OnboardingWizard
                       onAbschliessen={(zielDesign) => {
                         setOnboarding(false);
@@ -841,13 +803,13 @@ export function App() {
                 )}
                 <div className="orbit065-home-links">
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
-                      <div className="k-titel" style={{ fontSize: 34 }}>
+                    <div className="app-gruss-reihe">
+                      <div className="k-titel app-gruss-titel">
                         {tagesgruss()}
                       </div>
-                      <div style={{ flex: 1 }} />
+                      <div className="app-fuell" />
                       {/* D2: Rollen-Vorstufe — ordnet die Kacheln, färbt Kosmos Blick */}
-                      <label style={{ fontSize: 12, color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <label className="app-rolle-label">
                         Rolle
                         <KSelect
                           size="sm"
@@ -864,10 +826,10 @@ export function App() {
                         </KSelect>
                       </label>
                     </div>
-                    <div style={{ color: 'var(--k-ink-soft)', marginTop: 6 }}>
+                    <div className="app-gruss-sub">
                       Womit beginnen wir? KosmoDesign ist bereit zum Zeichnen.
                     </div>
-                    <div style={{ marginTop: 12 }}>
+                    <div className="app-gruss-aktion">
                       <KButton
                         size="sm"
                         tone="quiet"
@@ -911,7 +873,7 @@ export function App() {
                   />
                 </div>
               </div>
-              <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }} data-testid="about-zeile">
+              <div className="app-about-zeile" data-testid="about-zeile">
                 KosmoOrbit v{__APP_VERSION__} · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>
             </div>
@@ -1009,43 +971,43 @@ function VariantenArchiv({ onOpen }: { onOpen: () => void }) {
   if (varianten.length === 0) return null;
 
   return (
-    <div style={{ display: 'grid', gap: 8 }} data-testid="varianten-archiv">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ fontWeight: 550, fontSize: 13.5 }}>Varianten-Archiv</div>
-        <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+    <div className="app-stapel-s3" data-testid="varianten-archiv">
+      <div className="app-kopf-reihe">
+        <div className="app-titel-klein">Varianten-Archiv</div>
+        <span className="app-hinweis-klein">
           Eingefrorene Stände («⧉ Variante» in der Berechnungsliste) — Kennzahlen im Direktvergleich.
         </span>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 10 }}>
+      <div className="app-karten-raster">
         {varianten.map((v) => (
-          <Panel key={v.id} data-testid="variante-karte" style={{ padding: 10, display: 'grid', gap: 8 }}>
+          <Panel key={v.id} data-testid="variante-karte" className="app-variante-karte">
             {v.thumbSvg ? (
               <div
-                style={{ height: 110, overflow: 'hidden', background: 'var(--k-plan-paper)', borderRadius: 6 }}
+                className="app-variante-bild"
                 dangerouslySetInnerHTML={{ __html: v.thumbSvg.replace('<svg ', '<svg style="width:100%;height:100%" ') }}
               />
             ) : (
-              <div style={{ height: 110, display: 'grid', placeItems: 'center', color: 'var(--k-ink-faint)', fontSize: 11.5 }}>
+              <div className="app-variante-leer">
                 kein Plan
               </div>
             )}
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontWeight: 550, fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div className="app-variante-titelblock">
+              <div className="app-variante-name">
                 {v.name}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+              <div className="app-variante-datum">
                 {new Date(v.createdAt).toLocaleString('de-CH')}
               </div>
             </div>
-            <div style={{ display: 'grid', gap: 2, fontSize: 11.5, fontFamily: 'var(--k-font-mono)' }}>
+            <div className="app-kennzahlen-stack">
               {v.kennzahlen.slice(0, 5).map((k, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-                  <span style={{ color: 'var(--k-ink-faint)' }}>{k.label}</span>
+                <div key={i} className="app-kennzahl-zeile">
+                  <span className="app-faint">{k.label}</span>
                   <span>{k.wert}</span>
                 </div>
               ))}
             </div>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="app-knopf-reihe">
               <KButton
                 size="sm"
                 tone="quiet"
@@ -1089,10 +1051,10 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
   useEffect(refresh, []);
 
   return (
-    <div style={{ display: 'grid', gap: 8 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <div style={{ fontWeight: 550, fontSize: 13.5 }}>Projekte</div>
-        <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+    <div className="app-stapel-s3">
+      <div className="app-kopf-reihe-wrap">
+        <div className="app-titel-klein">Projekte</div>
+        <span className="app-hinweis-klein">
           Autosave — jede Änderung landet hier. .kosmo bleibt fürs Weitergeben.
         </span>
       </div>
@@ -1101,7 +1063,7 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
           allein umbrach und wie ein defekter Toggle neben «Katalog ↓» aussah,
           siehe Kritik-065 p-01/i-01): zwei klar beschriftete, nebeneinander
           stehende Aktionen — Export/Import bleiben zwei eigenständige Knöpfe. */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      <div className="app-knopf-reihe-wrap">
         <KButton
           size="sm"
           tone="ghost"
@@ -1147,25 +1109,25 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
         </KButton>
       </div>
       {projekte.length === 0 && (
-        <div style={{ fontSize: 12.5, color: 'var(--k-ink-faint)' }}>
+        <div className="app-hinweis-klein">
           Noch keine gesicherten Stände — sobald du zeichnest, erscheint dein Projekt hier.
         </div>
       )}
-      <div style={{ display: 'grid', gap: 6 }}>
+      <div className="app-stapel-s2">
         {projekte.map((p) => (
           <Panel
             key={p.id}
             data-testid={`projekt-${p.id}`}
-            style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10 }}
+            className="app-projekt-karte"
           >
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <span style={{ fontWeight: 550, fontSize: 13 }}>{p.name}</span>
+            <div className="app-projekt-titelblock">
+              <span className="app-projekt-name">{p.name}</span>
               {p.id === aktivesProjektId() && (
-                <span style={{ marginLeft: 8 }}>
+                <span className="app-badge-abstand">
                   <Badge hue="var(--k-success)">aktiv</Badge>
                 </span>
               )}
-              <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+              <div className="app-projekt-meta">
                 {p.elemente} Elemente · {new Date(p.updatedAt).toLocaleString('de-CH')}
               </div>
             </div>
@@ -1201,20 +1163,13 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
           </Panel>
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className="app-projekt-neu-reihe">
         <input
           value={neuName}
           data-testid="projekt-neu-name"
           onChange={(e) => setNeuName(e.target.value)}
           placeholder="Neues Projekt — Name"
-          style={{
-            padding: '6px 10px',
-            borderRadius: 8,
-            border: '1px solid var(--k-line-strong)',
-            background: 'var(--k-raised)',
-            fontSize: 13,
-            width: 240,
-          }}
+          className="app-projekt-neu-feld"
         />
         <KButton
           size="sm"

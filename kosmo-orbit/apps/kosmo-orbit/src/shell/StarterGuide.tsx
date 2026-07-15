@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, KButton, Panel } from '@kosmo/ui';
+import './starter-guide.css';
 import {
   fortschrittProzent,
   istLetzterSchritt,
@@ -130,20 +131,11 @@ export function StarterGuide({ screen, kosmoOffen, wandAnzahl, onSchliessen }: S
         </div>
         <div
           aria-hidden
-          style={{
-            height: 3,
-            borderRadius: 2,
-            background: 'var(--k-line)',
-            overflow: 'hidden',
-          }}
+          className="sg-fortschritt-spur"
         >
           <div
-            style={{
-              height: '100%',
-              width: `${fortschrittProzent(index)}%`,
-              background: 'var(--k-accent)',
-              transition: 'width var(--k-motion-base)',
-            }}
+            className="sg-fortschritt-fill"
+            style={{ width: `${fortschrittProzent(index)}%` }}
           />
         </div>
         <div style={{ fontWeight: 550, fontSize: 14.5 }}>{schritt.titel}</div>

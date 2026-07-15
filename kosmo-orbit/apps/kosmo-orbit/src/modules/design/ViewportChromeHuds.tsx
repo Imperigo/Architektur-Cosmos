@@ -1,4 +1,5 @@
-import { Badge, KButton } from '@kosmo/ui';
+import { Badge, KButton, KKeyValue } from '@kosmo/ui';
+import './viewport-chrome-huds.css';
 import { DARSTELLUNG_LABEL } from './ViewportChrome';
 import { AchsenGizmo, VIcon } from './viewport-chrome-icons';
 import { VIEWPORT_MODUS_REIHENFOLGE, VIEWPORT_MODUS_TEXT, VIEWPORT_ROLLEN, VIEWPORT_WERKZEUGE, aspektLabel, kompassLabel, sonnenLabel } from './viewport-modi';
@@ -16,9 +17,9 @@ import { useViewportChromeRuntime } from '../../state/viewport-chrome-runtime';
  * unverändert als `inhalt` durch, ohne selbst irgendeinen Viewport3D-
  * Zustand kennen zu müssen (Entkopplungs-Begründung im Store-Kopfkommentar).
  *
- * Struktur/Klassen/testids sind BYTE-GLEICH zum vorherigen Ort in
- * `ViewportChrome.tsx` übernommen (Bestandsschutz, s. Auftrag) — nur die
- * äussere `position:absolute`-Verpackung entfällt (das übernimmt jetzt der
+ * Struktur/testids sind BYTE-GLEICH zum vorherigen Ort in `ViewportChrome.tsx`
+ * übernommen (Bestandsschutz, s. Auftrag) — nur die äussere
+ * `position:absolute`-Verpackung entfällt (das übernimmt jetzt der
  * Float-Rahmen aus `DockPanel.tsx`, `floatChrome:'schlank'`). Die
  * `.k-vp-*`-CSS-Klassen kommen weiterhin aus `ViewportChrome.tsx`s
  * `CHROME_STYLE`-`<style>`-Tag — der bleibt dort unverändert bestehen (ein
@@ -27,13 +28,21 @@ import { useViewportChromeRuntime } from '../../state/viewport-chrome-runtime';
  * gerendert, wenn `ViewportChrome`s `sichtbar`-Guard grün ist — dieselbe
  * Bedingung, unter der auch diese Floats sichtbar sind (`bereit` im
  * Runtime-Store), s. `DesignWorkspace.tsx`.
+ *
+ * v0.8.0B / P7 (Stations-Welle Design + Shell-Rest, Spez §3 B-41/B-42): die
+ * statischen Layout-/Typo-Inline-Styles wandern nach `viewport-chrome-huds.
+ * css`; die reinen Key-Value-Zeilenlisten (Statuskarte + Eigenschaften-
+ * Sektionen) laufen jetzt über `KKeyValue` (identischer testid-Ort, da
+ * `data-testid` auf dem KKeyValue-Wurzelelement landet). Die datengetriebenen
+ * Rollenfarben (`background`/`border`/`color` nach `rolle`/`aktiv`) bleiben
+ * bewusst Inline-Carrier — sie sind Zustand, keine Deko.
  */
 
 export function ViewportModusLeisteHud() {
   const modus = useViewportChromeRuntime((s) => s.modus);
   const onModusWechsel = useViewportChromeRuntime((s) => s.onModusWechsel);
   return (
-    <div className="k-glass" style={{ display: 'flex', gap: 4, padding: 4 }}>
+    <div className="k-glass vch-tab-leiste">
       {VIEWPORT_MODUS_REIHENFOLGE.map((m) => {
         const aktiv = m === modus;
         const r = VIEWPORT_ROLLEN[m];
@@ -65,26 +74,17 @@ export function ViewportModusKarteHud() {
   const rolle = VIEWPORT_ROLLEN[modus];
   const text = VIEWPORT_MODUS_TEXT[modus];
   return (
-    <div className="k-glass" style={{ padding: '14px 16px', width: '100%', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 8 }}>
+    <div className="k-glass vch-modus-karte">
+      <div className="vch-modus-kopf">
         <span className="k-vp-puls" style={{ background: rolle.farbe }} />
-        <span
-          style={{
-            fontFamily: 'var(--k-font-mono)',
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: '0.16em',
-            color: rolle.farbe,
-          }}
-          data-testid="viewport-modus-badge"
-        >
+        <span className="vch-modus-badge" style={{ color: rolle.farbe }} data-testid="viewport-modus-badge">
           {text.badge}
         </span>
-        <div style={{ flex: 1 }} />
+        <div className="vch-fuell" />
         <Badge hue={rolle.farbe}>{text.tagLabel}</Badge>
       </div>
-      <div style={{ fontWeight: 700, fontSize: 19, lineHeight: 1.15, color: 'var(--k-ink)' }}>{text.titel}</div>
-      <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', marginTop: 3 }}>{text.sub}</div>
+      <div className="vch-modus-titel">{text.titel}</div>
+      <div className="vch-modus-sub">{text.sub}</div>
     </div>
   );
 }
@@ -127,19 +127,17 @@ export function ViewportOrientierungHud() {
   const azimutRad = useViewportChromeRuntime((s) => s.azimutRad);
   const orientierung = kompassLabel(azimutRad);
   return (
-    <div className="k-glass" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px 12px 12px' }}>
+    <div className="k-glass vch-orientierung">
       <AchsenGizmo size={56} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, letterSpacing: '0.14em', color: 'var(--k-ink-faint)' }}>
-          ORIENTIERUNG
-        </span>
-        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 13, color: 'var(--k-ink-soft)' }} data-testid="viewport-orientierung">
+      <div className="vch-orientierung-spalte">
+        <span className="vch-label-micro">ORIENTIERUNG</span>
+        <span className="vch-wert-mono" data-testid="viewport-orientierung">
           {orientierung}
         </span>
-        <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-rolle-generator)' }}>X</span>
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-rolle-manuell)' }}>Y</span>
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-rolle-pn)' }}>Z</span>
+        <div className="vch-achsen-zeile">
+          <span style={{ color: 'var(--k-rolle-generator)' }}>X</span>
+          <span style={{ color: 'var(--k-rolle-manuell)' }}>Y</span>
+          <span style={{ color: 'var(--k-rolle-pn)' }}>Z</span>
         </div>
       </div>
     </div>
@@ -203,31 +201,12 @@ export function ViewportHudStatuskarteHud() {
           ];
 
   return (
-    <div className="k-glass" style={{ padding: '14px 16px', width: '100%', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-        <span
-          style={{
-            fontFamily: 'var(--k-font-mono)',
-            fontSize: 10,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'var(--k-ink-faint)',
-          }}
-        >
-          {text.hudTitel}
-        </span>
+    <div className="k-glass vch-hud-karte">
+      <div className="vch-hud-kopf">
+        <span className="vch-hud-kopf-label">{text.hudTitel}</span>
         <VIcon name={text.tabIcon} size={15} style={{ color: rolle.farbe }} />
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }} data-testid="viewport-hud">
-        {hud.map((h) => (
-          <div key={h.k} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--k-ink-faint)' }}>
-              {h.k}
-            </span>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, color: 'var(--k-ink-soft)' }}>{h.v}</span>
-          </div>
-        ))}
-      </div>
+      <KKeyValue data-testid="viewport-hud" zeilen={hud.map((h) => ({ key: h.k, wert: h.v }))} />
     </div>
   );
 }
@@ -330,53 +309,16 @@ export function ViewportEigenschaftenHud() {
   const aktion = modus === 'modellieren' ? onEinpassen : modus === 'kamera' ? onRendern : onFuerVisAufnehmen;
 
   return (
-    <div className="k-glass" style={{ width: '100%', height: '100%', minHeight: 0, display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-      <div
-        style={{
-          flex: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          borderBottom: '1px solid var(--k-glass-stroke)',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: 'var(--k-font-mono)',
-            fontSize: 10,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'var(--k-ink-faint)',
-          }}
-        >
-          Eigenschaften
-        </span>
+    <div className="k-glass vch-eigenschaften">
+      <div className="vch-eigenschaften-kopf">
+        <span className="vch-hud-kopf-label">Eigenschaften</span>
         <Badge hue={rolle.farbe}>{text.badge}</Badge>
       </div>
-      <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="vch-eigenschaften-koerper">
         {panel.map((sec) => (
           <div key={sec.label}>
-            <div
-              style={{
-                fontFamily: 'var(--k-font-mono)',
-                fontSize: 10,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--k-ink-faint)',
-                marginBottom: 8,
-              }}
-            >
-              {sec.label}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 1, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--k-glass-stroke)' }}>
-              {sec.zeilen.map((r) => (
-                <div key={r.k} style={{ padding: '9px 11px', background: 'rgba(255,255,255,.02)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 11, color: 'var(--k-ink-faint)' }}>{r.k}</span>
-                  <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, color: 'var(--k-ink-soft)' }}>{r.v}</span>
-                </div>
-              ))}
-            </div>
+            <div className="vch-sektion-titel">{sec.label}</div>
+            <KKeyValue zeilen={sec.zeilen.map((r) => ({ key: r.k, wert: r.v }))} />
           </div>
         ))}
         {modus === 'modellieren' && (
@@ -386,9 +328,9 @@ export function ViewportEigenschaftenHud() {
           </button>
         )}
       </div>
-      <div style={{ flex: 'none', padding: '12px 16px', borderTop: '1px solid var(--k-glass-stroke)' }}>
+      <div className="vch-eigenschaften-fuss">
         <KButton tone="accent" size="sm" style={{ width: '100%' }} onClick={aktion} data-testid="viewport-panel-aktion">
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, justifyContent: 'center', width: '100%' }}>
+          <span className="vch-aktion-inhalt">
             <VIcon name={text.aktionIcon} size={14} />
             {text.aktionLabel}
           </span>

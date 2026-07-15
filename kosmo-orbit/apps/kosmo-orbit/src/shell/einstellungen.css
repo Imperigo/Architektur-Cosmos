@@ -1,0 +1,248 @@
+/* Einstellungen (v0.8.0B / P7, Stations-Welle Design + Shell-Rest) —
+   Inline-Styles raus, Segmentschalter auf die KTabs-Pill-Anatomie
+   (aura.css .k-tabs/.k-tab, Spez §3 B-36); Markup/testids/aria unverändert,
+   nur die Optik wandert hierher. Ergänzt `orbit065-einstellungen-*`
+   (orbit-065.css) — die Sektions-/Titel-Klassen dort bleiben unangetastet.
+
+   Signal-Restbestände-Audit (P3-Audit, Design-Spez §2 Gesetz 1 «80·15·5,
+   genau eine gefüllte Signal-Fläche pro Viewport»): drei Segmentschalter
+   (Thema, Werkzeug-Anordnung, Oberflächen-Preset) füllten ihren aktiven
+   Eintrag bisher flächig mit `var(--k-accent)` — das widersprach der
+   «genau eine gefüllte Fläche»-Regel im selben Viewport. Ersetzt durch die
+   KTabs-Auswahl-Semantik: aktiv = `--k-raised`-Fläche + `--k-line-strong`-
+   Rand + 5px-Akzent-Punkt (Signal bleibt als PUNKT, nie als Fläche) — exakt
+   das `.k-tab--aktiv`-Rezept aus aura.css, hier als eigene Klasse, weil die
+   Buttons `role="group"`/`aria-pressed` bleiben (kein `role=tab`, Verträge
+   §7.1 bleiben unangetastet). */
+
+.es-scrim {
+  z-index: 250;
+  background: color-mix(in srgb, var(--k-ink) 22%, transparent);
+}
+
+.es-panel {
+  width: min(640px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+}
+
+.es-koerper-scroll {
+  overflow-y: auto;
+}
+
+.es-station-leer {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+
+.es-station-liste {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: var(--k-s2);
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+
+.es-station-meta {
+  color: var(--k-ink-faint);
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+}
+
+.es-darstellung-reihe {
+  display: flex;
+  gap: var(--k-s4);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Segment-Container — Pill-Anatomie wie .k-tabs (2px Innenpadding, radius
+   999, Fläche/Rand statt Kästen). */
+.es-segment {
+  display: inline-flex;
+  width: fit-content;
+  align-items: stretch;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--k-radius-pill);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line-strong);
+  overflow: hidden;
+}
+
+.es-segment-item {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  cursor: pointer;
+  padding: 5px 12px;
+  font-size: var(--k-t-sm);
+  font-weight: 500;
+  color: var(--k-ink-soft);
+  border: 1px solid transparent;
+  border-radius: var(--k-radius-pill);
+  transition: background var(--k-motion-fast), border-color var(--k-motion-fast), color var(--k-motion-fast);
+}
+.es-segment-item:hover {
+  color: var(--k-ink);
+  background: var(--k-hover);
+}
+/* Auswahl-Zustand: Fläche (--k-raised) + Rand, Signal nur als Punkt (::before) —
+   ersetzt die frühere flächige `var(--k-accent)`-Füllung (Signal-Rest-Audit). */
+.es-segment-item--aktiv {
+  color: var(--k-ink);
+  font-weight: 650;
+  background: var(--k-raised);
+  border-color: var(--k-line-strong);
+}
+.es-segment-item--aktiv::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--k-accent);
+  flex: none;
+}
+.es-segment-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.es-akzent-reihe {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.es-akzent-swatch {
+  all: unset;
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px var(--k-line-strong);
+}
+.es-akzent-swatch--aktiv {
+  box-shadow:
+    0 0 0 1.5px var(--k-field),
+    0 0 0 3px var(--k-technik);
+}
+
+.es-feld-block {
+  margin-top: var(--k-s3);
+  display: grid;
+  gap: var(--k-s2);
+}
+
+.es-feld-label {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+
+.es-feld-hinweis {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+
+.es-schalter-label {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.es-schalter-label--deaktiviert {
+  color: var(--k-ink-faint);
+  opacity: 0.55;
+}
+
+.es-fehler-text {
+  font-size: var(--k-t-xs);
+  color: var(--k-danger);
+}
+
+.es-knopf-reihe {
+  display: flex;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+}
+
+.es-hinweis-klein {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+  margin-top: var(--k-s2);
+}
+
+.es-system-hinweis {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+  line-height: 1.5;
+}
+
+.es-override-reihe {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.es-override-label {
+  font-size: var(--k-t-md);
+  color: var(--k-ink-faint);
+}
+
+/* Render-Qualität-Chips bleiben bewusst ausserhalb des Signal-Rest-Audits:
+   Modusfarbe ist `--k-technik` (Render-/Technik-Kanal), keine Akzent-Fläche —
+   dieselbe Trennung wie KPipelineNode/KVariantenKarte (Rollenfarbe statt
+   Signal). Optik unverändert, nur als Klasse statt Inline. */
+.es-override-btn {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: var(--k-ink-soft);
+  background: var(--k-surface);
+}
+.es-override-btn--aktiv {
+  color: var(--k-field);
+  background: var(--k-technik);
+}
+
+.es-neuigkeit {
+  display: grid;
+  gap: var(--k-s1);
+}
+.es-neuigkeit-kopf {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: baseline;
+}
+.es-neuigkeit-titel {
+  font-weight: 600;
+  font-size: var(--k-t-md);
+}
+.es-neuigkeit-datum {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.es-neuigkeit-liste {
+  margin: 0;
+  padding-left: 18px;
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  line-height: 1.6;
+}
+
+.es-system-reihe {
+  display: flex;
+  gap: var(--k-s4);
+  align-items: center;
+  flex-wrap: wrap;
+}

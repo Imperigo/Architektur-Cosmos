@@ -285,20 +285,8 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                 >
                   <span
                     aria-hidden
-                    style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 999,
-                      flex: 'none',
-                      display: 'grid',
-                      placeItems: 'center',
-                      fontFamily: 'var(--k-font-mono, monospace)',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      background: fertig ? 'var(--k-accent)' : aktiv ? s.farbeFill : 'transparent',
-                      border: `1.5px solid ${fertig ? 'var(--k-accent)' : aktiv ? s.farbe : 'var(--k-line-strong)'}`,
-                      color: fertig ? 'var(--k-accent-ink)' : aktiv ? s.farbe : 'var(--k-ink-faint)',
-                    }}
+                    className={`onboarding-stepper-badge${fertig ? ' onboarding-stepper-badge--fertig' : aktiv ? ' onboarding-stepper-badge--aktiv' : ''}`}
+                    style={aktiv && !fertig ? { ['--_farbe' as string]: s.farbe, ['--_farbe-fill' as string]: s.farbeFill } : undefined}
                   >
                     {fertig ? <KIcon name="haken" size={14} /> : s.nummer}
                   </span>
@@ -521,23 +509,17 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
         </div>
 
         {/* FOOTER — Punkte + Zurück/Weiter */}
-        <div style={{ flex: 'none', borderTop: '1px solid var(--k-line)', padding: '16px 28px', display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ display: 'flex', gap: 6 }}>
+        <div className="onboarding-footer">
+          <div className="onboarding-footer-punkte">
             {ONBOARDING_SCHRITTE.map((s, i) => (
               <span
                 key={s.id}
                 aria-hidden
-                style={{
-                  width: i === schritt ? 24 : 7,
-                  height: 7,
-                  borderRadius: 999,
-                  background: i <= schritt ? 'var(--k-accent)' : 'var(--k-line-strong)',
-                  transition: 'width var(--k-motion-base, 200ms)',
-                }}
+                className={`onboarding-footer-punkt ${i <= schritt ? 'onboarding-footer-punkt--erreicht' : ''} ${i === schritt ? 'onboarding-footer-punkt--aktiv' : 'onboarding-footer-punkt--inaktiv'}`}
               />
             ))}
           </div>
-          <span style={{ fontFamily: 'var(--k-font-mono, monospace)', fontSize: 11, color: 'var(--k-ink-faint)' }}>
+          <span className="onboarding-footer-zaehler">
             {aktuell.nummer} / 04
           </span>
           <div style={{ flex: 1 }} />

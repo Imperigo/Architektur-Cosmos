@@ -4,6 +4,7 @@ import { useKosmoStatus, kurzform } from '../state/kosmo-status';
 import { useProject } from '../state/project-store';
 import { KosmoOrb } from './KosmoOrb';
 import './orbit-065.css';
+import './kosmo-symbol.css';
 
 export interface KosmoSymbolProps {
   /** Öffnet das grosse Panel (Klick ODER Tastatur — natives <button>). */
@@ -62,47 +63,14 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
   const popupText = letzteAktivitaet ?? kurzform(begruessung());
 
   return (
-    <div
-      style={
-        eingebettet
-          ? {
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-end',
-              gap: 8,
-              pointerEvents: 'auto',
-            }
-          : {
-              position: 'fixed',
-              right: 22,
-              bottom: 22,
-              zIndex: 110,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-end',
-              gap: 8,
-            }
-      }
-    >
+    <div className={`ks-wrapper ${eingebettet ? 'ks-wrapper--eingebettet' : 'ks-wrapper--frei'}`}>
       {zeigePopup && (
         <div
           data-testid="kosmo-mini"
           role="status"
-          className="k-einblenden"
-          style={{
-            maxWidth: 260,
-            padding: '10px 12px',
-            borderRadius: 'var(--k-radius-md)',
-            background: 'var(--k-raised)',
-            border: '1px solid var(--k-line)',
-            boxShadow: 'var(--k-shadow-overlay)',
-            fontSize: 12.5,
-            lineHeight: 1.5,
-            color: 'var(--k-ink-soft)',
-          }}
+          className="k-einblenden ks-popup"
         >
-          <div style={{ fontWeight: 600, color: 'var(--k-ink)', marginBottom: 3 }}>
+          <div className="ks-popup-titel">
             {beschaeftigt ? 'Kosmo arbeitet …' : 'Kosmo'}
           </div>
           {popupText}
@@ -120,23 +88,10 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
         // Aufgabe 3 (0.6.6): `.k-druck` zusätzlich zu den bestehenden
         // `k-kosmo-symbol*`-Klassen (Puls-Animation bleibt unverändert).
         className={
-          beschaeftigt ? 'k-kosmo-symbol k-kosmo-symbol-beschaeftigt k-druck' : 'k-kosmo-symbol k-druck'
+          beschaeftigt
+            ? 'k-kosmo-symbol k-kosmo-symbol-beschaeftigt k-druck ks-knopf'
+            : 'k-kosmo-symbol k-druck ks-knopf'
         }
-        style={{
-          // `all:'unset'` entfernt (blockierte `.k-druck`s transform/
-          // filter) — die übrigen Optik-Eigenschaften stehen weiter unten
-          // explizit, Font/Color erben bereits global (aura.css).
-          margin: 0,
-          cursor: 'pointer',
-          width: 52,
-          height: 52,
-          borderRadius: 999,
-          display: 'grid',
-          placeItems: 'center',
-          background: 'var(--k-surface)',
-          border: '1px solid var(--k-line-strong)',
-          boxShadow: 'var(--k-shadow-overlay)',
-        }}
       >
         <KosmoOrb zustand={zustand} size={30} />
       </button>

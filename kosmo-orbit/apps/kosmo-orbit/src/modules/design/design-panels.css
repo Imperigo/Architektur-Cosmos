@@ -1,0 +1,159 @@
+/* Design-Kleinpanels (v0.8.0B / P7, Spez §3 B-41 KKeyValue-Anatomie) —
+   Inspector.tsx + KennzahlenPanel.tsx teilen dieselbe Row-Grammatik
+   (Key mono-uppercase links wäre zu eng für editierbare Felder — Inspector
+   braucht volle KSelect/KInput-Breite rechts, darum eine schlanke eigene
+   Zeilen-Klasse statt des vollen KKeyValue-Containers, gleiche Farb-/
+   Abstands-Tokens). KennzahlenPanel nutzt echtes `KKeyValue` für die reinen
+   Zahlen-Report-Blöcke (Zonen/Volumen/Kennzahlen); die Checks-Liste bleibt
+   eigene Struktur (Icon + Gruppenkopf, kein Key/Value-Paar). */
+
+.dp-panel {
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-raised);
+  padding: var(--k-s4);
+  display: grid;
+  gap: var(--k-s3);
+  font-size: var(--k-t-sm);
+}
+
+.dp-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.dp-fuell {
+  flex: 1;
+}
+
+/* Inspector-Zeile: schmale Label-Spalte (84px), Rest volle Breite für
+   Select/Input/Button. */
+.dp-zeile {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.dp-zeile-label {
+  color: var(--k-ink-faint);
+}
+.dp-feld-voll {
+  width: 100%;
+}
+.dp-feld-links {
+  width: 100%;
+  justify-content: flex-start;
+}
+.dp-zahlfeld {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.dp-zahlfeld-input {
+  width: 90px;
+}
+.dp-zahlfeld-schmal {
+  width: 48px;
+}
+.dp-einheit {
+  color: var(--k-ink-faint);
+}
+.dp-oeffnungsliste {
+  display: grid;
+  gap: var(--k-s2);
+  width: 100%;
+}
+.dp-checkbox-zeile {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.dp-beschlag-katalog {
+  margin-top: var(--k-s2);
+}
+.dp-beschlag-titel {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}
+.dp-beschlag-kategorie {
+  margin-top: var(--k-s1);
+}
+.dp-beschlag-kategorie-titel {
+  color: var(--k-ink-faint);
+}
+.dp-beschlag-typen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--k-s2);
+  margin-top: var(--k-s1);
+}
+.dp-beschlag-typ {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s1);
+  font-size: var(--k-t-sm);
+}
+
+/* KennzahlenPanel — Kopfzeile (Klapp-Button) + Körper. */
+.kp-kopf-knopf {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  padding: var(--k-s3) var(--k-s4);
+  width: calc(100% - 24px);
+}
+.kp-koerper {
+  padding: 0 var(--k-s4) var(--k-s4);
+  display: grid;
+  gap: var(--k-s3);
+}
+.kp-leerzustand {
+  color: var(--k-ink-faint);
+}
+.kp-custom-liste {
+  display: grid;
+  gap: 3px;
+}
+.kp-checks-knopfreihe {
+  display: flex;
+  gap: var(--k-s2);
+}
+.kp-checks-liste {
+  display: grid;
+  gap: var(--k-s3);
+}
+.kp-checks-gruppe {
+  display: grid;
+  gap: var(--k-s2);
+}
+.kp-checks-gruppentitel {
+  font-size: var(--k-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+.kp-check-zeile {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: baseline;
+}
+.kp-check-punkt {
+  color: var(--k-ink-faint);
+  font-weight: 700;
+}
+.kp-check-text {
+  color: var(--k-ink-soft);
+  line-height: 1.4;
+}
+.kp-checks-fussnote {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+}
+.kp-toggle-icon {
+  color: var(--k-ink-faint);
+}

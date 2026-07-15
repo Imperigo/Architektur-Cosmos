@@ -1,0 +1,60 @@
+/* KosmoSymbol (v0.8.0B / P7) — Inline-Styles auf Klassen; testids/DOM-
+   Vertrag (`kosmo-symbol`/`kosmo-mini`) bleiben exakt unverändert.
+
+   Löst die P3-`!important`-Brücke in `boden-dock.css` sauber auf: die
+   Grössen-/Rand-Overrides des Boden-Dock-Slots liefen bisher gegen die
+   INLINE-Styles dieser Komponente an (`width:52` etc.) — Inline schlägt
+   externe Regeln immer, ausser mit `!important`. Jetzt trägt der Knopf
+   selbst nur noch die Klasse `.ks-knopf` (Spezifität 0,1,0); der Boden-
+   Dock-Selektor `.boden-dock-kosmo-slot [data-testid='kosmo-symbol']`
+   (Klasse + Attribut, Spezifität 0,2,0) gewinnt jetzt allein durch höhere
+   Spezifität — die `!important`-Flags in `boden-dock.css` entfallen. */
+
+.ks-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--k-s2);
+}
+.ks-wrapper--eingebettet {
+  position: relative;
+  pointer-events: auto;
+}
+.ks-wrapper--frei {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 110;
+}
+
+.ks-popup {
+  max-width: 260px;
+  padding: 10px 12px;
+  border-radius: var(--k-radius-md);
+  background: var(--k-raised);
+  border: 1px solid var(--k-line);
+  box-shadow: var(--k-shadow-overlay);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--k-ink-soft);
+}
+.ks-popup-titel {
+  font-weight: 600;
+  color: var(--k-ink);
+  margin-bottom: 3px;
+}
+
+/* `all:'unset'` bewusst NICHT hier (blockierte vorher `.k-druck`s
+   transform/filter) — Font/Color erben weiter global (aura.css). */
+.ks-knopf {
+  margin: 0;
+  cursor: pointer;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--k-surface);
+  border: 1px solid var(--k-line-strong);
+  box-shadow: var(--k-shadow-overlay);
+}

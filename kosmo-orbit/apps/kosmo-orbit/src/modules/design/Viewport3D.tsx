@@ -6,6 +6,7 @@ import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
 import { aufgeloesteDarstellung3d, offizielleDarstellung3d, deriveAllMitFensterdetails, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import './viewport3d-chrome.css';
 import { useProject } from '../../state/project-store';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
@@ -2219,10 +2220,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     : [];
 
   return (
-    <div style={{ position: 'absolute', inset: 0 }}>
+    <div className="v3d-root">
       <div
         ref={mountRef}
-        style={{ position: 'absolute', inset: 0 }}
+        className="v3d-mount"
         data-testid="viewport3d"
         data-darstellung3d={darstellung3dAufgeloest}
       />
@@ -2271,41 +2272,18 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           gleiche Spalte wie `NavLeiste` (`right:88`), aber `bottom:92` statt
           `bottom:50`, damit sich nichts stapelt). Unaufdringlich: im Ruhe-
           zustand nur der Knopf, das Status-/Ergebnis-Panel wächst darüber. */}
-      <div
-        style={{
-          position: 'absolute',
-          right: 88,
-          bottom: 92,
-          zIndex: 5,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          gap: 6,
-        }}
-      >
+      <div className="v3d-render-ecke">
         {renderStatus !== 'bereit' && (
           <div
             data-testid="viewport-render-panel"
-            style={{
-              background: 'var(--k-surface)',
-              border: '1px solid var(--k-line)',
-              borderRadius: 'var(--k-radius-md)',
-              padding: 8,
-              boxShadow: 'var(--k-shadow-raised)',
-              display: 'grid',
-              gap: 6,
-              width: 200,
-            }}
+            className="v3d-render-panel"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div className="v3d-render-kopf">
               <Badge hue={moduleHue.vis}>Render</Badge>
               <span
                 data-testid="viewport-render-status"
+                className="v3d-render-status"
                 style={{
-                  fontSize: 10,
-                  fontFamily: 'var(--k-font-mono)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
                   color:
                     renderStatus === 'fertig'
                       ? 'var(--k-success)'
@@ -2334,7 +2312,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
                   imageName={renderLauf.bild}
                   alt="Render"
                   testid="viewport-render-bild"
-                  style={{ width: '100%', border: '1px solid var(--k-line)' }}
+                  className="v3d-render-bild"
                 />
                 <KButton size="sm" tone="accent" data-testid="viewport-render-blatt" onClick={renderAufsBlatt}>
                   Aufs Blatt legen
@@ -2342,7 +2320,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
               </>
             ) : (
               renderIstFehler && (
-                <div data-testid="viewport-render-fehler" style={{ fontSize: 11, color: 'var(--k-danger)' }}>
+                <div data-testid="viewport-render-fehler" className="v3d-render-fehler">
                   {renderLauf?.fehler ?? 'Render fehlgeschlagen'}
                 </div>
               )
@@ -2359,7 +2337,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           title="Aktuelles Viewport-Bild als lokale Bildquelle für KosmoVis aufnehmen (kein Rendering, kein Bridge-Job)"
           onClick={fuerVisAufnehmen}
         >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          <span className="v3d-knopf-inhalt">
             <KIcon name="kamera" size={14} />
             Für Vis aufnehmen
           </span>
@@ -2376,7 +2354,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           }
           onClick={renderStarten}
         >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          <span className="v3d-knopf-inhalt">
             <KIcon name="kamera" size={14} />
             {renderKnopfLabel}
           </span>
@@ -2393,18 +2371,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       {sketchModeAn && sketchStrokes.length === 0 && !sketchPending && (
         <div
           data-testid="sketch3d-hinweis"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 18,
-            transform: 'translateX(-50%)',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-md)',
-            padding: 'var(--k-s3) var(--k-s4)',
-            fontSize: 'var(--k-t-md)',
-            boxShadow: 'var(--k-shadow-overlay)',
-          }}
+          className="v3d-sketch-hinweis"
         >
           Klicken + ziehen zeichnet auf der getroffenen Fläche — auf einer Wand ergibt der Strich eine Öffnung, sonst
           eine Wand. Kamera steht still, bis das Werkzeug wechselt.
@@ -2413,23 +2380,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       {!sketchPending && sketchStrokes.length > 0 && (
         <div
           data-testid="sketch3d-batch"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 18,
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 'var(--k-s3)',
-            alignItems: 'center',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-md)',
-            padding: 'var(--k-s3) var(--k-s4)',
-            boxShadow: 'var(--k-shadow-overlay)',
-          }}
+          className="v3d-sketch-batch"
         >
           <Badge hue={moduleHue.design}>Frei skizziert</Badge>
-          <span style={{ fontSize: 'var(--k-t-md)' }}>{sketchStrokes.length} Strich{sketchStrokes.length === 1 ? '' : 'e'}</span>
+          <span className="v3d-sketch-text">{sketchStrokes.length} Strich{sketchStrokes.length === 1 ? '' : 'e'}</span>
           <KButton size="sm" tone="accent" data-testid="sketch3d-uebergeben" onClick={sketchUebergeben}>
             Übergeben
           </KButton>
@@ -2441,23 +2395,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       {sketchPending && (
         <div
           data-testid="sketch3d-proposal"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 18,
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 'var(--k-s3)',
-            alignItems: 'center',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-accent)',
-            borderRadius: 'var(--k-radius-md)',
-            padding: 'var(--k-s3) var(--k-s4)',
-            boxShadow: 'var(--k-shadow-overlay)',
-          }}
+          className="v3d-sketch-batch v3d-sketch-batch--vorschlag"
         >
           <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
-          <span style={{ fontSize: 'var(--k-t-md)' }}>{sketchPending.length} Wände</span>
+          <span className="v3d-sketch-text">{sketchPending.length} Wände</span>
           <KButton size="sm" tone="accent" data-testid="sketch3d-accept" onClick={sketchUebernehmen}>
             Übernehmen
           </KButton>

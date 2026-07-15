@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Badge, Hairline, KButton, KIcon, Measure, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KIcon, KKeyValue, moduleHue } from '@kosmo/ui';
+import './design-panels.css';
 import { areaReport, kennzahlenAuswerten, pruefeGrundriss } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 
@@ -59,92 +60,75 @@ export function KennzahlenPanel() {
       // `RasterPanel.tsx`): Hintergrund/Rahmen/Schatten bleiben, nur
       // Position/Breite/Höhen-Deckel entfallen — der äussere
       // `.k-dock-panel-inhalt` (dock-flaeche.css) übernimmt das Scrollen.
-      className="k-dialog"
-      style={{
-        background: 'var(--k-surface)',
-        border: '1px solid var(--k-line)',
-        borderRadius: 'var(--k-radius-md)',
-        boxShadow: 'var(--k-shadow-raised)',
-        fontSize: 'var(--k-t-sm)',
-      }}
+      className="k-dialog dp-panel"
     >
-      <button
-        onClick={() => setOpen(!open)}
-        style={{
-          all: 'unset',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--k-s3)',
-          padding: 'var(--k-s3) var(--k-s4)',
-          width: 'calc(100% - 24px)',
-        }}
-      >
+      <button onClick={() => setOpen(!open)} className="kp-kopf-knopf">
         <Badge hue={moduleHue.design}>Kennzahlen</Badge>
         {befunde.length > 0 && (
           <Badge hue={befunde[0]!.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)'}>
             {befunde.length} Check{befunde.length > 1 ? 's' : ''}
           </Badge>
         )}
-        <span style={{ flex: 1 }} />
-        <KIcon name={open ? 'minus' : 'plus'} size={14} style={{ color: 'var(--k-ink-faint)' }} />
+        <span className="dp-fuell" />
+        <KIcon name={open ? 'minus' : 'plus'} size={14} className="kp-toggle-icon" />
       </button>
       {open && (
-        <div style={{ padding: '0 var(--k-s4) var(--k-s4)', display: 'grid', gap: 'var(--k-s3)' }}>
+        <div className="kp-koerper">
           {!hasZones && !hasMasses && (
-            <div style={{ color: 'var(--k-ink-faint)' }}>
+            <div className="kp-leerzustand">
               Zeichne Zonen oder Volumen — die Flächen laufen hier live mit.
             </div>
           )}
           {hasZones && (
             <>
-              {(['HNF', 'NNF', 'VF', 'FF', 'KF'] as const).map(
-                (k) =>
-                  report.total[k] > 0 && (
-                    <Row key={k} label={k} value={`${fmt(report.total[k])} m²`} />
-                  ),
-              )}
-              <Hairline />
-              <Row label="NGF" value={`${fmt(report.totalNgf)} m²`} strong />
-              <Row
-                label={`aGF-Ziel (×${doc.settings.agfFactor})`}
-                value={`${fmt(report.agfZiel)} m²`}
-                strong
-              />
-              <Row
-                label={`GF-Schätzung (×${doc.settings.facadeFactor})`}
-                value={`${fmt(report.gfSchaetzung)} m²`}
+              <KKeyValue
+                zeilen={[
+                  ...(['HNF', 'NNF', 'VF', 'FF', 'KF'] as const)
+                    .filter((k) => report.total[k] > 0)
+                    .map((k) => ({ key: k, wert: `${fmt(report.total[k])} m²` })),
+                  { key: 'NGF', wert: <strong>{fmt(report.totalNgf)} m²</strong> },
+                  {
+                    key: `aGF-Ziel (×${doc.settings.agfFactor})`,
+                    wert: <strong>{fmt(report.agfZiel)} m²</strong>,
+                  },
+                  {
+                    key: `GF-Schätzung (×${doc.settings.facadeFactor})`,
+                    wert: `${fmt(report.gfSchaetzung)} m²`,
+                  },
+                ]}
               />
             </>
           )}
           {hasMasses && (
             <>
               {hasZones && <Hairline />}
-              <Row label="GF Volumenstudie" value={`${fmt(report.gfVolumen)} m²`} strong />
-              {Object.entries(report.gfVolumenNachProgramm).map(([prog, gf]) => (
-                <Row key={prog} label={`· ${prog}`} value={`${fmt(gf)} m²`} />
-              ))}
+              <KKeyValue
+                zeilen={[
+                  { key: 'GF Volumenstudie', wert: <strong>{fmt(report.gfVolumen)} m²</strong> },
+                  ...Object.entries(report.gfVolumenNachProgramm).map(([prog, gf]) => ({
+                    key: `· ${prog}`,
+                    wert: `${fmt(gf)} m²`,
+                  })),
+                ]}
+              />
             </>
           )}
           {kennzahlenAuswerten(doc, report).length > 0 && (
             <>
               <Hairline />
-              <div style={{ display: 'grid', gap: 3 }} data-testid="custom-kennzahlen">
-                {kennzahlenAuswerten(doc, report).map((k) => (
-                  <Row
-                    key={k.name}
-                    label={`${k.name} (${k.basis})`}
-                    value={`${k.betrag.toLocaleString('de-CH')} ${k.einheit}`}
-                    strong
-                  />
-                ))}
-              </div>
+              <KKeyValue
+                data-testid="custom-kennzahlen"
+                zeilen={kennzahlenAuswerten(doc, report).map((k) => ({
+                  key: `${k.name} (${k.basis})`,
+                  wert: <strong>{k.betrag.toLocaleString('de-CH')} {k.einheit}</strong>,
+                }))}
+              />
             </>
           )}
           {befunde.length > 0 && (
             <>
               <Hairline />
-              <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
+              <div className="kp-checks-knopfreihe">
                 <KButton
                   size="sm"
                   tone={checksFilter === 'alle' ? 'accent' : 'ghost'}
@@ -162,33 +146,21 @@ export function KennzahlenPanel() {
                   Nur Fehler
                 </KButton>
               </div>
-              <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="checks">
+              <div className="kp-checks-liste" data-testid="checks">
                 {(['fehler', 'warnung', 'hinweis'] as const)
                   .filter((schwere) => checksFilter === 'alle' || schwere === 'fehler')
                   .map((schwere) => {
                     const gruppe = befundeGruppiert.filter((b) => b.schwere === schwere);
                     if (gruppe.length === 0) return null;
                     return (
-                      <div
-                        key={schwere}
-                        data-testid={`checks-gruppe-${schwere}`}
-                        style={{ display: 'grid', gap: 'var(--k-s2)' }}
-                      >
-                        <span
-                          style={{
-                            fontSize: 'var(--k-t-xs)',
-                            fontWeight: 600,
-                            letterSpacing: '0.02em',
-                            textTransform: 'uppercase',
-                            color: 'var(--k-ink-faint)',
-                          }}
-                        >
+                      <div key={schwere} data-testid={`checks-gruppe-${schwere}`} className="kp-checks-gruppe">
+                        <span className="kp-checks-gruppentitel">
                           {schwere} ({gruppe.length})
                         </span>
                         {gruppe.map((b, i) => (
-                          <div key={i} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
+                          <div key={i} className="kp-check-zeile">
                             {b.schwere === 'hinweis' ? (
-                              <span title={b.schwere} style={{ color: 'var(--k-ink-faint)', fontWeight: 700 }}>
+                              <span title={b.schwere} className="kp-check-punkt">
                                 ·
                               </span>
                             ) : (
@@ -202,7 +174,7 @@ export function KennzahlenPanel() {
                                 }}
                               />
                             )}
-                            <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>
+                            <span className="kp-check-text">
                               {b.n > 1 ? `${b.n}× ` : ''}
                               {b.text}
                             </span>
@@ -211,7 +183,7 @@ export function KennzahlenPanel() {
                       </div>
                     );
                   })}
-                <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+                <span className="kp-checks-fussnote">
                   Richtwerte-Checks — kein Normersatz.
                 </span>
               </div>
@@ -219,17 +191,6 @@ export function KennzahlenPanel() {
           )}
         </div>
       )}
-    </div>
-  );
-}
-
-function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
-      <span style={{ color: strong ? 'var(--k-ink)' : 'var(--k-ink-soft)', fontWeight: strong ? 550 : 400 }}>
-        {label}
-      </span>
-      <Measure style={{ fontWeight: strong ? 600 : 400 }}>{value}</Measure>
     </div>
   );
 }

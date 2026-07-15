@@ -1,0 +1,311 @@
+/* App.tsx (v0.8.0B / P7, Stations-Welle Design + Shell-Rest) — der App-Rest:
+   Kopfleiste/Sync-Leiste/Zentrale-Grid/Varianten-Archiv/Projektliste als
+   Klassen statt Inline-Styles. Reiner Hüllenumbau — Screen-Routing, Sync-/
+   Projekt-/Varianten-Logik und alle testids bleiben unangetastet. */
+
+.app-wurzel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest, `--k-sunken`
+   + subtile Trennlinie (Papier fällt auf `--k-line` zurück). */
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s4);
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--k-line-subtil, var(--k-line));
+  background: var(--k-sunken, var(--k-surface));
+  z-index: 3;
+}
+
+/* Ersetzt `K_DRUCK_KNOPF_RESET` (JS-Objekt) — dieselben Werte als Klasse. */
+.app-druck-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.app-wortmarke-knopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.app-fuell {
+  flex: 1;
+}
+.app-inline-nowrap {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.app-inline-reihe {
+  display: inline-flex;
+  gap: var(--k-s3);
+  align-items: center;
+}
+.app-inline {
+  display: inline-flex;
+  align-items: center;
+}
+
+.app-sync-leiste {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--k-line);
+  background: var(--k-surface);
+  font-size: 12.5px;
+}
+.app-faint {
+  color: var(--k-ink-faint);
+}
+.app-sync-input {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+}
+.app-sync-input--url {
+  width: 210px;
+}
+.app-sync-input--raum {
+  width: 130px;
+}
+.app-sync-input--token {
+  width: 110px;
+}
+.app-danger {
+  color: var(--k-danger);
+}
+.app-warning {
+  color: var(--k-warning);
+}
+.app-raeume-reihe {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.app-raum-chip {
+  margin: 0;
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  font-family: var(--k-font-mono);
+  font-size: 11.5px;
+  background: var(--k-surface);
+}
+.app-raum-chip--aktiv {
+  background: var(--k-accent-wash);
+}
+.app-koppeln-karte {
+  flex-basis: 100%;
+  display: flex;
+  gap: var(--k-s4);
+  align-items: center;
+  padding-top: var(--k-s3);
+}
+.app-qr-bild {
+  width: 164px;
+  height: 164px;
+  flex-shrink: 0;
+  border: 1px solid var(--k-line);
+}
+.app-qr-fehler {
+  width: 164px;
+  flex-shrink: 0;
+  font-size: 11.5px;
+  color: var(--k-danger);
+}
+.app-koppeln-hinweis {
+  font-size: var(--k-t-md);
+  color: var(--k-ink-soft);
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+.app-stationsflaeche {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.app-station-huelle {
+  position: absolute;
+  inset: 0;
+}
+
+.app-zentrale-scroll {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: 48px 24px;
+}
+.app-zentrale-inhalt {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s7, 28px);
+}
+.app-onboarding-spanne {
+  grid-column: 1 / -1;
+}
+.app-gruss-reihe {
+  display: flex;
+  align-items: baseline;
+  gap: var(--k-s4);
+}
+.app-gruss-titel {
+  font-size: 34px;
+}
+.app-rolle-label {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.app-gruss-sub {
+  color: var(--k-ink-soft);
+  margin-top: 6px;
+}
+.app-gruss-aktion {
+  margin-top: 12px;
+}
+.app-about-zeile {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+  font-family: var(--k-font-mono);
+}
+
+/* ── Varianten-Archiv / Projektliste ────────────────────────────────────── */
+
+.app-stapel-s3 {
+  display: grid;
+  gap: var(--k-s3);
+}
+.app-stapel-s2 {
+  display: grid;
+  gap: var(--k-s2);
+}
+.app-kopf-reihe {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.app-kopf-reihe-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.app-titel-klein {
+  font-weight: 550;
+  font-size: 13.5px;
+}
+.app-hinweis-klein {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.app-karten-raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: var(--k-s3);
+}
+.app-variante-karte {
+  padding: 10px;
+  display: grid;
+  gap: var(--k-s3);
+}
+.app-variante-bild {
+  height: 110px;
+  overflow: hidden;
+  background: var(--k-plan-paper);
+  border-radius: 6px;
+}
+.app-variante-leer {
+  height: 110px;
+  display: grid;
+  place-items: center;
+  color: var(--k-ink-faint);
+  font-size: 11.5px;
+}
+.app-variante-titelblock {
+  min-width: 0;
+}
+.app-variante-name {
+  font-weight: 550;
+  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-variante-datum {
+  font-size: var(--k-t-xs, 11px);
+  color: var(--k-ink-faint);
+}
+.app-kennzahlen-stack {
+  display: grid;
+  gap: 2px;
+  font-size: 11.5px;
+  font-family: var(--k-font-mono);
+}
+.app-kennzahl-zeile {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--k-s3);
+}
+.app-knopf-reihe {
+  display: flex;
+  gap: var(--k-s2);
+}
+.app-knopf-reihe-wrap {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.app-projekt-karte {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.app-projekt-titelblock {
+  min-width: 0;
+  flex: 1;
+}
+.app-projekt-name {
+  font-weight: 550;
+  font-size: 13px;
+}
+.app-badge-abstand {
+  margin-left: var(--k-s3);
+}
+.app-projekt-meta {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.app-projekt-neu-reihe {
+  display: flex;
+  gap: var(--k-s3);
+}
+.app-projekt-neu-feld {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+  font-size: 13px;
+  width: 240px;
+}
