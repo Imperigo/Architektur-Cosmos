@@ -5,13 +5,30 @@ import {
   setBlaetter,
   setDateiname,
   sheetPaperSize,
+  sheetPlancode,
   sheetToSvg,
   type ImageAsset,
+  type KosmoDoc,
   type PublikationsSet,
   type Sheet,
 } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { baueHerkunft, ermittleEditionId, herkunftKennzeichnung, svgMitHerkunft } from '../../state/herkunft';
+
+/**
+ * Dateiname (ohne Endung) des Set-/Plansatz-PDFs — EINE Quelle für die
+ * tatsächliche `pdf.save()`-Benennung UND die Vorschau, die der Nutzer VOR
+ * dem Export im Set-Panel sieht (v0.8.0 P8, «der Nutzer sieht den
+ * Dateinamen vor dem Export»). Bewusst OHNE Plancode: ein Set-PDF bündelt
+ * i.d.R. mehrere Blätter mit potenziell unterschiedlichen Plancodes (jedes
+ * Blatt trägt seine eigene `planNummer`/`disziplin`/`geschossCode`) — EINEN
+ * davon als Dateinamen des ganzen Bündels auszuzeichnen wäre irreführend,
+ * kein «Plancode fürs Set». Der Projektname bleibt darum die tragende
+ * Namensquelle, wie bisher (byte-gleicher Name ohne jede Änderung). */
+export function pdfSetDateiname(doc: KosmoDoc, set?: PublikationsSet): string {
+  const stamm = doc.settings.projectName.replace(/\s+/g, '-');
+  return `${stamm}-${set ? set.name.replace(/\s+/g, '-') : 'Plansatz'}`;
+}
 
 /**
  * PDF-Font-Einbettung (v0.7.3 D4 «Zwei Stimmen») — dieselbe Logik wie
@@ -114,8 +131,7 @@ export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
   // `keywords`-Feld grep-bar; der Plansatz-Inhalt selbst (svg2pdf-Vektoren
   // oben) bleibt unberührt.
   pdf!.setProperties({ keywords: herkunftKennzeichnung(herkunft) });
-  const stamm = doc.settings.projectName.replace(/\s+/g, '-');
-  pdf!.save(`${stamm}-${set ? set.name.replace(/\s+/g, '-') : 'Plansatz'}.pdf`);
+  pdf!.save(`${pdfSetDateiname(doc, set)}.pdf`);
 }
 
 /** Publikations-Set als Einzel-SVGs — jede Datei nach der Namensregel
@@ -134,12 +150,20 @@ export function exportSetSvgs(set: PublikationsSet): void {
   });
   sheets.forEach((sheet, i) => {
     const markup = svgMitHerkunft(sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName }), herkunft);
+    // v0.8.0 P8 (Befund): `sheetPlancode()` existierte seit P5 in
+    // `derive/publikation.ts`, war aber NIE bis hierher verdrahtet — `ctx.plancode`
+    // fehlte, `setDateiname` griff darum immer auf `NAMENSREGEL_DEFAULT` zurück,
+    // selbst wenn volle Stammdaten vorlagen. Diese Zeile schliesst die Lücke; ohne
+    // Stammdaten bleibt `sheetPlancode()` `undefined` und der Name byte-gleich wie
+    // zuvor (Daten-Guard in `setDateiname` selbst, s. dortigen Kommentar).
+    const plancode = sheetPlancode(doc, sheet);
     const name = setDateiname(set.namensregel, {
       nr: i + 1,
       blatt: sheet.name,
       projekt: doc.settings.projectName,
       massstab: sheet.placements[0]?.scale ?? null,
       format: `${sheet.format}-${sheet.orientation}`,
+      ...(plancode !== undefined ? { plancode } : {}),
     });
     const url = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml' }));
     const a = document.createElement('a');

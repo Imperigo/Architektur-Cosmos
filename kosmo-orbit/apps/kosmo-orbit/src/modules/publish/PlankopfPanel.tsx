@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import {
   PHASEN_MATRIX,
+  setDateiname,
   sheetPlancode,
   siaZuMatrixStufe,
   type Sheet,
@@ -114,6 +115,26 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
   if (!doc.settings.buero?.kuerzel) plancodeFehlend.push('Büro-Kürzel');
   if (!doc.settings.projekt?.projektCode) plancodeFehlend.push('Projekt-Code');
   if (!sheet.plankopf?.planNummer) plancodeFehlend.push('Plan-Nummer');
+
+  // v0.8.0 P8 (Spez §4.4/§9 P-I8, «Plancode-Namen sichtbar im Export»): der
+  // Nutzer soll den tatsächlichen Export-Dateinamen SEHEN, bevor er
+  // exportiert — dieselbe `setDateiname()`-Funktion, die `exportSetSvgs()`
+  // (`export-sheets.ts`) beim SVG-Download aufruft, mit denselben Feldern
+  // (Set-Position hier immer als Platzhalter «1», weil dieses Panel kein Set
+  // kennt — die tatsächliche Nummer stammt aus der Set-Reihenfolge beim
+  // echten Export). Ohne Plancode (Daten-Guard) zeigt die Vorschau ehrlich
+  // den heutigen Alt-Namen (`NAMENSREGEL_DEFAULT`), byte-gleich zum
+  // tatsächlichen Export. Ehrliche Grenze: trägt ein Set eine EIGENE
+  // `namensregel`, gewinnt beim Export diese — die Vorschau hier zeigt die
+  // Standard-Regeln (Set-eigene Regeln sind Set-, nicht Blatt-Wissen).
+  const exportDateiname = setDateiname(undefined, {
+    nr: 1,
+    blatt: sheet.name,
+    projekt: doc.settings.projectName,
+    massstab: sheet.placements[0]?.scale ?? null,
+    format: `${sheet.format}-${sheet.orientation}`,
+    ...(plancode !== undefined ? { plancode } : {}),
+  });
 
   const massstaebe = [...new Set(eintrag.massstaebe)];
   const revisionen = sheet.revisionen ?? [];
@@ -271,6 +292,16 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
               Unvollständig — es fehlt: {plancodeFehlend.join(', ')}
             </span>
           )}
+        </KField>
+
+        {/* Export-Dateiname-Vorschau (v0.8.0 P8) — derselbe Name, den der
+            SVG-Export dieses Blatts tatsächlich vergibt (`setDateiname()`,
+            `export-sheets.ts`). Mit vollem Plancode ersetzt er den
+            Alt-Namen automatisch (Daten-Guard, s. `derive/publikation.ts`). */}
+        <KField label="Export-Dateiname (Vorschau)">
+          <div data-testid="export-dateiname" style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)', wordBreak: 'break-all' }}>
+            {exportDateiname}.svg
+          </div>
         </KField>
       </div>
 

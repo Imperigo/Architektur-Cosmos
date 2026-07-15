@@ -585,6 +585,21 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </div>
         )}
         <Hairline />
+        {/* v0.8.0 P8 (Spez §8/§9 P-K8, «Export-Hub ehrlich»): der Prototyp
+            zeigte eine 27-Formate-Karte in 6 Kategorien — bewusst NICHT
+            nachgebaut (Vertagungsliste, Abschnitt 8: «DWG/Blatt-IFC/
+            glTF-aus-Publish existieren nicht — werden nicht vorgetäuscht»).
+            Kosmos Export-Hub ist stattdessen genau diese Sets-Sektion + die
+            «Plansatz PDF»/«Blatt SVG»/«Grundriss DXF»-Gruppe weiter unten:
+            REALE Formate, die alle tatsächlich exportieren (PDF via
+            svg2pdf, SVG als Vektor-Markup, DXF je Geschoss aus
+            `planToDxf()` — ein DESIGN-Ansicht-Export, kein Blatt-Export,
+            s. Spez). IFC-Export existiert (`export-ifc`, KosmoDesign-
+            Station) — ebenfalls kein Blatt-Format, darum bewusst nicht
+            hier dupliziert. Keine zusätzliche «vertagt»-Hinweiszeile hier:
+            ohne einen konkreten, in DIESEM Screen umsetzbaren
+            Owner-Nutzen wäre sie nur ein toter Hinweis auf einen toten
+            Button (Spez-Prinzip «keine toten Buttons»). */}
         <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="pubsets">
           <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
             Publikations-Sets
