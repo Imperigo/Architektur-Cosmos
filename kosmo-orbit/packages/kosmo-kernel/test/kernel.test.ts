@@ -5402,6 +5402,138 @@ describe('Plan-Revisionen (RE-ARCHICAD A7)', () => {
     const setCsv = transmittalCsv(doc, doc.settings.publikationsSets![0]!);
     expect(setCsv.split('\n')[1]).toContain('Schnitt');
   });
+
+  // v0.8.0 P5 (docs/V080-PLANKOPF-SPEZ.md §4.4/V-K4): Plancode-basierte
+  // Exportnamen + Transmittal-Spalte, additiv hinter Daten-Guard — die drei
+  // Tests oben (setDateiname/transmittalCsv ohne Plancode-Kontext) bleiben
+  // unverändert und beweisen bereits den Guard-Fall (kein `ctx.plancode`
+  // übergeben ⇒ exakt das alte Verhalten). Die Tests unten decken den
+  // Plancode-Pfad selbst ab.
+  it('sheetPlancode: volle Stammdaten (Büro-Kürzel, Projekt-Code, Plankopf) ergeben MAA-SEE-BP-A-EG-101', async () => {
+    const { sheetPlancode } = await import('../src');
+    const { doc } = setupDoc();
+    const b1 = (execute(doc, 'publish.blattErstellen', { name: 'Grundriss EG', format: 'A1' }).patches[0] as { id: string }).id;
+    execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
+    execute(doc, 'design.projektInfoSetzen', { projektCode: 'SEE' });
+    execute(doc, 'design.siaPhaseSetzen', { siaPhase: 'bauprojekt' });
+    execute(doc, 'publish.plankopfSetzen', {
+      sheetId: b1,
+      patch: { disziplin: 'A', geschossCode: 'EG', planNummer: '101' },
+    });
+    const sheet = doc.get<import('../src').Sheet>(b1)!;
+    expect(sheetPlancode(doc, sheet)).toBe('MAA-SEE-BP-A-EG-101');
+  });
+
+  it('sheetPlancode: fehlende Disziplin/Geschoss bekommen den ehrlichen «—»-Platzhalter aus plancode() selbst', async () => {
+    const { sheetPlancode } = await import('../src');
+    const { doc } = setupDoc();
+    const b1 = (execute(doc, 'publish.blattErstellen', { name: 'Grundriss EG', format: 'A1' }).patches[0] as { id: string }).id;
+    execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
+    execute(doc, 'design.projektInfoSetzen', { projektCode: 'SEE' });
+    execute(doc, 'publish.plankopfSetzen', { sheetId: b1, patch: { planNummer: '007' } });
+    const sheet = doc.get<import('../src').Sheet>(b1)!;
+    // Default-siaPhase 'wettbewerb' → Matrix-Stufe VS.
+    expect(sheetPlancode(doc, sheet)).toBe('MAA-SEE-VS-—-—-007');
+  });
+
+  it('sheetPlancode: Guard — fehlt Büro-Kürzel, Projekt-Code ODER Plannummer, gibt es keinen Plancode', async () => {
+    const { sheetPlancode } = await import('../src');
+    const { doc } = setupDoc();
+    const b1 = (execute(doc, 'publish.blattErstellen', { name: 'Grundriss EG', format: 'A1' }).patches[0] as { id: string }).id;
+    const sheetOhneAlles = doc.get<import('../src').Sheet>(b1)!;
+    expect(sheetPlancode(doc, sheetOhneAlles)).toBeUndefined();
+
+    execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
+    expect(sheetPlancode(doc, doc.get<import('../src').Sheet>(b1)!)).toBeUndefined(); // Projekt-Code + Plannummer fehlen noch
+
+    execute(doc, 'design.projektInfoSetzen', { projektCode: 'SEE' });
+    expect(sheetPlancode(doc, doc.get<import('../src').Sheet>(b1)!)).toBeUndefined(); // Plannummer fehlt noch
+
+    execute(doc, 'publish.plankopfSetzen', { sheetId: b1, patch: { planNummer: '101' } });
+    expect(sheetPlancode(doc, doc.get<import('../src').Sheet>(b1)!)).toBe('MAA-SEE-VS-—-—-101');
+  });
+
+  it('setDateiname: mit ctx.plancode + Standardregel greift NAMENSREGEL_PLANCODE — Guard-Fall bleibt byte-gleich', async () => {
+    const { setDateiname, NAMENSREGEL_PLANCODE } = await import('../src');
+    expect(NAMENSREGEL_PLANCODE).toBe('{plancode}_{blatt}_{massstab}');
+    // Mit Plancode + ohne eigene Regel: der Plancode ersetzt das «P-{nr}»-Präfix.
+    expect(
+      setDateiname(undefined, {
+        nr: 1,
+        blatt: 'Grundriss EG',
+        projekt: 'TKB',
+        massstab: 50,
+        plancode: 'MAA-SEE-BP-A-EG-101',
+      }),
+    ).toBe('MAA-SEE-BP-A-EG-101_Grundriss_EG_1-50');
+    // Guard: OHNE ctx.plancode (Feld weggelassen) exakt wie zuvor — byte-gleich
+    // zum ersten Test dieses Blocks (`setDateiname`-Test oben).
+    expect(setDateiname(undefined, { nr: 1, blatt: 'Grundriss EG', projekt: 'TKB', massstab: 50 })).toBe(
+      'P-01_Grundriss_EG_1-50',
+    );
+    // Eigene Regel gewinnt auch bei vorhandenem Plancode — nur der Standardfall
+    // wechselt automatisch, eine explizit gesetzte Regel bleibt Herr im Haus.
+    expect(
+      setDateiname('{blatt}', { nr: 1, blatt: 'Grundriss EG', projekt: 'TKB', plancode: 'MAA-SEE-BP-A-EG-101' }),
+    ).toBe('Grundriss_EG');
+  });
+
+  it('setDateiname: Sonderzeichen/Länge im Plancode bleiben pfadsicher (keine Trenner, Umlaute erhalten)', async () => {
+    const { setDateiname, plancode } = await import('../src');
+    // Disziplin/Geschoss sind freie Textfelder — ein Schrägstrich oder
+    // Doppelpunkt darin darf NIE im Dateinamen landen (dieselbe Sanitisierung
+    // wie für {blatt}/{projekt} heute, s. Datei-Kopfkommentar «schau wie heute
+    // saniert wird»).
+    const unsicher = plancode({ buero: 'MA/A', projekt: 'SE:E', phase: 'BP', disziplin: 'A', geschoss: 'EG', nr: '1' });
+    const name = setDateiname(undefined, { nr: 1, blatt: 'Grundriss', projekt: 'TKB', plancode: unsicher });
+    expect(name).not.toMatch(/[\\/:*?"<>|]/);
+    // Umlaute/ß bleiben erhalten (kein Sanitisierungs-Übereifer) — nur echte
+    // Pfad-Sonderzeichen werden ersetzt.
+    const nameUmlaut = setDateiname(undefined, {
+      nr: 1,
+      blatt: 'Grundriss',
+      projekt: 'TKB',
+      plancode: 'MÜB-BÄB-BP-A-EG-101',
+    });
+    expect(nameUmlaut).toContain('MÜB-BÄB-BP-A-EG-101');
+    // Sehr lange Werte (z.B. eine lange Freitext-Disziplin) brechen die
+    // Namensbildung nicht — kein Crash, kein Pfadtrenner-Leck.
+    const langeDisziplin = 'A'.repeat(300);
+    const langerCode = plancode({ buero: 'MAA', projekt: 'SEE', phase: 'BP', disziplin: langeDisziplin, geschoss: 'EG', nr: '1' });
+    const langerName = setDateiname(undefined, { nr: 1, blatt: 'Grundriss', projekt: 'TKB', plancode: langerCode });
+    expect(langerName.length).toBeGreaterThan(300);
+    expect(langerName).not.toMatch(/[\\/:*?"<>|]/);
+  });
+
+  it('transmittalCsv: Plancode-Spalte erscheint NUR, wenn mindestens ein Blatt einen Code hat — Guard hält den 5-Spalten-Kopf sonst byte-gleich', async () => {
+    const { transmittalCsv } = await import('../src');
+    const { doc, storeyId } = setupDoc();
+    const b1 = (execute(doc, 'publish.blattErstellen', { name: 'Grundriss EG', format: 'A1' }).patches[0] as { id: string }).id;
+    const b2 = (execute(doc, 'publish.blattErstellen', { name: 'Schnitt', format: 'A3' }).patches[0] as { id: string }).id;
+    execute(doc, 'publish.ansichtPlatzieren', { sheetId: b1, view: 'grundriss', storeyId, scale: 50, x: 200, y: 200 });
+    // Noch ohne Büro-/Projekt-/Plankopf-Stammdaten: Guard hält den Kopf exakt
+    // wie im Bestandstest oben (5 Spalten, keine Plancode-Spalte).
+    const ohneCode = transmittalCsv(doc);
+    expect(ohneCode.split('\n')[0]).toBe('Nr;Blatt;Format;Massstab;Revision');
+
+    // Sobald EIN Blatt einen Plancode bilden kann, erscheint die 6. Spalte für
+    // ALLE Zeilen — leer bei Blättern ohne eigenen Code (b2).
+    execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
+    execute(doc, 'design.projektInfoSetzen', { projektCode: 'SEE' });
+    execute(doc, 'design.siaPhaseSetzen', { siaPhase: 'bauprojekt' });
+    execute(doc, 'publish.plankopfSetzen', {
+      sheetId: b1,
+      patch: { disziplin: 'A', geschossCode: 'EG', planNummer: '101' },
+    });
+    const mitCode = transmittalCsv(doc);
+    const zeilen = mitCode.split('\n');
+    expect(zeilen[0]).toBe('Nr;Blatt;Format;Massstab;Revision;Plancode');
+    const zeileB1 = zeilen.find((z) => z.includes('Grundriss EG'))!;
+    const zeileB2 = zeilen.find((z) => z.includes('Schnitt'))!;
+    expect(zeileB1.endsWith(';MAA-SEE-BP-A-EG-101')).toBe(true);
+    expect(zeileB2.endsWith(';')).toBe(true); // kein Code für b2 — Spalte leer, kein Platzhalter
+    void b2;
+  });
 });
 
 describe('Härtetest-Runde 3 (Vision F1)', () => {
