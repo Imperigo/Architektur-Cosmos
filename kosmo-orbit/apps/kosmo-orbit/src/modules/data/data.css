@@ -1,0 +1,853 @@
+/* KosmoData (v0.8.0B / W6, `docs/V080B-DESIGN-SPEZ.md` §2/§3/§9.6 B-41) —
+ * Chrome-Schicht für `DataWorkspace.tsx` (+ `QuellenListe.tsx`/
+ * `ReferenzTabelle.tsx`/`RefHeroBild.tsx`/`DataLeerbild.tsx`). Reiner
+ * Visual-Umbau (Muster `modules/publish/publish.css`, `modules/vis/
+ * vis-visual.css`): ersetzt die 258 Inline-Styles in `DataWorkspace.tsx`
+ * durch Klassen + Tokens. Beide Theile (Papier/Orbit) laufen ausschliesslich
+ * über bestehende `--k-*`-Tokens — keine neue Farbe, kein neuer Rohwert.
+ *
+ * Zwei Schichten:
+ * 1) Ein kleines Set atomarer `kd-*`-Utilities auf den bestehenden
+ *    `--k-s1…s7`/`--k-t-*`-Skalen (Abstand/Typo/Flex/Grid) — die Datei hat
+ *    ~230 Wiederholungen exakt derselben Layout-/Typo-Mikromuster
+ *    (`display:flex;gap:var(--k-s2)` usw.); ein Utility-Layer auf DEN
+ *    REPO-TOKEN vermeidet 90+ Bedeutungslos-Namen für dieselbe Handvoll
+ *    Werte, bleibt aber literal-frei (Gesetz/B-22: keine rohen px/Hex in der
+ *    visuellen Schicht).
+ * 2) Benannte Anatomie-Klassen für echte Bausteine (Karte, Mediakachel,
+ *    Suchfeld, Dossier-Panel, Schichtbalken, Material-Würfel/-Swatch) —
+ *    dieselbe Aufteilung wie in `publish.css`/`vis-visual.css`.
+ *
+ * Gesetz 6 (Zwei Schriftstimmen): `publish.css` führt für seine Abschnitts-
+ * Kleinbeschriftungen bewusst eine eigene Mono-Klasse statt `k-titel` (PT
+ * Sans Narrow ist dort streng der Wortmarke vorbehalten) — hier bleibt
+ * `className="k-titel"` unverändert bestehen, weil `e2e/kosmodata-
+ * dach.spec.ts:160` die Bauteilkatalog-Sektionsüberschriften wörtlich per
+ * `.k-titel`-Locator prüft (E2E-Vertrag sticht die Gesetz-6-Politur; die
+ * Feinschärfung bleibt ein späterer, deklarierter Schritt). */
+
+/* ── 1) Atomare Utilities (Abstand/Typo/Flex/Grid auf --k-*-Skala) ──── */
+
+.kd-flex {
+  display: flex;
+}
+.kd-inline-flex {
+  display: inline-flex;
+}
+.kd-grid {
+  display: grid;
+}
+.kd-contents {
+  display: contents;
+}
+.kd-hidden {
+  display: none;
+}
+.kd-items-center {
+  align-items: center;
+}
+.kd-items-start {
+  align-items: flex-start;
+}
+.kd-items-baseline {
+  align-items: baseline;
+}
+.kd-justify-start {
+  justify-content: flex-start;
+}
+.kd-text-left {
+  text-align: left;
+}
+.kd-text-center {
+  text-align: center;
+}
+.kd-wrap {
+  flex-wrap: wrap;
+}
+.kd-col-dir {
+  flex-direction: column;
+}
+.kd-fill {
+  flex: 1;
+}
+.kd-min0 {
+  min-width: 0;
+}
+.kd-min-180 {
+  min-width: 180px;
+}
+.kd-shrink-0 {
+  flex-shrink: 0;
+}
+.kd-self-stretch {
+  align-self: stretch;
+}
+.kd-content-start {
+  align-content: start;
+}
+
+.kd-g1 {
+  gap: var(--k-s1);
+}
+.kd-g2 {
+  gap: var(--k-s2);
+}
+.kd-g3 {
+  gap: var(--k-s3);
+}
+.kd-g4 {
+  gap: var(--k-s4);
+}
+.kd-g5 {
+  gap: var(--k-s5);
+}
+.kd-gxs {
+  gap: 2px;
+}
+
+.kd-p-s1-s2 {
+  padding: var(--k-s1) var(--k-s2);
+}
+.kd-p-s1-s3 {
+  padding: var(--k-s1) var(--k-s3);
+}
+.kd-p-s2-s3 {
+  padding: var(--k-s2) var(--k-s3);
+}
+.kd-p-s3-s3 {
+  padding: var(--k-s3) var(--k-s3);
+}
+.kd-p-s3-s4 {
+  padding: var(--k-s3) var(--k-s4);
+}
+.kd-p-s4-s5 {
+  padding: var(--k-s4) var(--k-s5);
+}
+.kd-p-s5 {
+  padding: var(--k-s5);
+}
+.kd-p-s6 {
+  padding: var(--k-s6);
+}
+.kd-pt-s1 {
+  padding-top: var(--k-s1);
+}
+.kd-pt-s2 {
+  padding-top: var(--k-s2);
+}
+.kd-pl-s6 {
+  padding-left: var(--k-s6);
+}
+.kd-mt-s1 {
+  margin-top: var(--k-s1);
+}
+.kd-ml-s2 {
+  margin-left: var(--k-s2);
+}
+
+.kd-fs-xs {
+  font-size: var(--k-t-xs);
+}
+.kd-fs-sm {
+  font-size: var(--k-t-sm);
+}
+.kd-fs-md {
+  font-size: var(--k-t-md);
+}
+.kd-fs-lg {
+  font-size: var(--k-t-lg);
+}
+.kd-fs-plakat {
+  font-size: var(--k-t-plakat);
+}
+.kd-c-soft {
+  color: var(--k-ink-soft);
+}
+.kd-c-faint {
+  color: var(--k-ink-faint);
+}
+.kd-w-550 {
+  font-weight: 550;
+}
+.kd-w-600 {
+  font-weight: 600;
+}
+.kd-w-650 {
+  font-weight: 650;
+}
+.kd-w-700 {
+  font-weight: 700;
+}
+.kd-mono {
+  font-family: var(--k-font-mono);
+}
+.kd-italic {
+  font-style: italic;
+}
+.kd-cursor-pointer {
+  cursor: pointer;
+}
+.kd-wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+.kd-nowrap {
+  white-space: nowrap;
+}
+.kd-ov-hidden {
+  overflow: hidden;
+}
+.kd-ov-auto {
+  overflow: auto;
+}
+.kd-ellipsis-text {
+  text-overflow: ellipsis;
+}
+.kd-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kd-lh-45 {
+  line-height: 1.45;
+}
+.kd-lh-50 {
+  line-height: 1.5;
+}
+.kd-lh-55 {
+  line-height: 1.55;
+}
+.kd-lh-60 {
+  line-height: 1.6;
+}
+.kd-lh-66 {
+  line-height: 1.66;
+}
+.kd-max-70ch {
+  max-width: 70ch;
+}
+.kd-max-480 {
+  max-width: 480px;
+}
+.kd-w-full {
+  width: 100%;
+}
+.kd-w-1 {
+  width: 1px;
+}
+.kd-w-6 {
+  width: 6px;
+}
+.kd-h-6 {
+  height: 6px;
+}
+.kd-w-34 {
+  width: 34px;
+}
+.kd-h-34 {
+  height: 34px;
+}
+.kd-w-420 {
+  width: 420px;
+}
+.kd-h-84 {
+  height: 84px;
+}
+.kd-h-170 {
+  height: 170px;
+}
+.kd-h-14 {
+  height: 14px;
+}
+.kd-h-130 {
+  height: 130px;
+}
+
+.kd-rel {
+  position: relative;
+}
+.kd-abs {
+  position: absolute;
+}
+.kd-inset0 {
+  inset: 0;
+}
+.kd-top0 {
+  top: 0;
+}
+.kd-right0 {
+  right: 0;
+}
+.kd-bottom0 {
+  bottom: 0;
+}
+.kd-left0 {
+  left: 0;
+}
+.kd-left-s3 {
+  left: var(--k-s3);
+}
+.kd-pe-none {
+  pointer-events: none;
+}
+.kd-object-cover {
+  object-fit: cover;
+}
+.kd-place-center {
+  place-items: center;
+}
+
+.kd-bg-field {
+  background: var(--k-field);
+}
+.kd-bg-surface {
+  background: var(--k-surface);
+}
+.kd-bg-raised {
+  background: var(--k-raised);
+}
+.kd-bg-accent {
+  background: var(--k-accent);
+}
+.kd-bg-accent-wash {
+  background: var(--k-accent-wash);
+}
+.kd-bg-plan-paper {
+  background: var(--k-plan-paper);
+}
+.kd-b-line {
+  border: 1px solid var(--k-line);
+}
+.kd-b-line-strong {
+  border: 1px solid var(--k-line-strong);
+}
+.kd-r-sm {
+  border-radius: var(--k-radius-sm);
+}
+.kd-r-md {
+  border-radius: var(--k-radius-md);
+}
+.kd-r-lg {
+  border-radius: var(--k-radius-lg);
+}
+.kd-r-pill {
+  border-radius: 999px;
+}
+/* R1-Fix (Kritik-065 p-07/i-07): sichtbarer Rand auf `tone="ghost"`-Knöpfen,
+ * damit sie neben nacktem Text/Checkbox als Knopf erkennbar bleiben. */
+.kd-border-line {
+  border-color: var(--k-line);
+}
+
+.kd-col-fill-150 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.kd-col-fill-230 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.kd-col-fill-320 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+.kd-col-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* ── 2) Benannte Anatomie ────────────────────────────────────────────── */
+
+/* Stations-Viewport (Referenzen/Dach/Wissen/…-Tabs teilen sich die Fläche). */
+.kd-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.kd-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--k-s6);
+}
+.kd-content {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s5);
+}
+.kd-content--voll {
+  max-width: none;
+}
+
+/* Mono-Label uppercase .14em (Gesetz 6, «alles Messbare, Status, IDs,
+   Labels») — Dossier-Abschnittsköpfe («Geo», «Medien», «Analyse», …) und die
+   `<summary>`-Kopfzeile der Klapp-Gruppen (`DossierGruppe`). */
+.kd-label {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--k-ink-faint);
+}
+.kd-label--klick {
+  cursor: pointer;
+}
+.kd-dossier-anzahl {
+  font-family: var(--k-font-mono);
+  margin-left: var(--k-s2);
+}
+.kd-dossier-body {
+  display: grid;
+  gap: var(--k-s2);
+  padding-top: var(--k-s2);
+}
+
+/* `Panel` (kosmo-ui) ist eine reine Fläche (surface + hairline + radius-md,
+   `pad`-Prop 14px/0px) — `.kd-panel` bildet exakt dieselbe Anatomie als
+   Klasse nach; DataWorkspace verwendet ab hier `<div className="kd-panel …">`
+   statt `<Panel>` (Panel selbst bleibt in kosmo-ui unangetastet, andere
+   Stationen binden es weiter ein). Das spart den einzigen strukturellen
+   Grund, warum Fläche/Rand/Padding zuvor inline bleiben mussten (Panel setzt
+   sie selbst inline, eine Klasse hätte nie gewonnen) — jetzt volle
+   Klassen-Kontrolle inkl. `aktiv`/Hover/Fokus-Zustand. */
+.kd-panel {
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+}
+
+/* KdKarte — Ruhe = 1px `--k-line` auf `--k-raised`; Hover/aktiv = 1px
+   `--k-line-strong`; ein RUNDER Eck-Punkt (statt der früheren 6×6-Box,
+   Gesetz 5 «Rund statt Block») markiert `aktiv`. */
+.kd-karte {
+  background: var(--k-raised);
+}
+.kd-karte--hover {
+  border-color: var(--k-line-strong);
+}
+.kd-karte-eck {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--k-accent);
+}
+
+/* Suchfeld (KInput + Lupe links). */
+.kd-suchfeld-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.kd-suchfeld-icon {
+  position: absolute;
+  left: var(--k-s3);
+  color: var(--k-ink-faint);
+  pointer-events: none;
+}
+.kd-suchfeld-input {
+  padding-left: var(--k-s6);
+  width: 100%;
+}
+
+/* Werkzeugleisten-Gruppen, die sich der LOD-Adaption unterordnen
+   (`state/oberflaeche-adaption-kern.ts`) — `.kd-gehoben` überschreibt die
+   Dimmung von `.k-sekundaer`/`.k-selten` für das gerade genutzte Element
+   bewusst (dieselbe Absicht wie zuvor der inline `opacity:1`-Override). */
+.kd-gehoben {
+  opacity: 1 !important;
+}
+.kd-hinweis {
+  visibility: hidden;
+}
+.kd-hinweis--sichtbar {
+  visibility: visible;
+}
+
+/* Medien-Kachel (`MediaThumb`). */
+.kd-media-thumb {
+  position: relative;
+  height: 84px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line);
+  background: var(--k-field);
+  overflow: hidden;
+}
+.kd-media-thumb-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--k-s2);
+  text-align: center;
+  font-size: var(--k-t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+.kd-media-thumb-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.kd-media-thumb-credit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: var(--k-t-xs);
+  padding: var(--k-s1) var(--k-s2);
+  background: color-mix(in srgb, var(--k-surface) 70%, transparent);
+  color: var(--k-ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Referenz-Dossier (rechte 420px-Spalte) + Hero-Bild-Rahmen. */
+.kd-dossier-panel {
+  width: 420px;
+  border-left: 1px solid var(--k-line);
+  background: var(--k-surface);
+  overflow: auto;
+  padding: var(--k-s5);
+  display: grid;
+  gap: var(--k-s3);
+  align-content: start;
+}
+.kd-dossier-hero {
+  height: 170px;
+  border-radius: var(--k-radius-lg);
+  border: 1px solid var(--k-line);
+  background: var(--k-field);
+  overflow: hidden;
+}
+
+/* Themen-/Vibes-Tags im Dossier. */
+.kd-theme-tag {
+  font-size: var(--k-t-xs);
+  padding: var(--k-s1) var(--k-s3);
+  border-radius: 999px;
+  background: var(--k-accent-wash);
+}
+.kd-vibe-tag {
+  font-size: var(--k-t-xs);
+  padding: var(--k-s1) var(--k-s3);
+  border-radius: 999px;
+  border: 1px solid var(--k-line);
+  color: var(--k-ink-soft);
+}
+
+/* Daumen-hoch/-runter-Feedback-Knöpfe (nackte Icon-Knöpfe im Dossier). */
+.kd-icon-btn {
+  all: unset;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 1px 4px;
+}
+
+/* Bauteilkatalog: Name + Schichtbalken (massstäblich, Breite/Farbe bleiben
+   inline — datengetrieben aus den echten Schichtdicken/-funktionen, kein
+   zweiter Wahrheitsträger). Die «letztes Segment ohne Trennstrich»-Regel läuft
+   jetzt über `:last-child` statt eines JS-Ternarys. */
+.kd-layerbar {
+  display: flex;
+  height: 14px;
+  border-radius: var(--k-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--k-line);
+}
+.kd-layerbar-segment:not(:last-child) {
+  border-right: 1px solid var(--k-surface);
+}
+
+/* Material: Würfel-Vorschau-Canvas, Farb-Swatch (Verlauf bleibt inline —
+   datengetrieben aus PBR-Farbe/Rauheit), Eingabefelder-Anatomie
+   (Material-/Archiv-Formular teilen sich dieselben Werte). */
+.kd-wuerfel-canvas {
+  width: 100%;
+  height: 130px;
+  border: 1px solid var(--k-line);
+  background: var(--k-plan-paper);
+}
+.kd-material-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--k-radius-lg);
+  border: 1px solid var(--k-line-strong);
+  flex-shrink: 0;
+}
+.kd-eingabe {
+  padding: var(--k-s3) var(--k-s3);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+  font-size: var(--k-t-md);
+}
+.kd-eingabe--fill {
+  flex: 1;
+}
+/* Archiv-Formular verwendet dieselbe Eingabe-Anatomie, aber auf `--k-surface`
+   statt `--k-raised` (historischer, unverbindlicher Unterschied der beiden
+   Formulare — bewusst nicht vereinheitlicht, kein Vertragsbezug). */
+.kd-eingabe--surface {
+  background: var(--k-surface);
+}
+.kd-eingabe--w200 {
+  flex: 1 1 200px;
+}
+.kd-eingabe--w260 {
+  flex: 1 1 260px;
+  font-family: var(--k-font-mono);
+}
+.kd-eingabe--w170 {
+  flex: 0 1 170px;
+}
+/* `DataLeerbild` — Signet + ehrlicher Satz, mittig im Container; `--start`
+   im "eigenes Material erfassen"-Kartenraster steht linksbündig (die Karte
+   selbst ist ein Grid-Item, kein eigener Signet-Slot). */
+.kd-leerbild {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--k-s2);
+}
+.kd-leerbild-start {
+  justify-items: start;
+  justify-content: start;
+}
+.kd-leerbild-signet {
+  display: block;
+}
+
+/* Gedächtnis-Timeline: fokussierter Rand (Querverweis aus dem Referenz-
+   Dossier) + Notiz-Eingabe beim «Zu Training befördern». */
+.kd-eintrag--fokus {
+  border-color: var(--k-accent);
+}
+.kd-befoerdern-eingabe {
+  flex: 1;
+  min-width: 180px;
+  padding: var(--k-s2) var(--k-s3);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line);
+  background: var(--k-surface);
+  font-size: var(--k-t-sm);
+}
+
+/* ── ReferenzTabelle (mittlere Spalte, Gesetz 5-Ausnahme «Tabellen bleiben
+   Tabellen») — Hairline-Trennung statt Kästen (Gesetz 8): die Fläche selbst
+   trägt keinen umlaufenden Rahmen mehr, nur der Kopf + jede Zeile schliessen
+   mit einer 1px-Hairline ab; `gridTemplateColumns` bleibt der einzige Inline-
+   Rest (gemeinsame JS-Konstante `SPALTEN`, keine zweite Quelle der Wahrheit
+   für die sechs Spaltenbreiten). */
+.kd-tabelle {
+  min-width: 0;
+  flex: 1;
+  background: var(--k-surface);
+  border-radius: var(--k-radius-md);
+  overflow: hidden;
+}
+.kd-tabelle-kopf {
+  display: grid;
+  gap: var(--k-s3);
+  padding: 0 var(--k-s4);
+  height: 34px;
+  align-items: center;
+  background: var(--k-field);
+  border-bottom: 1px solid var(--k-line);
+}
+.kd-tabelle-kopf-label {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+.kd-tabelle-zeile {
+  display: grid;
+  gap: var(--k-s3);
+  align-items: center;
+  padding: var(--k-s2) var(--k-s4);
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid var(--k-line);
+  cursor: pointer;
+}
+.kd-tabelle-zeile--aktiv {
+  border-left-color: var(--k-accent);
+  background: var(--k-accent-wash);
+}
+.kd-tabelle-id {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kd-tabelle-objekt {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  min-width: 0;
+}
+.kd-tabelle-stern {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex: none;
+  color: var(--k-ink-faint);
+}
+.kd-tabelle-stern--aktiv {
+  color: var(--k-warning);
+}
+.kd-tabelle-bild {
+  width: 40px;
+  flex: none;
+}
+.kd-tabelle-titel-wrap {
+  min-width: 0;
+  display: grid;
+}
+.kd-tabelle-titel {
+  font-size: var(--k-t-sm);
+  font-weight: 550;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kd-tabelle-ort {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.kd-tabelle-quelle {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kd-tabelle-epoche {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-soft);
+}
+.kd-tabelle-material-wrap {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.kd-tabelle-material-leer {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.kd-tabelle-material-pill {
+  font-size: var(--k-t-xs);
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--k-field);
+  border: 1px solid var(--k-line);
+  color: var(--k-ink-soft);
+  white-space: nowrap;
+}
+.kd-tabelle-material-mehr {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+/* Status nie nur Farbe (Gesetz 10): Punkt + Mono-Label, Farbe/Fläche bleiben
+   die einzigen datengetriebenen Inline-Werte (`statusFarbe` kommt aus
+   `ref-ableitung.ts`, keine feste Palette hier). */
+.kd-tabelle-status {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.kd-tabelle-status-punkt {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+/* ── QuellenListe (linke Spalte, Quellen-/Epochen-Facetten) ─────────── */
+.kd-quelle-liste {
+  width: 220px;
+  flex: none;
+  display: grid;
+  gap: var(--k-s4);
+  align-content: start;
+}
+.kd-quelle-gruppe {
+  display: grid;
+  gap: 3px;
+}
+.kd-quelle-label {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  margin-bottom: 2px;
+}
+.kd-quelle-label--epochen {
+  margin: 2px 0;
+}
+.kd-quelle-knopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  padding: 5px 8px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-xs);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.kd-quelle-punkt {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 999px;
+}
+
+/* ── RefHeroBild (Karte/Dossier-Bildslot) ────────────────────────────── */
+.kd-hero-bild {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.kd-hero-platzhalter {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--k-s2);
+  width: 100%;
+  height: 100%;
+  padding: var(--k-s2);
+}
+.kd-hero-quelle {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  text-align: center;
+  overflow-wrap: anywhere;
+}

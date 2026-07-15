@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { RefEntry } from '@kosmo/data';
 import { Hairline } from '@kosmo/ui';
+import './data.css';
 import { EPOCHEN_BAENDER, epocheVonEntry } from './epochen';
 import { quellenFacetten } from './ref-ableitung';
 
@@ -11,40 +12,24 @@ import { quellenFacetten } from './ref-ableitung';
  * `year_start` abgeleitet, `epochen.ts`) — beide klickbar, beide filtern die
  * `ReferenzTabelle` daneben. Reine Anzeige/Interaktion, kein eigener State
  * ausserhalb der von `DataWorkspace.tsx` übergebenen Callbacks.
+ *
+ * v0.8.0B / W6 (Spez §2/§3): Inline-Styles → `data.css`-Klassen
+ * (`kd-quelle-*`); nur die Facettenfarbe selbst (`farbe`, aus
+ * `ref-ableitung.ts`/`epochen.ts`, keine feste Palette) bleibt ein gezielter
+ * Style-Override — genau der «CSS-Var-Carrier»-Fall, den die Spez zulässt.
  */
 
-const monoLabel: CSSProperties = {
-  fontFamily: 'var(--k-font-mono)',
-  fontSize: 10,
-  letterSpacing: '0.14em',
-  textTransform: 'uppercase',
-  color: 'var(--k-ink-faint)',
-};
-
-function knopfStil(aktiv: boolean, farbe: string): CSSProperties {
+function knopfFarbStil(aktiv: boolean, farbe: string): CSSProperties | undefined {
+  if (!aktiv) return undefined;
   return {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 'var(--k-s2)',
-    padding: '5px 8px',
-    borderRadius: 'var(--k-radius-sm)',
-    border: aktiv ? `1px solid color-mix(in srgb, ${farbe} 55%, transparent)` : '1px solid transparent',
-    background: aktiv ? `color-mix(in srgb, ${farbe} 14%, transparent)` : 'transparent',
-    color: aktiv ? farbe : 'var(--k-ink-soft)',
-    fontSize: 'var(--k-t-xs)',
-    cursor: 'pointer',
-    textAlign: 'left',
-    width: '100%',
+    borderColor: `color-mix(in srgb, ${farbe} 55%, transparent)`,
+    background: `color-mix(in srgb, ${farbe} 14%, transparent)`,
+    color: farbe,
   };
 }
 
 function Punkt({ farbe }: { farbe: string }) {
-  return (
-    <span
-      aria-hidden
-      style={{ width: 6, height: 6, flex: 'none', borderRadius: 999, background: farbe }}
-    />
-  );
+  return <span aria-hidden className="kd-quelle-punkt" style={{ background: farbe }} />;
 }
 
 export function QuellenListe({
@@ -73,22 +58,20 @@ export function QuellenListe({
   const epochenMitDaten = EPOCHEN_BAENDER.filter((b) => (epochenZaehlung.get(b.id) ?? 0) > 0);
 
   return (
-    <aside
-      data-testid="daten-quellen-liste"
-      style={{ width: 220, flex: 'none', display: 'grid', gap: 'var(--k-s4)', alignContent: 'start' }}
-    >
+    <aside data-testid="daten-quellen-liste" className="kd-quelle-liste">
       {quellen.length > 0 && (
-        <div style={{ display: 'grid', gap: 3 }}>
-          <span style={{ ...monoLabel, marginBottom: 2 }}>Datenquellen</span>
+        <div className="kd-quelle-gruppe">
+          <span className="kd-quelle-label">Datenquellen</span>
           <button
             type="button"
             data-testid="quelle-facette-alle"
             onClick={() => setQuelleFacet(null)}
-            style={knopfStil(quelleFacet === null, 'var(--k-ink-faint)')}
+            className="kd-quelle-knopf"
+            style={knopfFarbStil(quelleFacet === null, 'var(--k-ink-faint)')}
           >
             <Punkt farbe="var(--k-ink-faint)" />
-            <span style={{ flex: 1 }}>Alle</span>
-            <span style={{ fontFamily: 'var(--k-font-mono)' }}>{entries.length}</span>
+            <span className="kd-fill">Alle</span>
+            <span className="kd-mono">{entries.length}</span>
           </button>
           {quellen.map((q) => (
             <button
@@ -97,30 +80,30 @@ export function QuellenListe({
               data-testid={`quelle-facette-${q.id}`}
               title={q.label}
               onClick={() => setQuelleFacet(quelleFacet === q.id ? null : q.id)}
-              style={knopfStil(quelleFacet === q.id, q.farbe)}
+              className="kd-quelle-knopf"
+              style={knopfFarbStil(quelleFacet === q.id, q.farbe)}
             >
               <Punkt farbe={q.farbe} />
-              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {q.label}
-              </span>
-              <span style={{ fontFamily: 'var(--k-font-mono)' }}>{q.anzahl}</span>
+              <span className="kd-fill kd-ellipsis">{q.label}</span>
+              <span className="kd-mono">{q.anzahl}</span>
             </button>
           ))}
         </div>
       )}
 
       {epochenMitDaten.length > 0 && (
-        <div style={{ display: 'grid', gap: 3 }}>
+        <div className="kd-quelle-gruppe">
           <Hairline />
-          <span style={{ ...monoLabel, margin: '2px 0' }}>Epochen</span>
+          <span className="kd-quelle-label kd-quelle-label--epochen">Epochen</span>
           <button
             type="button"
             data-testid="epoche-facette-alle"
             onClick={() => setEpoche(null)}
-            style={knopfStil(epoche === null, 'var(--k-ink-faint)')}
+            className="kd-quelle-knopf"
+            style={knopfFarbStil(epoche === null, 'var(--k-ink-faint)')}
           >
-            <span style={{ flex: 1 }}>Alle</span>
-            <span style={{ fontFamily: 'var(--k-font-mono)' }}>{entries.length}</span>
+            <span className="kd-fill">Alle</span>
+            <span className="kd-mono">{entries.length}</span>
           </button>
           {epochenMitDaten.map((b) => (
             <button
@@ -128,10 +111,11 @@ export function QuellenListe({
               type="button"
               data-testid={`epoche-facette-${b.id}`}
               onClick={() => setEpoche(epoche === b.id ? null : b.id)}
-              style={knopfStil(epoche === b.id, 'var(--k-signal)')}
+              className="kd-quelle-knopf"
+              style={knopfFarbStil(epoche === b.id, 'var(--k-signal)')}
             >
-              <span style={{ flex: 1 }}>{b.label}</span>
-              <span style={{ fontFamily: 'var(--k-font-mono)' }}>{epochenZaehlung.get(b.id)}</span>
+              <span className="kd-fill">{b.label}</span>
+              <span className="kd-mono">{epochenZaehlung.get(b.id)}</span>
             </button>
           ))}
         </div>

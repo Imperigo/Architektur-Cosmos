@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { RefEntry } from '@kosmo/data';
+import './data.css';
 import { ladeHeroBild, tuschePfade, useDataRuntime } from './data-runtime';
 
 /**
@@ -50,13 +51,7 @@ export function RefHeroBild({
   }, [entry.id, hero]);
 
   if (hero && zustand?.status === 'lokal') {
-    return (
-      <img
-        src={zustand.objectUrl}
-        alt=""
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-      />
-    );
+    return <img src={zustand.objectUrl} alt="" className="kd-hero-bild" />;
   }
 
   const zeile = !hero
@@ -66,19 +61,7 @@ export function RefHeroBild({
       : 'Bild wird geprüft …';
 
   return (
-    <div
-      ref={halter}
-      data-testid="ref-bild-platzhalter"
-      style={{
-        display: 'grid',
-        justifyItems: 'center',
-        alignContent: 'center',
-        gap: 'var(--k-s2)',
-        width: '100%',
-        height: '100%',
-        padding: 'var(--k-s2)',
-      }}
-    >
+    <div ref={halter} data-testid="ref-bild-platzhalter" className="kd-hero-platzhalter">
       <svg
         data-testid="karte-leerbild"
         aria-hidden="true"
@@ -90,22 +73,14 @@ export function RefHeroBild({
         strokeWidth={1.4}
         strokeLinejoin="round"
         strokeLinecap="round"
-        style={{ display: 'block' }}
+        className="kd-leerbild-signet"
       >
         {tuschePfade(entry.id, entry.entry_type).map((d, i) => (
           <path key={i} d={d} />
         ))}
       </svg>
       {zeigeQuelle && (
-        <span
-          data-testid="ref-bild-quelle"
-          style={{
-            fontSize: 'var(--k-t-xs)',
-            color: 'var(--k-ink-faint)',
-            textAlign: 'center',
-            overflowWrap: 'anywhere',
-          }}
-        >
+        <span data-testid="ref-bild-quelle" className="kd-hero-quelle">
           {zeile}
         </span>
       )}

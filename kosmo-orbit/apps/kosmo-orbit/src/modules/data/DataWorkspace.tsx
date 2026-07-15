@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import {
   Badge,
   bestaetigen,
@@ -8,6 +8,7 @@ import {
   KChip,
   KIcon,
   KInput,
+  KKeyValue,
   KLade,
   KSelect,
   KTabs,
@@ -15,10 +16,9 @@ import {
   meldeFehler,
   Measure,
   Messrahmen,
-  Panel,
   moduleHue,
-  type PanelProps,
 } from '@kosmo/ui';
+import './data.css';
 import { DataLeerbild } from './DataLeerbild';
 import { RefHeroBild } from './RefHeroBild';
 import { gedaechtnisQuerverweise, type GedaechtnisTreffer } from './data-runtime';
@@ -185,30 +185,8 @@ const entryTypeLabel: Record<string, string> = {
 /** Medien-Kachel: Bild mit Fallback auf Platzhalter-Label (kein Fremd-CSS, nur @kosmo/ui-Variablen). */
 function MediaThumb({ media }: { media: RefEntryMedia }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        height: 84,
-        borderRadius: 'var(--k-radius-sm)',
-        border: '1px solid var(--k-line)',
-        background: 'var(--k-field)',
-        overflow: 'hidden',
-      }}
-    >
-      <span
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'grid',
-          placeItems: 'center',
-          padding: `0 var(--k-s2)`,
-          textAlign: 'center',
-          fontSize: 'var(--k-t-xs)',
-          letterSpacing: '0.04em',
-          textTransform: 'uppercase',
-          color: 'var(--k-ink-faint)',
-        }}
-      >
+    <div className="kd-media-thumb">
+      <span className="kd-media-thumb-label">
         {mediaTypeLabel[media.type]}
         {!media.url && ' · gesperrt'}
       </span>
@@ -217,26 +195,12 @@ function MediaThumb({ media }: { media: RefEntryMedia }) {
           src={media.url}
           alt={media.label}
           loading="lazy"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+          className="kd-media-thumb-img"
           onError={(ev) => ((ev.target as HTMLImageElement).style.display = 'none')}
         />
       )}
       {media.credit && (
-        <span
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            fontSize: 'var(--k-t-xs)',
-            padding: `var(--k-s1) var(--k-s2)`,
-            background: 'color-mix(in srgb, var(--k-surface) 70%, transparent)',
-            color: 'var(--k-ink-faint)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <span className="kd-media-thumb-credit">
           {media.credit}
         </span>
       )}
@@ -300,21 +264,13 @@ function DossierGruppe({
     <>
       <Hairline />
       <details data-testid={testid} open={offen}>
-        <summary
-          style={{
-            cursor: 'pointer',
-            fontSize: 'var(--k-t-xs)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
-            color: 'var(--k-ink-faint)',
-          }}
-        >
+        <summary className="kd-label kd-label--klick">
           {titel}
           {anzahl !== undefined && (
-            <span style={{ fontFamily: 'var(--k-font-mono)', marginLeft: 'var(--k-s2)' }}>{anzahl}</span>
+            <span className="kd-mono kd-ml-s2">{anzahl}</span>
           )}
         </summary>
-        <div style={{ display: 'grid', gap: 'var(--k-s2)', paddingTop: 'var(--k-s2)' }}>{children}</div>
+        <div className="kd-grid kd-g2 kd-pt-s2">{children}</div>
       </details>
     </>
   );
@@ -335,53 +291,32 @@ function entschlange(s: string): string {
 }
 
 /**
- * KdKarte (W4, UI-KONZEPT-065 §2 «Hierarchie-Rezept») — lokale Karten-Hülle
- * um `Panel` (kosmo-ui, eingefroren für diesen Stream — keine Zustands-Props
- * dort ergänzbar). Ruhe = 1px `--k-line` auf `--k-raised`; Hover = 1px
- * `--k-line-strong`; gewählt/aktiv = Akzent-Eckpunkt (6px-Quadrat in der
- * Kartenecke) STATT outline — nie beides gleichzeitig (§2, Rahmen-Regel).
+ * KdKarte (W4, UI-KONZEPT-065 §2 «Hierarchie-Rezept»; v0.8.0B/W6: Panel-
+ * Anatomie als `.kd-panel`-Klasse statt der `Panel`-Komponente — Fläche/Rand
+ * laufen jetzt vollständig über Klassen, `Panel` selbst bleibt in kosmo-ui
+ * unangetastet). Ruhe = 1px `--k-line` auf `--k-raised`; Hover = 1px
+ * `--k-line-strong`; gewählt/aktiv = RUNDER Eck-Punkt (Gesetz 5, ersetzt die
+ * frühere 6×6-Box) STATT outline — nie beides gleichzeitig (§2, Rahmen-Regel).
  */
 function KdKarte({
   aktiv = false,
-  style,
   className,
   children,
   ...rest
-}: PanelProps & { aktiv?: boolean; children?: ReactNode }) {
+}: HTMLAttributes<HTMLDivElement> & { 'data-testid'?: string; aktiv?: boolean; children?: ReactNode }) {
   const [hover, setHover] = useState(false);
   // MOTION-KONZEPT-066 §3 (.k-druck-Rollout Data): JEDE Verwendung von
   // `KdKarte` in dieser Datei trägt bereits ein `onClick` (Referenz-/
   // Material-/Dach-Karten) — die Karte selbst ist also immer echt klickbar,
   // nie Fake-Affordance. Darum hier zentral, statt an jedem Aufrufort.
-  const klassen = ['k-druck', className].filter(Boolean).join(' ');
+  const klassen = ['k-druck', 'kd-panel', 'kd-karte', aktiv || hover ? 'kd-karte--hover' : '', className]
+    .filter(Boolean)
+    .join(' ');
   return (
-    <Panel
-      {...rest}
-      className={klassen}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        position: 'relative',
-        background: 'var(--k-raised)',
-        borderColor: aktiv || hover ? 'var(--k-line-strong)' : 'var(--k-line)',
-        ...style,
-      }}
-    >
+    <div {...rest} className={klassen} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       {children}
-      {aktiv && (
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: 6,
-            height: 6,
-            background: 'var(--k-accent)',
-          }}
-        />
-      )}
-    </Panel>
+      {aktiv && <span aria-hidden className="kd-karte-eck" />}
+    </div>
   );
 }
 
@@ -402,18 +337,18 @@ function SuchFeld({
   onChange: (v: string) => void;
 }) {
   return (
-    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+    <div className="kd-rel kd-flex kd-items-center">
       <KIcon
         name="lupe"
         size={14}
-        style={{ position: 'absolute', left: 'var(--k-s3)', color: 'var(--k-ink-faint)', pointerEvents: 'none' }}
+        className="kd-abs kd-left-s3 kd-c-faint kd-pe-none"
       />
       <KInput
         data-testid={testid}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={{ paddingLeft: 'var(--k-s6)', width: '100%' }}
+        className="kd-pl-s6 kd-w-full"
       />
     </div>
   );
@@ -815,29 +750,26 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   const syncBadge = kosmoDataSyncBadge({ seedFehler, syncState, quelle, entriesCount: entries.length });
 
   return (
-    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
-      <div style={{ flex: 1, overflow: 'auto', padding: 'var(--k-s6)' }}>
+    <div className="k-einblenden kd-viewport">
+      <div className="kd-scroll">
         {/* v0.7.6 Welle 2 Stream D: der Referenzen-Tab bekommt eine
             3-Spalten-Tabellenfläche (Quellen/Epochen-Rail + Tabelle) und
             braucht dafür die volle Breite statt der 980px-Lesespalte der
             übrigen sieben Tabs — deren Layout bleibt unverändert. */}
-        <div style={{ maxWidth: tab === 'referenzen' ? 'none' : 980, margin: '0 auto', display: 'grid', gap: 'var(--k-s5)' }}>
+        <div className={`kd-content${tab === 'referenzen' ? ' kd-content--voll' : ''}`}>
           {/* Serie J2 / Batch B1: reiner Test-/Gruppierungs-Wrapper (kein
               eigener Box-Effekt, `display: contents`) — analog zu Designs
               `design-werkzeugleiste`, hier zusätzlich über die (nur im
               referenzen-Tab gerenderte) Such-/Filter-Gruppe hinweg, damit die
               feste-Anker-Prüfung (E2E) alle drei Adaptions-Gruppen erfasst. */}
-          <div data-testid="referenzen-werkzeugleiste" style={{ display: 'contents' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+          <div data-testid="referenzen-werkzeugleiste" className="kd-contents">
+          <div className="kd-flex kd-items-center kd-g3 kd-wrap">
             <Badge hue={moduleHue.data}>KosmoData</Badge>
             <span
               data-testid="leiste-gruppe-navigation"
-              className={fokusKlasse(stufeFuerGruppe('navigation'))}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                ...(gruppeHatGehobenesElement('navigation') ? { opacity: 1 } : {}),
-              }}
+              className={[fokusKlasse(stufeFuerGruppe('navigation')), 'kd-inline-flex kd-items-center', gruppeHatGehobenesElement('navigation') ? 'kd-gehoben' : '']
+                .filter(Boolean)
+                .join(' ')}
             >
               {/* W4 (UI-KONZEPT-065 §3): Tab-Wortknöpfe → KTabs. `navigation`
                   ist als Gruppe IMMER `primaer` (T7-Basis, nie gedimmt —
@@ -865,7 +797,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 ]}
               />
             </span>
-            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+            <span className="kd-c-soft kd-fs-md">
               {tab === 'uebersicht'
                 ? 'Sechs Sammlungen unter einem Dach'
                 : tab === 'referenzen'
@@ -882,7 +814,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                             ? 'Lernjournal — Gedächtnis, verknüpft mit Wissen und Training'
                             : 'HomePC-Archiv — Manifest für die HDD, lokal & privat'}
             </span>
-            <div style={{ flex: 1 }} />
+            <div className="kd-fill" />
             {/* R1-Fix (Kritik-065 p-07/i-07, «Zweite Werkzeugzeile mischt 5
                 Paradigmen»): dieselbe flex-Zeile bricht bei knapper Breite
                 um — Badge/Chip, «nackter» Ghost-Text, Checkbox, Text-Knopf
@@ -908,15 +840,16 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 data-testid="data-seed-retry"
                 title="Eingebaute Referenzdaten erneut laden"
                 onClick={() => setSeedRetry((n) => n + 1)}
-                style={{ borderColor: 'var(--k-line)' }}
+                className="kd-border-line"
               >
                 Erneut versuchen
               </KButton>
             )}
             <span
               data-testid="leiste-gruppe-sync"
-              className={fokusKlasse(stufeFuerGruppe('sync'))}
-              style={{ display: 'inline-flex', ...(gruppeHatGehobenesElement('sync') ? { opacity: 1 } : {}) }}
+              className={[fokusKlasse(stufeFuerGruppe('sync')), 'kd-inline-flex', gruppeHatGehobenesElement('sync') ? 'kd-gehoben' : '']
+                .filter(Boolean)
+                .join(' ')}
             >
               <KButton
                 size="sm"
@@ -927,7 +860,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 }}
                 data-testid="data-sync"
                 {...elementStil('sync', 'sync-button')}
-                style={{ borderColor: 'var(--k-line)' }}
+                className="kd-border-line"
               >
                 Sync
               </KButton>
@@ -938,20 +871,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 Design — Hinweis/Schalter/Reset stehen direkt neben Sync. */}
             <span
               data-testid="adaption-hinweis"
-              className="k-selten"
+              className={`k-selten kd-inline-flex kd-items-center kd-fs-xs kd-c-faint kd-nowrap kd-hinweis${adaptionHinweisSichtbar ? ' kd-hinweis--sichtbar' : ''}`}
               title={adaptionHinweisTitel}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                fontSize: 'var(--k-t-xs)',
-                color: 'var(--k-ink-faint)',
-                whiteSpace: 'nowrap',
-                visibility: adaptionHinweisSichtbar ? 'visible' : 'hidden',
-              }}
             >
               ⓘ angepasst
             </span>
-            <label style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
+            <label className="kd-fs-xs kd-c-faint kd-flex kd-items-center kd-g2">
               <input
                 type="checkbox"
                 data-testid="adaption-schalter"
@@ -966,7 +891,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               data-testid="adaption-reset"
               title="Gelerntes Nutzungsprofil löschen — die Leisten fallen auf die Basis-Stufen zurück. Der Schalter bleibt unverändert."
               onClick={adaptionZuruecksetzenUndAuffrischen}
-              style={{ borderColor: 'var(--k-line)' }}
+              className="kd-border-line"
             >
               Oberfläche zurücksetzen
             </KButton>
@@ -980,7 +905,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                   title="Einstellungen — KosmoData"
                   aria-label="Einstellungen — KosmoData"
                   onClick={onEinstellungen}
-                  style={{ borderColor: 'var(--k-line)' }}
+                  className="kd-border-line"
                 >
                   <KIcon name="zahnrad" size={14} />
                   Stations-Einstellungen
@@ -992,8 +917,9 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {tab === 'referenzen' && (
             <span
               data-testid="leiste-gruppe-suche"
-              className={fokusKlasse(stufeFuerGruppe('suche'))}
-              style={{ display: 'grid', gap: 'var(--k-s3)', ...(gruppeHatGehobenesElement('suche') ? { opacity: 1 } : {}) }}
+              className={[fokusKlasse(stufeFuerGruppe('suche')), 'kd-grid kd-g3', gruppeHatGehobenesElement('suche') ? 'kd-gehoben' : '']
+                .filter(Boolean)
+                .join(' ')}
             >
               <SuchFeld
                 testid="data-search"
@@ -1002,7 +928,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 onChange={setQuery}
               />
 
-              <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+              <div className="kd-flex kd-g2 kd-wrap">
                 <KButton
                   size="sm"
                   tone={nurSammlung ? 'accent' : 'quiet'}
@@ -1062,7 +988,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               dossier`) bleibt als dritte, unangetastete Spalte ausserhalb
               dieses Blocks bestehen (Vertrag unverändert). */}
           {geladen && !seedFehler && (
-            <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'flex-start' }}>
+            <div className="kd-flex kd-g5 kd-items-start">
               <QuellenListe
                 entries={entries}
                 quelleFacet={quelleFacet}
@@ -1071,7 +997,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 setEpoche={setEpoche}
               />
               {filtered.length === 0 ? (
-                <div style={{ flex: 1 }}>
+                <div className="kd-fill">
                   <Messrahmen
                     height={220}
                     caption="Keine Referenz passt zur Suche — Begriff lockern oder Filter lösen"
@@ -1093,22 +1019,10 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
       </div>
 
       {selected && (
-        <aside
-          data-testid="ref-detail-dossier"
-          style={{
-            width: 420,
-            borderLeft: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            overflow: 'auto',
-            padding: 'var(--k-s5)',
-            display: 'grid',
-            gap: 'var(--k-s3)',
-            alignContent: 'start',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+        <aside data-testid="ref-detail-dossier" className="kd-dossier-panel">
+          <div className="kd-flex kd-items-center">
             <Badge hue={moduleHue.data}>Referenz</Badge>
-            <div style={{ flex: 1 }} />
+            <div className="kd-fill" />
             <KButton size="sm" tone="ghost" onClick={() => setSelected(null)}>
               ×
             </KButton>
@@ -1116,28 +1030,19 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {/* K1: lokal-first — lokales Bild als <img>, sonst Tusche-Platzhalter
               plus die ehrliche Zeile «Bild nicht lokal — Quelle: <domain>»
               (vorher stand hier ein kaputtes externes <img> ohne Fallback). */}
-          <div
-            data-testid="ref-dossier-bild"
-            style={{
-              height: 170,
-              borderRadius: 'var(--k-radius-lg)',
-              border: '1px solid var(--k-line)',
-              background: 'var(--k-field)',
-              overflow: 'hidden',
-            }}
-          >
+          <div data-testid="ref-dossier-bild" className="kd-dossier-hero">
             <RefHeroBild entry={selected} signetGroesse={72} />
           </div>
-          <div style={{ fontSize: 'var(--k-t-lg)', fontWeight: 600 }}>{selected.title}</div>
+          <div className="kd-fs-lg kd-w-600">{selected.title}</div>
           <Measure>
             {[formatJahrSpanne(selected), selected.city, selected.country].filter(Boolean).join(' · ')}
           </Measure>
           {(selected.authors ?? []).length > 0 && (
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{(selected.authors ?? []).join(', ')}</div>
+            <div className="kd-fs-sm kd-c-soft">{(selected.authors ?? []).join(', ')}</div>
           )}
 
           {/* D6 (Batch 2): Status- und Sichtbarkeitschips aus dem reichen Master-Modell. */}
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+          <div className="kd-flex kd-g2 kd-wrap">
             {selected.entry_type && <Badge hue={moduleHue.data}>{entryTypeLabel[selected.entry_type] ?? selected.entry_type}</Badge>}
             {selected.database_profile && (
               <Badge hue="var(--k-info)">Datenbank {dbStatusLabel[selected.database_profile.status] ?? selected.database_profile.status}</Badge>
@@ -1151,63 +1056,86 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           </div>
 
           <Hairline />
-          {selected.one_sentence && <div style={{ fontSize: 'var(--k-t-md)', fontStyle: 'italic' }}>{selected.one_sentence}</div>}
+          {selected.one_sentence && <div className="kd-fs-md kd-italic">{selected.one_sentence}</div>}
           {(selected.full_description ?? selected.short_description) && (
-            <div style={{ fontSize: 'var(--k-t-md)', color: 'var(--k-ink-soft)', lineHeight: 1.55 }}>
+            <div className="kd-fs-md kd-c-soft kd-lh-55">
               {selected.full_description ?? selected.short_description}
             </div>
           )}
           {(selected.themes ?? []).length > 0 && (
-            <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+            <div className="kd-flex kd-g2 kd-wrap">
               {(selected.themes ?? []).map((t) => (
-                <span key={t} style={{ fontSize: 'var(--k-t-xs)', padding: `var(--k-s1) var(--k-s3)`, borderRadius: 999, background: 'var(--k-accent-wash)' }}>
+                <span key={t} className="kd-fs-xs kd-p-s1-s3 kd-r-pill kd-bg-accent-wash">
                   {t}
                 </span>
               ))}
             </div>
           )}
 
-          {/* Materialprofil: strukturiert (materials_detail) falls vorhanden, sonst die schlanke Tag-Liste. */}
+          {/* Materialprofil: strukturiert (materials_detail) als KKeyValue (Spez
+              §3 B-41, W6-Einsatz) falls vorhanden, sonst die schlanke Tag-Liste. */}
           {selected.materials_detail ? (
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)', display: 'grid', gap: 'var(--k-s2)' }}>
-              {(selected.materials_detail.primary ?? []).length > 0 && (
-                <div>Primär: {(selected.materials_detail.primary ?? []).join(', ')}</div>
-              )}
-              {(selected.materials_detail.stone_type ?? []).length > 0 && (
-                <div>Gestein: {(selected.materials_detail.stone_type ?? []).join(', ')}</div>
-              )}
-              {(selected.materials_detail.secondary ?? []).length > 0 && (
-                <div>Sekundär: {(selected.materials_detail.secondary ?? []).join(', ')}</div>
-              )}
+            <>
+              {(() => {
+                const zeilen = [
+                  ...((selected.materials_detail!.primary ?? []).length > 0
+                    ? [{ key: 'Primär', wert: (selected.materials_detail!.primary ?? []).join(', ') }]
+                    : []),
+                  ...((selected.materials_detail!.stone_type ?? []).length > 0
+                    ? [{ key: 'Gestein', wert: (selected.materials_detail!.stone_type ?? []).join(', ') }]
+                    : []),
+                  ...((selected.materials_detail!.secondary ?? []).length > 0
+                    ? [{ key: 'Sekundär', wert: (selected.materials_detail!.secondary ?? []).join(', ') }]
+                    : []),
+                ];
+                // Grid-Kind-Sizing-Eigenheit (Chromium): `.k-keyvalue` (flex-
+                // column + overflow:hidden) berechnet als UNMITTELBARES Kind
+                // eines `display:grid`-Containers ohne `grid-auto-rows` eine
+                // Höhe von 0 (Content bleibt vorhanden, nur die Box kollabiert
+                // — reproduzierbar isoliert getestet). Ein simpler Block-
+                // Wrapper dazwischen behebt es zuverlässig (`DossierGruppe`s
+                // `kd-dossier-body`-Wrapper zeigt dasselbe Muster bereits).
+                return zeilen.length > 0 ? (
+                  <div>
+                    <KKeyValue zeilen={zeilen} />
+                  </div>
+                ) : null;
+              })()}
               {selected.materials_detail.notes && (
-                <div style={{ fontStyle: 'italic' }}>{selected.materials_detail.notes}</div>
+                <div className="kd-fs-sm kd-c-faint kd-italic">{selected.materials_detail.notes}</div>
               )}
-            </div>
+            </>
           ) : (
             (selected.materials ?? []).length > 0 && (
-              <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+              <div className="kd-fs-sm kd-c-faint">
                 Material: {(selected.materials ?? []).join(', ')}
               </div>
             )
           )}
 
-          {/* Geo: Koordinaten + Region/Kanton/Land als Text — keine Karten-Lib (Offline/CORS). */}
+          {/* Geo: Koordinaten + Region/Kanton/Land als KKeyValue (Spez §3 B-41,
+              W6-Einsatz) — keine Karten-Lib (Offline/CORS). */}
           {selected.geo && (selected.geo.lat != null || selected.geo.region || selected.geo.canton) && (
             <>
               <Hairline />
-              <div data-testid="ref-geo" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-                <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
-                  Geo
-                </div>
-                {selected.geo.lat != null && selected.geo.lon != null && (
-                  <Measure>
-                    {selected.geo.lat.toFixed(4)}°, {selected.geo.lon.toFixed(4)}°
-                  </Measure>
-                )}
-                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
-                  {[selected.geo.region, selected.geo.canton, selected.country].filter(Boolean).join(' · ')}
-                </div>
-              </div>
+              <div className="kd-label">Geo</div>
+              {(() => {
+                const geo = selected.geo!;
+                const region = [geo.region, geo.canton, selected.country].filter(Boolean).join(' · ');
+                const zeilen = [
+                  ...(geo.lat != null && geo.lon != null
+                    ? [{ key: 'Koordinaten', wert: `${geo.lat.toFixed(4)}°, ${geo.lon.toFixed(4)}°` }]
+                    : []),
+                  ...(region ? [{ key: 'Region', wert: region }] : []),
+                ];
+                // s. Kommentar oben (Materialprofil) — derselbe Grid-Kind-
+                // Sizing-Fall, derselbe Block-Wrapper als Behebung.
+                return (
+                  <div>
+                    <KKeyValue data-testid="ref-geo" zeilen={zeilen} />
+                  </div>
+                );
+              })()}
             </>
           )}
 
@@ -1215,10 +1143,10 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {(selected.media ?? []).length > 0 && (
             <>
               <Hairline />
-              <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+              <div className="kd-label">
                 Medien
               </div>
-              <div data-testid="ref-media" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--k-s3)' }}>
+              <div data-testid="ref-media" className="kd-grid kd-col-2 kd-g3">
                 {(selected.media ?? []).map((m, i) => (
                   <MediaThumb key={`${m.type}-${i}`} media={m} />
                 ))}
@@ -1230,23 +1158,23 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {(selected.analysis_layers ?? []).length > 0 && (
             <>
               <Hairline />
-              <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+              <div className="kd-label">
                 Analyse
               </div>
-              <div data-testid="ref-analyse" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+              <div data-testid="ref-analyse" className="kd-grid kd-g3">
                 {(selected.analysis_layers ?? []).map((layer, i) => (
-                  <div key={`${layer.analysis_type}-${i}`} style={{ display: 'grid', gap: 'var(--k-s1)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
-                      <span style={{ fontSize: 'var(--k-t-sm)', fontWeight: 600 }}>{analysisTypeLabel[layer.analysis_type] ?? layer.analysis_type}</span>
-                      <div style={{ flex: 1 }} />
+                  <div key={`${layer.analysis_type}-${i}`} className="kd-grid kd-g1">
+                    <div className="kd-flex kd-items-center kd-g2">
+                      <span className="kd-fs-sm kd-w-600">{analysisTypeLabel[layer.analysis_type] ?? layer.analysis_type}</span>
+                      <div className="kd-fill" />
                       <Badge hue={reviewStatusHue[layer.review_status]}>{reviewStatusLabel[layer.review_status]}</Badge>
                     </div>
-                    <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{layer.summary}</div>
+                    <div className="kd-fs-xs kd-c-soft kd-lh-45">{layer.summary}</div>
                     {/* K6: strukturierte Analyse-Daten (`data`-Feld des reichen
                         Typs) — heute im Seed leer, aber der Vertrag sieht sie
                         vor; sobald sie kommen, sind sie sichtbar. */}
                     {layer.data && Object.keys(layer.data).length > 0 && (
-                      <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', overflowWrap: 'anywhere' }}>
+                      <div className="kd-mono kd-fs-xs kd-c-faint kd-wrap-anywhere">
                         {Object.entries(layer.data)
                           .map(([k, v]) => `${entschlange(k)}: ${typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)}`)
                           .join(' · ')}
@@ -1266,33 +1194,43 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {(selected.program_detail || selected.program) && (
             <DossierGruppe titel="Programm" testid="ref-programm" offen>
               {selected.program_detail ? (
-                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', display: 'grid', gap: 'var(--k-s1)' }}>
-                  {selected.program_detail.type && <div>Typ: {entschlange(selected.program_detail.type)}</div>}
-                  {selected.program_detail.subtype && <div>Untertyp: {entschlange(selected.program_detail.subtype)}</div>}
-                  {selected.program_detail.public_access && (
-                    <div>Zugang: {entschlange(selected.program_detail.public_access)}</div>
-                  )}
-                </div>
+                <KKeyValue
+                  zeilen={[
+                    ...(selected.program_detail.type
+                      ? [{ key: 'Typ', wert: entschlange(selected.program_detail.type) }]
+                      : []),
+                    ...(selected.program_detail.subtype
+                      ? [{ key: 'Untertyp', wert: entschlange(selected.program_detail.subtype) }]
+                      : []),
+                    ...(selected.program_detail.public_access
+                      ? [{ key: 'Zugang', wert: entschlange(selected.program_detail.public_access) }]
+                      : []),
+                  ]}
+                />
               ) : (
-                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{entschlange(selected.program ?? '')}</div>
+                <div className="kd-fs-sm kd-c-soft">{entschlange(selected.program ?? '')}</div>
               )}
             </DossierGruppe>
           )}
 
           {selected.context && Object.keys(selected.context).length > 0 && (
             <DossierGruppe titel="Kontext" testid="ref-kontext" offen>
-              <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', display: 'grid', gap: 'var(--k-s1)' }}>
-                {selected.context.topography && <div>Topografie: {entschlange(selected.context.topography)}</div>}
-                {selected.context.setting && <div>Lage: {entschlange(selected.context.setting)}</div>}
-                {selected.context.climate && <div>Klima: {entschlange(selected.context.climate)}</div>}
-              </div>
+              <KKeyValue
+                zeilen={[
+                  ...(selected.context.topography
+                    ? [{ key: 'Topografie', wert: entschlange(selected.context.topography) }]
+                    : []),
+                  ...(selected.context.setting ? [{ key: 'Lage', wert: entschlange(selected.context.setting) }] : []),
+                  ...(selected.context.climate ? [{ key: 'Klima', wert: entschlange(selected.context.climate) }] : []),
+                ]}
+              />
               {(selected.context.heritage_context ?? []).length > 0 && (
-                <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                <div className="kd-fs-xs kd-c-faint">
                   Denkmalkontext: {(selected.context.heritage_context ?? []).map(entschlange).join(' · ')}
                 </div>
               )}
               {(selected.context.landscape_relation ?? []).length > 0 && (
-                <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                <div className="kd-fs-xs kd-c-faint">
                   Landschaftsbezug: {(selected.context.landscape_relation ?? []).map(entschlange).join(' · ')}
                 </div>
               )}
@@ -1304,22 +1242,16 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
             (selected.database_tags ?? []).length > 0) && (
             <DossierGruppe titel="Einordnung" testid="ref-einordnung">
               {(selected.lecture_cluster ?? []).length > 0 && (
-                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+                <div className="kd-fs-sm kd-c-soft">
                   Vorlesungs-Cluster: {(selected.lecture_cluster ?? []).map(entschlange).join(' · ')}
                 </div>
               )}
               {(selected.vibes ?? []).length > 0 && (
-                <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                <div className="kd-flex kd-g2 kd-wrap">
                   {(selected.vibes ?? []).map((v) => (
                     <span
                       key={v}
-                      style={{
-                        fontSize: 'var(--k-t-xs)',
-                        padding: `var(--k-s1) var(--k-s3)`,
-                        borderRadius: 999,
-                        border: '1px solid var(--k-line)',
-                        color: 'var(--k-ink-soft)',
-                      }}
+                      className="kd-fs-xs kd-p-s1-s3 kd-r-pill kd-b-line kd-c-soft"
                     >
                       {entschlange(v)}
                     </span>
@@ -1328,13 +1260,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               )}
               {(selected.database_tags ?? []).length > 0 && (
                 <div
-                  style={{
-                    fontFamily: 'var(--k-font-mono)',
-                    fontSize: 'var(--k-t-xs)',
-                    color: 'var(--k-ink-faint)',
-                    lineHeight: 1.6,
-                    overflowWrap: 'anywhere',
-                  }}
+                  className="kd-mono kd-fs-xs kd-c-faint kd-lh-60 kd-wrap-anywhere"
                 >
                   {(selected.database_tags ?? []).join('  ')}
                 </div>
@@ -1347,21 +1273,21 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
             if (!at || (!at.overview && (at.chapters ?? []).length === 0)) return null;
             return (
               <DossierGruppe titel="Architektur-Text" testid="ref-architekturtext" anzahl={(at.chapters ?? []).length}>
-                {at.headline && <div style={{ fontSize: 'var(--k-t-md)', fontWeight: 600 }}>{at.headline}</div>}
+                {at.headline && <div className="kd-fs-md kd-w-600">{at.headline}</div>}
                 {at.overview && (
-                  <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{at.overview}</div>
+                  <div className="kd-fs-sm kd-c-soft kd-lh-50">{at.overview}</div>
                 )}
                 {(at.chapters ?? []).map((k, i) => (
                   <details key={`${k.title}-${i}`} data-testid="ref-architekturtext-kapitel">
-                    <summary style={{ cursor: 'pointer', fontSize: 'var(--k-t-sm)', fontWeight: 550 }}>
+                    <summary className="kd-cursor-pointer kd-fs-sm kd-w-550">
                       {k.title}
                       {k.review_status && (
-                        <span style={{ marginLeft: 'var(--k-s2)' }}>
+                        <span className="kd-ml-s2">
                           <Badge hue={reviewStatusHue[k.review_status]}>{reviewStatusLabel[k.review_status]}</Badge>
                         </span>
                       )}
                     </summary>
-                    <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.55, paddingTop: 'var(--k-s1)' }}>
+                    <div className="kd-fs-sm kd-c-soft kd-lh-55 kd-pt-s1">
                       {k.text}
                     </div>
                   </details>
@@ -1373,13 +1299,13 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {(selected.model_assets ?? []).length > 0 && (
             <DossierGruppe titel="3D-Modelle" testid="ref-modelle" anzahl={(selected.model_assets ?? []).length}>
               {(selected.model_assets ?? []).map((m, i) => (
-                <div key={`${m.r2_key}-${i}`} style={{ display: 'grid', gap: 'var(--k-s1)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 'var(--k-t-sm)', fontWeight: 550 }}>{m.title}</span>
-                    <div style={{ flex: 1 }} />
+                <div key={`${m.r2_key}-${i}`} className="kd-grid kd-g1">
+                  <div className="kd-flex kd-items-center kd-g2 kd-wrap">
+                    <span className="kd-fs-sm kd-w-550">{m.title}</span>
+                    <div className="kd-fill" />
                     <Badge hue={reviewStatusHue[m.review_status]}>{reviewStatusLabel[m.review_status]}</Badge>
                   </div>
-                  <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  <div className="kd-mono kd-fs-xs kd-c-faint">
                     {modelTypeLabel[m.model_type] ?? entschlange(m.model_type)} · {m.format.toUpperCase()} · LOD {entschlange(m.lod_level)}
                     {m.confidence_score !== undefined ? ` · Konfidenz ${Math.round(m.confidence_score * 100)}%` : ''}
                   </div>
@@ -1394,9 +1320,9 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
             return (
               <DossierGruppe titel="Quellen-Kandidaten" testid="ref-quellen" anzahl={quellen.length}>
                 {quellen.map((q, i) => (
-                  <div key={`${q.title ?? 'quelle'}-${i}`} style={{ display: 'grid', gap: 2 }}>
-                    <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{q.title ?? 'Ohne Titel'}</span>
-                    <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  <div key={`${q.title ?? 'quelle'}-${i}`} className="kd-grid kd-gxs">
+                    <span className="kd-fs-sm kd-c-soft">{q.title ?? 'Ohne Titel'}</span>
+                    <span className="kd-mono kd-fs-xs kd-c-faint">
                       {[q.source_type, q.reliability_level, q.rights_status].filter(Boolean).map((s) => entschlange(s!)).join(' · ')}
                     </span>
                   </div>
@@ -1407,12 +1333,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
 
           {selected.database_profile && (
             <DossierGruppe titel="Datenbankprofil" testid="ref-dbprofil">
-              <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)', lineHeight: 1.6 }}>
+              <div className="kd-mono kd-fs-xs kd-c-soft kd-lh-60">
                 Quellen {selected.database_profile.source_count} · Medien {selected.database_profile.media_count} · Modelle{' '}
                 {selected.database_profile.model_count} · Analysen {selected.database_profile.analysis_count} · Tags{' '}
                 {selected.database_profile.tag_count}
               </div>
-              <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', overflowWrap: 'anywhere' }}>
+              <div className="kd-mono kd-fs-xs kd-c-faint kd-wrap-anywhere">
                 {selected.database_profile.r2_prefix}
               </div>
             </DossierGruppe>
@@ -1425,31 +1351,29 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               bleibt der ehrliche Fallback für Alteinträge. Wissen: was die
               lokale BM25-Suche zum Titel findet. */}
           <DossierGruppe titel="Gedächtnis & Wissen" testid="ref-querverweise" offen>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
-              <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', flex: 1 }}>Gedächtnis</div>
+            <div className="kd-flex kd-items-center kd-g2">
+              <div className="kd-fs-xs kd-c-faint kd-fill">Gedächtnis</div>
               <button
                 type="button"
-                className="k-druck"
+                className="k-druck kd-icon-btn"
                 data-testid="ref-feedback-gut"
                 aria-label="Referenz als hilfreich bewerten"
                 onClick={() => feedbackZurReferenz('gut')}
-                style={{ all: 'unset', cursor: 'pointer', fontSize: 13, padding: '1px 4px' }}
               >
                 <KIcon name="daumen-hoch" size={14} />
               </button>
               <button
                 type="button"
-                className="k-druck"
+                className="k-druck kd-icon-btn"
                 data-testid="ref-feedback-schlecht"
                 aria-label="Referenz als nicht hilfreich bewerten"
                 onClick={() => feedbackZurReferenz('schlecht')}
-                style={{ all: 'unset', cursor: 'pointer', fontSize: 13, padding: '1px 4px' }}
               >
                 <KIcon name="daumen-runter" size={14} />
               </button>
             </div>
             {gedaechtnisLinks.length === 0 ? (
-              <span data-testid="ref-gedaechtnis-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+              <span data-testid="ref-gedaechtnis-leer" className="kd-fs-sm kd-c-faint">
                 Kein Gedächtnis-Eintrag erwähnt diese Referenz.
               </span>
             ) : (
@@ -1459,27 +1383,27 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                   size="sm"
                   tone="ghost"
                   data-testid="ref-gedaechtnis-link"
-                  style={{ justifyContent: 'flex-start', textAlign: 'left' }}
+                  className="kd-justify-start kd-text-left"
                   onClick={() => {
                     setGedaechtnisFokus(g.ts);
                     setTab('gedaechtnis');
                     nutzungMelden('dossier:gedaechtnis-link');
                   }}
                 >
-                  <span style={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
+                  <span className="kd-flex kd-col-dir kd-gxs kd-items-start">
                     <span>
                       {g.sentiment === 'gut' ? '👍' : '👎'} {kuerzeText(g.context, 90)}
                     </span>
-                    <span data-testid="ref-gedaechtnis-matchart" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                    <span data-testid="ref-gedaechtnis-matchart" className="kd-fs-xs kd-c-faint">
                       {g.matchArt === 'verknuepft' ? 'verknüpft' : 'Texttreffer'}
                     </span>
                   </span>
                 </KButton>
               ))
             )}
-            <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', marginTop: 'var(--k-s1)' }}>Wissen</div>
+            <div className="kd-fs-xs kd-c-faint kd-mt-s1">Wissen</div>
             {wissenLinks.length === 0 ? (
-              <span data-testid="ref-wissen-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+              <span data-testid="ref-wissen-leer" className="kd-fs-sm kd-c-faint">
                 Kein Wissens-Abschnitt zum Titel gefunden.
               </span>
             ) : (
@@ -1489,7 +1413,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                   size="sm"
                   tone="ghost"
                   data-testid="ref-wissen-link"
-                  style={{ justifyContent: 'flex-start', textAlign: 'left' }}
+                  className="kd-justify-start kd-text-left"
                   onClick={() => {
                     setWissenStartQuery(selected.title);
                     setTab('wissen');
@@ -1504,12 +1428,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
 
           {/* Assets dieses Projekts (Batch 5): Rückrichtung zu KosmoAsset per kosmodata_refs. */}
           <Hairline />
-          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
+          <div className="kd-label">
             Assets dieses Projekts
           </div>
-          <div data-testid="ref-assets" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+          <div data-testid="ref-assets" className="kd-grid kd-g2">
             {refAssets.length === 0 && (
-              <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Noch keine Assets verknüpft</span>
+              <span className="kd-fs-sm kd-c-faint">Noch keine Assets verknüpft</span>
             )}
             {refAssets.map((a) => (
               <KButton
@@ -1530,8 +1454,9 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {selected.has_3d && (
             <div
               data-testid="leiste-gruppe-dossier"
-              className={fokusKlasse(stufeFuerGruppe('dossier'))}
-              style={{ display: 'grid', gap: 'var(--k-s2)', ...(gruppeHatGehobenesElement('dossier') ? { opacity: 1 } : {}) }}
+              className={[fokusKlasse(stufeFuerGruppe('dossier')), 'kd-grid kd-g2', gruppeHatGehobenesElement('dossier') ? 'kd-gehoben' : '']
+                .filter(Boolean)
+                .join(' ')}
             >
               <Hairline />
               {ref3dQuelle ? (
@@ -1549,7 +1474,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                   >
                     {ref3dLaden ? 'Lädt …' : 'Referenz-3D ins Modell laden'}
                   </KButton>
-                  <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  <span className="kd-fs-xs kd-c-faint">
                     Lädt das verknüpfte 3D-Objekt aus KosmoAsset als Kontext neben deinen Entwurf.
                   </span>
                 </>
@@ -1570,13 +1495,13 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                       >
                         {ref3dLaden ? 'Lädt …' : 'Referenz-3D vom Archiv laden (Remote)'}
                       </KButton>
-                      <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                      <span className="kd-fs-xs kd-c-faint">
                         Lädt das Studienmodell vom Architektur-Archiv — der Bestand dort kann noch
                         unbefüllt sein, ein Fehlschlag wird ehrlich gemeldet.
                       </span>
                     </>
                   )}
-                  <span data-testid="ref3d-kein-lokal" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  <span data-testid="ref3d-kein-lokal" className="kd-fs-xs kd-c-faint">
                     Studienmodell noch nicht lokal verfügbar — verknüpfe in KosmoAsset ein 3D-Objekt
                     mit dieser Referenz oder importiere die GLB dort.
                   </span>
@@ -1681,14 +1606,14 @@ function KosmoDataUebersicht({
   const sammlungIds: KosmoDataSammlung[] = ['referenz', 'asset', 'wissen', 'training', 'gedaechtnis', 'archiv'];
 
   return (
-    <div data-testid="kosmodata-dach" style={{ display: 'grid', gap: 'var(--k-s5)' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--k-s3)' }}>
+    <div data-testid="kosmodata-dach" className="kd-grid kd-g5">
+      <div className="kd-grid kd-col-fill-150 kd-g3">
         {zahlen
           ? sammlungIds.map((s) => (
-              <Panel key={s} data-testid={`dach-zahl-${s}`} style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}>
+              <div key={s} data-testid={`dach-zahl-${s}`} className="kd-panel kd-grid kd-g2 kd-p-s3-s4">
                 <Badge hue={sammlungHue[s]}>{sammlungLabel[s]}</Badge>
-                <span style={{ fontSize: 'var(--k-t-plakat)', fontWeight: 650 }}>{zahlen[s]}</span>
-              </Panel>
+                <span className="kd-fs-plakat kd-w-650">{zahlen[s]}</span>
+              </div>
             ))
           : <KLade text="Sammlungen laden …" height={80} />}
       </div>
@@ -1704,26 +1629,19 @@ function KosmoDataUebersicht({
         <Messrahmen height={140} caption="Kein Treffer über die sechs Sammlungen — Begriff lockern" />
       )}
 
-      <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+      <div className="kd-grid kd-g3">
         {treffer.map((t) => (
           <KdKarte
             key={t.id}
-            pad={false}
             data-testid="dach-treffer"
             onClick={() => springeZuTreffer(t)}
-            style={{ cursor: 'pointer', padding: `var(--k-s3) var(--k-s4)`, display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}
+            className="kd-cursor-pointer kd-flex kd-items-center kd-g3 kd-p-s3-s4"
           >
             <Badge hue={sammlungHue[t.sammlung]}>{sammlungLabel[t.sammlung]}</Badge>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 'var(--k-t-md)', fontWeight: 550 }}>{t.titel}</div>
+            <div className="kd-fill kd-min0">
+              <div className="kd-fs-md kd-w-550">{t.titel}</div>
               <div
-                style={{
-                  fontSize: 'var(--k-t-xs)',
-                  color: 'var(--k-ink-faint)',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
+                className="kd-fs-xs kd-c-faint kd-ov-hidden kd-ellipsis-text kd-nowrap"
               >
                 {t.kurztext}
               </div>
@@ -1764,8 +1682,8 @@ export function BauteilkatalogView() {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 'var(--k-s5)' }}>
-      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+    <div className="kd-grid kd-g5">
+      <div className="kd-flex kd-g2 kd-wrap">
         <KButton
           size="sm"
           tone={kategorieFilter === 'alle' ? 'accent' : 'quiet'}
@@ -1787,9 +1705,9 @@ export function BauteilkatalogView() {
         ))}
       </div>
       {sichtbareKategorien.map((kat) => (
-        <div key={kat} style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-          <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>{kat}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 'var(--k-s3)' }}>
+        <div key={kat} className="kd-grid kd-g3">
+          <div className="k-titel kd-fs-lg">{kat}</div>
+          <div className="kd-grid kd-col-fill-320 kd-g3">
             {bauteilkatalog
               .filter((e) => e.kategorie === kat)
               .map((e) => {
@@ -1799,14 +1717,15 @@ export function BauteilkatalogView() {
                 const nr = bauteilkatalog.indexOf(e) + 1;
                 return (
                   <Karteikarte key={e.id} nr={nr} data-testid={`bauteil-${e.id}`}>
-                   <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-                    <div style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 'var(--k-t-md)' }}>{e.name}</div>
-                    <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{e.beschrieb}</div>
+                   <div className="kd-grid kd-g3">
+                    <div className="kd-mono kd-w-700 kd-fs-md">{e.name}</div>
+                    <div className="kd-fs-sm kd-c-soft kd-lh-50">{e.beschrieb}</div>
                     {/* Schichtbalken (massstäblich) */}
-                    <div style={{ display: 'flex', height: 14, borderRadius: 'var(--k-radius-md)', overflow: 'hidden', border: '1px solid var(--k-line)' }}>
+                    <div className="kd-layerbar">
                       {e.layers.map((l, i) => (
                         <div
                           key={i}
+                          className="kd-layerbar-segment"
                           title={`${l.material} ${l.thickness} mm (${l.function})`}
                           style={{
                             width: `${(l.thickness / dicke) * 100}%`,
@@ -1818,15 +1737,14 @@ export function BauteilkatalogView() {
                                   : l.function === 'hohlraum'
                                     ? 'transparent'
                                     : 'var(--k-line-strong)',
-                            borderRight: i < e.layers.length - 1 ? '1px solid var(--k-surface)' : 'none',
                           }}
                         />
                       ))}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+                    <div className="kd-flex kd-items-center kd-g3 kd-fs-sm kd-c-faint">
                       <span>{dicke} mm</span>
                       <span>U ≈ {u.toFixed(2)} W/m²K</span>
-                      <div style={{ flex: 1 }} />
+                      <div className="kd-fill" />
                       {schonDa ? (
                         <Badge hue="var(--k-success)">Im Projekt</Badge>
                       ) : (
@@ -1843,7 +1761,7 @@ export function BauteilkatalogView() {
         </div>
       ))}
       {uebernommen && (
-        <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+        <div className="kd-fs-sm kd-c-soft">
           Übernommen — ab sofort im Wand-/Decken-Werkzeug (KosmoDesign) wählbar. U-Werte sind
           Richtwerte (SIA-180-vereinfacht), kein Nachweis-Ersatz.
         </div>
@@ -1862,14 +1780,6 @@ const materialArtHue: Record<MaterialArt, string> = {
   rohmaterial: 'var(--k-success)',
   baumaterial: 'var(--k-info)',
   unbekannt: 'var(--k-ink-faint)',
-};
-
-const materialInputStyle: CSSProperties = {
-  padding: `var(--k-s3) var(--k-s3)`,
-  borderRadius: 'var(--k-radius-sm)',
-  border: '1px solid var(--k-line-strong)',
-  background: 'var(--k-raised)',
-  fontSize: 'var(--k-t-md)',
 };
 
 /** Lesbare «L×B×D mm»-Zeile aus einer lieferbaren Grösse — nur die vorhandenen Masse. */
@@ -1951,7 +1861,7 @@ function MaterialWuerfel({
     <canvas
       ref={ref}
       data-testid="material-wuerfel"
-      style={{ width: '100%', height: 130, border: '1px solid var(--k-line)', background: 'var(--k-plan-paper)' }}
+      className="kd-wuerfel-canvas"
     />
   );
 }
@@ -2051,8 +1961,8 @@ export function MaterialkatalogView() {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 'var(--k-s5)' }}>
-      <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5, maxWidth: '70ch' }}>
+    <div className="kd-grid kd-g5">
+      <div className="kd-fs-sm kd-c-soft kd-lh-50 kd-max-70ch">
         Referenzkatalog (fest) — dieselben Schlüssel tragen die Aufbauten des Bauteilkatalogs:
         3D-Farbe, Plan-Schraffur und U-Wert kommen aus einer Quelle. Der 3D-Würfel zeigt die
         lieferbare Grösse, wo bekannt, sonst ehrlich einen Platzhalter-Würfel 1:1:1. «Quelle
@@ -2060,7 +1970,7 @@ export function MaterialkatalogView() {
         wurde. Eigene Einträge unten verlangen die Quelle immer (Owner-Befund K21).
       </div>
 
-      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+      <div className="kd-flex kd-g2 kd-wrap">
         {(['alle', 'baumaterial', 'rohmaterial', 'unbekannt'] as const).map((f) => (
           <KButton
             key={f}
@@ -2075,42 +1985,33 @@ export function MaterialkatalogView() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 'var(--k-s3)' }}>
+      <div className="kd-grid kd-col-fill-230 kd-g3">
         {gefiltert.map((m) => (
           <KdKarte
             key={m.key}
             data-testid={`material-${m.key}`}
             aktiv={selectedKey === m.key}
             onClick={() => setSelectedKey(selectedKey === m.key ? null : m.key)}
-            style={{
-              padding: `var(--k-s3) var(--k-s4)`,
-              display: 'grid',
-              gap: 'var(--k-s2)',
-              cursor: 'pointer',
-            }}
+            className="kd-grid kd-g2 kd-cursor-pointer kd-p-s3-s4"
           >
-            <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center' }}>
+            <div className="kd-flex kd-g3 kd-items-center">
               <span
+                className="kd-material-swatch"
                 style={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: 'var(--k-radius-lg)',
                   background: `linear-gradient(135deg, ${hex(m.pbr.color)}, color-mix(in srgb, ${hex(m.pbr.color)} ${Math.round((1 - m.pbr.roughness) * 60 + 40)}%, white))`,
-                  border: '1px solid var(--k-line-strong)',
-                  flexShrink: 0,
                 }}
                 title={`Rauheit ${m.pbr.roughness}${m.pbr.metalness ? ` · Metall ${m.pbr.metalness}` : ''}`}
               />
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{m.name}</div>
-                <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+              <div className="kd-min0">
+                <div className="kd-w-550 kd-fs-md">{m.name}</div>
+                <div className="kd-fs-xs kd-c-faint">
                   Schraffur: {m.sia}
                   {m.lambda !== undefined ? ` · λ ${m.lambda}` : ''}
                 </div>
               </div>
             </div>
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{m.beschrieb}</div>
-            <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+            <div className="kd-fs-sm kd-c-soft kd-lh-45">{m.beschrieb}</div>
+            <div className="kd-flex kd-g2 kd-wrap">
               <Badge hue={materialArtHue[m.materialArt]}>{materialArtLabel[m.materialArt]}</Badge>
               {m.region && <Badge hue="var(--k-ink-faint)">{m.region}</Badge>}
             </div>
@@ -2119,10 +2020,10 @@ export function MaterialkatalogView() {
       </div>
 
       {selected && (
-        <Panel data-testid="material-detail" style={{ padding: 'var(--k-s5)', display: 'grid', gap: 'var(--k-s3)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
-            <span style={{ fontWeight: 600, fontSize: 'var(--k-t-lg)' }}>{selected.name}</span>
-            <div style={{ flex: 1 }} />
+        <div data-testid="material-detail" className="kd-panel kd-grid kd-g3 kd-p-s5">
+          <div className="kd-flex kd-items-center kd-g3">
+            <span className="kd-w-600 kd-fs-lg">{selected.name}</span>
+            <div className="kd-fill" />
             <KButton size="sm" tone="ghost" onClick={() => setSelectedKey(null)}>
               ×
             </KButton>
@@ -2134,33 +2035,33 @@ export function MaterialkatalogView() {
             {...(selected.pbr.metalness !== undefined ? { metallisch: selected.pbr.metalness } : {})}
             materialKey={selected.key}
           />
-          <div data-testid="material-detail-quelle" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+          <div data-testid="material-detail-quelle" className="kd-fs-sm kd-c-soft">
             Quelle: {selected.quelle}
           </div>
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+          <div className="kd-flex kd-g2 kd-wrap">
             <Badge hue={materialArtHue[selected.materialArt]}>{materialArtLabel[selected.materialArt]}</Badge>
             {selected.region && <Badge hue="var(--k-ink-faint)">{selected.region}</Badge>}
           </div>
           {selected.dimensionen ? (
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+            <div className="kd-fs-sm kd-c-faint">
               Lieferbar: {selected.dimensionen.lieferbar.map(formatMaterialGroesse).join(' · ')}
               {selected.dimensionen.hinweis && <div>{selected.dimensionen.hinweis}</div>}
             </div>
           ) : (
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+            <div className="kd-fs-sm kd-c-faint">
               Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.
             </div>
           )}
-        </Panel>
+        </div>
       )}
 
       <Hairline />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>
+      <div className="kd-flex kd-items-center kd-g3">
+        <span className="k-titel kd-fs-lg">
           Eigene Materialien
         </span>
-        <div style={{ flex: 1 }} />
+        <div className="kd-fill" />
         <KButton
           size="sm"
           tone={formOffen ? 'accent' : 'quiet'}
@@ -2172,22 +2073,22 @@ export function MaterialkatalogView() {
       </div>
 
       {formOffen && (
-        <Panel data-testid="material-erfassen-formular" style={{ padding: 'var(--k-s5)', display: 'grid', gap: 'var(--k-s3)', maxWidth: 480 }}>
+        <div data-testid="material-erfassen-formular" className="kd-panel kd-grid kd-g3 kd-max-480 kd-p-s5">
           <input
             data-testid="material-titel"
             placeholder="Titel"
             value={formTitel}
             onChange={(e) => setFormTitel(e.target.value)}
-            style={materialInputStyle}
+            className="kd-eingabe"
           />
           <input
             data-testid="material-quelle"
             placeholder="Quelle (Pflicht) — Lieferant, Katalog, Foto-Datum …"
             value={formQuelle}
             onChange={(e) => setFormQuelle(e.target.value)}
-            style={materialInputStyle}
+            className="kd-eingabe"
           />
-          <div style={{ display: 'flex', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+          <div className="kd-flex kd-g3 kd-wrap">
             <KSelect
               data-testid="material-art"
               value={formArt}
@@ -2204,17 +2105,17 @@ export function MaterialkatalogView() {
               placeholder="Region (optional)"
               value={formRegion}
               onChange={(e) => setFormRegion(e.target.value)}
-              style={{ ...materialInputStyle, flex: 1 }}
+              className="kd-eingabe kd-eingabe--fill"
             />
           </div>
-          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+          <div className="kd-flex kd-g3">
             <input
               data-testid="material-laenge"
               placeholder="Länge mm"
               type="number"
               value={formLaenge}
               onChange={(e) => setFormLaenge(e.target.value)}
-              style={{ ...materialInputStyle, flex: 1 }}
+              className="kd-eingabe kd-eingabe--fill"
             />
             <input
               data-testid="material-breite"
@@ -2222,7 +2123,7 @@ export function MaterialkatalogView() {
               type="number"
               value={formBreite}
               onChange={(e) => setFormBreite(e.target.value)}
-              style={{ ...materialInputStyle, flex: 1 }}
+              className="kd-eingabe kd-eingabe--fill"
             />
             <input
               data-testid="material-dicke"
@@ -2230,10 +2131,10 @@ export function MaterialkatalogView() {
               type="number"
               value={formDicke}
               onChange={(e) => setFormDicke(e.target.value)}
-              style={{ ...materialInputStyle, flex: 1 }}
+              className="kd-eingabe kd-eingabe--fill"
             />
           </div>
-          <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+          <span className="kd-fs-xs kd-c-faint">
             Masse optional — nur wenn bekannt. Die Textur/PBR-Map selbst ist Stufe 2 (externer
             Quellen-Ingest, Lizenzprüfung); der Würfel zeigt bis dahin einen ehrlichen
             Platzhalter-Ton.
@@ -2241,36 +2142,31 @@ export function MaterialkatalogView() {
           <KButton size="sm" tone="accent" data-testid="material-erfassen-speichern" onClick={() => void materialAbsenden()}>
             Speichern
           </KButton>
-        </Panel>
+        </div>
       )}
 
       {erfasst === null && <KLade text="Eigene Materialien laden …" height={80} />}
       {erfasst !== null && erfasst.length === 0 && (
-        <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+        <span className="kd-fs-sm kd-c-faint">
           Noch keine eigenen Materialien — «+ Material erfassen» legt den ersten an.
         </span>
       )}
       {erfasst !== null && erfasst.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 'var(--k-s3)' }}>
+        <div className="kd-grid kd-col-fill-230 kd-g3">
           {erfasst.map((m) => (
             <KdKarte
               key={m.id}
               data-testid={`material-erfasst-${m.id}`}
               aktiv={selectedErfasstId === m.id}
               onClick={() => setSelectedErfasstId(selectedErfasstId === m.id ? null : m.id)}
-              style={{
-                padding: `var(--k-s3) var(--k-s4)`,
-                display: 'grid',
-                gap: 'var(--k-s2)',
-                cursor: 'pointer',
-              }}
+              className="kd-grid kd-g2 kd-cursor-pointer kd-p-s3-s4"
             >
               {/* K21/W4: eigene Einträge tragen keine Textur/Farbe (Stufe 2) —
                   ehrliches Signet statt Fake-Swatch. */}
-              <DataLeerbild typ="material" style={{ justifyItems: 'start', justifyContent: 'start' }} />
-              <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)', overflowWrap: 'anywhere' }}>{m.title}</div>
-              <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', overflowWrap: 'anywhere' }}>Quelle: {m.quelle}</div>
-              <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+              <DataLeerbild typ="material" align="start" />
+              <div className="kd-w-550 kd-fs-md kd-wrap-anywhere">{m.title}</div>
+              <div className="kd-fs-xs kd-c-faint kd-wrap-anywhere">Quelle: {m.quelle}</div>
+              <div className="kd-flex kd-g2 kd-wrap">
                 {m.materialArt && <Badge hue={materialArtHue[m.materialArt]}>{materialArtLabel[m.materialArt]}</Badge>}
                 {m.region && <Badge hue="var(--k-ink-faint)">{m.region}</Badge>}
               </div>
@@ -2280,10 +2176,10 @@ export function MaterialkatalogView() {
       )}
 
       {selectedErfasst && (
-        <Panel data-testid="material-erfasst-detail" style={{ padding: 'var(--k-s5)', display: 'grid', gap: 'var(--k-s3)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
-            <span style={{ fontWeight: 600, fontSize: 'var(--k-t-lg)', overflowWrap: 'anywhere' }}>{selectedErfasst.title}</span>
-            <div style={{ flex: 1 }} />
+        <div data-testid="material-erfasst-detail" className="kd-panel kd-grid kd-g3 kd-p-s5">
+          <div className="kd-flex kd-items-center kd-g3">
+            <span className="kd-w-600 kd-fs-lg kd-wrap-anywhere">{selectedErfasst.title}</span>
+            <div className="kd-fill" />
             <KButton size="sm" tone="ghost" onClick={() => void materialLoeschen(selectedErfasst)}>
               Löschen
             </KButton>
@@ -2293,23 +2189,23 @@ export function MaterialkatalogView() {
               ? { groesse: selectedErfasst.materialDimensionen.lieferbar[0] }
               : {})}
           />
-          <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>Quelle: {selectedErfasst.quelle}</div>
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+          <div className="kd-fs-sm kd-c-soft">Quelle: {selectedErfasst.quelle}</div>
+          <div className="kd-flex kd-g2 kd-wrap">
             {selectedErfasst.materialArt && (
               <Badge hue={materialArtHue[selectedErfasst.materialArt]}>{materialArtLabel[selectedErfasst.materialArt]}</Badge>
             )}
             {selectedErfasst.region && <Badge hue="var(--k-ink-faint)">{selectedErfasst.region}</Badge>}
           </div>
           {selectedErfasst.materialDimensionen ? (
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+            <div className="kd-fs-sm kd-c-faint">
               Lieferbar: {selectedErfasst.materialDimensionen.lieferbar.map(formatMaterialGroesse).join(' · ')}
             </div>
           ) : (
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+            <div className="kd-fs-sm kd-c-faint">
               Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.
             </div>
           )}
-        </Panel>
+        </div>
       )}
     </div>
   );
@@ -2486,7 +2382,7 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
   const sichtbareDocs = sammlungFilter === 'alle' ? docs : docs.filter((d) => sammlungVonDoc(d) === sammlungFilter);
 
   return (
-    <div data-testid="kosmodata-wissen" style={{ display: 'grid', gap: 'var(--k-s5)' }}>
+    <div data-testid="kosmodata-wissen" className="kd-grid kd-g5">
       <SuchFeld
         testid="wissen-search"
         placeholder="Wissensbasis durchsuchen … (z.B. «Brandschutz Treppenhaus»)"
@@ -2506,53 +2402,53 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
       )}
 
       {zeigtSuche ? (
-        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+        <div className="kd-grid kd-g3">
           {hits.length === 0 && (
             <Messrahmen height={140} caption="Kein Treffer in der Wissensbasis — Begriff lockern" />
           )}
           {hits.map((h) => (
-            <Panel key={h.id} data-testid="wissen-hit" style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--k-s3)' }}>
-                <span style={{ fontSize: 'var(--k-t-sm)', fontWeight: 550 }}>
+            <div key={h.id} data-testid="wissen-hit" className="kd-panel kd-grid kd-g2 kd-p-s3-s4">
+              <div className="kd-flex kd-items-baseline kd-g3">
+                <span className="kd-fs-sm kd-w-550">
                   {h.docName} · Abschnitt {h.seq + 1}
                 </span>
-                <div style={{ flex: 1 }} />
-                <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                <div className="kd-fill" />
+                <span className="kd-mono kd-fs-xs kd-c-faint">
                   {h.score.toFixed(2)}
                 </span>
               </div>
-              <div style={{ fontSize: 'var(--k-t-md)', lineHeight: 1.5, color: 'var(--k-ink-soft)' }}>
+              <div className="kd-fs-md kd-lh-50 kd-c-soft">
                 {h.text.length > 220 ? `${h.text.slice(0, 220)} …` : h.text}
               </div>
-            </Panel>
+            </div>
           ))}
         </div>
       ) : (
         <>
-          <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="wissen-import">
-            <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Import (Docling-Wissens-Ingest)</div>
+          <div className="kd-grid kd-g3" data-testid="wissen-import">
+            <div className="k-titel kd-fs-lg">Import (Docling-Wissens-Ingest)</div>
             {importEintraege.length === 0 ? (
-              <span data-testid="wissen-import-leer" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+              <span data-testid="wissen-import-leer" className="kd-fs-sm kd-c-faint">
                 Noch keine Importe — tools/docling-ingest/ingest.py
               </span>
             ) : (
               <>
                 {importEintraege.map((e) => (
-                  <Panel
+                  <div
                     key={`${e.quelleDateiname}-${e.importiertAm}`}
                     data-testid="wissen-import-eintrag"
-                    style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}
+                    className="kd-panel kd-grid kd-g2 kd-p-s3-s4"
                   >
-                    <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{e.titel}</div>
+                    <div className="kd-w-550 kd-fs-md">{e.titel}</div>
                     <div
                       data-testid="wissen-import-herkunft"
-                      style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}
+                      className="kd-fs-xs kd-c-faint"
                     >
                       Import · {e.werkzeug} · {importDatum(e.importiertAm)}
                     </div>
-                  </Panel>
+                  </div>
                 ))}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+                <div className="kd-flex kd-items-center kd-g3 kd-wrap">
                   {geladeneBasis.has('import') && !importStatus ? (
                     <Badge hue={moduleHue.prepare}>In Wissensbasis geladen</Badge>
                   ) : (
@@ -2567,7 +2463,7 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
                     </KButton>
                   )}
                   {importStatus && (
-                    <span data-testid="wissen-import-status" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                    <span data-testid="wissen-import-status" className="kd-fs-xs kd-c-faint">
                       {importStatus}
                     </span>
                   )}
@@ -2577,12 +2473,12 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
           </div>
 
           {docs.length > 0 && (
-            <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>
+            <div className="kd-grid kd-g3">
+              <div className="k-titel kd-fs-lg">
                 Dokumente ({sichtbareDocs.length})
               </div>
               {sammlungenInDocs.length > 1 && (
-                <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                <div className="kd-flex kd-g2 kd-wrap">
                   <KButton
                     size="sm"
                     tone={sammlungFilter === 'alle' ? 'accent' : 'quiet'}
@@ -2607,24 +2503,18 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
               {sichtbareDocs.map((d) => {
                 const oeffentlich = (d.visibility ?? 'private') === 'public';
                 return (
-                  <Panel
+                  <div
                     key={d.id}
                     data-testid="wissen-doc"
-                    style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}
+                    className="kd-panel kd-flex kd-items-center kd-g3 kd-p-s3-s4"
                   >
-                    <div style={{ minWidth: 0, flex: 1 }}>
+                    <div className="kd-min0 kd-fill">
                       <div
-                        style={{
-                          fontWeight: 550,
-                          fontSize: 'var(--k-t-md)',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
+                        className="kd-w-550 kd-fs-md kd-ov-hidden kd-ellipsis-text kd-nowrap"
                       >
                         {d.name}
                       </div>
-                      <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', display: 'flex', gap: 'var(--k-s2)', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <div className="kd-fs-xs kd-c-faint kd-flex kd-g2 kd-items-center kd-wrap">
                         <Badge hue={d.source === 'basis' ? moduleHue.prepare : 'var(--k-ink-faint)'}>{d.source}</Badge>
                         <span>{d.chunkCount} Abschnitte</span>
                         {d.pages !== undefined && <span>· {d.pages} {d.pages === 1 ? 'Seite' : 'Seiten'}</span>}
@@ -2646,23 +2536,23 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
                         Entfernen
                       </KButton>
                     )}
-                  </Panel>
+                  </div>
                 );
               })}
             </div>
           )}
 
           {basis.length > 0 && (
-            <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="wissen-basis">
-              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Bauwissen-Basis (Kosmos-Bibliothek)</div>
+            <div className="kd-grid kd-g3" data-testid="wissen-basis">
+              <div className="k-titel kd-fs-lg">Bauwissen-Basis (Kosmos-Bibliothek)</div>
               {basis.map((sa) => (
-                <Panel
+                <div
                   key={sa.sammlung}
-                  style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'flex', alignItems: 'center', gap: 'var(--k-s4)' }}
+                  className="kd-panel kd-flex kd-items-center kd-g4 kd-p-s3-s4"
                 >
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{sa.label}</div>
-                    <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  <div className="kd-min0 kd-fill">
+                    <div className="kd-w-550 kd-fs-md">{sa.label}</div>
+                    <div className="kd-fs-xs kd-c-faint">
                       {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
                     </div>
                   </div>
@@ -2679,7 +2569,7 @@ export function KosmoWissenView({ startQuery }: { startQuery?: string } = {}) {
                       {ladeBasis === sa.sammlung ? 'Lade …' : 'Laden'}
                     </KButton>
                   )}
-                </Panel>
+                </div>
               ))}
             </div>
           )}
@@ -2760,12 +2650,12 @@ export function KosmoTrainingView() {
   }
 
   return (
-    <div data-testid="kosmodata-training" style={{ display: 'grid', gap: 'var(--k-s5)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
-        <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+    <div data-testid="kosmodata-training" className="kd-grid kd-g5">
+      <div className="kd-flex kd-items-center kd-g3 kd-wrap">
+        <span className="kd-c-soft kd-fs-md">
           Zwei Achsen — Architektur (Bürostil) und Software (KosmoOrbit selbst) —, kombiniert exportierbar für die LoRA.
         </span>
-        <div style={{ flex: 1 }} />
+        <div className="kd-fill" />
         <KButton
           size="sm"
           tone="accent"
@@ -2778,7 +2668,7 @@ export function KosmoTrainingView() {
       </div>
 
       {geladen && !leer && (
-        <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+        <div className="kd-flex kd-g2 kd-wrap">
           <KButton
             size="sm"
             tone={achseFilter === 'alle' ? 'accent' : 'quiet'}
@@ -2820,60 +2710,60 @@ export function KosmoTrainingView() {
       {geladen && !leer && (
         <>
           {achseFilter !== 'software' && (
-          <Panel data-testid="training-achse-architektur" style={{ padding: `var(--k-s4) var(--k-s5)`, display: 'grid', gap: 'var(--k-s3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+          <div data-testid="training-achse-architektur" className="kd-panel kd-grid kd-g3 kd-p-s4-s5">
+            <div className="kd-flex kd-items-center kd-g3">
               <Badge hue={moduleHue.train}>Architektur — Bürostil &amp; Fachwissen</Badge>
               <Measure>{architektur.length}</Measure>
-              <div style={{ flex: 1 }} />
+              <div className="kd-fill" />
               <KButton size="sm" tone="ghost" onClick={oeffneKosmoTrain}>
                 Zur KosmoTrain-Station
               </KButton>
             </div>
             {architektur.length === 0 ? (
-              <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+              <span className="kd-fs-sm kd-c-faint">
                 Unter Kosmo-Antworten mit 👍/👎 + Notiz sammelst du Architektur-Training — in der
                 KosmoTrain-Station kuratierst du die Notizen (sie sind der Trainings-Kern).
               </span>
             ) : (
-              <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+              <div className="kd-grid kd-g2">
                 {architektur.slice(0, 8).map((b) => (
-                  <div key={b.id} data-testid="training-beispiel" style={{ fontSize: 'var(--k-t-sm)', display: 'grid', gap: 'var(--k-s1)' }}>
-                    <div style={{ fontWeight: 550 }}>{kuerzeText(b.frage, 100)}</div>
-                    <div style={{ color: 'var(--k-ink-soft)' }}>{kuerzeText(b.antwort)}</div>
+                  <div key={b.id} data-testid="training-beispiel" className="kd-fs-sm kd-grid kd-g1">
+                    <div className="kd-w-550">{kuerzeText(b.frage, 100)}</div>
+                    <div className="kd-c-soft">{kuerzeText(b.antwort)}</div>
                   </div>
                 ))}
                 {architektur.length > 8 && (
-                  <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                  <span className="kd-fs-xs kd-c-faint">
                     … und {architektur.length - 8} weitere
                   </span>
                 )}
               </div>
             )}
-          </Panel>
+          </div>
           )}
 
           {achseFilter !== 'architektur' && (
-          <Panel data-testid="training-achse-software" style={{ padding: `var(--k-s4) var(--k-s5)`, display: 'grid', gap: 'var(--k-s3)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+          <div data-testid="training-achse-software" className="kd-panel kd-grid kd-g3 kd-p-s4-s5">
+            <div className="kd-flex kd-items-center kd-g3">
               <Badge hue={moduleHue.data}>Software — KosmoOrbit selbst</Badge>
               <Measure>
                 {commandsCount} Commands · {dokuCount} Doku
               </Measure>
             </div>
-            <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+            <div className="kd-grid kd-g2">
               {software.slice(0, 8).map((b) => (
-                <div key={b.id} data-testid="training-beispiel" style={{ fontSize: 'var(--k-t-sm)', display: 'grid', gap: 'var(--k-s1)' }}>
-                  <div style={{ fontWeight: 550 }}>{kuerzeText(b.frage, 100)}</div>
-                  <div style={{ color: 'var(--k-ink-soft)' }}>{kuerzeText(b.antwort)}</div>
+                <div key={b.id} data-testid="training-beispiel" className="kd-fs-sm kd-grid kd-g1">
+                  <div className="kd-w-550">{kuerzeText(b.frage, 100)}</div>
+                  <div className="kd-c-soft">{kuerzeText(b.antwort)}</div>
                 </div>
               ))}
               {software.length > 8 && (
-                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                <span className="kd-fs-xs kd-c-faint">
                   … und {software.length - 8} weitere
                 </span>
               )}
             </div>
-          </Panel>
+          </div>
           )}
         </>
       )}
@@ -3012,8 +2902,8 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
   };
 
   return (
-    <div data-testid="kosmodata-gedaechtnis" style={{ display: 'grid', gap: 'var(--k-s5)' }}>
-      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap', alignItems: 'center' }}>
+    <div data-testid="kosmodata-gedaechtnis" className="kd-grid kd-g5">
+      <div className="kd-flex kd-g2 kd-wrap kd-items-center">
         {(['alle', 'gut', 'schlecht'] as const).map((f) => (
           <KButton
             key={f}
@@ -3026,7 +2916,7 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
             {sentimentLabel[f]}
           </KButton>
         ))}
-        <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--k-line)' }} />
+        <Hairline vertical />
         {(['alle', 'roh', 'kuratiert'] as const).map((f) => (
           <KButton
             key={f}
@@ -3055,7 +2945,7 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
         <Messrahmen height={140} caption="Kein Eintrag passt zum Filter — Filter lockern" />
       )}
 
-      <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+      <div className="kd-grid kd-g3">
         {zeilen.map((e) => {
           const kuratiert = istTraining(e);
           const oeffentlich = (e.visibility ?? 'private') === 'public';
@@ -3063,18 +2953,13 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
           const treffer = wissenTreffer[e.ts];
           const fokussiert = fokusTs === e.ts;
           return (
-            <Panel
+            <div
               key={e.ts}
               data-testid="gedaechtnis-eintrag"
               data-gedaechtnis-ts={e.ts}
-              style={{
-                padding: `var(--k-s3) var(--k-s4)`,
-                display: 'grid',
-                gap: 'var(--k-s2)',
-                ...(fokussiert ? { borderColor: 'var(--k-accent)' } : {}),
-              }}
+              className={`kd-panel kd-grid kd-g2 kd-p-s3-s4${fokussiert ? ' kd-eintrag--fokus' : ''}`}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+              <div className="kd-flex kd-items-center kd-g3 kd-wrap">
                 <Badge hue={e.sentiment === 'gut' ? 'var(--k-success)' : 'var(--k-warning)'}>
                   {e.sentiment === 'gut' ? '👍 BEIBEHALTEN' : '👎 VERMEIDEN'}
                 </Badge>
@@ -3083,10 +2968,10 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
                     <Badge hue={moduleHue.data}>Querverweis aus Referenz</Badge>
                   </span>
                 )}
-                <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                <span className="kd-mono kd-fs-xs kd-c-faint">
                   {e.ts.slice(0, 16).replace('T', ' ')}
                 </span>
-                <div style={{ flex: 1 }} />
+                <div className="kd-fill" />
                 {kuratiert && (
                   <span data-testid="gedaechtnis-kuratiert">
                     <Badge hue={moduleHue.train}>kuratiert → Training</Badge>
@@ -3099,12 +2984,12 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
                 </span>
               </div>
 
-              <div style={{ fontSize: 'var(--k-t-md)', color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{kuerzeText(e.context, 180)}</div>
+              <div className="kd-fs-md kd-c-soft kd-lh-45">{kuerzeText(e.context, 180)}</div>
               {e.note && (
-                <div style={{ fontSize: 'var(--k-t-sm)', fontStyle: 'italic', color: 'var(--k-ink-faint)' }}>Notiz: {kuerzeText(e.note, 160)}</div>
+                <div className="kd-fs-sm kd-italic kd-c-faint">Notiz: {kuerzeText(e.note, 160)}</div>
               )}
 
-              <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap', alignItems: 'center' }}>
+              <div className="kd-flex kd-g2 kd-wrap kd-items-center">
                 <KButton size="sm" tone="ghost" data-testid="gedaechtnis-visibility-toggle" onClick={() => toggleVisibility(e)}>
                   {oeffentlich ? 'Privat machen' : 'Öffentlich machen'}
                 </KButton>
@@ -3120,15 +3005,7 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
                         if (ev.key === 'Enter') (ev.target as HTMLInputElement).blur();
                         if (ev.key === 'Escape') setBefoerdern(null);
                       }}
-                      style={{
-                        flex: 1,
-                        minWidth: 180,
-                        padding: `var(--k-s2) var(--k-s3)`,
-                        borderRadius: 'var(--k-radius-sm)',
-                        border: '1px solid var(--k-line)',
-                        background: 'var(--k-surface)',
-                        fontSize: 'var(--k-t-sm)',
-                      }}
+                      className="kd-befoerdern-eingabe"
                     />
                   ) : (
                     <KButton size="sm" tone="ghost" data-testid="gedaechtnis-befördern" onClick={() => setBefoerdern(e.ts)}>
@@ -3149,21 +3026,21 @@ export function KosmoGedaechtnisView({ fokusTs }: { fokusTs?: string } = {}) {
               </div>
 
               {aufgeklappt === e.ts && (
-                <div data-testid="gedaechtnis-wissen-treffer" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+                <div data-testid="gedaechtnis-wissen-treffer" className="kd-grid kd-g2">
                   {ladeWissen === e.ts && (
-                    <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>Suche …</span>
+                    <span className="kd-fs-xs kd-c-faint">Suche …</span>
                   )}
                   {treffer && treffer.length === 0 && (
-                    <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>Kein verwandtes Wissen gefunden</span>
+                    <span className="kd-fs-xs kd-c-faint">Kein verwandtes Wissen gefunden</span>
                   )}
                   {treffer?.map((h) => (
-                    <span key={h.id} style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)' }}>
+                    <span key={h.id} className="kd-fs-xs kd-c-soft">
                       {h.docName} · Abschnitt {h.seq + 1}
                     </span>
                   ))}
                 </div>
               )}
-            </Panel>
+            </div>
           );
         })}
       </div>
@@ -3185,14 +3062,6 @@ const ARCHIV_KATEGORIEN: ArchivKategorie[] = ['projekte', 'referenzen', 'assets'
 const archivQuelleLabel: Record<ArchivEintrag['quelle'], string> = {
   manuell: 'Manuell erfasst',
   ordner: 'Ordner-Register',
-};
-
-const inputStyle: CSSProperties = {
-  padding: `var(--k-s3) var(--k-s3)`,
-  borderRadius: 'var(--k-radius-sm)',
-  border: '1px solid var(--k-line-strong)',
-  background: 'var(--k-surface)',
-  fontSize: 'var(--k-t-md)',
 };
 
 /**
@@ -3305,39 +3174,31 @@ export function KosmoArchivView() {
   const leer = geladen && eintraege.length === 0;
 
   return (
-    <div data-testid="kosmodata-archiv" style={{ display: 'grid', gap: 'var(--k-s5)' }}>
+    <div data-testid="kosmodata-archiv" className="kd-grid kd-g5">
       <div
         data-testid="archiv-hinweis"
-        style={{
-          fontSize: 'var(--k-t-sm)',
-          color: 'var(--k-ink-soft)',
-          lineHeight: 1.5,
-          padding: `var(--k-s3) var(--k-s4)`,
-          borderRadius: 'var(--k-radius-sm)',
-          border: '1px solid var(--k-line)',
-          background: 'var(--k-raised)',
-        }}
+        className="kd-fs-sm kd-c-soft kd-lh-50 kd-p-s3-s4 kd-r-sm kd-b-line kd-bg-raised"
       >
         Lokal &amp; privat — nie in die Website. Grosse Bestände bleiben auf der HDD; KosmoOrbit
         führt nur das Verzeichnis (Manifest). Voll-Indexieren der HDD folgt über die HomeStation.
       </div>
 
-      <Panel data-testid="archiv-form" style={{ padding: `var(--k-s4) var(--k-s5)`, display: 'grid', gap: 'var(--k-s3)' }}>
-        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Bestand manuell erfassen</div>
-        <div style={{ display: 'flex', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+      <div data-testid="archiv-form" className="kd-panel kd-grid kd-g3 kd-p-s4-s5">
+        <div className="k-titel kd-fs-lg">Bestand manuell erfassen</div>
+        <div className="kd-flex kd-g3 kd-wrap">
           <input
             data-testid="archiv-feld-name"
             placeholder="Name (z.B. «Projekte 2010–2020»)"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={{ ...inputStyle, flex: '1 1 200px' }}
+            className="kd-eingabe kd-eingabe--surface kd-eingabe--w200"
           />
           <input
             data-testid="archiv-feld-pfad"
             placeholder="HDD-Pfad (z.B. D:\Archiv\Projekte 2010-2020)"
             value={pfad}
             onChange={(e) => setPfad(e.target.value)}
-            style={{ ...inputStyle, flex: '1 1 260px', fontFamily: 'var(--k-font-mono)' }}
+            className="kd-eingabe kd-eingabe--surface kd-eingabe--w260"
           />
           <KSelect
             data-testid="archiv-feld-kategorie"
@@ -3356,21 +3217,21 @@ export function KosmoArchivView() {
             value={groesse}
             onChange={(e) => setGroesse(e.target.value)}
             inputMode="numeric"
-            style={{ ...inputStyle, flex: '0 1 170px' }}
+            className="kd-eingabe kd-eingabe--surface kd-eingabe--w170"
           />
           <input
             data-testid="archiv-feld-notiz"
             placeholder="Notiz (optional)"
             value={notiz}
             onChange={(e) => setNotiz(e.target.value)}
-            style={{ ...inputStyle, flex: '1 1 200px' }}
+            className="kd-eingabe kd-eingabe--surface kd-eingabe--w200"
           />
         </div>
-        <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="kd-flex kd-g3 kd-items-center kd-wrap">
           <KButton size="sm" tone="accent" data-testid="archiv-hinzu" onClick={() => void hinzufuegen()}>
             Hinzufügen
           </KButton>
-          <div style={{ flex: 1 }} />
+          <div className="kd-fill" />
           <input
             data-testid="archiv-ordner-input"
             ref={(el) => {
@@ -3382,21 +3243,21 @@ export function KosmoArchivView() {
             }}
             type="file"
             multiple
-            style={{ display: 'none' }}
+            className="kd-hidden"
             onChange={(e) => void ordnerErfasst(e.currentTarget.files)}
           />
           <KButton size="sm" tone="ghost" data-testid="archiv-ordner" onClick={() => ordnerInputRef.current?.click()}>
             Ordner erfassen
           </KButton>
           {!ordnerUnterstuetzt && (
-            <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+            <span className="kd-fs-xs kd-c-faint">
               Ordner-Auswahl braucht einen Chromium-Browser (Desktop/iPad-App)
             </span>
           )}
         </div>
-      </Panel>
+      </div>
 
-      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+      <div className="kd-flex kd-g2 kd-wrap">
         <KButton
           size="sm"
           tone={kategorieFilter === 'alle' ? 'accent' : 'quiet'}
@@ -3440,22 +3301,22 @@ export function KosmoArchivView() {
         <Messrahmen height={140} caption="Kein Bestand passt zur Suche — Begriff lockern" />
       )}
 
-      <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+      <div className="kd-grid kd-g3">
         {gefiltert.map((e) => (
-          <Panel key={e.id} data-testid="archiv-eintrag" style={{ padding: `var(--k-s3) var(--k-s4)`, display: 'grid', gap: 'var(--k-s2)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
-              <span style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{e.name}</span>
+          <div key={e.id} data-testid="archiv-eintrag" className="kd-panel kd-grid kd-g2 kd-p-s3-s4">
+            <div className="kd-flex kd-items-center kd-g3 kd-wrap">
+              <span className="kd-w-550 kd-fs-md">{e.name}</span>
               <Badge hue={moduleHue.doc}>{archivKategorieLabel[e.kategorie]}</Badge>
               <Badge hue={e.quelle === 'ordner' ? moduleHue.asset : 'var(--k-ink-faint)'}>
                 {archivQuelleLabel[e.quelle]}
               </Badge>
-              <div style={{ flex: 1 }} />
+              <div className="kd-fill" />
               <KButton size="sm" tone="ghost" data-testid="archiv-entfernen" onClick={() => void entfernen(e)}>
                 Entfernen
               </KButton>
             </div>
-            <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{e.pfad}</div>
-            <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', display: 'flex', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+            <div className="kd-mono kd-fs-sm kd-c-soft">{e.pfad}</div>
+            <div className="kd-fs-xs kd-c-faint kd-flex kd-g3 kd-wrap">
               <span>{formatGroesse(e.groesseBytes)}</span>
               {e.dateien !== undefined && (
                 <span>
@@ -3463,8 +3324,8 @@ export function KosmoArchivView() {
                 </span>
               )}
             </div>
-            {e.notiz && <div style={{ fontSize: 'var(--k-t-sm)', fontStyle: 'italic', color: 'var(--k-ink-faint)' }}>{e.notiz}</div>}
-          </Panel>
+            {e.notiz && <div className="kd-fs-sm kd-italic kd-c-faint">{e.notiz}</div>}
+          </div>
         ))}
       </div>
     </div>

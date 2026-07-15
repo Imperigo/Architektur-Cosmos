@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import './data.css';
 
 /**
  * D-Leerbild (W4, UI-KONZEPT-065 §4/§4.5 «Leerzustände sind gezeichnet»,
@@ -14,12 +14,12 @@ import type { CSSProperties } from 'react';
  * Beide Signets: 1.5px-Stroke, `--k-ink-faint`, kein Fill. Darunter der
  * ehrliche Satz «kein Bild hinterlegt» (`--k-t-xs`, `--k-ink-faint`).
  * `data-testid="karte-leerbild"` sitzt auf dem SVG-Signet selbst (W4-Vertrag).
+ *
+ * v0.8.0B / W6 (Spez §2/§3): Inline-Styles → `data.css`-Klassen; `align`
+ * ersetzt das frühere rohe `style`-Prop (der einzige Aufrufer
+ * `DataWorkspace.tsx` wollte nur linksbündig statt zentriert).
  */
 export type DataLeerbildTyp = 'referenz' | 'material';
-
-const SIGNET_BASE: CSSProperties = {
-  display: 'block',
-};
 
 function ReferenzSignet() {
   return (
@@ -34,7 +34,7 @@ function ReferenzSignet() {
       strokeWidth={1.5}
       strokeLinejoin="round"
       strokeLinecap="round"
-      style={SIGNET_BASE}
+      className="kd-leerbild-signet"
     >
       {/* Kopf: die obere Raute (Dach-/Deckenfläche eines einfachen Quaders in Isometrie) */}
       <path d="M20 5 34 12.5 20 20 6 12.5Z" />
@@ -58,7 +58,7 @@ function MaterialSignet() {
       stroke="var(--k-ink-faint)"
       strokeWidth={1.5}
       strokeLinecap="round"
-      style={SIGNET_BASE}
+      className="kd-leerbild-signet"
     >
       <rect x={6} y={6} width={28} height={28} />
       {/* 45°-Schraffur, exakt im Quadrat berechnet — kein clipPath (mehrere
@@ -70,23 +70,16 @@ function MaterialSignet() {
 
 export interface DataLeerbildProps {
   typ: DataLeerbildTyp;
-  style?: CSSProperties;
+  /** `start` = linksbündig statt zentriert (Grid-Item im Kartenraster). */
+  align?: 'center' | 'start';
 }
 
-/** Platzhalter-Block: Signet + ehrlicher Satz, mittig in seinem Container. */
-export function DataLeerbild({ typ, style }: DataLeerbildProps) {
+/** Platzhalter-Block: Signet + ehrlicher Satz, mittig (oder linksbündig) in seinem Container. */
+export function DataLeerbild({ typ, align = 'center' }: DataLeerbildProps) {
   return (
-    <div
-      style={{
-        display: 'grid',
-        justifyItems: 'center',
-        alignContent: 'center',
-        gap: 'var(--k-s2)',
-        ...style,
-      }}
-    >
+    <div className={`kd-leerbild${align === 'start' ? ' kd-leerbild-start' : ''}`}>
       {typ === 'referenz' ? <ReferenzSignet /> : <MaterialSignet />}
-      <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>kein Bild hinterlegt</span>
+      <span className="kd-fs-xs kd-c-faint">kein Bild hinterlegt</span>
     </div>
   );
 }
