@@ -13,6 +13,8 @@ import {
   type Storey,
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
+import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
+import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
 import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
 import { DossierPanel } from './DossierPanel';
 import { PlankopfPanel } from './PlankopfPanel';
@@ -79,6 +81,42 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
 
   const sheet = sheets.find((s) => s.id === activeSheetId) ?? sheets[0] ?? null;
   const paper = sheet ? sheetPaperSize(sheet) : null;
+
+  // v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «Publish in die Dock-Registry»)
+  // — Dossier/Plankopf als `DockPanelEintrag[]` für `DockFlaeche`, analog
+  // `DesignWorkspace.tsx`s `designDockPanels`. Beide bleiben Daten-/UI-
+  // Zustand-Guards ohne `…Offen`-Flag in `ui-zustand.ts` (s. `dock-
+  // stationen.ts`s `PUBLISH_PANELS`-Kopfkommentar) — `schliessen` bleibt
+  // identisch mit dem `onClose`, den beide Panel-Inhalte schon hatten
+  // (Doppel-Chrome-Kompromiss, `DockPanel.tsx`). `plankopf` braucht
+  // zusätzlich ein aktives Blatt (`sheet`) — ohne Blatt bleibt es unsichtbar
+  // (`sichtbar: plankopfOffen && !!sheet`, wie der bisherige `plankopfOffen
+  // && sheet`-Guard); der `sheetId`-Fallback `''` wird dabei nie sichtbar
+  // gerendert, weil `DockFlaeche` ein unsichtbares Panel gar nicht in
+  // `ergebnis.rects` aufnimmt.
+  const publishDockPanels: DockPanelEintrag[] = useMemo(
+    () => [
+      {
+        id: 'dossier',
+        sichtbar: dossierOffen,
+        schliessen: () => setDossierOffen(false),
+        inhalt: <DossierPanel onClose={() => setDossierOffen(false)} />,
+      },
+      {
+        id: 'plankopf',
+        sichtbar: plankopfOffen && !!sheet,
+        schliessen: () => setPlankopfOffen(false),
+        inhalt: (
+          <PlankopfPanel
+            sheetId={sheet?.id ?? ''}
+            selectedPlacementId={selectedPlacement}
+            onClose={() => setPlankopfOffen(false)}
+          />
+        ),
+      },
+    ],
+    [dossierOffen, plankopfOffen, sheet, selectedPlacement],
+  );
 
   const svgMarkup = useMemo(
     () =>
@@ -728,7 +766,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       </div>
 
       {/* Blattfläche */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40%, als
             Unterkante statt Oberkante — die Leiste sitzt ÜBER dem Blatt,
             keine Logik/Testid-Änderung). */}
@@ -986,12 +1024,41 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </KButton>
         </KToolbar>
 
+        {/* v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «Publish in die Dock-
+            Registry») — eigener `position:'relative'`-Container NUR für die
+            Blattfläche + `DockFlaeche` (Dossier/Plankopf, s.u.), OHNE die
+            Werkzeugleiste oben: dasselbe Muster wie `DesignWorkspace.tsx`
+            (Kopfkommentar `DockFlaeche.tsx` «y-Start»: «die Werkzeugleisten
+            liegen als Flex-Geschwister VOR diesem Container»). Läge die
+            Werkzeugleiste MIT im Dock-Feld-Container, würde `DockFlaeche`s
+            gemessenes Feld bis zu deren Oberkante reichen — die rechte
+            Dock-Spalte (Plankopf) läge dann optisch ÜBER der Werkzeugleiste
+            (inkl. «Rückgängig»-Knopf), einer positionierten Fläche gewinnt
+            dort immer gegen unpositionierten Inhalt gleicher DOM-Reihenfolge. */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
         <div
           style={{
             flex: 1,
+            minHeight: 0,
             overflow: 'auto',
-            display: 'grid',
-            placeItems: 'center',
+            // v0.8.0 P11 (Owner-Pflichtauftrag 15.07.): OBEN-zentriert statt
+            // mittig (`flex-start`), NICHT mehr `display:grid;placeItems:
+            // center`. Grund (real gemessen, s. Abschlussbericht): der
+            // app-weite Boden-Dock (`shell/BodenDock.tsx`, `position:fixed`,
+            // `screen !== 'home'`) schwebt am VIEWPORT-Unterrand — eine
+            // mittige Zentrierung legte das (grosse) Blatt zwangsläufig in
+            // die Viewport-Mitte, wo die Pille darüber liegt (Owner-
+            // Screenshot: «liegt mitten auf dem Blatt»). Top-Ausrichtung +
+            // die Höhen-Deckelung des Blatts unten (`maxHeight` via
+            // `BODEN_DOCK_RESERVE_PX`) halten das GANZE Blatt strukturell
+            // ÜBER der Pille. `minHeight:0` hält diesen Scroll-Container auf
+            // die Viewport-Höhe geklemmt (sonst wüchse er mit dem Blatt über
+            // den Viewport-Rand hinaus und der Reserve-Raum läge unter dem
+            // Fold statt über der Pille).
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
             background: 'var(--k-field)',
             padding: 'var(--k-s6)',
           }}
@@ -1002,7 +1069,22 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               data-testid="sheet-canvas"
               style={{
                 position: 'relative',
-                width: 'min(100%, 1100px)',
+                flex: '0 0 auto',
+                // v0.8.0 P11: die Breite bleibt die DEFINITE Achse (die
+                // Blatt-Overlays — Platzierungen/Plankopf-Hitbox — sind in %
+                // der Canvas-Grösse positioniert und würden bei gebrochenem
+                // Seitenverhältnis driften, s. `plankopf-overlay.ts`), die
+                // Höhe folgt aus `aspectRatio`. Der DRITTE `min()`-Term
+                // deckelt die Breite so, dass die daraus abgeleitete HÖHE in
+                // den Raum ÜBER der Boden-Dock-Pille passt: verfügbare Höhe ≈
+                // `100dvh − BODEN_DOCK_RESERVE_PX (Dock-Fussabdruck unten) −
+                // ~132px (Kopfleiste + Werkzeugleiste + Innenabstand oben,
+                // gemessen ~111px + Sicherheitsband)`, mal Seitenverhältnis
+                // `W/H` = die Breite, die genau diese Höhe ergibt. Bei sehr
+                // breiten/kurzen Fenstern greift stattdessen `min(100%,
+                // 1100px)` — für beide Blatt-Orientierungen korrekt, weil der
+                // Term aus dem echten Blatt-Seitenverhältnis abgeleitet ist.
+                width: `min(100%, 1100px, calc((100dvh - ${BODEN_DOCK_RESERVE_PX}px - 132px) * ${paper.width} / ${paper.height}))`,
                 aspectRatio: `${paper.width} / ${paper.height}`,
                 boxShadow: 'var(--k-shadow, 0 8px 30px rgba(0,0,0,0.12))',
               }}
@@ -1318,14 +1400,16 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             </div>
           )}
         </div>
-        {dossierOffen && <DossierPanel onClose={() => setDossierOffen(false)} />}
-        {plankopfOffen && sheet && (
-          <PlankopfPanel
-            sheetId={sheet.id}
-            selectedPlacementId={selectedPlacement}
-            onClose={() => setPlankopfOffen(false)}
-          />
-        )}
+        {/* v0.8.0 P11 (Owner-Pflichtauftrag 15.07.): Dossier/Plankopf waren
+            hier zwei eigene `position:'absolute'`-Overlays — jetzt EIN
+            kollisionsfreier Dock (`shell/dock/DockFlaeche.tsx`, Solver
+            `state/dock-kern.ts`, Registry `state/dock-stationen.ts`
+            `'publish'`), analog `DesignWorkspace.tsx`s
+            `<DockFlaeche station="design" .../>`. Sichtbarkeit bleibt exakt
+            der bisherige lokale State (`dossierOffen`/`plankopfOffen`),
+            gespiegelt in `publishDockPanels` oben. */}
+        <DockFlaeche station="publish" panels={publishDockPanels} />
+        </div>
       </div>
     </div>
   );

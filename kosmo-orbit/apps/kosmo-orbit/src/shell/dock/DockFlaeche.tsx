@@ -74,6 +74,22 @@ import './dock-flaeche.css';
  *     Panels dürfen den Kosmo-Streifen geometrisch berühren, die BEDIENUNG
  *     bleibt trotzdem geschützt, weil Boden-Dock (z-108) und Kosmo-Symbol
  *     (z-110) über jedem Panel (z-14/30) liegen und die Klicks gewinnen.
+ *
+ *     v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «BodenDock ins Dock-System»)
+ *     — GEFUNDENE LÜCKE, jetzt geschlossen: die Reserve mass bisher NUR am
+ *     `kosmo-symbol`-Knoten. Dieser Knoten unmountet aber, sobald das
+ *     Kosmo-Panel offen ist (`kosmoOpen`, `shell/BodenDock.tsx`) — in diesem
+ *     Zustand lieferte `document.querySelector('[data-testid="kosmo-
+ *     symbol"]')` `null`, die BOT-Reserve entfiel komplett, und ein Panel
+ *     konnte (in der 'vis'-Station, die keine Statusleiste kennt) bis unter
+ *     den fixen `boden-dock`-Streifen wachsen. Fallback additiv: fehlt das
+ *     Symbol, wird stattdessen die Oberkante des `boden-dock`-Containers
+ *     selbst gemessen (`shell/BodenDock.tsx`, IMMER gemountet solange
+ *     `screen !== 'home'`, unabhängig von `kosmoOpen`) — dieselbe ADAPTIVE
+ *     Schwelle (`BOT_RESERVE_MIN_FELD_H`) gilt unverändert. Ist auch der
+ *     Kosmo-Symbol-Pfad vorhanden (Regelfall), bleibt das Verhalten BYTE-
+ *     IDENTISCH zu vorher (keine Verhaltensänderung für design/vis im
+ *     Normalfall, s. Abschlussbericht P11 Teil A Punkt 1).
  */
 
 export interface DockPanelEintrag {
@@ -327,11 +343,16 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       // dem Feld danach noch >= BOT_RESERVE_MIN_FELD_H bleiben — sonst
       // (kleine Fensterhöhen) schützt allein die z-Ordnung (Boden-Dock
       // z-108 / Kosmo-Symbol z-110 über Panel z-14/30) die Bedienung.
+      // v0.8.0 P11: fehlt das Kosmo-Symbol (Kosmo-Panel offen, s.
+      // Kopfkommentar), fällt die Messung auf den `boden-dock`-Container
+      // selbst zurück — der bleibt in JEDER Modul-Ansicht gemountet.
       const kosmoSymbol = document.querySelector('[data-testid="kosmo-symbol"]');
-      if (kosmoSymbol) {
-        const symbolYEnde = kosmoSymbol.getBoundingClientRect().top - c.top;
-        if (symbolYEnde - DOCK_KONSTANTEN.GAP * 2 >= BOT_RESERVE_MIN_FELD_H) {
-          yEnde = Math.min(yEnde, symbolYEnde);
+      const bodenDockAktuell = kosmoSymbol ? null : document.querySelector('[data-testid="boden-dock"]');
+      const reserveKante = kosmoSymbol ?? bodenDockAktuell;
+      if (reserveKante) {
+        const reserveYEnde = reserveKante.getBoundingClientRect().top - c.top;
+        if (reserveYEnde - DOCK_KONSTANTEN.GAP * 2 >= BOT_RESERVE_MIN_FELD_H) {
+          yEnde = Math.min(yEnde, reserveYEnde);
         }
       }
 

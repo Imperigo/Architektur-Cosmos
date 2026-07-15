@@ -80,9 +80,35 @@ import type { PanelDef } from './dock-kern';
  * abgeleitet aus der heutigen Inhaltsdichte je Panel (Tabellen/Matrizen
  * brauchen mehr `groesse` als reine Formulare), gewählt im vorgegebenen
  * Rahmen `min` 150-220 / `groesse` 280-420.
+ *
+ * **Boden-Dock — bewusst KEIN Registry-Eintrag (v0.8.0 P11, Owner-
+ * Pflichtauftrag 15.07.)**: der Boden-Dock (`shell/BodenDock.tsx`,
+ * `data-testid="boden-dock"`) ist ein APP-WEITER, stationsübergreifender
+ * Navigations-Layer (gemountet in `App.tsx` für jede Station gleichzeitig,
+ * `screen !== 'home'`) — kein Panel EINER Station, das der Solver an-/
+ * abdocken, einklappen oder verschieben könnte (`schliessbar`/`bewegbar`/
+ * `dock:'left'|'right'|'float'` ergäben hier keinen Sinn: es gibt nichts,
+ * das man schliessen oder umdocken würde). Er ist trotzdem kein blinder
+ * Fleck fürs Dock-System, sondern auf zwei ehrlich unterschiedlichen Wegen
+ * angebunden, je nachdem ob die Station eine `DockFlaeche` hat:
+ *   - Stationen MIT `DockFlaeche` (`'design'`/`'vis'`, s.u.): der Solver
+ *     kennt den Boden-Dock nicht direkt, aber `shell/dock/DockFlaeche.tsx`
+ *     MISST seine reale Position (`kosmo-symbol`-Knoten im Regelfall, seit
+ *     P11 zusätzlich der `boden-dock`-Container selbst als Fallback, s.
+ *     dortiger Kopfkommentar) und reserviert daraus die adaptive
+ *     y-Ende-Grenze des Feldes — Panels wachsen strukturell nie darunter.
+ *   - Stationen OHNE `DockFlaeche` (`'publish'` seit P11, sowie `'daten'`/
+ *     `'wissen'`/… ausserhalb dieser Registry): kein Solver-Feld zum
+ *     Reservieren vorhanden — dort gilt statt einer Registry-Zeile die
+ *     exportierte Konstante `BODEN_DOCK_RESERVE_PX` (`shell/BodenDock.tsx`),
+ *     die Aufrufer als statisches Bottom-Padding einsetzen (s.
+ *     `modules/publish/PublishWorkspace.tsx`s Blattfläche). Minimalziel
+ *     dieses Pakets war ausschliesslich Publish — `daten`/`wissen`/`chat`/
+ *     `pipeline` teilen dieselbe theoretische Lücke, sind aber NICHT Teil
+ *     dieser Runde (ehrlich offener Punkt, s. Abschlussbericht P11).
  */
 
-export type DockStation = 'design' | 'plan' | 'vis';
+export type DockStation = 'design' | 'plan' | 'vis' | 'publish';
 
 const DESIGN_PANELS: readonly PanelDef[] = [
   // ---- linke Spalte -------------------------------------------------------
@@ -540,6 +566,75 @@ const VIS_PANELS: readonly PanelDef[] = [
 ];
 
 /**
+ * v0.8.0 P11 (Owner-Pflichtauftrag 15.07., ehem. P11-«Stretch» in
+ * `docs/V080-PLANKOPF-SPEZ.md` §8, jetzt Pflichtrahmen) — KosmoPublish
+ * bekommt eine `DockFlaeche` wie design/vis. EHRLICHER SCHNITT (Auftrag:
+ * «was heute absolut positioniert ist, wird DockPanel-Kind; was zu tief
+ * verwoben ist, bleibt draussen»):
+ *   - `plankopf` (`PlankopfPanel.tsx`) und `dossier` (`DossierPanel.tsx`)
+ *     waren die ZWEI einzigen `position:'absolute'`-Overlays in
+ *     `PublishWorkspace.tsx` (rechts `right:16/top:52/width:380` bzw. links
+ *     `left:90/top:52/width:430`, beide `zIndex:20`) — strukturell identisch
+ *     zum Design-Stations-Befund aus Welle 1/2 (`KennzahlenPanel.tsx`/
+ *     `Inspector.tsx`), darum nach demselben Muster migriert: die eigene
+ *     `position/right|left/top/width/maxHeight/zIndex`-Hülle entfällt in
+ *     beiden Komponenten (der Rest — Badge/Titel/Schliessen-Knopf/Inhalt/
+ *     Hintergrund/Rahmen/Schatten — bleibt UNVERÄNDERT, «Doppel-Chrome»
+ *     bewusst in Kauf genommen, s. `DockPanel.tsx`-Kopfkommentar). Beide
+ *     bleiben reine Daten-/UI-Zustand-Guards ohne `…Offen`-Flag in
+ *     `ui-zustand.ts` (Sichtbarkeit = lokaler `plankopfOffen`/`dossierOffen`-
+ *     State aus `PublishWorkspace.tsx`, gespiegelt wie `unternehmerplan`/
+ *     `kennzahlen`/`inspector` in der Design-Station) — die
+ *     ⊆-`PANEL_IDS`-Invariante gilt darum NICHT für `'publish'` (wie schon
+ *     für `'vis'`, s. `dock-zustand.test.ts`).
+ *   - DOKUMENTIERTE AUSNAHME (bleibt draussen): die Blattliste links
+ *     (Set-/Blattverwaltung, Export-Sektionen, `width:220`-Sidebar) UND die
+ *     Blattfläche selbst (`sheet-canvas`, Werkzeugleiste, Drag-Overlays auf
+ *     dem SVG) sind NICHT Teil des Docks. Beide sind kein «Panel», das man
+ *     schliessen/andocken/einklappen würde — die Sidebar ist waagrecht per
+ *     Flex-Spalte fixiert (kein Solver-Rechteck nötig), die Blattfläche IST
+ *     der zentrale Arbeitsinhalt selbst (das Äquivalent zu `viewport3d`/
+ *     `planview` in Design — auch die sind, korrekt, NIE Dock-Panels).
+ *     Beide bleiben darum handgetunt wie bisher, keine Migrations-Lücke.
+ *
+ * Wichtigkeit/Dock-Zone: `plankopf` rechts (spiegelt seine historische
+ * Position rechts oben), `dossier` links (spiegelt seine historische
+ * Position links der Blattmitte) — je eine eigene Spalte, keine Konkurrenz
+ * um Rang untereinander (nur je ein Panel pro Spalte, `wichtigkeit` ist
+ * hier ohne praktische Wirkung, gesetzt nach dem üblichen Band zur
+ * Konsistenz mit den anderen Registries). `min`/`groesse` grosszügig (beide
+ * Panels sind inhaltlich dicht: Plankopf hat sieben Textfelder + Layout-
+ * Schalter + Phasenkarte + Massstab-Chips, Dossier Kennzahlen + Freitext +
+ * Export-Knöpfe).
+ */
+const PUBLISH_PANELS: readonly PanelDef[] = [
+  {
+    id: 'dossier',
+    titel: 'Projekt-Dossier',
+    rolle: 'generator',
+    wichtigkeit: 45,
+    dock: 'left',
+    min: 220,
+    groesse: 420,
+    start: 'zu',
+    schliessbar: true,
+    bewegbar: true,
+  },
+  {
+    id: 'plankopf',
+    titel: 'Plankopf',
+    rolle: 'manuell',
+    wichtigkeit: 50,
+    dock: 'right',
+    min: 220,
+    groesse: 420,
+    start: 'zu',
+    schliessbar: true,
+    bewegbar: true,
+  },
+];
+
+/**
  * Panel-Registry je Station. `'plan'` bleibt ein bewusst leeres Array —
  * KEIN Welle-3-TODO mehr, sondern ein endgültiger Scope-Entscheid (s.
  * Abschlussbericht P6): die 2D-«Plan»-Station ist im echten Produkt keine
@@ -563,6 +658,8 @@ export function stationsPanels(station: DockStation): readonly PanelDef[] {
       return [];
     case 'vis':
       return VIS_PANELS;
+    case 'publish':
+      return PUBLISH_PANELS;
   }
 }
 

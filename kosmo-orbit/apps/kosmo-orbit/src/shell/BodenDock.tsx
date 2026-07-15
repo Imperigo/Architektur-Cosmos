@@ -153,6 +153,29 @@ function werkzeugMeta(toolId: ToolId): WerkzeugMeta {
  *  dort, keine exportierte Schnittstelle zum Wiederverwenden). */
 const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 20 };
 
+/**
+ * v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «BodenDock ins Dock-System») —
+ * Gesamt-Reserve vom UNTEREN Viewport-Rand, die der Boden-Dock optisch
+ * beansprucht: `bottom:96px` (`boden-dock.css`) + die tatsächliche
+ * Container-Höhe der Knopfreihe (Top-3-Tier-Kreis `TIER_GROESSE.innen`=64px,
+ * `state/orbit-rang.ts`, die höchste der drei Grössen) + `padding:10px 16px`
+ * oben/unten (`boden-dock.css`, 2×10px) = 96 + 64 + 20 = 180px.
+ *
+ * Benannte Konstante statt Magic Number, für Stationen OHNE eigenen
+ * Dock-Feld-Messlauf (`shell/dock/DockFlaeche.tsx` misst dieselbe Reserve
+ * LIVE am `boden-dock`/`kosmo-symbol`-DOM, s. dortiger Kopfkommentar) — z.B.
+ * `modules/publish/PublishWorkspace.tsx`s Blattfläche, die den sichtbaren
+ * Blatt-Bereich um diesen Betrag nach unten polstert, damit die Pille nie
+ * über dem Blatt liegt (Owner-Befund: «liegt mitten auf dem Blatt»). Bewusst
+ * ein statischer Wert statt Laufzeitmessung: die Publish-Station hat (anders
+ * als Design/Vis) keinen `ResizeObserver`-Feld-Messlauf, und ein neuer nur
+ * für diesen einen Zweck wäre mehr Maschinerie als der ehrliche, an die
+ * bestehende CSS gebundene Wert hier — ändert sich `boden-dock.css`/
+ * `TIER_GROESSE`, muss diese Konstante mitgezogen werden (dieselbe Pflicht
+ * gilt für jede andere Stelle, die diese Zahlen kennt).
+ */
+export const BODEN_DOCK_RESERVE_PX = 180;
+
 export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: BodenDockProps) {
   // Reagiert auf jeden Phasenwechsel (`design.siaPhaseSetzen`, PhasenLeiste)
   // — derselbe Selektor-Zugriff wie `Viewport3D.tsx` (Kopfkommentar dort).

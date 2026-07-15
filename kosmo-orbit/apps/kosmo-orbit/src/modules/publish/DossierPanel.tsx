@@ -151,14 +151,13 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
   return (
     <div
       data-testid="dossier-panel"
+      // v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «Publish in die Dock-
+      // Registry»): war ein eigener `position:'absolute'`-Overlay
+      // (`left:90/top:52/width:430/maxHeight`) — jetzt ein Dock-Panel-INHALT
+      // (`dock-stationen.ts` `'dossier'`), Position/Breite/Höhen-Deckel
+      // kommen von `DockPanel.tsx`/`dock-kern.ts`s Solver (identisches Muster
+      // wie `KennzahlenPanel.tsx`s P4-Migration).
       style={{
-        position: 'absolute',
-        left: 90,
-        top: 52,
-        zIndex: 20,
-        width: 430,
-        maxHeight: 'calc(100% - 90px)',
-        overflow: 'auto',
         background: 'var(--k-raised)',
         border: '1px solid var(--k-technik)',
         boxShadow: 'var(--k-shadow-overlay)',

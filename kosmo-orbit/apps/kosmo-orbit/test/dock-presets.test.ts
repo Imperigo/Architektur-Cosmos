@@ -25,7 +25,7 @@ import { neuLadenAusSpeicher, useDockZustand } from '../src/state/dock-zustand';
  */
 
 const STORAGE_KEY = 'kosmo.dock.v1';
-const STATIONEN: readonly PresetStation[] = ['design', 'vis'];
+const STATIONEN: readonly PresetStation[] = ['design', 'vis', 'publish'];
 
 beforeEach(() => {
   localStorage.clear();
@@ -134,6 +134,10 @@ describe('dock-presets — Registry-Validität', () => {
   it('vis: genau ein Panel ist offen-fähig (visPalette — der einzige echte Toggle, s. Kopfkommentar)', () => {
     expect(offenFaehigeIds('vis')).toEqual(['visPalette']);
   });
+
+  it('publish: genau zwei Panel-IDs sind offen-fähig (dossier + plankopf, beide echte Werkzeugleisten-Toggles)', () => {
+    expect(offenFaehigeIds('publish')).toEqual(['dossier', 'plankopf']);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -156,11 +160,11 @@ describe('dock-presets — design/fokus ist die aufgeräumteste Kuration (Owner-
   });
 });
 
-describe('dock-presets — design/arbeiten ist der ruhige Standard (heutigem Verhalten am nächsten)', () => {
+describe('dock-presets — design/arbeiten ist der ruhige Standard mit 1-2 offenen Werkzeug-Panels (P9-Abnahmefund)', () => {
   const preset = presetFuer('design', 'arbeiten');
 
-  it('offen-Liste ist leer', () => {
-    expect(preset.offen).toEqual([]);
+  it('genau zwei Panels offen: Berechnungsliste + Modellbaum/Mengen/Ausmass (Spez §7.1: «1-2 sinnvoll ausgewählte Panels»)', () => {
+    expect(preset.offen).toEqual(['listeOffen', 'drawOffen']);
   });
 
   it('keine Overrides — kennzahlen bleibt normal (nicht eingeklappt)', () => {
@@ -196,6 +200,26 @@ describe('dock-presets — vis-Station (ehrliche Grenze: nur visPalette ist ein 
   });
 });
 
+describe('dock-presets — publish-Station (v0.8.0 P11, beide Panels sind echte Hebel)', () => {
+  it('publish/fokus: nur die Blattfläche — dossier UND plankopf zu', () => {
+    const preset = presetFuer('publish', 'fokus');
+    expect(preset.offen).toEqual([]);
+    expect(preset.overrides).toEqual({});
+  });
+
+  it('publish/arbeiten: plankopf offen (häufigster Begleiter beim Blatt-Zusammenstellen), dossier zu', () => {
+    const preset = presetFuer('publish', 'arbeiten');
+    expect(preset.offen).toEqual(['plankopf']);
+    expect(preset.overrides).toEqual({});
+  });
+
+  it('publish/pruefen: dossier offen und angeheftet, plankopf zu', () => {
+    const preset = presetFuer('publish', 'pruefen');
+    expect(preset.offen).toEqual(['dossier']);
+    expect(preset.overrides['dossier']).toEqual({ angeheftet: true });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // 3. dock-zustand.ts — presetSetzen / layoutZuruecksetzen / Persistenz
 // ---------------------------------------------------------------------------
@@ -215,6 +239,13 @@ describe('dock-zustand — presetSetzen (PD1)', () => {
   it('lässt andere Stationen/Presets unberührt', () => {
     useDockZustand.getState().presetSetzen('design', 'fokus');
     expect(useDockZustand.getState().aktivesPreset['vis']).toBeUndefined();
+  });
+
+  it('funktioniert genauso für die publish-Station (v0.8.0 P11)', () => {
+    useDockZustand.getState().presetSetzen('publish', 'pruefen');
+    const layout = useDockZustand.getState().layoutFuer('publish');
+    expect(layout.panels['dossier']).toEqual({ angeheftet: true });
+    expect(useDockZustand.getState().aktivesPreset['publish']).toBe('pruefen');
   });
 
   it('überschreibt vorherige manuelle Overrides vollständig (kein Preset⊕Reste)', () => {

@@ -65,8 +65,9 @@ export const PRESET_IDS: readonly PresetId[] = ['fokus', 'arbeiten', 'pruefen'];
 /** Presets existieren nur für Stationen mit einer echten Panel-Registry —
  *  `'plan'` ist in `dock-stationen.ts` ein endgültig leeres Array (kein
  *  Welle-3-TODO, s. dortiger Kopfkommentar), darum bewusst ausgeschlossen
- *  statt mit drei bedeutungslosen Presets aufgefüllt. */
-export type PresetStation = Extract<DockStation, 'design' | 'vis'>;
+ *  statt mit drei bedeutungslosen Presets aufgefüllt. `'publish'` kam mit
+ *  v0.8.0 P11 hinzu (`dock-stationen.ts`s `PUBLISH_PANELS`). */
+export type PresetStation = Extract<DockStation, 'design' | 'vis' | 'publish'>;
 
 /**
  * Ein kuratiertes Layout-Ziel. `offen`/`overrides` sind reine Ziel-Daten,
@@ -116,6 +117,12 @@ export interface DockPreset {
  *     `paletteOffen` in `vis-runtime.ts`), die übrigen drei sind reine
  *     Daten-Guards (Graph-/Selektions-/Minimap-Zustand) ohne einen Store,
  *     den ein Preset ansteuern könnte.
+ *   - `'publish'` (v0.8.0 P11): wie `'vis'` — `dossier`/`plankopf` stehen
+ *     NICHT in `PANEL_IDS` (lokaler `useState` in `PublishWorkspace.tsx`,
+ *     s. `dock-stationen.ts`s `PUBLISH_PANELS`-Kopfkommentar), tragen aber
+ *     BEIDE `schliessbar:true` UND haben einen echten Werkzeugleisten-
+ *     Umschalter (`publish-dossier`/`publish-plankopf`) — die Registry ist
+ *     also auch hier die verlässliche Quelle.
  */
 function istOffenFaehig(station: PresetStation, def: PanelDef): boolean {
   if (station === 'design') {
@@ -160,19 +167,31 @@ const DESIGN_FOKUS: DockPreset = {
 };
 
 /**
- * `'arbeiten'` — der ruhige Standard, dem heutigen (v0.7.9) Verhalten am
- * nächsten: keine Werkzeug-Panels offen, `kennzahlen` normal (NICHT
- * eingeklappt — Abwesenheit von `eingeklappt` in `overrides` reicht dafür,
- * `mischePanel()` in `dock-kern.ts` defaultet ohne Override auf
- * `eingeklappt:false`). Bewusst leere `overrides` — dieses Preset IST fast
- * der unveränderte Ist-Zustand, nur jetzt benannt und wählbar.
+ * `'arbeiten'` — der ruhige Standard. P9-Abnahmefund (Matrix-Muss, s.
+ * `docs/V080-PLANKOPF-SPEZ.md` §7.1: «1–2 sinnvoll ausgewählte Panels
+ * offen»): die ursprüngliche Fassung liess `offen:[]` — technisch
+ * unterscheidbar von `'fokus'` (Kennzahlen bleibt hier nicht eingeklappt),
+ * aber KEIN einziges Werkzeug-Panel offen widersprach der Spez wörtlich.
+ * Gewählt nach Registry-WICHTIGKEIT (`dock-stationen.ts`s Bandkommentar,
+ * beide Begründungen dort bereits VOR diesem Fund so benannt, jetzt nur
+ * tatsächlich genutzt):
+ *   - `listeOffen` (Berechnungsliste, wichtigkeit 46) — «die zentrale
+ *     Flächen-/Wohnungs-Kennzahlliste, während der Entwurfsiteration
+ *     häufig eingesehen».
+ *   - `drawOffen` (Modellbaum · Mengen · Ausmass, wichtigkeit 48) —
+ *     «wird beim Modellieren oft mitlaufend offen gehalten».
+ * Beide Kommentare beschreiben WÖRTLICH «während der Arbeit dauerhaft
+ * offen» — exakt die Zielgruppe des «Arbeiten»-Presets, nicht irgendein
+ * beliebiges Paar. `kennzahlen` bleibt normal (NICHT eingeklappt —
+ * Abwesenheit von `eingeklappt` in `overrides` reicht dafür, `mischePanel()`
+ * in `dock-kern.ts` defaultet ohne Override auf `eingeklappt:false`).
  */
 const DESIGN_ARBEITEN: DockPreset = {
   id: 'arbeiten',
   station: 'design',
   titel: 'Arbeiten',
-  beschreibung: 'Der ruhige Standard: Kennzahlen normal sichtbar, sonst nichts offen.',
-  offen: [],
+  beschreibung: 'Berechnungsliste und Modellbaum/Mengen offen, Kennzahlen normal sichtbar.',
+  offen: ['listeOffen', 'drawOffen'],
   overrides: {},
 };
 
@@ -272,6 +291,61 @@ const VIS_PRUEFEN: DockPreset = {
 };
 
 // ---------------------------------------------------------------------------
+// Publish-Station — drei Presets (v0.8.0 P11, Owner-Pflichtauftrag 15.07.)
+//
+// Beide Panels (`dossier`/`plankopf`, `dock-stationen.ts`s `PUBLISH_PANELS`)
+// sind ECHTE Hebel (s. `istOffenFaehig`-Kommentar oben) — anders als bei
+// `'vis'` gibt es hier KEINE ehrliche Einschränkung zu dokumentieren, beide
+// IDs sind über `offen` voll ansteuerbar. Die Blattfläche/Blattliste selbst
+// (der eigentliche Arbeitsinhalt, s. `dock-stationen.ts`-Kopfkommentar
+// «dokumentierte Ausnahme») bleibt naturgemäss immer da — Presets sagen nur
+// etwas über die ZWEI Zusatz-Panels aus.
+// ---------------------------------------------------------------------------
+
+/** `'fokus'` — nur die Blattfläche, beide Zusatz-Panels zu. */
+const PUBLISH_FOKUS: DockPreset = {
+  id: 'fokus',
+  station: 'publish',
+  titel: 'Fokus',
+  beschreibung: 'Nur die Blattfläche — Dossier und Plankopf sind zu.',
+  offen: [],
+  overrides: {},
+};
+
+/**
+ * `'arbeiten'` — der Standard beim Blatt-Zusammenstellen: `plankopf` offen
+ * (Feldeditor wird beim Bearbeiten eines Blattes am häufigsten gebraucht —
+ * Plan-Nummer/Disziplin/Massstab-Chips begleiten praktisch jede Sitzung),
+ * `dossier` bleibt zu (Report-Export ist ein punktueller Abschluss-Schritt,
+ * kein Dauerbegleiter, s. `DossierPanel.tsx`-Kopfkommentar «eigenständiges
+ * Panel»).
+ */
+const PUBLISH_ARBEITEN: DockPreset = {
+  id: 'arbeiten',
+  station: 'publish',
+  titel: 'Arbeiten',
+  beschreibung: 'Plankopf offen zum Beschriften der Blätter, Dossier bleibt zu.',
+  offen: ['plankopf'],
+  overrides: {},
+};
+
+/**
+ * `'pruefen'` — Review-Modus: `dossier` offen und angeheftet (die
+ * Kennzahlen-/Freigabe-Übersicht ist der Kontrollblick vor dem Versand),
+ * `plankopf` zu (keine Feld-Bearbeitung während der Prüfung).
+ */
+const PUBLISH_PRUEFEN: DockPreset = {
+  id: 'pruefen',
+  station: 'publish',
+  titel: 'Prüfen',
+  beschreibung: 'Dossier offen und angeheftet — für die Kontrolle vor dem Versand.',
+  offen: ['dossier'],
+  overrides: {
+    dossier: { angeheftet: true },
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Registry + öffentliche Zugriffsfunktionen
 // ---------------------------------------------------------------------------
 
@@ -287,8 +361,16 @@ const VIS_PRESETS: Readonly<Record<PresetId, DockPreset>> = {
   pruefen: VIS_PRUEFEN,
 };
 
+const PUBLISH_PRESETS: Readonly<Record<PresetId, DockPreset>> = {
+  fokus: PUBLISH_FOKUS,
+  arbeiten: PUBLISH_ARBEITEN,
+  pruefen: PUBLISH_PRUEFEN,
+};
+
 function presetsFuerStation(station: PresetStation): Readonly<Record<PresetId, DockPreset>> {
-  return station === 'design' ? DESIGN_PRESETS : VIS_PRESETS;
+  if (station === 'design') return DESIGN_PRESETS;
+  if (station === 'vis') return VIS_PRESETS;
+  return PUBLISH_PRESETS;
 }
 
 /** Ein einzelnes Preset — wirft nie (der Typ `PresetId` deckt alle Schlüssel
@@ -332,7 +414,7 @@ export function presetOffenMap(station: PresetStation, id: PresetId): ReadonlyMa
 // ---------------------------------------------------------------------------
 
 function pruefePresetIntegritaet(): void {
-  for (const station of ['design', 'vis'] as const) {
+  for (const station of ['design', 'vis', 'publish'] as const) {
     const gueltigeIds = new Set(dockbarePanelIds(station));
     const offenFaehig = new Set(offenFaehigeIds(station));
     for (const preset of allePresets(station)) {

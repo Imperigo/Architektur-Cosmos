@@ -208,7 +208,7 @@ function istGueltigerSpeicher(wert: unknown): wert is Record<string, unknown> {
   return true;
 }
 
-const GUELTIGE_STATIONEN: readonly DockStation[] = ['design', 'plan', 'vis'];
+const GUELTIGE_STATIONEN: readonly DockStation[] = ['design', 'plan', 'vis', 'publish'];
 const GUELTIGE_PRESET_IDS: readonly PresetId[] = ['fokus', 'arbeiten', 'pruefen'];
 
 function istDockStation(wert: unknown): wert is DockStation {

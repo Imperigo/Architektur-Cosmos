@@ -206,9 +206,19 @@ for (const preset of ['fokus', 'arbeiten', 'pruefen'] as const) {
       // Kennzahlen bleibt als Daten-Guard sichtbar, aber eingeklappt.
       await expect(page.locator('[data-testid="dock-panel-kennzahlen-tab"]')).toBeVisible();
     } else if (preset === 'arbeiten') {
-      // Ebenfalls 0 sichtbare Werkzeug-Panels (offen=[]), ABER Kennzahlen
-      // NICHT eingeklappt — der Unterschied zu "fokus".
+      // v0.8.0 P11 (P9-Abnahmefund, Spez §7.1 «1-2 sinnvoll ausgewählte
+      // Panels offen»): GENAU listeOffen (Berechnungsliste) + drawOffen
+      // (Modellbaum/Mengen/Ausmass) sind offen — beide nach Registry-
+      // WICHTIGKEIT gewählt (`dock-presets.ts` `DESIGN_ARBEITEN`), alle
+      // anderen neun Werkzeug-Panels (inkl. des zuvor manuell geöffneten
+      // kvOffen) sind zu. Kennzahlen NICHT eingeklappt — der Unterschied zu
+      // "fokus".
+      const ARBEITEN_OFFEN = ['listeOffen', 'drawOffen'];
+      for (const id of ARBEITEN_OFFEN) {
+        await expect(page.locator(`[data-testid="dock-panel-${id}"]`)).toBeVisible();
+      }
       for (const id of DESIGN_WERKZEUG_PANEL_IDS) {
+        if (ARBEITEN_OFFEN.includes(id)) continue;
         await expect(page.locator(`[data-testid="dock-panel-${id}"]`)).toHaveCount(0);
       }
       await expect(page.locator('[data-testid="dock-panel-kennzahlen-tab"]')).toHaveCount(0);
