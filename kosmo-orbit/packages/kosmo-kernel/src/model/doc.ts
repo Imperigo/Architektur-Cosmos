@@ -289,6 +289,33 @@ export interface ProjektInfo {
    * ISO-Datum. Noch ohne eigenes UI-Feld (A2), additiv für spätere
    * Termin-Übersichten/Kosmo-Erinnerungen. */
   fristen?: { label: string; datum: string }[];
+  /** Projekt-/Baugesuchs-Nummer (v0.8.0 P2) — freier Code (Büro- oder
+   * Behörden-Vergabe), erscheint im Plankopf neben den übrigen Stammdaten.
+   * Additiv, wie die übrigen `ProjektInfo`-Felder; nur über
+   * `design.projektInfoSetzen` gesetzt (Merge). */
+  projektCode?: string;
+}
+
+/**
+ * Büro-Stammdaten (v0.8.0 P2) — Name, Adresse, Kürzel und Logo fürs
+ * Plankopf-Bürofeld. Additiv zu `DocSettings`, nach demselben Muster wie
+ * `ProjektInfo`: fehlend (kein `buero`-Feld) = kein Bürofeld im Plankopf,
+ * bestehende Docs bleiben unverändert (Goldens-Guard, kein Kernel-Bruch).
+ * Nur über `publish.bueroSetzen` gesetzt (Merge, nie Komplettüberschrieb —
+ * s. dortigen Kommentar). EHRLICH, wie bei `ProjektInfo` oben: läuft über
+ * Yjs/Undo/`.kosmo`-Export wie jede SettingsPatch-Änderung, ABER
+ * `SyncClient` synct heute nur `entities` live, keine SettingsPatches —
+ * Büro-Stammdaten sind persistent (Vault/IndexedDB, `.kosmo`-Export, Undo),
+ * aber NICHT live-kollaborativ zwischen offenen Sitzungen (dieselbe vertagte
+ * Folgearbeit an `@kosmo/sync` wie bei `ProjektInfo`).
+ */
+export interface BueroInfo {
+  name?: string;
+  adresse?: string;
+  kuerzel?: string;
+  /** ImageAsset-Id des Büro-Logos — nur PNG (s. `publish.bueroSetzen`-
+   * Kommentar zum Format-Guard). */
+  logoAssetId?: string;
 }
 
 export interface DocSettings {
@@ -386,6 +413,10 @@ export interface DocSettings {
    * Bauherr-/Verfasser-Zeile (Golden-Guard). Nur über
    * `design.projektInfoSetzen` gesetzt. */
   projekt?: ProjektInfo;
+  /** Büro-Stammdaten (v0.8.0 P2) — s. `BueroInfo`-Kommentar oben. Fehlend =
+   * kein Bürofeld im Plankopf (Golden-Guard). Nur über `publish.bueroSetzen`
+   * gesetzt. */
+  buero?: BueroInfo;
 }
 
 /** Auflösung von `darstellung3d: 'auto'` (v0.7.0 E3) — pure Funktion, testbar

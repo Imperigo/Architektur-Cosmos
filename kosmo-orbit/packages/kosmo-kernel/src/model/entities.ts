@@ -453,6 +453,41 @@ export interface SheetWolke {
   revision: string;
 }
 
+/**
+ * Plankopf-Textfelder (v0.8.0 P2) — additive Angaben für den Kopfstempel
+ * eines Blatts (Inhalt, Plannummer, Disziplin, Geschoss-Code, gezeichnet/
+ * geprüft von, Datum). Reine Datenhaltung dieser Runde: das eigentliche
+ * Zeichnen des Kopfstempels folgt in einem separaten `derive/`-Paket, hier
+ * nur die Guard-Phase — fehlend (kein `plankopf` am Blatt) bleibt das Bild
+ * byte-identisch (Goldens-Guard, wie z.B. `fluegelTyp` bei `Opening`). Nur
+ * über `publish.plankopfSetzen` gesetzt (Merge, s. dortigen Kommentar).
+ */
+export interface SheetPlankopf {
+  inhalt?: string;
+  planNummer?: string;
+  disziplin?: string;
+  geschossCode?: string;
+  gezeichnet?: string;
+  geprueft?: string;
+  datum?: string;
+}
+
+/**
+ * Blatt-Layout-Schalter (v0.8.0 P2) — additive boolesche Optionen
+ * (Heftrand, Faltmarken, Wasserzeichen, Massstabsbalken, Nordpfeil). Wie bei
+ * `SheetPlankopf`: reine Datenhaltung, das Zeichnen folgt separat in
+ * `derive/` — fehlend = heutiges Bild bleibt byte-identisch (Goldens-Guard).
+ * Nur über `publish.blattLayoutSetzen` gesetzt (Merge, s. dortigen
+ * Kommentar).
+ */
+export interface SheetLayout {
+  heftrand?: boolean;
+  faltmarken?: boolean;
+  wasserzeichen?: boolean;
+  massstabsbalken?: boolean;
+  nordpfeil?: boolean;
+}
+
 /** Planblatt (KosmoPublish) — Layout aus platzierten Ansichten. */
 export interface Sheet extends Base {
   kind: 'sheet';
@@ -468,6 +503,10 @@ export interface Sheet extends Base {
   revisionen?: SheetRevision[];
   /** Änderungswolken (A7), je an einen Revisions-Index gebunden. */
   wolken?: SheetWolke[];
+  /** Plankopf-Textfelder (v0.8.0 P2) — s. `SheetPlankopf`-Kommentar. */
+  plankopf?: SheetPlankopf;
+  /** Layout-Schalter (v0.8.0 P2) — s. `SheetLayout`-Kommentar. */
+  layout?: SheetLayout;
 }
 
 /**

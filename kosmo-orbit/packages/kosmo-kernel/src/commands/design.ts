@@ -2246,13 +2246,14 @@ export const setProjektInfo = registerCommand({
   id: 'design.projektInfoSetzen',
   title: 'Projekt-Stammdaten setzen',
   description:
-    'Setzt/ergänzt die Projekt-Stammdaten (Bauherrschaft, Adresse, Parzellennummer, Planverfasser:in, Fristen) — additiv, wie bei design.prioritaetSetzen (materialPrioritaeten): nur übergebene Felder werden geändert, der Rest bleibt. Bauherr/Verfasser erscheinen im Plankopf (nur wenn gesetzt, sonst keine Zeile). Getrennt von design.standortSetzen (Koordinaten) und parzellenFlaeche (AZ-Kennzahl) — unabhängige Felder derselben Parzelle.',
+    'Setzt/ergänzt die Projekt-Stammdaten (Bauherrschaft, Adresse, Parzellennummer, Planverfasser:in, Fristen, Projekt-/Baugesuchs-Code) — additiv, wie bei design.prioritaetSetzen (materialPrioritaeten): nur übergebene Felder werden geändert, der Rest bleibt. Bauherr/Verfasser erscheinen im Plankopf (nur wenn gesetzt, sonst keine Zeile). Getrennt von design.standortSetzen (Koordinaten) und parzellenFlaeche (AZ-Kennzahl) — unabhängige Felder derselben Parzelle.',
   params: z.object({
     bauherr: z.string().optional(),
     adresse: z.string().optional(),
     parzelleNr: z.string().optional(),
     verfasser: z.string().optional(),
     fristen: z.array(z.object({ label: z.string(), datum: z.string() })).optional(),
+    projektCode: z.string().optional().describe('Projekt-/Baugesuchs-Nummer, z.B. «BG-2026-014»'),
   }),
   summarize: (p) => {
     const teile: string[] = [];
@@ -2261,6 +2262,7 @@ export const setProjektInfo = registerCommand({
     if (p.parzelleNr !== undefined) teile.push(`Parzelle Nr. ${p.parzelleNr}`);
     if (p.verfasser !== undefined) teile.push(`Verfasser «${p.verfasser}»`);
     if (p.fristen !== undefined) teile.push(`${p.fristen.length} Frist(en)`);
+    if (p.projektCode !== undefined) teile.push(`Code «${p.projektCode}»`);
     return teile.length > 0 ? `Stammdaten: ${teile.join(', ')}` : 'Stammdaten: keine Änderung';
   },
   run: (doc, p) => {
@@ -2278,6 +2280,7 @@ export const setProjektInfo = registerCommand({
       ...(p.parzelleNr !== undefined ? { parzelleNr: p.parzelleNr } : {}),
       ...(p.verfasser !== undefined ? { verfasser: p.verfasser } : {}),
       ...(p.fristen !== undefined ? { fristen: p.fristen } : {}),
+      ...(p.projektCode !== undefined ? { projektCode: p.projektCode } : {}),
     };
     return [{ settings: true, before: { projekt: vorher }, after: { projekt: nachher } }];
   },

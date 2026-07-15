@@ -1,7 +1,16 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { ImageAsset, Sheet, SheetImage, SheetPlacement, SheetText, Storey } from '../model/entities';
-import type { AnyPatch, KosmoDoc, PublikationsSet } from '../model/doc';
+import type {
+  ImageAsset,
+  Sheet,
+  SheetImage,
+  SheetLayout,
+  SheetPlacement,
+  SheetPlankopf,
+  SheetText,
+  Storey,
+} from '../model/entities';
+import type { AnyPatch, BueroInfo, KosmoDoc, PublikationsSet } from '../model/doc';
 import { formatBelegungsBericht, schlageBlattBelegungVor } from '../derive/blattfuellung';
 import { formatBaugesuchBericht, schlageBaugesuchSatzVor } from '../derive/baugesuch';
 import { ausnuetzungsnachweisSvg, BAUGESUCH_HINWEIS, deriveAusnuetzungKennwerte, utf8ToBase64 } from '../derive/ausnuetzungsnachweis';
@@ -406,14 +415,55 @@ function pngGroesse(base64: string): { width: number; height: number } | null {
   return width > 0 && height > 0 ? { width, height } : null;
 }
 
-/** Referenziert irgendein Blatt (ausser optional einem Slot) dieses Asset noch? */
-function assetNochReferenziert(doc: KosmoDoc, assetId: string, ausser: { sheetId: string; bildId: string }): boolean {
+/**
+ * Referenziert irgendein Blatt-Bild-Slot ODER das Büro-Logo
+ * (`settings.buero.logoAssetId`) dieses Asset noch? `ausser` schliesst GENAU
+ * die eine Referenz aus, die der Aufrufer selbst gerade ersetzt/entfernt —
+ * entweder einen Bild-Slot (`{ sheetId, bildId }`, wie bisher) oder das
+ * Büro-Logo-Feld selbst (`{ buero: true }`, v0.8.0 P2: `publish.bueroSetzen`
+ * ersetzt seinen EIGENEN alten Logo-Asset und darf dabei nicht an der
+ * eigenen, noch nicht aktualisierten Referenz scheitern). Ohne `ausser`
+ * zählen beide Referenzarten voll — das ist der GC-Schutz: ein Bild-Slot,
+ * der zufällig denselben Asset wie das Büro-Logo trägt, darf beim Entfernen
+ * dieses Slots das Logo nicht mitreissen (und umgekehrt).
+ */
+function assetNochReferenziert(
+  doc: KosmoDoc,
+  assetId: string,
+  ausser?: { sheetId: string; bildId: string } | { buero: true },
+): boolean {
   for (const s of doc.byKind<Sheet>('sheet')) {
     for (const b of s.bilder ?? []) {
-      if (b.assetId === assetId && !(s.id === ausser.sheetId && b.id === ausser.bildId)) return true;
+      if (
+        b.assetId === assetId &&
+        !(ausser && 'sheetId' in ausser && s.id === ausser.sheetId && b.id === ausser.bildId)
+      ) {
+        return true;
+      }
     }
   }
+  if (doc.settings.buero?.logoAssetId === assetId && !(ausser && 'buero' in ausser)) return true;
   return false;
+}
+
+/**
+ * Merge eines Teil-Patches in ein optionales Feld-Bündel (`SheetPlankopf`/
+ * `SheetLayout`, v0.8.0 P2): nur im `patch` VORHANDENE Schlüssel ändern
+ * etwas — ein fehlender Schlüssel lässt das Feld unangetastet, ein
+ * vorhandener Schlüssel mit explizitem Wert `undefined` LÖSCHT das Feld
+ * wieder. Anders als das flache Merge-Muster von `design.projektInfoSetzen`
+ * (das nur setzt, nie löscht) trägt dieses Muster echtes Löschen, weil
+ * `patch` ein einzelnes verschachteltes Objekt ist statt einzelner
+ * Top-Level-Parameter.
+ */
+function mergeTeilPatch<T extends object>(vorher: T, patch: Partial<Record<string, unknown>>): T {
+  const nachher = { ...vorher } as Record<string, unknown>;
+  for (const key of Object.keys(patch)) {
+    const wert = patch[key];
+    if (wert === undefined) delete nachher[key];
+    else nachher[key] = wert;
+  }
+  return nachher as T;
 }
 
 export const placeImage = registerCommand({
@@ -760,6 +810,149 @@ export const createBaugesuch = registerCommand({
       after: { publikationsSets: [...vorherSets.filter((s) => s.name !== 'Baugesuch'), set] },
     });
 
+    return patches;
+  },
+});
+
+const SheetPlankopfPatchSchema = z.object({
+  inhalt: z.string().optional().describe('Plan-Inhalt/Titel, z.B. «Grundriss EG»'),
+  planNummer: z.string().optional().describe('Plannummer, z.B. «A-102»'),
+  disziplin: z.string().optional().describe('Disziplin/Fachbereich, z.B. «Architektur»'),
+  geschossCode: z.string().optional().describe('Geschoss-Kürzel des Plankopfs, z.B. «EG»'),
+  gezeichnet: z.string().optional().describe('Gezeichnet von (Kürzel/Name)'),
+  geprueft: z.string().optional().describe('Geprüft von (Kürzel/Name)'),
+  datum: z.string().optional().describe('Datum als Text (de-CH), z.B. «14.07.2026»'),
+});
+
+export const setPlankopf = registerCommand({
+  id: 'publish.plankopfSetzen',
+  title: 'Plankopf setzen',
+  description:
+    'Setzt/ergänzt die Plankopf-Textfelder eines Blatts (Inhalt, Plannummer, Disziplin, Geschoss-Code, gezeichnet/geprüft von, Datum) — additiv wie design.projektInfoSetzen: nur im patch enthaltene Felder ändern sich, weggelassene bleiben unverändert. Reine Datenhaltung dieser Runde: der Kopfstempel selbst wird erst in einem späteren Ableitungspaket gezeichnet, ein Blatt ohne gesetzten Plankopf bleibt im Plan-Bild unverändert.',
+  params: z.object({
+    sheetId: z.string(),
+    patch: SheetPlankopfPatchSchema,
+  }),
+  summarize: (p, doc) => {
+    const sheet = doc.get<Sheet>(p.sheetId);
+    const name = sheet && sheet.kind === 'sheet' ? sheet.name : p.sheetId;
+    const felder = Object.keys(p.patch);
+    return felder.length > 0 ? `Plankopf «${name}»: ${felder.join(', ')}` : `Plankopf «${name}»: keine Änderung`;
+  },
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const vorher: SheetPlankopf = sheet.plankopf ?? {};
+    const nachher = mergeTeilPatch(vorher, p.patch);
+    const after: Sheet = { ...sheet, plankopf: nachher };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+const SheetLayoutPatchSchema = z.object({
+  heftrand: z.boolean().optional().describe('Heftrand zeichnen'),
+  faltmarken: z.boolean().optional().describe('Faltmarken zeichnen'),
+  wasserzeichen: z.boolean().optional().describe('Wasserzeichen (z.B. «Entwurf») einblenden'),
+  massstabsbalken: z.boolean().optional().describe('Massstabsbalken zeichnen'),
+  nordpfeil: z.boolean().optional().describe('Nordpfeil zeichnen'),
+});
+
+export const setBlattLayout = registerCommand({
+  id: 'publish.blattLayoutSetzen',
+  title: 'Blatt-Layout setzen',
+  description:
+    'Setzt/ergänzt die Layout-Schalter eines Blatts (Heftrand, Faltmarken, Wasserzeichen, Massstabsbalken, Nordpfeil) — additiv wie design.projektInfoSetzen: nur im patch enthaltene Felder ändern sich, weggelassene bleiben unverändert. Reine Datenhaltung dieser Runde: das Zeichnen der Schalter folgt in einem späteren Ableitungspaket, ein Blatt ohne gesetztes Layout bleibt im Plan-Bild unverändert.',
+  params: z.object({
+    sheetId: z.string(),
+    patch: SheetLayoutPatchSchema,
+  }),
+  summarize: (p, doc) => {
+    const sheet = doc.get<Sheet>(p.sheetId);
+    const name = sheet && sheet.kind === 'sheet' ? sheet.name : p.sheetId;
+    const felder = Object.keys(p.patch);
+    return felder.length > 0 ? `Layout «${name}»: ${felder.join(', ')}` : `Layout «${name}»: keine Änderung`;
+  },
+  run: (doc, p) => {
+    const sheet = requireSheet(doc, p.sheetId);
+    const vorher: SheetLayout = sheet.layout ?? {};
+    const nachher = mergeTeilPatch(vorher, p.patch);
+    const after: Sheet = { ...sheet, layout: nachher };
+    return [{ id: sheet.id, before: sheet, after }];
+  },
+});
+
+/**
+ * Büro-Stammdaten (v0.8.0 P2, `BueroInfo` in `model/doc.ts`) — Name, Adresse,
+ * Kürzel und Logo fürs Plankopf-Bürofeld. Merge-Semantik wie
+ * `design.projektInfoSetzen` (nur übergebene Top-Level-Felder ändern sich,
+ * kein Löschen — anders als `plankopfSetzen`/`blattLayoutSetzen` oben, die
+ * ein verschachteltes `patch`-Objekt mit Lösch-Semantik tragen). `logoDataUrl`
+ * akzeptiert bewusst NUR PNG: SVG bräuchte einen eigenen Sanitizing-/
+ * Render-Pfad, JPG eine verlustbehaftete Neucodierung fürs IHDR-Massmuster —
+ * beides ist ehrlich vertagt, kein stiller Fallback. EHRLICH (wie
+ * `ProjektInfo`, s. `doc.ts` Kommentar bei `ProjektInfo`/`BueroInfo`, Zeilen
+ * um 277–281 bzw. bei `BueroInfo` selbst): dieser Command schreibt eine
+ * SettingsPatch — die läuft über Yjs/Undo/`.kosmo`-Export wie jede andere
+ * Mutation, ABER `SyncClient` synct heute nur `entities` live, KEINE
+ * SettingsPatches. Büro-Stammdaten sind also persistent (Undo, Vault,
+ * `.kosmo`), aber NICHT live-kollaborativ zwischen zwei offenen Sitzungen —
+ * dieselbe vertagte Folgearbeit an `@kosmo/sync` wie bei den
+ * Projekt-Stammdaten, kein Bug dieser Runde.
+ */
+export const setBuero = registerCommand({
+  id: 'publish.bueroSetzen',
+  title: 'Büro-Stammdaten setzen',
+  description:
+    'Setzt/ergänzt die Büro-Stammdaten fürs Plankopf-Bürofeld (Name, Adresse, Kürzel, Logo) — additiv wie design.projektInfoSetzen: nur übergebene Felder ändern sich, der Rest bleibt. logoDataUrl akzeptiert AUSSCHLIESSLICH eine base64-PNG-data:-URL (data:image/png;base64,…) — jedes andere Format (SVG, JPG, …) löst einen Fehler aus, weil dafür noch kein Verarbeitungsweg gebaut ist. Ein neues Logo ersetzt ein vorheriges; der alte Bild-Asset wird entsorgt, falls ihn kein Blatt mehr braucht.',
+  params: z.object({
+    name: z.string().optional(),
+    adresse: z.string().optional(),
+    kuerzel: z.string().optional(),
+    logoDataUrl: z
+      .string()
+      .optional()
+      .describe('data:image/png;base64,… — nur PNG; SVG/JPG folgen in einer späteren Version'),
+  }),
+  summarize: (p) => {
+    const teile: string[] = [];
+    if (p.name !== undefined) teile.push(`Name «${p.name}»`);
+    if (p.adresse !== undefined) teile.push(`Adresse «${p.adresse}»`);
+    if (p.kuerzel !== undefined) teile.push(`Kürzel «${p.kuerzel}»`);
+    if (p.logoDataUrl !== undefined) teile.push('Logo aktualisiert');
+    return teile.length > 0 ? `Büro: ${teile.join(', ')}` : 'Büro: keine Änderung';
+  },
+  run: (doc, p) => {
+    const vorher: BueroInfo = doc.settings.buero ?? {};
+    const patches: AnyPatch[] = [];
+    let logoAssetId: string | undefined = vorher.logoAssetId;
+
+    if (p.logoDataUrl !== undefined) {
+      const asset = assetAusDataUrl('Büro-Logo', p.logoDataUrl);
+      if (asset.mime !== 'image/png') {
+        throw new CommandError('Logo: PNG erforderlich — SVG/JPG folgt in einer späteren Version');
+      }
+      patches.push({ id: asset.id, before: null, after: asset });
+      // Alten Logo-Asset entsorgen, falls kein Blatt (Bild-Slot) ihn noch
+      // braucht — `{ buero: true }` schliesst NUR die eigene (noch nicht
+      // aktualisierte) Buero-Referenz aus, ein Bild-Slot-Verweis zählt weiter.
+      if (
+        vorher.logoAssetId &&
+        vorher.logoAssetId !== asset.id &&
+        !assetNochReferenziert(doc, vorher.logoAssetId, { buero: true })
+      ) {
+        const alt = doc.get<ImageAsset>(vorher.logoAssetId);
+        if (alt) patches.push({ id: alt.id, before: alt, after: null });
+      }
+      logoAssetId = asset.id;
+    }
+
+    const nachher: BueroInfo = {
+      ...vorher,
+      ...(p.name !== undefined ? { name: p.name } : {}),
+      ...(p.adresse !== undefined ? { adresse: p.adresse } : {}),
+      ...(p.kuerzel !== undefined ? { kuerzel: p.kuerzel } : {}),
+      ...(logoAssetId !== undefined ? { logoAssetId } : {}),
+    };
+    patches.push({ settings: true as const, before: { buero: vorher }, after: { buero: nachher } });
     return patches;
   },
 });
