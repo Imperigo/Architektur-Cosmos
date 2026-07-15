@@ -3,6 +3,7 @@ import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KToolbar,
 import {
   imagePaperBounds,
   placementPaperBounds,
+  plankopfReserveMm,
   planToDxf,
   sheetPaperSize,
   sheetToSvg,
@@ -147,7 +148,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       storeyId,
       scale: placeScale,
       x: paper.width / 2,
-      y: (paper.height - 30) / 2,
+      // v0.8.0 P7: «−30» war eine grobe Schätzung an den alten kompakten
+      // Fusskopf angelehnt — jetzt aus der EINZIGEN Quelle
+      // `plankopfReserveMm()` (Spez §5.1), konsistent mit dem seit P7
+      // default-aktiven, deutlich höheren 180×55-Plankopf.
+      y: (paper.height - plankopfReserveMm().hoehe) / 2,
     });
   }
 
@@ -158,7 +163,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       view: 'axo',
       scale: placeScale * 2, // Axo grosszügiger skalieren (halb so gross wie 1:scale)
       x: paper.width / 2,
-      y: (paper.height - 30) / 2,
+      y: (paper.height - plankopfReserveMm().hoehe) / 2,
     });
   }
 
@@ -198,7 +203,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       b: l.b,
       scale: placeScale,
       x: paper.width / 2,
-      y: (paper.height - 30) / 2,
+      y: (paper.height - plankopfReserveMm().hoehe) / 2,
       title: l.titel,
     });
   }
@@ -210,7 +215,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     runCommand('publish.bildPlatzieren', {
       sheetId: sheet.id,
       x: Math.round(paper.width / 2 - w / 2),
-      y: Math.round((paper.height - 30) / 2 - w / 3),
+      y: Math.round((paper.height - plankopfReserveMm().hoehe) / 2 - w / 3),
       w: Math.round(w),
     });
   }
@@ -265,7 +270,15 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     }
   }
 
-  /** Toolkit 5: A0-Wettbewerbsplakat mit vorplatzierten Slots — EIN Undo-Schritt. */
+  /**
+   * Toolkit 5: A0-Wettbewerbsplakat mit vorplatzierten Slots — EIN
+   * Undo-Schritt. v0.8.0 P7 (Spez §5.1/§5.2, «dokumentierte Ausnahme, kein
+   * Migrations-Lücke»): Plakat-Blätter erhalten den Heftrand NICHT (Poster-
+   * Konvention randlos/vollflächig) — ehrlich als explizites `layout:
+   * { heftrand: false }` BEIM Erstellen gesetzt, nicht als Namens-Heuristik
+   * im Kernel (`derive/sheet.ts` kennt «Plakat» nicht und soll es auch
+   * nicht kennen müssen).
+   */
   function erzeugePlakat(layout: 'klassisch' | 'spalte') {
     const { history } = useProject.getState();
     const name = doc.settings.projectName;
@@ -275,6 +288,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
         name: `Plakat ${sheets.filter((s) => s.name.startsWith('Plakat')).length + 1}`,
         format: 'A0',
         orientation: 'hoch',
+        layout: { heftrand: false },
       });
       const sheetId = (res.patches[0] as { id: string }).id;
       // A0 hoch: 841 × 1189 mm

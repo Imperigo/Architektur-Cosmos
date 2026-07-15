@@ -204,9 +204,14 @@ export function lochungMm(h: number): Lochung {
 // Ergebnis: breite=190mm, hoehe=65mm — etwas grosszügiger als die bisherigen
 // 40mm (die schon fast zufällig nah an 54mm lagen), weil hier zusätzlich zur
 // Plankopf-Höhe noch ein expliziter Sicherheitsabstand zum übrigen Inhalt
-// eingerechnet ist statt nur zur Papierkante. Konsumenten (blattfuellung.ts,
-// publish.ts) werden erst im Sammelwechsel P7 umgestellt — bis dahin bleibt
-// ihr Verhalten unverändert.
+// eingerechnet ist statt nur zur Papierkante. Konsumenten seit dem
+// Sammelwechsel P7 umgestellt: `derive/blattfuellung.ts` (Auto-Fuellungs-
+// Raster), `commands/publish.ts` (Ausnützungsnachweis-Bildreserve +
+// Baugesuch-Zentrierung), `PublishWorkspace.tsx` (Schnellplatzierungs-
+// Zentrierung) — alle vier nutzen jetzt ausschliesslich `.hoehe` (die
+// Auto-Fuellung platziert nie in der rechten Plankopf-Spalte hinein, darum
+// genügt hier die Höhen-Reserve, `.breite` bleibt für einen künftigen
+// spalten-genauen Kollisionscheck vorbereitet).
 const PLANKOPF_RESERVE_RAND_MM = 10;
 
 export function plankopfReserveMm(): BlattMasse {

@@ -960,7 +960,13 @@ describe('KosmoPublish (Blätter, DXF)', () => {
     // Darstellung wird versal (reiner Matcher-String, kein Golden).
     expect(svg).toContain('GRUNDRISS EG');
     expect(svg).toContain('1:100');
-    expect(svg).toContain('Blatt 1 · A1');
+    // v0.8.0 P7 (Golden-Sammelwechsel 080): der alte kompakte Fusskopf zeigte
+    // «Blatt {n} · {format}» als EINE Zeile — der seit P7 default-aktive
+    // 180×55-Plankopf zeigt das Blattformat stattdessen als eigenes
+    // «Format»-Halbzellen-Feld (Spez §1.5), ohne die Blattnummer (die ist im
+    // Plancode/Plan-Nr.-Feld verortet, nicht mehr hier). Reiner
+    // Matcher-String, kein Golden (s. docs/GOLDEN-WECHSEL-080.md).
+    expect(svg).toContain('>A1</text>');
 
     const pid = sheet.placements[0]!.id;
     execute(doc, 'publish.ansichtVerschieben', { sheetId, placementId: pid, x: 300, y: 300 });
@@ -2365,15 +2371,30 @@ describe('SIA-Phasen-Detaillierung (Owner 03.07.)', () => {
     expect(sectionInnerSvg(doc, spec, 100).inner).not.toContain('#d7d4ce');
   });
 
-  it('Phase steht im Plankopf; Command ist undo-fähig; Altbestand fällt auf werkplan', () => {
+  // v0.8.0 P7 (Golden-Sammelwechsel 080, docs/V080-PLANKOPF-SPEZ.md §2.2):
+  // dieser Test prüfte bisher `phaseLabel(settings.phase)` im Plankopf — seit
+  // dem Sammelwechsel zeigt der Plankopf die Matrix-Stufe aus
+  // `siaZuMatrixStufe(settings.siaPhase)` (Spez-Halbzelle «Phase», Format
+  // `{Stufe} · {SIA-Nr.}`), NICHT mehr `phaseLabel(settings.phase)` — bewusst
+  // mitgezogen, s. GOLDEN-WECHSEL-080.md. `design.phaseSetzen` ändert weiterhin
+  // NUR den Plan-Darstellungsgrad (`BauPhase`), bleibt entkoppelt von der
+  // Plankopf-Matrix (Owner-Entscheid 1) — die Assertion prüft das jetzt
+  // ausdrücklich (Plankopf bleibt VS·SIA 21, obwohl `phase` wechselt).
+  it('Plankopf zeigt die SIA-Matrix-Stufe (siaPhase), NICHT den Plan-Darstellungsgrad (phase, entkoppelt); Command ist undo-fähig; Altbestand fällt auf werkplan', () => {
     const { doc } = haus();
     const blatt = execute(doc, 'publish.blattErstellen', { name: 'B', format: 'A3', orientation: 'quer' });
     const sheetId = (blatt.patches[0] as { id: string }).id;
-    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('Werkplan (SIA 51)');
+    // Default-Doc: siaPhase 'wettbewerb' → Matrix-Stufe VS (Spez §2.2)
+    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('VS · SIA 21');
     const res = execute(doc, 'design.phaseSetzen', { phase: 'vorprojekt' });
-    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('Vorprojekt (SIA 31)');
+    // Entkoppelt: `phase` (Plan-Darstellungsgrad) wechselt, die Plankopf-
+    // Matrix-Stufe bleibt unverändert (weiterhin siaPhase 'wettbewerb' → VS).
+    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('VS · SIA 21');
     doc.apply(invertPatches(res.patches));
     expect(doc.settings.phase).toBe('werkplan');
+    // siaPhase-Wechsel dagegen ändert die Plankopf-Matrix-Stufe.
+    execute(doc, 'design.siaPhaseSetzen', { siaPhase: 'bauprojekt' });
+    expect(sheetToSvg(doc, sheetId, { projectName: 'T', date: '03.07.2026' })).toContain('BP · SIA 32');
     const alt = KosmoDoc.fromJSON({
       schema: 'kosmo.model/v1',
       settings: { projectName: 'Alt', agfFactor: 1.28, facadeFactor: 1.1 } as never,

@@ -2,6 +2,7 @@ import type { KosmoDoc } from '../model/doc';
 import type { ImageAsset, Sheet, SheetImage, SheetPlacement, SheetText, Storey } from '../model/entities';
 import type { Pt } from '../model/units';
 import { deriveBerechnungsliste } from './berechnungsliste';
+import { plankopfReserveMm } from './blattlayout';
 import { axoInnerSvg, planInnerSvg, sectionInnerSvg } from './plansvg';
 import { schwarzplanGeometrie } from './schwarzplan';
 import { imagePaperBounds, placementPaperBounds, sheetPaperSize } from './sheet';
@@ -280,7 +281,12 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
 
   // --- Einfaches Spaltenraster über die freie Fläche ---
   const RAND = 14; // Blattrahmen (10 mm) + Luft
-  const PLANKOPF_RESERVE = 40; // Plankopf + Reserve — bewusst grosszügig/pauschal, kein Pixel-Fit
+  // v0.8.0 P7 (Golden-Sammelwechsel 080, Spez §5.1): die vormals pauschale
+  // «40» ist ersetzt durch die EINZIGE Quelle `plankopfReserveMm().hoehe`
+  // (`derive/blattlayout.ts`) — mit dem seit P7 default-aktiven, deutlich
+  // grösseren 180×55-Plankopf reicht die alte Schätzung nicht mehr aus, neu
+  // platzierter Auto-Fuellungs-Inhalt würde sonst in den Plankopf hineinragen.
+  const PLANKOPF_RESERVE = plankopfReserveMm().hoehe;
   const x0 = RAND;
   const y0 = RAND;
   const x1 = paper.width - RAND;

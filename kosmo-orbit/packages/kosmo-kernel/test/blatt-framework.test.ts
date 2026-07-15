@@ -5,17 +5,24 @@ import { pruefeGolden } from './golden-helfer';
 /**
  * v0.8.0 P4 (docs/V080-PLANKOPF-SPEZ.md §6, «+2 additive Goldens») — Golden
  * `blatt-framework.svg`: ein Demo-Blatt MIT `sheet.plankopf`/`sheet.layout`-
- * Daten (Daten-Guard aktiv, s. `derive/sheet.ts` `rahmenGuard`-Kommentar),
- * ALLE fünf `SheetLayout`-Booleans an, ein platzierter Grundriss (macht den
- * Nordpfeil sichtbar, Spez §1.6), Phase Bauprojekt (BP — hat ein
- * Wasserzeichen, anders als AF), lange Musterwerte (Ellipsen-Kürzung wie im
- * Schwesterngolden `plankopf-framework.svg`). Format A1 quer (Plan-Vorgabe
- * §6: «A1 quer, Heftrand+Faltmarken+Wasserzeichen BP+Plankopf»).
+ * Daten, ALLE fünf `SheetLayout`-Booleans EXPLIZIT auf `true`, ein
+ * platzierter Grundriss (macht den Nordpfeil sichtbar, Spez §1.6), Phase
+ * Bauprojekt (BP — hat ein Wasserzeichen, anders als AF), lange Musterwerte
+ * (Ellipsen-Kürzung wie im Schwesterngolden `plankopf-framework.svg`).
+ * Format A1 quer (Plan-Vorgabe §6: «A1 quer,
+ * Heftrand+Faltmarken+Wasserzeichen BP+Plankopf»).
  *
- * Dies ist NICHT der Golden-Sammelwechsel 080 (P7) — dieses Blatt trägt die
- * neuen Felder nur, weil es EXTRA für dieses Golden mit ihnen ausgestattet
- * wird (Daten-Guard, kein Default-Flip). Alle 32 Bestands-Goldens bleiben
- * unberührt, s. Abschlussbericht.
+ * Bei P4 entstand dieses Golden noch HINTER dem Daten-Guard (P1–P6): ohne
+ * `sheet.plankopf`/`sheet.layout` fiel ein Blatt auf den alten kompakten
+ * Fusskopf zurück. Seit dem Golden-Sammelwechsel 080 (P7, Spez §5.1) ist der
+ * Guard aufgelöst — das volle Framework ist jetzt IMMER aktiv, fehlende
+ * `SheetLayout`-Booleans bedeuten die fixierten Post-Wechsel-Defaults statt
+ * des alten Fusskopfs. Dieses Demo-Blatt selbst bleibt davon unberührt: alle
+ * fünf Booleans stehen hier bereits explizit auf `true` — identisch zum
+ * neuen Default —, darum ist `blatt-framework.svg` NICHT Teil der
+ * Sammelwechsel-Goldens (byte-identisch, s. docs/GOLDEN-WECHSEL-080.md). Nur
+ * der letzte Test unten («Guard-Beweis») prüfte den inzwischen aufgelösten
+ * Guard und ist mit P7 entsprechend durch einen «Default-Beweis» ersetzt.
  */
 
 function baueDemoDoc(): { doc: KosmoDoc; sheetId: string } {
@@ -143,16 +150,41 @@ describe('Golden — blatt-framework.svg (A1 quer, volles Plankopf-Framework unt
     expect(svg).not.toContain('Musterbüro für Architektur und Städtebau Andrin AG');
   });
 
-  it('Guard-Beweis: ein Blatt ohne plankopf/layout bleibt beim kompakten Alt-Kopf (kein data-teil="plankopf"/"blattlayout")', () => {
+  // v0.8.0 P7 (Golden-Sammelwechsel 080, Spez §5.1): löst den früheren
+  // «Guard-Beweis» ab — ein Blatt OHNE `plankopf`/`layout` zeigt seit dem
+  // Sammelwechsel trotzdem das volle Framework (Post-Wechsel-Default), der
+  // alte kompakte Fusskopf (`<g font-size="3">`) ist nicht mehr erreichbar.
+  it('Default-Beweis: ein Blatt ohne plankopf/layout zeigt trotzdem das volle Framework (Post-Sammelwechsel-Default, kein Alt-Kopf mehr erreichbar)', () => {
     const doc = new KosmoDoc();
     const blatt = execute(doc, 'publish.blattErstellen', { name: 'Blatt ohne Framework-Daten', format: 'A1', orientation: 'quer' });
     const sheetId = (blatt.patches[0] as { id: string }).id;
     const svg = sheetToSvg(doc, sheetId, { projectName: doc.settings.projectName, date: '15.07.2026' });
-    expect(svg).not.toContain('data-teil="plankopf"');
-    expect(svg).not.toContain('data-teil="blattlayout"');
-    expect(svg).toContain('<g font-size="3">');
+    expect(svg).toContain('data-teil="plankopf"');
+    expect(svg).toContain('data-teil="blattlayout"');
+    expect(svg).not.toContain('<g font-size="3">');
     const sheet = doc.get<Sheet>(sheetId)!;
     expect(sheet.plankopf).toBeUndefined();
     expect(sheet.layout).toBeUndefined();
+  });
+
+  // Explizite `false`-Werte bleiben respektiert (P2-Lösch-Semantik) — auch
+  // nach dem Default-Flip überschreibt ein bewusst gesetztes `false` den
+  // Post-Wechsel-Default (Spez §5.1).
+  it('explizites layout:{heftrand:false, faltmarken:false} schaltet Heftrand/Lochung/Faltmarken trotz Default AN gezielt ab', () => {
+    const doc = new KosmoDoc();
+    const blatt = execute(doc, 'publish.blattErstellen', {
+      name: 'Plakat-artig',
+      format: 'A0',
+      orientation: 'hoch',
+      layout: { heftrand: false, faltmarken: false },
+    });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    const svg = sheetToSvg(doc, sheetId, { projectName: doc.settings.projectName, date: '15.07.2026' });
+    // Framework bleibt aktiv (Plankopf immer da), nur Heftrand/Faltmarken weg.
+    expect(svg).toContain('data-teil="plankopf"');
+    // Uniform-10mm-Rahmen (keine Heftrand-Asymmetrie) statt `rahmenRect()`.
+    expect(svg).toMatch(/<rect x="10" y="10" width="[\d.]+" height="[\d.]+" fill="none"/);
+    // Wasserzeichen/Massstabsbalken bleiben Default AN (nicht Teil des Patches).
+    expect(svg).toContain('data-teil="wasserzeichen"');
   });
 });

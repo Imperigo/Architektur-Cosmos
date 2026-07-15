@@ -345,24 +345,37 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
       <Hairline />
 
       {/* Layout-Schalter (Spez §1.6/§1.7/§4.1, `publish.blattLayoutSetzen`) —
-          fehlend = AUS in dieser Phase (P7 flippt die Post-Wechsel-Defaults,
-          Spez §5.1); dieser Editor zeigt den EFFEKTIVEN Zustand ehrlich,
-          kein hartcodiertes «AN». */}
+          v0.8.0 P7 (Golden-Sammelwechsel 080, Default-Flip): fehlend
+          bedeutet jetzt AN (Post-Wechsel-Default, Spez §5.1), nicht mehr AUS
+          — dieser Editor zeigt weiterhin den EFFEKTIVEN Zustand ehrlich
+          (kein hartcodiertes «AN»/«AUS»): `!== false` statt `=== true` für
+          die vier unbedingten Schalter, und für `nordpfeil` zusätzlich die
+          Grundriss-/Situationsplan-Bedingung aus `derive/sheet.ts`
+          (`hatGrundrissOderSituation`) — sonst zeigte die Checkbox «an»,
+          obwohl das Blatt (mangels Grundriss/Situation) gar keinen
+          Nordpfeil zeichnet. */}
       <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
         <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
           Blatt-Layout
         </span>
-        {LAYOUT_SCHALTER.map((s) => (
-          <label key={s.feld} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
-            <input
-              type="checkbox"
-              data-testid={s.testid}
-              checked={sheet!.layout?.[s.feld] === true}
-              onChange={(e) => layoutPatch(s.feld, e.target.checked)}
-            />
-            {s.label}
-          </label>
-        ))}
+        {LAYOUT_SCHALTER.map((s) => {
+          const an =
+            s.feld === 'nordpfeil'
+              ? sheet!.layout?.nordpfeil !== false &&
+                sheet!.placements.some((p) => p.view === 'grundriss' || p.view === 'situationsplan')
+              : sheet!.layout?.[s.feld] !== false;
+          return (
+            <label key={s.feld} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+              <input
+                type="checkbox"
+                data-testid={s.testid}
+                checked={an}
+                onChange={(e) => layoutPatch(s.feld, e.target.checked)}
+              />
+              {s.label}
+            </label>
+          );
+        })}
       </div>
     </div>
   );

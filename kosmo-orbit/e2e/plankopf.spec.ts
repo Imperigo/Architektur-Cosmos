@@ -7,10 +7,12 @@ import { expect, test } from '@playwright/test';
  *  - Felder setzen → Plankopf erscheint im SVG (`<g data-teil="plankopf">`),
  *    Plancode wird sichtbar UND im Panel korrekt (`sheetPlancode()`).
  *  - Layout-Toggle Wasserzeichen an/aus (`publish.blattLayoutSetzen`).
- *  - Overlay-Klick öffnet/fokussiert das Panel — für BEIDE Geometrien (Alt-
- *    Fusskopf ohne Plankopf-/Layout-Daten, Framework-Plankopf mit Daten;
- *    Nachweis über die Overlay-Bounding-Box, die beim Wechsel spürbar
- *    wächst, 120×26/31mm → 180×55mm).
+ *  - Overlay-Klick öffnet/fokussiert das Panel — seit dem Golden-
+ *    Sammelwechsel 080 (Default-Flip, `docs/GOLDEN-WECHSEL-080.md`) zeigt
+ *    JEDES Blatt sofort das volle 180×55-Framework, auch ganz ohne
+ *    Plankopf-/Layout-Daten (der frühere P4-Daten-Guard mit dem kompakten
+ *    ~120×26/31-mm-Alt-Fusskopf ist aufgelöst) — die Overlay-Hitbox bleibt
+ *    darum über Feld-Eingaben hinweg GLEICH gross, statt zu wachsen.
  *  - Massstab-Chip MIT Selektion ändert den Massstab der Platzierung (+
  *    Undo), OHNE Selektion bleiben die Chips deaktiviert (reine
  *    Empfehlungsanzeige, Spez §2.3).
@@ -57,8 +59,11 @@ test('Plankopf: Felder setzen → Framework-Plankopf im SVG, Plancode korrekt, W
   await page.click('[data-testid="publish-plankopf"]');
   await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
 
-  // Vor dem Ausfüllen: Alt-Fusskopf, kein Framework-Plankopf im SVG.
-  await expect(page.locator('[data-testid="sheet-canvas"] g[data-teil="plankopf"]')).toHaveCount(0);
+  // v0.8.0 P7 (Golden-Sammelwechsel 080, Default-Flip): schon VOR jeder
+  // Feld-Eingabe zeigt das neu erstellte Blatt das volle Framework — der
+  // frühere P4-Daten-Guard (Alt-Fusskopf ohne Plankopf-/Layout-Daten) ist
+  // aufgelöst, s. docs/GOLDEN-WECHSEL-080.md.
+  await expect(page.locator('[data-testid="sheet-canvas"] g[data-teil="plankopf"]')).toHaveCount(1);
 
   await page.fill('[data-testid="plankopf-buero-kuerzel"]', 'MAA');
   await page.locator('[data-testid="plankopf-buero-kuerzel"]').blur();
@@ -73,8 +78,8 @@ test('Plankopf: Felder setzen → Framework-Plankopf im SVG, Plancode korrekt, W
   await page.fill('[data-testid="plankopf-inhalt"]', 'Grundriss EG');
   await page.locator('[data-testid="plankopf-inhalt"]').blur();
 
-  // Sobald IRGENDEIN Plankopf-Feld gesetzt ist, ersetzt das Framework den
-  // Alt-Fusskopf (Daten-Guard, `derive/sheet.ts` `rahmenGuard`).
+  // Framework bleibt nach den Feld-Eingaben unverändert vorhanden (war schon
+  // vorher da, Default-Flip s. oben).
   await expect(page.locator('[data-testid="sheet-canvas"] g[data-teil="plankopf"]')).toHaveCount(1, { timeout: 10_000 });
   await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('Grundriss EG');
 
@@ -86,12 +91,16 @@ test('Plankopf: Felder setzen → Framework-Plankopf im SVG, Plancode korrekt, W
   // Kein «unvollständig»-Hinweis mehr, sobald alle drei Pflichtteile stehen.
   await expect(page.locator('[data-testid="plankopf-plancode-hinweis"]')).toHaveCount(0);
 
-  // Wasserzeichen-Toggle (VS-Phase: «STUDIE — NICHT FÜR AUSFÜHRUNG»).
-  await expect(page.locator('[data-testid="sheet-canvas"]')).not.toContainText('STUDIE');
-  await page.check('[data-testid="blattlayout-wasserzeichen"]');
-  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('STUDIE', { timeout: 10_000 });
+  // Wasserzeichen-Toggle (VS-Phase: «STUDIE — NICHT FÜR AUSFÜHRUNG»). v0.8.0
+  // P7 (Default-Flip, Spez §5.1): Wasserzeichen ist jetzt OHNE explizites
+  // Setzen bereits AN — der Checkbox-Ausgangszustand ist darum «angehakt»
+  // (s. PlankopfPanel.tsx, `!== false`-Anzeige), nicht mehr «leer».
+  await expect(page.locator('[data-testid="blattlayout-wasserzeichen"]')).toBeChecked();
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('STUDIE');
   await page.uncheck('[data-testid="blattlayout-wasserzeichen"]');
   await expect(page.locator('[data-testid="sheet-canvas"]')).not.toContainText('STUDIE', { timeout: 10_000 });
+  await page.check('[data-testid="blattlayout-wasserzeichen"]');
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toContainText('STUDIE', { timeout: 10_000 });
 });
 
 test('Plankopf: Plancode-Hinweis nennt fehlende Teile, bevor die Stammdaten stehen', async ({ page }) => {
@@ -106,7 +115,17 @@ test('Plankopf: Plancode-Hinweis nennt fehlende Teile, bevor die Stammdaten steh
   await expect(page.locator('[data-testid="plankopf-plancode"]')).toHaveText('—');
 });
 
-test('Plankopf-Overlay: Klick öffnet das Panel bei BEIDEN Geometrien — Alt-Rect ohne Daten, Framework-Rect mit Daten', async ({ page }) => {
+// v0.8.0 P7 (Golden-Sammelwechsel 080, Default-Flip): dieser Test prüfte
+// bisher zwei UNTERSCHIEDLICHE Overlay-Geometrien (kompakter Alt-Fusskopf vs.
+// gewachsenes Framework-Rect, Nachweis über eine wachsende Bounding-Box). Mit
+// dem Default-Flip zeigt JEDES Blatt von Anfang an das volle 180×55-mm-
+// Framework — der Alt-Fusskopf ist nicht mehr erreichbar (s.
+// docs/GOLDEN-WECHSEL-080.md). Der Test prüft jetzt stattdessen: die
+// Overlay-Hitbox ist von Anfang an da (Framework-Grösse), der Klick öffnet
+// das Panel VOR wie NACH dem Setzen von Plankopf-Feldern, und die Hitbox-
+// Grösse bleibt dabei stabil (kein Wachstum mehr, weil es keine zweite,
+// kleinere Geometrie mehr gibt).
+test('Plankopf-Overlay: Klick öffnet das Panel — Framework-Rect ist von Anfang an da und bleibt über Feld-Eingaben hinweg gleich gross', async ({ page }) => {
   await ladeUndOeffnePublish(page);
   await page.click('[data-testid="add-sheet"]');
   await expect(page.locator('[data-testid="sheet-canvas"]')).toBeVisible();
@@ -114,18 +133,19 @@ test('Plankopf-Overlay: Klick öffnet das Panel bei BEIDEN Geometrien — Alt-Re
   await expect(page.locator('[data-testid="plankopf-panel"]')).toHaveCount(0);
   const overlay = page.locator('[data-testid="plankopf-overlay"]');
   await expect(overlay).toBeAttached();
-  const altBox = await overlay.boundingBox();
-  expect(altBox).not.toBeNull();
+  const vorBox = await overlay.boundingBox();
+  expect(vorBox).not.toBeNull();
 
-  // Alt-Rect: Overlay-Klick öffnet das Panel, obwohl das Blatt noch KEINE
-  // Plankopf-/Layout-Daten trägt (kompakter Fusskopf, kein `data-teil`).
+  // Framework-Rect ist bereits vor jeder Feld-Eingabe da (Default-Flip) —
+  // Klick öffnet das Panel.
   await overlay.click();
   await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
   await page.click('[data-testid="plankopf-schliessen"]');
   await expect(page.locator('[data-testid="plankopf-panel"]')).toHaveCount(0);
 
-  // Framework-Rect: sobald ein Plankopf-Feld gesetzt ist, wächst die Hitbox
-  // spürbar (120×26/31mm → 180×55mm) — Klick öffnet das Panel weiterhin.
+  // Nach dem Setzen eines Plankopf-Felds bleibt die Hitbox dieselbe Grösse
+  // (dieselbe 180×55-mm-Box, keine zweite Geometrie mehr) — Klick öffnet das
+  // Panel weiterhin.
   await page.click('[data-testid="publish-plankopf"]');
   await page.fill('[data-testid="plankopf-inhalt"]', 'Fassade Ost');
   await page.locator('[data-testid="plankopf-inhalt"]').blur();
@@ -133,9 +153,10 @@ test('Plankopf-Overlay: Klick öffnet das Panel bei BEIDEN Geometrien — Alt-Re
   await page.click('[data-testid="plankopf-schliessen"]');
   await expect(page.locator('[data-testid="plankopf-panel"]')).toHaveCount(0);
 
-  const frameworkBox = await overlay.boundingBox();
-  expect(frameworkBox).not.toBeNull();
-  expect(frameworkBox!.height).toBeGreaterThan(altBox!.height * 1.3);
+  const nachBox = await overlay.boundingBox();
+  expect(nachBox).not.toBeNull();
+  expect(Math.abs(nachBox!.height - vorBox!.height)).toBeLessThan(3);
+  expect(Math.abs(nachBox!.width - vorBox!.width)).toBeLessThan(3);
 
   await overlay.click();
   await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();

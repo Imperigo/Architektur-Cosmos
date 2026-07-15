@@ -16,6 +16,7 @@ import { formatBaugesuchBericht, schlageBaugesuchSatzVor } from '../derive/bauge
 import { ausnuetzungsnachweisSvg, BAUGESUCH_HINWEIS, deriveAusnuetzungKennwerte, utf8ToBase64 } from '../derive/ausnuetzungsnachweis';
 import { deriveBerechnungsliste } from '../derive/berechnungsliste';
 import { sheetPaperSize } from '../derive/sheet';
+import { plankopfReserveMm } from '../derive/blattlayout';
 import { CommandError, registerCommand } from './core';
 
 /**
@@ -157,15 +158,32 @@ export const removeWolke = registerCommand({
   },
 });
 
+// v0.8.0 P7 (Golden-Sammelwechsel 080, Spez §5.1/§5.2): oben deklariert
+// (statt bei `publish.blattLayoutSetzen` weiter unten), weil `createSheet`
+// direkt darunter sie ebenfalls braucht — einzige Ausnahme vom
+// Post-Wechsel-Default (Heftrand AN), die der Kernel selbst kennt: die
+// A0-Plakat-Preset-Blätter (`erzeugePlakat()`, `PublishWorkspace.tsx`)
+// setzen hierüber explizit `{ heftrand: false }` BEIM Erstellen — eine
+// ehrliche, im UI-Preset-Code sichtbare Ausnahme statt einer Namens-
+// Heuristik im Kernel (der Kernel selbst kennt «Plakat» nicht).
+const SheetLayoutPatchSchema = z.object({
+  heftrand: z.boolean().optional().describe('Heftrand zeichnen'),
+  faltmarken: z.boolean().optional().describe('Faltmarken zeichnen'),
+  wasserzeichen: z.boolean().optional().describe('Wasserzeichen (z.B. «Entwurf») einblenden'),
+  massstabsbalken: z.boolean().optional().describe('Massstabsbalken zeichnen'),
+  nordpfeil: z.boolean().optional().describe('Nordpfeil zeichnen'),
+});
+
 export const createSheet = registerCommand({
   id: 'publish.blattErstellen',
   title: 'Planblatt erstellen',
   description:
-    'Erstellt ein leeres Planblatt für den Plansatz. format: A0–A4 (Standard A1), orientation: quer oder hoch.',
+    'Erstellt ein leeres Planblatt für den Plansatz. format: A0–A4 (Standard A1), orientation: quer oder hoch. layout: optionale Layout-Schalter beim Erstellen (z.B. { heftrand: false } für randlose Plakate) — ohne Angabe gelten die fixierten Post-Sammelwechsel-Defaults (Heftrand/Faltmarken/Wasserzeichen/Massstabsbalken an, Nordpfeil an nur bei platziertem Grundriss/Situationsplan).',
   params: z.object({
     name: z.string().describe('Blattname, z.B. «Grundrisse 1:100»'),
     format: z.enum(['A0', 'A1', 'A2', 'A3', 'A4']).default('A1'),
     orientation: z.enum(['quer', 'hoch']).default('quer'),
+    layout: SheetLayoutPatchSchema.optional(),
   }),
   summarize: (p) => `Blatt «${p.name}» (${p.format} ${p.orientation})`,
   run: (doc, p) => {
@@ -177,6 +195,10 @@ export const createSheet = registerCommand({
       orientation: p.orientation,
       index: doc.byKind<Sheet>('sheet').length,
       placements: [],
+      // `mergeTeilPatch` (s. unten) räumt zod-optionale `undefined`-Werte weg
+      // — `exactOptionalPropertyTypes` verlangt sonst, dass eine gesetzte
+      // Eigenschaft NIE literal `undefined` trägt (nur ganz fehlen darf).
+      ...(p.layout ? { layout: mergeTeilPatch<SheetLayout>({}, p.layout) } : {}),
     };
     return [{ id: sheet.id, before: null, after: sheet }];
   },
@@ -698,9 +720,14 @@ export const createBaugesuch = registerCommand({
       const sheet: Sheet = { id: newId('blatt'), kind: 'sheet', name, format, orientation, index: nextIndex++, placements: [] };
       return sheet;
     };
+    // v0.8.0 P7 (Golden-Sammelwechsel 080): «−30» war eine grobe, ans
+    // alte ~120×26-mm-Fusskopf angelehnte Schätzung — ersetzt durch die
+    // EINZIGE Quelle `plankopfReserveMm()` (Spez §5.1), damit die
+    // vorgeschlagene Zentrierung mit dem seit P7 default-aktiven,
+    // deutlich höheren 180×55-Plankopf konsistent bleibt.
     const zentrierterPlatz = (sheet: Sheet) => {
       const paper = sheetPaperSize(sheet);
-      return { x: Math.round(paper.width / 2), y: Math.round((paper.height - 30) / 2) };
+      return { x: Math.round(paper.width / 2), y: Math.round((paper.height - plankopfReserveMm().hoehe) / 2) };
     };
 
     // Situation
@@ -786,7 +813,11 @@ export const createBaugesuch = registerCommand({
 
     const nachweisSheet = anlegen('Ausnützungsnachweis', 'A4', 'hoch');
     const paper = sheetPaperSize(nachweisSheet);
-    const plankopfReserve = 40;
+    // v0.8.0 P7: «40» war eine pauschale Schätzung — jetzt aus der
+    // EINZIGEN Quelle `plankopfReserveMm()` (Spez §5.1), damit das
+    // eingebettete Ausnützungsnachweis-Bild den seit P7 default-aktiven,
+    // grösseren 180×55-Plankopf dieses Blatts nicht überlappt.
+    const plankopfReserve = plankopfReserveMm().hoehe;
     const usableHeight = paper.height - 20 - plankopfReserve;
     const bildW = Math.round(usableHeight * (794 / 1123));
     const bild: SheetImage = {
@@ -846,14 +877,6 @@ export const setPlankopf = registerCommand({
     const after: Sheet = { ...sheet, plankopf: nachher };
     return [{ id: sheet.id, before: sheet, after }];
   },
-});
-
-const SheetLayoutPatchSchema = z.object({
-  heftrand: z.boolean().optional().describe('Heftrand zeichnen'),
-  faltmarken: z.boolean().optional().describe('Faltmarken zeichnen'),
-  wasserzeichen: z.boolean().optional().describe('Wasserzeichen (z.B. «Entwurf») einblenden'),
-  massstabsbalken: z.boolean().optional().describe('Massstabsbalken zeichnen'),
-  nordpfeil: z.boolean().optional().describe('Nordpfeil zeichnen'),
 });
 
 export const setBlattLayout = registerCommand({

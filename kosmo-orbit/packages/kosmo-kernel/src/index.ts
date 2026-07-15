@@ -34,6 +34,10 @@ export * from './derive/fang';
 export * from './derive/treppe';
 export * from './derive/gltf';
 export * from './derive/plansvg';
+// v0.8.0 P7 (Golden-Sammelwechsel 080): Blattgeometrie öffentlich, damit
+// App-seitige Offsets (PublishWorkspace-Schnellplatzierung) dieselbe
+// `plankopfReserveMm()`-Quelle nutzen können statt einer eigenen Schätzung.
+export * from './derive/blattlayout';
 export * from './derive/sheet';
 export * from './derive/blattfuellung';
 export * from './derive/ausnuetzungsnachweis';
