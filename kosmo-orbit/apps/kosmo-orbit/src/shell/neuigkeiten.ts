@@ -35,6 +35,34 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.0',
+    datum: '2026-07-15',
+    punkte: [
+      {
+        text: 'KosmoPublish hat ein vollständiges Blattlayout-Framework bekommen: ein normgerechter 180×55-mm-Plankopf, Faltmarken nach DIN 824, Lochung nach ISO 838 und eine sechsstufige Phasen-Matrix (Vorstudie bis Ausführung) mit passendem Wasserzeichen — in der Ausführungsphase ersetzt ein Freigabe-Stempel das Wasserzeichen. Bestehende Blätter sind automatisch auf das neue Framework umgestellt; einzige Ausnahme ist das A0-Plakat, das den vollen Plankopf, aber bewusst keinen 20-mm-Heftrand trägt.',
+        station: 'publish',
+      },
+      {
+        text: 'Jedes Blatt bekommt einen automatischen Plancode (Büro-Kürzel · Projekt-Code · Phasen-Stufe · Disziplin · Geschoss · Plan-Nummer) — er erscheint im Plankopf, im Export-Dateinamen und in der Transmittal-Liste, sobald die nötigen Stammdaten stehen; ohne sie bleibt der bisherige Dateiname unverändert.',
+        station: 'publish',
+      },
+      {
+        text: 'Neues Plankopf-Panel: Plankopf-Felder, Büro-Stammdaten samt PNG-Logo, Projekt-Code und fünf Layout-Schalter (Heftrand/Faltmarken/Wasserzeichen/Massstabsbalken/Nordpfeil) an einem Ort — inklusive Massstab-Empfehlungen als anklickbare Chips je Planungsphase.',
+        station: 'publish',
+      },
+      {
+        text: 'Aufgeräumte Standard-Oberflächen: KosmoDesign, KosmoVis und KosmoPublish bieten je drei benannte Ansichten — Fokus (nur das Nötigste), Arbeiten (der kuratierte Alltag) und Prüfen (Kennzahlen und Kontrolle im Vordergrund). Ein echter Erststart landet automatisch bei Fokus; wer die Oberfläche bereits selbst eingerichtet hat, bleibt unangetastet. Kosmo räumt auf Zuruf auf («Räum die Oberfläche auf»).',
+      },
+      {
+        text: 'Die untere Werkzeug-Pille schwebte bisher stationsblind über dem Inhalt — in KosmoPublish lag sie mitten auf dem Blatt. Sie hält jetzt überall sauber Abstand, und Dossier sowie Plankopf sind als vollwertige, automatisch ausweichende Dock-Panels in KosmoPublish angekommen.',
+        station: 'publish',
+      },
+      {
+        text: 'Ehrlich offen: das eigenständige .kxp-Hyper-Modell samt Viewer und Freigabe-Workflow, ein grösserer Auto-Layout-Editor fürs Blatt und Büro-Logos als SVG/JPG (heute nur PNG) bleiben spätere Runden — nichts davon ist vorgetäuscht.',
+      },
+    ],
+  },
+  {
     version: '0.7.9',
     datum: '2026-07-14',
     punkte: [

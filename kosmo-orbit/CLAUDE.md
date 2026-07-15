@@ -1,6 +1,6 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
-> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.7.9** (Stand 14.07.2026);
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.0** (Stand 15.07.2026);
 > alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
 > älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
 > (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal
@@ -15,9 +15,9 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 
 ## Was du zuerst liest
 
-1. `ROADMAP.md` — 123 nummerierte Einträge, jeder ein abgeschlossenes Feature mit
-   Belegen. Der jüngste Stand steht **unten** vor dem Marker
-   «Phase 3 abgeschlossen».
+1. `ROADMAP.md` — 380 nummerierte Einträge (Stand v0.8.0; der Release-Eintrag 381
+   folgt), jeder ein abgeschlossenes Feature mit Belegen. Der jüngste Stand steht
+   **unten** vor dem Marker «Phase 3 abgeschlossen».
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
 3. `docs/GESTALTUNGSKONZEPT.md` + `docs/OWNER-MANDAT.md` — Ästhetik und Owner-Regeln.
 4. `docs/HOMESTATION-AUFTRAG.md` — was auf die RTX-5090-Heimstation wartet.
@@ -28,8 +28,9 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 cd kosmo-orbit
 npm install                 # Root-Workspace (npm workspaces)
 npm run build               # baut alle Pakete + die App
-npm test                    # 194 Kernel + 19 KI + 6 Contracts + 14 App
-npm run typecheck           # exactOptionalPropertyTypes ist AN
+npm test                    # 924 Kernel + 1092 App + 109 KI + 28 Contracts + 29 Data + 8 Lizenz + 31 UI (Stand v0.8.0)
+npm run typecheck           # 8 Workspaces, exactOptionalPropertyTypes ist AN
+npm run svg-qa              # 33 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
 ```
 
 E2E (Playwright) braucht die Helferserver und den Preview-Build:

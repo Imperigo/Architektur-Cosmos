@@ -1,6 +1,6 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.7.9 «Dock-Vollendung»** (Stand 14.07.2026, ROADMAP 367).
+**Aktuelle Version: v0.8.0 «KosmoPublish Plankopf-Framework + Default-Oberflächen»** (Stand 15.07.2026, ROADMAP 380; Release-Eintrag 381 folgt).
 **Alle Versionen davor (≤ v0.7.6) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 - **Entwicklungs-Branch:** `claude/kosmo-orbit-v1-build-pzxkbj`
