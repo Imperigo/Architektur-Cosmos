@@ -1077,53 +1077,99 @@ progress {
    (`components.tsx`) — die Optik ist BYTE-GLEICH aus den bisherigen
    Inline-Werten übernommen, nur die Style-QUELLE wandert. `.k-btn:disabled`
    ersetzt die frühere JS-Ternäre für opacity/cursor (dasselbe Ergebnis, weil
-   `disabled` weiterhin echtes Button-Attribut bleibt). */
+   `disabled` weiterhin echtes Button-Attribut bleibt).
+
+   v0.8.0B / P2 (Spez §3 B-34) — 1px-Border-Prinzip, KEINE gefüllten Buttons
+   (Ausnahme: das native `:disabled`-Dimmen). Die vier Klassennamen bleiben
+   BYTE-GLEICH (`e2e/kurztasten-pan.spec.ts` prüft `k-btn-accent` per
+   `classList.contains`) — nur die Deklarationen unten wechseln auf die
+   Blaupause (`_ds` `components/core/Button.jsx`): accent = Wash-Fill +
+   Line-Stroke + Akzent-Text, quiet (= "secondary") = Glass, ghost =
+   transparent→Hover, danger = 12%-Fill/45%-Stroke. Glass/Glow-Fallbacks
+   (`var(--k-glass-fill, …)`, `var(--k-glow-cyan-sm, none)`) sind orbit-only
+   Tokens — auf Papier greift automatisch der Fallback («Papier kennt kein
+   Glas»/keine Glow, Spec §1 B-24). */
 .k-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: var(--k-s2);
   border: 1px solid transparent;
-  border-radius: var(--k-radius-sm);
+  border-radius: var(--k-radius-md);
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   transition:
     background var(--k-motion-fast),
     border-color var(--k-motion-fast),
     color var(--k-motion-fast),
-    opacity var(--k-motion-fast);
+    opacity var(--k-motion-fast),
+    box-shadow var(--k-motion-base),
+    transform var(--k-motion-fast);
   user-select: none;
   white-space: nowrap;
 }
 .k-btn:disabled {
   opacity: 0.45;
   cursor: default;
+  transform: none;
+}
+/* Hover-Anheben (Gesetz 12) — `:not(:active)` lässt den Knopfdruck
+   (`.k-druck:active`, oben) beim gehaltenen Klick gewinnen, statt mit ihm um
+   dieselbe `transform`-Deklaration zu konkurrieren. */
+.k-btn:hover:not(:disabled):not(:active) {
+  transform: translateY(-1px);
 }
 .k-btn-accent {
-  background: var(--k-accent);
-  color: var(--k-accent-ink);
+  background: var(--k-accent-wash);
+  border-color: color-mix(in srgb, var(--k-accent) 45%, transparent);
+  color: var(--k-accent);
+}
+.k-btn-accent:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--k-accent) 18%, transparent);
+  box-shadow: var(--k-glow-cyan-sm, none);
 }
 .k-btn-quiet {
-  background: var(--k-raised);
+  background: var(--k-glass-fill, var(--k-raised));
   color: var(--k-ink);
+  border-color: var(--k-glass-stroke, var(--k-line-strong));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+.k-btn-quiet:hover:not(:disabled) {
   border-color: var(--k-line-strong);
 }
 .k-btn-ghost {
   background: transparent;
   color: var(--k-ink-soft);
 }
+.k-btn-ghost:hover:not(:disabled) {
+  background: var(--k-hover);
+  color: var(--k-ink);
+}
 .k-btn-danger {
-  background: transparent;
+  background: color-mix(in srgb, var(--k-danger) 12%, transparent);
+  border-color: color-mix(in srgb, var(--k-danger) 45%, transparent);
   color: var(--k-danger);
-  border-color: var(--k-danger);
+}
+.k-btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--k-danger) 20%, transparent);
 }
 .k-btn-sm {
-  padding: 3px 10px;
+  height: 32px;
+  padding: 0 var(--k-s4);
   font-size: 12.5px;
 }
 .k-btn-md {
-  padding: 6px 14px;
+  height: 40px;
+  padding: 0 var(--k-s5);
   font-size: 14px;
+}
+/* NEU (P2, Spez §3 B-34) — additive dritte Grösse. */
+.k-btn-lg {
+  height: 48px;
+  padding: 0 var(--k-s6);
+  font-size: var(--k-t-lg);
 }
 
 /* KSelect — natives <select>, eigener Chevron. GRENZE (bleibt bestehen):
@@ -1135,18 +1181,25 @@ progress {
    exakt dieselben wie dort. Eine sechste Akzentfarbe braucht eine weitere
    Variante hier (Review-Hinweis). KSelect bleibt ein natives `<select>` —
    diese Änderung ist reine Chevron-Optik, DOM/Props/E2E-Verträge unverändert. */
+/* v0.8.0B / P2 (Spez §3 B-38) — Glass-/Flächenstufen-Optik: Trigger auf
+   `--k-sunken` (Papier fällt via Fallback auf `--k-field` zurück, siehe
+   `.k-input` weiter unten für dieselbe Begründung), radius-md statt -sm.
+   Verhalten (Fokusfalle/ESC/Positions-Logik in `select.tsx`) UNVERÄNDERT —
+   reiner CSS-Durchgang, `class="k-select k-select--md"` bleibt byte-gleich
+   (`komponenten.test.tsx` prüft den vollen Klassenstring). */
 .k-select {
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid var(--k-line-strong);
-  border-radius: var(--k-radius-sm);
-  background-color: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  background-color: var(--k-sunken, var(--k-field));
   color: var(--k-ink);
   background-repeat: no-repeat;
   background-position: right var(--k-s3) center;
   background-size: 10px 6px;
   padding-right: var(--k-s6);
   cursor: pointer;
+  transition: border-color var(--k-motion-fast), box-shadow var(--k-motion-fast);
   /* Standard = monochromer Tusche-Pfeil (kein data-akzent gesetzt) — gilt
      für Papier UND Kosmos (Chevron war nie ans orbit-Feld angepasst, das
      ändert D7 nicht — s. Bericht «offene Punkte»). */
@@ -1170,6 +1223,10 @@ progress {
   opacity: 0.5;
   cursor: default;
 }
+.k-select:focus-visible {
+  border-color: var(--k-accent);
+  box-shadow: var(--k-glow-cyan-sm, none);
+}
 .k-select--sm {
   padding-top: 3px;
   padding-bottom: 3px;
@@ -1183,12 +1240,22 @@ progress {
   font-size: var(--k-t-md);
 }
 
-/* KTabs — role=tab-Buttons, aktiv = 2px-Akzent-Unterstrich, KEINE Füllfläche. */
+/* KTabs (v0.8.0B / P2, Spez §3 B-36) — Segmented-Pill-Anatomie: Container
+   radius 999 + 2px-Innenpadding, aktiver Eintrag als Chip (Fläche+Rand) mit
+   vorangestelltem 5px-Akzent-Punkt (`::before`, rein dekorativ — KEINE
+   DOM-/testid-/role-Änderung, `role=tab`/`aria-selected` bleiben aus
+   `tabs.tsx` unverändert). Vereinheitlicht PhasenLeiste + Ansichts-
+   Umschalter (bislang zwei Ad-hoc-Optiken). KSegmentPill entfällt als eigene
+   Komponente — KTabs deckt die Segmented-Pill-Anatomie hier bereits
+   vollständig ab (Begründung im Bau-Bericht). */
 .k-tabs {
   display: flex;
   align-items: stretch;
-  gap: var(--k-s5);
-  border-bottom: 1px solid var(--k-line);
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--k-radius-pill);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
 }
 .k-tab {
   all: unset;
@@ -1198,24 +1265,35 @@ progress {
   gap: var(--k-s2);
   cursor: pointer;
   color: var(--k-ink-soft);
-  border-bottom: 2px solid transparent;
-  padding: var(--k-s3) var(--k-s2);
-  margin-bottom: -1px;
+  border: 1px solid transparent;
+  border-radius: var(--k-radius-pill);
+  padding: var(--k-s2) var(--k-s4);
+  transition: background var(--k-motion-fast), border-color var(--k-motion-fast), color var(--k-motion-fast);
 }
 .k-tabs--sm .k-tab {
   font-size: var(--k-t-sm);
-  padding: var(--k-s2) var(--k-s2);
+  padding: 4px var(--k-s3);
 }
 .k-tabs--md .k-tab {
   font-size: var(--k-t-md);
 }
 .k-tab:hover {
   color: var(--k-ink);
+  background: var(--k-hover);
 }
 .k-tab--aktiv {
   color: var(--k-ink);
-  border-bottom-color: var(--k-accent);
+  background: var(--k-raised);
+  border-color: var(--k-line-strong);
   font-weight: 600;
+}
+.k-tab--aktiv::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--k-accent);
+  flex: none;
 }
 .k-tab:disabled {
   opacity: 0.45;
@@ -1230,16 +1308,22 @@ progress {
   position: relative;
   display: inline-block;
 }
+/* v0.8.0B / P2 (Spez §3 B-38) — Glass-/Flächenstufen-Optik; Verhalten
+   (Aussenklick/ESC/Fokusfalle in `overlay.tsx`) unverändert. Auf Papier
+   fallen `--k-glass-*` zurück auf `--k-raised`/`--k-line-strong` — dort ist
+   das Menü optisch weiterhin eine deckende Karte («Papier kennt kein Glas»). */
 .k-menu {
   position: absolute;
   top: calc(100% + var(--k-s2));
   left: 0;
   z-index: 100;
   min-width: 190px;
-  background: var(--k-raised);
-  border: 1px solid var(--k-line-strong);
+  background: var(--k-glass-fill, var(--k-raised));
+  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
   border-radius: var(--k-radius-md);
-  box-shadow: var(--k-shadow-overlay);
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   padding: var(--k-s2) 0;
   display: flex;
   flex-direction: column;
@@ -1263,7 +1347,7 @@ progress {
 }
 .k-menu-item:hover,
 .k-menu-item:focus-visible {
-  background: var(--k-surface);
+  background: var(--k-hover);
 }
 .k-menu-item:disabled {
   opacity: 0.45;
@@ -1292,11 +1376,16 @@ progress {
    (oben, unverändert) für Scrim/Höhen-Deckel/Umbruch; `.k-dialog-box` trägt
    NEU Fläche/Rahmen/Schatten/Layout, `.k-dialog-kopf`/`.k-dialog-fuss` sind
    NEU. KEINE 45°-Ecke (die gehört den Karteikarten). */
+/* v0.8.0B / P2 (Spez §3 B-38) — Glass-/Flächenstufen-Optik, Verhalten
+   (Fokusfalle/ESC in `overlay.tsx`) unverändert. Fallback-Ketten lassen
+   Papier bei der bisherigen deckenden Karte («Papier kennt kein Glas»). */
 .k-dialog-box {
-  background: var(--k-raised);
-  border: 1px solid var(--k-line-strong);
-  box-shadow: var(--k-shadow-overlay);
-  border-radius: 0;
+  background: var(--k-glass-fill, var(--k-raised));
+  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-radius: var(--k-radius-karte);
   display: flex;
   flex-direction: column;
 }
@@ -1349,15 +1438,28 @@ progress {
   flex: 0 0 auto;
 }
 
-/* KField/KInput — ersetzt die 10 lokalen `inputStyle`-Konstanten. */
+/* KField/KInput — ersetzt die 10 lokalen `inputStyle`-Konstanten.
+   v0.8.0B / P2 (Spez §3 B-35) — Feld auf `--k-sunken` + 1px `--k-line`,
+   radius-md; Mono-Micro-Label 11px uppercase Tracking .14em darüber;
+   focus-within/-visible = Akzent-Rand + Glow. `var(--k-sunken, var(--k-field))`
+   ist eine bewusste Fallback-Kette: `--k-sunken` existiert nur im Orbit-
+   Theme (aura.css-Block `[data-theme='orbit']`); auf Papier greift der
+   Fallback automatisch auf `--k-field` — ein Feld auf Seitenton, nur durch
+   die 1px-Linie vom Grund abgesetzt (Gesetz 8, Hairline statt Fläche),
+   OHNE einen neuen Papier-Hexwert erfinden zu müssen. Dieselbe Kette nutzen
+   `.k-select`/`.k-node`/`.k-card--sunken` weiter unten. */
 .k-field {
   display: flex;
   flex-direction: column;
   gap: var(--k-s2);
 }
 .k-field-label {
-  font-size: var(--k-t-sm);
-  color: var(--k-ink-soft);
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-micro);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
 }
 .k-field-hinweis {
   font-size: var(--k-t-xs);
@@ -1368,11 +1470,12 @@ progress {
   color: var(--k-danger);
 }
 .k-input {
-  border: 1px solid var(--k-line-strong);
-  border-radius: var(--k-radius-sm);
-  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  background: var(--k-sunken, var(--k-field));
   color: var(--k-ink);
   padding: 6px var(--k-s4);
+  transition: border-color var(--k-motion-fast), box-shadow var(--k-motion-fast);
 }
 .k-input--sm {
   padding: 3px var(--k-s3);
@@ -1390,6 +1493,47 @@ progress {
 }
 .k-input:focus-visible {
   border-color: var(--k-accent);
+  box-shadow: var(--k-glow-cyan-sm, none);
+}
+/* NEU (P2, Spez §3 B-35) — `command`-Variante: 48px, Mono, optionaler
+   ⌘-Kbd-Chip. Der Wrapper trägt `focus-within`, damit der Glow greift,
+   sobald das Kind-`<input>` fokussiert ist (spec-wörtlich "focus-within"). */
+.k-input-wrap {
+  display: inline-flex;
+}
+.k-input-wrap--command {
+  align-items: center;
+  gap: var(--k-s3);
+  width: 100%;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  background: var(--k-sunken, var(--k-field));
+  padding: 0 var(--k-s4);
+  transition: border-color var(--k-motion-fast), box-shadow var(--k-motion-fast);
+}
+.k-input-wrap--command:focus-within {
+  border-color: var(--k-accent);
+  box-shadow: var(--k-glow-cyan-sm, none);
+}
+.k-input-wrap--command .k-input--command {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+.k-input-wrap--command .k-input--command:focus-visible {
+  box-shadow: none;
+}
+.k-input-kbd {
+  flex: none;
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-micro);
+  color: var(--k-ink-faint);
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-xs);
+  padding: 2px 6px;
 }
 
 /* KChip — konsolidiert Badge/Statusleisten-Chip/orbit-badge (`Badge` bleibt
@@ -1428,6 +1572,52 @@ progress {
   opacity: 1;
 }
 
+/* NEU (v0.8.0B / P2, Spez §3 B-37) — Status-Chip: radius 999, Mono,
+   padding 2px/8px (statt der eckigen `--k-radius-sm`-Basisform). */
+.k-status-chip {
+  border-radius: var(--k-radius-pill);
+  padding: 2px 8px;
+  font-family: var(--k-font-mono);
+  letter-spacing: 0.06em;
+}
+.k-status-chip--sm {
+  font-size: var(--k-t-xs);
+}
+.k-status-chip--md {
+  font-size: var(--k-t-sm);
+}
+
+/* NEU (P2, Spez §3 B-37) — Closed-Chip «+ NAME»: h22, gestrichelter
+   Glass-Rand, Mono 9.5px, hover/Fokus hebt den Akzent an (Gesetz 9: LOD-
+   Treppe, geschlossene Panels als gestrichelte Chips). `9.5px` ist ein
+   wörtlicher Spec-Einzelwert, keine `--k-t-*`-Stufe trifft ihn exakt
+   (zwischen `--k-t-xs` 10.5 und einem denkbaren "kleiner"-Wert). */
+.k-chip-geschlossen {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 var(--k-s3);
+  border: 1px dashed var(--k-glass-stroke, var(--k-line-strong));
+  border-radius: var(--k-radius-pill);
+  font-family: var(--k-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  cursor: pointer;
+}
+.k-chip-geschlossen:hover,
+.k-chip-geschlossen:focus-visible {
+  color: var(--k-accent);
+  border-color: var(--k-accent);
+}
+.k-chip-geschlossen-plus {
+  font-weight: 700;
+}
+
 /* KToolbar/KToolGruppe — EINE Zeile, Gruppen durch Hairlines getrennt. */
 .k-toolbar {
   display: flex;
@@ -1455,4 +1645,618 @@ progress {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--k-ink-faint);
+}
+
+/* KWerkzeugKreis (v0.8.0B / P2, Spez §3 B-39, `field.tsx`) — Kreis-
+   Werkzeug-Grammatik: 32px-Kreis, Rand+Punkt ODER invertierte Fläche bei
+   aktiv. Rail-/BodenDock-Einsatz ist W3-Scope; hier nur die Komponente. */
+.k-werkzeug-kreis {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--k-radius-pill);
+  border: 1px solid var(--k-line);
+  background: var(--k-surface);
+  color: var(--k-ink-soft);
+  cursor: pointer;
+  transition: background var(--k-motion-fast), border-color var(--k-motion-fast), color var(--k-motion-fast);
+}
+.k-werkzeug-kreis:hover:not(:disabled) {
+  color: var(--k-ink);
+  background: var(--k-hover);
+}
+.k-werkzeug-kreis--aktiv {
+  border: 1.5px solid var(--_rolle, var(--k-accent));
+  color: var(--_rolle, var(--k-accent));
+}
+.k-werkzeug-kreis--invertiert {
+  background: var(--k-ink);
+  border-color: var(--k-ink);
+  color: var(--k-field);
+}
+.k-werkzeug-kreis-punkt {
+  position: absolute;
+  bottom: -3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--_rolle, var(--k-accent));
+}
+.k-werkzeug-kreis:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   v0.8.0B / P2 — Neue Komponenten (Spez §3). Reine Ergänzung, nichts
+   Bestehendes oben in dieser Datei wurde in diesem Abschnitt verändert. */
+
+/* KPill (`pill.tsx`, Spez §3 B-40) — 22px, Mono 600 11px uppercase .14em,
+   radius 999, Rollenfarbe als Text+12%-Fill+Stroke, optionaler 6px-Dot;
+   `solid` kehrt auf `--k-signal-tinte`-Text um. `10px`-Innenabstand ist ein
+   wörtlicher Spec-Einzelwert (§3) — keine `--k-s*`-Stufe trifft ihn exakt
+   (s3=8/s4=12), darum bewusst literal statt gerundet. */
+.k-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  height: 22px;
+  padding: 0 10px;
+  font-family: var(--k-font-mono);
+  font-weight: 600;
+  font-size: var(--k-t-micro);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: var(--k-radius-pill);
+  color: var(--_farbe, var(--k-ink-faint));
+  background: var(--_fill, var(--k-hover));
+  border: 1px solid var(--_linie, var(--k-line-strong));
+  white-space: nowrap;
+}
+.k-pill-punkt {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--_farbe, var(--k-ink-faint));
+}
+.k-pill--solid {
+  color: var(--k-signal-tinte);
+  background: var(--_farbe, var(--k-ink-faint));
+  border-color: transparent;
+}
+
+/* KKeyValue (`keyvalue.tsx`, Spez §3 B-41) — Zeilenstapel gap 1px (Trick:
+   Container-Hintergrund = Trennlinienfarbe, Zeilen-Hintergrund = Fläche,
+   die 1px-Lücke dazwischen wird zur Hairline, Gesetz 8). Container-radius
+   10 ist ein wörtlicher Spec-Einzelwert zwischen `--k-radius-sm`(8)/
+   `-md`(12), s. Doc-Kommentar in `keyvalue.tsx`. */
+.k-keyvalue {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--k-line-subtil, var(--k-line));
+}
+.k-keyvalue-zeile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-s3);
+  padding: 10px var(--k-s4);
+  background: var(--k-surface);
+}
+.k-keyvalue-key {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+.k-keyvalue-wert {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  text-align: right;
+}
+.k-keyvalue-fortschritt {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: var(--k-line);
+  overflow: hidden;
+}
+.k-keyvalue-fortschritt-balken {
+  height: 100%;
+}
+
+/* KHud (`hud.tsx`, Spez §3 B-42) — Glass-HUD-Karte für Kennzahlen/Modus-
+   Badge/Achsenkreuz/Zoom (0.7.5-Viz-Anatomie); Einsatz W3/W5. */
+.k-hud {
+  border-radius: var(--k-radius-karte);
+  padding: var(--k-s4) var(--k-s5);
+}
+.k-hud-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-s3);
+  margin-bottom: var(--k-s4);
+}
+.k-hud-titel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+.k-hud-icon {
+  display: inline-flex;
+  width: 15px;
+  height: 15px;
+}
+
+/* KStatuszeile (`hud.tsx`, Spez §3 B-43) — 30px, `--k-statusbar` (Papier
+   fällt via Fallback auf `--k-sunken`/`--k-field` zurück), Mono-11px-Chips
+   beidseitig. Shell-Einsatz W3. */
+.k-statuszeile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 30px;
+  padding: 0 var(--k-s4);
+  background: var(--k-statusbar, var(--k-sunken, var(--k-field)));
+  border-top: 1px solid var(--k-line-subtil, var(--k-line));
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  letter-spacing: 0.06em;
+  color: var(--k-ink-faint);
+}
+.k-statuszeile-seite {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s4);
+}
+
+/* KPipelineNode (`node.tsx`, Spez §3 B-44) — min 220px, 1.5px Rollenborder
+   bei 55% Deckkraft, radius-node 18, running-Puls 2s (Glow = Info-Zustand,
+   Gesetz 7). NodeCanvas-Einsatz W5. */
+.k-node {
+  --_rolle: var(--k-signal);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+  min-width: 220px;
+  padding: var(--k-s4);
+  background: var(--k-surface);
+  border: 1.5px solid color-mix(in srgb, var(--_rolle) 55%, transparent);
+  border-radius: var(--k-radius-node);
+  transition: border-color var(--k-motion-base), box-shadow var(--k-motion-base);
+}
+.k-node--aktiv {
+  border-color: var(--_rolle);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--_rolle) 22%, transparent);
+}
+.k-node--laeuft {
+  animation: k-node-puls 2s var(--k-ease-standard) infinite;
+}
+@keyframes k-node-puls {
+  0%,
+  100% {
+    box-shadow: 0 0 0 color-mix(in srgb, var(--_rolle) 0%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 24px color-mix(in srgb, var(--_rolle) 26%, transparent);
+  }
+}
+.k-node-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-s3);
+}
+.k-node-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  color: var(--_rolle);
+}
+.k-node-titel {
+  font-weight: 700;
+  font-size: var(--k-t-sm);
+  color: var(--k-ink);
+  line-height: 1.2;
+}
+.k-node-beschreibung {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  line-height: 1.35;
+}
+.k-node-ports {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  margin-top: 2px;
+}
+.k-node-port {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--_rolle);
+  background: var(--k-surface);
+}
+.k-node-port--gefuellt {
+  background: var(--_rolle);
+}
+@media (prefers-reduced-motion: reduce) {
+  .k-node--laeuft {
+    animation: none;
+  }
+}
+
+/* KVariantenKarte (`variantenkarte.tsx`, Spez §3 B-45) — 4/3, ID-/Badge-Pill
+   auf `rgba(5,6,8,.6)` + `blur(6px)` (theme-invariant, s. Doc-Kommentar in
+   der Komponente), RENDERT/FAVORIT, Scan nur bei `laeuft`, gewählt = 1.5px
+   Akzent + Glow. KuratierFlaeche-Einsatz W5. */
+.k-variantenkarte {
+  position: relative;
+  border-radius: var(--k-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--k-line);
+  background: var(--k-surface);
+  transition: border-color var(--k-motion-base), box-shadow var(--k-motion-base);
+}
+.k-variantenkarte--gewaehlt {
+  border: 1.5px solid var(--k-accent);
+  box-shadow: var(--k-glow-cyan-sm, none);
+}
+.k-variantenkarte-bild {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background-color: var(--k-hover);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+.k-variantenkarte-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--k-rolle-generator) 22%, transparent), transparent);
+  animation: k-variantenkarte-scan 1.8s linear infinite;
+}
+@keyframes k-variantenkarte-scan {
+  0% {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(220px);
+    opacity: 0;
+  }
+}
+.k-variantenkarte-embleme {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.k-variantenkarte-id,
+.k-variantenkarte-badge {
+  font-family: var(--k-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--k-radius-pill);
+  background: rgba(5, 6, 8, 0.6);
+  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--k-ink-soft);
+}
+.k-variantenkarte-id {
+  font-size: 10px;
+}
+.k-variantenkarte-badge {
+  font-size: 9px;
+}
+.k-variantenkarte-badge--laeuft {
+  color: var(--k-rolle-generator);
+}
+.k-variantenkarte-badge--favorit {
+  color: var(--k-rolle-agent);
+}
+.k-variantenkarte-aktionen {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.k-variantenkarte-aktion {
+  all: unset;
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: rgba(5, 6, 8, 0.5);
+  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
+  color: var(--k-ink-faint);
+}
+.k-variantenkarte-aktion:hover {
+  color: var(--k-ink);
+}
+.k-variantenkarte-fuss {
+  padding: var(--k-s3) var(--k-s4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .k-variantenkarte-scan {
+    animation: none;
+  }
+}
+
+/* KCard (`card.tsx`, Spez §9.14 B-126) — solid/glass/sunken Fläche,
+   Rollenakzent als 2px-Hairline LINKS, nie eine gefärbte Box. */
+.k-card {
+  position: relative;
+  border-radius: var(--k-radius-karte);
+  padding: var(--k-s6);
+  color: var(--k-ink);
+  transition: border-color var(--k-motion-base), box-shadow var(--k-motion-base);
+}
+.k-card--solid {
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  box-shadow: var(--k-shadow-sm, var(--k-shadow-raised));
+}
+.k-card--glass {
+  background: var(--k-glass-fill, var(--k-raised));
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-overlay)), var(--k-inset-top, none);
+}
+.k-card--sunken {
+  background: var(--k-sunken, var(--k-field));
+  border: 1px solid var(--k-line);
+}
+.k-card--interaktiv {
+  cursor: pointer;
+}
+.k-card--interaktiv:hover {
+  border-color: var(--k-line-strong);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-raised));
+}
+.k-card--aktiv {
+  border-color: var(--k-accent);
+  box-shadow: var(--k-glow-cyan, none);
+}
+.k-card-akzent {
+  position: absolute;
+  left: 0;
+  top: var(--k-s4);
+  bottom: var(--k-s4);
+  width: 2px;
+  border-radius: 999px;
+  background: var(--_rolle, var(--k-accent));
+}
+.k-card--pad-sm {
+  padding: var(--k-s4);
+}
+.k-card--pad-lg {
+  padding: var(--k-s7);
+}
+
+/* KSwitch (`switch.tsx`, Spez §9.14 B-127) — Track 40×24, Thumb 18px. */
+.k-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s3);
+  cursor: pointer;
+  user-select: none;
+}
+.k-switch input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.k-switch-strecke {
+  position: relative;
+  width: 40px;
+  height: 24px;
+  flex: none;
+  background: var(--k-hover);
+  border: 1px solid var(--k-line-strong);
+  border-radius: 999px;
+  transition: background var(--k-motion-base), border-color var(--k-motion-base);
+}
+.k-switch-daumen {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: var(--k-raised);
+  border-radius: 999px;
+  box-shadow: var(--k-shadow-xs, var(--k-shadow-raised));
+  transition: transform var(--k-motion-base) var(--k-ease-standard);
+}
+.k-switch input:checked + .k-switch-strecke {
+  background: var(--k-accent-wash);
+  border-color: var(--k-accent);
+}
+.k-switch input:checked + .k-switch-strecke .k-switch-daumen {
+  transform: translateX(16px);
+  background: var(--k-accent);
+}
+.k-switch input:focus-visible + .k-switch-strecke {
+  box-shadow: var(--k-glow-cyan-sm, none);
+}
+.k-switch input:disabled + .k-switch-strecke {
+  opacity: 0.4;
+}
+.k-switch-label {
+  font-size: var(--k-t-md);
+  color: var(--k-ink-soft);
+}
+
+/* Meldungen/Bestätigung (v0.8.0B / P2, Spez §3 — Glass-/Flächenstufen-Optik,
+   Verhalten/testids/aria in `meldungen.tsx` unverändert). */
+.k-meldungen-host {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+  max-width: min(520px, calc(100vw - 32px));
+}
+.k-meldung-karte {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s4);
+  background: var(--k-glass-fill, var(--k-raised));
+  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
+  border-left: 3px solid var(--_ton, var(--k-ink-soft));
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-overlay));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  padding: 9px var(--k-s4);
+  font-size: var(--k-t-md);
+}
+.k-meldung-text {
+  flex: 1;
+  min-width: 0;
+}
+.k-meldung-schliessen {
+  all: unset;
+  cursor: pointer;
+  color: var(--k-ink-faint);
+  font-size: 12px;
+  padding: 0 2px;
+}
+.k-bestaetigung-scrim {
+  background: color-mix(in srgb, var(--k-ink) 22%, transparent);
+}
+.k-bestaetigung-box {
+  padding: var(--k-s5);
+  width: min(420px, calc(100vw - 48px));
+  display: grid;
+  gap: var(--k-s4);
+}
+.k-bestaetigung-titel {
+  font-size: var(--k-t-md);
+  font-weight: 650;
+}
+.k-bestaetigung-text {
+  font-size: var(--k-t-md);
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+.k-bestaetigung-aktionen {
+  display: flex;
+  gap: var(--k-s3);
+  justify-content: flex-end;
+}
+
+/* ApprovalCard-Optik (v0.8.0B / P2, Spez §3 B-46/B-99) — reiner Klassensatz
+   für `shell/GovernanceGate.tsx` (Datei bleibt in P2 strukturell
+   unangetastet, Anwendung prüft W7). Deutsche Aktionen (Einmal erlauben/
+   Für den Job erlauben/Nachfragen/Ablehnen) sind TEXT der jeweiligen
+   KButton-Kinder — die vier Aktionen nutzen die BESTEHENDEN KButton-Töne
+   direkt (accent=Einmal erlauben, quiet=Für den Job erlauben [Glass],
+   ghost=Nachfragen, danger=Ablehnen), keine eigenen Aktions-Klassen nötig.
+   `--_risiko` wird vom Konsumenten inline gesetzt (z.B.
+   `style={{ '--_risiko': 'var(--k-danger)' }}`), je nach Risikostufe. */
+.k-approval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s4);
+  padding: var(--k-s6);
+  background: var(--k-surface);
+  border: 1px solid color-mix(in srgb, var(--k-warning) 40%, transparent);
+  border-radius: var(--k-radius-karte);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-raised));
+}
+.k-approval-kopf {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--k-s4);
+}
+.k-approval-titel {
+  font-weight: 700;
+  font-size: var(--k-t-h3);
+  color: var(--k-ink);
+  line-height: 1.2;
+}
+.k-approval-sub {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+  margin-top: 2px;
+}
+.k-approval-risiko {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  flex: none;
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-micro);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--k-radius-pill);
+  color: var(--_risiko, var(--k-warning));
+  background: color-mix(in srgb, var(--_risiko, var(--k-warning)) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--_risiko, var(--k-warning)) 40%, transparent);
+}
+.k-approval-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--k-s2) var(--k-s4);
+  font-size: var(--k-t-xs);
+}
+.k-approval-meta-key {
+  font-family: var(--k-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--k-ink-faint);
+}
+.k-approval-meta-wert {
+  font-family: var(--k-font-mono);
+  color: var(--k-ink-soft);
+}
+.k-approval-aktionen {
+  display: flex;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
 }

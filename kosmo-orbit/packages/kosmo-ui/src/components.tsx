@@ -9,7 +9,11 @@ type Tone = 'accent' | 'quiet' | 'ghost' | 'danger';
 
 export interface KButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone?: Tone;
-  size?: 'sm' | 'md';
+  /**
+   * NEU (v0.8.0B / P2, Spez §3 B-34) — `lg` (48px) additiv zu `sm`(32px)/
+   * `md`(40px); bestehende Aufrufer ohne `size` bleiben bei `md`, byte-gleich.
+   */
+  size?: 'sm' | 'md' | 'lg';
 }
 
 /**
@@ -19,6 +23,13 @@ export interface KButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * `data-testid`-Durchreichung (via `...rest`) und disabled-Verhalten bleiben
  * identisch — nur die Style-QUELLE wandert, die Optik ist byte-gleich aus
  * den vorherigen Inline-Werten übernommen (siehe Git-Historie dieser Datei).
+ *
+ * v0.8.0B / P2 (Spez §3 B-34): die vier `TONE_KLASSE`-Klassennamen
+ * (`k-btn-accent/-quiet/-ghost/-danger`) bleiben BYTE-GLEICH — nur ihre
+ * CSS-Deklarationen in `aura.css` wechseln auf das 1px-Border-Prinzip
+ * (accent = Wash+Line+Text, quiet = Glass, ghost = transparent→Hover,
+ * danger = 12%/45%). `e2e/kurztasten-pan.spec.ts` prüft `k-btn-accent` per
+ * `classList.contains` — der Klassenname selbst ist ein Vertrag.
  */
 const TONE_KLASSE: Record<Tone, string> = {
   accent: 'k-btn-accent',

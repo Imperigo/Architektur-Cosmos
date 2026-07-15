@@ -61,43 +61,27 @@ const TON_FARBE: Record<Meldung['ton'], string> = {
   fehler: 'var(--k-danger)',
 };
 
-/** Host — einmal in der Shell mounten. */
+/** Host — einmal in der Shell mounten.
+ *
+ * v0.8.0B / P2 (Spez §3: KSelect/KDialog/KMenu/Meldungen → Glass-/
+ * Flächenstufen-Optik, Verhalten unverändert) — die Inline-Styles wandern in
+ * `.k-meldungen-host`/`.k-meldung-karte`/… (`aura.css`); `aria-live`,
+ * `data-testid="meldung-{ton}"` und die Ton-Farbe (weiterhin ein CSS-
+ * Variablen-Wert, `TON_FARBE`, kein rohes Hex) bleiben byte-gleich.
+ */
 export function KMeldungen() {
   const liste = useSyncExternalStore(abonniere, () => meldungen, () => meldungen);
   if (liste.length === 0) return null;
   return (
-    <div
-      aria-live="polite"
-      style={{
-        position: 'fixed',
-        bottom: 18,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 200,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        maxWidth: 'min(520px, calc(100vw - 32px))',
-      }}
-    >
+    <div aria-live="polite" className="k-meldungen-host">
       {liste.map((m) => (
         <div
           key={m.id}
           data-testid={`meldung-${m.ton}`}
-          className="k-meldung"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            background: 'var(--k-raised)',
-            border: '1px solid var(--k-line-strong)',
-            borderLeft: `3px solid ${TON_FARBE[m.ton]}`,
-            boxShadow: 'var(--k-shadow-overlay)',
-            padding: '9px 12px',
-            fontSize: 13,
-          }}
+          className="k-meldung k-meldung-karte"
+          style={{ ['--_ton' as string]: TON_FARBE[m.ton] }}
         >
-          <span style={{ flex: 1, minWidth: 0 }}>{m.text}</span>
+          <span className="k-meldung-text">{m.text}</span>
           {m.aktion && (
             <KButton
               size="sm"
@@ -110,11 +94,7 @@ export function KMeldungen() {
               {m.aktion.label}
             </KButton>
           )}
-          <button
-            aria-label="Meldung schliessen"
-            onClick={() => entferne(m.id)}
-            style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 12, padding: '0 2px' }}
-          >
+          <button aria-label="Meldung schliessen" className="k-meldung-schliessen" onClick={() => entferne(m.id)}>
             ✕
           </button>
         </div>
@@ -174,27 +154,18 @@ export function KBestaetigung() {
       aria-modal
       aria-label={offen.titel}
       data-testid="bestaetigung"
-      className="k-dialog-scrim"
+      className="k-dialog-scrim k-bestaetigung-scrim"
       onKeyDown={(e) => e.key === 'Escape' && schliesse(false)}
-      style={{ zIndex: 210, background: 'color-mix(in srgb, var(--k-ink) 22%, transparent)' }}
+      style={{ zIndex: 210 }}
       onClick={() => schliesse(false)}
     >
       <div
-        className="k-karte k-skalieren-ein k-dialog"
+        className="k-dialog-box k-skalieren-ein k-dialog k-bestaetigung-box"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: 'var(--k-raised)',
-          padding: '16px 18px',
-          width: 'min(420px, calc(100vw - 48px))',
-          display: 'grid',
-          gap: 10,
-        }}
       >
-        <div className="k-titel" style={{ fontSize: 13, fontWeight: 650 }}>{offen.titel}</div>
-        {offen.text && (
-          <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{offen.text}</div>
-        )}
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+        <div className="k-titel k-bestaetigung-titel">{offen.titel}</div>
+        {offen.text && <div className="k-bestaetigung-text">{offen.text}</div>}
+        <div className="k-bestaetigung-aktionen">
           <KButton size="sm" tone="ghost" data-testid="bestaetigung-nein" onClick={() => schliesse(false)}>
             Abbrechen
           </KButton>
