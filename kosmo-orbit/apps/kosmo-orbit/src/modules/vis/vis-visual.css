@@ -1,0 +1,1217 @@
+/* v0.8.0B / P5 (Welle W5, Spez §3/§4/§9.12 B-44/B-45/B-89…B-143) — die
+ * Viz-Anatomie fürs Themenpaar (Owner-Entscheid 4: KEINE eigene Dark-Shell,
+ * jede Klasse hier bedient Papier UND Orbit über die bestehenden `--k-*`-
+ * Tokens). Eigene Datei, additiv — ersetzt die 80 `style={{…}}`-Inline-Styles
+ * in `NodeCanvas.tsx` + die Inline-Muster in `KuratierFlaeche.tsx`/
+ * `KuratierInspektor.tsx`/`VisWorkspace.tsx` durch Klassen. Kanten-/Layout-
+ * Geometrie (Node-Höhen, Port-Positionen, Kanten-Pfade) bleibt unangetastet —
+ * diese Datei ändert nur Optik (Farbe/Rand/Puls/Abstand), nie Zahlen, die
+ * `NodeCanvas.tsx` zur Positionierung berechnet. */
+
+/* ── KPipelineNode-Anatomie auf dem SVG-Node (B-44) ─────────────────────
+   Die Karte bleibt geometrisch die bestehende «geschnittene Ecke»-Form
+   (Karteikarten-Verwandter, NodeCanvas.tsx `d=…`) — nur Randfarbe/-stärke
+   und der Laufend-Puls folgen jetzt der KPipelineNode-Anatomie (1.5px
+   Rollenborder bei 55% Deckkraft, running-Puls NUR bei laufendem Status,
+   Gesetz 7: Glow ist Informationszustand). `--_rolle` kommt vom Node selbst
+   (Kategorie-Hue, dieselbe CSS-Custom-Property-Injektion wie `KPipelineNode`/
+   `KCard` in kosmo-ui). */
+.vis-node-karte {
+  stroke: color-mix(in srgb, var(--_rolle, var(--k-line-strong)) 55%, transparent);
+  stroke-width: 1.5;
+  transition: stroke var(--k-motion-base, 200ms);
+}
+.vis-node-karte--laeuft {
+  animation: vis-node-puls 2s var(--k-ease-standard, ease-in-out) infinite;
+}
+@keyframes vis-node-puls {
+  0%,
+  100% {
+    stroke: color-mix(in srgb, var(--_rolle, var(--k-line-strong)) 55%, transparent);
+  }
+  50% {
+    stroke: var(--_rolle, var(--k-line-strong));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vis-node-karte--laeuft {
+    animation: none;
+  }
+}
+.vis-node-ausgewaehlt-rahmen {
+  pointer-events: none;
+}
+
+/* ── Bild-Kachel (Bildvergleich/-Kachel, wiederverwendet) ──────────── */
+.vis-bild-kachel {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.vis-bild-kachel-qa {
+  font-size: 9px;
+  font-family: var(--k-font-mono);
+}
+.vis-bild-kachel-qa--ok {
+  color: var(--k-success);
+}
+.vis-bild-kachel-qa--fehl {
+  color: var(--k-danger);
+}
+.vis-img-full {
+  width: 100%;
+  border: 1px solid var(--k-line);
+}
+
+/* ── Node-Palette (Dock-Panel-Inhalt) ────────────────────────────── */
+.vis-palette {
+  display: grid;
+  gap: var(--k-s3, 10px);
+}
+.vis-palette-kat-kopf {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+.vis-palette-kat-strich {
+  width: 20px;
+  height: 3px;
+  border-radius: 1px;
+  background: var(--_farbe);
+}
+.vis-palette-kat-label {
+  font-size: 10.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--k-ink-soft);
+}
+.vis-palette-kat-liste {
+  display: grid;
+  gap: 3px;
+}
+.vis-palette-eintrag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  background: var(--k-raised);
+  font-size: 11px;
+  color: var(--k-ink);
+  cursor: pointer;
+  text-align: left;
+}
+.vis-palette-eintrag-icon {
+  color: var(--k-ink-soft);
+  flex-shrink: 0;
+}
+
+/* ── Ausrichten-Leiste (Dock-Panel-Inhalt) ───────────────────────── */
+.vis-ausrichten-leiste {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+}
+
+/* ── Porttyp-Legende (Dock-Panel-Inhalt) ──────────────────────────── */
+.vis-legende-panel {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-soft);
+}
+.vis-legende-zeile {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.vis-legende-punkt {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--_farbe);
+}
+
+/* ── Minimap (Dock-Panel-Inhalt) ───────────────────────────────────── */
+.vis-minimap-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--k-raised);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* ── Canvas-Wrapper + SVG selbst ───────────────────────────────────── */
+.vis-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.vis-canvas-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  background: var(--k-plan-paper);
+}
+
+/* ── Kanten-Interaktionsflächen (Cursor/Farb-Utilities, keine Geometrie) */
+.vis-edge-hit {
+  cursor: pointer;
+}
+.vis-edge-trennen {
+  cursor: pointer;
+  opacity: 0;
+}
+.vis-edge-trennen--sichtbar {
+  opacity: 1;
+}
+.vis-edge-trennen-icon {
+  color: var(--k-danger);
+}
+
+/* ── Node-Kopf/Knöpfe (Cursor/Farb-Utilities, keine Geometrie) ────── */
+.vis-node-kopf-griff {
+  cursor: grab;
+}
+.vis-node-kopf-label {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.vis-node-knopf {
+  cursor: pointer;
+}
+.vis-node-icon-soft {
+  color: var(--k-ink-soft);
+}
+.vis-node-icon-faint {
+  color: var(--k-ink-faint);
+}
+.vis-node-port-hit {
+  cursor: crosshair;
+}
+.vis-node-koerper--gesperrt {
+  pointer-events: none;
+}
+
+/* ── Fixe Chrome-Positionen (Palette-/Kuratier-/Zoom-/Minimap-Knöpfe) ── */
+.vis-chrome-topleft {
+  position: absolute;
+  left: 12px;
+  top: 56px;
+  z-index: 32;
+}
+.vis-chrome-topright {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 36;
+}
+.vis-chrome-bottomright {
+  position: absolute;
+  right: 12px;
+  bottom: 92px;
+  z-index: 32;
+  display: flex;
+  gap: 4px;
+}
+.vis-chrome-bottomleft {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 32;
+}
+.vis-kuratier-zaehler {
+  font-size: 10px;
+  font-family: var(--k-font-mono);
+}
+
+/* ── Klapptext (Node-Körper) ───────────────────────────────────────── */
+.vis-klapptext {
+  display: grid;
+  gap: 2px;
+}
+.vis-klapptext-text {
+  font-size: 10.5px;
+  color: var(--k-ink-soft);
+  line-height: 1.35;
+}
+.vis-klapptext-text--platzhalter {
+  font-style: italic;
+}
+.vis-klapptext-text--clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.vis-klapptext-mehr {
+  justify-self: start;
+  font-size: 10px;
+  color: var(--k-ink-faint);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ── Node-Körper je Typ (NodeKoerper) ──────────────────────────────── */
+.vis-node-info-zeile {
+  font-size: 10.5px;
+  color: var(--k-ink-faint);
+  font-family: var(--k-font-mono);
+}
+.vis-node-feld {
+  width: 100%;
+  padding: 3px 6px;
+  border: 1px solid var(--k-line-strong);
+  border-radius: 4px;
+  background: var(--k-surface);
+  font-size: 11px;
+  font-family: inherit;
+}
+.vis-node-feld--textarea {
+  resize: none;
+}
+.vis-node-stimmung-wrap {
+  display: grid;
+  gap: 4px;
+}
+.vis-node-select-voll {
+  width: 100%;
+  font-size: 11px;
+}
+.vis-node-zahl-wrap {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.vis-node-zahl-regler {
+  flex: 1;
+}
+.vis-node-zahl-wert {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+}
+.vis-node-render-wrap {
+  display: grid;
+  gap: 6px;
+}
+.vis-node-render-formular {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.vis-node-render-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4px;
+}
+.vis-node-feld-zelle {
+  min-width: 0;
+}
+.vis-node-select-zelle {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.vis-node-final-prompt {
+  font-size: 9.5px;
+  font-family: var(--k-font-mono);
+  color: var(--k-ink-faint);
+  line-height: 1.3;
+}
+.vis-node-aktionen {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+/* Status nie nur Farbe (Gesetz 10) — die Klasse trägt NUR die Farbe, das
+   Mono-Label/Punkt-Prinzip liefert der Text selbst (STATUS_LABEL). */
+.vis-node-status {
+  font-size: 10px;
+  font-family: var(--k-font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.vis-node-status--fertig {
+  color: var(--k-success);
+}
+.vis-node-status--fehler {
+  color: var(--k-danger);
+}
+.vis-node-status--neutral {
+  color: var(--k-ink-faint);
+}
+.vis-node-status--aktiv {
+  color: var(--k-warning);
+}
+.vis-node-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--k-ink-soft);
+  cursor: pointer;
+}
+.vis-node-fortschritt {
+  font-size: 9.5px;
+  font-family: var(--k-font-mono);
+  color: var(--k-ink-soft);
+}
+.vis-node-leerbild {
+  height: 110px;
+  border: 1px dashed var(--k-line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px;
+  font-size: 10px;
+  color: var(--k-ink-faint);
+}
+.vis-node-leerbild--fehler {
+  color: var(--k-danger);
+}
+.vis-vergleich-bilder {
+  display: flex;
+  gap: 4px;
+}
+.vis-vergleich-leer {
+  height: 110px;
+  flex: 1;
+  border: 1px dashed var(--k-line-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--k-ink-faint);
+}
+.vis-node-referenz-wrap {
+  display: grid;
+  gap: 4px;
+}
+.vis-node-referenz-leer {
+  height: 46px;
+  border: 1px dashed var(--k-line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--k-ink-faint);
+}
+.vis-node-aufnahme-wrap {
+  display: grid;
+  gap: 4px;
+}
+.vis-node-aufnahme-info {
+  font-size: 9.5px;
+  color: var(--k-ink-faint);
+}
+.vis-node-aufnahme-leer {
+  height: 46px;
+  border: 1px dashed var(--k-line-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--k-ink-faint);
+  text-align: center;
+  padding: 4px;
+}
+.vis-node-kamera-liste {
+  display: grid;
+  gap: 3px;
+  font-size: 10px;
+  color: var(--k-ink-soft);
+}
+.vis-node-kamera-leer {
+  font-style: italic;
+  color: var(--k-ink-faint);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   KuratierFlaeche.tsx + KuratierInspektor.tsx — KVariantenKarte-Anatomie
+   (B-45/B-93/B-95/B-141) auf dem 3-spaltigen Raster + Kurations-Inspektor.
+   Mono-Label-Rezept (11px uppercase .14em) zentral statt je Stelle dupliziert. */
+.vis-mono-label {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+
+.vis-kuratier-flaeche {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  background: var(--k-field);
+}
+.vis-kuratier-mitte {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.vis-kuratier-rail {
+  width: 220px;
+  flex: none;
+  border-right: 1px solid var(--k-line);
+  background: var(--k-surface);
+  padding: var(--k-s4, 16px);
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  overflow: auto;
+}
+.vis-kuratier-rail-titel {
+  margin-bottom: 8px;
+}
+.vis-kuratier-rail-leer {
+  font-size: 11px;
+  color: var(--k-ink-faint);
+  font-style: italic;
+}
+.vis-kuratier-rail-zeile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+}
+.vis-kuratier-rail-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--_farbe) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--_farbe) 45%, transparent);
+}
+.vis-kuratier-rail-label {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  color: var(--k-ink-soft);
+}
+.vis-kuratier-rail-trenner {
+  height: 1px;
+  background: var(--k-line);
+  margin: 10px 0;
+}
+.vis-kuratier-rail-fuss {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  color: var(--k-ink-faint);
+}
+
+.vis-kuratier-spalte {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.vis-kuratier-subtoolbar {
+  height: 48px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--k-line);
+  background: var(--k-surface);
+}
+.vis-kuratier-subtoolbar-icon {
+  color: var(--k-mod-vis);
+}
+.vis-kuratier-subtoolbar-titel {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--k-ink);
+}
+.vis-kuratier-subtoolbar-zahl {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  color: var(--k-ink-faint);
+}
+.vis-kuratier-spacer {
+  flex: 1;
+}
+.vis-kuratier-segment {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--k-radius-sm);
+  background: var(--k-field);
+  border: 1px solid var(--k-line);
+}
+.vis-kuratier-segment-eintrag {
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--k-ink-soft);
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.vis-kuratier-segment-eintrag--aktiv {
+  background: var(--k-accent-wash);
+  color: var(--k-accent);
+}
+
+.vis-kuratier-inhalt {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 20px;
+}
+.vis-kuratier-raster-stapel {
+  display: grid;
+  gap: 24px;
+}
+.vis-kuratier-raster {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.vis-kuratier-ablage-stapel {
+  display: grid;
+  gap: 10px;
+}
+.vis-kuratier-leerzustand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  padding: 40px 4px;
+  text-align: center;
+}
+.vis-kuratier-leerzustand-text {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+  font-style: italic;
+  max-width: 360px;
+}
+
+/* Raster-Karte (KVariantenKarte-Anatomie: 4/3, ID-Pill-Scrim, Auswahl =
+   Accent+Glow, Favorit = Rollenfarbe `agent`) */
+.vis-raster-karte {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--k-radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--k-line-strong);
+  transition: border-color var(--k-motion-fast, 120ms), box-shadow var(--k-motion-fast, 120ms);
+}
+/* Auswahl-Codierung (B-141): gewählt = 1.5px Accent+Glow, Favorit (ohne
+   Auswahl) = Rollenfarbe `agent` — dieselbe Zweistufigkeit wie
+   KVariantenKarte selbst. */
+.vis-raster-karte--gewaehlt {
+  border: 1.5px solid var(--k-accent);
+  box-shadow: var(--k-glow-cyan, none);
+}
+.vis-raster-karte--favorit {
+  border-color: var(--k-rolle-agent-line);
+}
+.vis-raster-karte--verworfen {
+  opacity: 0.6;
+}
+.vis-raster-karte-bild {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vis-raster-karte-embleme {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.vis-raster-karte-id {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: #f4f6fa;
+  background: rgba(5, 6, 8, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+.vis-raster-karte-id--aktiv {
+  color: var(--k-accent);
+  border-color: var(--k-accent);
+}
+.vis-raster-karte-badge {
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--k-rolle-agent);
+  background: rgba(5, 6, 8, 0.6);
+  border: 1px solid var(--k-rolle-agent-line);
+}
+.vis-raster-karte-fuss {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 9px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 6px;
+  background: linear-gradient(transparent, rgba(5, 6, 8, 0.88));
+}
+.vis-raster-karte-meta {
+  font-family: var(--k-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: #dfe3ea;
+}
+.vis-raster-karte-aktionen {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.vis-raster-karte-knopf {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: rgba(5, 6, 8, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #c7ccd6;
+}
+.vis-raster-karte-knopf--markiert {
+  color: var(--k-rolle-agent);
+}
+.vis-raster-karte-knopf--verworfen {
+  color: var(--k-danger);
+}
+.vis-raster-karte-vgl {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-family: var(--k-font-mono);
+  color: #c7ccd6;
+  cursor: pointer;
+  padding-left: 2px;
+}
+
+/* Vergleichsansicht (A/B, Rollenfarbe generator vs. Accent) */
+.vis-vergleich-flaeche {
+  display: grid;
+  gap: 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.vis-vergleich-paar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.vis-vergleich-karte {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--k-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--k-line-strong);
+}
+.vis-vergleich-karte--a {
+  border-color: var(--k-rolle-generator-line);
+}
+.vis-vergleich-karte--b {
+  border-color: var(--k-accent);
+  box-shadow: var(--k-glow-cyan, none);
+}
+.vis-vergleich-karte-bild {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vis-vergleich-karte-kopf {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vis-vergleich-karte-label {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  font-family: var(--k-font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--k-signal-tinte, #050608);
+}
+.vis-vergleich-karte-label--a {
+  background: var(--k-rolle-generator);
+}
+.vis-vergleich-karte-label--b {
+  background: var(--k-accent);
+}
+.vis-vergleich-karte-id {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  color: #e6e9ef;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(5, 6, 8, 0.6);
+}
+.vis-vergleich-tabelle {
+  border-radius: var(--k-radius-md);
+  border: 1px solid var(--k-line);
+  overflow: hidden;
+}
+.vis-vergleich-tabelle-kopf {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  padding: 10px 16px;
+  background: var(--k-surface);
+  border-bottom: 1px solid var(--k-line);
+}
+.vis-vergleich-tabelle-kopf-a {
+  text-align: right;
+  color: var(--k-rolle-generator);
+}
+.vis-vergleich-tabelle-kopf-label {
+  padding: 0 20px;
+}
+.vis-vergleich-tabelle-kopf-b {
+  color: var(--k-accent);
+}
+.vis-vergleich-zeile {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 9px 16px;
+  background: var(--k-raised);
+  border-bottom: 1px solid var(--k-line);
+}
+.vis-vergleich-zeile-wert {
+  font-family: var(--k-font-mono);
+  font-size: 12px;
+  color: var(--k-ink-faint);
+  font-weight: 400;
+}
+.vis-vergleich-zeile-wert--a {
+  text-align: right;
+}
+.vis-vergleich-zeile-wert--abweichend-a {
+  color: var(--k-rolle-generator);
+  font-weight: 700;
+}
+.vis-vergleich-zeile-wert--abweichend-b {
+  color: var(--k-accent);
+  font-weight: 700;
+}
+.vis-vergleich-zeile-label {
+  padding: 0 20px;
+  min-width: 130px;
+  text-align: center;
+  color: var(--k-ink-faint);
+}
+.vis-vergleich-aktionen {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.vis-kuratier-statuszeile {
+  height: 28px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  border-top: 1px solid var(--k-line);
+  background: var(--k-statusbar, var(--k-sunken, var(--k-surface)));
+}
+.vis-kuratier-statuszeile-text {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  color: var(--k-ink-faint);
+}
+
+/* ── Kurations-Inspektor (KKeyValue-Einsatz + Vorschau-Slot) ───────── */
+.vis-inspektor {
+  width: 340px;
+  flex: none;
+  border-left: 1px solid var(--k-line);
+  background: var(--k-surface);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.vis-inspektor--leer {
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+.vis-inspektor-kopf {
+  height: 44px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--k-line);
+}
+.vis-inspektor-kopf-id {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: var(--k-radius-pill);
+  color: var(--k-accent);
+  background: var(--k-accent-wash);
+}
+.vis-inspektor-inhalt {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+.vis-inspektor-slot {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--k-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--k-accent);
+  box-shadow: var(--k-glow-cyan, none);
+}
+.vis-inspektor-slot-bild {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vis-inspektor-titel {
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--k-ink);
+}
+.vis-inspektor-untertitel {
+  font-family: var(--k-font-mono);
+  font-size: 11.5px;
+  color: var(--k-ink-soft);
+  margin-top: 2px;
+}
+.vis-inspektor-herkunft {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.vis-inspektor-herkunft-glied {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.vis-inspektor-herkunft-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--k-radius-pill);
+  background: var(--k-raised);
+  border: 1px solid var(--k-line-strong);
+}
+.vis-inspektor-herkunft-punkt {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--_farbe);
+}
+.vis-inspektor-herkunft-label {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  color: var(--k-ink-soft);
+}
+.vis-inspektor-herkunft-pfeil {
+  color: var(--k-ink-faint);
+}
+.vis-inspektor-bewertung {
+  display: flex;
+  gap: 5px;
+}
+.vis-inspektor-bewertung-stern {
+  color: var(--k-line-strong);
+}
+.vis-inspektor-bewertung-stern--aktiv {
+  color: var(--k-rolle-agent);
+}
+.vis-inspektor-bewertung-leer {
+  font-size: 10.5px;
+  color: var(--k-ink-faint);
+  font-style: italic;
+  margin-top: 4px;
+}
+.vis-inspektor-fuss {
+  flex: none;
+  padding: 14px;
+  border-top: 1px solid var(--k-line);
+  display: grid;
+  gap: 8px;
+}
+.vis-inspektor-fuss-zeile {
+  display: flex;
+  gap: 8px;
+}
+.vis-inspektor-fuss-knopf {
+  flex: 1;
+}
+.vis-inspektor-fuss-knopf-icon {
+  color: var(--k-rolle-agent);
+}
+.vis-inspektor-fuss-primaer {
+  width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   VisWorkspace.tsx — Toolbar-/HUD-Reste auf die P2/P3-Grammatik: Mono-
+   Labels uppercase, Preset-Segment als Pill-Gruppe (kein Kasten). */
+.vis-preset-schnellzugriff {
+  display: inline-flex;
+  border: 1px solid var(--k-line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.vis-preset-eintrag {
+  all: unset;
+  cursor: pointer;
+  padding: 3px 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--k-ink-soft);
+  background: var(--k-surface);
+}
+.vis-preset-eintrag--aktiv {
+  font-weight: 650;
+  color: var(--k-accent-ink);
+  background: var(--k-accent);
+}
+.vis-workspace-fuellen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.vis-workspace-buehne {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.vis-workspace-buehne-zentriert {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vis-toolbar-spacer {
+  flex: 1;
+}
+.vis-toolbar-hinweis {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+
+/* ── EinfachAnsicht (legacy Fallback-Tab, «kein Funktionsverlust») ─── */
+.vis-einfach-flaeche {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: var(--k-s5, 20px);
+}
+.vis-einfach-stapel {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s6, 16px);
+}
+.vis-einfach-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3, 10px);
+}
+.vis-einfach-kopf-text {
+  color: var(--k-ink-soft);
+  font-size: 13px;
+}
+.vis-einfach-spacer {
+  flex: 1;
+}
+.vis-einfach-panel {
+  display: grid;
+  gap: var(--k-s3, 10px);
+}
+.vis-einfach-zeile {
+  display: flex;
+  gap: var(--k-s3, 10px);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.vis-einfach-label {
+  font-size: 12.5px;
+  color: var(--k-ink-soft);
+}
+.vis-einfach-feld {
+  padding: 5px 9px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+}
+.vis-einfach-feld--breit {
+  width: 240px;
+}
+.vis-einfach-feld--prompt {
+  padding: 7px 10px;
+}
+.vis-einfach-feld--prompt-mono {
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--k-ink-soft);
+}
+.vis-einfach-hinweis-zeile {
+  font-size: 11px;
+  color: var(--k-ink-faint);
+}
+.vis-einfach-aktionen {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.vis-einfach-aktionen-hinweis {
+  font-size: 12px;
+  color: var(--k-ink-faint);
+}
+.vis-einfach-fehler {
+  color: var(--k-danger);
+  font-size: 12.5px;
+}
+.vis-einfach-erfolg {
+  color: var(--k-success);
+  font-size: 12.5px;
+}
+.vis-einfach-serie {
+  display: grid;
+  gap: 8px;
+}
+.vis-einfach-serie-kopf {
+  display: flex;
+  gap: var(--k-s3, 10px);
+  align-items: baseline;
+}
+.vis-einfach-serie-titel {
+  font-size: 13px;
+}
+.vis-einfach-serie-zeit {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.vis-einfach-serie-raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--k-s3, 10px);
+}
+.vis-einfach-karte {
+  display: grid;
+  gap: 6px;
+}
+.vis-einfach-karte-kopf {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.vis-einfach-karte-label {
+  font-family: var(--k-font-mono);
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.vis-einfach-karte-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--k-ink-soft);
+}
+.vis-einfach-job {
+  display: grid;
+  gap: 8px;
+}
+.vis-einfach-job-kopf {
+  display: flex;
+  gap: var(--k-s3, 10px);
+  align-items: center;
+}
+.vis-einfach-job-zeit {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.vis-einfach-bilder {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.vis-einfach-detail {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  font-size: 12.5px;
+}
+.vis-einfach-detail-grund {
+  color: var(--k-ink-faint);
+}
+.vis-einfach-bild-fest {
+  width: 280px;
+  border: 1px solid var(--k-line);
+}

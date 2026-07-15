@@ -42,6 +42,7 @@ import {
 import { BridgeBild } from './BridgeBild';
 import { KuratierFlaeche } from './KuratierFlaeche';
 import type { KuratierKartenDaten } from './varianten-diff';
+import './vis-visual.css';
 
 /**
  * NodeCanvas (V1-Finish P2, W1-Neubau UI-KONZEPT-065 §5) — der Blender-artige
@@ -330,10 +331,10 @@ function BildKachel({
   alt: string;
 }) {
   return (
-    <div style={{ flex: 1, display: 'grid', gap: 2, minWidth: 0 }}>
-      <BridgeBild jobId={jobId} imageName={bild} alt={alt} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+    <div className="vis-bild-kachel">
+      <BridgeBild jobId={jobId} imageName={bild} alt={alt} className="vis-img-full" />
       {qa && (
-        <span style={{ fontSize: 9, fontFamily: 'var(--k-font-mono)', color: qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)' }}>
+        <span className={`vis-bild-kachel-qa ${qa.verdict.passed ? 'vis-bild-kachel-qa--ok' : 'vis-bild-kachel-qa--fehl'}`}>
           QA {qa.verdict.passed ? 'ok' : '✗'}
         </span>
       )}
@@ -823,42 +824,29 @@ export function NodeCanvas({
       sichtbar: paletteOffen,
       schliessen: paletteSchliessen,
       inhalt: (
-        <div data-testid="vis-palette" style={{ display: 'grid', gap: 10 }}>
+        <div data-testid="vis-palette" className="vis-palette">
           {KATEGORIE_REIHENFOLGE.map((kat) => {
             const eintraege = Object.values(VIS_NODE_KATALOG).filter((t) => t.kategorie === kat);
             if (eintraege.length === 0) return null;
             return (
               <div key={kat} data-testid={`vis-palette-kategorie-${kat}`}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-                  <span aria-hidden style={{ width: 20, height: 3, borderRadius: 1, background: VIS_KATEGORIE_HUE[kat] }} />
-                  <span style={{ fontSize: 10.5, fontWeight: 650, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--k-ink-soft)' }}>
+                <div className="vis-palette-kat-kopf">
+                  <span aria-hidden className="vis-palette-kat-strich" style={{ ['--_farbe' as string]: VIS_KATEGORIE_HUE[kat] }} />
+                  <span className="vis-palette-kat-label">
                     {KATEGORIE_LABEL[kat]}
                   </span>
                 </div>
-                <div style={{ display: 'grid', gap: 3 }}>
+                <div className="vis-palette-kat-liste">
                   {eintraege.map((t) => (
                     <button
                       key={t.typ}
                       type="button"
-                      className="k-druck"
+                      className="k-druck vis-palette-eintrag"
                       data-testid={`vis-palette-eintrag-${t.typ}`}
                       title={t.hilfe}
                       onClick={() => onNodeHinzu?.(t.typ)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        padding: '4px 6px',
-                        border: '1px solid var(--k-line)',
-                        borderRadius: 'var(--k-radius-sm)',
-                        background: 'var(--k-raised)',
-                        fontSize: 11,
-                        color: 'var(--k-ink)',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                      }}
                     >
-                      <KIcon name={KATEGORIE_ICON[kat]} size={14} style={{ color: 'var(--k-ink-soft)', flexShrink: 0 }} />
+                      <KIcon name={KATEGORIE_ICON[kat]} size={14} className="vis-palette-eintrag-icon" />
                       {t.label}
                     </button>
                   ))}
@@ -877,23 +865,11 @@ export function NodeCanvas({
       inhalt: (
         <div
           data-testid="vis-ausrichten-leiste"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4,
-            width: '100%',
-            height: '100%',
-            padding: 4,
-            boxSizing: 'border-box',
-            // Karten-Optik wie vor der Dock-Migration (der `--schlank`-
-            // Panel-Rahmen ist bewusst transparent, s. dock-flaeche.css —
-            // der Inhalt bringt sein Aussehen selbst mit, wie die
-            // Viewport-HUDs mit ihrem `.k-glass`).
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-          }}
+          // Karten-Optik wie vor der Dock-Migration (der `--schlank`-
+          // Panel-Rahmen ist bewusst transparent, s. dock-flaeche.css —
+          // der Inhalt bringt sein Aussehen selbst mit, wie die
+          // Viewport-HUDs mit ihrem `.k-glass`).
+          className="vis-ausrichten-leiste"
         >
           <KButton size="sm" tone="ghost" data-testid="vis-ausrichten-links" title="Links ausrichten" onClick={() => ausrichtenAn('x')}>
             Links
@@ -913,25 +889,10 @@ export function NodeCanvas({
       id: 'visLegende',
       sichtbar: graph.nodes.length > 0 && legendeTypen.length > 0,
       inhalt: (
-        <div
-          data-testid="vis-legende"
-          style={{
-            display: 'grid',
-            gap: 3,
-            width: '100%',
-            height: '100%',
-            padding: '6px 8px',
-            boxSizing: 'border-box',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-            fontSize: 'var(--k-t-xs)',
-            color: 'var(--k-ink-soft)',
-          }}
-        >
+        <div data-testid="vis-legende" className="vis-legende-panel">
           {legendeTypen.map((t) => (
-            <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span aria-hidden style={{ width: 7, height: 7, borderRadius: 999, background: PORT_FARBE[t] }} />
+            <div key={t} className="vis-legende-zeile">
+              <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[t] }} />
               <span>{PORT_TYP_NAME[t]}</span>
             </div>
           ))}
@@ -950,16 +911,7 @@ export function NodeCanvas({
           width={MINIMAP_W}
           height={MINIMAP_H}
           viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
-          style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            background: 'var(--k-raised)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-            cursor: 'crosshair',
-            touchAction: 'none',
-          }}
+          className="vis-minimap-svg"
           onPointerDown={(e) => {
             e.stopPropagation();
             (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
@@ -1006,7 +958,7 @@ export function NodeCanvas({
   ];
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div className="vis-canvas-wrap">
     <svg
       ref={svgRef}
       data-testid="node-canvas"
@@ -1015,7 +967,7 @@ export function NodeCanvas({
       // komplett (eigenes Node-Interaktions-Feedback der Kanvas bleibt
       // unverändert bestehen).
       data-cursor-zone="eigen"
-      style={{ width: '100%', height: '100%', display: 'block', touchAction: 'none', background: 'var(--k-plan-paper)' }}
+      className="vis-canvas-svg"
       viewBox={(() => {
         const w = flaeche.w / view.scale;
         const h = flaeche.h / view.scale;
@@ -1167,7 +1119,7 @@ export function NodeCanvas({
               fill="none"
               stroke="transparent"
               strokeWidth={12}
-              style={{ cursor: 'pointer' }}
+              className="vis-edge-hit"
               onPointerDown={(ev) => {
                 ev.stopPropagation();
                 setAuswahlEdge(e.id);
@@ -1184,8 +1136,7 @@ export function NodeCanvas({
             />
             <g
               transform={`translate(${(a.x + b.x) / 2}, ${(a.y + b.y) / 2})`}
-              className="k-uebergang-schnell"
-              style={{ cursor: 'pointer', opacity: trennenSichtbar ? 1 : 0 }}
+              className={`k-uebergang-schnell vis-edge-trennen${trennenSichtbar ? ' vis-edge-trennen--sichtbar' : ''}`}
               data-testid="edge-trennen"
               onPointerDown={(ev) => {
                 ev.stopPropagation();
@@ -1203,7 +1154,7 @@ export function NodeCanvas({
               <g className="k-druck">
                 <title>Verbindung trennen</title>
                 <circle r={9} fill="var(--k-raised)" stroke="var(--k-danger)" />
-                <KIcon name="schliessen" size={14} x={-7} y={-7} style={{ color: 'var(--k-danger)' }} />
+                <KIcon name="schliessen" size={14} x={-7} y={-7} className="vis-edge-trennen-icon" />
               </g>
             </g>
           </g>
@@ -1270,14 +1221,23 @@ export function NodeCanvas({
         const kategorieFarbe = VIS_KATEGORIE_HUE[kat.kategorie];
         const kategorieIcon = KATEGORIE_ICON[kat.kategorie];
         const istAusgewaehlt = auswahl.has(n.id);
+        // v0.8.0B / P5 (Spez §3 B-44, KPipelineNode-Anatomie): running-Puls
+        // NUR am laufenden Render-Node (Gesetz 7 — Glow ist Informations-
+        // zustand, nie Deko). Dieselbe Statusmenge wie `laeuftNoch` unten in
+        // `NodeKoerper` (`gesendet/wartetFreigabe/wartetGpu/rendert`) — EIN
+        // Wahrheitsbegriff für «läuft», hier nur auf den Kartenrahmen gespiegelt.
+        const nodeLaeuft = n.typ === 'render' && !!lauf && (OFFENE_LAUF_STATUS as readonly string[]).includes(lauf.status);
         return (
           <g key={n.id} transform={`translate(${n.x}, ${n.y})`} data-testid={`vis-node-${n.typ}`}>
-            {/* Karte mit geschnittener Ecke (Karteikarten-Verwandter) */}
+            {/* Karte mit geschnittener Ecke (Karteikarten-Verwandter) — Form/
+                Layout unangetastet; Rand folgt jetzt der KPipelineNode-
+                Anatomie (1.5px Rollenborder 55%, running-Puls nur bei
+                laufendem Status, `vis-visual.css`). */}
             <path
               d={`M 0 0 H ${NODE_W - 12} L ${NODE_W} 12 V ${h} H 0 Z`}
               fill="var(--k-raised)"
-              stroke="var(--k-mod-vis, var(--k-line-strong))"
-              strokeWidth={1}
+              className={`vis-node-karte${nodeLaeuft ? ' vis-node-karte--laeuft' : ''}`}
+              style={{ ['--_rolle' as string]: kategorieFarbe }}
             />
             {/* V1-Welle Commit 1: Akzent-Rahmen (Tusche, kein Fill) für
                 ausgewählte Nodes — Marquee/Klick/Shift-Klick setzen `auswahl`. */}
@@ -1291,12 +1251,12 @@ export function NodeCanvas({
                 fill="none"
                 stroke="var(--k-accent)"
                 strokeWidth={1.5}
-                pointerEvents="none"
+                className="vis-node-ausgewaehlt-rahmen"
               />
             )}
             {/* Kopf = Drag-Griff (V1-Welle Commit 1: + Auswahl-Logik) */}
             <g
-              style={{ cursor: 'grab' }}
+              className="vis-node-kopf-griff"
               onPointerDown={(e) => {
                 e.stopPropagation();
                 if (e.shiftKey) {
@@ -1329,8 +1289,8 @@ export function NodeCanvas({
               }}
             >
               <rect width={NODE_W} height={KOPF_H} fill="transparent" />
-              <KIcon name={kategorieIcon} size={14} x={8} y={6} style={{ color: 'var(--k-ink-soft)' }} />
-              <text x={28} y={17} fontSize={11.5} fontWeight={650} fill="var(--k-ink)" style={{ letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              <KIcon name={kategorieIcon} size={14} x={8} y={6} className="vis-node-icon-soft" />
+              <text x={28} y={17} fontSize={11.5} fontWeight={650} fill="var(--k-ink)" className="vis-node-kopf-label">
                 {kat.label}
               </text>
               {/* V1-Welle Commit 2: Node-Kollaps — nur Kopf+Ports sichtbar
@@ -1338,8 +1298,7 @@ export function NodeCanvas({
                   Render-Job (Status weder «bereit» noch «fertig») blockiert
                   den Kollaps mit einem ehrlichen Hinweis statt still zu tun. */}
               <g
-                className="k-druck"
-                style={{ cursor: 'pointer' }}
+                className="k-druck vis-node-knopf"
                 data-testid="node-kollaps"
                 onPointerDown={(e) => {
                   e.stopPropagation();
@@ -1356,12 +1315,11 @@ export function NodeCanvas({
                   size={14}
                   x={NODE_W - 40}
                   y={6}
-                  style={{ color: 'var(--k-ink-faint)' }}
+                  className="vis-node-icon-faint"
                 />
               </g>
               <g
-                className="k-druck"
-                style={{ cursor: 'pointer' }}
+                className="k-druck vis-node-knopf"
                 data-testid="node-loeschen"
                 onPointerDown={(e) => {
                   e.stopPropagation();
@@ -1369,7 +1327,7 @@ export function NodeCanvas({
                 }}
               >
                 <title>Node löschen</title>
-                <KIcon name="schliessen" size={14} x={NODE_W - 22} y={6} style={{ color: 'var(--k-ink-faint)' }} />
+                <KIcon name="schliessen" size={14} x={NODE_W - 22} y={6} className="vis-node-icon-faint" />
               </g>
             </g>
             {/* Tonstreifen (W1): zurückhaltender Kategorie-Hue, 2px, ersetzt die
@@ -1396,7 +1354,7 @@ export function NodeCanvas({
                     cy={y}
                     r={11}
                     fill="transparent"
-                    style={{ cursor: 'crosshair' }}
+                    className="vis-node-port-hit"
                     onPointerUp={(e) => {
                       if (!pending) return;
                       e.stopPropagation();
@@ -1428,7 +1386,7 @@ export function NodeCanvas({
                     cy={y}
                     r={11}
                     fill="transparent"
-                    style={{ cursor: 'crosshair' }}
+                    className="vis-node-port-hit"
                     onPointerDown={(e) => {
                       // KEIN Pointer-Capture: das pointerup muss den Ziel-Port treffen
                       e.stopPropagation();
@@ -1454,7 +1412,7 @@ export function NodeCanvas({
                 y={koerperY}
                 width={NODE_W - 16}
                 height={h - koerperY - 8}
-                style={{ pointerEvents: drag || marquee ? 'none' : 'auto' }}
+                className={drag || marquee ? 'vis-node-koerper--gesperrt' : undefined}
               >
                 <NodeKoerper
                   graphId={graphId}
@@ -1499,7 +1457,7 @@ export function NodeCanvas({
         Design-Panels, s. `DockFlaeche.tsx`-Kopfkommentar. Bewusst UNTER der
         Kuratier-Fläche (z-35, `KuratierFlaeche.tsx`) — während der Kuration
         bleibt dieser Knopf wie bisher verdeckt. */}
-    <div style={{ position: 'absolute', left: 12, top: 56, zIndex: 32 }}>
+    <div className="vis-chrome-topleft">
       <KButton
         size="sm"
         tone="ghost"
@@ -1524,7 +1482,7 @@ export function NodeCanvas({
         z-35 (über den Dock-Panels z-14/30, wie sie vorher mit 8 über den
         z-5-Overlays lag) — der Schliessen-Knopf muss weiterhin EINE Stufe
         darüber bleiben. */}
-    <div style={{ position: 'absolute', right: 12, top: 12, zIndex: 36 }}>
+    <div className="vis-chrome-topright">
       <KButton
         size="sm"
         tone="ghost"
@@ -1536,7 +1494,7 @@ export function NodeCanvas({
       >
         <KIcon name={kuratierOffen ? 'schliessen' : 'stern'} size={16} title="Kuratieren" />
         {kuratierKarten.length > 0 && (
-          <span style={{ fontSize: 10, fontFamily: 'var(--k-font-mono)' }}>{kuratierKarten.length}</span>
+          <span className="vis-kuratier-zaehler">{kuratierKarten.length}</span>
         )}
       </KButton>
     </div>
@@ -1560,7 +1518,7 @@ export function NodeCanvas({
         zIndex 32 (P6, vorher auto): über den Dock-Panels — ein nach rechts
         gezogenes/gedocktes Panel darf die Zoom-/Snap-/Routing-Knöpfe nie
         unklickbar machen (gleiche Begründung wie beim Palette-Toggle oben). */}
-    <div style={{ position: 'absolute', right: 12, bottom: 92, zIndex: 32, display: 'flex', gap: 4 }}>
+    <div className="vis-chrome-bottomright">
       {/* V1-Welle Commit 1/2: Raster-Snap + Kanten-Routing — Werkzeug-
           Umschalter neben der Zoom-Leiste, fern von Testpunkt (30,30) und
           der Minimap (unten links). */}
@@ -1607,7 +1565,7 @@ export function NodeCanvas({
         der Legende. zIndex 32 (P6): über den Dock-Panels, gleiche Begründung
         wie beim Palette-Toggle oben (B-Modus-Linksspalte). */}
     {graph.nodes.length > 0 && (
-      <div style={{ position: 'absolute', left: 12, bottom: 12, zIndex: 32 }}>
+      <div className="vis-chrome-bottomleft">
         <KButton
           size="sm"
           tone="ghost"
@@ -1658,43 +1616,26 @@ function KlappText({
 }) {
   const hatText = text.trim().length > 0;
   return (
-    <div style={{ display: 'grid', gap: 2 }}>
+    <div className="vis-klapptext">
       <div
         data-testid={testid}
-        style={{
-          fontSize: 10.5,
-          color: 'var(--k-ink-soft)',
-          lineHeight: 1.35,
-          fontStyle: hatText ? 'normal' : 'italic',
-          ...(offen
-            ? {}
-            : ({
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              } as React.CSSProperties)),
-        }}
+        className={[
+          'vis-klapptext-text',
+          !hatText ? 'vis-klapptext-text--platzhalter' : '',
+          !offen ? 'vis-klapptext-text--clamp' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
         {hatText ? text : platzhalter}
       </div>
       {hatText && (
         <button
           type="button"
-          className="k-druck"
+          className="k-druck vis-klapptext-mehr"
           data-testid="node-expand"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onToggleOffen}
-          style={{
-            justifySelf: 'start',
-            fontSize: 10,
-            color: 'var(--k-ink-faint)',
-            background: 'transparent',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            textDecoration: 'underline',
-          }}
         >
           {offen ? 'weniger' : '… mehr'}
         </button>
@@ -1753,15 +1694,6 @@ function NodeKoerper({
       meldeFehler(err);
     }
   };
-  const feld: React.CSSProperties = {
-    width: '100%',
-    padding: '3px 6px',
-    border: '1px solid var(--k-line-strong)',
-    borderRadius: 4,
-    background: 'var(--k-surface)',
-    fontSize: 11,
-    fontFamily: 'inherit',
-  };
   // Bug T4a: ein Node OHNE `params` (Hand-Edit/Fremd-Import/Yjs-Merge von
   // einem anderen Stand) darf die Station nie abstürzen lassen — fehlende
   // Parameter zählen wie leere/Default-Werte (Wurzel-Fix in derive/visgraph.ts
@@ -1771,7 +1703,7 @@ function NodeKoerper({
   switch (node.typ) {
     case 'modell': {
       const teile = doc.byKind('wall').length + doc.byKind('slab').length + doc.byKind('roof').length;
-      return <div style={{ fontSize: 10.5, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }}>Szene: {teile} Bauteile (GLB)</div>;
+      return <div className="vis-node-info-zeile">Szene: {teile} Bauteile (GLB)</div>;
     }
     case 'material':
       return (
@@ -1793,20 +1725,20 @@ function NodeKoerper({
           data-testid="prompt-text"
           onBlur={(e) => e.target.value !== params['text'] && param('text', e.target.value)}
           onPointerDown={(e) => e.stopPropagation()}
-          style={{ ...feld, resize: 'none' }}
+          className="vis-node-feld vis-node-feld--textarea"
         />
       );
     case 'stimmung': {
       const presetKey = String(params['preset'] ?? 'morgen');
       return (
-        <div style={{ display: 'grid', gap: 4 }}>
+        <div className="vis-node-stimmung-wrap">
           <KSelect
             size="sm"
             value={presetKey}
             data-testid="stimmung-preset"
             onChange={(e) => param('preset', e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            style={{ width: '100%', fontSize: 11 }}
+            className="vis-node-select-voll"
           >
             {Object.entries(VIS_STIMMUNGEN).map(([key, s]) => (
               <option key={key} value={key}>{s.label}</option>
@@ -1829,7 +1761,7 @@ function NodeKoerper({
       const max = Number(params['max'] ?? 1);
       const schritt = Number(params['schritt'] ?? 0.05);
       return (
-        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }} onPointerDown={(e) => e.stopPropagation()}>
+        <div className="vis-node-zahl-wrap" onPointerDown={(e) => e.stopPropagation()}>
           <input
             type="range"
             key={String(params['wert'] ?? 0)}
@@ -1839,9 +1771,9 @@ function NodeKoerper({
             defaultValue={Number(params['wert'] ?? 0)}
             data-testid="zahl-regler"
             onPointerUp={(e) => param('wert', Number((e.target as HTMLInputElement).value))}
-            style={{ flex: 1 }}
+            className="vis-node-zahl-regler"
           />
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5 }}>{Number(params['wert'] ?? 0)}</span>
+          <span className="vis-node-zahl-wert">{Number(params['wert'] ?? 0)}</span>
         </div>
       );
     }
@@ -1875,13 +1807,13 @@ function NodeKoerper({
       const gruen = status === 'fertig';
       const rot = status === 'fehler' || status === 'zeitueberschreitung';
       const grau = status === 'bereit' || status === 'abgebrochen';
-      const statusFarbe = gruen
-        ? 'var(--k-success)'
+      const statusKlasse = gruen
+        ? 'vis-node-status--fertig'
         : rot
-          ? 'var(--k-danger)'
+          ? 'vis-node-status--fehler'
           : grau
-            ? 'var(--k-ink-faint)'
-            : 'var(--k-warning)';
+            ? 'vis-node-status--neutral'
+            : 'vis-node-status--aktiv';
       const laeuftNoch = ['gesendet', 'wartetFreigabe', 'wartetGpu', 'rendert'].includes(status);
       // V-H4 (UI-KONZEPT-065 §5): semantisches Formular — schreibt in flache
       // Render-Node-`params` über den bestehenden `vis.nodeParametrieren`-Weg;
@@ -1896,16 +1828,16 @@ function NodeKoerper({
       const fassadenBausteine = renderPromptBausteine(doc);
       const finalPrompt = kombiniertePrompt(eingehenderPrompt, formularZusatz(params));
       return (
-        <div style={{ display: 'grid', gap: 6 }} onPointerDown={(e) => e.stopPropagation()}>
-          <div data-testid="render-formular" style={{ display: 'grid', gap: 4, minWidth: 0 }}>
+        <div className="vis-node-render-wrap" onPointerDown={(e) => e.stopPropagation()}>
+          <div data-testid="render-formular" className="vis-node-render-formular">
             {/* V-H4-Fix (Kritik-065 Runde 1, Befund 1): `1fr 1fr` allein lässt
                 Grid-Spalten am Inhalt (Select-Optionstext) wachsen — `minmax(0, 1fr)`
                 erzwingt die Spur, `minWidth: 0` an JEDEM Grid-Kind bricht die
                 Flex-/Select-Mindestbreite, `width: 100% + boxSizing: border-box` an
                 Input/Select klemmt sie auf das Innenmass. Sonst ragen «Szene»/
                 «Personen» über den rechten 45°-Kartenrand hinaus. */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 4 }}>
-              <div style={{ minWidth: 0 }}>
+            <div className="vis-node-render-grid">
+              <div className="vis-node-feld-zelle">
                 <KField label="Fassade">
                   {fassadenBausteine.length > 0 ? (
                     <KSelect
@@ -1913,7 +1845,7 @@ function NodeKoerper({
                       value={formFassade}
                       data-testid="render-formular-fassade"
                       onChange={(e) => param('formFassade', e.target.value)}
-                      style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                      className="vis-node-select-zelle"
                     >
                       <option value="">— frei —</option>
                       {fassadenBausteine.map((b) => (
@@ -1928,19 +1860,19 @@ function NodeKoerper({
                       placeholder="frei …"
                       data-testid="render-formular-fassade"
                       onBlur={(e) => e.target.value !== formFassade && param('formFassade', e.target.value)}
-                      style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                      className="vis-node-select-zelle"
                     />
                   )}
                 </KField>
               </div>
-              <div style={{ minWidth: 0 }}>
+              <div className="vis-node-feld-zelle">
                 <KField label="Szene">
                   <KSelect
                     size="sm"
                     value={formSzene}
                     data-testid="render-formular-szene"
                     onChange={(e) => param('formSzene', e.target.value)}
-                    style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                    className="vis-node-select-zelle"
                   >
                     <option value="">—</option>
                     <option value="strasse">Aussen · Strasse</option>
@@ -1950,14 +1882,14 @@ function NodeKoerper({
                   </KSelect>
                 </KField>
               </div>
-              <div style={{ minWidth: 0 }}>
+              <div className="vis-node-feld-zelle">
                 <KField label="Jahreszeit">
                   <KSelect
                     size="sm"
                     value={formJahreszeit}
                     data-testid="render-formular-jahreszeit"
                     onChange={(e) => param('formJahreszeit', e.target.value)}
-                    style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                    className="vis-node-select-zelle"
                   >
                     <option value="">—</option>
                     <option value="sommer">Sommer</option>
@@ -1966,14 +1898,14 @@ function NodeKoerper({
                   </KSelect>
                 </KField>
               </div>
-              <div style={{ minWidth: 0 }}>
+              <div className="vis-node-feld-zelle">
                 <KField label="Personen">
                   <KSelect
                     size="sm"
                     value={formPersonen}
                     data-testid="render-formular-personen"
                     onChange={(e) => param('formPersonen', e.target.value)}
-                    style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                    className="vis-node-select-zelle"
                   >
                     <option value="">—</option>
                     <option value="keine">keine</option>
@@ -1991,18 +1923,15 @@ function NodeKoerper({
                 placeholder="Freitext-Zusatz …"
                 data-testid="render-formular-freitext"
                 onBlur={(e) => e.target.value !== formFreitext && param('formFreitext', e.target.value)}
-                style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}
+                className="vis-node-select-zelle"
               />
             </KField>
             {/* Ehrlichkeit/V8: der TATSÄCHLICHE Prompt, den «Ausführen» sendet. */}
-            <div
-              data-testid="render-final-prompt"
-              style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-faint)', lineHeight: 1.3 }}
-            >
+            <div data-testid="render-final-prompt" className="vis-node-final-prompt">
               {finalPrompt || 'kein Prompt — verbinde Stimmung/Stil oder fülle das Formular'}
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="vis-node-aktionen">
             <KButton
               size="sm"
               tone="accent"
@@ -2023,12 +1952,12 @@ function NodeKoerper({
                 Abbrechen
               </KButton>
             )}
-            <span data-testid="render-status" style={{ fontSize: 10, fontFamily: 'var(--k-font-mono)', textTransform: 'uppercase', letterSpacing: '0.05em', color: statusFarbe }}>
+            <span data-testid="render-status" className={`vis-node-status ${statusKlasse}`}>
               {STATUS_LABEL[status] ?? status}
             </span>
           </div>
           {/* HS5: «Nur Cycles» bestellt reines Cycles statt KI-Veredelung. */}
-          <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 10, color: 'var(--k-ink-soft)', cursor: 'pointer' }}>
+          <label className="vis-node-checkbox-label">
             <input
               type="checkbox"
               data-testid="render-nur-cycles"
@@ -2045,7 +1974,7 @@ function NodeKoerper({
             data-testid="vis-preset-select"
             onChange={(e) => param('preset', e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            style={{ width: '100%', fontSize: 11 }}
+            className="vis-node-select-voll"
           >
             <option value="">kein Preset (Default 128 Samples)</option>
             {RENDER_PRESETS.map((p) => (
@@ -2054,15 +1983,15 @@ function NodeKoerper({
           </KSelect>
           {/* Worker + Fortschritt, sobald der Worker den Job hält (HS3-Auflage 5). */}
           {(lauf?.worker || lauf?.progress) && (status === 'rendert' || status === 'wartetGpu') && (
-            <div data-testid="render-fortschritt" style={{ fontSize: 9.5, fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>
+            <div data-testid="render-fortschritt" className="vis-node-fortschritt">
               {lauf.worker ?? 'worker'}
               {lauf.progress ? ` · ${lauf.progress.phase} ${Math.round(lauf.progress.pct * 100)}%` : ''}
             </div>
           )}
           {status === 'fertig' && lauf?.jobId && lauf.bild ? (
-            <BridgeBild jobId={lauf.jobId} imageName={lauf.bild} alt="Render" testid="render-bild" style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+            <BridgeBild jobId={lauf.jobId} imageName={lauf.bild} alt="Render" testid="render-bild" className="vis-img-full" />
           ) : (
-            <div style={{ height: 110, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 6, fontSize: 10, color: rot ? 'var(--k-danger)' : 'var(--k-ink-faint)' }}>
+            <div className={`vis-node-leerbild${rot ? ' vis-node-leerbild--fehler' : ''}`}>
               {rot
                 ? (lauf?.fehler ?? 'Render fehlgeschlagen')
                 : status === 'fertig'
@@ -2088,22 +2017,9 @@ function NodeKoerper({
         .map((p) => bildQuelle(node.id, p))
         .filter((b): b is NonNullable<typeof b> => b !== null);
       return (
-        <div style={{ display: 'flex', gap: 4 }} data-testid="vergleich-bilder">
+        <div className="vis-vergleich-bilder" data-testid="vergleich-bilder">
           {bilder.length === 0 && (
-            <div
-              style={{
-                height: 110,
-                flex: 1,
-                border: '1px dashed var(--k-line-strong)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 6,
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 10,
-                color: 'var(--k-ink-faint)',
-              }}
-            >
+            <div className="vis-vergleich-leer">
               {/* Kritik-065 Runde 1, Befund 5: Leerzustand-Signet — zwei
                   überlappende Bildrahmen statt reiner Textwüste. */}
               <svg width="28" height="22" viewBox="0 0 28 22" aria-hidden focusable="false">
@@ -2119,8 +2035,8 @@ function NodeKoerper({
             'dataUrl' in b ? (
               // v0.6.7 P0: Viewport-Aufnahme — keine Bridge, direktes <img> (wie
               // der 'referenz'-Node bei einer data:-URL, s.u.).
-              <div key={i} style={{ flex: 1, display: 'grid', gap: 2, minWidth: 0 }}>
-                <img src={b.dataUrl} alt={`Bild ${i + 1}`} style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+              <div key={i} className="vis-bild-kachel">
+                <img src={b.dataUrl} alt={`Bild ${i + 1}`} className="vis-img-full" />
               </div>
             ) : (
               <BildKachel key={i} jobId={b.jobId} bild={b.bild} qa={b.qa} alt={`Bild ${i + 1}`} />
@@ -2157,18 +2073,18 @@ function NodeKoerper({
     case 'referenz': {
       const url = String(params['url'] ?? '');
       return (
-        <div style={{ display: 'grid', gap: 4 }} onPointerDown={(e) => e.stopPropagation()}>
+        <div className="vis-node-referenz-wrap" onPointerDown={(e) => e.stopPropagation()}>
           <input
             defaultValue={url}
             key={url}
             placeholder="Bild-URL / data:-URL"
             onBlur={(e) => e.target.value !== url && param('url', e.target.value)}
-            style={feld}
+            className="vis-node-feld"
           />
           {url ? (
-            <img src={url} alt="Referenz" style={{ width: '100%', border: '1px solid var(--k-line)' }} />
+            <img src={url} alt="Referenz" className="vis-img-full" />
           ) : (
-            <div style={{ height: 46, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)' }}>
+            <div className="vis-node-referenz-leer">
               Referenz / Splat-Ansicht
             </div>
           )}
@@ -2189,15 +2105,15 @@ function NodeKoerper({
       const kameraParam = String(params['kamera'] ?? 'aktuell');
       const gewaehlt = waehleAufnahme(aufnahmen, kameraParam);
       return (
-        <div style={{ display: 'grid', gap: 4 }} onPointerDown={(e) => e.stopPropagation()}>
-          <div style={{ fontSize: 9.5, color: 'var(--k-ink-faint)' }}>Viewport-Aufnahme (kein Rendering)</div>
+        <div className="vis-node-aufnahme-wrap" onPointerDown={(e) => e.stopPropagation()}>
+          <div className="vis-node-aufnahme-info">Viewport-Aufnahme (kein Rendering)</div>
           <KSelect
             size="sm"
             value={kameraParam}
             data-testid="aufnahme-kamera"
             onChange={(e) => param('kamera', e.target.value)}
             onPointerDown={(e) => e.stopPropagation()}
-            style={{ width: '100%', fontSize: 11 }}
+            className="vis-node-select-voll"
           >
             <option value="aktuell">jüngste Aufnahme</option>
             <option value="nordost">Nordost</option>
@@ -2208,10 +2124,10 @@ function NodeKoerper({
               src={gewaehlt.dataUrl}
               alt="Viewport-Aufnahme"
               data-testid="aufnahme-bild"
-              style={{ width: '100%', border: '1px solid var(--k-line)' }}
+              className="vis-img-full"
             />
           ) : (
-            <div style={{ height: 46, border: '1px dashed var(--k-line-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)', textAlign: 'center', padding: 4 }}>
+            <div className="vis-node-aufnahme-leer">
               Noch keine Aufnahme
             </div>
           )}
@@ -2237,9 +2153,9 @@ function NodeKoerper({
       // Modell», keine KI-Wahl.
       const kameras = deriveAutoKameras(doc);
       return (
-        <div style={{ display: 'grid', gap: 3, fontSize: 10, color: 'var(--k-ink-soft)' }} data-testid="vis-auto-kamera-liste">
+        <div className="vis-node-kamera-liste" data-testid="vis-auto-kamera-liste">
           {kameras.length === 0 ? (
-            <span style={{ fontStyle: 'italic', color: 'var(--k-ink-faint)' }}>
+            <span className="vis-node-kamera-leer">
               Keine Geometrie im Modell — nichts abzuleiten.
             </span>
           ) : (

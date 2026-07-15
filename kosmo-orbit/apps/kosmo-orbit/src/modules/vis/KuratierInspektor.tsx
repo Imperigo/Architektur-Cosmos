@@ -1,7 +1,8 @@
 import { VIS_KATEGORIE_HUE, VIS_NODE_KATALOG, type VisGraph } from '@kosmo/kernel';
-import { KButton, KIcon, Messrahmen } from '@kosmo/ui';
+import { KButton, KIcon, KKeyValue, Messrahmen } from '@kosmo/ui';
 import { BridgeBild } from './BridgeBild';
 import { herkunftChain, kurzKennung, sterneAusQa, varianteMerkmale, type KuratierKartenDaten } from './varianten-diff';
+import './vis-visual.css';
 
 /**
  * Kurations-Inspektor (Soll-Bild `Kosmo Viz Kuratierung.dc.html` §6.2, rechte
@@ -9,6 +10,11 @@ import { herkunftChain, kurzKennung, sterneAusQa, varianteMerkmale, type Kuratie
  * Sterne-Bewertung, «Ins Projekt übernehmen». Reiner Anzeige-Baustein: alle
  * Ableitungen kommen aus `varianten-diff.ts`, alle Aktionen laufen über die
  * vom Elternteil (`KuratierFlaeche.tsx`) gereichten Handler.
+ *
+ * v0.8.0B / P5 (Spez §3 B-41): die Meta-Zeilen laufen jetzt über `KKeyValue`
+ * (Zeilenstapel gap 1px, Key Mono faint / Wert Mono secondary) statt des
+ * vorherigen Inline-Nachbaus — exakt das Muster, das B-41 als Ersatz für
+ * Inspector-Label/Wert-Paare vorgibt.
  */
 export function KuratierInspektor({
   graph,
@@ -29,19 +35,7 @@ export function KuratierInspektor({
 }) {
   if (!karte) {
     return (
-      <aside
-        data-testid="vis-kuratier-inspektor"
-        style={{
-          width: 340,
-          flex: 'none',
-          borderLeft: '1px solid var(--k-line)',
-          background: 'var(--k-surface)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 18,
-        }}
-      >
+      <aside data-testid="vis-kuratier-inspektor" className="vis-inspektor vis-inspektor--leer">
         <Messrahmen height={160} caption="Kurations-Inspektor — wähle eine Karte im Raster" />
       </aside>
     );
@@ -53,145 +47,70 @@ export function KuratierInspektor({
   const sterne = sterneAusQa(qa);
   const kennung = 'jobId' in karte.quelle ? kurzKennung(karte.quelle.jobId) : kurzKennung(karte.node.id);
 
-  const metaZeilen: Array<[string, string]> = [
-    ['Node-Typ', merkmale.typLabel],
-    ['Szene', merkmale.szene],
-    ['Stimmung', merkmale.stimmung],
-    ...(merkmale.presetLabel ? ([['Preset', merkmale.presetLabel]] as Array<[string, string]>) : []),
-    ...(merkmale.faithful !== undefined ? ([['Geometrie-Treue', merkmale.faithful.toFixed(2)]] as Array<[string, string]>) : []),
-    ...(merkmale.samples !== undefined ? ([['Samples', String(merkmale.samples)]] as Array<[string, string]>) : []),
+  const metaZeilen: Array<{ key: string; wert: string }> = [
+    { key: 'Node-Typ', wert: merkmale.typLabel },
+    { key: 'Szene', wert: merkmale.szene },
+    { key: 'Stimmung', wert: merkmale.stimmung },
+    ...(merkmale.presetLabel ? [{ key: 'Preset', wert: merkmale.presetLabel }] : []),
+    ...(merkmale.faithful !== undefined ? [{ key: 'Geometrie-Treue', wert: merkmale.faithful.toFixed(2) }] : []),
+    ...(merkmale.samples !== undefined ? [{ key: 'Samples', wert: String(merkmale.samples) }] : []),
     ...(merkmale.qaBestanden !== undefined
-      ? ([['QA-Verdikt', merkmale.qaBestanden ? 'bestanden' : 'verfehlt']] as Array<[string, string]>)
+      ? [{ key: 'QA-Verdikt', wert: merkmale.qaBestanden ? 'bestanden' : 'verfehlt' }]
       : []),
   ];
 
-  const monoLabel: React.CSSProperties = {
-    fontFamily: 'var(--k-font-mono)',
-    fontSize: 10,
-    letterSpacing: '0.14em',
-    textTransform: 'uppercase',
-    color: 'var(--k-ink-faint)',
-  };
-
   return (
-    <aside
-      data-testid="vis-kuratier-inspektor"
-      style={{
-        width: 340,
-        flex: 'none',
-        borderLeft: '1px solid var(--k-line)',
-        background: 'var(--k-surface)',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 0,
-      }}
-    >
-      <div
-        style={{
-          height: 44,
-          flex: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 14px',
-          borderBottom: '1px solid var(--k-line)',
-        }}
-      >
-        <span style={monoLabel}>Kurations-Inspektor</span>
-        <span
-          style={{
-            fontFamily: 'var(--k-font-mono)',
-            fontSize: 10.5,
-            padding: '2px 8px',
-            borderRadius: 'var(--k-radius-pill)',
-            color: 'var(--k-accent)',
-            background: 'var(--k-accent-wash)',
-          }}
-        >
+    <aside data-testid="vis-kuratier-inspektor" className="vis-inspektor">
+      <div className="vis-inspektor-kopf">
+        <span className="vis-mono-label">Kurations-Inspektor</span>
+        <span className="vis-inspektor-kopf-id">
           {id}
         </span>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: 16, display: 'grid', gap: 16 }}>
-        <div
-          className="slotwrap"
-          style={{
-            position: 'relative',
-            aspectRatio: '4 / 3',
-            borderRadius: 'var(--k-radius-md)',
-            overflow: 'hidden',
-            border: '1px solid var(--k-accent)',
-            boxShadow: 'var(--k-glow-cyan, none)',
-          }}
-        >
+      <div className="vis-inspektor-inhalt">
+        <div className="slotwrap vis-inspektor-slot">
           {'dataUrl' in karte.quelle ? (
             <img
               src={karte.quelle.dataUrl}
               alt={merkmale.typLabel}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              className="vis-inspektor-slot-bild"
             />
           ) : (
             <BridgeBild
               jobId={karte.quelle.jobId}
               imageName={karte.quelle.bild}
               alt={merkmale.typLabel}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              className="vis-inspektor-slot-bild"
             />
           )}
         </div>
 
         <div>
-          <div style={{ fontWeight: 700, fontSize: 17, color: 'var(--k-ink)' }}>Variante {id}</div>
-          <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 11.5, color: 'var(--k-ink-soft)', marginTop: 2 }}>
+          <div className="vis-inspektor-titel">Variante {id}</div>
+          <div className="vis-inspektor-untertitel">
             {kennung} · {merkmale.typLabel}
           </div>
         </div>
 
-        <div style={{ display: 'grid', gap: 1, borderRadius: 'var(--k-radius-sm)', overflow: 'hidden', border: '1px solid var(--k-line)' }}>
-          {metaZeilen.map(([k, v]) => (
-            <div
-              key={k}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: 10,
-                padding: '7px 10px',
-                background: 'var(--k-raised)',
-                fontSize: 11.5,
-              }}
-            >
-              <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, letterSpacing: '0.04em', color: 'var(--k-ink-faint)' }}>{k}</span>
-              <span style={{ fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>{v}</span>
-            </div>
-          ))}
-        </div>
+        <KKeyValue zeilen={metaZeilen} />
 
         <div>
-          <div style={{ ...monoLabel, marginBottom: 8 }}>Herkunft</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }} data-testid="vis-kuratier-herkunft">
+          <div className="vis-mono-label vis-kuratier-rail-titel">Herkunft</div>
+          <div className="vis-inspektor-herkunft" data-testid="vis-kuratier-herkunft">
             {kette.map((n, i) => {
               const kat = VIS_NODE_KATALOG[n.typ];
               const farbe = kat ? VIS_KATEGORIE_HUE[kat.kategorie] : 'var(--k-ink-faint)';
               return (
-                <span key={n.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 5,
-                      padding: '3px 8px',
-                      borderRadius: 'var(--k-radius-pill)',
-                      background: 'var(--k-raised)',
-                      border: '1px solid var(--k-line-strong)',
-                    }}
-                  >
-                    <span aria-hidden style={{ width: 6, height: 6, borderRadius: 999, background: farbe }} />
-                    <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-ink-soft)' }}>
+                <span key={n.id} className="vis-inspektor-herkunft-glied">
+                  <span className="vis-inspektor-herkunft-chip">
+                    <span aria-hidden className="vis-inspektor-herkunft-punkt" style={{ ['--_farbe' as string]: farbe }} />
+                    <span className="vis-inspektor-herkunft-label">
                       {kat?.label ?? n.typ}
                     </span>
                   </span>
                   {i < kette.length - 1 && (
-                    <KIcon name="pfeil-rechts" size={14} style={{ color: 'var(--k-ink-faint)' }} />
+                    <KIcon name="pfeil-rechts" size={14} className="vis-inspektor-herkunft-pfeil" />
                   )}
                 </span>
               );
@@ -200,29 +119,29 @@ export function KuratierInspektor({
         </div>
 
         <div>
-          <div style={{ ...monoLabel, marginBottom: 8 }}>Bewertung</div>
-          <div style={{ display: 'flex', gap: 5 }} data-testid="vis-kuratier-bewertung">
+          <div className="vis-mono-label vis-kuratier-rail-titel">Bewertung</div>
+          <div className="vis-inspektor-bewertung" data-testid="vis-kuratier-bewertung">
             {[0, 1, 2, 3, 4].map((i) => (
               <KIcon
                 key={i}
                 name={i < sterne ? 'stern-voll' : 'stern'}
                 size={16}
-                style={{ color: i < sterne ? 'var(--k-rolle-agent)' : 'var(--k-line-strong)' }}
+                className={i < sterne ? 'vis-inspektor-bewertung-stern--aktiv' : 'vis-inspektor-bewertung-stern'}
               />
             ))}
           </div>
           {sterne === 0 && (
-            <div style={{ fontSize: 10.5, color: 'var(--k-ink-faint)', fontStyle: 'italic', marginTop: 4 }}>
+            <div className="vis-inspektor-bewertung-leer">
               Keine QA-Bewertung vorhanden.
             </div>
           )}
         </div>
       </div>
 
-      <div style={{ flex: 'none', padding: 14, borderTop: '1px solid var(--k-line)', display: 'grid', gap: 8 }}>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <KButton size="sm" tone="quiet" style={{ flex: 1 }} data-testid="vis-kuratier-inspektor-favorit" onClick={onMarkieren}>
-            <KIcon name={karte.kur.markiert ? 'stern-voll' : 'stern'} size={14} style={{ color: 'var(--k-rolle-agent)' }} />
+      <div className="vis-inspektor-fuss">
+        <div className="vis-inspektor-fuss-zeile">
+          <KButton size="sm" tone="quiet" className="vis-inspektor-fuss-knopf" data-testid="vis-kuratier-inspektor-favorit" onClick={onMarkieren}>
+            <KIcon name={karte.kur.markiert ? 'stern-voll' : 'stern'} size={14} className="vis-inspektor-fuss-knopf-icon" />
             Favorit
           </KButton>
           <KButton size="sm" tone="ghost" data-testid="vis-kuratier-inspektor-verwerfen" onClick={onVerwerfen}>
@@ -230,7 +149,7 @@ export function KuratierInspektor({
             {karte.kur.verworfen ? 'Zurückholen' : 'Verwerfen'}
           </KButton>
         </div>
-        <KButton size="sm" tone="accent" style={{ width: '100%' }} data-testid="vis-kuratier-inspektor-ins-projekt" onClick={onInsProjekt}>
+        <KButton size="sm" tone="accent" className="vis-inspektor-fuss-primaer" data-testid="vis-kuratier-inspektor-ins-projekt" onClick={onInsProjekt}>
           <KIcon name="ordner" size={14} />
           Ins Projekt übernehmen
         </KButton>

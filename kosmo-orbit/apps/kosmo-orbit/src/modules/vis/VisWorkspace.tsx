@@ -24,6 +24,7 @@ import { BridgeBild } from './BridgeBild';
 import { presetAnwenden } from '../../state/dock-preset-anwendung';
 import { PRESET_IDS, type PresetId } from '../../state/dock-presets';
 import { useDockZustand } from '../../state/dock-zustand';
+import './vis-visual.css';
 
 /**
  * HS3: jeder Bridge-Fetch trägt den Token (falls gesetzt) — sonst sperrt eine
@@ -290,9 +291,9 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
 
   if (tab === 'einfach') {
     return (
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
+      <div className="vis-workspace-fuellen">
         <VisTabs tab={tab} setTab={setTab} />
-        <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
+        <div className="vis-workspace-buehne">
           <EinfachAnsicht />
         </div>
       </div>
@@ -300,7 +301,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column' }}>
+    <div className="vis-workspace-fuellen">
       <VisTabs tab={tab} setTab={setTab} {...(onEinstellungen ? { onEinstellungen } : {})}>
         {/* W1 Massnahme 6: KToolbar/KToolGruppe (UI-KONZEPT-065 §3) — Gruppen
             Graph | Bauen | Automatik. Alle testids + Beschriftungen wörtlich
@@ -343,8 +344,13 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
           {/* SK-V2 (UI-Selbstkritik 0.6.4): «+»-Präfix wie bei «+ Graph»/«+ Node» —
               vorher stand «Drei Stimmungen» doppelt in der Leiste (Graph-NAME im
               Select links + dieser Knopf), ohne dass erkennbar war, dass der
-              Knopf etwas NEUES anlegt. */}
-          <KButton size="sm" tone="accent" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
+              Knopf etwas NEUES anlegt.
+              v0.8.0B / P5 (Gesetz 1, Signal-Flächen-Audit): tone accent → quiet.
+              Die EINE Akzent-Primäraktion der Node-Tree-Ansicht ist «Ausführen»
+              am Render-Node (B-124 «◉ Rendern»); ein zweiter Akzent-Knopf in
+              derselben Ansicht verwässerte die 80·15·5-Dichte. testid + Text
+              byte-gleich, reine Ton-Änderung. */}
+          <KButton size="sm" tone="quiet" data-testid="drei-stimmungen" onClick={dreiStimmungen}>
             + Drei Stimmungen
           </KButton>
         </KToolGruppe>
@@ -366,12 +372,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
             role="group"
             aria-label="Oberflächen-Preset"
             title="Fokus/Arbeiten/Prüfen — kuratierte Layout-Presets (auch in Einstellungen → Darstellung)"
-            style={{
-              display: 'inline-flex',
-              border: '1px solid var(--k-line)',
-              borderRadius: 999,
-              overflow: 'hidden',
-            }}
+            className="vis-preset-schnellzugriff"
           >
             {PRESET_IDS.map((id) => (
               <button
@@ -380,15 +381,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
                 data-testid={`dock-preset-${id}`}
                 aria-pressed={aktivesPresetVis === id}
                 onClick={() => presetAnwenden('vis', id)}
-                style={{
-                  all: 'unset',
-                  cursor: 'pointer',
-                  padding: '3px 8px',
-                  fontSize: 11.5,
-                  fontWeight: aktivesPresetVis === id ? 650 : 500,
-                  color: aktivesPresetVis === id ? 'var(--k-accent-ink)' : 'var(--k-ink-soft)',
-                  background: aktivesPresetVis === id ? 'var(--k-accent)' : 'var(--k-surface)',
-                }}
+                className={`vis-preset-eintrag${aktivesPresetVis === id ? ' vis-preset-eintrag--aktiv' : ''}`}
               >
                 {PRESET_KURZLABEL[id]}
               </button>
@@ -396,7 +389,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
           </span>
         </KToolGruppe>
       </VisTabs>
-      <div style={{ position: 'relative', flex: 1, minHeight: 0 }}>
+      <div className="vis-workspace-buehne">
         {graphId ? (
           // Node-Palette (Welle 3, ZUSÄTZLICH zum nativen `node-hinzu`-Select
           // oben — der bleibt der E2E-Vertrag): der Klick ruft dieselbe
@@ -404,7 +397,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
           // der das entscheidet.
           <NodeCanvas key={graphId} graphId={graphId} onNodeHinzu={nodeHinzu} />
         ) : (
-          <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="vis-workspace-buehne-zentriert">
             <Messrahmen
               height={200}
               caption="Noch kein Render-Graph — «+ Graph» beginnt leer, «Drei Stimmungen» setzt den fertigen Teilgraph"
@@ -439,8 +432,8 @@ function VisTabs({
       <KTabs items={VIS_TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as 'graph' | 'einfach')} size="sm" />
       <Hairline vertical />
       {children}
-      <div style={{ flex: 1 }} />
-      <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+      <div className="vis-toolbar-spacer" />
+      <span className="vis-toolbar-hinweis">
         Render nur auf «Ausführen» — der Graph ist Teil des Projekts (Undo, Sync)
       </span>
       {onEinstellungen && (
@@ -607,30 +600,23 @@ function EinfachAnsicht() {
   const inSerie = new Set(serien.flatMap((s) => Object.keys(s.jobs)));
   const einzelJobs = jobs.filter((j) => !inSerie.has(j.job_id));
 
-  const inputStyle: React.CSSProperties = {
-    padding: '5px 9px',
-    borderRadius: 'var(--k-radius-sm)',
-    border: '1px solid var(--k-line-strong)',
-    background: 'var(--k-raised)',
-  };
-
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 20 }}>
-      <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <div className="vis-einfach-flaeche">
+      <div className="vis-einfach-stapel">
+        <div className="vis-einfach-kopf">
           <Badge hue={moduleHue.vis}>KosmoVis</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 13 }}>
+          <span className="vis-einfach-kopf-text">
             Geometrie-treue Renderings über die HomeStation
           </span>
-          <div style={{ flex: 1 }} />
+          <div className="vis-einfach-spacer" />
           <Badge hue={health === 'ok' ? 'var(--k-success)' : 'var(--k-danger)'}>
             Bridge {health}
           </Badge>
         </div>
 
-        <Panel style={{ display: 'grid', gap: 10 }}>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-            <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+        <Panel className="vis-einfach-panel">
+          <div className="vis-einfach-zeile">
+            <label className="vis-einfach-label">
               Bridge-URL{' '}
               <input
                 value={bridgeUrl}
@@ -638,10 +624,10 @@ function EinfachAnsicht() {
                   setBridgeUrl(e.target.value);
                   localStorage.setItem('kosmo.bridge', e.target.value);
                 }}
-                style={{ ...inputStyle, width: 240 }}
+                className="vis-einfach-feld vis-einfach-feld--breit"
               />
             </label>
-            <label style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+            <label className="vis-einfach-label">
               Geometrie-Treue{' '}
               <input
                 type="range"
@@ -661,7 +647,7 @@ function EinfachAnsicht() {
               setPrompt(e.target.value);
               setPromptOverride(null);
             }}
-            style={{ ...inputStyle, padding: '7px 10px' }}
+            className="vis-einfach-feld vis-einfach-feld--prompt"
           />
           {/* V8: finaler Prompt — Modell-Materialien sprechen mit, alles überschreibbar */}
           <textarea
@@ -669,12 +655,12 @@ function EinfachAnsicht() {
             value={promptOverride ?? finalerRenderPrompt('', prompt, renderPromptBausteine(useProject.getState().doc))}
             onChange={(e) => setPromptOverride(e.target.value)}
             rows={2}
-            style={{ ...inputStyle, padding: '7px 10px', fontFamily: 'inherit', fontSize: 12, color: 'var(--k-ink-soft)' }}
+            className="vis-einfach-feld vis-einfach-feld--prompt-mono"
           />
-          <span style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+          <span className="vis-einfach-hinweis-zeile">
             Finaler Prompt (geht so an die Bridge) — Material-Bausteine kommen aus den Wandaufbauten; Tippen überschreibt.
           </span>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="vis-einfach-aktionen">
             <KButton tone="accent" onClick={() => void submit()} disabled={sending || health !== 'ok'} data-testid="send-render">
               {sending ? 'Sende …' : 'Render-Job senden'}
             </KButton>
@@ -684,32 +670,32 @@ function EinfachAnsicht() {
                   tatsächlich gesendeten Presets abweichen. */}
               {STIMMUNGEN.length} Varianten ({STIMMUNGEN.map((s) => s.label).join(' · ')})
             </KButton>
-            <span style={{ fontSize: 12, color: 'var(--k-ink-faint)' }}>
+            <span className="vis-einfach-aktionen-hinweis">
               Modell wird als GLB exportiert; gerendert wird im GPU-Leerlauf-Fenster.
             </span>
           </div>
-          {error && <div style={{ color: 'var(--k-danger)', fontSize: 12.5 }}>⚠ {error}</div>}
-          {hinweis && <div style={{ color: 'var(--k-success)', fontSize: 12.5 }} data-testid="vis-hinweis">✓ {hinweis}</div>}
+          {error && <div className="vis-einfach-fehler">⚠ {error}</div>}
+          {hinweis && <div className="vis-einfach-erfolg" data-testid="vis-hinweis">✓ {hinweis}</div>}
         </Panel>
 
         {/* Varianten-Serien: Stimmungen nebeneinander, QA je Karte */}
         {[...serien].reverse().map((s) => (
-          <div key={s.id} style={{ display: 'grid', gap: 8 }} data-testid="varianten-serie">
-            <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
-              <span className="k-titel" style={{ fontSize: 13 }}>Varianten-Serie</span>
-              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+          <div key={s.id} className="vis-einfach-serie" data-testid="varianten-serie">
+            <div className="vis-einfach-serie-kopf">
+              <span className="k-titel vis-einfach-serie-titel">Varianten-Serie</span>
+              <span className="vis-einfach-serie-zeit">
                 {new Date(s.ts).toLocaleString('de-CH')}
               </span>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+            <div className="vis-einfach-serie-raster">
               {Object.entries(s.jobs).map(([jobId, label], i) => {
                 const j = jobById.get(jobId);
                 return (
                   <Karteikarte key={jobId} nr={i + 1}>
-                    <div style={{ display: 'grid', gap: 6 }}>
-                      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                        <span style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 12.5 }}>{label}</span>
-                        <div style={{ flex: 1 }} />
+                    <div className="vis-einfach-karte">
+                      <div className="vis-einfach-karte-kopf">
+                        <span className="vis-einfach-karte-label">{label}</span>
+                        <div className="vis-einfach-spacer" />
                         {j?.result ? (
                           <Badge hue={j.result.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
                             QA {j.result.qa.verdict.passed ? 'ok' : 'verfehlt'}
@@ -724,16 +710,16 @@ function EinfachAnsicht() {
                             jobId={jobId}
                             imageName={j.result.images[0]!}
                             alt={label}
-                            style={{ width: '100%', border: '1px solid var(--k-line)' }}
+                            className="vis-img-full"
                           />
-                          <div style={{ display: 'flex', gap: 12, alignItems: 'center', fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+                          <div className="vis-einfach-karte-meta">
                             {j.result.qa.geometry && (
                               <span>Geometrie <Measure>{j.result.qa.geometry.geometry_fidelity.toFixed(2)}</Measure></span>
                             )}
                             {j.result.qa.style && (
                               <span>Stil <Measure>{j.result.qa.style.style_score.toFixed(2)}</Measure></span>
                             )}
-                            <div style={{ flex: 1 }} />
+                            <div className="vis-einfach-spacer" />
                             <KButton
                               size="sm"
                               tone="quiet"
@@ -763,8 +749,8 @@ function EinfachAnsicht() {
           />
         )}
         {einzelJobs.map((j) => (
-          <Panel key={j.job_id} style={{ display: 'grid', gap: 8 }} data-testid="render-job">
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <Panel key={j.job_id} className="vis-einfach-job" data-testid="render-job">
+            <div className="vis-einfach-job-kopf">
               <Measure>{j.job_id}</Measure>
               <Badge
                 hue={
@@ -777,28 +763,25 @@ function EinfachAnsicht() {
               >
                 {j.status}
               </Badge>
-              <div style={{ flex: 1 }} />
-              <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+              <div className="vis-einfach-spacer" />
+              <span className="vis-einfach-job-zeit">
                 {new Date(j.created_at).toLocaleTimeString('de-CH')}
               </span>
             </div>
             {j.result && (
               <>
                 <Hairline />
-                <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                <div className="vis-einfach-bilder">
                   {j.result.images.map((img) => (
                     <BridgeBild
                       key={img}
                       jobId={j.job_id}
                       imageName={img}
                       alt={img}
-                      style={{
-                        width: 280,
-                        border: '1px solid var(--k-line)',
-                      }}
+                      className="vis-einfach-bild-fest"
                     />
                   ))}
-                  <div style={{ display: 'grid', gap: 6, alignContent: 'start', fontSize: 12.5 }}>
+                  <div className="vis-einfach-detail">
                     <Badge hue={j.result.qa.verdict.passed ? 'var(--k-success)' : 'var(--k-danger)'}>
                       QA {j.result.qa.verdict.passed ? 'bestanden' : 'verfehlt'}
                     </Badge>
@@ -821,7 +804,7 @@ function EinfachAnsicht() {
                       </span>
                     )}
                     {j.result.qa.verdict.reason && (
-                      <span style={{ color: 'var(--k-ink-faint)' }}>{j.result.qa.verdict.reason}</span>
+                      <span className="vis-einfach-detail-grund">{j.result.qa.verdict.reason}</span>
                     )}
                   </div>
                 </div>

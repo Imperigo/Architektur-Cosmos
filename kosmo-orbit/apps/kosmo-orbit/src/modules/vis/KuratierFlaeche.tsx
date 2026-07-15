@@ -11,6 +11,7 @@ import {
   varianteMerkmale,
   type KuratierKartenDaten,
 } from './varianten-diff';
+import './vis-visual.css';
 
 /**
  * Vis-Kuratierfläche (Welle 1 — Soll-Bild `Kosmo Viz Kuratierung.dc.html`
@@ -28,14 +29,6 @@ type Filter = 'alle' | 'favoriten' | 'verworfen';
 type Ansicht = 'raster' | 'vergleich';
 
 const FILTER_LABEL: Record<Filter, string> = { alle: 'Alle', favoriten: 'Favoriten', verworfen: 'Verworfen' };
-
-const monoLabel: React.CSSProperties = {
-  fontFamily: 'var(--k-font-mono)',
-  fontSize: 10,
-  letterSpacing: '0.16em',
-  textTransform: 'uppercase',
-  color: 'var(--k-ink-faint)',
-};
 
 export function KuratierFlaeche({
   graph,
@@ -118,84 +111,50 @@ export function KuratierFlaeche({
   return (
     <div
       data-testid="vis-kuratier-flaeche"
-      className="k-einblenden"
       // zIndex 35 statt 8 (v0.7.8 Welle 3/P6): die früheren z-5-Overlays
       // (Palette/Minimap/Legende/Ausrichten) sind jetzt Dock-Panels mit
       // z-14 (gedockt) bzw. z-30 (schwebend, `DockPanel.tsx`) — die
       // Vollbild-Kuratier-Fläche muss weiterhin ÜBER ihnen liegen (wie 8
       // vorher über 5 lag). Ihr Schliessen-Knopf (`vis-kuratier-toggle`,
       // NodeCanvas.tsx) liegt eine Stufe höher (36).
-      style={{ position: 'absolute', inset: 0, zIndex: 35, display: 'flex', flexDirection: 'column', background: 'var(--k-field)' }}
+      className="k-einblenden vis-kuratier-flaeche"
     >
-      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+      <div className="vis-kuratier-mitte">
         {/* Herkunft-Rail (Entsprechung Soll-Bild "Node-Palette 268") */}
-        <aside
-          style={{
-            width: 220,
-            flex: 'none',
-            borderRight: '1px solid var(--k-line)',
-            background: 'var(--k-surface)',
-            padding: 16,
-            display: 'grid',
-            gap: 4,
-            alignContent: 'start',
-            overflow: 'auto',
-          }}
-        >
-          <span style={{ ...monoLabel, marginBottom: 8 }}>Aktiver Zweig</span>
+        <aside className="vis-kuratier-rail">
+          <span className="vis-mono-label vis-kuratier-rail-titel">Aktiver Zweig</span>
           {zweig.length === 0 ? (
-            <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', fontStyle: 'italic' }}>Graph ist leer.</span>
+            <span className="vis-kuratier-rail-leer">Graph ist leer.</span>
           ) : (
             zweig.map((n) => {
               const kat = VIS_NODE_KATALOG[n.typ];
               const farbe = kat ? VIS_KATEGORIE_HUE[kat.kategorie] : 'var(--k-ink-faint)';
               return (
-                <div key={n.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0' }}>
-                  <span
-                    aria-hidden
-                    style={{
-                      width: 18,
-                      height: 18,
-                      flex: 'none',
-                      borderRadius: 6,
-                      background: `color-mix(in srgb, ${farbe} 16%, transparent)`,
-                      border: `1px solid color-mix(in srgb, ${farbe} 45%, transparent)`,
-                    }}
-                  />
-                  <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-soft)' }}>
+                <div key={n.id} className="vis-kuratier-rail-zeile">
+                  <span aria-hidden className="vis-kuratier-rail-icon" style={{ ['--_farbe' as string]: farbe }} />
+                  <span className="vis-kuratier-rail-label">
                     {kat?.label ?? n.typ}
                   </span>
                 </div>
               );
             })
           )}
-          <div style={{ height: 1, background: 'var(--k-line)', margin: '10px 0' }} />
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
+          <div className="vis-kuratier-rail-trenner" />
+          <span className="vis-kuratier-rail-fuss">
             {karten.length} Varianten insgesamt
           </span>
         </aside>
 
         {/* Mitte: Sub-Toolbar + Raster/Vergleich */}
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-          <div
-            style={{
-              height: 48,
-              flex: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              padding: '0 16px',
-              borderBottom: '1px solid var(--k-line)',
-              background: 'var(--k-surface)',
-            }}
-          >
-            <KIcon name="auge" size={16} style={{ color: 'var(--k-mod-vis)' }} />
-            <span style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--k-ink)' }}>{quellKat?.label ?? 'Varianten'}</span>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 11, color: 'var(--k-ink-faint)' }}>
+        <div className="vis-kuratier-spalte">
+          <div className="vis-kuratier-subtoolbar">
+            <KIcon name="auge" size={16} className="vis-kuratier-subtoolbar-icon" />
+            <span className="vis-kuratier-subtoolbar-titel">{quellKat?.label ?? 'Varianten'}</span>
+            <span className="vis-kuratier-subtoolbar-zahl">
               · {karten.length} Varianten
             </span>
-            <div style={{ flex: 1 }} />
-            <div style={{ display: 'flex', gap: 2, padding: 3, borderRadius: 'var(--k-radius-sm)', background: 'var(--k-field)', border: '1px solid var(--k-line)' }}>
+            <div className="vis-kuratier-spacer" />
+            <div className="vis-kuratier-segment">
               {(['alle', 'favoriten', 'verworfen'] as const).map((f) => (
                 <button
                   key={f}
@@ -203,25 +162,13 @@ export function KuratierFlaeche({
                   data-testid={`vis-kuratier-filter-${f}`}
                   aria-pressed={filter === f}
                   onClick={() => setFilter(f)}
-                  style={{
-                    height: 26,
-                    padding: '0 11px',
-                    borderRadius: 6,
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: filter === f ? 'var(--k-accent-wash)' : 'transparent',
-                    color: filter === f ? 'var(--k-accent)' : 'var(--k-ink-soft)',
-                    fontFamily: 'var(--k-font-mono)',
-                    fontSize: 10.5,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                  }}
+                  className={`vis-kuratier-segment-eintrag${filter === f ? ' vis-kuratier-segment-eintrag--aktiv' : ''}`}
                 >
                   {FILTER_LABEL[f]}
                 </button>
               ))}
             </div>
-            <div style={{ display: 'flex', gap: 2, padding: 3, borderRadius: 'var(--k-radius-sm)', background: 'var(--k-field)', border: '1px solid var(--k-line)' }}>
+            <div className="vis-kuratier-segment">
               {(['raster', 'vergleich'] as const).map((a) => (
                 <button
                   key={a}
@@ -229,19 +176,7 @@ export function KuratierFlaeche({
                   data-testid={`vis-kuratier-ansicht-${a}`}
                   aria-pressed={ansicht === a}
                   onClick={() => setAnsicht(a)}
-                  style={{
-                    height: 26,
-                    padding: '0 11px',
-                    borderRadius: 6,
-                    border: 'none',
-                    cursor: 'pointer',
-                    background: ansicht === a ? 'var(--k-accent-wash)' : 'transparent',
-                    color: ansicht === a ? 'var(--k-accent)' : 'var(--k-ink-soft)',
-                    fontFamily: 'var(--k-font-mono)',
-                    fontSize: 10.5,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                  }}
+                  className={`vis-kuratier-segment-eintrag${ansicht === a ? ' vis-kuratier-segment-eintrag--aktiv' : ''}`}
                 >
                   {a === 'raster' ? 'Raster' : 'Vergleich'}
                 </button>
@@ -249,14 +184,14 @@ export function KuratierFlaeche({
             </div>
           </div>
 
-          <div style={{ flex: 1, minHeight: 0, overflow: 'auto', padding: 20 }}>
+          <div className="vis-kuratier-inhalt">
             {ansicht === 'raster' ? (
               hauptKarten.length === 0 && !ablageSichtbar ? (
                 <LeerRaster filter={filter} />
               ) : (
-                <div style={{ display: 'grid', gap: 24 }}>
+                <div className="vis-kuratier-raster-stapel">
                   {hauptKarten.length > 0 && (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                    <div className="vis-kuratier-raster">
                       {hauptKarten.map((k) => (
                         <RasterKarte
                           key={k.node.id}
@@ -274,9 +209,9 @@ export function KuratierFlaeche({
                     </div>
                   )}
                   {ablageSichtbar && (
-                    <div style={{ display: 'grid', gap: 10 }}>
-                      <span style={{ ...monoLabel, color: 'var(--k-ink-faint)' }}>Ablage ({ablage.length})</span>
-                      <div data-testid="vis-kuratier-ablage" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+                    <div className="vis-kuratier-ablage-stapel">
+                      <span className="vis-mono-label">Ablage ({ablage.length})</span>
+                      <div data-testid="vis-kuratier-ablage" className="vis-kuratier-raster">
                         {ablage.map((k) => (
                           <RasterKarte
                             key={k.node.id}
@@ -306,8 +241,8 @@ export function KuratierFlaeche({
                 onBInsProjekt={() => void insProjekt(vergleichKarten[1]!, `Variante ${idVon.get(vergleichKarten[1]!.node.id) ?? ''}`)}
               />
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center', padding: '40px 4px', textAlign: 'center' }}>
-                <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontStyle: 'italic' }}>
+              <div className="vis-kuratier-leerzustand">
+                <span className="vis-kuratier-leerzustand-text">
                   Wähle zwei Karten im Raster («Vergleichen»-Häkchen), um sie hier gegenüberzustellen.
                 </span>
               </div>
@@ -329,21 +264,10 @@ export function KuratierFlaeche({
       </div>
 
       {/* Statusleiste (Soll-Bild §6.2) */}
-      <div
-        style={{
-          height: 28,
-          flex: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          padding: '0 14px',
-          borderTop: '1px solid var(--k-line)',
-          background: 'var(--k-statusbar, var(--k-sunken, var(--k-surface)))',
-        }}
-      >
+      <div className="vis-kuratier-statuszeile">
         <span
           data-testid="vis-kuratier-status"
-          style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}
+          className="vis-kuratier-statuszeile-text"
         >
           {karten.length} Varianten · {favoriten.length} Favoriten · {ablage.length} verworfen
         </span>
@@ -360,7 +284,7 @@ function LeerRaster({ filter }: { filter: Filter }) {
         ? 'Die Ablage ist leer — nichts wurde verworfen.'
         : 'Noch keine Renderbilder oder Aufnahmen — «Ausführen» an einem Render-Node oder eine Viewport-Aufnahme füllt das Raster.';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center', padding: '40px 4px', textAlign: 'center' }}>
+    <div className="vis-kuratier-leerzustand">
       <svg width="26" height="22" viewBox="0 0 26 22" aria-hidden focusable="false">
         <rect x="1.5" y="2.5" width="17" height="14" rx="1.5" fill="none" stroke="var(--k-ink-faint)" strokeWidth="1.4" />
         <path
@@ -371,14 +295,23 @@ function LeerRaster({ filter }: { filter: Filter }) {
           strokeLinejoin="round"
         />
       </svg>
-      <span style={{ fontSize: 11.5, color: 'var(--k-ink-faint)', fontStyle: 'italic', maxWidth: 360 }}>{text}</span>
+      <span className="vis-kuratier-leerzustand-text">{text}</span>
     </div>
   );
 }
 
-/** Eine Raster-Karte (Soll-Bild §6.2: `aspect-ratio 4/3`, ID-Pill, FAVORIT-
- * Badge, Meta-Fusszeile, Aktionen). Ausgewählt = Accent-Rahmen+Glow, Favorit
- * (ohne Auswahl) = golden getönter Rahmen (Rollenfarbe `agent`). */
+/** Eine Raster-Karte — KVariantenKarte-Anatomie (Spez §3 B-45/§9.12 B-93:
+ * `aspect-ratio 4/3`, ID-Pill-Scrim `rgba(5,6,8,.6)`, FAVORIT-Badge, gewählt =
+ * 1.5px Accent+Glow). Nutzt die `vis-raster-karte-*`-Klassen statt der
+ * `KVariantenKarte`-Komponente selbst: die Karte lebt hier von zwei
+ * unterschiedlichen Bildquellen (`BridgeBild`s async Blob-Fetch fürs
+ * CSP-geschützte Bridge-Artefakt ODER eine direkte `dataUrl`-Aufnahme,
+ * s. `KuratierKartenDaten`), die generische Komponente kennt nur ein
+ * statisches `bild`-URL/`background-image` — dieselbe Optik (byte-identische
+ * Klassenwerte), ohne den Blob-Fetch nachzubauen. Kein RENDERT-Badge/Scan:
+ * `kuratierKarten` enthält laut `NodeCanvas.tsx` ausschliesslich `fertig`e
+ * Render-Läufe + vorhandene Aufnahmen — ein «läuft»-Zustand kommt hier nie
+ * vor (Ehrlichkeits-Gebot, keine Attrappe für einen Zustand ohne echte Daten). */
 function RasterKarte({
   karte,
   id,
@@ -404,98 +337,53 @@ function RasterKarte({
   const merkmale = varianteMerkmale(karte.node, karte.auftrag, qa);
   const kennung = 'jobId' in karte.quelle ? kurzKennung(karte.quelle.jobId) : kurzKennung(karte.node.id);
 
-  const rahmen = ausgewaehlt
-    ? '1.5px solid var(--k-accent)'
+  const rahmenKlasse = ausgewaehlt
+    ? 'vis-raster-karte--gewaehlt'
     : karte.kur.markiert
-      ? '1px solid var(--k-rolle-agent-line)'
-      : '1px solid var(--k-line-strong)';
+      ? 'vis-raster-karte--favorit'
+      : '';
 
   return (
     <div
       data-testid="vis-kuratier-karte"
       onClick={onWahl}
-      style={{
-        position: 'relative',
-        aspectRatio: '4 / 3',
-        borderRadius: 'var(--k-radius-md)',
-        overflow: 'hidden',
-        cursor: 'pointer',
-        border: rahmen,
-        boxShadow: ausgewaehlt ? 'var(--k-glow-cyan, none)' : 'none',
-        opacity: karte.kur.verworfen ? 0.6 : 1,
-        transition: 'border-color var(--k-motion-fast, 120ms), box-shadow var(--k-motion-fast, 120ms)',
-      }}
+      className={['vis-raster-karte', rahmenKlasse, karte.kur.verworfen ? 'vis-raster-karte--verworfen' : ''].filter(Boolean).join(' ')}
     >
       {'dataUrl' in karte.quelle ? (
         <img
           src={karte.quelle.dataUrl}
           alt={merkmale.typLabel}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          className="vis-raster-karte-bild"
         />
       ) : (
         <BridgeBild
           jobId={karte.quelle.jobId}
           imageName={karte.quelle.bild}
           alt={merkmale.typLabel}
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          className="vis-raster-karte-bild"
         />
       )}
 
       {/* ID-Pill + Favorit-Badge */}
-      <div style={{ position: 'absolute', top: 8, left: 8, right: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
+      <div className="vis-raster-karte-embleme">
         <span
-          style={{
-            fontFamily: 'var(--k-font-mono)',
-            fontSize: 10,
-            fontWeight: 600,
-            letterSpacing: '0.08em',
-            padding: '3px 8px',
-            borderRadius: 999,
-            color: ausgewaehlt ? 'var(--k-accent)' : '#f4f6fa',
-            background: 'rgba(5, 6, 8, 0.6)',
-            border: `1px solid ${ausgewaehlt ? 'var(--k-accent)' : 'rgba(255,255,255,0.14)'}`,
-          }}
+          className={`vis-raster-karte-id${ausgewaehlt ? ' vis-raster-karte-id--aktiv' : ''}`}
         >
           {id}
         </span>
         {karte.kur.markiert && (
-          <span
-            style={{
-              fontFamily: 'var(--k-font-mono)',
-              fontSize: 9,
-              fontWeight: 600,
-              letterSpacing: '0.1em',
-              padding: '3px 8px',
-              borderRadius: 999,
-              color: 'var(--k-rolle-agent)',
-              background: 'rgba(5, 6, 8, 0.6)',
-              border: '1px solid var(--k-rolle-agent-line)',
-            }}
-          >
+          <span className="vis-raster-karte-badge">
             FAVORIT
           </span>
         )}
       </div>
 
       {/* Fusszeile: Meta + Aktionen */}
-      <div
-        style={{
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          bottom: 0,
-          padding: '9px 10px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-end',
-          gap: 6,
-          background: 'linear-gradient(transparent, rgba(5, 6, 8, 0.88))',
-        }}
-      >
-        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 9.5, letterSpacing: '0.04em', color: '#dfe3ea' }}>
+      <div className="vis-raster-karte-fuss">
+        <span className="vis-raster-karte-meta">
           {kennung} · {merkmale.szene !== '—' ? merkmale.szene : merkmale.stimmung}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+        <div className="vis-raster-karte-aktionen">
           <button
             type="button"
             data-testid="vis-kuratier-stern"
@@ -506,7 +394,7 @@ function RasterKarte({
               e.stopPropagation();
               onMarkieren();
             }}
-            style={knopfStil(karte.kur.markiert ? 'var(--k-rolle-agent)' : undefined)}
+            className={`vis-raster-karte-knopf${karte.kur.markiert ? ' vis-raster-karte-knopf--markiert' : ''}`}
           >
             <KIcon name={karte.kur.markiert ? 'stern-voll' : 'stern'} size={14} />
           </button>
@@ -520,7 +408,7 @@ function RasterKarte({
               e.stopPropagation();
               onVerwerfen();
             }}
-            style={knopfStil(karte.kur.verworfen ? 'var(--k-danger)' : undefined)}
+            className={`vis-raster-karte-knopf${karte.kur.verworfen ? ' vis-raster-karte-knopf--verworfen' : ''}`}
           >
             <KIcon name="schliessen" size={14} />
           </button>
@@ -533,21 +421,12 @@ function RasterKarte({
               e.stopPropagation();
               onInsProjekt();
             }}
-            style={knopfStil()}
+            className="vis-raster-karte-knopf"
           >
             <KIcon name="ordner" size={14} />
           </button>
           <label
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 3,
-              fontSize: 9,
-              fontFamily: 'var(--k-font-mono)',
-              color: '#c7ccd6',
-              cursor: 'pointer',
-              paddingLeft: 2,
-            }}
+            className="vis-raster-karte-vgl"
             onClick={(e) => e.stopPropagation()}
           >
             <input type="checkbox" data-testid="vis-kuratier-vergleich-wahl" checked={imVergleich} onChange={onVergleichWahl} />
@@ -557,20 +436,6 @@ function RasterKarte({
       </div>
     </div>
   );
-}
-
-function knopfStil(farbe?: string): React.CSSProperties {
-  return {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    display: 'grid',
-    placeItems: 'center',
-    cursor: 'pointer',
-    background: 'rgba(5, 6, 8, 0.55)',
-    border: '1px solid rgba(255,255,255,0.14)',
-    color: farbe ?? '#c7ccd6',
-  };
 }
 
 /** Vergleich (Soll-Bild §6.2): 2-up A/B + Parameter-Diff-Tabelle. A trägt die
@@ -598,30 +463,21 @@ function VergleichAnsicht({
   const zeilen = varianteDiff(merkmaleA, merkmaleB);
 
   const bildKarte = (k: KuratierKartenDaten, label: 'A' | 'B', id: string) => {
-    const farbe = label === 'A' ? 'var(--k-rolle-generator)' : 'var(--k-accent)';
-    const rahmen = label === 'A' ? 'var(--k-rolle-generator-line)' : 'var(--k-accent)';
     return (
       <div
         key={k.node.id}
-        style={{
-          position: 'relative',
-          aspectRatio: '16 / 10',
-          borderRadius: 'var(--k-radius-lg)',
-          overflow: 'hidden',
-          border: `1px solid ${rahmen}`,
-          boxShadow: label === 'B' ? 'var(--k-glow-cyan, none)' : 'none',
-        }}
+        className={`vis-vergleich-karte vis-vergleich-karte--${label.toLowerCase()}`}
       >
         {'dataUrl' in k.quelle ? (
-          <img src={k.quelle.dataUrl} alt={`Variante ${label}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img src={k.quelle.dataUrl} alt={`Variante ${label}`} className="vis-vergleich-karte-bild" />
         ) : (
-          <BridgeBild jobId={k.quelle.jobId} imageName={k.quelle.bild} alt={`Variante ${label}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <BridgeBild jobId={k.quelle.jobId} imageName={k.quelle.bild} alt={`Variante ${label}`} className="vis-vergleich-karte-bild" />
         )}
-        <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 24, height: 24, borderRadius: 7, display: 'grid', placeItems: 'center', fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 12, color: '#050608', background: farbe }}>
+        <div className="vis-vergleich-karte-kopf">
+          <span className={`vis-vergleich-karte-label vis-vergleich-karte-label--${label.toLowerCase()}`}>
             {label}
           </span>
-          <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: '#e6e9ef', padding: '3px 9px', borderRadius: 999, background: 'rgba(5,6,8,.6)' }}>
+          <span className="vis-vergleich-karte-id">
             {id}
           </span>
         </div>
@@ -630,40 +486,34 @@ function VergleichAnsicht({
   };
 
   return (
-    <div data-testid="vis-kuratier-vergleich-flaeche" style={{ display: 'grid', gap: 18, maxWidth: 1100, margin: '0 auto' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+    <div data-testid="vis-kuratier-vergleich-flaeche" className="vis-vergleich-flaeche">
+      <div className="vis-vergleich-paar">
         {bildKarte(a, 'A', idA)}
         {bildKarte(b, 'B', idB)}
       </div>
-      <div style={{ borderRadius: 'var(--k-radius-md)', border: '1px solid var(--k-line)', overflow: 'hidden' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', padding: '10px 16px', background: 'var(--k-surface)', borderBottom: '1px solid var(--k-line)' }}>
-          <span style={{ ...monoLabel, color: 'var(--k-rolle-generator)', textAlign: 'right' }}>Variante A</span>
-          <span style={{ ...monoLabel, padding: '0 20px' }}>Parameter</span>
-          <span style={{ ...monoLabel, color: 'var(--k-accent)' }}>Variante B</span>
+      <div className="vis-vergleich-tabelle">
+        <div className="vis-vergleich-tabelle-kopf">
+          <span className="vis-mono-label vis-vergleich-tabelle-kopf-a">Variante A</span>
+          <span className="vis-mono-label vis-vergleich-tabelle-kopf-label">Parameter</span>
+          <span className="vis-mono-label vis-vergleich-tabelle-kopf-b">Variante B</span>
         </div>
         {zeilen.map((z) => (
-          <div
-            key={z.label}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto 1fr',
-              alignItems: 'center',
-              padding: '9px 16px',
-              background: 'var(--k-raised)',
-              borderBottom: '1px solid var(--k-line)',
-            }}
-          >
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, textAlign: 'right', color: z.abweichend ? 'var(--k-rolle-generator)' : 'var(--k-ink-faint)', fontWeight: z.abweichend ? 700 : 400 }}>
+          <div key={z.label} className="vis-vergleich-zeile">
+            <span
+              className={`vis-vergleich-zeile-wert vis-vergleich-zeile-wert--a${z.abweichend ? ' vis-vergleich-zeile-wert--abweichend-a' : ''}`}
+            >
               {z.a}
             </span>
-            <span style={{ ...monoLabel, padding: '0 20px', minWidth: 130, textAlign: 'center', color: 'var(--k-ink-faint)' }}>{z.label}</span>
-            <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 12, color: z.abweichend ? 'var(--k-accent)' : 'var(--k-ink-faint)', fontWeight: z.abweichend ? 700 : 400 }}>
+            <span className="vis-mono-label vis-vergleich-zeile-label">{z.label}</span>
+            <span
+              className={`vis-vergleich-zeile-wert${z.abweichend ? ' vis-vergleich-zeile-wert--abweichend-b' : ''}`}
+            >
               {z.b}
             </span>
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+      <div className="vis-vergleich-aktionen">
         <KButton size="sm" tone="quiet" data-testid="vis-kuratier-vergleich-a-behalten" onClick={onABehalten}>
           Variante A behalten
         </KButton>

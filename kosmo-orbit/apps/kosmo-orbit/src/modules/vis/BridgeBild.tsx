@@ -16,12 +16,16 @@ export function BridgeBild({
   alt,
   testid,
   style,
+  className,
 }: {
   jobId: string;
   imageName: string;
   alt: string;
   testid?: string;
   style?: React.CSSProperties;
+  /** v0.8.0B / P5 (Spez §3 B-22, Inline-Styles raus): additiv neben `style` —
+   * der Aufrufer bringt sein Aussehen jetzt meist über eine Klasse mit. */
+  className?: string;
 }) {
   const [url, setUrl] = useState<string | null>(null);
   const [fehler, setFehler] = useState(false);
@@ -50,6 +54,7 @@ export function BridgeBild({
     return (
       <div
         data-testid={testid ? `${testid}-fehler` : undefined}
+        className={className}
         style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-danger)', border: '1px dashed var(--k-line-strong)', minHeight: 60 }}
       >
         Bild nicht ladbar
@@ -59,11 +64,12 @@ export function BridgeBild({
   if (!url) {
     return (
       <div
+        className={className}
         style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: 'var(--k-ink-faint)', border: '1px dashed var(--k-line)', minHeight: 60 }}
       >
         lädt …
       </div>
     );
   }
-  return <img src={url} alt={alt} data-testid={testid} style={style} />;
+  return <img src={url} alt={alt} data-testid={testid} className={className} style={style} />;
 }
