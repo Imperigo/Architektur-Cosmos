@@ -14,6 +14,8 @@ import {
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
 import { DossierPanel } from './DossierPanel';
+import { PlankopfPanel } from './PlankopfPanel';
+import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
 
 /**
  * KosmoPublish — Blatteditor. Blätter sind Kernel-Entities (Undo/Sync/.kosmo
@@ -63,6 +65,14 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   // ui-zustand-Store, weil DossierPanel bewusst ein eigenständiges Panel
   // bleibt (nur `onClose`-Prop, kein Doc-/Undo-Zustand).
   const [dossierOffen, setDossierOffen] = useState(false);
+  // v0.8.0 P6 (Plankopf-Framework-Editor, docs/V080-PLANKOPF-SPEZ.md §8/§9
+  // V-K9): PlankopfPanel öffnet über den Werkzeugleisten-Knopf ODER per Klick
+  // auf das Plankopf-Overlay im Blatt-Canvas (`plankopfOffen` triggert
+  // beides). Preview-lokale Toggles «Zonen»/«Aussenbemassung» (Spez §8 V-K8,
+  // §9 V-I5): NIE ins Doc, NIE in den Export — reiner lokaler UI-Zustand.
+  const [plankopfOffen, setPlankopfOffen] = useState(false);
+  const [zonenVorschau, setZonenVorschau] = useState(false);
+  const [aussenbemassungVorschau, setAussenbemassungVorschau] = useState(false);
   const svgHostRef = useRef<HTMLDivElement>(null);
   const bildDateiRef = useRef<HTMLInputElement>(null);
 
@@ -392,6 +402,20 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             onClick={() => setDossierOffen((v) => !v)}
           >
             <KIcon name="dokument" size={14} title="Projekt-Dossier" /> Dossier
+          </KButton>
+          {/* v0.8.0 P6: Plankopf-Editor — dasselbe «Projekt geladen»-Kriterium
+              wie Dossier (mind. ein Geschoss), zusätzlich braucht es ein
+              aktives Blatt (sonst gibt es kein `Sheet.plankopf` zum Setzen). */}
+          <KButton
+            size="sm"
+            tone={plankopfOffen ? 'accent' : 'ghost'}
+            data-testid="publish-plankopf"
+            title="Plankopf — Feldeditor, Büro-Stammdaten, Layout-Schalter, Massstab-Chips und Phasen-Detailkarte"
+            aria-label="Plankopf öffnen"
+            disabled={!sheet}
+            onClick={() => setPlankopfOffen((v) => !v)}
+          >
+            <KIcon name="stift" size={14} title="Plankopf" /> Plankopf
           </KButton>
           {onEinstellungen && (
             <KButton
@@ -755,6 +779,31 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               </KButton>
             ))}
           </KToolGruppe>
+          {/* v0.8.0 P6 (Spez §8 V-K8/§9 V-I5): reine Vorschau-Toggles — NIE
+              ins Doc, NIE in den Export, lokaler State (`zonenVorschau`/
+              `aussenbemassungVorschau` oben). «Zonen» tönt die Ränder
+              zwischen Papierkante und Zeichenfläche; «Aussenbemassung»
+              zeichnet B/H-Masslinien um die Zeichenfläche. */}
+          <KToolGruppe label="Vorschau (nur Anzeige)">
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+              <input
+                type="checkbox"
+                data-testid="plankopf-preview-zonen"
+                checked={zonenVorschau}
+                onChange={(e) => setZonenVorschau(e.target.checked)}
+              />
+              Zonen
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+              <input
+                type="checkbox"
+                data-testid="plankopf-preview-aussenbemassung"
+                checked={aussenbemassungVorschau}
+                onChange={(e) => setAussenbemassungVorschau(e.target.checked)}
+              />
+              Aussenbemassung
+            </label>
+          </KToolGruppe>
           {selectedPlacement && sheet && (() => {
             const pl = sheet.placements.find((x) => x.id === selectedPlacement);
             if (!pl) return null;
@@ -1092,6 +1141,117 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   />
                 );
               })}
+              {/* Plankopf-Overlay (v0.8.0 P6, Spez §8 V-K9/P-K7): selektierbar
+                  (Klick öffnet/fokussiert das PlankopfPanel), aber NICHT
+                  verschiebbar — korrigiert bewusst den im Prototyp offen
+                  eingeräumten Bug («keine Sperre implementiert»). Die Hitbox
+                  kommt aus dem TATSÄCHLICH gerenderten SVG
+                  (`findePlankopfHitbox`, `plankopf-overlay.ts`) — deckt so
+                  automatisch beide Geometrien ab (Alt-Fusskopf ohne
+                  Plankopf-/Layout-Daten, Framework-Plankopf mit Daten), ohne
+                  dass P7 (Default-Flip der `SheetLayout`-Booleans) hier
+                  etwas nachziehen müsste. */}
+              {(() => {
+                const hit = findePlankopfHitbox(svgMarkup);
+                if (!hit) return null;
+                return (
+                  <div
+                    data-testid="plankopf-overlay"
+                    title="Plankopf — Klick öffnet den Editor (fester Sitz unten rechts, nicht verschiebbar)"
+                    onPointerDown={(e) => {
+                      e.preventDefault();
+                      setSelectedPlacement(null);
+                      setSelectedBild(null);
+                      setPlankopfOffen(true);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: `${(hit.x / paper.width) * 100}%`,
+                      top: `${(hit.y / paper.height) * 100}%`,
+                      width: `${(hit.width / paper.width) * 100}%`,
+                      height: `${(hit.height / paper.height) * 100}%`,
+                      border: plankopfOffen ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
+                      cursor: 'pointer',
+                      borderRadius: 'var(--k-radius-sm)',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!plankopfOffen) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!plankopfOffen) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
+                    }}
+                  />
+                );
+              })()}
+              {/* Vorschau-Overlay «Zonen» (Spez §8 V-K8): tönt die Ränder
+                  zwischen Papierkante und Zeichenfläche — rein dekorativ,
+                  `pointerEvents: 'none'`, NIE im Export. */}
+              {zonenVorschau && (() => {
+                const rahmen = findeRahmenRect(svgMarkup);
+                if (!rahmen) return null;
+                const baender = [
+                  { left: 0, top: 0, width: paper.width, height: rahmen.y }, // oben
+                  { left: 0, top: rahmen.y + rahmen.height, width: paper.width, height: paper.height - (rahmen.y + rahmen.height) }, // unten
+                  { left: 0, top: rahmen.y, width: rahmen.x, height: rahmen.height }, // links
+                  { left: rahmen.x + rahmen.width, top: rahmen.y, width: paper.width - (rahmen.x + rahmen.width), height: rahmen.height }, // rechts
+                ];
+                return (
+                  <div data-testid="plankopf-preview-zonen-overlay" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+                    {baender.map(
+                      (b, i) =>
+                        b.width > 0.01 &&
+                        b.height > 0.01 && (
+                          <div
+                            key={i}
+                            style={{
+                              position: 'absolute',
+                              left: `${(b.left / paper.width) * 100}%`,
+                              top: `${(b.top / paper.height) * 100}%`,
+                              width: `${(b.width / paper.width) * 100}%`,
+                              height: `${(b.height / paper.height) * 100}%`,
+                              background: 'color-mix(in srgb, var(--k-accent) 14%, transparent)',
+                            }}
+                          />
+                        ),
+                    )}
+                  </div>
+                );
+              })()}
+              {/* Vorschau-Overlay «Aussenbemassung» (Spez §8 V-K8): B/H-
+                  Masslinien um die Zeichenfläche — reine Anzeige, NIE im
+                  Export/Doc (Owner-Auflösung ungeklärter Prototyp-Toggle). */}
+              {aussenbemassungVorschau && (() => {
+                const rahmen = findeRahmenRect(svgMarkup);
+                if (!rahmen) return null;
+                const { x: fx, y: fy, width: fw, height: fh } = rahmen;
+                return (
+                  <svg
+                    data-testid="plankopf-preview-aussenbemassung-overlay"
+                    viewBox={`0 0 ${paper.width} ${paper.height}`}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', color: 'var(--k-accent)' }}
+                  >
+                    <line x1={fx} y1={fy - 3} x2={fx + fw} y2={fy - 3} stroke="currentColor" strokeWidth={0.4} />
+                    <line x1={fx} y1={fy - 5} x2={fx} y2={fy - 1} stroke="currentColor" strokeWidth={0.4} />
+                    <line x1={fx + fw} y1={fy - 5} x2={fx + fw} y2={fy - 1} stroke="currentColor" strokeWidth={0.4} />
+                    <text x={fx + fw / 2} y={fy - 4} textAnchor="middle" fontSize={4} fill="currentColor">
+                      {Math.round(fw)} mm
+                    </text>
+                    <line x1={fx - 3} y1={fy} x2={fx - 3} y2={fy + fh} stroke="currentColor" strokeWidth={0.4} />
+                    <line x1={fx - 5} y1={fy} x2={fx - 1} y2={fy} stroke="currentColor" strokeWidth={0.4} />
+                    <line x1={fx - 5} y1={fy + fh} x2={fx - 1} y2={fy + fh} stroke="currentColor" strokeWidth={0.4} />
+                    <text
+                      x={fx - 4}
+                      y={fy + fh / 2}
+                      textAnchor="middle"
+                      fontSize={4}
+                      fill="currentColor"
+                      transform={`rotate(-90 ${fx - 4} ${fy + fh / 2})`}
+                    >
+                      {Math.round(fh)} mm
+                    </text>
+                  </svg>
+                );
+              })()}
             </div>
           ) : (
             /* R1-Fix (Kritik-065 p-09/i-09, «Blattbereich-Leersatz von
@@ -1130,6 +1290,13 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           )}
         </div>
         {dossierOffen && <DossierPanel onClose={() => setDossierOffen(false)} />}
+        {plankopfOffen && sheet && (
+          <PlankopfPanel
+            sheetId={sheet.id}
+            selectedPlacementId={selectedPlacement}
+            onClose={() => setPlankopfOffen(false)}
+          />
+        )}
       </div>
     </div>
   );
