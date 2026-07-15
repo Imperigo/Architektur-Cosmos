@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { DOCK_KONSTANTEN, type DockModus, type DockZone, type FloatAnker, type PanelOverride } from './dock-kern';
+import { presetFuer, type DockPreset, type PresetId, type PresetStation } from './dock-presets';
 import type { DockStation } from './dock-stationen';
 
 /**
@@ -35,6 +36,19 @@ import type { DockStation } from './dock-stationen';
  * (Tab-Höhe `COLLH`), nicht dasselbe Feld wie `ui-zustand`s `…Offen`-Booleans
  * (P3 muss beide beim Rendern in Einklang bringen, s. `dock-stationen.ts`
  * Kopfkommentar zur `unternehmerplan`-Lücke).
+ *
+ * **v0.8.0 (PD1) — `aktivesPreset`**: additive Erweiterung für die kuratierten
+ * Layout-Varianten aus `dock-presets.ts` (`'fokus' | 'arbeiten' | 'pruefen'`,
+ * je Station `'design'`/`'vis'`). Dieser Store merkt sich nur, WELCHES Preset
+ * je Station zuletzt gewählt wurde (`presetSetzen()` schreibt es UND wendet
+ * dessen `overrides`/`leftW`/`rightW` über die bestehenden Aktionen an —
+ * Booleans/`offen` bleiben aussen vor, s. `dock-presets.ts`-Kopfkommentar).
+ * Fehlt ein Eintrag (z.B. alter `localStorage`-Stand ohne das Feld, oder eine
+ * Station, für die nie `presetSetzen()` lief), gilt das als «kein Preset
+ * aktiv» — funktional identisch zum heutigen (v0.7.9) Verhalten, NICHT
+ * automatisch `'fokus'`: der Owner-Auftrag zieht die «richtige» Default-
+ * Oberfläche («fokus» beim ECHTEN Erststart) bewusst in PD2, dort wo der
+ * Erststart selbst erkannt wird — diese Datei liefert nur den Mechanismus.
  */
 
 // ---------------------------------------------------------------------------
@@ -80,10 +94,16 @@ interface DockSpeicher {
   version: 1;
   modus: DockModus;
   layouts: Record<string, DockStationLayout>;
+  /** v0.8.0 (PD1) — je Station das zuletzt gewählte Preset, s. Kopfkommentar.
+   *  `Partial<Record<...>>` statt `Record<...>`, weil `'plan'` NIE einen
+   *  Eintrag bekommt (keine Presets, s. `dock-presets.ts`s `PresetStation`)
+   *  und weil frisch installierte/alte Speicherstände hier schlicht leer
+   *  sind. */
+  aktivesPreset: Partial<Record<DockStation, PresetId>>;
 }
 
 function basisSpeicher(): DockSpeicher {
-  return { version: 1, modus: 'A', layouts: {} };
+  return { version: 1, modus: 'A', layouts: {}, aktivesPreset: {} };
 }
 
 /** Minimaler In-Memory-Ersatz, falls die Laufzeit kein `localStorage` kennt
@@ -181,7 +201,39 @@ function istGueltigerSpeicher(wert: unknown): wert is Record<string, unknown> {
   if (wert['version'] !== 1) return false;
   if ('modus' in wert && wert['modus'] !== undefined && wert['modus'] !== 'A' && wert['modus'] !== 'B') return false;
   if ('layouts' in wert && wert['layouts'] !== undefined && !istEbenesObjekt(wert['layouts'])) return false;
+  // 'aktivesPreset' ist v0.8.0 (PD1) additiv — kein Top-Level-Formcheck nötig
+  // über den generischen `istEbenesObjekt`-Fall hinaus: ein ungültiger Wert
+  // (falscher Typ, unbekannte Station/Preset-ID) wird defensiv in
+  // `normalisiereAktivesPreset()` gefiltert, exakt wie bei `layouts` oben.
   return true;
+}
+
+const GUELTIGE_STATIONEN: readonly DockStation[] = ['design', 'plan', 'vis'];
+const GUELTIGE_PRESET_IDS: readonly PresetId[] = ['fokus', 'arbeiten', 'pruefen'];
+
+function istDockStation(wert: unknown): wert is DockStation {
+  return (GUELTIGE_STATIONEN as readonly unknown[]).includes(wert);
+}
+
+function istPresetId(wert: unknown): wert is PresetId {
+  return (GUELTIGE_PRESET_IDS as readonly unknown[]).includes(wert);
+}
+
+/** Defensiv: pickt aus einem unbekannten Wert nur gültige
+ *  Station→PresetId-Paare heraus, verwirft alles andere (ungültiger
+ *  Stations-/Preset-Name, falscher Typ) — 1:1 dasselbe Härtungs-Muster wie
+ *  `normalisierePanelOverride`. Rückwärtskompatibel: fehlt das Feld ganz
+ *  (alter Speicher vor PD1), liefert `istEbenesObjekt` hier `false` und diese
+ *  Funktion gibt `{}` zurück, kein Crash. */
+function normalisiereAktivesPreset(wert: unknown): Partial<Record<DockStation, PresetId>> {
+  if (!istEbenesObjekt(wert)) return {};
+  const ergebnis: Partial<Record<DockStation, PresetId>> = {};
+  for (const [station, presetId] of Object.entries(wert)) {
+    if (istDockStation(station) && istPresetId(presetId)) {
+      ergebnis[station] = presetId;
+    }
+  }
+  return ergebnis;
 }
 
 function normalisiere(wert: Record<string, unknown>): DockSpeicher {
@@ -191,7 +243,8 @@ function normalisiere(wert: Record<string, unknown>): DockSpeicher {
   for (const [key, layout] of Object.entries(layoutsRoh)) {
     layouts[key] = normalisiereLayout(layout);
   }
-  return { version: 1, modus, layouts };
+  const aktivesPreset = normalisiereAktivesPreset(wert['aktivesPreset']);
+  return { version: 1, modus, layouts, aktivesPreset };
 }
 
 /** Defensiver Lese-Weg: kaputtes JSON/falsche Form → Basiszustand, kein Crash. */
@@ -224,8 +277,8 @@ function schreibeSpeicher(speicher: DockSpeicher): void {
   }
 }
 
-function persistiere(zustand: Pick<DockZustand, 'modus' | 'layouts'>): void {
-  schreibeSpeicher({ version: 1, modus: zustand.modus, layouts: zustand.layouts });
+function persistiere(zustand: Pick<DockZustand, 'modus' | 'layouts' | 'aktivesPreset'>): void {
+  schreibeSpeicher({ version: 1, modus: zustand.modus, layouts: zustand.layouts, aktivesPreset: zustand.aktivesPreset });
 }
 
 // ---------------------------------------------------------------------------
@@ -263,6 +316,12 @@ export interface DockZustand {
   modus: DockModus;
   /** Schlüssel `${modus}:${station}` → Layout-Eintrag. */
   layouts: Record<string, DockStationLayout>;
+  /** v0.8.0 (PD1) — je Station das zuletzt per `presetSetzen()` gewählte
+   *  Preset (s. Kopfkommentar). Fehlt ein Eintrag, ist «kein Preset aktiv»
+   *  gemeint — NICHT implizit `'arbeiten'` als gespeicherter Wert (der
+   *  Fallback-CHARAKTER von `'arbeiten'` ist rein semantisch: es ist das
+   *  Preset, das am wenigsten vom heutigen Ist-Zustand abweicht). */
+  aktivesPreset: Partial<Record<DockStation, PresetId>>;
 
   modusSetzen: (m: DockModus) => void;
   leftWSetzen: (station: DockStation, px: number) => void;
@@ -274,8 +333,23 @@ export interface DockZustand {
    *  Schreibvorgang — für den row-Splitter, der zwei Nachbarn gleichzeitig
    *  verändert (sonst würde ein Zwischenzustand persistiert). */
   panelOverridesSetzen: (station: DockStation, patches: Record<string, PanelOverridePatch>) => void;
-  /** «Auf schlaues Layout zurücksetzen» — löscht NUR den aktiven Schlüssel
-   *  (`${modus}:${station}`), alle anderen Stationen/Modi bleiben unberührt. */
+  /** v0.8.0 (PD1) — merkt sich `id` als aktives Preset der Station UND wendet
+   *  dessen `overrides`/`leftW`/`rightW` sofort über die bestehenden Aktionen
+   *  an (`leftWSetzen`/`rightWSetzen`/`panelOverridesSetzen`) — ausgehend von
+   *  einem für diesen Schlüssel geleerten Layout, damit KEINE manuellen
+   *  Alt-Overrides von vorher übrig bleiben (die Kuration soll exakt dem
+   *  Preset entsprechen, nicht Preset⊕Reste). `offen`/Booleans bleiben
+   *  aussen vor — s. `dock-presets.ts`-Kopfkommentar (Zwei-Schichten-Modell). */
+  presetSetzen: (station: PresetStation, id: PresetId) => void;
+  /** «Auf schlaues Layout zurücksetzen» — löscht den aktiven Schlüssel
+   *  (`${modus}:${station}`), alle anderen Stationen/Modi bleiben unberührt.
+   *  v0.8.0 (PD1) GEÄNDERT: ist für die Station ein Preset aktiv
+   *  (`aktivesPreset[station]`), landet man NICHT mehr auf einem leeren
+   *  Layout, sondern wieder GENAU auf dessen Kuration (dieselbe Anwend-Logik
+   *  wie `presetSetzen`, minus dem erneuten Schreiben von `aktivesPreset`
+   *  selbst, das bleibt unverändert). Ohne aktives Preset (z.B. `'plan'`,
+   *  das nie eins bekommen kann, oder eine Station, für die `presetSetzen()`
+   *  nie lief) bleibt es exakt das bisherige Verhalten: leeres Layout. */
   layoutZuruecksetzen: (station: DockStation) => void;
   /** Gemergte Overrides für die aktive `modus`+`station`-Kombination — IMMER
    *  vollständig (leftW/rightW aufgelöst mit `DOCK_KONSTANTEN`-Defaults). */
@@ -290,9 +364,34 @@ export interface DockZustand {
   zustandWiederherstellen: (modus: DockModus, layouts: Record<string, DockStationLayout>) => void;
 }
 
-function anfangsZustand(): Pick<DockZustand, 'modus' | 'layouts'> {
+function anfangsZustand(): Pick<DockZustand, 'modus' | 'layouts' | 'aktivesPreset'> {
   const gespeichert = ladeSpeicherRoh();
-  return { modus: gespeichert.modus, layouts: gespeichert.layouts };
+  return { modus: gespeichert.modus, layouts: gespeichert.layouts, aktivesPreset: gespeichert.aktivesPreset };
+}
+
+/**
+ * Wendet ein Preset auf den `${modus}:${station}`-Schlüssel an: leert ihn
+ * zuerst (kein Vermischen mit alten manuellen Overrides), setzt dann
+ * `leftW`/`rightW`/`overrides` über die BESTEHENDEN Aktionen (nicht über
+ * einen zweiten, parallelen Schreibweg) — geteilte Hilfsfunktion für
+ * `presetSetzen` und `layoutZuruecksetzen` (mit aktivem Preset). Persistiert
+ * am Ende selbst noch einmal, damit auch ein Preset ohne `leftW`/`rightW`/
+ * `overrides` (rein hypothetisch, aktuell hat keines das) sicher geschrieben
+ * wird — die einzelnen Aktionen persistieren zwar schon selbst, ein
+ * zusätzlicher Schreibvorgang mit identischem Inhalt ist dabei harmlos.
+ */
+function wendePresetLayoutAn(get: () => DockZustand, set: (teil: Partial<DockZustand>) => void, station: PresetStation, preset: DockPreset): void {
+  const { modus, layouts } = get();
+  const key = layoutKey(modus, station);
+  if (key in layouts) {
+    const geleert = { ...layouts };
+    delete geleert[key];
+    set({ layouts: geleert });
+  }
+  if (preset.leftW !== undefined) get().leftWSetzen(station, preset.leftW);
+  if (preset.rightW !== undefined) get().rightWSetzen(station, preset.rightW);
+  if (Object.keys(preset.overrides).length > 0) get().panelOverridesSetzen(station, preset.overrides);
+  persistiere(get());
 }
 
 export const useDockZustand = create<DockZustand>((set, get) => ({
@@ -342,7 +441,24 @@ export const useDockZustand = create<DockZustand>((set, get) => ({
     persistiere(get());
   },
 
+  presetSetzen: (station, id) => {
+    const preset = presetFuer(station, id);
+    wendePresetLayoutAn(get, set, station, preset);
+    const aktivesPreset = { ...get().aktivesPreset, [station]: id };
+    set({ aktivesPreset });
+    persistiere(get());
+  },
+
   layoutZuruecksetzen: (station) => {
+    if (station === 'design' || station === 'vis') {
+      const aktivId = get().aktivesPreset[station];
+      if (aktivId !== undefined) {
+        // v0.8.0 (PD1): mit aktivem Preset heisst "zurücksetzen" wieder auf
+        // dessen Kuration, nicht auf ein leeres Layout (s. Interface-Kommentar).
+        wendePresetLayoutAn(get, set, station, presetFuer(station, aktivId));
+        return;
+      }
+    }
     const { modus, layouts } = get();
     const key = layoutKey(modus, station);
     if (!(key in layouts)) return;
