@@ -8,8 +8,9 @@ import {
   type SheetLayout,
   type SheetPlankopf,
 } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, KChip, KField, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Badge, Hairline, KButton, KChip, KField, KIcon, KSwitch, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './publish.css';
 
 /**
  * PlankopfPanel (v0.8.0 P6, `docs/V080-PLANKOPF-SPEZ.md` §1.5/§2.3/§4/§8
@@ -141,15 +142,6 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
   const letzteRevision = revisionen[revisionen.length - 1];
   const effektiverIndex = letzteRevision?.index ?? eintrag.index ?? '–';
 
-  const inputStil: React.CSSProperties = {
-    padding: 'var(--k-s2) var(--k-s3)',
-    borderRadius: 'var(--k-radius-sm)',
-    border: '1px solid var(--k-line-strong)',
-    background: 'var(--k-field)',
-    fontSize: 'var(--k-t-sm)',
-    width: '100%',
-  };
-
   return (
     <div
       ref={panelRef}
@@ -161,19 +153,11 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
       // Deckel kommen von `DockPanel.tsx`/`dock-kern.ts`s Solver (identisches
       // Muster wie `KennzahlenPanel.tsx`s P4-Migration: Hintergrund/Rahmen/
       // Schatten bleiben, nur Position/Grösse entfallen).
-      style={{
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
+      className="k-publish-panel"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+      <div className="k-publish-panel-kopf">
         <Badge hue={moduleHue.publish}>Plankopf</Badge>
-        <div style={{ flex: 1, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>{sheet.name}</div>
+        <div className="k-publish-spacer k-publish-meta-zeile">{sheet.name}</div>
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen" data-testid="plankopf-schliessen">
           <KIcon name="schliessen" size={14} />
         </KButton>
@@ -186,30 +170,24 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
           Stempel-Status, Index-Logik, Massstabs-Übersicht der Stufe. */}
       <div
         data-testid="plankopf-detailkarte"
-        style={{
-          display: 'grid',
-          gap: 6,
-          padding: 'var(--k-s3)',
-          border: '1px solid var(--k-line)',
-          borderRadius: 'var(--k-radius-sm)',
-          borderLeft: `3px solid ${eintrag.farbe}`,
-        }}
+        className="k-publish-detailkarte"
+        style={{ ['--_farbe' as string]: eintrag.farbe }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600 }}>
-          <span style={{ width: 10, height: 10, borderRadius: '50%', background: eintrag.farbe, flexShrink: 0 }} />
+        <div className="k-publish-detailkarte-titel">
+          <span className="k-publish-detailkarte-punkt" aria-hidden="true" />
           {matrixStufe} · {eintrag.name} ({eintrag.siaNr})
         </div>
-        <div style={{ color: 'var(--k-ink-soft)' }}>Freigabe-Empfänger: {eintrag.freigabeEmpfaenger}</div>
-        <div style={{ color: 'var(--k-ink-soft)' }}>
+        <div className="k-publish-detailkarte-zeile">Freigabe-Empfänger: {eintrag.freigabeEmpfaenger}</div>
+        <div className="k-publish-detailkarte-zeile">
           {eintrag.wasserzeichenText !== null
             ? `Wasserzeichen: «${eintrag.wasserzeichenText}»`
             : `Kein Wasserzeichen (${matrixStufe}) — Stempel: «${eintrag.stempelText}»`}
         </div>
-        <div style={{ color: 'var(--k-ink-soft)' }}>
+        <div className="k-publish-detailkarte-zeile">
           Index: {effektiverIndex}
           {letzteRevision ? ' (aus Revisionsverzeichnis)' : ' (Phasen-Default, noch keine Revision erfasst)'}
         </div>
-        <div style={{ color: 'var(--k-ink-soft)' }}>Empfohlene Massstäbe: {eintrag.massstaebeLabel}</div>
+        <div className="k-publish-detailkarte-zeile">Empfohlene Massstäbe: {eintrag.massstaebeLabel}</div>
       </div>
 
       {/* Massstab-Chips (Spez §2.3): setzen den Massstab der SELEKTIERTEN
@@ -217,11 +195,11 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
           KEINE harte Phasen-Sperre (die Chips bleiben immer klickbar, sobald
           eine Platzierung selektiert ist — auch ausserhalb der Empfehlung,
           s. Spez-Beispiel Situationsplan 1:500 in Phase BW). */}
-      <div style={{ display: 'grid', gap: 6 }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+      <div className="k-publish-abschnitt">
+        <span className="k-publish-abschnitt-label">
           Massstab-Chips — empfohlen in {eintrag.name}
         </span>
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        <div className="k-publish-massstab-liste">
           {massstaebe.map((m) => (
             <button
               key={m}
@@ -238,11 +216,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
                 runCommand('publish.ansichtAnpassen', { sheetId, placementId: selectedPlacementId, scale: m });
                 melde(`Massstab 1:${m} auf die Auswahl übernommen`, { ton: 'erfolg' });
               }}
-              style={{
-                all: 'unset',
-                cursor: selectedPlacementId ? 'pointer' : 'not-allowed',
-                opacity: selectedPlacementId ? 1 : 0.5,
-              }}
+              className="k-plankopf-chip-knopf"
             >
               <KChip size="sm" hue={eintrag.farbe}>
                 1:{m}
@@ -251,7 +225,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
           ))}
         </div>
         {!selectedPlacementId && (
-          <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }} data-testid="plankopf-massstab-hinweis">
+          <span className="k-publish-hinweis-klein" data-testid="plankopf-massstab-hinweis">
             Nur Empfehlung — erst eine Platzierung im Blatt auswählen, um den Massstab zu übernehmen.
           </span>
         )}
@@ -260,8 +234,8 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
       <Hairline />
 
       {/* Plankopf-Textfelder (Spez §1.5/§4.1, `publish.plankopfSetzen`) */}
-      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+      <div className="k-publish-abschnitt">
+        <span className="k-publish-abschnitt-label">
           Plankopf-Felder
         </span>
         {PLANKOPF_FELDER.map((f) => (
@@ -270,7 +244,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
               defaultValue={sheet!.plankopf?.[f.feld] ?? ''}
               placeholder={f.placeholder}
               data-testid={f.testid}
-              style={inputStil}
+              className="k-publish-input"
               onBlur={(e) => plankopfPatch(f.feld, e.target.value)}
             />
           </KField>
@@ -283,12 +257,12 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
         <KField label="Plancode (read-only)">
           <div
             data-testid="plankopf-plancode"
-            style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 600, color: plancode ? 'var(--k-ink)' : 'var(--k-ink-faint)' }}
+            className={`k-publish-mono-wert${plancode ? ' k-publish-mono-wert--gesetzt' : ''}`}
           >
             {plancode ?? '—'}
           </div>
           {plancodeFehlend.length > 0 && (
-            <span data-testid="plankopf-plancode-hinweis" style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+            <span data-testid="plankopf-plancode-hinweis" className="k-publish-hinweis-klein">
               Unvollständig — es fehlt: {plancodeFehlend.join(', ')}
             </span>
           )}
@@ -299,7 +273,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             `export-sheets.ts`). Mit vollem Plancode ersetzt er den
             Alt-Namen automatisch (Daten-Guard, s. `derive/publikation.ts`). */}
         <KField label="Export-Dateiname (Vorschau)">
-          <div data-testid="export-dateiname" style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-soft)', wordBreak: 'break-all' }}>
+          <div data-testid="export-dateiname" className="k-publish-dateiname">
             {exportDateiname}.svg
           </div>
         </KField>
@@ -310,8 +284,8 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
       {/* Büro-Stammdaten (Spez §4.2/§4.3, `publish.bueroSetzen`) + Projekt-Code
           (`design.projektInfoSetzen`). SettingsPatch — persistent/undo-fähig,
           aber nicht live-sync (s. Kommentar `commands/publish.ts` `setBuero`). */}
-      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+      <div className="k-publish-abschnitt">
+        <span className="k-publish-abschnitt-label">
           Büro-Stammdaten
         </span>
         <KField label="Büroname">
@@ -319,7 +293,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             defaultValue={doc.settings.buero?.name ?? ''}
             placeholder="z.B. Baubüro Andrin"
             data-testid="plankopf-buero-name"
-            style={inputStil}
+            className="k-publish-input"
             onBlur={(e) => bueroPatch('name', e.target.value)}
           />
         </KField>
@@ -328,7 +302,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             defaultValue={doc.settings.buero?.adresse ?? ''}
             placeholder="Strasse, PLZ Ort"
             data-testid="plankopf-buero-adresse"
-            style={inputStil}
+            className="k-publish-input"
             onBlur={(e) => bueroPatch('adresse', e.target.value)}
           />
         </KField>
@@ -337,16 +311,16 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             defaultValue={doc.settings.buero?.kuerzel ?? ''}
             placeholder="z.B. MAA"
             data-testid="plankopf-buero-kuerzel"
-            style={inputStil}
+            className="k-publish-input"
             onBlur={(e) => bueroPatch('kuerzel', e.target.value)}
           />
         </KField>
         <KField label="Büro-Logo (PNG)" hinweis="Nur PNG — SVG/JPG folgen in einer späteren Version.">
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <div className="k-publish-logo-zeile">
             <KButton size="sm" tone="quiet" onClick={() => logoInputRef.current?.click()} data-testid="plankopf-buero-logo-knopf">
               Logo laden…
             </KButton>
-            <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+            <span className="k-publish-hinweis-klein">
               {doc.settings.buero?.logoAssetId ? 'Logo gesetzt' : 'kein Logo'}
             </span>
           </div>
@@ -355,7 +329,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             type="file"
             accept="image/*"
             data-testid="plankopf-buero-logo"
-            style={{ display: 'none' }}
+            className="k-publish-versteckt-input"
             onChange={(e) => {
               logoDateiGewaehlt(e.target.files?.[0]);
               e.target.value = '';
@@ -367,7 +341,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             defaultValue={doc.settings.projekt?.projektCode ?? ''}
             placeholder="z.B. SEE"
             data-testid="plankopf-projekt-code"
-            style={inputStil}
+            className="k-publish-input"
             onBlur={(e) => projektCodePatch(e.target.value)}
           />
         </KField>
@@ -384,9 +358,10 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
           Grundriss-/Situationsplan-Bedingung aus `derive/sheet.ts`
           (`hatGrundrissOderSituation`) — sonst zeigte die Checkbox «an»,
           obwohl das Blatt (mangels Grundriss/Situation) gar keinen
-          Nordpfeil zeichnet. */}
-      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+          Nordpfeil zeichnet. v0.8.0B / W4 (Spez §3 B-127): `KSwitch` statt
+          nackter Checkbox — dasselbe `<input type="checkbox">` darunter. */}
+      <div className="k-publish-abschnitt">
+        <span className="k-publish-abschnitt-label">
           Blatt-Layout
         </span>
         {LAYOUT_SCHALTER.map((s) => {
@@ -396,15 +371,13 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
                 sheet!.placements.some((p) => p.view === 'grundriss' || p.view === 'situationsplan')
               : sheet!.layout?.[s.feld] !== false;
           return (
-            <label key={s.feld} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
-              <input
-                type="checkbox"
-                data-testid={s.testid}
-                checked={an}
-                onChange={(e) => layoutPatch(s.feld, e.target.checked)}
-              />
-              {s.label}
-            </label>
+            <KSwitch
+              key={s.feld}
+              data-testid={s.testid}
+              checked={an}
+              onChange={(e) => layoutPatch(s.feld, e.target.checked)}
+              label={s.label}
+            />
           );
         })}
       </div>

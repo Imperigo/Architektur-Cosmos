@@ -12,6 +12,7 @@ import {
 } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, KIcon, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './publish.css';
 
 /**
  * DossierPanel (v0.7.6 Welle 3 Stream F, Report-Dossier) — eigenständiges
@@ -157,19 +158,11 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
       // (`dock-stationen.ts` `'dossier'`), Position/Breite/Höhen-Deckel
       // kommen von `DockPanel.tsx`/`dock-kern.ts`s Solver (identisches Muster
       // wie `KennzahlenPanel.tsx`s P4-Migration).
-      style={{
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
+      className="k-publish-panel"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+      <div className="k-publish-panel-kopf">
         <Badge hue={moduleHue.publish}>Projekt-Dossier</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="k-publish-spacer" />
         <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="dossier-export-svg">
           SVG
         </KButton>
@@ -181,21 +174,11 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
         </KButton>
       </div>
 
-      <div
-        data-testid="dossier-hinweis"
-        style={{
-          background: 'var(--k-warning-wash, #f6f2e6)',
-          border: '1px solid var(--k-warning-line, #c9bfa0)',
-          borderRadius: 'var(--k-radius-sm)',
-          padding: 'var(--k-s3) var(--k-s4)',
-          fontWeight: 600,
-          color: 'var(--k-ink)',
-        }}
-      >
+      <div data-testid="dossier-hinweis" className="k-publish-hinweis-warnung">
         {DOSSIER_HINWEIS}
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+      <div className="k-publish-meta-zeile">
         {doc.settings.projectName || '(kein Projektname)'} · {siaPhaseLabel(doc.settings.siaPhase)}
         {kennzahlen.length > 0 && (
           <>
@@ -207,8 +190,8 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+      <div className="k-publish-abschnitt">
+        <span className="k-publish-abschnitt-label">
           Übersicht (Export-Vorschau, nicht Teil des Doc)
         </span>
         <textarea
@@ -217,15 +200,7 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
           placeholder="Leitsatz — ein Satz zum Projektstand …"
           rows={2}
           data-testid="dossier-uebersicht-lead"
-          style={{
-            padding: 'var(--k-s2) var(--k-s3)',
-            borderRadius: 'var(--k-radius-sm)',
-            border: '1px solid var(--k-line-strong)',
-            background: 'var(--k-field)',
-            fontSize: 'var(--k-t-sm)',
-            fontFamily: 'var(--k-font-ui)',
-            resize: 'vertical',
-          }}
+          className="k-publish-textarea"
         />
         <textarea
           value={uebersichtText}
@@ -233,22 +208,14 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
           placeholder="Fliesstext — was das Dossier zusammenfasst …"
           rows={3}
           data-testid="dossier-uebersicht-text"
-          style={{
-            padding: 'var(--k-s2) var(--k-s3)',
-            borderRadius: 'var(--k-radius-sm)',
-            border: '1px solid var(--k-line-strong)',
-            background: 'var(--k-field)',
-            fontSize: 'var(--k-t-sm)',
-            fontFamily: 'var(--k-font-ui)',
-            resize: 'vertical',
-          }}
+          className="k-publish-textarea"
         />
       </div>
 
       <Hairline />
 
-      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-        <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+      <div className="k-publish-abschnitt">
+        <span className="k-publish-abschnitt-label">
           Governance & Freigabe (optional)
         </span>
         <textarea
@@ -257,32 +224,18 @@ export function DossierPanel({ onClose }: { onClose: () => void }) {
           placeholder="Freigabetext — leer lassen, damit der Abschnitt entfällt (Ehrlichkeits-Guard)."
           rows={2}
           data-testid="dossier-freigabe-text"
-          style={{
-            padding: 'var(--k-s2) var(--k-s3)',
-            borderRadius: 'var(--k-radius-sm)',
-            border: '1px solid var(--k-line-strong)',
-            background: 'var(--k-field)',
-            fontSize: 'var(--k-t-sm)',
-            fontFamily: 'var(--k-font-ui)',
-            resize: 'vertical',
-          }}
+          className="k-publish-textarea"
         />
         <input
           value={freigegebenVon}
           onChange={(e) => setFreigegebenVon(e.target.value)}
           placeholder="Freigegeben durch …"
           data-testid="dossier-freigegeben-von"
-          style={{
-            padding: 'var(--k-s2) var(--k-s3)',
-            borderRadius: 'var(--k-radius-sm)',
-            border: '1px solid var(--k-line-strong)',
-            background: 'var(--k-field)',
-            fontSize: 'var(--k-t-sm)',
-          }}
+          className="k-publish-input"
         />
       </div>
 
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+      <span className="k-publish-hinweis-klein">
         Bild-Slot, Parameter und Herkunfts-Kette folgen als eigene Felder, sobald KosmoVis/Kosmo-Data
         entsprechende Daten am Doc mitführen — bis dahin bleibt der Bild-Slot ein ehrlicher Platzhalter.
       </span>

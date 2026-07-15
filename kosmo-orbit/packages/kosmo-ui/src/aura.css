@@ -2072,7 +2072,16 @@ progress {
   padding: var(--k-s7);
 }
 
-/* KSwitch (`switch.tsx`, Spez §9.14 B-127) — Track 40×24, Thumb 18px. */
+/* KSwitch (`switch.tsx`, Spez §9.14 B-127) — Track 40×24, Thumb 18px.
+   v0.8.0B / W4 (Publish, erster echter Verbraucher) — Fix: `pointer-events:
+   none` auf dem Input blockierte JEDEN direkten Klick/Tap auf das (unsichtbar
+   gestylte) `<input>` selbst; ein echter Mausklick traf zufällig über die
+   `<label>`-Aktivierungssemantik trotzdem, aber Playwrights `check()`/
+   `uncheck()` (zielt direkt auf das Input-Element) scheiterte an der
+   Aktionierbarkeits-Prüfung («intercepts pointer events», real reproduziert
+   in `e2e/plankopf.spec.ts`, Blatt-Layout-Schalter). Das Input bleibt
+   unsichtbar (`opacity:0`), ist jetzt aber wieder ein echtes Klickziel —
+   Track/Daumen bleiben rein optisch (`.k-switch-strecke`/`-daumen`). */
 .k-switch {
   display: inline-flex;
   align-items: center;
@@ -2083,7 +2092,7 @@ progress {
 .k-switch input {
   position: absolute;
   opacity: 0;
-  pointer-events: none;
+  cursor: pointer;
 }
 .k-switch-strecke {
   position: relative;

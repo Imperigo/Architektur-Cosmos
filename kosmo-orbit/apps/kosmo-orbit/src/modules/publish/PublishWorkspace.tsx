@@ -1,5 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
-import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KSwitch, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
   imagePaperBounds,
   placementPaperBounds,
@@ -19,6 +19,7 @@ import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
 import { DossierPanel } from './DossierPanel';
 import { PlankopfPanel } from './PlankopfPanel';
 import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
+import './publish.css';
 
 /**
  * KosmoPublish — Blatteditor. Blätter sind Kernel-Entities (Undo/Sync/.kosmo
@@ -79,6 +80,45 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   const svgHostRef = useRef<HTMLDivElement>(null);
   const bildDateiRef = useRef<HTMLInputElement>(null);
 
+  // v0.8.0B / W4 (ROADMAP 381, «1400px-Umbruch-Fix») — die Blattbreiten-Formel
+  // unten (`k-publish-blatt`, `--k-publish-chrome-h`) deckelt die Blattbreite
+  // so, dass die daraus abgeleitete Höhe unter dem Boden-Dock Platz hat. Der
+  // frühere Chrome-Term war ein HARTES `132px`-Literal («Kopfleiste +
+  // Werkzeugleiste + Innenabstand, gemessen ~111px + Sicherheitsband») — bei
+  // vielen sichtbaren Werkzeuggruppen bricht `blattflaeche-werkzeugleiste` ab
+  // ~1400px zweizeilig um, ihre reale Höhe wächst über die Schätzung hinaus,
+  // und das Blatt liess dafür keinen Platz mehr frei (überlappte den
+  // Boden-Dock). Jetzt ECHT gemessen: die viewport-relative Unterkante der
+  // Werkzeugleiste (deckt Shell-Header + Werkzeugleiste in EINER Messung ab,
+  // ein- wie zweizeilig) + der Scroll-Containers Innenabstand oben (`--k-s6`).
+  const [chromeHoehe, setChromeHoehe] = useState(132);
+  useLayoutEffect(() => {
+    const PADDING_OBEN = 24; // deckt sich mit `--k-s6` (Scroll-Container-Padding)
+    const SICHERHEITSBAND = 8;
+    let rafHandle = 0;
+    const jetztMessen = () => {
+      rafHandle = 0;
+      const el = document.querySelector('[data-testid="blattflaeche-werkzeugleiste"]');
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setChromeHoehe(Math.round(r.bottom + PADDING_OBEN + SICHERHEITSBAND));
+    };
+    const messenDebounced = () => {
+      if (rafHandle) return;
+      rafHandle = requestAnimationFrame(jetztMessen);
+    };
+    const ro = new ResizeObserver(messenDebounced);
+    const el0 = document.querySelector('[data-testid="blattflaeche-werkzeugleiste"]');
+    if (el0) ro.observe(el0);
+    window.addEventListener('resize', messenDebounced);
+    jetztMessen();
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', messenDebounced);
+      if (rafHandle) cancelAnimationFrame(rafHandle);
+    };
+  }, []);
+
   const sheet = sheets.find((s) => s.id === activeSheetId) ?? sheets[0] ?? null;
   const paper = sheet ? sheetPaperSize(sheet) : null;
 
@@ -94,18 +134,30 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   // && sheet`-Guard); der `sheetId`-Fallback `''` wird dabei nie sichtbar
   // gerendert, weil `DockFlaeche` ein unsichtbares Panel gar nicht in
   // `ergebnis.rects` aufnimmt.
+  // v0.8.0B / W4 (Spez §4/§2 Gesetz 9, B-58) — «Publish ist der ERSTE
+  // Verbraucher» des additiven `oeffnen`-Felds (`DockFlaeche.tsx`s
+  // `DockPanelEintrag`): reicht denselben Öffnen-Setter durch, den der
+  // Werkzeugleisten-Knopf schon ruft (`setDossierOffen(true)`/
+  // `setPlankopfOffen(true)`), NUR solange die Aktion auch wirklich etwas
+  // öffnet (dieselben Guards wie die Knöpfe oben: Dossier braucht mind. ein
+  // Geschoss, Plankopf ein aktives Blatt) — ein Chip, dessen Klick am
+  // eigenen Sichtbarkeits-Guard verpufft, wäre ein toter Knopf. Ergebnis:
+  // geschlossene Panels erscheinen als «+ PROJEKT-DOSSIER»/«+ PLANKOPF»-Chips
+  // in der Dock-Closed-Leiste.
   const publishDockPanels: DockPanelEintrag[] = useMemo(
     () => [
       {
         id: 'dossier',
         sichtbar: dossierOffen,
         schliessen: () => setDossierOffen(false),
+        ...(storeys.length > 0 ? { oeffnen: () => setDossierOffen(true) } : {}),
         inhalt: <DossierPanel onClose={() => setDossierOffen(false)} />,
       },
       {
         id: 'plankopf',
         sichtbar: plankopfOffen && !!sheet,
         schliessen: () => setPlankopfOffen(false),
+        ...(sheet ? { oeffnen: () => setPlankopfOffen(true) } : {}),
         inhalt: (
           <PlankopfPanel
             sheetId={sheet?.id ?? ''}
@@ -115,7 +167,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
         ),
       },
     ],
-    [dossierOffen, plankopfOffen, sheet, selectedPlacement],
+    [dossierOffen, plankopfOffen, sheet, selectedPlacement, storeys.length],
   );
 
   const svgMarkup = useMemo(
@@ -401,37 +453,19 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, display: 'flex' }}>
+    <div className="k-publish">
       {/* Blattliste */}
-      <div
-        style={{
-          width: 220,
-          borderRight: '1px solid var(--k-line)',
-          background: 'var(--k-surface)',
-          padding: 'var(--k-s3)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--k-s3)',
-          overflow: 'auto',
-        }}
-      >
+      <div className="k-publish-sidebar">
         {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
             Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
             v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
         <div
-          className="k-glass"
+          className="k-glass k-publish-kopf"
           data-testid="publish-werkzeugleiste"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--k-s2)',
-            padding: 'var(--k-s2) var(--k-s3)',
-            borderTopColor: `color-mix(in srgb, ${moduleHue.publish} 65%, var(--k-glass-stroke, var(--k-line)))`,
-            borderTopWidth: 2,
-          }}
+          style={{ ['--_hue' as string]: moduleHue.publish }}
         >
           <Badge hue={moduleHue.publish}>Plansatz</Badge>
-          <div style={{ flex: 1 }} />
+          <div className="k-publish-spacer" />
           {/* Stream A1: Report-Dossier (DossierPanel.tsx) war bislang ein
               eigenständiges, aber ungehängtes Panel — hier der Zugang dazu,
               in derselben Werkzeugleiste wie der Einstellungen-Knopf. Guard:
@@ -443,7 +477,16 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               das Dossier hier vorsorglich gesperrt, weil es KEIN Command mit
               Lücken-Meldung ist, sondern eine reine Editor-/Export-Vorschau
               — ein leeres Panel ohne jedes Geschoss wäre ein «leeres Blatt
-              vortäuschen». */}
+              vortäuschen».
+              v0.8.0B / W4 (Spez §2 Gesetz 1+2, Entrümpeln): Dossier/Plankopf
+              waren hier «Icon + Text» in einer 220px-Spalte neben Badge +
+              Gear — die Zeile lief real breiter als die Spalte (gemessen
+              317px Inhalt vs. 201px verfügbar) und liess Chromium beim
+              Fokussieren eines Knopfs die Spalte horizontal ansteuern
+              («PLANSATZ» links abgeschnitten, Screenshot-Beweis). Jetzt
+              icon-only (Titel/aria-label bleiben die vollständige
+              Beschriftung) — passt in die Spalte, kein Layout-Bug mehr, und
+              entspricht Gesetz 2 (Sekundär-Werkzeuge treten zurück). */}
           <KButton
             size="sm"
             tone={dossierOffen ? 'accent' : 'ghost'}
@@ -453,7 +496,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             disabled={storeys.length === 0}
             onClick={() => setDossierOffen((v) => !v)}
           >
-            <KIcon name="dokument" size={14} title="Projekt-Dossier" /> Dossier
+            <KIcon name="dokument" size={14} title="Projekt-Dossier" />
           </KButton>
           {/* v0.8.0 P6: Plankopf-Editor — dasselbe «Projekt geladen»-Kriterium
               wie Dossier (mind. ein Geschoss), zusätzlich braucht es ein
@@ -467,7 +510,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             disabled={!sheet}
             onClick={() => setPlankopfOffen((v) => !v)}
           >
-            <KIcon name="stift" size={14} title="Plankopf" /> Plankopf
+            <KIcon name="stift" size={14} title="Plankopf" />
           </KButton>
           {onEinstellungen && (
             <KButton
@@ -485,30 +528,18 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
         {sheets.map((s) => (
           <Panel
             key={s.id}
-            /* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40% —
-               zurückhaltender als der Stationskopf mit 65%), analog dem
-               Kopf-Muster von v0.7.7. Ausgewählt bleibt weiterhin die
-               volle Akzentfarbe (borderColor gewinnt dank späterer
-               Objekt-Position gegenüber `border`, borderTopColor danach
-               nochmals gegenüber der Top-Seite — reines Style-Merging,
-               keine Logik). */
-            className="k-glass"
+            /* v0.7.8 Welle D PD3, v0.8.0B / W4 (Spez §3 B-126): KCard-
+               Anatomie (2px-Rollenakzent LINKS via `::before` statt
+               Rahmenbox) — ausgewählt hebt den Akzent auf die volle
+               Akzentfarbe + `--k-hover`-Grund, sonst dezente Modul-Hue-Note
+               (40%, Klassen `k-publish-sheet-karte(--aktiv)` in `publish.css`). */
+            className={`k-publish-sheet-karte${sheet?.id === s.id ? ' k-publish-sheet-karte--aktiv' : ''}`}
             data-testid={`sheet-${s.index}`}
             onClick={() => setActiveSheetId(s.id)}
-            style={{
-              padding: 'var(--k-s3) var(--k-s4)',
-              cursor: 'pointer',
-              background: 'var(--k-glass-fill, var(--k-surface))',
-              border: '1px solid var(--k-glass-stroke, var(--k-line))',
-              borderColor: sheet?.id === s.id ? 'var(--k-accent)' : 'var(--k-glass-stroke, var(--k-line))',
-              borderTopColor: sheet?.id === s.id
-                ? 'var(--k-accent)'
-                : `color-mix(in srgb, ${moduleHue.publish} 40%, var(--k-glass-stroke, var(--k-line)))`,
-              borderTopWidth: 2,
-            }}
+            style={{ ['--_hue' as string]: moduleHue.publish }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)' }}>
-              <div style={{ fontWeight: 550, fontSize: 'var(--k-t-sm)', flex: 1 }}>{s.name}</div>
+            <div className="k-publish-sheet-kopf">
+              <div className="k-publish-sheet-name">{s.name}</div>
               <button
                 aria-label="Blatt entfernen"
                 data-testid={`blatt-entfernen-${s.index}`}
@@ -517,18 +548,18 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   runCommand('publish.blattEntfernen', { sheetId: s.id });
                   if (activeSheetId === s.id) setActiveSheetId(null);
                 }}
-                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', display: 'flex', padding: '0 var(--k-s1)' }}
+                className="k-publish-icon-knopf"
               >
                 <KIcon name="schliessen" size={14} title="Blatt entfernen" />
               </button>
             </div>
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+            <div className="k-publish-sheet-meta">
               {s.format} {s.orientation} · {s.placements.length} Ansichten
               {(s.bilder?.length ?? 0) > 0 ? ` · ${s.bilder!.length} ${s.bilder!.length === 1 ? 'Bild' : 'Bilder'}` : ''}
             </div>
           </Panel>
         ))}
-        <div style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center' }}>
+        <div className="k-publish-add-zeile">
           <KSelect
             size="sm"
             value={newFormat}
@@ -543,8 +574,8 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </KButton>
         </div>
         <Hairline />
-        <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-          <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+        <div className="k-publish-abschnitt">
+          <span className="k-publish-abschnitt-label">
             Baugesuch (SIA 33)
           </span>
           {/* R1-Fix (Kritik-065 p-09/i-09, «Füllflächen-Inkonsistenz»):
@@ -563,30 +594,28 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           {/* Kritik-Runde 2: als Grid-Kind wurde der Span auf volle Spalten-
               breite gestreckt — der absolute Akzent-Eckpunkt sass dadurch frei
               schwebend am rechten Panelrand statt an der Knopfecke.
-              justifySelf begrenzt den Span auf die Knopfbreite. */}
-          <span style={{ position: 'relative', display: 'inline-block', justifySelf: 'start' }}>
+              `k-publish-eck-wrap` (justifySelf:start) begrenzt den Span auf
+              die Knopfbreite. */}
+          <span className="k-publish-eck-wrap">
             <KButton
               size="sm"
               tone="quiet"
+              className="k-publish-baugesuch-knopf"
               onClick={baugesuchErstellen}
               data-testid="baugesuch-erstellen"
               title="Stellt Situation, Grundriss je Geschoss, die definierten Schnitte und ein Ausnützungsnachweis-Blatt zusammen und bündelt sie als Publikations-Set «Baugesuch» — EIN Undo-Schritt. Zusammenstellung für die Eingabe, keine Bewilligung."
-              style={{ borderWidth: 1.5, borderColor: 'var(--k-accent)' }}
             >
               Baugesuch
             </KButton>
-            <span
-              aria-hidden
-              style={{ position: 'absolute', top: 0, right: 0, width: 6, height: 6, background: 'var(--k-accent)' }}
-            />
+            <span aria-hidden className="k-publish-eck-punkt" />
           </span>
         </div>
         <Hairline />
-        <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-          <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+        <div className="k-publish-abschnitt">
+          <span className="k-publish-abschnitt-label">
             A0-Plakat (Toolkit 5)
           </span>
-          <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
+          <div className="k-publish-reihe">
             <KButton size="sm" tone="quiet" onClick={() => erzeugePlakat('klassisch')} data-testid="plakat-klassisch">
               Klassisch
             </KButton>
@@ -596,8 +625,8 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           </div>
         </div>
         {sheet && (sheet.texte?.length ?? 0) > 0 && (
-          <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="text-editor">
-            <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>Texte</span>
+          <div className="k-publish-abschnitt" data-testid="text-editor">
+            <span className="k-publish-abschnitt-label">Texte</span>
             {sheet.texte!.map((t) => (
               <textarea
                 key={t.id}
@@ -609,15 +638,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                     runCommand('publish.textSetzen', { sheetId: sheet.id, textId: t.id, text: e.target.value });
                   }
                 }}
-                style={{
-                  padding: 'var(--k-s2) var(--k-s3)',
-                  borderRadius: 'var(--k-radius-sm)',
-                  border: '1px solid var(--k-line-strong)',
-                  background: 'var(--k-raised)',
-                  fontSize: 'var(--k-t-sm)',
-                  fontFamily: t.titel ? 'var(--k-font-titel)' : 'var(--k-font-ui)',
-                  resize: 'vertical',
-                }}
+                className={`k-publish-textarea${t.titel ? ' k-publish-textarea--titel' : ''}`}
               />
             ))}
           </div>
@@ -638,31 +659,24 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             ohne einen konkreten, in DIESEM Screen umsetzbaren
             Owner-Nutzen wäre sie nur ein toter Hinweis auf einen toten
             Button (Spez-Prinzip «keine toten Buttons»). */}
-        <div style={{ display: 'grid', gap: 'var(--k-s2)' }} data-testid="pubsets">
-          <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+        <div className="k-publish-abschnitt" data-testid="pubsets">
+          <span className="k-publish-abschnitt-label">
             Publikations-Sets
           </span>
           {(doc.settings.publikationsSets ?? []).map((set) => (
             <div
               key={set.name}
-              /* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40%,
-                 zurückhaltender als der Stationskopf) — reine Kartenoptik,
-                 Inhalt/Testid/Logik unverändert. */
-              className="k-glass"
+              /* v0.7.8 Welle D PD3, v0.8.0B / W4 (Spez §3 B-126): dieselbe
+                 KCard-Anatomie wie die Blattliste-Karten (2px-Hue-Akzent
+                 LINKS, 40% — zurückhaltender als der Stationskopf) — reine
+                 Kartenoptik, Inhalt/Testid/Logik unverändert. */
+              className="k-publish-pubset-karte"
               data-testid="pubset-karte"
-              style={{
-                display: 'flex',
-                gap: 'var(--k-s2)',
-                alignItems: 'center',
-                fontSize: 'var(--k-t-sm)',
-                padding: 'var(--k-s2) var(--k-s3)',
-                borderTopColor: `color-mix(in srgb, ${moduleHue.publish} 40%, var(--k-glass-stroke, var(--k-line)))`,
-                borderTopWidth: 2,
-              }}
+              style={{ ['--_hue' as string]: moduleHue.publish }}
             >
-              <span style={{ flex: 1, fontWeight: 550 }}>
+              <span className="k-publish-pubset-name">
                 {set.name}{' '}
-                <span style={{ color: 'var(--k-ink-faint)', fontWeight: 400 }}>
+                <span className="k-publish-pubset-meta">
                   · {set.sheetIds.length} Blätter
                 </span>
               </span>
@@ -693,13 +707,13 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               <button
                 aria-label={`Set ${set.name} entfernen`}
                 onClick={() => runCommand('publish.setEntfernen', { name: set.name })}
-                style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-ink-faint)', display: 'flex', padding: '0 var(--k-s1)' }}
+                className="k-publish-icon-knopf"
               >
                 <KIcon name="schliessen" size={14} title="Set entfernen" />
               </button>
             </div>
           ))}
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+          <div className="k-publish-pubset-neu">
             <KInput
               size="sm"
               value={neuesSetName}
@@ -711,7 +725,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               placeholder="Set-Name…"
               title="Set-Name, z.B. «Wettbewerb»"
               data-testid="pubset-name"
-              style={{ flex: 1, minWidth: 0 }}
+              className="k-publish-pubset-input"
             />
             <KButton
               size="sm"
@@ -724,41 +738,35 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             </KButton>
           </div>
         </div>
-        <div style={{ flex: 1 }} />
+        <div className="k-publish-spacer" />
         {/* R1-Fix (Kritik-065 p-09/i-09, «Blatt SVG»/«Grundriss DXF» als
             nackte Textlinks): beide waren `tone="ghost"` OHNE sichtbaren
             Rand — neben dem gefüllten «Plansatz PDF» wirkten sie wie reine
-            Textlinks statt wie gleichrangige Export-Aktionen. Jetzt in einer
-            gerahmten Gruppe mit «Plansatz PDF» (Panel-Rand), beide mit
-            Export-KIcon und sichtbarem Rand — bleiben `tone="ghost"`
-            (Kontur statt Füllung, §2-Muster: nur «Plansatz PDF» akzentuiert). */}
-        <div
-          style={{
-            display: 'grid',
-            gap: 'var(--k-s2)',
-            padding: 'var(--k-s3)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-sm)',
-          }}
-        >
+            Textlinks statt wie gleichrangige Export-Aktionen. v0.8.0B / W4
+            (Spez §2 Gesetz 8): die frühere Rahmenbox weicht einer Hairline
+            oben (`k-publish-export-gruppe`) — Trennung durch Linie statt
+            Kasten; bleiben `tone="ghost"` (Kontur statt Füllung, §2-Muster:
+            nur «Plansatz PDF» akzentuiert — die EINE gefüllte Signal-Fläche
+            der ganzen Station, Gesetz 1). */}
+        <div className="k-publish-export-gruppe">
           <KButton size="sm" tone="accent" onClick={() => void exportSheetSetPdf()} data-testid="export-set">
             <KIcon name="export" size={14} /> Plansatz PDF
           </KButton>
           <KButton
             size="sm"
             tone="ghost"
+            className="k-publish-export-ghost-rand"
             onClick={exportSvg}
             data-testid="export-blatt-svg"
-            style={{ borderColor: 'var(--k-line)' }}
           >
             <KIcon name="export" size={14} /> Blatt SVG
           </KButton>
           <KButton
             size="sm"
             tone="ghost"
+            className="k-publish-export-ghost-rand"
             onClick={exportDxfFile}
             data-testid="export-dxf"
-            style={{ borderColor: 'var(--k-line)' }}
           >
             <KIcon name="export" size={14} /> Grundriss DXF
           </KButton>
@@ -766,21 +774,15 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       </div>
 
       {/* Blattfläche */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="k-publish-canvas">
         {/* v0.7.8 Welle D PD3: Glass + dezente Publish-Hue-Note (40%, als
             Unterkante statt Oberkante — die Leiste sitzt ÜBER dem Blatt,
             keine Logik/Testid-Änderung). */}
         <KToolbar
           data-testid="blattflaeche-werkzeugleiste"
           dicht
-          className="k-glass"
-          style={{
-            flexWrap: 'wrap',
-            background: 'var(--k-glass-fill, var(--k-surface))',
-            borderRadius: 0,
-            borderBottomColor: `color-mix(in srgb, ${moduleHue.publish} 40%, var(--k-glass-stroke, var(--k-line)))`,
-            borderBottomWidth: 2,
-          }}
+          className="k-glass k-publish-canvas-toolbar"
+          style={{ ['--_hue' as string]: moduleHue.publish }}
         >
           <KToolGruppe label="Platzieren">
             <KSelect
@@ -814,9 +816,18 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             <KButton size="sm" tone="quiet" onClick={placeBildSlot} data-testid="place-bildslot" disabled={!sheet}>
               Bild-Slot
             </KButton>
+            {/* v0.8.0B / W4 (Spez §2 Gesetz 1: «pro Viewport genau EINE
+                gefüllte Signal-Fläche») — «Blatt füllen» war bisher
+                zusätzlich zu «Plansatz PDF» (Sidebar-Fuss) `tone="accent"`:
+                zwei gefüllte Flächen im selben Bildschirm. Die EINE
+                Primäraktion der ganzen Station bleibt der Export («Plansatz
+                PDF», der Abschluss der Seite) — «Blatt füllen» ist eine
+                Werkzeug-Aktion INNERHALB des Editierens, kein Abschluss,
+                darum jetzt `quiet` wie seine Nachbarn (Kontur statt Füllung,
+                bleibt aber am rechten Rand der Gruppe optisch betont). */}
             <KButton
               size="sm"
-              tone="accent"
+              tone="quiet"
               onClick={blattFuellen}
               data-testid="blatt-fuellen"
               disabled={!sheet}
@@ -850,26 +861,23 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               ins Doc, NIE in den Export, lokaler State (`zonenVorschau`/
               `aussenbemassungVorschau` oben). «Zonen» tönt die Ränder
               zwischen Papierkante und Zeichenfläche; «Aussenbemassung»
-              zeichnet B/H-Masslinien um die Zeichenfläche. */}
+              zeichnet B/H-Masslinien um die Zeichenfläche. v0.8.0B / W4
+              (Spez §3 B-127): `KSwitch` statt nackter Checkbox — dasselbe
+              native `<input type="checkbox">`-Bedienelement darunter,
+              Tastatur/Screenreader/E2E `.check()`/`.uncheck()` unverändert. */}
           <KToolGruppe label="Vorschau (nur Anzeige)">
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
-              <input
-                type="checkbox"
-                data-testid="plankopf-preview-zonen"
-                checked={zonenVorschau}
-                onChange={(e) => setZonenVorschau(e.target.checked)}
-              />
-              Zonen
-            </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
-              <input
-                type="checkbox"
-                data-testid="plankopf-preview-aussenbemassung"
-                checked={aussenbemassungVorschau}
-                onChange={(e) => setAussenbemassungVorschau(e.target.checked)}
-              />
-              Aussenbemassung
-            </label>
+            <KSwitch
+              data-testid="plankopf-preview-zonen"
+              checked={zonenVorschau}
+              onChange={(e) => setZonenVorschau(e.target.checked)}
+              label="Zonen"
+            />
+            <KSwitch
+              data-testid="plankopf-preview-aussenbemassung"
+              checked={aussenbemassungVorschau}
+              onChange={(e) => setAussenbemassungVorschau(e.target.checked)}
+              label="Aussenbemassung"
+            />
           </KToolGruppe>
           {selectedPlacement && sheet && (() => {
             const pl = sheet.placements.find((x) => x.id === selectedPlacement);
@@ -941,7 +949,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       runCommand('publish.ansichtAnpassen', { sheetId: sheet.id, placementId: pl.id, title: e.target.value });
                     }
                   }}
-                  style={{ width: 130 }}
+                  className="k-publish-feld-titel"
                 />
                 <KButton
                   size="sm"
@@ -976,7 +984,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: b.id, w });
                     }
                   }}
-                  style={{ width: 62 }}
+                  className="k-publish-feld-schmal"
                 />
                 <KInput
                   size="sm"
@@ -989,7 +997,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: b.id, title: e.target.value });
                     }
                   }}
-                  style={{ width: 110 }}
+                  className="k-publish-feld-mittel"
                 />
                 <KButton size="sm" tone="quiet" data-testid="bild-laden" onClick={() => bildDateiRef.current?.click()}>
                   Bild laden…
@@ -1012,13 +1020,13 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             ref={bildDateiRef}
             type="file"
             accept="image/png,image/jpeg,image/webp"
-            style={{ display: 'none' }}
+            className="k-publish-versteckt-input"
             onChange={(e) => {
               bildDateiGewaehlt(e.target.files?.[0]);
               e.target.value = '';
             }}
           />
-          <div style={{ flex: 1 }} />
+          <div className="k-publish-spacer" />
           <KButton size="sm" tone="ghost" onClick={undo}>
             <KIcon name="pfeil-links" size={14} /> Rückgängig
           </KButton>
@@ -1035,58 +1043,51 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             Dock-Spalte (Plankopf) läge dann optisch ÜBER der Werkzeugleiste
             (inkl. «Rückgängig»-Knopf), einer positionierten Fläche gewinnt
             dort immer gegen unpositionierten Inhalt gleicher DOM-Reihenfolge. */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+        <div className="k-publish-dockbereich">
         <div
-          style={{
-            flex: 1,
-            minHeight: 0,
-            overflow: 'auto',
-            // v0.8.0 P11 (Owner-Pflichtauftrag 15.07.): OBEN-zentriert statt
-            // mittig (`flex-start`), NICHT mehr `display:grid;placeItems:
-            // center`. Grund (real gemessen, s. Abschlussbericht): der
-            // app-weite Boden-Dock (`shell/BodenDock.tsx`, `position:fixed`,
-            // `screen !== 'home'`) schwebt am VIEWPORT-Unterrand — eine
-            // mittige Zentrierung legte das (grosse) Blatt zwangsläufig in
-            // die Viewport-Mitte, wo die Pille darüber liegt (Owner-
-            // Screenshot: «liegt mitten auf dem Blatt»). Top-Ausrichtung +
-            // die Höhen-Deckelung des Blatts unten (`maxHeight` via
-            // `BODEN_DOCK_RESERVE_PX`) halten das GANZE Blatt strukturell
-            // ÜBER der Pille. `minHeight:0` hält diesen Scroll-Container auf
-            // die Viewport-Höhe geklemmt (sonst wüchse er mit dem Blatt über
-            // den Viewport-Rand hinaus und der Reserve-Raum läge unter dem
-            // Fold statt über der Pille).
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            background: 'var(--k-field)',
-            padding: 'var(--k-s6)',
-          }}
+          // v0.8.0 P11 (Owner-Pflichtauftrag 15.07.): OBEN-zentriert statt
+          // mittig (`flex-start`), NICHT mehr `display:grid;placeItems:
+          // center`. Grund (real gemessen, s. Abschlussbericht): der
+          // app-weite Boden-Dock (`shell/BodenDock.tsx`, `position:fixed`,
+          // `screen !== 'home'`) schwebt am VIEWPORT-Unterrand — eine
+          // mittige Zentrierung legte das (grosse) Blatt zwangsläufig in
+          // die Viewport-Mitte, wo die Pille darüber liegt (Owner-
+          // Screenshot: «liegt mitten auf dem Blatt»). Top-Ausrichtung +
+          // die Höhen-Deckelung des Blatts unten (via `k-publish-blatt`s
+          // Breitenformel) halten das GANZE Blatt strukturell ÜBER der
+          // Pille. `min-height:0` (`.k-publish-scroll`) hält diesen
+          // Scroll-Container auf die Viewport-Höhe geklemmt (sonst wüchse er
+          // mit dem Blatt über den Viewport-Rand hinaus und der Reserve-Raum
+          // läge unter dem Fold statt über der Pille).
+          className="k-publish-scroll"
         >
           {sheet && paper ? (
             <div
               ref={svgHostRef}
               data-testid="sheet-canvas"
+              className="k-publish-blatt"
               style={{
-                position: 'relative',
-                flex: '0 0 auto',
-                // v0.8.0 P11: die Breite bleibt die DEFINITE Achse (die
-                // Blatt-Overlays — Platzierungen/Plankopf-Hitbox — sind in %
-                // der Canvas-Grösse positioniert und würden bei gebrochenem
-                // Seitenverhältnis driften, s. `plankopf-overlay.ts`), die
-                // Höhe folgt aus `aspectRatio`. Der DRITTE `min()`-Term
-                // deckelt die Breite so, dass die daraus abgeleitete HÖHE in
-                // den Raum ÜBER der Boden-Dock-Pille passt: verfügbare Höhe ≈
-                // `100dvh − BODEN_DOCK_RESERVE_PX (Dock-Fussabdruck unten) −
-                // ~132px (Kopfleiste + Werkzeugleiste + Innenabstand oben,
-                // gemessen ~111px + Sicherheitsband)`, mal Seitenverhältnis
-                // `W/H` = die Breite, die genau diese Höhe ergibt. Bei sehr
-                // breiten/kurzen Fenstern greift stattdessen `min(100%,
-                // 1100px)` — für beide Blatt-Orientierungen korrekt, weil der
-                // Term aus dem echten Blatt-Seitenverhältnis abgeleitet ist.
-                width: `min(100%, 1100px, calc((100dvh - ${BODEN_DOCK_RESERVE_PX}px - 132px) * ${paper.width} / ${paper.height}))`,
+                // v0.8.0 P11 / v0.8.0B W4 (ROADMAP 381, 1400px-Fix): die
+                // Breite bleibt die DEFINITE Achse (die Blatt-Overlays —
+                // Platzierungen/Plankopf-Hitbox — sind in % der Canvas-Grösse
+                // positioniert und würden bei gebrochenem Seitenverhältnis
+                // driften, s. `plankopf-overlay.ts`), die Höhe folgt aus
+                // `aspectRatio`. Der DRITTE `min()`-Term deckelt die Breite
+                // so, dass die daraus abgeleitete HÖHE in den Raum ÜBER der
+                // Boden-Dock-Pille passt: verfügbare Höhe ≈ `100dvh −
+                // BODEN_DOCK_RESERVE_PX (Dock-Fussabdruck unten) −
+                // --k-publish-chrome-h (ECHT gemessene Kopfleiste +
+                // Werkzeugleiste + Innenabstand oben, s. `chromeHoehe`-Effekt
+                // oben — spiegelt jetzt auch einen zweizeiligen Werkzeugleisten-
+                // Umbruch, statt eines festen `132px`-Literals)`, mal
+                // Seitenverhältnis `W/H` = die Breite, die genau diese Höhe
+                // ergibt. Bei sehr breiten/kurzen Fenstern greift stattdessen
+                // `min(100%, 1100px)` — für beide Blatt-Orientierungen
+                // korrekt, weil der Term aus dem echten Blatt-Seitenverhältnis
+                // abgeleitet ist.
+                ['--k-publish-chrome-h' as string]: `${chromeHoehe}px`,
+                width: `min(100%, 1100px, calc((100dvh - ${BODEN_DOCK_RESERVE_PX}px - var(--k-publish-chrome-h)) * ${paper.width} / ${paper.height}))`,
                 aspectRatio: `${paper.width} / ${paper.height}`,
-                boxShadow: 'var(--k-shadow, 0 8px 30px rgba(0,0,0,0.12))',
               }}
               onPointerMove={(e) => {
                 if (textDrag) {
@@ -1143,10 +1144,18 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               }}
             >
               <div
-                style={{ position: 'absolute', inset: 0 }}
+                className="k-publish-blatt-svg"
                 // Vorschau = echtes Druck-SVG aus dem Kern
                 dangerouslySetInnerHTML={{ __html: svgMarkup.replace('<svg ', '<svg style="width:100%;height:100%" ') }}
               />
+              {/* Platzierungs-/Bild-/Text-Overlays: Auswahl + Drag. Hover-
+                  Rand war bisher eine direkte DOM-Style-Mutation
+                  (`onMouseEnter`/`onMouseLeave`) — v0.8.0B / W4 (reiner
+                  Visual-Umbau): jetzt CSS `:hover` auf `.k-publish-overlay`
+                  (`publish.css`), `is-sel` steuert denselben Zustand wie
+                  vorher der `sel`/`textDrag.id===t.id`-Vergleich. Verhalten
+                  (Klick/Drag/Selektion/testids) unverändert — nur die
+                  Hover-Optik wandert von JS-Style-Mutation in CSS. */}
               {/* Platzierungs-Overlays: Auswahl + Drag */}
               {sheet.placements.map((pl) => {
                 const b = placementPaperBounds(doc, pl);
@@ -1163,21 +1172,12 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       const p = toPaper(e);
                       if (p) setDrag({ id: pl.id, dx: pl.x, dy: pl.y });
                     }}
+                    className={`k-publish-overlay${sel ? ' k-publish-overlay--sel' : ''}`}
                     style={{
-                      position: 'absolute',
                       left: `${(x / paper.width) * 100}%`,
                       top: `${(y / paper.height) * 100}%`,
                       width: `${(b.width / paper.width) * 100}%`,
                       height: `${(b.height / paper.height) * 100}%`,
-                      border: sel ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
-                      cursor: 'move',
-                      borderRadius: 'var(--k-radius-sm)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
                     }}
                   />
                 );
@@ -1198,21 +1198,12 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       setSelectedBild(b.id);
                       setBildDrag({ id: b.id, dx: r.x + r.width / 2, dy: r.y + r.height / 2 });
                     }}
+                    className={`k-publish-overlay${sel ? ' k-publish-overlay--sel' : ''}`}
                     style={{
-                      position: 'absolute',
                       left: `${(x / paper.width) * 100}%`,
                       top: `${(y / paper.height) * 100}%`,
                       width: `${(r.width / paper.width) * 100}%`,
                       height: `${(r.height / paper.height) * 100}%`,
-                      border: sel ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
-                      cursor: 'move',
-                      borderRadius: 'var(--k-radius-sm)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!sel) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
                     }}
                   />
                 );
@@ -1224,6 +1215,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                 const hMm = zeilen.length * t.size * 1.35;
                 const tx = textDrag?.id === t.id ? textDrag.dx : t.x;
                 const ty = (textDrag?.id === t.id ? textDrag.dy : t.y) - t.size;
+                const selText = textDrag?.id === t.id;
                 return (
                   <div
                     key={t.id}
@@ -1234,20 +1226,12 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       setSelectedPlacement(null);
                       setTextDrag({ id: t.id, dx: t.x, dy: t.y });
                     }}
+                    className={`k-publish-overlay${selText ? ' k-publish-overlay--sel' : ''}`}
                     style={{
-                      position: 'absolute',
                       left: `${(tx / paper.width) * 100}%`,
                       top: `${(ty / paper.height) * 100}%`,
                       width: `${(Math.max(wMm, 20) / paper.width) * 100}%`,
                       height: `${(Math.max(hMm, 8) / paper.height) * 100}%`,
-                      border: textDrag?.id === t.id ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
-                      cursor: 'move',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (textDrag?.id !== t.id) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (textDrag?.id !== t.id) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
                     }}
                   />
                 );
@@ -1275,21 +1259,12 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                       setSelectedBild(null);
                       setPlankopfOffen(true);
                     }}
+                    className={`k-publish-overlay-plankopf${plankopfOffen ? ' k-publish-overlay-plankopf--sel' : ''}`}
                     style={{
-                      position: 'absolute',
                       left: `${(hit.x / paper.width) * 100}%`,
                       top: `${(hit.y / paper.height) * 100}%`,
                       width: `${(hit.width / paper.width) * 100}%`,
                       height: `${(hit.height / paper.height) * 100}%`,
-                      border: plankopfOffen ? '1.5px solid var(--k-accent)' : '1px dashed transparent',
-                      cursor: 'pointer',
-                      borderRadius: 'var(--k-radius-sm)',
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!plankopfOffen) (e.currentTarget as HTMLElement).style.border = '1px dashed var(--k-accent)';
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!plankopfOffen) (e.currentTarget as HTMLElement).style.border = '1px dashed transparent';
                     }}
                   />
                 );
@@ -1307,20 +1282,19 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   { left: rahmen.x + rahmen.width, top: rahmen.y, width: paper.width - (rahmen.x + rahmen.width), height: rahmen.height }, // rechts
                 ];
                 return (
-                  <div data-testid="plankopf-preview-zonen-overlay" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+                  <div data-testid="plankopf-preview-zonen-overlay" className="k-publish-zonen-overlay">
                     {baender.map(
                       (b, i) =>
                         b.width > 0.01 &&
                         b.height > 0.01 && (
                           <div
                             key={i}
+                            className="k-publish-zonen-band"
                             style={{
-                              position: 'absolute',
                               left: `${(b.left / paper.width) * 100}%`,
                               top: `${(b.top / paper.height) * 100}%`,
                               width: `${(b.width / paper.width) * 100}%`,
                               height: `${(b.height / paper.height) * 100}%`,
-                              background: 'color-mix(in srgb, var(--k-accent) 14%, transparent)',
                             }}
                           />
                         ),
@@ -1339,7 +1313,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                   <svg
                     data-testid="plankopf-preview-aussenbemassung-overlay"
                     viewBox={`0 0 ${paper.width} ${paper.height}`}
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', color: 'var(--k-accent)' }}
+                    className="k-publish-aussenbemassung-svg"
                   >
                     <line x1={fx} y1={fy - 3} x2={fx + fw} y2={fy - 3} stroke="currentColor" strokeWidth={0.4} />
                     <line x1={fx} y1={fy - 5} x2={fx} y2={fy - 1} stroke="currentColor" strokeWidth={0.4} />
@@ -1376,24 +1350,9 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                darüber (`--k-font-ui`/`--k-t-sm`) — Wortlaut unverändert
                (e2e/module.spec.ts:491 prüft `getByText('Noch kein Blatt im
                Plansatz', …)`, nur EINE sichtbare Fundstelle im DOM). */
-            <div style={{ position: 'relative', width: 520, maxWidth: '90%' }}>
+            <div className="k-publish-leerzustand">
               <Messrahmen height={280} caption="" style={{ width: '100%' }} />
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0 16%',
-                  textAlign: 'center',
-                  fontFamily: 'var(--k-font-ui)',
-                  fontSize: 'var(--k-t-sm)',
-                  color: 'var(--k-ink-soft)',
-                  lineHeight: 1.5,
-                  pointerEvents: 'none',
-                }}
-              >
+              <div className="k-publish-leerzustand-text">
                 Noch kein Blatt im Plansatz — links Format wählen und «+ Blatt», dann Grundrisse, Schnitte und
                 Ansichten platzieren
               </div>

@@ -1,0 +1,491 @@
+/* KosmoPublish (v0.8.0B / W4, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
+   Schicht für `PublishWorkspace.tsx`/`PlankopfPanel.tsx`/`DossierPanel.tsx`.
+   Reiner Visual-Umbau: ersetzt die vorherigen Inline-Styles durch Klassen +
+   Tokens (Muster `shell/dock/dock-flaeche.css`, 0 Inline). Rein dekorative
+   Werte (Farbe/Rahmen/Radius/Abstand/Schrift) wandern hierher; Daten-
+   getriebene Geometrie (Platzierungs-/Bild-/Text-Overlays, Blattbreite aus
+   `paper.width/height`) bleibt inline, weil sie pro Render aus dem Doc
+   berechnet wird — keine zweite Quelle der Wahrheit für dieselbe Zahl.
+
+   Modul-Hue (`moduleHue.publish`, Salbei `#6f8b6a`) wird wie in
+   `KCard`/`KPill`/`KWerkzeugKreis` als CSS-Custom-Property `--_hue` PRO
+   INSTANZ übergeben (`style={{ '--_hue': moduleHue.publish }}`) — das ist
+   KEIN Inline-Style im beanstandeten Sinn (Layout/Farbe hart im JSX), sondern
+   derselbe Token-Carrier, den die P2-Komponenten bereits etablieren.
+
+   Gesetz 6 (Zwei Schriftstimmen) — Abschnitts-Kleinbeschriftungen
+   («Baugesuch (SIA 33)», «Plankopf-Felder» usw.) liefen bisher über
+   `className="k-titel"` (PT Sans Narrow) — laut Spez §2 Gesetz 6 ist PT Sans
+   Narrow NUR der Wortmarke vorbehalten, Labels/Messbares gehören in Mono
+   UPPERCASE Tracking .14em. Diese Datei führt darum eine STATIONS-EIGENE
+   `.k-publish-abschnitt-label`-Klasse — `k-titel` selbst bleibt unangetastet
+   (Bestandsschutz für andere Stationen, ausserhalb des W4-Scopes). */
+
+.k-publish {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+/* ── Sidebar (Blattliste + Sets + Export) ─────────────────────────── */
+
+.k-publish-sidebar {
+  width: 220px;
+  border-right: 1px solid var(--k-line);
+  background: var(--k-surface);
+  padding: var(--k-s3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+  /* v0.8.0B / W4 — Fix (real gemessen, kein Theoriewert): der Bestand hatte
+     hier `overflow:auto` (beide Achsen) auf einer FIXEN 220px-Spalte. Der
+     Kopf (`.k-publish-kopf`: Badge + 2-3 Knöpfe) ist knapp breiter als die
+     verfügbaren ~204px — beim Fokussieren/Klicken eines seiner Knöpfe (z.B.
+     «Plankopf») scrollt Chromium den nächsten scrollbaren Vorfahren
+     serienmässig ins Blickfeld; weil BEIDE Achsen scrollbar waren, geschah
+     das horizontal und schnitt «PLANSATZ» links ab (reproduziert per
+     Screenshot-Beweis). Eine 220px-Spalte braucht nie horizontales Scrollen
+     — jetzt `overflow-x:hidden` (nur vertikal scrollbar), Verhalten sonst
+     unverändert. */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.k-publish-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  padding: var(--k-s2) var(--k-s3);
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+
+.k-publish-spacer {
+  flex: 1;
+}
+
+/* Blattliste-Karten — KCard-Anatomie (Spez §3 B-126): 2px-Rollenakzent LINKS
+   statt einer Rahmenbox; Modul-Hue als «Rollenfarbe» dieser Station (die
+   `KCard`-Komponente selbst kennt nur Entitäts-Rollen manuell/pn/agent/…,
+   keine Modul-Hues — die Anatomie wird darum hier lokal repliziert statt die
+   Komponente zweckzuentfremden, dokumentierter Entscheid Abschlussbericht). */
+.k-publish-sheet-karte {
+  position: relative;
+  padding: var(--k-s3) var(--k-s4);
+  padding-left: calc(var(--k-s4) + 6px);
+  cursor: pointer;
+  background: var(--k-surface);
+  border-radius: var(--k-radius-karte);
+}
+.k-publish-sheet-karte::before {
+  content: '';
+  position: absolute;
+  left: var(--k-s2);
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--_hue) 55%, var(--k-line-strong));
+}
+.k-publish-sheet-karte--aktiv {
+  background: var(--k-hover);
+}
+.k-publish-sheet-karte--aktiv::before {
+  background: var(--k-accent);
+  width: 2.5px;
+}
+.k-publish-sheet-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+.k-publish-sheet-name {
+  font-weight: 550;
+  font-size: var(--k-t-sm);
+  flex: 1;
+}
+.k-publish-sheet-meta {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+
+.k-publish-icon-knopf {
+  all: unset;
+  cursor: pointer;
+  color: var(--k-ink-faint);
+  display: flex;
+  padding: 0 var(--k-s1);
+}
+.k-publish-icon-knopf:hover,
+.k-publish-icon-knopf:focus-visible {
+  color: var(--k-accent);
+}
+
+.k-publish-add-zeile {
+  display: flex;
+  gap: var(--k-s2);
+  align-items: center;
+}
+
+.k-publish-abschnitt {
+  display: grid;
+  gap: var(--k-s2);
+}
+.k-publish-abschnitt-label {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--k-ink-soft);
+}
+
+/* Baugesuch-Knopf — Akzent-Eckpunkt statt Füllung (R1-Fix, Gesetz 1/2:
+   aktiv/besonders ≠ gefüllt; die einzige gefüllte Signal-Fläche der Station
+   bleibt «Plansatz PDF»). */
+.k-publish-baugesuch-knopf {
+  border-width: 1.5px;
+  border-color: var(--k-accent);
+}
+
+.k-publish-eck-wrap {
+  position: relative;
+  display: inline-block;
+  justify-self: start;
+}
+.k-publish-eck-punkt {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--k-accent);
+}
+
+.k-publish-reihe {
+  display: flex;
+  gap: var(--k-s2);
+}
+
+.k-publish-textarea {
+  padding: var(--k-s2) var(--k-s3);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+  font-size: var(--k-t-sm);
+  font-family: var(--k-font-ui);
+  resize: vertical;
+}
+.k-publish-textarea--titel {
+  font-family: var(--k-font-titel);
+}
+
+/* Publikations-Sets — dieselbe KCard-Anatomie wie die Blattliste-Karten,
+   zurückhaltendere 40%-Hue-Note (bestehende v0.7.8-Konvention). */
+.k-publish-pubset-karte {
+  position: relative;
+  display: flex;
+  gap: var(--k-s2);
+  align-items: center;
+  font-size: var(--k-t-sm);
+  padding: var(--k-s2) var(--k-s3);
+  padding-left: calc(var(--k-s3) + 6px);
+  border-radius: var(--k-radius-karte);
+  background: var(--k-surface);
+}
+.k-publish-pubset-karte::before {
+  content: '';
+  position: absolute;
+  left: var(--k-s2);
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--_hue) 45%, var(--k-line-strong));
+}
+.k-publish-pubset-name {
+  flex: 1;
+  font-weight: 550;
+}
+.k-publish-pubset-meta {
+  color: var(--k-ink-faint);
+  font-weight: 400;
+}
+.k-publish-pubset-neu {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.k-publish-pubset-input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Export-Gruppe — Hairline statt Rahmenbox (Gesetz 8: Flächenstufen +
+   Hairlines statt Kästen). War zuvor `border:1px solid …` rundum. */
+.k-publish-export-gruppe {
+  display: grid;
+  gap: var(--k-s2);
+  padding-top: var(--k-s3);
+  border-top: 1px solid var(--k-line);
+}
+/* R1-Fix (Kritik-065 p-09/i-09): `ghost`-Knöpfe sind sonst randlos
+   (`--k-btn`-Basis `border:1px solid transparent`) — «Blatt SVG»/«Grundriss
+   DXF» brauchen einen sichtbaren Rand, sonst wirken sie neben dem gefüllten
+   «Plansatz PDF» wie nackte Textlinks statt gleichrangige Export-Aktionen. */
+.k-publish-export-ghost-rand {
+  border-color: var(--k-line);
+}
+
+/* ── Blattfläche (Werkzeugleiste + Canvas) ────────────────────────── */
+
+.k-publish-canvas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.k-publish-canvas-toolbar {
+  flex-wrap: wrap;
+  border-radius: 0;
+  border-bottom-width: 2px;
+  border-bottom-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+
+.k-publish-vorschau-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.k-publish-feld-schmal {
+  width: 62px;
+}
+.k-publish-feld-mittel {
+  width: 110px;
+}
+.k-publish-feld-titel {
+  width: 130px;
+}
+
+.k-publish-versteckt-input {
+  display: none;
+}
+
+/* Dock-Bereich (Blattfläche + DockFlaeche, Dossier/Plankopf) — eigener
+   `position:relative`-Container NUR für die Blattfläche, s. Kopfkommentar
+   `PublishWorkspace.tsx` («y-Start»). */
+.k-publish-dockbereich {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  position: relative;
+}
+
+.k-publish-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: var(--k-field);
+  padding: var(--k-s6);
+}
+
+/* v0.8.0B / W4 (ROADMAP 381, 1400px-Umbruch-Fix) — `--k-publish-chrome-h`
+   spiegelt die ECHTE, gemessene Unterkante der Blattflächen-Werkzeugleiste
+   (`PublishWorkspace.tsx`s ResizeObserver auf `[data-testid="blattflaeche-
+   werkzeugleiste"]`, viewport-relativ — deckt Header+Werkzeugleiste in EINER
+   Messung ab, ob ein- oder zweizeilig). Der vorherige harte `132px`-Literal
+   war eine EINMALIGE Schätzung (Kopfleiste+Werkzeugleiste+Innenabstand,
+   Kommentar «gemessen ~111px + Sicherheitsband») — bei einem Umbruch der
+   Werkzeugleiste (z.B. 1400px, viele Werkzeuggruppen) wuchs die reale Höhe
+   über die Schätzung hinaus, das Blatt liess dafür keinen Platz mehr frei
+   und schob unter den Boden-Dock. Mit der CSS-Var bleibt der Term ehrlich
+   bei jeder Fensterbreite; Default `132px` nur als Startwert vor dem ersten
+   Messlauf (identisch zum bisherigen Fallback, kein verhaltensänderndes
+   Flackern). */
+.k-publish-blatt {
+  position: relative;
+  flex: 0 0 auto;
+  box-shadow: var(--k-shadow, 0 8px 30px rgba(0, 0, 0, 0.12));
+}
+
+.k-publish-blatt-svg {
+  position: absolute;
+  inset: 0;
+}
+
+.k-publish-overlay {
+  position: absolute;
+  cursor: move;
+  border: 1px dashed transparent;
+  border-radius: var(--k-radius-sm);
+}
+.k-publish-overlay:hover:not(.k-publish-overlay--sel) {
+  border-color: var(--k-accent);
+}
+.k-publish-overlay--sel {
+  border: 1.5px solid var(--k-accent);
+}
+
+.k-publish-overlay-plankopf {
+  position: absolute;
+  cursor: pointer;
+  border: 1px dashed transparent;
+  border-radius: var(--k-radius-sm);
+}
+.k-publish-overlay-plankopf:hover:not(.k-publish-overlay-plankopf--sel) {
+  border-color: var(--k-accent);
+}
+.k-publish-overlay-plankopf--sel {
+  border: 1.5px solid var(--k-accent);
+}
+
+.k-publish-zonen-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.k-publish-zonen-band {
+  position: absolute;
+  background: color-mix(in srgb, var(--k-accent) 14%, transparent);
+}
+
+.k-publish-aussenbemassung-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  color: var(--k-accent);
+}
+
+.k-publish-leerzustand {
+  position: relative;
+  width: 520px;
+  max-width: 90%;
+}
+/* ── PlankopfPanel/DossierPanel (Dock-Panel-Inhalte) ──────────────── */
+
+.k-publish-panel {
+  background: var(--k-raised);
+  border: 1px solid var(--k-technik);
+  box-shadow: var(--k-shadow-overlay);
+  padding: var(--k-s4);
+  display: grid;
+  gap: var(--k-s4);
+  font-size: var(--k-t-sm);
+}
+.k-publish-panel-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.k-publish-meta-zeile {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+.k-publish-hinweis-klein {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.k-publish-hinweis-warnung {
+  background: var(--k-warning-wash, #f6f2e6);
+  border: 1px solid var(--k-warning-line, #c9bfa0);
+  border-radius: var(--k-radius-sm);
+  padding: var(--k-s3) var(--k-s4);
+  font-weight: 600;
+  color: var(--k-ink);
+}
+.k-publish-input {
+  padding: var(--k-s2) var(--k-s3);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-field);
+  font-size: var(--k-t-sm);
+  width: 100%;
+}
+.k-publish-mono-wert {
+  font-family: var(--k-font-mono);
+  font-weight: 600;
+  color: var(--k-ink-faint);
+}
+.k-publish-mono-wert--gesetzt {
+  color: var(--k-ink);
+}
+.k-publish-dateiname {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-soft);
+  word-break: break-all;
+}
+.k-publish-logo-zeile {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Phasen-Detailkarte — `--_farbe` (Phasenfarbe aus `PHASEN_MATRIX`, keine
+   `--k-rolle-*`-Entitätsrolle) als Carrier, dieselbe Token-Carrier-Konvention
+   wie `KCard`/`KPill`. */
+.k-publish-detailkarte {
+  display: grid;
+  gap: 6px;
+  padding: var(--k-s3);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  border-left: 3px solid var(--_farbe);
+}
+.k-publish-detailkarte-titel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.k-publish-detailkarte-punkt {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--_farbe);
+  flex-shrink: 0;
+}
+.k-publish-detailkarte-zeile {
+  color: var(--k-ink-soft);
+}
+
+.k-publish-massstab-liste {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+/* Massstab-Chip-Knopf — `disabled` ist ein echtes Button-Attribut, Cursor/
+   Opacity laufen darum über `:disabled` statt einer JS-berechneten Inline-
+   Style (dieselbe Vereinfachung wie die Blattflächen-Overlay-Hover-Regel). */
+.k-plankopf-chip-knopf {
+  all: unset;
+  cursor: pointer;
+}
+.k-plankopf-chip-knopf:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.k-publish-leerzustand-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16%;
+  text-align: center;
+  font-family: var(--k-font-ui);
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+  pointer-events: none;
+}

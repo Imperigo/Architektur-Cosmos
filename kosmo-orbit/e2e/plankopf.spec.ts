@@ -216,3 +216,54 @@ test('Büro-Logo: Nicht-PNG-Datei löst die ehrliche Fehlermeldung des Commands 
   // Kein stiller Fehlschlag: das Panel bleibt offen, kein Logo gesetzt.
   await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
 });
+
+// v0.8.0B / W4 (Spez §4/§2 Gesetz 9, B-58) — «Publish ist der ERSTE
+// Verbraucher» des additiven `oeffnen`-Felds auf `DockPanelEintrag`
+// (`shell/dock/DockFlaeche.tsx`): ein Panel, das seine Station als
+// `sichtbar:false` UND mit einem `oeffnen`-Rückruf meldet, erscheint als
+// «+ NAME»-Closed-Chip in der Dock-Closed-Leiste — additiver Test, kein
+// bestehendes Verhalten geändert (vorher blieb die Leiste für JEDE Station
+// leer, weil niemand `oeffnen` durchreichte).
+test('Dock-Closed-Chips: geschlossene Dossier-/Plankopf-Panels erscheinen als «+ NAME»-Chip und öffnen per Klick wieder', async ({ page }) => {
+  await ladeUndOeffnePublish(page);
+  await page.click('[data-testid="add-sheet"]');
+  await expect(page.locator('[data-testid="sheet-canvas"]')).toBeVisible();
+
+  // Beide Panels starten geschlossen (`start:'zu'`, `dock-stationen.ts`s
+  // `PUBLISH_PANELS`) — beide reichen jetzt `oeffnen` durch (erster
+  // Verbraucher, s. `PublishWorkspace.tsx`s `publishDockPanels`), darum
+  // erscheinen BEIDE Closed-Chips bereits VOR jedem Öffnen, sobald ein
+  // Blatt existiert (dieselben Guards wie die Werkzeugleisten-Knöpfe).
+  const dossierChip = page.locator('[data-testid="dock-closed-chip-dossier"]');
+  const plankopfChip = page.locator('[data-testid="dock-closed-chip-plankopf"]');
+  await expect(page.locator('[data-testid="dock-closed-leiste"]')).toBeVisible();
+  await expect(dossierChip).toBeVisible();
+  await expect(dossierChip).toContainText('Projekt-Dossier');
+  await expect(plankopfChip).toBeVisible();
+  await expect(plankopfChip).toContainText('Plankopf');
+  await expect(page.locator('[data-testid="dossier-panel"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toHaveCount(0);
+
+  // Chip-Klick öffnet das Panel — der eigene Chip verschwindet sofort.
+  await dossierChip.click();
+  await expect(page.locator('[data-testid="dossier-panel"]')).toBeVisible();
+  await expect(dossierChip).toHaveCount(0);
+
+  // Über die Dock-Kopf-Chrome schliessen (nicht das Panel-eigene
+  // «Schliessen» — Doppel-Chrome, s. `DockPanel.tsx`-Kopfkommentar) → Chip
+  // erscheint wieder.
+  await page.click('[data-testid="dock-panel-dossier-schliessen"]');
+  await expect(page.locator('[data-testid="dossier-panel"]')).toHaveCount(0);
+  await expect(dossierChip).toBeVisible();
+
+  // Plankopf: derselbe Nachweis über den Werkzeugleisten-Knopf statt den
+  // Chip — beide Öffnen-Wege (Knopf UND Chip) bedienen denselben Setter.
+  await page.click('[data-testid="publish-plankopf"]');
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
+  await expect(plankopfChip).toHaveCount(0);
+  await page.click('[data-testid="dock-panel-plankopf-schliessen"]');
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toHaveCount(0);
+  await expect(plankopfChip).toBeVisible();
+  await plankopfChip.click();
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
+});
