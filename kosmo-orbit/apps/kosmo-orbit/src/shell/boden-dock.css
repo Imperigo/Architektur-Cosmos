@@ -43,18 +43,26 @@
 }
 
 /* v0.7.4 P3 — rechter Slot für den eingebetteten Kosmo-Orb (kein eigener
-   Fixed-Layer mehr, s. `KosmoSymbol.tsx` `eingebettet`-Variante): eine dünne
-   Trennlinie hebt ihn optisch von den 8 Werkzeug-Knöpfen ab, ohne eine neue
-   Farbe einzuführen (derselbe `--k-line`-Ton wie der Dock-Rahmen selbst). */
+   Fixed-Layer mehr, s. `KosmoSymbol.tsx` `eingebettet`-Variante). v0.8.0B /
+   W3 (Spez §4, B-64): die Trennung selbst wandert in den eigenständigen
+   `.boden-dock-trenner` (26px, s.u.) — dieser Slot behält nur noch den
+   Rand-Abstand dazu, kein doppelter `border-left` mehr. */
 .boden-dock-kosmo-slot {
   display: flex;
   align-items: flex-end;
-  margin-left: 14px;
-  padding-left: 14px;
-  border-left: 1px solid var(--k-line);
+  margin-left: 4px;
   pointer-events: auto;
 }
 
+/* v0.8.0B / W3 (Spez §4, B-65) — Basis-Randstärke jetzt 1px («übrige Tools
+   1px-Border», Blaupause) statt vorher pauschal 1.5px für ALLE Tiers; die
+   Top-3 (`--innen`, unten) heben sich mit 1.5px + Rollenfarbe ab. Grössen
+   selbst bleiben bei `TIER_GROESSE` (64/54/46, `state/orbit-rang.ts`,
+   NICHT verändert) — die Blaupausen-Masse 44/36px würden die getestete
+   `BODEN_DOCK_RESERVE_PX=180`/`bottom:96px`-Kollisionsrechnung verschieben
+   (Spec-Test-Vertrag, s. Auftrag), darum bewusst NICHT übernommen; die
+   Feingliederung (Randstärke/Rollenpunkt/Trenner) trägt die Blaupause so
+   weit wie ohne Vertragsbruch möglich. */
 .boden-dock-knopf {
   position: relative;
   flex: none;
@@ -64,24 +72,105 @@
   padding: 0;
   border-radius: 999px;
   background: var(--k-surface);
-  border: 1.5px solid var(--k-line-strong);
+  border: 1px solid var(--k-line-strong);
   cursor: pointer;
   pointer-events: auto;
   transition:
     width var(--k-motion-fast),
     height var(--k-motion-fast),
     box-shadow var(--k-motion-fast),
-    border-color var(--k-motion-fast);
+    border-color var(--k-motion-fast),
+    transform var(--k-dock-schnell, var(--k-motion-fast));
 }
 
 /* Top-3 (Rang-Position 0-2, `tierFuerPosition`) — Rollenfarben-Border + Glow,
    exakt dieselbe Betonung wie OrbitStarts `.orbit065-rang-kreis--innen`
    (eigene Klasse, eigenes File — kein Import aus `orbit-065.css`). */
 .boden-dock-knopf--innen {
+  border-width: 1.5px;
   border-color: var(--k-dock-rolle, var(--k-accent));
   box-shadow:
     0 0 0 2px var(--k-dock-rolle, var(--k-accent)),
     0 0 10px 1px var(--k-dock-rolle, var(--k-accent));
+}
+
+/* v0.8.0B / W3 (Spez §4, B-65) — 4px-Rollenpunkt unterhalb des Top-Werk-
+   zeugs (Blaupause: «bottom −7»), NUR bei den Top-3. Rein dekorativ, bleibt
+   innerhalb des bestehenden 10px-Bodenpaddings des Containers (kein
+   Höhenzuwachs des Docks). */
+.boden-dock-knopf--innen::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--k-dock-rolle, var(--k-accent));
+  pointer-events: none;
+}
+
+/* v0.8.0B / W3 (Spez §4, B-67) — «Hover-Sog nur Nachbarn»: reine CSS-Geste,
+   kein Zustand nötig. Der gehoverte Kreis selbst hebt sich leicht, seine
+   UNMITTELBAREN Nachbarn rücken minimal zu ihm heran (± 3px) — alle
+   übrigen bleiben still (Gesetz 1, Signal-Disziplin: nur ein Nachbarpaar
+   reagiert, nie die ganze Reihe). `:has()` ist im gepinnten Playwright-
+   Chromium verfügbar (Chromium ≥105); ohne Support bleibt die Reihe
+   einfach unbewegt (kein Fallback nötig, rein additive Geste). */
+.boden-dock-werkzeuge .boden-dock-knopf:hover {
+  transform: translateY(-1px);
+}
+.boden-dock-werkzeuge .boden-dock-knopf:hover + .boden-dock-knopf {
+  transform: translateX(-3px);
+}
+.boden-dock-werkzeuge .boden-dock-knopf:has(+ .boden-dock-knopf:hover) {
+  transform: translateX(3px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .boden-dock-werkzeuge .boden-dock-knopf:hover,
+  .boden-dock-werkzeuge .boden-dock-knopf:hover + .boden-dock-knopf,
+  .boden-dock-werkzeuge .boden-dock-knopf:has(+ .boden-dock-knopf:hover) {
+    transform: none;
+  }
+}
+
+/* v0.8.0B / W3 (Spez §4, B-66) — Kosmo-Orb-Zielgestalt im Boden-Dock: 38px,
+   1.5px gestrichelter Teal-Ring + 9px-Punkt, statt des generischen 52px-
+   Symbols. `KosmoSymbol.tsx` bleibt UNVERÄNDERT (bedient auch die
+   freistehende Home-Variante) — die Grössenkorrektur läuft rein über diese
+   Nachfahren-Selektoren MIT `!important`, weil `KosmoSymbol.tsx`s eigene
+   Inline-Styles (Breite/Höhe/Rand) sonst gewinnen würden (Inline schlägt
+   unwichtige externe Regeln immer). `position:relative` ist nötig, damit
+   der `::after`-Punkt (unten) relativ zum Knopf sitzt — die Home-Variante
+   ist bereits `position:fixed`-Kind eines Wrappers, nicht betroffen. */
+.boden-dock-kosmo-slot [data-testid='kosmo-symbol'] {
+  width: 38px !important;
+  height: 38px !important;
+  border: 1.5px dashed var(--k-signal) !important;
+  position: relative !important;
+}
+.boden-dock-kosmo-slot [data-testid='kosmo-symbol']::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  transform: translateX(-50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--k-signal);
+  pointer-events: none;
+}
+
+/* v0.8.0B / W3 (Spez §4, B-64) — 1×26px-Trenner vor dem Kosmo-Slot. */
+.boden-dock-trenner {
+  align-self: center;
+  width: 1px;
+  height: 26px;
+  margin: 0 4px;
+  background: var(--k-line-strong);
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -201,7 +201,11 @@ export function DockPanel({
     // greifbar). Mit `rect.z` gewinnt das vom Menschen platzierte Panel —
     // wie im Prototyp.
     zIndex: rect.z,
-  };
+    // v0.8.0B / W3 (Spez §4, B-54) — die EINZIGE flächige Rollenkennung
+    // (`border-top: 2px solid var(--rolle)`, `dock-flaeche.css`) liest diese
+    // CSS-Var; additiv, keine bestehende Style-Angabe verändert.
+    '--rolle': `var(--k-rolle-${def.rolle})`,
+  } as React.CSSProperties;
 
   // v0.7.8 Welle 2 / Paket P5 («HUDs als echte Dock-Floats»): eine schlanke
   // Chrome-Variante für Panels, die als kompakte Glass-Karte OHNE Dock-Kopf
@@ -252,22 +256,31 @@ export function DockPanel({
           onPointerDown={tabPointerDown}
           onClick={tabKlick}
         >
-          <span
-            className="k-dock-panel-rollenpunkt"
-            aria-hidden
-            style={{ background: `var(--k-rolle-${def.rolle})` }}
-          />
-          <span className="k-dock-panel-titel">{def.titel}</span>
-          {angeheftet && (
-            <span className="k-dock-panel-pin-badge" data-testid={`dock-panel-${def.id}-pin-badge`} aria-hidden="true">
-              •
-            </span>
-          )}
-          {kosmoBadgeSichtbar && (
-            <span className="k-dock-kosmo-badge" data-testid={`dock-panel-${def.id}-kosmo-badge`} aria-hidden="true">
-              KOSMO
-            </span>
-          )}
+          <span className="k-dock-panel-tab-zeile">
+            <span
+              className="k-dock-panel-rollenpunkt"
+              aria-hidden
+              style={{ background: `var(--k-rolle-${def.rolle})` }}
+            />
+            <span className="k-dock-panel-titel">{def.titel}</span>
+            {angeheftet && (
+              <span className="k-dock-panel-pin-badge" data-testid={`dock-panel-${def.id}-pin-badge`} aria-hidden="true">
+                •
+              </span>
+            )}
+            {kosmoBadgeSichtbar && (
+              <span className="k-dock-kosmo-badge" data-testid={`dock-panel-${def.id}-kosmo-badge`} aria-hidden="true">
+                KOSMO
+              </span>
+            )}
+          </span>
+          {/* v0.8.0B / W3 (Spez §4, B-56) — literale Hinweiszeile, additiv
+              neben Titel/Badges (byte-gleich erhalten). Rein dekorativ
+              (`aria-hidden`) — der Button trägt sein eigenes `aria-label`
+              bereits mit demselben Sinn («… wieder öffnen»). */}
+          <span className="k-dock-panel-tab-hinweis" aria-hidden="true">
+            EINGEKLAPPT · TIPPEN ZUM ÖFFNEN
+          </span>
         </button>
       </div>
     );
@@ -344,7 +357,7 @@ export function DockPanel({
         {def.schliessbar && onSchliessen && (
           <button
             type="button"
-            className="k-dock-panel-knopf"
+            className="k-dock-panel-knopf k-dock-panel-knopf--schliessen"
             data-testid={`dock-panel-${def.id}-schliessen`}
             title="Schliessen"
             aria-label="Schliessen"

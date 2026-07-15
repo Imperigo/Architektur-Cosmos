@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { KChip } from '@kosmo/ui';
 import {
   DOCK_KONSTANTEN,
   placeFloats,
@@ -100,6 +101,18 @@ export interface DockPanelEintrag {
   /** Fehlt bei datengetriebenen Panels ohne eigenes Boolean (`unternehmerplan`,
    *  `kennzahlen`, `inspector`). */
   schliessen?: () => void;
+  /**
+   * v0.8.0B / W3 (Spez §4/§2 Gesetz 9, B-58) — Gegenstück zu `schliessen`:
+   * öffnet ein Panel wieder, dessen Station es als `sichtbar:false` meldet.
+   * Additiv und OPTIONAL — kein bestehender Aufrufer setzt dieses Feld heute
+   * (jede Station reicht bislang nur `sichtbar`/`schliessen` durch), darum
+   * bleibt die neue Closed-Chip-Leiste (unten im Render) app-weit leer, bis
+   * eine Station ihre eigene Öffnen-Funktion hier durchreicht — ohne dieses
+   * Feld kein Chip, kein Verhalten ändert sich für bestehende Aufrufer.
+   * Das eigentliche Wieder-Anzeigen einer Station-eigenen `oeffnen`-Funktion
+   * ist Sache der jeweiligen Station (W4–W7), nicht dieser Chrome-Welle.
+   */
+  oeffnen?: () => void;
   inhalt: ReactNode;
 }
 
@@ -939,9 +952,27 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     return <div ref={wurzelRef} className="k-dock-flaeche" data-testid="dock-flaeche" />;
   }
 
+  // v0.8.0B / W3 (Spez §4/§2 Gesetz 9, B-58) — Closed-Chip-Kandidaten: nur
+  // Panels, deren Station BEIDES meldet — `sichtbar:false` UND ein
+  // `oeffnen`-Rückruf (additiv, s. `DockPanelEintrag`-Kopfkommentar). Ohne
+  // Aufrufer, der `oeffnen` setzt, bleibt dieses Array leer.
+  const geschlosseneMitOeffnen = panels.filter((p) => !p.sichtbar && p.oeffnen);
+
   return (
     <div ref={wurzelRef} className="k-dock-flaeche" data-testid="dock-flaeche">
       <DockAutoHinweisChip text={hinweisText} />
+      {geschlosseneMitOeffnen.length > 0 && (
+        <div className="k-dock-closed-leiste" data-testid="dock-closed-leiste" style={{ left: feld.x, top: feld.y }}>
+          {geschlosseneMitOeffnen.map((p) => {
+            const def = defs.find((d) => d.id === p.id);
+            return (
+              <KChip key={p.id} variant="geschlossen" data-testid={`dock-closed-chip-${p.id}`} onClick={() => p.oeffnen?.()}>
+                {def?.titel ?? p.id}
+              </KChip>
+            );
+          })}
+        </div>
+      )}
       {panels.map((p) => {
         const rect = ergebnis.rects[p.id];
         if (!rect) return null; // geschlossen ODER gerade gedraggt — kein Platz reserviert

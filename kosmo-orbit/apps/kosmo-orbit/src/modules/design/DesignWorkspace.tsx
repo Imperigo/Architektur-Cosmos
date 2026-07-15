@@ -3422,6 +3422,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             (Werkzeugleiste/Geschossleiste/Berechnungsliste) oder gar nicht
             beisammen. Bewusst unterhalb der bestehenden Statuszeile ergänzt,
             nicht als zweite Leiste — «eine» dezente Leiste, wie beauftragt. */}
+        {/* v0.8.0B / W3 (Spez §4 B-49) — Statuszeilen-Anatomie: 30px, Mono-11-
+            Chips (Pill-Form, `--k-flaeche-zwischen`-Grund mit Papier-Fallback
+            auf `--k-surface`), KStatuszeile-Rezept (hud.tsx/aura.css) als
+            Vorlage. testids/Inhalte/Position (absolute, bottom:12 — Spec-Test-
+            Vertrag `boden-dock.spec.ts`/`dock-layout.spec.ts`) bleiben
+            WÖRTLICH; KEIN `text-transform:uppercase` auf den Wert-Chips —
+            Playwright vergleicht gerenderten Text (`toContainText(
+            'Ausschreibung')`, `faehigkeiten-phasen.spec.ts`). */}
         <div
           data-testid="statusleiste"
           style={{
@@ -3435,39 +3443,42 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             // optisch abschnitt. Dieselbe Klärung (right:88), die
             // `NavLeiste.tsx` fürs `nav-fit`-Werkzeug schon nutzt.
             right: 88,
+            minHeight: 30,
             display: 'flex',
             flexWrap: 'wrap',
             rowGap: 4,
-            gap: 14,
+            gap: 10,
             alignItems: 'center',
             pointerEvents: 'none',
-            fontSize: 12.5,
+            fontFamily: 'var(--k-font-mono)',
+            fontSize: 11,
+            letterSpacing: '0.05em',
             color: 'var(--k-ink-soft)',
           }}
         >
           <span
             data-testid="statusleiste-werkzeug"
-            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
           >
             {WERKZEUG_KURZLABEL[tool]}
           </span>
           <span
             data-testid="statusleiste-geschoss"
-            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
           >
             {storeys.find((s: Storey) => s.id === activeStoreyId)?.name ?? '–'}
           </span>
           <span
             data-testid="statusleiste-lod"
             title="Plan-Detaillierungsgrad (zoomabhängig)"
-            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
           >
             {LOD_KURZLABEL[planLodStufe]}
           </span>
           <span
             data-testid="statusleiste-flaeche"
             title="Ausgezogene SIA-Fläche (NGF) des aktiven Geschosses"
-            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
           >
             {flaecheGeschossM2 !== null ? `${flaecheGeschossM2.toFixed(0)} m²` : '–'}
           </span>
@@ -3479,7 +3490,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           <span
             data-testid="statusleiste-phase"
             title="Aktuelle SIA-Teilphase des Projekts"
-            style={{ background: 'var(--k-surface)', padding: '3px 8px', borderRadius: 6, border: '1px solid var(--k-line)' }}
+            style={{ background: 'var(--k-flaeche-zwischen, var(--k-surface))', padding: '2px 8px', borderRadius: 999, border: '1px solid var(--k-line-subtil, var(--k-line))' }}
           >
             {siaPhaseLabel(doc.settings.siaPhase)}
           </span>
@@ -3506,10 +3517,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               aria-expanded={modusMenuOffen}
               onClick={() => setModusMenuOffen((o) => !o)}
               style={{
-                background: 'var(--k-surface)',
-                padding: '3px 8px',
-                borderRadius: 6,
-                border: modusAkzent ? '1px solid var(--k-accent)' : '1px solid var(--k-line)',
+                background: 'var(--k-flaeche-zwischen, var(--k-surface))',
+                padding: '2px 8px',
+                borderRadius: 999,
+                border: modusAkzent ? '1px solid var(--k-accent)' : '1px solid var(--k-line-subtil, var(--k-line))',
                 transitionProperty: 'border-color',
                 transitionDuration: 'var(--k-feder)',
                 cursor: 'pointer',

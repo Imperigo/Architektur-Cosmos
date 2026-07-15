@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import { Hairline, KButton } from '@kosmo/ui';
 import type { StationModulId } from '../../shell/stations-werkzeuge';
 import { STATION_GLYPHE, WerkzeugGlyphe } from '../../shell/werkzeug-glyphen';
@@ -154,6 +154,19 @@ export function EntwurfsDock({
 
   return (
     <div data-testid="entwurf-dock" className="orbit065-dock">
+      {/* v0.8.0B / W3 (Spez §4 B-50/B-39) — Rail-Werkzeuge auf die
+          KWerkzeugKreis-KLASSEN-Grammatik: 30×30-Kreis, aktiv = 1.5px
+          Akzent-Border + 4px-Punkt (`k-werkzeug-kreis--aktiv`/`-punkt`,
+          aura.css) statt gefüllter Accent-Fläche — Signal-Disziplin
+          (Gesetz 1): die Rail trägt keine gefüllte Signal-Fläche mehr.
+          KButton-Hülle/testids/aria/titles bleiben BYTE-GLEICH
+          (`entwurfs-icons.spec.ts` prüft `aria-pressed`); die
+          `k-werkzeug-kreis`-Klassen stehen in aura.css NACH den
+          `k-btn-*`-Klassen und gewinnen darum die Fläche/Border/Farbe.
+          Der frühere `--k-ink→--k-accent-ink`-Kontrast-Override entfällt
+          MIT der gefüllten Fläche (die Glyphe liegt jetzt immer auf
+          `--k-surface`, die globale Tinte stimmt wieder). Rail-BREITE
+          bleibt Solver-Sache (`dock-kern.ts` RAIL:52, tabu). */}
       {EINTRAEGE.map(({ modus: m, testid, titel, station }) => {
         const aktiv = modus === m;
         return (
@@ -165,24 +178,21 @@ export function EntwurfsDock({
             aria-label={titel}
             aria-pressed={aktiv}
             data-testid={testid}
-            className={`orbit065-dock-knopf${poppendId === testid ? ' orbit065-dock-pop' : ''}`}
+            className={`orbit065-dock-knopf k-werkzeug-kreis${aktiv ? ' k-werkzeug-kreis--aktiv' : ''}${poppendId === testid ? ' orbit065-dock-pop' : ''}`}
             onClick={() => klick(testid, station, aktion[m])}
             onAnimationEnd={() => setPoppendId((id) => (id === testid ? null : id))}
             style={{
-              width: 32,
-              height: 32,
+              width: 30,
+              height: 30,
               padding: 0,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: 'var(--k-radius-pill)',
-              // Kontrast-Fix (s. Kopfkommentar): auf dem aktiven Accent-Knopf
-              // löst `var(--k-ink)` in der Glyphe die kontrastierende
-              // Vordergrundfarbe des Knopfs auf statt der globalen Tinte.
-              ...(aktiv ? ({ '--k-ink': 'var(--k-accent-ink)' } as CSSProperties) : {}),
             }}
           >
             <WerkzeugGlyphe {...STATION_GLYPHE[station]} size={20} />
+            {aktiv && <span className="k-werkzeug-kreis-punkt" aria-hidden="true" />}
           </KButton>
         );
       })}
@@ -197,12 +207,12 @@ export function EntwurfsDock({
           title={titel}
           aria-label={titel}
           data-testid={testid}
-          className={`orbit065-dock-knopf${poppendId === testid ? ' orbit065-dock-pop' : ''}`}
+          className={`orbit065-dock-knopf k-werkzeug-kreis${poppendId === testid ? ' orbit065-dock-pop' : ''}`}
           onClick={() => klick(testid, station, stationsAktion[testid]!)}
           onAnimationEnd={() => setPoppendId((id) => (id === testid ? null : id))}
           style={{
-            width: 32,
-            height: 32,
+            width: 30,
+            height: 30,
             padding: 0,
             display: 'flex',
             alignItems: 'center',

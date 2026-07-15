@@ -1,15 +1,19 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { SiaPhase } from '@kosmo/kernel';
 import { flipFirst, flipPlay, type FlipRechteck, type ModuleId } from '@kosmo/ui';
 import { useProject } from '../state/project-store';
+import { nutzungsProfil } from '../state/oberflaeche-adaption-kern';
 import {
   ALLE_TOOL_IDS,
-  aktuelleRaenge,
-  sortiereNachRang,
+  anfangsKontingent,
+  naechsteReihenfolge,
   tierFuerPosition,
   TIER_GROESSE,
+  toolNutzungMelden,
   STATION_ZU_TOOLID,
   type RangTier,
   type ToolId,
+  type UmordnungsKontingent,
 } from '../state/orbit-rang';
 import { STATION_GLYPHE, WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkzeug-glyphen';
 import type { StationModulId } from './stations-werkzeuge';
@@ -23,13 +27,13 @@ import './boden-dock.css';
  * — dieses Bauteil ersetzt/entfernt nichts).
  *
  * Rang/Grösse: dieselbe Formel wie der OrbitStart-Hub (Spec
- * `docs/V072-VISUELLES-UPDATE-SPEZ.md` §4) — `aktuelleRaenge(siaPhase)` +
- * `sortiereNachRang` + `tierFuerPosition` (64/54/46 px, `state/orbit-rang.ts`,
- * NUR gelesen, nicht verändert). Die Reihenfolge wird NICHT hier neu
- * geglättet (keine eigene Hysterese/Kontingent-Instanz wie OrbitStarts
- * `useHubRang` — der ist eine private Funktion dieser Datei, keine
- * exportierte Schnittstelle) — ein Phasenwechsel berechnet einfach neu
- * (`useMemo`, Abhängigkeit `siaPhase`), FLIP glättet den Sprung optisch.
+ * `docs/V072-VISUELLES-UPDATE-SPEZ.md` §4, seit v0.8.0B/W3 wörtlich auch
+ * `docs/V080B-DESIGN-SPEZ.md` §4 B-67) — `naechsteReihenfolge()` +
+ * `tierFuerPosition` (64/54/46 px, `state/orbit-rang.ts`, NUR gelesen, nicht
+ * verändert). Seit W3 glättet ein EIGENER Hook (`useBodenRang` unten) die
+ * Reihenfolge MIT Hysterese/Anti-Nerv-Kontingent — dieselbe Formel wie
+ * OrbitStarts `useHubRang`, hier zusätzlich mit einem Zeit-Timer, weil der
+ * Boden-Dock (anders als der Hub) dauerhaft gemountet bleibt.
  *
  * Rollenfarbe/Icon je Knopf: dieselbe Quelle wie OrbitStarts Rang-Kreise —
  * `STATION_GLYPHE` (`werkzeug-glyphen.tsx`, «Station → Glyphe → Rollenfarbe»,
@@ -176,19 +180,99 @@ const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 2
  */
 export const BODEN_DOCK_RESERVE_PX = 180;
 
+/**
+ * v0.8.0B / W3 (Spez §4, B-67) — Rang-Formel-Kreislauf des Boden-Docks, MIT
+ * Hysterese/Anti-Nerv-Kontingent statt der bisherigen «bei jedem Phasen-
+ * wechsel neu sortieren»-Kurzfassung: `naechsteReihenfolge()` (`state/
+ * orbit-rang.ts`, bereits vollständig gebaut UND getestet für `OrbitStart`s
+ * `useHubRang` — hier additiv WIEDERVERWENDET, keine zweite Formel-
+ * Implementierung) liefert `RANG(T)=0.6·PHASE(T)+0.4·NUTZUNG(T,7Tage)`
+ * bereits inklusive Hysterese-Schwelle (Δ>0.08) UND Anti-Nerv-Kontingent
+ * (höchstens 1 Umsortierung/Sitzungsminute ausserhalb eines Phasenwechsels).
+ * KEIN `state/`-Eingriff — dieser Hook liegt vollständig HIER (Chrome-Datei),
+ * `orbit-rang.ts` wird nur GELESEN (importiert), nicht verändert.
+ *
+ * NEU gegenüber `OrbitStart.tsx`s `useHubRang` (die nur bei Phasenwechsel/
+ * Fächer-Wechsel neu rechnet): ein `BODEN_RANG_INTERVALL_MS`-Timer lässt den
+ * Boden-Dock (ein app-weit DAUERHAFT gemountetes Element, anders als der
+ * Hub) auch OHNE Phasenwechsel auf Nutzungsdrift reagieren — «stabil vor
+ * spontan» bleibt gewahrt, weil Hysterese-Schwelle UND Kontingent unverändert
+ * aus `orbit-rang.ts` gelten (der Timer fragt nur öfter nach, er umgeht keine
+ * der beiden Wachen).
+ *
+ * Deterministischer Start (Test-Vertrag `boden-dock.spec.ts`): ohne
+ * Nutzungsdaten (frisches `localStorage`, wie in jedem E2E-Seed) ist
+ * `NUTZUNG(T)` für alle Werkzeuge 0 — der erste Aufruf sortiert dann rein
+ * nach `PHASE(T)`, byte-gleich zur bisherigen `aktuelleRaenge`-Reihenfolge.
+ */
+const BODEN_RANG_INTERVALL_MS = 20_000;
+
+function useBodenRang(toolIds: readonly ToolId[], siaPhase: SiaPhase): ToolId[] {
+  const kontingentRef = useRef<UmordnungsKontingent>(anfangsKontingent());
+  const raengeRef = useRef<Record<ToolId, number> | null>(null);
+  const reihenfolgeRef = useRef<ToolId[]>([]);
+  const toolIdsSchluessel = toolIds.join(',');
+
+  const [reihenfolge, setReihenfolge] = useState<ToolId[]>(() => {
+    const ergebnis = naechsteReihenfolge({
+      toolIds,
+      siaPhase,
+      nutzung: nutzungsProfil(),
+      alteReihenfolge: [],
+      alteRaenge: null,
+      kontingent: kontingentRef.current,
+      jetztMs: Date.now(),
+    });
+    kontingentRef.current = ergebnis.kontingent;
+    raengeRef.current = ergebnis.raenge;
+    reihenfolgeRef.current = ergebnis.reihenfolge;
+    return ergebnis.reihenfolge;
+  });
+
+  const neuBerechnen = () => {
+    const ergebnis = naechsteReihenfolge({
+      toolIds,
+      siaPhase,
+      nutzung: nutzungsProfil(),
+      alteReihenfolge: reihenfolgeRef.current,
+      alteRaenge: raengeRef.current,
+      kontingent: kontingentRef.current,
+      jetztMs: Date.now(),
+    });
+    kontingentRef.current = ergebnis.kontingent;
+    raengeRef.current = ergebnis.raenge;
+    if (ergebnis.umgeordnet) {
+      reihenfolgeRef.current = ergebnis.reihenfolge;
+      setReihenfolge(ergebnis.reihenfolge);
+    }
+  };
+
+  useEffect(() => {
+    neuBerechnen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siaPhase, toolIdsSchluessel]);
+
+  useEffect(() => {
+    const id = window.setInterval(neuBerechnen, BODEN_RANG_INTERVALL_MS);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return reihenfolge;
+}
+
 export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: BodenDockProps) {
   // Reagiert auf jeden Phasenwechsel (`design.siaPhaseSetzen`, PhasenLeiste)
   // — derselbe Selektor-Zugriff wie `Viewport3D.tsx` (Kopfkommentar dort).
   const siaPhase = useProject((s) => s.doc.settings.siaPhase);
 
-  const reihenfolge = useMemo(
-    () => sortiereNachRang(ALLE_TOOL_IDS, aktuelleRaenge(siaPhase)),
-    [siaPhase],
-  );
+  const reihenfolge = useBodenRang(ALLE_TOOL_IDS, siaPhase);
 
-  // FLIP bei Rang-Umsortierung (Spec §4) — derselbe First/Invert/Play-Ablauf
-  // wie `OrbitStart.tsx` (dort pro Hauptwerkzeug-Fächer, hier eine einzige
-  // Reihe); `flipPlay` prüft `prefers-reduced-motion` selbst.
+  // FLIP bei Rang-Umsortierung (Spec §4, 240–500ms — `flipPlay`s Default
+  // 320ms liegt im Fenster) — derselbe First/Invert/Play-Ablauf wie
+  // `OrbitStart.tsx` (dort pro Hauptwerkzeug-Fächer, hier eine einzige
+  // Reihe); `flipPlay` prüft `prefers-reduced-motion` selbst (kappt den FLIP
+  // vollständig, Spec §4 «prefers-reduced-motion kappt FLIP»).
   const kreisRefs = useRef<Map<ToolId, HTMLElement>>(new Map());
   const vorherigeRechtecke = useRef<Map<ToolId, FlipRechteck>>(new Map());
   useLayoutEffect(() => {
@@ -225,7 +309,16 @@ export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: B
               }
               aria-label={`${meta.titel} öffnen — Rolle ${rollenLabel}`}
               title={`${meta.titel} — Rolle ${rollenLabel}`}
-              onClick={() => (meta.moduleId ? onOeffnen(meta.moduleId) : onSyncToggle())}
+              onClick={() => {
+                // v0.8.0B / W3 (Spez §4, B-67) — jeder Klick zählt als
+                // Nutzungspunkt in dasselbe geteilte 7-Tage-Profil, das auch
+                // `EntwurfsDock`/`OrbitStart` füttern (`orbit-rang.ts`s
+                // `toolNutzungMelden`, EINE Quelle) — der Rang-Timer oben
+                // (`useBodenRang`) liest diesen Stand beim nächsten Zyklus.
+                toolNutzungMelden(toolId);
+                if (meta.moduleId) onOeffnen(meta.moduleId);
+                else onSyncToggle();
+              }}
               ref={(el) => {
                 if (el) kreisRefs.current.set(toolId, el);
                 else kreisRefs.current.delete(toolId);
@@ -237,9 +330,16 @@ export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: B
         })}
       </div>
       {!kosmoOpen && (
-        <div className="boden-dock-kosmo-slot">
-          <KosmoSymbol eingebettet onOpen={onKosmoOpen} />
-        </div>
+        <>
+          {/* v0.8.0B / W3 (Spez §4, B-64) — 1×26px-Trenner (Blaupausen-Mass)
+              vor dem Kosmo-Slot; ersetzt den bisherigen `border-left` der
+              Slot-Fläche selbst (bleibt als Fallback in `boden-dock.css`,
+              falls `kosmoOpen` je ohne diesen Trenner rendern sollte). */}
+          <span className="boden-dock-trenner" aria-hidden="true" />
+          <div className="boden-dock-kosmo-slot">
+            <KosmoSymbol eingebettet onOpen={onKosmoOpen} />
+          </div>
+        </>
       )}
     </div>
   );

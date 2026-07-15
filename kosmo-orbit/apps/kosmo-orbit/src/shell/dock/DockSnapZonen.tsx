@@ -46,6 +46,12 @@ export interface DockSnapZonenProps {
  *  Ordner, eine Abweichung fiele in `dock-interaktion.spec.ts` sofort auf. */
 const SNAP_ZONE_STRAHL = 70;
 
+/** v0.8.0B / W3 (Spez §4, B-57) — Move-Ghost «Kopf-only»: die Ghost-Höhe
+ *  bleibt auf die Kopfzeile begrenzt (`DockPanel.tsx`s Kopf ist 28px hoch,
+ *  `dock-flaeche.css`) statt der vollen Panel-Höhe (`geist.h`) — nur die
+ *  BREITE (`geist.w`, unverändert die Panel-Breite) bleibt wie gezogen. */
+const GEIST_KOPF_HOEHE = 28;
+
 export function DockSnapZonen({ feld, leftW, rightW, modus, geist, mitSchwebendZone = true }: DockSnapZonenProps) {
   const linksBreite = Math.min(feld.w, leftW + SNAP_ZONE_STRAHL);
   const rechtsBreite = Math.min(feld.w, rightW + SNAP_ZONE_STRAHL);
@@ -57,13 +63,21 @@ export function DockSnapZonen({ feld, leftW, rightW, modus, geist, mitSchwebendZ
         data-testid="dock-snap-links"
         data-aktiv={geist.zone === 'left'}
         style={{ left: feld.x, top: feld.y, width: linksBreite, height: feld.h }}
-      />
+      >
+        <span className="k-dock-snap-zone-label" aria-hidden="true">
+          ← LINKS
+        </span>
+      </div>
       <div
         className="k-dock-snap-zone"
         data-testid="dock-snap-rechts"
         data-aktiv={geist.zone === 'right'}
         style={{ left: feld.x + feld.w - rechtsBreite, top: feld.y, width: rechtsBreite, height: feld.h }}
-      />
+      >
+        <span className="k-dock-snap-zone-label" aria-hidden="true">
+          RECHTS →
+        </span>
+      </div>
       {modus === 'A' && mitSchwebendZone && (
         <div
           className="k-dock-snap-zone k-dock-snap-zone-schwebend"
@@ -75,12 +89,16 @@ export function DockSnapZonen({ feld, leftW, rightW, modus, geist, mitSchwebendZ
             width: Math.max(0, feld.w - linksBreite - rechtsBreite),
             height: feld.h,
           }}
-        />
+        >
+          <span className="k-dock-snap-zone-label" aria-hidden="true">
+            SCHWEBEND
+          </span>
+        </div>
       )}
       <div
         className="k-dock-drag-geist"
         data-testid="dock-drag-geist"
-        style={{ left: geist.x, top: geist.y, width: geist.w, height: geist.h }}
+        style={{ left: geist.x, top: geist.y, width: geist.w, height: GEIST_KOPF_HOEHE }}
       />
     </>
   );

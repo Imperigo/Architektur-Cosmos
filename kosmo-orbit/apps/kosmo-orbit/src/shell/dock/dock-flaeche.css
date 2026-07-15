@@ -6,7 +6,20 @@
    im Auftrag verlangt.
    `prefers-reduced-motion` ist bereits GLOBAL in `aura.css` geregelt (killt
    jede `transition-duration` auf 0.01ms) — hier bewusst KEIN eigener
-   `@media`-Riegel, das wäre eine zweite Quelle der Wahrheit. */
+   `@media`-Riegel, das wäre eine zweite Quelle der Wahrheit.
+
+   v0.8.0B / W3 (Spez §4, B-135-Entscheid): der Splitter bleibt bei den
+   bestehenden rohen 2px/3px-Literalen dieser Datei — KEINE neue
+   `--k-line-micro/-hair/-node/-hero`-Skala in `aura.css`/`tokens.ts`
+   nachgezogen. Begründung: diese Datei kennt schon länger ausschliesslich
+   lokale, undokumentierte Chrome-Literale für Klein-Mass (Griffstreifen
+   32×5px, Badges 1px/2px, Rollenpunkt 6px, Orb-Insets) — B-135 addiert eine
+   ganze Token-Familie für einen einzigen zusätzlichen Anwendungsfall (den
+   3px-Hover-Zustand des Splitters), die sonst nirgends im Repo referenziert
+   würde. Der Auftrag selbst stellt das unter einen Bedingungssatz («falls
+   du sie brauchst») — hier wird sie nicht gebraucht, additive Tokens ohne
+   zweiten Verbraucher wären genau das vorsorgliche Tokenisieren, das der
+   F3/F1-Kommentar in `aura.css` selbst als Gegenbeispiel nennt. */
 
 .k-dock-flaeche {
   position: absolute;
@@ -16,30 +29,109 @@
   pointer-events: none;
 }
 
+/* v0.8.0B / W3 (Spez §4/§2 Gesetz 9, B-58) — Closed-Chip-Leiste: die
+   «+ NAME»-Chips für Panels, die eine Station als `sichtbar:false` UND mit
+   einem `oeffnen`-Rückruf meldet (`DockFlaeche.tsx`s `DockPanelEintrag.
+   oeffnen`, additiv — kein bestehender Aufrufer setzt das Feld heute, die
+   Leiste bleibt also überall leer, bis eine Station es nachzieht, s.
+   Abschlussbericht). Oben links im gemessenen Feld, über den Panels
+   (z-index höher als Panels/Splitter), damit sie nie unter einem Panel
+   verschwindet. */
+.k-dock-closed-leiste {
+  position: absolute;
+  z-index: 60;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--k-s2);
+  pointer-events: none;
+}
+.k-dock-closed-leiste > * {
+  pointer-events: auto;
+}
+
+/* v0.8.0B / W3 (Spez §4, B-54) — DockPanel-Chrome nach der Blaupause:
+   Grund `--k-surface` (statt `--k-raised`), EIN dünner 1px-Rahmen auf
+   `--k-line-subtil` (mit `--k-line`-Fallback fürs Papier-Thema, das
+   `-subtil` nicht kennt) und darüber die EINZIGE flächige Rollenkennung —
+   ein 2px `border-top` in der Panel-Rolle (`--rolle`, von `DockPanel.tsx`
+   inline gesetzt: `var(--k-rolle-<rolle>)`; ohne Rolle fällt sie auf
+   `--k-line-strong` zurück, betrifft praktisch nie ein echtes Panel, da
+   jede `PanelDef` eine Rolle trägt). `--k-shadow-md` ist orbit-only
+   (Owner-Vorbehalt «Papier kennt kein Glas», Spez §1 B-24) — der Fallback
+   auf `--k-shadow-overlay` hält Papier bei seinem flachen Blattschatten.
+   Fokus (kein eigener State nötig): `:focus-within` auf einem Kind (Kopf-
+   Knopf, Inhalt) hebt Rand + Glow — rein CSS, ohne einen neuen `state/`-
+   Eintrag für "welches Panel ist fokussiert". */
 .k-dock-panel {
   position: absolute;
   pointer-events: auto;
   display: flex;
   flex-direction: column;
-  background: var(--k-raised);
-  border: 1px solid var(--k-technik);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line-subtil, var(--k-line));
+  border-top: 2px solid var(--rolle, var(--k-line-strong));
   border-radius: var(--k-radius-md);
-  box-shadow: var(--k-shadow-overlay);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-overlay));
   overflow: hidden;
   transition:
     left var(--k-dock-reflow) var(--k-ease-standard),
     top var(--k-dock-reflow) var(--k-ease-standard),
     width var(--k-dock-reflow) var(--k-ease-standard),
-    height var(--k-dock-reflow) var(--k-ease-standard);
+    height var(--k-dock-reflow) var(--k-ease-standard),
+    border-color var(--k-dock-schnell) var(--k-ease-standard),
+    box-shadow var(--k-dock-schnell) var(--k-ease-standard);
+}
+.k-dock-panel:focus-within {
+  border-color: var(--k-line-strong);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-overlay)), var(--k-glow-cyan-sm, none);
+}
+
+/* v0.8.0B / W3 (Spez §4, B-55) — Float/HUD: GLEICHE Anatomie (Rollen-Top-
+   Border, Kopf, Knöpfe — alles oben), aber auf Glass statt Vollfläche +
+   die tiefere shadow-lg-Stufe (schwebt ÜBER dem Feld). Token-gemappt
+   (Spez §1: die Float-Panel-Variante des Prototyps wird auf `--k-glass-*`
+   gemappt, kein Zweitwert); Papier fällt über die Fallbacks auf seine
+   Vollflächen zurück («Papier kennt kein Glas»). `data-schwebend` steht
+   bereits seit P4 auf jedem Panel-Container (`DockPanel.tsx`) — reiner
+   CSS-Anschluss, kein Markup-/testid-Wechsel. */
+.k-dock-panel[data-schwebend='true'] {
+  background: var(--k-glass-fill, var(--k-surface));
+  border-color: var(--k-glass-stroke, var(--k-line));
+  border-top-color: var(--rolle, var(--k-line-strong));
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+}
+.k-dock-panel[data-schwebend='true']:focus-within {
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay)), var(--k-glow-cyan-sm, none);
+}
+/* Griffpunkte-Icon (B-55): zwei Reihen à drei Punkte links im Kopf eines
+   schwebenden Panels — CSS-generiert (radial-gradient), kein innerText,
+   keine Markup-Änderung; der Kopf bleibt der bestehende Ziehgriff. */
+.k-dock-panel[data-schwebend='true'] .k-dock-panel-kopf::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 10px;
+  height: 7px;
+  background-image: radial-gradient(circle, var(--k-ink-faint) 1px, transparent 1.1px);
+  background-size: 4px 4px;
+  opacity: 0.9;
+}
+/* Der Kopf eines Floats liegt auf dem Glass selbst — die deckende
+   Zwischenflächen-Stufe würde das Glass an der wichtigsten Stelle wieder
+   zukleistern; halbtransparent stattdessen. */
+.k-dock-panel[data-schwebend='true'] .k-dock-panel-kopf {
+  background: color-mix(in srgb, var(--k-flaeche-zwischen, var(--k-surface)) 55%, transparent);
 }
 
 .k-dock-panel-kopf {
   display: flex;
   align-items: center;
   gap: var(--k-s2);
-  padding: var(--k-s2) var(--k-s3);
-  border-bottom: 1px solid var(--k-line);
-  background: var(--k-surface);
+  height: 28px;
+  padding: 0 var(--k-s3);
+  border-bottom: 1px solid var(--k-line-subtil, var(--k-line));
+  background: var(--k-flaeche-zwischen, var(--k-surface));
   flex: 0 0 auto;
   /* v0.7.8 Welle 2 (P4, Header-Drag): der Kopf ist der Ziehgriff — touch-
      action:none NUR hier (nicht auf der ganzen Fläche/den Knöpfen, s.
@@ -54,9 +146,10 @@
   cursor: grabbing;
 }
 
+/* v0.8.0B / W3 (Spez §4, B-54) — 7px→6px (Blaupausen-Mass). */
 .k-dock-panel-rollenpunkt {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex: 0 0 auto;
 }
@@ -72,6 +165,7 @@
 .k-dock-panel-titel {
   font-family: var(--k-font-mono);
   font-size: 12px;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--k-ink-soft);
@@ -107,6 +201,14 @@
 .k-dock-panel-knopf[data-aktiv='true'] {
   color: var(--k-accent);
   box-shadow: inset 0 0 0 1px var(--k-accent);
+}
+/* v0.8.0B / W3 (Spez §4, B-54) — «Close-hover danger»: NUR der
+   Schliessen-Knopf färbt sich beim Hover in der Gefahren-Farbe, alle
+   anderen Kopf-Knöpfe bleiben bei der neutralen Feld-Hebung oben. */
+.k-dock-panel-knopf--schliessen:hover,
+.k-dock-panel-knopf--schliessen:focus-visible {
+  background: color-mix(in srgb, var(--k-danger) 16%, transparent);
+  color: var(--k-danger);
 }
 
 /* v0.7.8 Abnahme-Fix (C4, Matrix-Muss) — Pin-Badge im Kopf, additiv neben
@@ -174,15 +276,23 @@
   height: 100%;
 }
 
+/* v0.8.0B / W3 (Spez §4, B-56) — der eingeklappte Tab ist zweizeilig: oben
+   die bestehende Titel-/Badge-Reihe (Kind `.k-dock-panel-tab-zeile`, byte-
+   gleiche Optik zur vorherigen einzeiligen Reihe), darunter der literale
+   Hinweistext «EINGEKLAPPT · TIPPEN ZUM ÖFFNEN» (`.k-dock-panel-tab-hinweis`)
+   — beide zusammen bleiben innerhalb der 34px-Tab-Höhe (`DOCK_KONSTANTEN.
+   COLLH`). Der ganze Button bleibt EIN Klickziel (kein Layout-Bruch der
+   bestehenden Tab-Semantik/`data-testid`s, `DockPanel.tsx`). */
 .k-dock-panel-tab {
   all: unset;
   box-sizing: border-box;
   display: flex;
-  align-items: center;
-  gap: var(--k-s2);
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
   width: 100%;
   height: 100%;
-  padding: 0 var(--k-s3);
+  padding: 3px var(--k-s3);
   cursor: pointer;
   /* v0.7.9 (A3, Teil A): der Tab ist jetzt selbst ein Ziehgriff
      (`DockPanel.tsx`s `tabPointerDown`) — touch-action:none NUR hier (auf dem
@@ -204,6 +314,25 @@
 .k-dock-panel-tab:focus-visible {
   color: var(--k-ink);
   background: var(--k-field);
+}
+.k-dock-panel-tab-zeile {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  width: 100%;
+}
+.k-dock-panel-tab-hinweis {
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  padding-left: 14px;
+  transition: color var(--k-dock-schnell) var(--k-ease-standard);
+}
+.k-dock-panel-tab:hover .k-dock-panel-tab-hinweis,
+.k-dock-panel-tab:focus-visible .k-dock-panel-tab-hinweis {
+  color: var(--k-accent);
 }
 
 .k-dock-splitter {
@@ -242,10 +371,22 @@
   width: 100%;
   height: 2px;
 }
+/* v0.8.0B / W3 (Spez §4, B-57) — Hover/aktiv wächst die sichtbare Linie von
+   2px auf 3px (zusätzlich zum bestehenden Farb-/Glow-Wechsel). */
 .k-dock-splitter:hover::after,
 .k-dock-splitter[data-aktiv='true']::after {
   background: var(--k-accent);
   box-shadow: var(--k-glow-cyan-sm, 0 0 8px rgba(87, 182, 194, 0.35));
+}
+.k-dock-splitter[data-art='col-left']:hover::after,
+.k-dock-splitter[data-art='col-right']:hover::after,
+.k-dock-splitter[data-art='col-left'][data-aktiv='true']::after,
+.k-dock-splitter[data-art='col-right'][data-aktiv='true']::after {
+  width: 3px;
+}
+.k-dock-splitter[data-art='row']:hover::after,
+.k-dock-splitter[data-art='row'][data-aktiv='true']::after {
+  height: 3px;
 }
 
 /* Rollenfarben-Alias (Spec-Lücke): `dock-kern.ts`s `PanelDef.rolle`-Union
@@ -261,14 +402,23 @@
    visuell, `pointer-events:none` (die Zonenlogik selbst läuft auf
    Zeiger-Koordinaten in `DockFlaeche.tsx`, nicht auf DOM-Hit-Testing dieser
    Overlays). */
+/* v0.8.0B / W3 (Spez §4, B-57) — Snap-Zonen jetzt IMMER (nicht erst aktiv)
+   sichtbar als dünne gestrichelte Accent-Linie auf einer sehr leisen
+   Accent-Wash-Fläche (.04) — vorher unsichtbar (`transparent`/`line-strong`)
+   bis zur Aktivierung; die Blaupause verlangt die Zone selbst schon als
+   Orientierung, bevor der Zeiger sie trifft. Aktiv wird die Linie/Fläche
+   kräftiger (bestehendes Verhalten). */
 .k-dock-snap-zone {
   position: absolute;
   pointer-events: none;
   z-index: 25;
   box-sizing: border-box;
-  border: 2px dashed var(--k-line-strong, var(--k-line));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--k-accent-wash, var(--k-line-strong));
   border-radius: var(--k-radius-md);
-  background: transparent;
+  background: color-mix(in srgb, var(--k-accent) 4%, transparent);
   transition:
     background var(--k-dock-schnell) var(--k-ease-standard),
     border-color var(--k-dock-schnell) var(--k-ease-standard);
@@ -276,6 +426,20 @@
 .k-dock-snap-zone[data-aktiv='true'] {
   border-color: var(--k-accent);
   background: color-mix(in srgb, var(--k-accent) 12%, transparent);
+}
+.k-dock-snap-zone-label {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  opacity: 0.7;
+  transition: color var(--k-dock-schnell) var(--k-ease-standard), opacity var(--k-dock-schnell) var(--k-ease-standard);
+}
+.k-dock-snap-zone[data-aktiv='true'] .k-dock-snap-zone-label {
+  color: var(--k-accent);
+  opacity: 1;
 }
 
 /* v0.7.8 Welle 2 (P5, «C6» Auto-Reaktions-Hinweis) — Chip unten mittig ÜBER
@@ -285,6 +449,12 @@
    (dieselbe Begründung wie `DockFlaeche.tsx`s Kosmo-Symbol-Messung). Rein
    informativ, `pointer-events:none` (kein Klickziel, blockiert nichts
    darunter). */
+/* v0.8.0B / W3 (Spez §4/§2 Gesetz 11) — Quittungs-Chip auf die neue
+   Anatomie: Mono-Micro (11px) + goldener Kosmo-Punkt (CSS-generiert —
+   `::before`-Content zählt NICHT zu `innerText`, `dock-interaktion.spec.ts`s
+   `toHaveText('Bauablauf eingeklappt · Platz geschaffen')` bleibt byte-
+   gleich erfüllt; aus demselben Grund KEIN `text-transform:uppercase` hier,
+   Playwright vergleicht den GERENDERTEN Text). */
 .k-dock-auto-hinweis {
   position: fixed;
   left: 50%;
@@ -292,15 +462,31 @@
   transform: translateX(-50%);
   z-index: 109;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
   padding: 8px 16px;
   border-radius: var(--k-radius-pill);
   font-family: var(--k-font-mono);
-  font-size: 12px;
-  letter-spacing: 0.03em;
+  font-size: var(--k-t-micro, 11px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: var(--k-ink-soft);
   white-space: nowrap;
 }
+.k-dock-auto-hinweis::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--k-rolle-agent);
+}
 
+/* v0.8.0B / W3 (Spez §4, B-57) — Move-Ghost «Kopf-only»: `DockSnapZonen.tsx`
+   zieht die Ghost-Höhe jetzt auf die Kopfhöhe zusammen (statt der vollen
+   Panel-Höhe) — dieser Block liefert nur noch die Optik (leichte Drehung +
+   Deckkraft), die Geometrie kommt aus der JSX-Seite. */
 .k-dock-drag-geist {
   position: absolute;
   pointer-events: none;
@@ -310,6 +496,8 @@
   border-radius: var(--k-radius-md);
   background: color-mix(in srgb, var(--k-accent) 18%, transparent);
   box-shadow: var(--k-shadow-overlay);
+  opacity: 0.96;
+  transform: rotate(-1deg);
 }
 
 /* v0.7.8 Welle 3 (P7, «Kosmo ordnet») — der goldene Orb, der zur Kopfleiste
@@ -326,30 +514,33 @@
    `--k-ease-entrance` (`cubic-bezier(0.16,1,0.3,1)`), die tatsächliche
    Entrance-/Out-Kurve des Systems: schnell raus, weich einrasten — genau
    das «ease-out»-Gefühl, das der Auftrag verlangt. */
+/* v0.8.0B / W3 (Spez §4, B-60) — 14px → 48px (Blaupausen-Mass «goldener
+   48px-Orb»); Kern-/Halo-Insets proportional mitgezogen, Gleitfahrt
+   (`--k-dock-orb`, .55s) unverändert. */
 .k-dock-kosmo-orb {
   position: absolute;
   z-index: 50;
   pointer-events: none;
-  width: 14px;
-  height: 14px;
-  margin: -7px 0 0 -7px;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
   transition:
     left var(--k-dock-orb) var(--k-ease-entrance),
     top var(--k-dock-orb) var(--k-ease-entrance);
 }
 .k-dock-kosmo-orb-kern {
   position: absolute;
-  inset: 3px;
+  inset: 14px;
   border-radius: 50%;
   background: var(--k-rolle-agent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--k-rolle-agent) 70%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--k-rolle-agent) 70%, transparent);
 }
 .k-dock-kosmo-orb-halo {
   position: absolute;
-  inset: 0;
+  inset: 4px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--k-rolle-agent) 35%, transparent);
-  box-shadow: 0 0 18px 4px color-mix(in srgb, var(--k-rolle-agent) 45%, transparent);
+  box-shadow: 0 0 26px 6px color-mix(in srgb, var(--k-rolle-agent) 45%, transparent);
   animation: k-dock-kosmo-orb-puls 1.6s ease-in-out infinite;
 }
 @keyframes k-dock-kosmo-orb-puls {

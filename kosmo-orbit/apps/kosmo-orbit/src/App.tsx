@@ -438,14 +438,21 @@ export function App() {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {/* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest,
+          `--k-sunken` (statt `--k-surface`) + subtile Trennlinie
+          (`--k-line-subtil`, orbit-only — Papier fällt über den zweiten
+          `var()`-Parameter auf sein bestehendes `--k-line` zurück). Inhalte/
+          `data-testid`s/Reihenfolge bleiben WÖRTLICH unverändert, nur
+          Höhe/Fläche/Rand wandern auf die neue Anatomie. */}
       <header
         style={{
           display: 'flex',
           alignItems: 'center',
           gap: 14,
-          padding: '8px 16px',
-          borderBottom: '1px solid var(--k-line)',
-          background: 'var(--k-surface)',
+          height: 56,
+          padding: '0 16px',
+          borderBottom: '1px solid var(--k-line-subtil, var(--k-line))',
+          background: 'var(--k-sunken, var(--k-surface))',
           zIndex: 3,
         }}
       >
