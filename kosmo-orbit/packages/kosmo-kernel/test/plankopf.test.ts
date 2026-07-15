@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   afFreigabeStempelSvg,
   kuerzeMitEllipse,
+  massstabsbalkenSegmente,
+  massstabsbalkenSvg,
   MATRIX_STUFEN,
+  nordpfeilSvg,
   PHASEN_MATRIX,
   plancode,
   plankopfSvg,
@@ -331,6 +334,118 @@ describe('afFreigabeStempelSvg — nur bei AF (Spez §1.7)', () => {
     expect(Number(x)).toBeGreaterThanOrEqual(zielA4.x - 0.01);
     expect(Number(y)).toBeGreaterThanOrEqual(zielA4.y - 0.01);
     expect(Number(x) + Number(breite)).toBeLessThanOrEqual(zielA4.x + zielA4.breite + 0.01);
+  });
+});
+
+describe('massstabsbalkenSegmente — Segmentformel (Spez §1.6, hart über mehrere Massstäbe)', () => {
+  it('folgt wörtlich clamp(2, 6, round(45 / (1000 / Massstabszahl))) = round(0.045 × M)', () => {
+    // Wörtlich nachgerechnet (nicht nur gegen die Implementierung gespiegelt):
+    // 1:500 → 45/2=22.5→23→clamp 6 · 1:200 → 45/5=9→clamp 6 ·
+    // 1:100 → 45/10=4.5→5 · 1:50 → 45/20=2.25→2 · 1:20 → 45/50=0.9→1→clamp 2 ·
+    // 1:10 → 45/100=0.45→0→clamp 2.
+    expect(massstabsbalkenSegmente(500)).toBe(6);
+    expect(massstabsbalkenSegmente(200)).toBe(6);
+    expect(massstabsbalkenSegmente(100)).toBe(5);
+    expect(massstabsbalkenSegmente(50)).toBe(2);
+    expect(massstabsbalkenSegmente(20)).toBe(2);
+    expect(massstabsbalkenSegmente(10)).toBe(2);
+  });
+
+  it('bleibt für jeden denkbaren Massstab innerhalb von [2, 6] (Clamp-Grenzen)', () => {
+    for (const m of [1, 5, 15, 33, 75, 150, 333, 750, 1000, 5000]) {
+      const n = massstabsbalkenSegmente(m);
+      expect(n).toBeGreaterThanOrEqual(2);
+      expect(n).toBeLessThanOrEqual(6);
+    }
+  });
+});
+
+describe('massstabsbalkenSvg — Geometrie/Position (Spez §1.6)', () => {
+  const zf = zeichenflaeche(841, 594);
+  const zfRect = { x: rahmenRect(841, 594).x, y: rahmenRect(841, 594).y, breite: zf.breite, hoehe: zf.hoehe };
+  const pkRect = plankopfRect(841, 594);
+
+  it('liefert Leerstring ohne echten Massstab (kein erfundener Balken)', () => {
+    expect(massstabsbalkenSvg(zfRect, pkRect.y, 0)).toBe('');
+    expect(massstabsbalkenSvg(zfRect, pkRect.y, -100)).toBe('');
+  });
+
+  it('rendert genau so viele Segment-Rects wie massstabsbalkenSegmente(massstab) liefert', () => {
+    for (const massstab of [500, 200, 100, 50, 20, 10]) {
+      const svg = massstabsbalkenSvg(zfRect, pkRect.y, massstab);
+      const rects = svg.match(/<rect /g);
+      expect(rects).toHaveLength(massstabsbalkenSegmente(massstab));
+    }
+  });
+
+  it('liegt unten LINKS in der Zeichenfläche (x nahe zf.x, y oberhalb der Plankopf-Oberkante)', () => {
+    const svg = massstabsbalkenSvg(zfRect, pkRect.y, 100);
+    const m = svg.match(/<rect x="([\d.]+)" y="([\d.]+)"/);
+    expect(m).not.toBeNull();
+    const [, x, y] = m as unknown as [string, string, string];
+    expect(Number(x)).toBeGreaterThanOrEqual(zfRect.x);
+    expect(Number(x)).toBeLessThan(zfRect.x + 10); // nahe am linken Rand, kein zentrierter Balken
+    expect(Number(y)).toBeLessThan(pkRect.y); // liegt oberhalb (also "nahe") der Plankopf-Oberkante
+  });
+
+  it('Beschriftung: «0» am linken, «{n} m · M 1:{massstab}» am rechten Ende', () => {
+    const svg = massstabsbalkenSvg(zfRect, pkRect.y, 100);
+    const anzahl = massstabsbalkenSegmente(100);
+    expect(svg).toContain('>0<');
+    expect(svg).toContain(`${anzahl} m · M 1:100`);
+  });
+
+  it('alle font-size-Werte stammen aus PLANKOPF_TYPO_MM.massstabsbalkenLabel', () => {
+    const svg = massstabsbalkenSvg(zfRect, pkRect.y, 100);
+    const groessen = [...svg.matchAll(/font-size="([\d.]+)"/g)].map((m) => Number(m[1]));
+    expect(groessen.length).toBeGreaterThan(0);
+    for (const g of groessen) expect(g).toBe(PLANKOPF_TYPO_MM.massstabsbalkenLabel);
+  });
+});
+
+describe('nordpfeilSvg — Geometrie/Position (Spez §1.6)', () => {
+  it('rendert genau eine Gruppe <g data-teil="nordpfeil"> mit Kreis, Pfeil-Pfad und Label «N»', () => {
+    const zf = zeichenflaeche(841, 594);
+    const zfRect = { x: rahmenRect(841, 594).x, y: rahmenRect(841, 594).y, breite: zf.breite, hoehe: zf.hoehe };
+    const svg = nordpfeilSvg(zfRect);
+    expect(svg.match(/<g data-teil="nordpfeil"/g)).toHaveLength(1);
+    expect(svg.match(/<circle /g)).toHaveLength(1);
+    expect(svg.match(/<path /g)).toHaveLength(1);
+    expect(svg).toContain('>N<');
+  });
+
+  it('liegt oben RECHTS in der Zeichenfläche (Kreis-Mittelpunkt nahe der oberen rechten Ecke)', () => {
+    const zf = zeichenflaeche(841, 594);
+    const rahmen = rahmenRect(841, 594);
+    const zfRect = { x: rahmen.x, y: rahmen.y, breite: zf.breite, hoehe: zf.hoehe };
+    const svg = nordpfeilSvg(zfRect);
+    const m = svg.match(/<circle cx="([\d.]+)" cy="([\d.]+)" r="([\d.]+)"/);
+    expect(m).not.toBeNull();
+    const [, cx, cy, r] = m as unknown as [string, string, string, string];
+    expect(Number(r)).toBe(4);
+    // Nahe der rechten Kante (weniger als 15mm Abstand), deutlich rechts der Zeichenflächen-Mitte.
+    expect(zfRect.x + zfRect.breite - Number(cx)).toBeLessThan(15);
+    expect(Number(cx)).toBeGreaterThan(zfRect.x + zfRect.breite / 2);
+    // Nahe der oberen Kante, deutlich über der Zeichenflächen-Mitte.
+    expect(Number(cy) - zfRect.y).toBeLessThan(15);
+    expect(Number(cy)).toBeLessThan(zfRect.y + zfRect.hoehe / 2);
+  });
+
+  it('funktioniert für alle 5 Formate × beide Ausrichtungen ohne Absturz', () => {
+    const groessen: [number, number][] = [
+      [1189, 841],
+      [841, 594],
+      [594, 420],
+      [420, 297],
+      [297, 210],
+      [594, 1189],
+    ];
+    for (const [bw, bh] of groessen) {
+      const zf = zeichenflaeche(bw, bh);
+      const rahmen = rahmenRect(bw, bh);
+      const zfRect = { x: rahmen.x, y: rahmen.y, breite: zf.breite, hoehe: zf.hoehe };
+      expect(() => nordpfeilSvg(zfRect)).not.toThrow();
+    }
   });
 });
 

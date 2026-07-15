@@ -362,4 +362,10 @@ export const PLANKOPF_TYPO_MM = {
   planNr: 3.0,
   /** Logo-Initialen (mono bold, Phasenfarbe). */
   logoInitialen: 5.6,
+  /** Massstabsbalken-Beschriftung («0» / «{n} m · M 1:xx», Spez §1.6) —
+   * additive P4-Ergänzung dieser Runde (`derive/plankopf.ts`,
+   * `massstabsbalkenSvg()`), ausserhalb der ursprünglichen §1.5-Tabelle (die
+   * nur die 180×55-Plankopf-Gruppe selbst listet) — bewusst trotzdem auf
+   * derselben mm-Typoleiter geführt statt einer neuen, unabhängigen Zahl. */
+  massstabsbalkenLabel: 2.0,
 } as const;

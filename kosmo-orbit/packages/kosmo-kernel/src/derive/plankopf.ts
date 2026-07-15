@@ -663,3 +663,108 @@ export function afFreigabeStempelSvg(zeichenflaeche: BlattRect, matrixStufe: Mat
   parts.push(`</g>`);
   return parts.join('\n');
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// Massstabsbalken & Nordpfeil (v0.8.0 P4-Nachtrag, Spez §1.6) — beide liegen
+// wie Wasserzeichen/AF-Stempel über der ZEICHENFLÄCHE, nicht über der
+// Plankopf-Gruppe selbst: der Aufrufer (`derive/sheet.ts`) platziert sie mit
+// der Zeichenflächen-Geometrie aus `derive/blattlayout.ts` — vom Aufrufer
+// platzierbare Fragmente nach demselben Muster wie `wasserzeichenSvg()` oben.
+// ───────────────────────────────────────────────────────────────────────────
+
+/**
+ * Segmentanzahl des Massstabsbalkens (Spez §1.6, wörtlich):
+ * `clamp(2, 6, round(45 / (1000 / Massstabszahl)))` — rechnerisch identisch
+ * zu `round(0.045 × Massstabszahl)`. Exportiert für den harten Formel-Test
+ * über mehrere Massstäbe (P4-Gate) — dieselbe Funktion, die `sheet.ts` für
+ * die Balken-Geometrie selbst aufruft (kein Doppelpfad).
+ */
+export function massstabsbalkenSegmente(massstab: number): number {
+  const roh = Math.round(45 / (1000 / massstab));
+  return Math.min(6, Math.max(2, roh));
+}
+
+/** Balkenhöhe (mm) der Segmentkette. */
+const MASSSTABSBALKEN_HOEHE_MM = 2.5;
+/** Abstand der Balken-Oberkante zur Plankopf-Oberkante (Spez §1.6: «nahe der
+ * Plankopf-Oberkante») — misst vom oberen Rand des Beschriftungstextes. */
+const MASSSTABSBALKEN_ABSTAND_PLANKOPF_MM = 3;
+const MASSSTABSBALKEN_LABEL_ABSTAND_MM = 1.2;
+
+/**
+ * Massstabsbalken (Spez §1.6): unten links in der Zeichenfläche, nahe der
+ * Plankopf-Oberkante (`plankopfObenY`, die y-Koordinate der Akzentbalken-
+ * Oberkante — s. `plankopfRect(...).y` in `derive/blattlayout.ts`). Meter-
+ * Segmente abwechselnd Tinte/Papier gefüllt (`massstabsbalkenSegmente()`),
+ * Beschriftung «0» am linken Ende, «{n} m · M 1:{massstab}» am rechten Ende
+ * (mono, `PLANKOPF_TYPO_MM.massstabsbalkenLabel`) — eine kompakte
+ * Einzeiler-Fassung der Spez-Vorgabe «Beschriftung von 0 bis n m» + «M
+ * 1:xx»; die Spez fixiert keine Zwischenbeschriftung je Meter, nur die
+ * beiden Enden. Leerstring bei `massstab <= 0`/`NaN` (kein erfundener
+ * Balken ohne echten Massstab).
+ */
+export function massstabsbalkenSvg(zeichenflaeche: BlattRect, plankopfObenY: number, massstab: number): string {
+  if (!massstab || massstab <= 0) return '';
+  const anzahl = massstabsbalkenSegmente(massstab);
+  const segmentBreite = 1000 / massstab; // 1 Meter Welt = so viele mm Papier bei 1:massstab
+  const labelSize = PLANKOPF_TYPO_MM.massstabsbalkenLabel;
+  const barY = plankopfObenY - MASSSTABSBALKEN_ABSTAND_PLANKOPF_MM - MASSSTABSBALKEN_LABEL_ABSTAND_MM - labelSize - MASSSTABSBALKEN_HOEHE_MM;
+  const barX = zeichenflaeche.x + PAD_MM;
+  const parts: string[] = [`<g data-teil="massstabsbalken">`];
+  for (let i = 0; i < anzahl; i++) {
+    const segX = barX + i * segmentBreite;
+    const tinte = i % 2 === 0;
+    parts.push(
+      `<rect x="${segX.toFixed(2)}" y="${barY.toFixed(2)}" width="${segmentBreite.toFixed(2)}" height="${MASSSTABSBALKEN_HOEHE_MM}" fill="${tinte ? BLATT.tinte : 'white'}" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}"/>`,
+    );
+  }
+  const barBreite = anzahl * segmentBreite;
+  const labelY = barY + MASSSTABSBALKEN_HOEHE_MM + MASSSTABSBALKEN_LABEL_ABSTAND_MM + labelSize;
+  parts.push(
+    `<text x="${barX.toFixed(2)}" y="${labelY.toFixed(2)}" ${messbarAttr(labelSize)}>0</text>`,
+    `<text x="${(barX + barBreite).toFixed(2)}" y="${labelY.toFixed(2)}" text-anchor="end" ${messbarAttr(labelSize)}>${anzahl} m · M 1:${massstab}</text>`,
+    `</g>`,
+  );
+  return parts.join('\n');
+}
+
+/** Kreisradius des Nordpfeils (Spez §1.6: «r≈4mm», Migrationswert aus
+ * `plansvg.ts`). */
+const NORDPFEIL_RADIUS_MM = 4;
+/** Abstand Kreismittelpunkt zum jeweiligen Zeichenflächen-Rand — Migrations-
+ * Ausgangswert aus `plansvg.ts` (`planToSvg`: dort `cy=16` bei 10mm-
+ * Rahmenoberkante, `cx=paper.width-16` bei 10mm-Rahmenrechtskante, je
+ * `r+2=6mm` Abstand zur jeweiligen Rahmenkante — hier auf die
+ * Zeichenflächen-Kanten aus `derive/blattlayout.ts` übersetzt). */
+const NORDPFEIL_RANDABSTAND_MM = NORDPFEIL_RADIUS_MM + 2;
+/** Label-Grösse (Spez §1.6: «Label-Grösse 3mm», Migrationswert). */
+const NORDPFEIL_LABEL_GROESSE_MM = 3;
+/** Abstand Label-Baseline zur Kreis-Unterkante (Migrationswert aus
+ * `plansvg.ts`: dort `y=26` bei Kreis-Unterkante `16+4=20` → Abstand 6). */
+const NORDPFEIL_LABEL_ABSTAND_MM = 6;
+
+/**
+ * Nordpfeil (Spez §1.6): oben rechts in der Zeichenfläche — Kreis (r≈4mm),
+ * Pfeilspitze (Linie + Doppel-Strich als Spitze), Label «N» (mono bold,
+ * 3mm). Migriert die bestehende, bereits mm-echte Implementierung aus
+ * `derive/plansvg.ts` (`planToSvg`, Kommentar «Nordpfeil oben rechts») als
+ * Ausgangspunkt, übersetzt deren Papier-mm-Proportionen auf die
+ * Zeichenflächen-Geometrie aus `derive/blattlayout.ts` — `plansvg.ts` selbst
+ * bleibt dabei unverändert (Owner-Entscheid 4, Spez §5.3: der volle
+ * Plankopf/das Framework gilt nur für Publish-Blätter).
+ */
+export function nordpfeilSvg(zeichenflaeche: BlattRect): string {
+  const cx = zeichenflaeche.x + zeichenflaeche.breite - NORDPFEIL_RANDABSTAND_MM;
+  const cy = zeichenflaeche.y + NORDPFEIL_RANDABSTAND_MM;
+  const r = NORDPFEIL_RADIUS_MM;
+  const spitzeY = cy - r + 1;
+  const fussY = cy + r - 1;
+  const fluegelY = spitzeY + 1.6;
+  return [
+    `<g data-teil="nordpfeil" stroke="${BLATT.tinte}" fill="none" stroke-width="${BLATT.rahmenStift}">`,
+    `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r}"/>`,
+    `<path d="M ${cx.toFixed(2)} ${fussY.toFixed(2)} L ${cx.toFixed(2)} ${spitzeY.toFixed(2)} M ${(cx - 1.4).toFixed(2)} ${fluegelY.toFixed(2)} L ${cx.toFixed(2)} ${spitzeY.toFixed(2)} L ${(cx + 1.4).toFixed(2)} ${fluegelY.toFixed(2)}"/>`,
+    `<text x="${cx.toFixed(2)}" y="${(cy + r + NORDPFEIL_LABEL_ABSTAND_MM).toFixed(2)}" text-anchor="middle" ${messbarWert(NORDPFEIL_LABEL_GROESSE_MM, { bold: true })} stroke="none" fill="${BLATT.tinte}">N</text>`,
+    `</g>`,
+  ].join('\n');
+}
