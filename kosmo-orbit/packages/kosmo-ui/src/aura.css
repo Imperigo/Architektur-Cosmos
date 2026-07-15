@@ -5,6 +5,25 @@
    verschwunden (Migration `ink→orbit`: `App.tsx`). Farbakzent weiterhin
    wählbar (data-akzent). Konzept: docs/GESTALTUNGSKONZEPT.md */
 
+/* v0.8.0B / W1 (docs/V080B-DESIGN-SPEZ.md §1) — DS-Mapping-Tabelle
+   (Dokumentation, KEINE neuen Variablen): `--k-*` bleibt der kanonische
+   Namensraum, die `_ds`-Namen (`--ink-*`, `--surface-*`, `--space-*`,
+   `--role-*`) werden nicht eingeführt, sondern hierher übersetzt.
+     --ink-900        → --k-field
+     --ink-950        → --k-sunken
+     --ink-1000       → --k-statusbar
+     --ink-850        → --k-flaeche-zwischen
+     --ink-800        → --k-surface
+     --ink-750        → --k-raised
+     --ink-700        → --k-hover               (NEU, W1, orbit)
+     --surface-sunken → --k-sunken
+     --accent         → --k-signal (Marke) bzw. --k-accent (Theme)
+     --role-*         → --k-rolle-*  (database → ak)
+     --glass-*        → --k-glass-*
+     --space-*        → --k-s*
+     --radius-card    → --k-radius-karte
+   Die rohen Neon-Werte `--ak-*` bleiben kanonische Referenz, NIE live. */
+
 :root,
 [data-theme='paper'] {
   --k-field: #f5f3ee;
@@ -16,6 +35,20 @@
   --k-line: #e4e0d6;
   --k-line-strong: #c9c4b6;
   --k-technik: #1a1815;
+  /* v0.8.0B / W1 (Spez §1 B-26) — Flächenstufe Hover, komplettiert
+     sunken→field→zwischen→surface→raised→hover. Kosmos bekommt unten im
+     `[data-theme='orbit']`-Block sein eigenes `#222732` (= ink-700, EINE
+     Stufe HELLER als --k-raised — dort heisst „mehr Gewicht" heller, weil
+     das dunkle Feld erst bei Schwarz aufhört). Papier braucht ein eigenes
+     Äquivalent statt denselben Wert zu erben: --k-raised ist bereits reines
+     Weiss, „heller" geht nicht mehr. Nach derselben Flächenstufen-Logik
+     (Hover = mehr optisches Gewicht als die Ruhefläche) bedeutet das für
+     ein helles Thema das GEGENTEIL — eine Stufe DUNKLER, nicht heller.
+     Gewählt: der Mittelwert zwischen --k-field (#f5f3ee, die dunkelste
+     Papier-Stufe) und --k-line (#e4e0d6, die Randlinie) — sichtbar
+     dunkler als --k-raised/-surface (Hover-Kontrast auf Karten/Panels),
+     aber heller als jede Linie (bleibt Fläche, wird nie zur Border). */
+  --k-hover: #ede9e2;
   /* v0.7.3 D7: Standard-Akzent wechselt von monochromer Tusche auf die
      dunkle Teal-Familie `#3E96A2` (Kosmos nutzt die hellere `#57b6c2` aus
      derselben Familie — siehe `[data-theme='orbit']` unten) — dunkler, weil
@@ -46,6 +79,13 @@
   --k-s5: 16px;
   --k-s6: 24px;
   --k-s7: 32px;
+  /* v0.8.0B / W1 (Spez §1/§6) — `_ds`-Pflichtstufen additiv oben drauf;
+     s1–s7 bleiben unverändert (2px ist Repo-Recht, testgesichert). Ab jetzt
+     sind rohe px-Literale in der visuellen Schicht ein Review-Befund
+     (Ausnahme: Plangrafik/`stilblatt.ts`, hart kodiert per Vertrag). */
+  --k-s8: 48px;
+  --k-s9: 64px;
+  --k-s10: 96px;
 
   /* Typo-Skala (W0) — Portlabels/Fussnoten/Chips (xs) bis Plakat-Versalien
      (plakat). Zwei Stimmen bleiben Gesetz (Plakat/Technik); diese Skala regelt
@@ -55,6 +95,16 @@
   --k-t-md: 13.5px;
   --k-t-lg: 16px;
   --k-t-plakat: 20px;
+  /* v0.8.0B / W1 (Spez §1) — Typo-Leiter nach oben (`_ds`, Lato 900/700):
+     h3/h2/h1/display sind NUR ausserhalb des CAD-Chromes erlaubt
+     (Onboarding, OrbitStart, Report/Dossier, Leerzustände); code/micro
+     ergänzen die kleine Skala (Mono-Werte, Mikro-Labels). */
+  --k-t-h3: 21px;
+  --k-t-h2: 28px;
+  --k-t-h1: 42px;
+  --k-t-display: 60px;
+  --k-t-code: 13px;
+  --k-t-micro: 11px;
 }
 
 /* Wählbare Farbakzente (Standard = die neue Teal-Familie im Paper-Block/
@@ -124,6 +174,9 @@
   --k-radius-xs: 6px;
   --k-radius-karte: 14px;
   --k-radius-node: 18px;
+  /* v0.8.0B / W1 (Spez §1 B-27) — OrbitStart/Orbit-Hub existiert real und
+     fragt danach; themen-agnostisch wie die drei Radien darüber. */
+  --k-radius-hub: 26px;
   --k-motion-fast: 120ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-base: 200ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-settle: 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
@@ -256,8 +309,29 @@
   --k-ink-soft: #b6bdcb;
   --k-ink-faint: #6e7686;
   --k-technik: #444b59;
-  --k-line: #222732;
-  --k-line-strong: #2a3140;
+  /* v0.8.0B / W1 (Spez §1/§6, Konfliktentscheid «Borders Alpha-Weiss») —
+     Alpha-Border-Flip, NUR im Kosmos-Theme: die einzige Stelle, an der
+     dieses Paket das Repo sticht (Begründung §6: Alpha trennt auf allen
+     sechs Flächenstufen sunken/field/zwischen/surface/raised/hover
+     konsistent; visuell ≈ identisch zu den bisherigen Volltönen auf
+     `#0b0d12`). Bisher Volltöne `#222732`/`#2a3140` (v0.7.2) — jetzt
+     Alpha-Weiss auf drei Stufen inkl. neuer, noch feinerer `-subtil`-Stufe.
+     Papier bleibt bei warmen Volltönen (`#e4e0d6`/`#c9c4b6`, oben im
+     `:root, [data-theme='paper']`-Block) — dieser Flip gilt ausdrücklich
+     nicht dort. */
+  --k-line-subtil: rgba(255, 255, 255, 0.07);
+  --k-line: rgba(255, 255, 255, 0.11);
+  --k-line-strong: rgba(255, 255, 255, 0.18);
+  /* Hintergrundraster (Spez §1 B-135-Nachbar/§9.16) — nur Backdrop-Zweck,
+     nie unter Text, opacity ≤.5 an der Einsatzstelle. */
+  --k-hairline: rgba(120, 140, 190, 0.14);
+  /* Flächenstufe Hover (Spez §1 B-26) — komplettiert sunken→hover; siehe
+     Papier-Gegenstück + Begründung oben im `:root, [data-theme='paper']`-
+     Block. `#222732` ist zufällig derselbe Hexwert wie die alte
+     `--k-line` vor dem Alpha-Flip — kein Bezug, reiner Koinzidenz-Zufall
+     zweier unabhängig hergeleiteter ink-Stufen (ink-700 vs. das frühere
+     ink-800-Border-Grau). */
+  --k-hover: #222732;
   --k-accent: #57b6c2;
   --k-accent-hover: #6cc4cf;
   --k-accent-ink: #06141a;
@@ -267,7 +341,9 @@
   --k-viewport-sky: #101012;
   /* v0.7.6 «Kosmo-Viz» §Fundament — Glass-HUD-Rezept + Glow + feinere
      Flächenstufen. Nur im dunklen `orbit`-Theme (token-spiegel bewacht orbit
-     nicht); genutzt via `.k-glass` unten. Das Glass ist die schwebende
+     grundsätzlich nicht — Ausnahme W1, s.u.: die neuen Border-/Schatten-/
+     Hover-Tokens dieses Blocks bekommen gezielte Wächter-Tests, siehe
+     `token-spiegel.test.ts`); genutzt via `.k-glass` unten. Das Glass ist die schwebende
      Overlay-Sprache (Viewport-HUD, Achsenkreuz, Kuratier-Karten), NIE als
      Stationsfläche. */
   --k-glass-fill: rgba(20, 23, 31, 0.62);
@@ -289,6 +365,19 @@
      Lücke betraf laut Handoff nur das dunkle Theme. */
   --k-flaeche-zwischen: #101319;
   --k-ink-muted: #8b92a2;
+  /* v0.8.0B / W1 (Spez §1 B-24, Owner-Vorbehalt v0.7.8 «sobald eine Fläche
+     danach fragt» — Panels/HUDs/Karten des Neubaus fragen jetzt) —
+     Schatten-Skala NUR im Kosmos-Theme. Papier behält ausschliesslich
+     `--k-shadow-raised`/`-overlay` (oben im `:root, [data-theme='paper']`-
+     Block) und bekommt KEIN Gegenstück zu dieser Skala — «Papier kennt
+     kein Glas»: das helle Thema simuliert keine schwebenden Tiefen-Ebenen,
+     nur den einen flachen Blattschatten. */
+  --k-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+  --k-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.32);
+  --k-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.38);
+  --k-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.46);
+  --k-shadow-xl: 0 32px 80px rgba(0, 0, 0, 0.55);
+  --k-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   color-scheme: dark;
 }
 

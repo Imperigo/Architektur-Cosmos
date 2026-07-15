@@ -40,6 +40,15 @@ export const paper = {
   /** Standard-Akzent (kein `data-akzent` gesetzt) — Teal dunkel, v0.7.3 D7. */
   accent: '#3e96a2',
   accentInk: '#06141a',
+  /**
+   * v0.8.0B / W1 (Spez §1 B-26) — Flächenstufe Hover, Papier-Äquivalent.
+   * Mittelwert zwischen `field` (#f5f3ee) und `line` (#e4e0d6): dunkler als
+   * `raised`/`surface` (Hover braucht mehr Gewicht als die Ruhefläche),
+   * heller als jede Linie. Kosmos geht bei Hover nach OBEN (heller, siehe
+   * `orbit.hover`), Papier zwangsläufig nach UNTEN (dunkler) — `raised` ist
+   * bereits reines Weiss, dort gibt es kein „heller" mehr.
+   */
+  hover: '#ede9e2',
 } as const;
 
 /** Semantische Töne — in beiden Themes lesbar (aura.css: paper-Werte, Referenz). */
@@ -108,6 +117,21 @@ export const type = {
 } as const;
 
 /**
+ * Typo-Leiter nach oben (NEU, v0.8.0B / W1, Spez §1) — spiegelt
+ * `--k-t-h3/-h2/-h1/-display/-code/-micro` aus aura.css. Display/H-Ebenen
+ * NUR ausserhalb des CAD-Chromes (Onboarding, OrbitStart, Report/Dossier,
+ * Leerzustände) — das CAD-Chrome bleibt bei `type` (der kleinen Skala).
+ */
+export const typeGross = {
+  h3: '21px',
+  h2: '28px',
+  h1: '42px',
+  display: '60px',
+  code: '13px',
+  micro: '11px',
+} as const;
+
+/**
  * Spacing-Skala (NEU, W0) — spiegelt `--k-s1`…`--k-s7` aus aura.css. Gilt für
  * ALLE gaps/paddings; rohe px-Literale sind ab jetzt ein Review-Befund.
  */
@@ -119,6 +143,13 @@ export const scale = {
   s5: '16px',
   s6: '24px',
   s7: '32px',
+  /**
+   * NEU (v0.8.0B / W1, Spez §1/§6) — `_ds`-Pflichtstufen additiv zu s1–s7
+   * (2px bleibt Repo-Recht, testgesichert). Spiegelt `--k-s8/-s9/-s10`.
+   */
+  s8: '48px',
+  s9: '64px',
+  s10: '96px',
 } as const;
 
 /** Radien — spiegelt `--k-radius-sm/-md/-lg` aus aura.css. v0.7.3 D7: die
@@ -127,6 +158,12 @@ export const scale = {
  * `pill` bleibt als praktischer Zusatzwert (volle Rundung, keine
  * aura-Variable nötig) bestehen. */
 export const radius = { sm: '8px', md: '12px', lg: '16px', pill: '999px' } as const;
+
+/**
+ * NEU (v0.8.0B / W1, Spez §1 B-27) — spiegelt `--k-radius-hub`
+ * (OrbitStart/Orbit-Hub, themen-agnostisch wie die drei Radien oben).
+ */
+export const radiusHub = '26px';
 
 export const motion = {
   /** Zurückhaltend-präzise (Owner Q20): kurz, physikalisch sauber, nie verspielt. */
@@ -149,11 +186,11 @@ export const motion = {
 /** Schatten — `raised`/`overlay` (Legacy-Form, unverändert exportiert) zeigen
  * die Papier-Werte, `paper` (NEU) dieselben nochmal benannt. v0.7.3 D7: der
  * `ink`-Zweig (dunklerer Schatten fürs entfernte Tinte-Thema) ist mit dem
- * Theme weggefallen — `orbit` bekommt in aura.css weiterhin KEINEN eigenen
- * `--k-shadow-*`-Override (unverändert seit 0.7.2), darum bleibt hier auch
- * kein `shadow.orbit`-Zweig nötig. Der einzig erlaubte Schatten in der
- * Oberfläche bleibt `overlay`, ausschliesslich an schwebenden Overlays
- * (Menü, Dialog, Palette). */
+ * Theme weggefallen. Bis v0.8.0B/W1 bekam `orbit` in aura.css keinen eigenen
+ * `--k-shadow-*`-Override; W1 (Spez §1 B-24) führt die Schatten-Skala jetzt
+ * NUR für Kosmos ein (`shadow.orbit` unten) — Papier bleibt bei `raised`/
+ * `overlay`/`paper.*`, ausschliesslich an schwebenden Overlays (Menü, Dialog,
+ * Palette) bzw. der einen flachen Blattkontur. */
 export const shadow = {
   raised: '0 1px 0 rgba(26, 24, 21, 0.08)',
   overlay: '0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18)',
@@ -161,15 +198,32 @@ export const shadow = {
     raised: '0 1px 0 rgba(26, 24, 21, 0.08)',
     overlay: '0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18)',
   },
+  /**
+   * NEU (v0.8.0B / W1, Spez §1 B-24) — Schatten-Skala NUR im Kosmos-Theme
+   * (spiegelt `--k-shadow-xs/-sm/-md/-lg/-xl` + `--k-inset-top` aus dem
+   * `[data-theme='orbit']`-Block). Papier bekommt KEIN Gegenstück — «Papier
+   * kennt kein Glas», es bleibt bei `paper.raised`/`paper.overlay` oben.
+   */
+  orbit: {
+    xs: '0 1px 2px rgba(0, 0, 0, 0.30)',
+    sm: '0 2px 8px rgba(0, 0, 0, 0.32)',
+    md: '0 8px 24px rgba(0, 0, 0, 0.38)',
+    lg: '0 18px 48px rgba(0, 0, 0, 0.46)',
+    xl: '0 32px 80px rgba(0, 0, 0, 0.55)',
+    insetTop: 'inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+  },
 } as const;
 
 /**
  * Orbit-Thema (`[data-theme='orbit']` in aura.css, v0.7.2 §1) — seit v0.7.3
  * D7 die «Kosmos»-Hälfte des Theme-Paars (Tinte entfernt). Hexwerte exakt
- * gespiegelt; NICHT vom `token-spiegel.test.ts`-Wächter geprüft (der bleibt
- * auf paper+:root beschränkt, siehe dort), hier trotzdem als vollständiger
- * TS-Spiegel für Code, das orbit-Farben ausserhalb von CSS-Variablen
- * braucht.
+ * gespiegelt; der Grossteil ist NICHT vom `token-spiegel.test.ts`-Wächter
+ * geprüft (der bleibt grundsätzlich auf paper+:root beschränkt, siehe
+ * dort) — hier trotzdem als vollständiger TS-Spiegel für Code, das
+ * orbit-Farben ausserhalb von CSS-Variablen braucht. AUSNAHME (v0.8.0B/W1):
+ * die neuen `line*`/`hairline`/`hover`-Werte (Alpha-Border-Flip + Flächen-
+ * stufe Hover, Spez §1/§6) bekommen gezielte Wächter-Tests, weil W1 sie
+ * frisch einführt bzw. ändert — dort ist Drift am wahrscheinlichsten.
  */
 export const orbit = {
   field: '#0b0d12',
@@ -178,8 +232,20 @@ export const orbit = {
   ink: '#f4f6fa',
   inkSoft: '#b6bdcb',
   inkFaint: '#6e7686',
-  line: '#222732',
-  lineStrong: '#2a3140',
+  /**
+   * v0.8.0B / W1 (Spez §1/§6, Konfliktentscheid «Borders Alpha-Weiss») —
+   * Alpha-Border-Flip: `line`/`lineStrong` waren bis 0.7.2 Volltöne
+   * (`#222732`/`#2a3140`), jetzt Alpha-Weiss auf drei Stufen inkl. der
+   * neuen `lineSubtil`. Einzige Stelle, an der dieses Paket das Repo
+   * sticht (Begründung in aura.css beim `[data-theme='orbit']`-Block).
+   */
+  lineSubtil: 'rgba(255, 255, 255, 0.07)',
+  line: 'rgba(255, 255, 255, 0.11)',
+  lineStrong: 'rgba(255, 255, 255, 0.18)',
+  /** NEU (W1, Spez §1) — Hintergrundraster, nur Backdrop, opacity ≤.5. */
+  hairline: 'rgba(120, 140, 190, 0.14)',
+  /** NEU (W1, Spez §1 B-26) — Flächenstufe Hover, komplettiert sunken→hover. */
+  hover: '#222732',
   accent: '#57b6c2',
   accentHover: '#6cc4cf',
   accentInk: '#06141a',

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { motion, paper, radius, scale, type } from '../src/tokens';
+import { motion, orbit, paper, radius, radiusHub, scale, shadow, type, typeGross } from '../src/tokens';
 
 /**
  * Token-Spiegel-Wächter (W0, UI-KONZEPT-065 §2): `aura.css` ist die einzige
@@ -54,6 +54,15 @@ function lies(blockCss: string, varName: string, blockLabel: string): string {
 // bewusst unbewacht (siehe `tokens.ts`-Kommentar bei `export const orbit`).
 const paperBlock = block(auraCss, "[data-theme='paper']");
 const rootBlock = block(auraCss, ':root {'); // der spätere, theme-unabhängige :root-Block (Radien/Fonts/Motion)
+// v0.8.0B / W1 (Spez §1/§6): AUSNAHME von der bisherigen "orbit bleibt
+// unbewacht"-Regel — die frisch eingeführten/geänderten orbit-Tokens dieses
+// Pakets (Alpha-Border-Flip, Schatten-Skala, Hover) bekommen gezielte
+// Wächter-Tests, weil hier die Drift-Gefahr am grössten ist. Der Rest von
+// `orbit` (Grundfarben etc.) bleibt wie zuvor unbewacht.
+// needle enthält die abschliessende Klammer (wie `rootBlock` oben) — reine
+// Kommentar-Erwähnungen von `[data-theme='orbit']` (ohne unmittelbar
+// folgende `{`) im Datei-Kopf dürfen NICHT den falschen Block treffen.
+const orbitBlock = block(auraCss, "[data-theme='orbit'] {");
 
 describe('token-spiegel (W0): aura.css ist die Wahrheit, tokens.ts folgt exakt', () => {
   it('Radien (--k-radius-sm/-md/-lg) stimmen mit tokens.radius überein', () => {
@@ -114,6 +123,70 @@ describe('token-spiegel (W0): aura.css ist die Wahrheit, tokens.ts folgt exakt',
     ];
     for (const [key, cssVar] of paare) {
       expect(motion[key], `motion.${key} vs. ${cssVar}`).toBe(lies(rootBlock, cssVar, ':root'));
+    }
+  });
+
+  /**
+   * v0.8.0B / W1 (Spez §1/§6) — additive Wächter-Erweiterung. Alle sechs
+   * Punkte unten sind NEU in dieser Welle; die Tests oben (Basis W0) bleiben
+   * unverändert.
+   */
+  it('NEU (W1) Spacing --k-s8/-s9/-s10 stimmt mit tokens.scale überein', () => {
+    const paare: Array<[keyof typeof scale, string]> = [
+      ['s8', '--k-s8'],
+      ['s9', '--k-s9'],
+      ['s10', '--k-s10'],
+    ];
+    for (const [key, cssVar] of paare) {
+      expect(scale[key], `scale.${key} vs. ${cssVar}`).toBe(lies(paperBlock, cssVar, 'paper'));
+    }
+  });
+
+  it('NEU (W1) Typo-Leiter --k-t-h3/-h2/-h1/-display/-code/-micro stimmt mit tokens.typeGross überein', () => {
+    const paare: Array<[keyof typeof typeGross, string]> = [
+      ['h3', '--k-t-h3'],
+      ['h2', '--k-t-h2'],
+      ['h1', '--k-t-h1'],
+      ['display', '--k-t-display'],
+      ['code', '--k-t-code'],
+      ['micro', '--k-t-micro'],
+    ];
+    for (const [key, cssVar] of paare) {
+      expect(typeGross[key], `typeGross.${key} vs. ${cssVar}`).toBe(lies(paperBlock, cssVar, 'paper'));
+    }
+  });
+
+  it('NEU (W1) --k-radius-hub stimmt mit tokens.radiusHub überein', () => {
+    expect(radiusHub, 'radiusHub vs. --k-radius-hub').toBe(lies(rootBlock, '--k-radius-hub', ':root'));
+  });
+
+  it('NEU (W1) Flächenstufe Hover (--k-hover) stimmt beidseitig überein (paper + orbit)', () => {
+    expect(paper.hover, 'paper.hover vs. --k-hover (paper)').toBe(lies(paperBlock, '--k-hover', 'paper'));
+    expect(orbit.hover, 'orbit.hover vs. --k-hover (orbit)').toBe(lies(orbitBlock, '--k-hover', 'orbit'));
+  });
+
+  it('NEU (W1) Alpha-Border-Flip (--k-line-subtil/-line/-line-strong, orbit-only) stimmt mit tokens.orbit überein', () => {
+    expect(orbit.lineSubtil, 'orbit.lineSubtil vs. --k-line-subtil').toBe(
+      lies(orbitBlock, '--k-line-subtil', 'orbit'),
+    );
+    expect(orbit.line, 'orbit.line vs. --k-line (orbit)').toBe(lies(orbitBlock, '--k-line', 'orbit'));
+    expect(orbit.lineStrong, 'orbit.lineStrong vs. --k-line-strong (orbit)').toBe(
+      lies(orbitBlock, '--k-line-strong', 'orbit'),
+    );
+    expect(orbit.hairline, 'orbit.hairline vs. --k-hairline').toBe(lies(orbitBlock, '--k-hairline', 'orbit'));
+  });
+
+  it('NEU (W1) Schatten-Skala (--k-shadow-xs/-sm/-md/-lg/-xl + --k-inset-top, orbit-only) stimmt mit tokens.shadow.orbit überein', () => {
+    const paare: Array<[keyof typeof shadow.orbit, string]> = [
+      ['xs', '--k-shadow-xs'],
+      ['sm', '--k-shadow-sm'],
+      ['md', '--k-shadow-md'],
+      ['lg', '--k-shadow-lg'],
+      ['xl', '--k-shadow-xl'],
+      ['insetTop', '--k-inset-top'],
+    ];
+    for (const [key, cssVar] of paare) {
+      expect(shadow.orbit[key], `shadow.orbit.${key} vs. ${cssVar}`).toBe(lies(orbitBlock, cssVar, 'orbit'));
     }
   });
 });
