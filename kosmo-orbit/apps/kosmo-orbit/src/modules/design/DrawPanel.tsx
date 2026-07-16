@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { ausmassAlsCsv, deriveAusmass, deriveMengen, raumTypVorschlag, type Entity, type MassBody, type Roof, type Slab, type Stair, type Wall, type Zone, type Assembly } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * KosmoDraw — der sichtbare BIM-Verständnisträger (Vision Q9/Q15):
@@ -59,14 +60,11 @@ function RaumTypCopilot() {
   const v = raumTypVorschlag(doc, zone);
   if (!v) return null;
   return (
-    <div
-      data-testid="raumtyp-vorschlag"
-      style={{ display: 'flex', gap: 6, alignItems: 'center', padding: '4px 8px', fontSize: 11.5, borderBottom: '1px solid var(--k-line)' }}
-    >
-      <span style={{ color: 'var(--k-ink-soft)' }}>
+    <div data-testid="raumtyp-vorschlag" className="draw-copilot">
+      <span className="sp-textsoft">
         Raumtyp? Kosmo meint «{v.raumTyp}» ({v.grund})
       </span>
-      <div style={{ flex: 1 }} />
+      <div className="dp-fuell" />
       <KButton
         size="sm"
         tone="quiet"
@@ -113,22 +111,11 @@ export function DrawPanel() {
     v === undefined ? '—' : `${v.toLocaleString('de-CH', { maximumFractionDigits: 1 })} ${einheit}`;
 
   return (
-    <div
-      data-testid="draw-panel"
-      style={{
-        zIndex: 20,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-      }}
-    >
+    <div data-testid="draw-panel" className="dp-dialog--flex">
       <RaumTypCopilot />
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px' }}>
+      <div className="draw-kopf">
         <Badge hue="var(--k-mod-draw)">KosmoDraw</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone={tab === 'baum' ? 'accent' : 'ghost'} onClick={() => setTab('baum')} data-testid="draw-tab-baum">
           Modellbaum
         </KButton>
@@ -140,17 +127,17 @@ export function DrawPanel() {
         </KButton>
       </div>
       <Hairline />
-      <div style={{ overflow: 'auto', padding: '8px 10px', display: 'grid', gap: 6, fontSize: 12.5 }}>
+      <div className="draw-koerper">
         {tab === 'baum' ? (
           storeys.length === 0 ? (
-            <span style={{ color: 'var(--k-ink-faint)' }}>Noch kein Geschoss.</span>
+            <span className="dp-leer">Noch kein Geschoss.</span>
           ) : (
             storeys.map((s) => {
               const elemente = doc.inStorey(s.id).filter((e) => e.kind !== 'opening');
               return (
-                <div key={s.id} style={{ display: 'grid', gap: 3 }}>
-                  <div className="k-titel" style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
-                    {s.name} <span style={{ fontFamily: 'var(--k-font-mono)', textTransform: 'none' }}>({elemente.length})</span>
+                <div key={s.id} className="dp-spalte--eng">
+                  <div className="k-titel draw-geschoss-titel">
+                    {s.name} <span className="draw-baum-anzahl">({elemente.length})</span>
                   </div>
                   {elemente.map((e) => (
                     <button
@@ -160,23 +147,10 @@ export function DrawPanel() {
                         setActiveStorey(s.id);
                         select([e.id]);
                       }}
-                      style={{
-                        all: 'unset',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        gap: 8,
-                        alignItems: 'baseline',
-                        padding: '2px 6px',
-                        background: selection.includes(e.id) ? 'var(--k-accent-wash)' : 'transparent',
-                        borderLeft: selection.includes(e.id) ? '2px solid var(--k-accent)' : '2px solid transparent',
-                      }}
+                      className={`draw-baum-eintrag${selection.includes(e.id) ? ' draw-baum-eintrag--aktiv' : ''}`}
                     >
-                      <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {elementLabel(doc, e)}
-                      </span>
-                      <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10.5, color: 'var(--k-ink-faint)' }}>
-                        {IFC[e.kind] ?? ''}
-                      </span>
+                      <span className="draw-baum-label">{elementLabel(doc, e)}</span>
+                      <span className="draw-baum-ifc">{IFC[e.kind] ?? ''}</span>
                     </button>
                   ))}
                 </div>
@@ -185,26 +159,26 @@ export function DrawPanel() {
           )
         ) : tab === 'ausmass' ? (
           ausmass.positionen.length === 0 ? (
-            <span style={{ color: 'var(--k-ink-faint)' }}>Noch keine Bauteile im Modell.</span>
+            <span className="dp-leer">Noch keine Bauteile im Modell.</span>
           ) : (
             <>
-              <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="ausmass-tabelle">
+              <table className="dp-tabelle draw-tabelle-links" data-testid="ausmass-tabelle">
                 <thead>
-                  <tr style={{ textAlign: 'left', color: 'var(--k-ink-faint)', fontSize: 11 }}>
-                    <th style={{ fontWeight: 500, padding: '2px 4px' }}>Position</th>
-                    <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'right' }}>Menge</th>
+                  <tr>
+                    <th>Position</th>
+                    <th className="dp-num">Menge</th>
                   </tr>
                 </thead>
                 <tbody>
                   {ausmass.positionen.map((p, i) => (
-                    <tr key={i} style={{ borderTop: '1px solid var(--k-line)' }}>
-                      <td style={{ padding: '3px 4px' }}>
+                    <tr key={i}>
+                      <td>
                         {p.position}
-                        <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-ink-faint)' }}>
+                        <div className="draw-zeile-detail">
                           {p.kapitel} · {p.herleitung}
                         </div>
                       </td>
-                      <td style={{ padding: '3px 4px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <td className="dp-num draw-nowrap">
                         <Measure>
                           {p.menge.toLocaleString('de-CH', { maximumFractionDigits: 2 })} {p.einheit === 'm2' ? 'm²' : p.einheit === 'm3' ? 'm³' : p.einheit}
                         </Measure>
@@ -213,42 +187,42 @@ export function DrawPanel() {
                   ))}
                 </tbody>
               </table>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div className="draw-csv-zeile">
                 <KButton size="sm" tone="quiet" onClick={ausmassCsv} data-testid="ausmass-csv">
                   CSV (Excel-CH)
                 </KButton>
-                <span style={{ color: 'var(--k-ink-faint)', fontSize: 10.5, flex: 1 }}>
+                <span className="draw-csv-hinweis">
                   {ausmass.hinweise[ausmass.hinweise.length - 1]}
                 </span>
               </div>
             </>
           )
         ) : mengen.positionen.length === 0 ? (
-          <span style={{ color: 'var(--k-ink-faint)' }}>Noch keine Bauteile im Modell.</span>
+          <span className="dp-leer">Noch keine Bauteile im Modell.</span>
         ) : (
-          <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="mengen-tabelle">
+          <table className="dp-tabelle draw-tabelle-links" data-testid="mengen-tabelle">
             <thead>
-              <tr style={{ textAlign: 'left', color: 'var(--k-ink-faint)', fontSize: 11 }}>
-                <th style={{ fontWeight: 500, padding: '2px 4px' }}>Position</th>
-                <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'right' }}>Stk</th>
-                <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'right' }}>Fläche</th>
-                <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'right' }}>Volumen</th>
+              <tr>
+                <th>Position</th>
+                <th className="dp-num">Stk</th>
+                <th className="dp-num">Fläche</th>
+                <th className="dp-num">Volumen</th>
               </tr>
             </thead>
             <tbody>
               {mengen.positionen.map((p) => (
-                <tr key={p.kind + p.bezeichnung} style={{ borderTop: '1px solid var(--k-line)' }}>
-                  <td style={{ padding: '3px 4px' }}>
+                <tr key={p.kind + p.bezeichnung}>
+                  <td>
                     {p.bezeichnung}
-                    <div style={{ fontFamily: 'var(--k-font-mono)', fontSize: 10, color: 'var(--k-ink-faint)' }}>{p.ifcKlasse}</div>
+                    <div className="draw-zeile-detail">{p.ifcKlasse}</div>
                   </td>
-                  <td style={{ padding: '3px 4px', textAlign: 'right' }}>
+                  <td className="dp-num">
                     <Measure>{p.anzahl}</Measure>
                   </td>
-                  <td style={{ padding: '3px 4px', textAlign: 'right' }}>
+                  <td className="dp-num">
                     <Measure>{fmt(p.flaeche, 'm²')}</Measure>
                   </td>
-                  <td style={{ padding: '3px 4px', textAlign: 'right' }}>
+                  <td className="dp-num">
                     <Measure>{fmt(p.volumen, 'm³')}</Measure>
                   </td>
                 </tr>
@@ -257,7 +231,7 @@ export function DrawPanel() {
           </table>
         )}
         {tab === 'mengen' && mengen.positionen.length > 0 && (
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 10.5 }}>
+          <span className="draw-fussnote">
             Vorausmasse aus der Parametrik (Wände netto, Dächer als Grundfläche) — kein NPK-Ausmass.
           </span>
         )}

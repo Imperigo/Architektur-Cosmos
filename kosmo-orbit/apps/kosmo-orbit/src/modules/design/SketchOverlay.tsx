@@ -4,6 +4,7 @@ import { Badge, KButton, moduleHue } from '@kosmo/ui';
 import type { Pt } from '@kosmo/kernel';
 import { fitStrokes, type FittedSegment, type Stroke } from './sketch';
 import { skizzeAnnaeherungen, skizzeMiniPfad, type SkizzeVarianteId } from './skizze-annaeherungen';
+import './design-panels.css';
 
 /**
  * KosmoSketch-Overlay — liegt über dem Plan: Freihand zeichnen (Apple Pencil:
@@ -112,7 +113,7 @@ export function SketchOverlay({ toWorld, toScreen, onAccept, onPanDelta }: Sketc
       // Attribut, kein Verhalten — `cursor: 'crosshair'` (Zeile unten) bleibt
       // unverändert, `CursorEbene.tsx` morpht zusätzlich auf das Fadenkreuz.
       data-cursor-zone="praezision"
-      style={{ position: 'absolute', inset: 0, touchAction: 'none', cursor: 'crosshair' }}
+      className="so-ueberlage"
       onPointerDown={(e) => {
         if (pending) return;
         // v0.6.6 / Welle 2 Stream C (Task 5): Palm-Rejection-Basis — ein
@@ -178,7 +179,7 @@ export function SketchOverlay({ toWorld, toScreen, onAccept, onPanDelta }: Sketc
         finish();
       }}
     >
-      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+      <svg className="so-svg">
         {/* Roh-Skizze: fertige, noch nicht gefittete Striche — dezent, grau */}
         {!pending &&
           strokes.map((s, i) => {
@@ -201,25 +202,9 @@ export function SketchOverlay({ toWorld, toScreen, onAccept, onPanDelta }: Sketc
       </svg>
 
       {!pending && strokes.length > 0 && (
-        <div
-          data-testid="sketch-batch"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 18,
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 'var(--k-s3)',
-            alignItems: 'center',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-line)',
-            borderRadius: 'var(--k-radius-md)',
-            padding: 'var(--k-s3) var(--k-s4)',
-            boxShadow: 'var(--k-shadow-overlay)',
-          }}
-        >
+        <div data-testid="sketch-batch" className="so-leiste">
           <Badge hue={moduleHue.design}>Frei skizziert</Badge>
-          <span style={{ fontSize: 'var(--k-t-md)' }}>{strokes.length} Strich{strokes.length === 1 ? '' : 'e'}</span>
+          <span className="so-zahl-text">{strokes.length} Strich{strokes.length === 1 ? '' : 'e'}</span>
           <KButton size="sm" tone="accent" data-testid="sketch-uebergeben" onClick={uebergeben}>
             Übergeben
           </KButton>
@@ -230,49 +215,19 @@ export function SketchOverlay({ toWorld, toScreen, onAccept, onPanDelta }: Sketc
       )}
 
       {pending && (
-        <div
-          data-testid="sketch-proposal"
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: 18,
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--k-s3)',
-            alignItems: 'center',
-            background: 'var(--k-surface)',
-            border: '1px solid var(--k-accent)',
-            borderRadius: 'var(--k-radius-md)',
-            padding: 'var(--k-s3) var(--k-s4)',
-            boxShadow: 'var(--k-shadow-overlay)',
-          }}
-        >
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center' }}>
+        <div data-testid="sketch-proposal" className="so-leiste so-leiste--vorschlag">
+          <div className="so-vorschlag-kopf">
             <Badge hue={moduleHue.design}>Skizze erkannt</Badge>
-            <span style={{ fontSize: 'var(--k-t-md)' }}>{pending.length} Wände — eine Annäherung wählen</span>
+            <span className="so-zahl-text">{pending.length} Wände — eine Annäherung wählen</span>
           </div>
-          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+          <div className="so-varianten-reihe">
             {skizzeAnnaeherungen(pending).map((v, i) => (
-              <div
-                key={v.id}
-                data-testid={`skizze-vorschlag-${i + 1}`}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 'var(--k-s2)',
-                  alignItems: 'center',
-                  width: 108,
-                  border: '1px solid var(--k-line)',
-                  borderRadius: 'var(--k-radius-sm)',
-                  padding: 'var(--k-s2)',
-                }}
-              >
-                <div style={{ fontSize: 'var(--k-t-sm)', fontWeight: 600 }}>{v.titel}</div>
-                <svg width={56} height={56} viewBox="0 0 56 56" style={{ background: 'var(--k-raised)', borderRadius: 4 }}>
+              <div key={v.id} data-testid={`skizze-vorschlag-${i + 1}`} className="so-karte">
+                <div className="so-karte-titel">{v.titel}</div>
+                <svg width={56} height={56} viewBox="0 0 56 56" className="so-mini-svg">
                   <path d={skizzeMiniPfad(v.segments)} fill="none" stroke="var(--k-accent)" strokeWidth={2} strokeLinecap="round" />
                 </svg>
-                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', textAlign: 'center', lineHeight: 1.3 }}>
+                <span className="so-karte-text">
                   {v.beschreibung}
                 </span>
                 <KButton

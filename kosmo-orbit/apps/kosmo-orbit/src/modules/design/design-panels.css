@@ -157,3 +157,691 @@
 .kp-toggle-icon {
   color: var(--k-ink-faint);
 }
+
+/* ---- v0.8.0B / W8c-B (Abnahme-Nachtrag): die 13 Design-Werkzeugpanels
+   (Berechnungsliste/Draw/Varianten/Splat/Kv/Raster/Mängel/Bauablauf/
+   Unternehmerplan/Sketch/Modul/Submissions-Check/CurtainWall) — additiv zur
+   Datei oben (dieselbe `.dp-*`-Grammatik), NICHT `.dp-panel`: diese Panels
+   schweben als Dialoge (technik-Rahmen + Overlay-Schatten + zIndex) statt als
+   reine Dock-Inhalte, darum eine eigene, aber verwandte Basisklasse. Alle
+   Panels sind Dock-/Overlay-INHALT einer Station — keine eigene gefüllte
+   Dauer-Signalfläche (Gesetz 1); Akzent bleibt Auswahl/Primäraktion. */
+
+.dp-dialog {
+  z-index: 20;
+  background: var(--k-raised);
+  border: 1px solid var(--k-technik);
+  box-shadow: var(--k-shadow-overlay);
+  padding: var(--k-s4);
+  display: grid;
+  gap: var(--k-s4);
+  font-size: var(--k-t-sm);
+}
+/* Modifikator: Panels mit potenziell langem Inhalt (Tabellen/Listen) scrollen
+   intern, statt den Dock-Rahmen zu sprengen (T4b-Grundsatz). */
+.dp-dialog--scroll {
+  overflow: auto;
+}
+/* DrawPanel: eigene Kopf-/Tab-/Körper-Gliederung statt der generischen
+   Kopf+Grid-Struktur — volle Höhe, Kopf/Hairline/Scroll-Körper als Flex. */
+.dp-dialog--flex {
+  z-index: 20;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--k-raised);
+  border: 1px solid var(--k-technik);
+  box-shadow: var(--k-shadow-overlay);
+}
+/* ModulEditor: schwebt zentriert über dem Viewport (eigenes Portal), keine
+   Anker-Fläche. */
+.dp-dialog--fixed {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: var(--k-raised);
+  border: 1px solid var(--k-line-strong);
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-overlay);
+  padding: var(--k-s5);
+  display: grid;
+  gap: var(--k-s3);
+}
+/* UnternehmerplanPanel (Diff-Karten-Stufe): rechts angedockter Anker statt
+   zentriertem Dialog — Grösse bleibt viewport-abhängig. */
+.dp-dialog--anker {
+  position: absolute;
+  right: 12px;
+  top: 52px;
+  width: min(420px, calc(100vw - 122px));
+  max-height: calc(100% - 90px);
+  overflow: auto;
+}
+
+/* Ehrlichkeits-Hinweisbox (KV/Bauablauf/Mängel — «Richtwert, kein
+   Normersatz») — bleibt permanent sichtbar, nicht nur beim Export. */
+.dp-hinweis {
+  background: var(--k-warning-wash, #f6f2e6);
+  border: 1px solid var(--k-warning-line, #c9bfa0);
+  border-radius: var(--k-radius-sm);
+  padding: var(--k-s3) var(--k-s4);
+  font-weight: 600;
+  color: var(--k-ink);
+}
+
+.dp-meta {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}
+.dp-fussnote {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+}
+.dp-leer {
+  color: var(--k-ink-faint);
+}
+/* Sektionstitel innerhalb eines Panels («Raumprogramm», «GF-Block», «Mangel
+   erfassen» …) — zusammen mit der bestehenden `.k-titel`-Klasse (Versal/
+   Tracking) verwendet, wie im Bestand (`className="k-titel dp-titel-block"`). */
+.dp-titel-block {
+  font-size: var(--k-t-lg);
+  color: var(--k-ink-soft);
+}
+
+.dp-reihe {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+}
+.dp-reihe--eng {
+  gap: var(--k-s2);
+}
+.dp-reihe--fest {
+  flex-wrap: nowrap;
+}
+.dp-spalte {
+  display: grid;
+  gap: var(--k-s3);
+}
+.dp-spalte--eng {
+  display: grid;
+  gap: var(--k-s2);
+}
+.dp-zwischen {
+  display: flex;
+  justify-content: space-between;
+}
+.dp-zwischen--mitte {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dp-feld-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-sm);
+}
+.dp-label-schmal {
+  color: var(--k-ink-soft);
+  display: inline-block;
+}
+
+/* Tabellen-Grammatik (KV/Bauablauf/Berechnungsliste/Ausmass/Mengen-Tabellen):
+   Hairline-Zeilen statt Kästen (Gesetz 8), Mono-Ziffern rechtsbündig. */
+.dp-tabelle {
+  border-collapse: collapse;
+  width: 100%;
+}
+.dp-tabelle thead tr {
+  text-align: right;
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+}
+.dp-tabelle thead tr th:first-child {
+  text-align: left;
+}
+.dp-tabelle th {
+  font-weight: 500;
+  padding: 2px 4px;
+}
+.dp-tabelle td {
+  padding: 3px 4px;
+}
+.dp-tabelle tbody tr {
+  border-top: 1px solid var(--k-line);
+}
+.dp-tabelle-summe {
+  border-top: 1px solid var(--k-technik);
+  font-weight: 600;
+}
+.dp-num {
+  text-align: right;
+}
+.dp-farbe-erfolg {
+  color: var(--k-success);
+}
+.dp-farbe-fehler {
+  color: var(--k-danger);
+}
+
+/* Breiten-Leiter der Zahl-/Auswahlfelder: Werte kalibriert auf die je Feld
+   erwartete Ziffern-/Zeichenzahl (Splat-Box-Koordinaten, Kennwert-Prozente,
+   Modul-Masse, Typ-Auswahl …) — keine beliebigen Layout-Literale, sondern
+   eine geschlossene, wiederverwendete Stufenleiter (Review-Ausnahme B-22,
+   dokumentiert statt still verstreut). */
+.dp-w48 {
+  width: 48px;
+}
+.dp-w58 {
+  width: 58px;
+}
+.dp-w66 {
+  width: 66px;
+}
+.dp-w70 {
+  width: 70px;
+}
+.dp-w72 {
+  width: 72px;
+}
+.dp-w76 {
+  width: 76px;
+}
+.dp-w90 {
+  width: 90px;
+}
+.dp-w92 {
+  width: 92px;
+}
+.dp-w108 {
+  width: 108px;
+}
+.dp-w110 {
+  width: 110px;
+}
+.dp-w120 {
+  width: 120px;
+}
+.dp-w132 {
+  width: 132px;
+}
+.dp-w150 {
+  width: 150px;
+}
+
+/* DrawPanel — Kopf/Tabs/Modellbaum */
+.draw-copilot {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  border-bottom: 1px solid var(--k-line);
+}
+.draw-kopf {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+}
+.draw-koerper {
+  overflow: auto;
+  padding: 8px 10px;
+  display: grid;
+  gap: 6px;
+  font-size: 12.5px;
+}
+.draw-geschoss-titel {
+  font-size: 12.5px;
+  color: var(--k-ink-soft);
+}
+.draw-baum-eintrag {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 2px 6px;
+  background: transparent;
+  border-left: 2px solid transparent;
+}
+.draw-baum-eintrag--aktiv {
+  background: var(--k-accent-wash);
+  border-left: 2px solid var(--k-accent);
+}
+.draw-baum-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.draw-baum-ifc {
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  color: var(--k-ink-faint);
+}
+.draw-baum-anzahl {
+  font-family: var(--k-font-mono);
+  text-transform: none;
+}
+.draw-tabelle-links thead tr {
+  text-align: left;
+}
+.draw-zeile-detail {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  color: var(--k-ink-faint);
+}
+.draw-nowrap {
+  white-space: nowrap;
+}
+.draw-csv-zeile {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.draw-csv-hinweis {
+  color: var(--k-ink-faint);
+  font-size: 10.5px;
+  flex: 1;
+}
+.draw-fussnote {
+  color: var(--k-ink-faint);
+  font-size: 10.5px;
+}
+
+/* BerechnungslistePanel — Raumprogramm-Erfassung, Tabelle, Typ-Buttons */
+.bl-csv-label {
+  cursor: pointer;
+}
+.bl-versteckt {
+  display: none;
+}
+/* Wohnungstyp-Farben (`typFarbe()`) bleiben absichtlich Inline-Styles: die
+   Farbe kommt aus einer Laufzeit-Datenquelle (Wohnungstypen-Katalog), nicht
+   aus dem Design-System — echte Daten-Carrier (Spez §7.1 B-22-Ausnahme). */
+.bl-farbe-name {
+  font-weight: 600;
+}
+.bl-differenz {
+  font-weight: 600;
+}
+.bl-erfuellung {
+  color: var(--k-ink-soft);
+}
+.bl-delta-neutral {
+  color: var(--k-ink-faint);
+}
+.bl-tieout {
+  color: var(--k-warning);
+  font-size: var(--k-t-sm);
+}
+.bl-typreihe {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.bl-gf-block {
+  display: grid;
+  gap: var(--k-s1);
+}
+.bl-gf-total {
+  font-weight: 600;
+  border-top: 1px solid var(--k-line);
+  padding-top: var(--k-s1);
+}
+
+/* BerechnungslistePanel — SegmentiererSektion (Wohnungen schneiden) */
+.sg-wrap {
+  display: grid;
+  gap: 6px;
+}
+.sg-kopf {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.sg-titel {
+  font-weight: 600;
+  font-size: 12px;
+}
+.sg-kern-label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--k-ink-soft);
+}
+.sg-hinweis {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.sg-slider-spalte {
+  display: grid;
+  gap: 4px;
+  font-size: 11.5px;
+}
+.sg-slider-zeile {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.sg-slider-label {
+  width: 92px;
+  color: var(--k-ink-soft);
+}
+.sg-ergebnis-spalte {
+  display: grid;
+  gap: 3px;
+  font-size: 11.5px;
+}
+.sg-diagnose {
+  color: var(--k-warning);
+  line-height: 1.4;
+}
+
+/* SketchOverlay — Batch-/Vorschlagsleiste + Annäherungs-Karten */
+.so-ueberlage {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  cursor: crosshair;
+}
+.so-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.so-leiste {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-md);
+  padding: var(--k-s3) var(--k-s4);
+  box-shadow: var(--k-shadow-overlay);
+}
+.so-leiste--vorschlag {
+  flex-direction: column;
+  border-color: var(--k-accent);
+}
+.so-vorschlag-kopf {
+  display: flex;
+  gap: var(--k-s2);
+  align-items: center;
+}
+.so-zahl-text {
+  font-size: var(--k-t-md);
+}
+.so-varianten-reihe {
+  display: flex;
+  gap: var(--k-s3);
+}
+.so-karte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  align-items: center;
+  width: 108px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  padding: var(--k-s2);
+}
+.so-karte-titel {
+  font-size: var(--k-t-sm);
+  font-weight: 600;
+}
+.so-mini-svg {
+  background: var(--k-raised);
+  border-radius: 4px;
+}
+.so-karte-text {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* ModulEditor — Zeichenfläche + Kopfzeile */
+.me-kopf {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+}
+.me-flaeche {
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-surface);
+  cursor: crosshair;
+  touch-action: none;
+}
+.me-fuss {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  font-size: var(--k-t-sm);
+}
+
+/* VariantenPanel — Gewichte-Slider, Top-Karten, Kennzahl-Matrix */
+.vp-gewicht-zeile {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.vp-gewicht-label {
+  width: 132px;
+  color: var(--k-ink-soft);
+  font-size: 11.5px;
+}
+.vp-skizze-leer {
+  font-size: 10.5px;
+  color: var(--k-ink-faint);
+}
+.vp-skizze {
+  width: 100%;
+  height: 64px;
+  background: var(--k-sunken);
+}
+.vp-matrix-wrap {
+  display: grid;
+  gap: 2px;
+}
+.vp-matrix-kopf {
+  font-size: 11px;
+  color: var(--k-ink-faint);
+}
+.vp-matrix-svg {
+  width: 100%;
+}
+.vp-matrix-linie {
+  cursor: pointer;
+}
+.vp-karte {
+  display: grid;
+  gap: 4px;
+  padding: 8px;
+}
+.vp-karte-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.vp-karte-teilscores {
+  font-size: 10px;
+  color: var(--k-ink-faint);
+}
+.vp-hinweis-text {
+  font-size: 11.5px;
+  color: var(--k-ink-faint);
+}
+.vp-gewichte-spalte {
+  display: grid;
+  gap: 6px;
+}
+.vp-slider {
+  flex: 1;
+}
+.vp-start-zeile {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.vp-zaehler {
+  color: var(--k-ink-soft);
+  font-size: 11.5px;
+}
+.vp-fehlertext {
+  font-size: 11.5px;
+  color: var(--k-danger);
+}
+.vp-top-spalte {
+  display: grid;
+  gap: 6px;
+}
+.vp-top-titel {
+  font-size: 11px;
+  font-weight: 600;
+}
+.vp-zug-label {
+  font-size: 11.5px;
+}
+.vp-fussnote {
+  color: var(--k-ink-faint);
+  font-size: 11px;
+}
+
+/* SubmissionsCheckPanel — Lücken/Hinweise-Listen */
+.sub-titel-luecke {
+  color: var(--k-danger, #a33);
+}
+.sub-befund {
+  padding: var(--k-s2) var(--k-s3);
+  border-left: 2px solid var(--k-line-strong);
+}
+.sub-befund--luecke {
+  border-left-color: var(--k-danger, #a33);
+}
+
+/* UnternehmerplanPanel — Dateiname-Chip, Bericht, Diff-Karten */
+.up-dateiname {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+  font-family: var(--k-font-mono);
+}
+.up-hinweistext {
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+.up-mehr-titel {
+  cursor: pointer;
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}
+.up-mehr-text {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+  line-height: 1.5;
+  margin-top: var(--k-s2);
+}
+.up-bericht {
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+.up-karte-koerper {
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3) var(--k-s4);
+  width: 100%;
+}
+.up-karte-kopf {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.up-karte-titel {
+  font-weight: 600;
+  font-size: var(--k-t-sm);
+  flex: 1;
+  min-width: 160px;
+}
+
+/* MaengelPanel — Erfassungsformular + Mangel-Zeilen */
+.mg-formreihe {
+  display: flex;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+}
+.mg-feld-ort {
+  flex: 1 1 160px;
+}
+.mg-feld-gewerk {
+  flex: 1 1 140px;
+}
+.mg-feld-frist {
+  flex: 1 1 120px;
+}
+.mg-beschreibung {
+  resize: vertical;
+}
+.mg-zeile {
+  display: grid;
+  gap: var(--k-s1);
+}
+.mg-ort {
+  font-weight: 600;
+}
+.mg-beschreibungstext {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+
+/* RasterPanel — Eingabezeilen, Varianten-Raster */
+.rp-eingabereihe {
+  display: flex;
+  gap: var(--k-s4);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.rp-formel {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+  font-family: var(--k-font-mono);
+}
+.rp-varianten-raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 6px;
+}
+.rp-variante-titel {
+  font-family: var(--k-font-mono);
+  font-weight: 700;
+  font-size: var(--k-t-sm);
+}
+.rp-variante-masse {
+  display: flex;
+  gap: var(--k-s5);
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-sm);
+  flex-wrap: wrap;
+}
+
+/* SplatPanel — Zuschneiden/Ausdünnen/Video-Text */
+.sp-textsoft {
+  color: var(--k-ink-soft);
+}
+.sp-textsoft-sm {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-sm);
+}

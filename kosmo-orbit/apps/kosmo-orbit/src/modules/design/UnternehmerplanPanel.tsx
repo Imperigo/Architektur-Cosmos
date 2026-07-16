@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Badge, Hairline, Karteikarte, KButton, melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 import {
   baueKarten,
   commandFuerKarte,
@@ -54,28 +55,12 @@ export function UnternehmerplanPanel() {
   if (!dxf || !abgleich) {
     if (!pdfHinweis) return null;
     return (
-      <div
-        data-testid="unternehmerplan-panel"
-        className="k-dialog"
-        style={{
-          zIndex: 20,
-          overflow: 'auto',
-          background: 'var(--k-raised)',
-          border: '1px solid var(--k-technik)',
-          boxShadow: 'var(--k-shadow-overlay)',
-          padding: 'var(--k-s4)',
-          display: 'grid',
-          gap: 'var(--k-s4)',
-          fontSize: 'var(--k-t-sm)',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+      <div data-testid="unternehmerplan-panel" className="k-dialog dp-dialog dp-dialog--scroll">
+        <div className="dp-kopf">
           <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)', fontFamily: 'var(--k-font-mono)' }}>
-            {pdfHinweis.dateiname}
-          </span>
+          <span className="up-dateiname">{pdfHinweis.dateiname}</span>
         </div>
-        <span data-testid="pdf-hinweis" style={{ color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+        <span data-testid="pdf-hinweis" className="up-hinweistext">
           {pdfHinweis.text}
         </span>
         {/* K5 (Owner-Rundgang 0.6.2, S. 10): die ausführliche Begründung
@@ -84,12 +69,8 @@ export function UnternehmerplanPanel() {
             «?»-Hinweis — die Kernaussage oben bleibt immer sichtbar. */}
         {pdfHinweis.detail && (
           <details data-testid="pdf-hinweis-mehr">
-            <summary style={{ cursor: 'pointer', color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
-              ? Warum keine automatische Analyse
-            </summary>
-            <p style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)', lineHeight: 1.5, marginTop: 'var(--k-s2)' }}>
-              {pdfHinweis.detail}
-            </p>
+            <summary className="up-mehr-titel">? Warum keine automatische Analyse</summary>
+            <p className="up-mehr-text">{pdfHinweis.detail}</p>
           </details>
         )}
       </div>
@@ -121,51 +102,28 @@ export function UnternehmerplanPanel() {
   };
 
   return (
-    <div
-      data-testid="unternehmerplan-panel"
-      className="k-dialog"
-      style={{
-        position: 'absolute',
-        right: 12,
-        top: 52,
-        zIndex: 20,
-        width: 'min(420px, calc(100vw - 122px))',
-        maxHeight: 'calc(100% - 90px)',
-        overflow: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="unternehmerplan-panel" className="k-dialog dp-dialog dp-dialog--anker">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
-        {dateiname && (
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)', fontFamily: 'var(--k-font-mono)' }}>
-            {dateiname}
-          </span>
-        )}
+        {dateiname && <span className="up-dateiname">{dateiname}</span>}
       </div>
 
-      <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{berichtText}</span>
+      <span className="up-bericht">{berichtText}</span>
 
       <Hairline />
 
       {karten.length === 0 ? (
-        <span style={{ color: 'var(--k-ink-faint)' }}>Keine Karten.</span>
+        <span className="dp-leer">Keine Karten.</span>
       ) : (
-        <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="unternehmerplan-karten">
+        <div className="dp-spalte" data-testid="unternehmerplan-karten">
           {karten.map((karte, i) => {
             const st = status[karte.id] ?? 'offen';
             const zeigeAnwenden = karte.stufe === 1 && st === 'offen';
             return (
               <Karteikarte key={karte.id} nr={i + 1} data-testid={`karte-${karte.id}`}>
-                <div style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3) var(--k-s4)', width: '100%' }}>
-                  <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 600, fontSize: 'var(--k-t-sm)', flex: 1, minWidth: 160 }}>{karte.titel}</span>
+                <div className="up-karte-koerper">
+                  <div className="up-karte-kopf">
+                    <span className="up-karte-titel">{karte.titel}</span>
                     {st === 'uebernommen' ? (
                       <Badge hue="var(--k-success)">übernommen ✓</Badge>
                     ) : st === 'manuell' ? (
@@ -176,7 +134,7 @@ export function UnternehmerplanPanel() {
                       <Badge hue="var(--k-ink-faint)">markiert</Badge>
                     )}
                   </div>
-                  <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>{karte.detail}</span>
+                  <span className="dp-fussnote">{karte.detail}</span>
                   {zeigeAnwenden && (
                     <div>
                       <KButton

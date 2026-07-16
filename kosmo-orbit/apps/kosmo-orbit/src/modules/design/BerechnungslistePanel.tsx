@@ -13,6 +13,7 @@ import {
 import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import { anfangsEntwurf } from './berechnungsliste-entwurf';
+import './design-panels.css';
 
 /**
  * Berechnungsliste Volumenstudien — der Owner-Excel-Workflow als lebendes
@@ -110,23 +111,10 @@ export function BerechnungslistePanel({
   };
 
   return (
-    <div
-      data-testid="berechnungsliste-panel"
-      style={{
-        zIndex: 20,
-        overflow: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="berechnungsliste-panel" className="dp-dialog dp-dialog--scroll">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-design)">Berechnungsliste</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton
           size="sm"
           tone="ghost"
@@ -151,21 +139,19 @@ export function BerechnungslistePanel({
       </div>
 
       {/* Raumprogramm-Erfassung */}
-      <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
-          <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
-            Raumprogramm (HNF-Soll)
-          </div>
-          <div style={{ flex: 1 }} />
+      <div className="dp-spalte">
+        <div className="dp-kopf">
+          <div className="k-titel dp-titel-block">Raumprogramm (HNF-Soll)</div>
+          <div className="dp-fuell" />
           {/* V5: Wettbewerbs-Soll als CSV — nie mehr abtippen */}
-          <label style={{ cursor: 'pointer' }}>
-            <span className="k-btn k-btn-sm k-btn-quiet" data-testid="csv-import" style={{ fontSize: 'var(--k-t-xs)' }}>
+          <label className="bl-csv-label">
+            <span className="k-btn k-btn-sm k-btn-quiet" data-testid="csv-import">
               CSV importieren
             </span>
             <input
               type="file"
               accept=".csv,text/csv,text/plain"
-              style={{ display: 'none' }}
+              className="bl-versteckt"
               data-testid="csv-import-input"
               onChange={async (e) => {
                 const datei = e.target.files?.[0];
@@ -186,18 +172,18 @@ export function BerechnungslistePanel({
           </label>
         </div>
         {importMeldung && (
-          <div style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }} data-testid="csv-import-meldung">
+          <div className="dp-fussnote" data-testid="csv-import-meldung">
             {importMeldung}
           </div>
         )}
         {entwurf.length === 0 && (
-          <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }} data-testid="kein-raumprogramm">
+          <div className="dp-fussnote" data-testid="kein-raumprogramm">
             Kein Wettbewerbs-Raumprogramm geladen — über KosmoData/Import ein Projekt laden oder
             manuell Typen hinzufügen.
           </div>
         )}
         {entwurf.map((p, i) => (
-          <div key={i} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center' }}>
+          <div key={i} className="dp-kopf">
             <KSelect
               size="sm"
               value={p.typ}
@@ -206,7 +192,7 @@ export function BerechnungslistePanel({
                 next[i] = { ...p, typ: e.target.value };
                 setEntwurf(next);
               }}
-              style={{ width: 150 }}
+              className="dp-w150"
               data-testid={`posten-typ-${i}`}
             >
               {WOHNUNGSTYPEN.map((t) => (
@@ -226,11 +212,11 @@ export function BerechnungslistePanel({
                 next[i] = { ...p, hnfSoll: Number(e.target.value) || 0 };
                 setEntwurf(next);
               }}
-              style={{ width: 72 }}
+              className="dp-w72"
               data-testid={`posten-hnf-${i}`}
             />
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>m² HNF</span>
-            <div style={{ flex: 1 }} />
+            <span className="dp-fussnote">m² HNF</span>
+            <div className="dp-fuell" />
             <KButton
               size="sm"
               tone="ghost"
@@ -241,7 +227,7 @@ export function BerechnungslistePanel({
             </KButton>
           </div>
         ))}
-        <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="dp-reihe">
           <KButton
             size="sm"
             tone="ghost"
@@ -250,19 +236,19 @@ export function BerechnungslistePanel({
           >
             <KIcon name="plus" size={14} /> Posten
           </KButton>
-          <span style={{ color: 'var(--k-ink-faint)' }}>×</span>
-          <KInput size="sm" mono value={faktor} onChange={(e) => setFaktor(e.target.value)} style={{ width: 72 }} title="aGF-Faktor" />
-          <span style={{ color: 'var(--k-ink-faint)' }}>Max aGF</span>
+          <span className="dp-leer">×</span>
+          <KInput size="sm" mono value={faktor} onChange={(e) => setFaktor(e.target.value)} className="dp-w72" title="aGF-Faktor" />
+          <span className="dp-leer">Max aGF</span>
           <KInput
             size="sm"
             mono
             value={maxAgf}
             onChange={(e) => setMaxAgf(e.target.value)}
             placeholder="—"
-            style={{ width: 72 }}
+            className="dp-w72"
             data-testid="liste-max"
           />
-          <div style={{ flex: 1 }} />
+          <div className="dp-fuell" />
           <KButton size="sm" tone="accent" onClick={uebernehmen} data-testid="liste-uebernehmen">
             Übernehmen
           </KButton>
@@ -273,60 +259,48 @@ export function BerechnungslistePanel({
 
       {/* Lebende Tabelle */}
       {liste.zeilen.length === 0 ? (
-        <span style={{ color: 'var(--k-ink-faint)' }}>
+        <span className="dp-leer">
           Raumprogramm erfassen und «Übernehmen» — dann rechnet die Liste bei jedem Strich mit.
         </span>
       ) : (
-        <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="liste-tabelle">
+        <table className="dp-tabelle" data-testid="liste-tabelle">
           <thead>
-            <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
-              <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'left' }}>Typ</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>Soll</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>Ziel ×{liste.programmFaktor}</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>ausgezogen</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>+/−</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>%</th>
+            <tr>
+              <th>Typ</th>
+              <th>Soll</th>
+              <th>Ziel ×{liste.programmFaktor}</th>
+              <th>ausgezogen</th>
+              <th>+/−</th>
+              <th>%</th>
             </tr>
           </thead>
           <tbody>
             {liste.zeilen.map((z) => (
-              <tr key={z.typ} style={{ borderTop: '1px solid var(--k-line)' }}>
-                <td style={{ padding: '3px 4px', color: z.farbe, fontWeight: 600 }}>{z.name}</td>
-                <td style={{ padding: '3px 4px', textAlign: 'right' }}><Measure>{fmt(z.hnfSoll)}</Measure></td>
-                <td style={{ padding: '3px 4px', textAlign: 'right' }}><Measure>{fmt(z.agfZiel)}</Measure></td>
-                <td style={{ padding: '3px 4px', textAlign: 'right', background: `${z.farbe}20` }}>
+              <tr key={z.typ}>
+                {/* z.farbe kommt aus dem Wohnungstypen-Katalog (Laufzeit-Daten,
+                    keine Design-Token) — legitimer Daten-Carrier-Rest. */}
+                <td className="bl-farbe-name" style={{ color: z.farbe }}>{z.name}</td>
+                <td className="dp-num"><Measure>{fmt(z.hnfSoll)}</Measure></td>
+                <td className="dp-num"><Measure>{fmt(z.agfZiel)}</Measure></td>
+                <td className="dp-num" style={{ background: `${z.farbe}20` }}>
                   <Measure>{fmt(z.ausgezogen)}</Measure>
                 </td>
-                <td
-                  style={{
-                    padding: '3px 4px',
-                    textAlign: 'right',
-                    color: z.differenz >= 0 ? 'var(--k-success)' : 'var(--k-danger)',
-                    fontWeight: 600,
-                  }}
-                >
+                <td className={`dp-num bl-differenz ${z.differenz >= 0 ? 'dp-farbe-erfolg' : 'dp-farbe-fehler'}`}>
                   <Measure>{`${z.differenz >= 0 ? '+' : ''}${fmt(z.differenz)}`}</Measure>
                 </td>
-                <td style={{ padding: '3px 4px', textAlign: 'right', color: 'var(--k-ink-soft)' }} data-testid={`erfuellung-${z.typ}`}>
+                <td className="dp-num bl-erfuellung" data-testid={`erfuellung-${z.typ}`}>
                   <Measure>{z.agfZiel > 0 ? `${Math.round((z.ausgezogen / z.agfZiel) * 100)}` : '–'}</Measure>
                 </td>
               </tr>
             ))}
-            <tr style={{ borderTop: '1px solid var(--k-technik)', fontWeight: 600 }}>
-              <td style={{ padding: '3px 4px' }}>Total aGF</td>
+            <tr className="dp-tabelle-summe">
+              <td>Total aGF</td>
               <td colSpan={2} />
-              <td style={{ padding: '3px 4px', textAlign: 'right' }}><Measure>{fmt(liste.totalAgf)}</Measure></td>
+              <td className="dp-num"><Measure>{fmt(liste.totalAgf)}</Measure></td>
               <td
-                style={{
-                  padding: '3px 4px',
-                  textAlign: 'right',
-                  color:
-                    liste.deltaMax === null
-                      ? 'var(--k-ink-faint)'
-                      : liste.deltaMax > 0
-                        ? 'var(--k-danger)'
-                        : 'var(--k-success)',
-                }}
+                className={`dp-num ${
+                  liste.deltaMax === null ? 'bl-delta-neutral' : liste.deltaMax > 0 ? 'dp-farbe-fehler' : 'dp-farbe-erfolg'
+                }`}
                 data-testid="liste-delta-max"
               >
                 <Measure>
@@ -338,7 +312,7 @@ export function BerechnungslistePanel({
         </table>
       )}
       {liste.untypisiert > 0.5 && (
-        <div style={{ color: 'var(--k-warning)', fontSize: 'var(--k-t-sm)' }} data-testid="liste-tieout">
+        <div className="bl-tieout" data-testid="liste-tieout">
           ⚠ {fmt(liste.untypisiert)} m² gezeichnet ohne Typzuordnung (Tie-out) — Zonen unten einem
           Wohnungstyp zuweisen.
         </div>
@@ -347,11 +321,9 @@ export function BerechnungslistePanel({
       <Hairline />
 
       {/* Zeichnen mit Typ: das Zonen-Werkzeug schreibt den aktiven Typ */}
-      <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
-          Zeichnen als
-        </div>
-        <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+      <div className="dp-spalte--eng">
+        <div className="k-titel dp-titel-block">Zeichnen als</div>
+        <div className="bl-typreihe">
           <KButton size="sm" tone={wohnungstyp === null ? 'accent' : 'ghost'} onClick={() => setWohnungstyp(null)}>
             ohne Typ
           </KButton>
@@ -368,29 +340,27 @@ export function BerechnungslistePanel({
             </KButton>
           ))}
         </div>
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+        <span className="dp-fussnote">
           Neue Zonen (Werkzeug «Zone») erhalten den gewählten Typ und zählen ins «ausgezogen».
         </span>
       </div>
 
       {/* GF-Block */}
-      <div style={{ display: 'grid', gap: 'var(--k-s1)' }} data-testid="liste-gf">
-        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
-          GF-Block
-        </div>
+      <div className="bl-gf-block" data-testid="liste-gf">
+        <div className="k-titel dp-titel-block">GF-Block</div>
         {liste.geschosse.filter((g) => g.gf > 0.5).map((g) => (
-          <div key={g.storeyId} style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--k-ink-soft)' }}>{g.name}</span>
+          <div key={g.storeyId} className="dp-zwischen">
+            <span className="sp-textsoft">{g.name}</span>
             <Measure>{fmt(g.gf)} m²</Measure>
           </div>
         ))}
         {liste.gfVolumen > 0.5 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ color: 'var(--k-ink-soft)' }}>Volumenkörper</span>
+          <div className="dp-zwischen">
+            <span className="sp-textsoft">Volumenkörper</span>
             <Measure>{fmt(liste.gfVolumen)} m²</Measure>
           </div>
         )}
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, borderTop: '1px solid var(--k-line)', paddingTop: 'var(--k-s1)' }}>
+        <div className="dp-zwischen bl-gf-total">
           <span>Total GF</span>
           <Measure>{fmt(liste.totalGf)} m²</Measure>
         </div>
@@ -509,11 +479,11 @@ function SegmentiererSektion() {
   };
 
   return (
-    <div style={{ display: 'grid', gap: 6 }} data-testid="segmentierer">
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <span style={{ fontWeight: 600, fontSize: 12 }}>Wohnungen schneiden</span>
-        <div style={{ flex: 1 }} />
-        <label style={{ display: 'flex', gap: 4, alignItems: 'center', fontSize: 11.5, color: 'var(--k-ink-soft)' }}>
+    <div className="sg-wrap" data-testid="segmentierer">
+      <div className="sg-kopf">
+        <span className="sg-titel">Wohnungen schneiden</span>
+        <div className="dp-fuell" />
+        <label className="sg-kern-label">
           <input type="checkbox" checked={mitKern} data-testid="segmentierer-kern" onChange={(e) => setMitKern(e.target.checked)} />
           Kern
         </label>
@@ -559,35 +529,36 @@ function SegmentiererSektion() {
           Fenster stanzen
         </KButton>
       </div>
-      {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>{hinweis}</div>}
+      {hinweis && <div className="sg-hinweis">{hinweis}</div>}
       {ergebnis && (
-        <div style={{ display: 'grid', gap: 4, fontSize: 11.5 }}>
-          <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ width: 92, color: 'var(--k-ink-soft)' }}>Min-Breite</span>
+        <div className="sg-slider-spalte">
+          <label className="sg-slider-zeile">
+            <span className="sg-slider-label">Min-Breite</span>
             <input
               type="range" min={3500} max={7000} step={250} value={minBreite}
               data-testid="segmentierer-minbreite"
               onChange={(e) => setMinBreite(Number(e.target.value))}
-              style={{ flex: 1 }}
+              className="vp-slider"
             />
             <Measure>{(minBreite / 1000).toFixed(2)} m</Measure>
           </label>
-          <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ width: 92, color: 'var(--k-ink-soft)' }}>Wohnungsgrösse</span>
+          <label className="sg-slider-zeile">
+            <span className="sg-slider-label">Wohnungsgrösse</span>
             <input
               type="range" min={0.8} max={1.2} step={0.05} value={groessenFaktor}
               data-testid="segmentierer-groesse"
               onChange={(e) => setGroessenFaktor(Number(e.target.value))}
-              style={{ flex: 1 }}
+              className="vp-slider"
             />
             <Measure>×{groessenFaktor.toFixed(2)}</Measure>
           </label>
         </div>
       )}
       {ergebnis && (
-        <div style={{ display: 'grid', gap: 3, fontSize: 11.5 }} data-testid="segmentierer-ergebnis">
+        <div className="sg-ergebnis-spalte" data-testid="segmentierer-ergebnis">
           {ergebnis.mix.map((m) => (
-            <div key={m.typ} style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div key={m.typ} className="dp-zwischen">
+              {/* typFarbe(m.typ) — Laufzeit-Datenfarbe des Wohnungstypen-Katalogs. */}
               <span style={{ color: typFarbe(m.typ) ?? 'var(--k-ink-soft)' }}>{m.typ}</span>
               <Measure>
                 {m.ist}/{m.soll}
@@ -595,11 +566,11 @@ function SegmentiererSektion() {
             </div>
           ))}
           {ergebnis.diagnose.map((d, i) => (
-            <div key={i} style={{ color: 'var(--k-warning)', lineHeight: 1.4 }}>
+            <div key={i} className="sg-diagnose">
               {d}
             </div>
           ))}
-          <span style={{ color: 'var(--k-ink-faint)' }}>
+          <span className="dp-leer">
             Übernahme legt Zonen an — ein Undo-Schritt.
           </span>
         </div>

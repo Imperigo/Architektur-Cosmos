@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { pruefeSubmissionsreife, type SubmissionsBefund } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, KIcon } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * A7 (Owner-Befund K17): Submissions-Check als sechstes Fähigkeits-Icon —
@@ -28,29 +29,16 @@ export function SubmissionsCheckPanel({ onClose }: { onClose: () => void }) {
   const hinweise = befunde.filter((b) => b.schwere === 'hinweis');
 
   return (
-    <div
-      data-testid="submission-panel"
-      style={{
-        zIndex: 20,
-        overflow: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="submission-panel" className="dp-dialog dp-dialog--scroll">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-design)">Submissions-Check</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
           <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+      <div className="dp-meta">
         Lückenliste für die Submissionsreife (SIA-Teilphase 4.41) — {activeStoreyId ? 'aktuelles Geschoss' : 'ganzes Projekt'}.
         Richtwerte aus dem Datenmodell, kein Normersatz.
       </div>
@@ -58,30 +46,28 @@ export function SubmissionsCheckPanel({ onClose }: { onClose: () => void }) {
       <Hairline />
 
       {befunde.length === 0 ? (
-        <div data-testid="submission-leer" style={{ color: 'var(--k-ink-faint)' }}>
+        <div data-testid="submission-leer" className="dp-leer">
           Keine Lücken gefunden — zeichne zuerst Wände/Decken/Zonen mit Aufbau, dann prüft der Check mit.
         </div>
       ) : (
         <>
           {luecken.length > 0 && (
-            <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="submission-luecken">
-              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-danger, #a33)' }}>
+            <div className="dp-spalte" data-testid="submission-luecken">
+              <div className="k-titel dp-titel-block sub-titel-luecke">
                 Lücken ({luecken.length}) — Nachtragsrisiko bei der Vergabe
               </div>
               {luecken.map((b, i) => (
-                <div key={`l-${i}`} style={{ padding: 'var(--k-s2) var(--k-s3)', borderLeft: '2px solid var(--k-danger, #a33)' }}>
+                <div key={`l-${i}`} className="sub-befund sub-befund--luecke">
                   {b.text}
                 </div>
               ))}
             </div>
           )}
           {hinweise.length > 0 && (
-            <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="submission-hinweise">
-              <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
-                Hinweise ({hinweise.length})
-              </div>
+            <div className="dp-spalte" data-testid="submission-hinweise">
+              <div className="k-titel dp-titel-block">Hinweise ({hinweise.length})</div>
               {hinweise.map((b, i) => (
-                <div key={`h-${i}`} style={{ padding: 'var(--k-s2) var(--k-s3)', borderLeft: '2px solid var(--k-line-strong)' }}>
+                <div key={`h-${i}`} className="sub-befund sub-befund--hinweis">
                   {b.text}
                 </div>
               ))}

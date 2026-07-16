@@ -13,6 +13,7 @@ import {
 } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, KIcon, KInput, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * Varianten-Panel (v0.7.0 E5-i/iii, Stream 5A) — Echtzeit-UI über
@@ -113,7 +114,7 @@ function baueKontext(doc: ReturnType<typeof useProject.getState>['doc'], storeyI
  *  Ergebnisse nur als Zahlenliste, keine Geometrie-Vorschau). */
 function WohnungsSkizze({ wohnungen }: { wohnungen: GeschnitteneWohnung[] }) {
   if (wohnungen.length === 0) {
-    return <div style={{ fontSize: 10.5, color: 'var(--k-ink-faint)' }}>(keine Wohnungen — Stagnation)</div>;
+    return <div className="vp-skizze-leer">(keine Wohnungen — Stagnation)</div>;
   }
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const w of wohnungen) {
@@ -128,7 +129,7 @@ function WohnungsSkizze({ wohnungen }: { wohnungen: GeschnitteneWohnung[] }) {
   const H = maxY - minY;
   if (!(W > 0) || !(H > 0)) return null;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 64, background: 'var(--k-sunken)' }} preserveAspectRatio="xMidYMid meet">
+    <svg viewBox={`0 0 ${W} ${H}`} className="vp-skizze" preserveAspectRatio="xMidYMid meet">
       {wohnungen.map((w, i) => {
         let bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity;
         for (const p of w.outline) {
@@ -177,12 +178,12 @@ function SegmentMatrixSvg({ top }: { top: SegmentVariante[] }) {
     return H - RAND - t * (H - 2 * RAND);
   };
   return (
-    <div data-testid="varianten-panel-matrix" style={{ display: 'grid', gap: 2 }}>
-      <div style={{ fontSize: 11, color: 'var(--k-ink-faint)' }}>
+    <div data-testid="varianten-panel-matrix" className="vp-matrix-wrap">
+      <div className="vp-matrix-kopf">
         Kennzahl-Matrix Top-{matrix.zeilen.length} (oben = besser)
         {aktiv !== null ? ` — ${matrix.zeilen[aktiv]?.name}` : ''}
       </div>
-      <svg viewBox={`0 0 ${W} ${H + 14}`} style={{ width: '100%' }}>
+      <svg viewBox={`0 0 ${W} ${H + 14}`} className="vp-matrix-svg">
         {matrix.achsen.map((a, i) => (
           <g key={a.key}>
             <line x1={x(i)} y1={RAND} x2={x(i)} y2={H - RAND} stroke="var(--k-line-strong)" strokeWidth={1} pointerEvents="none" />
@@ -204,7 +205,7 @@ function SegmentMatrixSvg({ top }: { top: SegmentVariante[] }) {
               stroke={aktiv === zi ? 'var(--k-accent)' : 'var(--k-ink-soft)'}
               strokeWidth={aktiv === zi ? 2.4 : 1.3}
               opacity={aktiv !== null && aktiv !== zi ? 0.35 : 0.9}
-              style={{ cursor: 'pointer' }}
+              className="vp-matrix-linie"
               onMouseEnter={() => setAktiv(zi)}
               onMouseLeave={() => setAktiv(null)}
             />
@@ -335,24 +336,10 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div
-      data-testid="varianten-panel"
-      className="k-dialog"
-      style={{
-        zIndex: 20,
-        overflowY: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="varianten-panel" className="k-dialog dp-dialog dp-dialog--scroll">
+      <div className="dp-kopf">
         <Badge hue={moduleHue.design}>Varianten (Anytime-Suche)</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
           <KIcon name="schliessen" size={14} />
         </KButton>
@@ -360,15 +347,15 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
       <Hairline />
 
       {!kontext && (
-        <div style={{ fontSize: 11.5, color: 'var(--k-ink-faint)' }}>
+        <div className="vp-hinweis-text">
           Footprint- und Korridor-Zone (Raumtyp «korridor») zeichnen sowie ein Raumprogramm erfassen — daraus baut die Suche ihren Soll-Mix.
         </div>
       )}
 
-      <div style={{ display: 'grid', gap: 6 }}>
+      <div className="vp-gewichte-spalte">
         {GEWICHT_KEYS.map((k) => (
-          <label key={k} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span style={{ width: 132, color: 'var(--k-ink-soft)', fontSize: 11.5 }}>{GEWICHT_LABEL[k]}</span>
+          <label key={k} className="vp-gewicht-zeile">
+            <span className="vp-gewicht-label">{GEWICHT_LABEL[k]}</span>
             <input
               type="range"
               min={0}
@@ -378,13 +365,13 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
               disabled={laeuft}
               data-testid={`varianten-panel-gewicht-${k}`}
               onChange={(e) => setGewichte((g) => ({ ...g, [k]: Number(e.target.value) }))}
-              style={{ flex: 1 }}
+              className="vp-slider"
             />
             <Measure>×{gewichte[k].toFixed(1)}</Measure>
           </label>
         ))}
-        <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ width: 132, color: 'var(--k-ink-soft)', fontSize: 11.5 }}>Seed</span>
+        <label className="vp-gewicht-zeile">
+          <span className="vp-gewicht-label">Seed</span>
           <KInput
             size="sm"
             mono
@@ -393,12 +380,12 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
             value={seed}
             disabled={laeuft}
             onChange={(e) => setSeed(Math.trunc(Number(e.target.value)) || 0)}
-            style={{ width: 90 }}
+            className="dp-w90"
           />
         </label>
       </div>
 
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div className="vp-start-zeile">
         {!laeuft ? (
           <KButton size="sm" tone="accent" data-testid="varianten-panel-start" onClick={start} disabled={!kontext}>
             Start
@@ -408,24 +395,19 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
             Stopp
           </KButton>
         )}
-        <span data-testid="varianten-panel-zaehler" style={{ color: 'var(--k-ink-soft)', fontSize: 11.5 }}>
+        <span data-testid="varianten-panel-zaehler" className="vp-zaehler">
           {anzahl} Varianten geprüft
         </span>
       </div>
-      {hinweis && <div style={{ fontSize: 11.5, color: 'var(--k-danger)' }}>{hinweis}</div>}
+      {hinweis && <div className="vp-fehlertext">{hinweis}</div>}
 
       {top.length > 0 && (
-        <div style={{ display: 'grid', gap: 6 }}>
-          <div style={{ fontSize: 11, fontWeight: 600 }}>Top-{top.length} nach Score</div>
+        <div className="vp-top-spalte">
+          <div className="vp-top-titel">Top-{top.length} nach Score</div>
           {top.map((v, i) => (
-            <div
-              key={i}
-              data-testid={`varianten-panel-karte-${i}`}
-              className="k-karte"
-              style={{ display: 'grid', gap: 4, padding: 8 }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11.5 }}>
+            <div key={i} data-testid={`varianten-panel-karte-${i}`} className="k-karte vp-karte">
+              <div className="vp-karte-kopf">
+                <span className="vp-zug-label">
                   #{i + 1} · {ZUG_LABEL[v.zug]}
                 </span>
                 <span data-testid={`varianten-panel-score-${i}`}>
@@ -433,7 +415,7 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
                 </span>
               </div>
               <WohnungsSkizze wohnungen={v.wohnungen} />
-              <div style={{ fontSize: 10, color: 'var(--k-ink-faint)' }}>
+              <div className="vp-karte-teilscores">
                 Programm {(v.teilScores.programmErfuellung * 100).toFixed(0)}% · Kompaktheit{' '}
                 {(v.teilScores.kompaktheit * 100).toFixed(0)}% · Mix {(v.teilScores.mixTreue * 100).toFixed(0)}% ·
                 Fläche {(v.teilScores.flaechenNutzung * 100).toFixed(0)}%
@@ -453,7 +435,7 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
           <SegmentMatrixSvg top={top} />
         </div>
       )}
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 11 }}>
+      <span className="vp-fussnote">
         Deterministischer Ruin-&amp;-Recreate-Hill-Climber (derive/variantensuche.ts) — kein Cloud-Optimierer, kein
         Worker. Übernahme ist ein Undo-Schritt.
       </span>

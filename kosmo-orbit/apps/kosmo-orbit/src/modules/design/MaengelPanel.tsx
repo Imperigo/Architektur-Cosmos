@@ -9,6 +9,7 @@ import {
 } from '@kosmo/kernel';
 import { Badge, Hairline, Karteikarte, KButton, KIcon, KInput, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * Mängel-Panel — Abschlussphase «Gebäudeabnahme» (v0.6.3,
@@ -102,23 +103,10 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div
-      data-testid="maengel-panel"
-      style={{
-        zIndex: 20,
-        overflow: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="maengel-panel" className="dp-dialog dp-dialog--scroll">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-design)">Mängel</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="maengel-protokoll">
           Abnahmeprotokoll (SVG)
         </KButton>
@@ -127,21 +115,11 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
         </KButton>
       </div>
 
-      <div
-        data-testid="maengel-hinweis"
-        style={{
-          background: 'var(--k-warning-wash, #f6f2e6)',
-          border: '1px solid var(--k-warning-line, #c9bfa0)',
-          borderRadius: 'var(--k-radius-sm)',
-          padding: 'var(--k-s3) var(--k-s4)',
-          fontWeight: 600,
-          color: 'var(--k-ink)',
-        }}
-      >
+      <div data-testid="maengel-hinweis" className="dp-hinweis">
         {ABNAHME_HINWEIS}
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+      <div className="dp-meta">
         {protokoll.anzahlOffen} offen / {protokoll.anzahlBehoben} behoben ({protokoll.anzahlTotal} total)
         {' · '}
         {siaPhaseLabel(doc.settings.siaPhase)}
@@ -149,18 +127,16 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <div data-testid="maengel-form" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
-          Mangel erfassen
-        </div>
-        <div style={{ display: 'flex', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+      <div data-testid="maengel-form" className="dp-spalte">
+        <div className="k-titel dp-titel-block">Mangel erfassen</div>
+        <div className="mg-formreihe">
           <KInput
             size="sm"
             data-testid="maengel-ort"
             placeholder="Ort, z.B. «Bad 2.OG»"
             value={ort}
             onChange={(e) => setOrt(e.target.value)}
-            style={{ flex: '1 1 160px' }}
+            className="mg-feld-ort"
           />
           <KInput
             size="sm"
@@ -169,7 +145,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
             list="maengel-gewerk-vorschlaege"
             value={gewerk}
             onChange={(e) => setGewerk(e.target.value)}
-            style={{ flex: '1 1 140px' }}
+            className="mg-feld-gewerk"
           />
           <datalist id="maengel-gewerk-vorschlaege">
             {MANGEL_GEWERK_VORSCHLAEGE.map((g) => (
@@ -182,7 +158,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
             placeholder="Frist (optional)"
             value={frist}
             onChange={(e) => setFrist(e.target.value)}
-            style={{ flex: '1 1 120px' }}
+            className="mg-feld-frist"
           />
         </div>
         <textarea
@@ -191,8 +167,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
           value={beschreibung}
           onChange={(e) => setBeschreibung(e.target.value)}
           rows={2}
-          className="k-input k-input--sm"
-          style={{ resize: 'vertical' }}
+          className="k-input k-input--sm mg-beschreibung"
         />
         <KButton
           size="sm"
@@ -208,18 +183,18 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
       <Hairline />
 
       {maengel.length === 0 ? (
-        <div data-testid="maengel-leer" style={{ color: 'var(--k-ink-faint)' }}>
+        <div data-testid="maengel-leer" className="dp-leer">
           Noch keine Mängel erfasst — die Liste bleibt leer, bis die Schlussbegehung beginnt.
         </div>
       ) : (
-        <div data-testid="maengel-liste" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+        <div data-testid="maengel-liste" className="dp-spalte">
           {maengel.map((m, i) => (
             <Karteikarte key={m.id} nr={i + 1} data-testid={`maengel-zeile-${m.id}`}>
-              <div style={{ display: 'grid', gap: 'var(--k-s1)' }}>
-                <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <span style={{ fontWeight: 600 }}>{m.ort}</span>
+              <div className="mg-zeile">
+                <div className="dp-reihe">
+                  <span className="mg-ort">{m.ort}</span>
                   <Badge hue={m.status === 'behoben' ? 'var(--k-success)' : 'var(--k-warning)'}>{m.gewerk}</Badge>
-                  <div style={{ flex: 1 }} />
+                  <div className="dp-fuell" />
                   <KButton
                     size="sm"
                     tone="quiet"
@@ -238,8 +213,8 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
                     <KIcon name="schliessen" size={14} />
                   </KButton>
                 </div>
-                <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{m.beschreibung}</span>
-                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                <span className="mg-beschreibungstext">{m.beschreibung}</span>
+                <span className="dp-fussnote">
                   {m.status === 'behoben' ? `Behoben ${m.behobenAm ?? ''}` : `Erfasst ${m.erfasstAm}`}
                   {m.frist ? ` · Frist ${m.frist}` : ''}
                 </span>
@@ -251,7 +226,7 @@ export function MaengelPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+      <span className="dp-fussnote">
         Nur ein interner Anstoss zur Schlussbegehung, kein rechtsgültiges Abnahmeprotokoll — die reale Abnahme
         (Bauherr, Architekt, Unternehmer vor Ort) bleibt Sache der Parteien (SIA 118).
       </span>

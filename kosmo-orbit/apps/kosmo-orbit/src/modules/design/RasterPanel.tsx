@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { generiereStuetzenraster, type RasterVariante } from '@kosmo/kernel';
 import { Badge, Hairline, Karteikarte, KButton, KIcon, KInput, Measure, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * Stützenraster-Assistent (Phase 3.26, V2-A3) — Holz-Hybrid-Wohnraster über
@@ -52,67 +53,52 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
   const zuschlag = 2 * (stuetzeCm / 200 + abstandCm / 100);
 
   return (
-    <div
-      data-testid="raster-panel"
-      className="k-dialog"
-      style={{
-        zIndex: 20,
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="raster-panel" className="k-dialog dp-dialog">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-draw)">Stützenraster</Badge>
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
-          UG-Parkierung ↔ Holzbau-Wohnraster
-        </span>
-        <div style={{ flex: 1 }} />
+        <span className="dp-fussnote">UG-Parkierung ↔ Holzbau-Wohnraster</span>
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
           <KIcon name="schliessen" size={14} />
         </KButton>
       </div>
 
-      <div style={{ display: 'flex', gap: 'var(--k-s4)', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div className="rp-eingabereihe">
         <label>
           Stütze{' '}
-          <KInput size="sm" mono type="number" value={stuetzeCm} onChange={(e) => setStuetzeCm(Number(e.target.value) || 30)} style={{ width: 58 }} /> cm
+          <KInput size="sm" mono type="number" value={stuetzeCm} onChange={(e) => setStuetzeCm(Number(e.target.value) || 30)} className="dp-w58" /> cm
         </label>
         <label>
           Abstand{' '}
-          <KInput size="sm" mono type="number" value={abstandCm} onChange={(e) => setAbstandCm(Number(e.target.value) || 10)} style={{ width: 58 }} /> cm
+          <KInput size="sm" mono type="number" value={abstandCm} onChange={(e) => setAbstandCm(Number(e.target.value) || 10)} className="dp-w58" /> cm
         </label>
         <label>
           Zimmer licht{' '}
-          <KInput size="sm" mono type="number" step={0.05} value={zimmerLicht} onChange={(e) => setZimmerLicht(Number(e.target.value) || 3)} style={{ width: 58 }} /> m
+          <KInput size="sm" mono type="number" step={0.05} value={zimmerLicht} onChange={(e) => setZimmerLicht(Number(e.target.value) || 3)} className="dp-w58" /> m
         </label>
         <label>
           Struktur{' '}
-          <KInput size="sm" mono type="number" step={0.05} value={struktur} onChange={(e) => setStruktur(Number(e.target.value) || 0.25)} style={{ width: 58 }} /> m
+          <KInput size="sm" mono type="number" step={0.05} value={struktur} onChange={(e) => setStruktur(Number(e.target.value) || 0.25)} className="dp-w58" /> m
         </label>
       </div>
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)', fontFamily: 'var(--k-font-mono)' }}>
+      <span className="rp-formel">
         Achsmass = Felder × Breite + {zuschlag.toFixed(2)} m · Minimum Wohnachse ={' '}
         {(zimmerLicht + struktur).toFixed(2)} m
       </span>
 
       <Hairline />
 
-      <div style={{ display: 'flex', gap: 'var(--k-s4)', alignItems: 'center', flexWrap: 'wrap' }}>
-        <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-sm)' }}>Achsen ins Modell:</span>
+      <div className="rp-eingabereihe">
+        <span className="dp-feld-inline">Achsen ins Modell:</span>
         <label>
           Hauptachsen{' '}
-          <KInput size="sm" mono type="number" min={2} max={40} value={anzahl} onChange={(e) => setAnzahl(Math.max(2, Number(e.target.value) || 5))} style={{ width: 58 }} data-testid="raster-anzahl" />
+          <KInput size="sm" mono type="number" min={2} max={40} value={anzahl} onChange={(e) => setAnzahl(Math.max(2, Number(e.target.value) || 5))} className="dp-w58" data-testid="raster-anzahl" />
         </label>
         <label>
           Querachsen{' '}
-          <KInput size="sm" mono type="number" min={2} max={40} value={querAnzahl} onChange={(e) => setQuerAnzahl(Math.max(2, Number(e.target.value) || 4))} style={{ width: 58 }} data-testid="raster-quer-anzahl" />
+          <KInput size="sm" mono type="number" min={2} max={40} value={querAnzahl} onChange={(e) => setQuerAnzahl(Math.max(2, Number(e.target.value) || 4))} className="dp-w58" data-testid="raster-quer-anzahl" />
         </label>
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>ersetzt das Raster des Geschosses · Zeichnen fängt auf Achsen</span>
+        <span className="dp-fussnote">ersetzt das Raster des Geschosses · Zeichnen fängt auf Achsen</span>
         <KButton
           size="sm"
           tone="quiet"
@@ -133,25 +119,22 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
 
       {/* Zwei-/dreispaltig ab genug Breite (T4b) — bis zu 24 Varianten
           gehen so ohne Scrollen auf, statt eine lange Einerkolonne zu sein. */}
-      <div
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 6 }}
-        data-testid="raster-varianten"
-      >
+      <div className="rp-varianten-raster" data-testid="raster-varianten">
         {varianten.map((v, i) => (
           <Karteikarte key={`${v.parkfelder}-${v.feldbreite}-${v.wohnachsen}`} nr={i + 1}>
-            <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-              <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
-                <span style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 'var(--k-t-sm)' }}>
+            <div className="dp-spalte--eng">
+              <div className="dp-reihe">
+                <span className="rp-variante-titel">
                   {v.parkfelder} Felder à {v.feldbreite.toFixed(2)} → Achse {v.achsmass.toFixed(2)} m
                 </span>
-                <div style={{ flex: 1 }} />
+                <div className="dp-fuell" />
                 <Badge hue={BEWERTUNG_HUE[v.bewertung] ?? 'var(--k-ink-faint)'}>{v.bewertung}</Badge>
                 {v.holzbauKritisch && <Badge hue="var(--k-warning)">Holzbau</Badge>}
                 <KButton size="sm" tone="quiet" data-testid="raster-achsen" onClick={() => achsenInsModell(v)}>
                   Achsen ins Modell
                 </KButton>
               </div>
-              <div style={{ display: 'flex', gap: 'var(--k-s5)', color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-sm)', flexWrap: 'wrap' }}>
+              <div className="rp-variante-masse">
                 <span>
                   ÷ {v.wohnachsen} Wohnachsen = <Measure>{v.wohnraster.toFixed(2)} m</Measure>
                 </span>
@@ -159,12 +142,12 @@ export function RasterPanel({ onClose }: { onClose: () => void }) {
                   Fahrgasse <Measure>{v.fahrgasse.toFixed(2)} m</Measure>
                 </span>
               </div>
-              <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>{v.hinweis}</span>
+              <span className="dp-fussnote">{v.hinweis}</span>
             </div>
           </Karteikarte>
         ))}
       </div>
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+      <span className="dp-fussnote">
         VSS 40 291 (Vernehmlassungsentwurf) als Entwurfsreferenz — kein verbindlicher Normnachweis.
       </span>
     </div>

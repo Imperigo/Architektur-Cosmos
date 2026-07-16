@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { deriveKostenschaetzung, kvBlattSvg, KV_HINWEIS, siaPhaseLabel, type KvKennwerte } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, KIcon, KInput, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * KV-Panel — Kostenvoranschlag-**Grobschätzung** (v0.6.3,
@@ -57,7 +58,7 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
     proz: boolean,
     titel: string,
   ) => (
-    <label style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center', color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-sm)' }} title={titel}>
+    <label className="dp-feld-inline" title={titel}>
       {label}
       <KInput
         size="sm"
@@ -69,30 +70,17 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
           const roh = Number(e.target.value);
           setzen(feld, proz ? roh / 100 : roh);
         }}
-        style={{ width: 76 }}
+        className="dp-w76"
       />
       {proz ? '%' : 'CHF/m²'}
     </label>
   );
 
   return (
-    <div
-      data-testid="kv-panel"
-      style={{
-        zIndex: 20,
-        overflow: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="kv-panel" className="dp-dialog dp-dialog--scroll">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-design)">Kostenschätzung</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="kv-blatt">
           KV-Blatt (SVG)
         </KButton>
@@ -101,21 +89,11 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
         </KButton>
       </div>
 
-      <div
-        data-testid="kv-hinweis"
-        style={{
-          background: 'var(--k-warning-wash, #f6f2e6)',
-          border: '1px solid var(--k-warning-line, #c9bfa0)',
-          borderRadius: 'var(--k-radius-sm)',
-          padding: 'var(--k-s3) var(--k-s4)',
-          fontWeight: 600,
-          color: 'var(--k-ink)',
-        }}
-      >
+      <div data-testid="kv-hinweis" className="dp-hinweis">
         {KV_HINWEIS}
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+      <div className="dp-meta">
         GF-Basis: <Measure>{kv.flaecheGf > 0 ? `${fmt(kv.flaecheGf)} m²` : '—'}</Measure>
         {' · '}
         {siaPhaseLabel(doc.settings.siaPhase)}
@@ -124,50 +102,44 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
       <Hairline />
 
       {kv.positionen.length === 0 ? (
-        <div data-testid="kv-leer" style={{ color: 'var(--k-ink-faint)' }}>
+        <div data-testid="kv-leer" className="dp-leer">
           Keine Geometrie gezeichnet — zuerst Decken oder Volumenkörper anlegen, dann rechnet die
           Schätzung mit.
         </div>
       ) : (
-        <>
-          <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="kv-tabelle">
-            <thead>
-              <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 11 }}>
-                <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'left' }}>BKP</th>
-                <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'left' }}>Bezeichnung</th>
-                <th style={{ fontWeight: 500, padding: '2px 4px' }}>CHF</th>
-              </tr>
-            </thead>
-            <tbody>
-              {kv.positionen.map((p) => (
-                <tr key={p.bkp} style={{ borderTop: '1px solid var(--k-line)' }}>
-                  <td style={{ padding: '3px 4px' }}>{p.bkp}</td>
-                  <td style={{ padding: '3px 4px' }}>{p.bezeichnung}</td>
-                  <td style={{ padding: '3px 4px', textAlign: 'right' }}>
-                    <Measure>{fmt(p.betrag)}</Measure>
-                  </td>
-                </tr>
-              ))}
-              <tr style={{ borderTop: '1px solid var(--k-technik)', fontWeight: 600 }}>
-                <td style={{ padding: '3px 4px' }} colSpan={2}>
-                  Total
-                </td>
-                <td style={{ padding: '3px 4px', textAlign: 'right' }} data-testid="kv-summe">
-                  <Measure>{fmt(kv.total)}</Measure>
+        <table className="dp-tabelle" data-testid="kv-tabelle">
+          <thead>
+            <tr>
+              <th>BKP</th>
+              <th>Bezeichnung</th>
+              <th>CHF</th>
+            </tr>
+          </thead>
+          <tbody>
+            {kv.positionen.map((p) => (
+              <tr key={p.bkp}>
+                <td>{p.bkp}</td>
+                <td>{p.bezeichnung}</td>
+                <td className="dp-num">
+                  <Measure>{fmt(p.betrag)}</Measure>
                 </td>
               </tr>
-            </tbody>
-          </table>
-        </>
+            ))}
+            <tr className="dp-tabelle-summe">
+              <td colSpan={2}>Total</td>
+              <td className="dp-num" data-testid="kv-summe">
+                <Measure>{fmt(kv.total)}</Measure>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       )}
 
       <Hairline />
 
-      <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-        <div className="k-titel" style={{ fontSize: 'var(--k-t-lg)', color: 'var(--k-ink-soft)' }}>
-          Kennwerte (Annahme Owner-Guideline, kein verbindlicher Wert)
-        </div>
-        <div style={{ display: 'flex', gap: 'var(--k-s3)', flexWrap: 'wrap' }}>
+      <div className="dp-spalte">
+        <div className="k-titel dp-titel-block">Kennwerte (Annahme Owner-Guideline, kein verbindlicher Wert)</div>
+        <div className="dp-reihe">
           {kennwertFeld('BKP 2 Basis', 'chfProM2Gf', 'kv-chf-m2', false, 'CHF pro m² GF für BKP 2 (Gebäude)')}
           {kennwertFeld('Rohbau', 'anteilRohbau', 'kv-anteil-rohbau', true, 'Anteil Rohbau am BKP-2-Basiswert')}
           {kennwertFeld('Ausbau', 'anteilAusbau', 'kv-anteil-ausbau', true, 'Anteil Ausbau am BKP-2-Basiswert')}
@@ -176,7 +148,7 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
           {kennwertFeld('Baunebenkosten (BKP 5)', 'zuschlagBaunebenkosten', 'kv-zuschlag-baunebenkosten', true, 'Zuschlag BKP 5 als Anteil der BKP-2-Summe')}
           {kennwertFeld('Reserve', 'reserve', 'kv-reserve', true, 'Reserve als Anteil der Zwischensumme BKP 2+4+5')}
         </div>
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+        <span className="dp-fussnote">
           Jede Änderung ist ein eigener Undo-Schritt (Command design.kvKennwerteSetzen).
         </span>
       </div>

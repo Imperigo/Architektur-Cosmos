@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { bauablaufBlattSvg, BAUABLAUF_HINWEIS, deriveBauablauf, siaPhaseLabel } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, KIcon, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * Bauablauf-Panel — Grob-Terminplan-Grundgerüst (v0.6.3,
@@ -40,23 +41,10 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div
-      data-testid="bauablauf-panel"
-      style={{
-        zIndex: 20,
-        overflow: 'auto',
-        background: 'var(--k-raised)',
-        border: '1px solid var(--k-technik)',
-        boxShadow: 'var(--k-shadow-overlay)',
-        padding: 'var(--k-s4)',
-        display: 'grid',
-        gap: 'var(--k-s4)',
-        fontSize: 'var(--k-t-sm)',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
+    <div data-testid="bauablauf-panel" className="dp-dialog dp-dialog--scroll">
+      <div className="dp-kopf">
         <Badge hue="var(--k-mod-design)">Bauablauf</Badge>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="bauablauf-blatt">
           Bauablaufblatt (SVG)
         </KButton>
@@ -65,21 +53,11 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
         </KButton>
       </div>
 
-      <div
-        data-testid="bauablauf-hinweis"
-        style={{
-          background: 'var(--k-warning-wash, #f6f2e6)',
-          border: '1px solid var(--k-warning-line, #c9bfa0)',
-          borderRadius: 'var(--k-radius-sm)',
-          padding: 'var(--k-s3) var(--k-s4)',
-          fontWeight: 600,
-          color: 'var(--k-ink)',
-        }}
-      >
+      <div data-testid="bauablauf-hinweis" className="dp-hinweis">
         {BAUABLAUF_HINWEIS}
       </div>
 
-      <div style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+      <div className="dp-meta">
         Gesamtdauer:{' '}
         <Measure>{ablauf.gesamtWochen > 0 ? `${ablauf.gesamtWochen} Wochen` : '—'}</Measure>
         {' · '}
@@ -89,32 +67,30 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
       <Hairline />
 
       {ablauf.phasen.length === 0 ? (
-        <div data-testid="bauablauf-leer" style={{ color: 'var(--k-ink-faint)' }}>
+        <div data-testid="bauablauf-leer" className="dp-leer">
           Keine Geometrie gezeichnet — zuerst mindestens ein Geschoss anlegen, dann rechnet der
           Grob-Terminplan mit.
         </div>
       ) : (
-        <table style={{ borderCollapse: 'collapse', width: '100%' }} data-testid="bauablauf-tabelle">
+        <table className="dp-tabelle" data-testid="bauablauf-tabelle">
           <thead>
-            <tr style={{ textAlign: 'right', color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
-              <th style={{ fontWeight: 500, padding: '2px 4px', textAlign: 'left' }}>Gewerk</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>Dauer</th>
-              <th style={{ fontWeight: 500, padding: '2px 4px' }}>Wochen</th>
+            <tr>
+              <th>Gewerk</th>
+              <th>Dauer</th>
+              <th>Wochen</th>
             </tr>
           </thead>
           <tbody>
             {ablauf.phasen.map((p) => (
-              <tr key={p.id} style={{ borderTop: '1px solid var(--k-line)' }}>
-                <td style={{ padding: '3px 4px' }}>
+              <tr key={p.id}>
+                <td>
                   {p.gewerk}
-                  {p.parallel ? (
-                    <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}> (überlappt)</span>
-                  ) : null}
+                  {p.parallel ? <span className="dp-fussnote"> (überlappt)</span> : null}
                 </td>
-                <td style={{ padding: '3px 4px', textAlign: 'right' }}>
+                <td className="dp-num">
                   <Measure>{`${p.dauerWochen} W.`}</Measure>
                 </td>
-                <td style={{ padding: '3px 4px', textAlign: 'right' }}>
+                <td className="dp-num">
                   <Measure>{`${p.startWoche}–${p.endWoche}`}</Measure>
                 </td>
               </tr>
@@ -125,7 +101,7 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
 
       <Hairline />
 
-      <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+      <span className="dp-fussnote">
         Gewerke-Reihenfolge und Dauern sind aus der gezeichneten Geometrie und konfigurierbaren
         Leistungswerten abgeleitet (Annahme Owner-Guideline, kein verbindlicher Wert) — Wochen sind
         relativ (Woche 1 = Baubeginn), ohne Kalenderbezug.

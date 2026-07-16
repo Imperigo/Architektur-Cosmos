@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import type { ModulElement } from '@kosmo/kernel';
 import { KButton, KInput, KSelect } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import './design-panels.css';
 
 /**
  * Modul-Editor (vorform-Kern): eine kleine Zeichenfläche fürs Fassadenmodul.
@@ -59,11 +60,7 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
   return createPortal(
     <div
       data-testid="modul-editor"
-      style={{
-        position: 'fixed', top: 70, left: '50%', transform: 'translateX(-50%)', zIndex: 60,
-        background: 'var(--k-raised)', border: '1px solid var(--k-line-strong)', borderRadius: 'var(--k-radius-md)',
-        boxShadow: 'var(--k-shadow-overlay)', padding: 'var(--k-s5)', display: 'grid', gap: 'var(--k-s3)',
-      }}
+      className="dp-dialog--fixed"
       onKeyDown={(e) => {
         if ((e.key === 'Delete' || e.key === 'Backspace') && auswahl !== null) {
           setElemente(elemente.filter((_, i) => i !== auswahl));
@@ -72,14 +69,14 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
       }}
       tabIndex={0}
     >
-      <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center' }}>
-        <b className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Modul-Editor</b>
-        <KInput size="sm" value={name} onChange={(e) => setName(e.target.value)} data-testid="modul-name" style={{ width: 110 }} />
-        <KInput size="sm" mono type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} style={{ width: 66 }} />
+      <div className="me-kopf">
+        <b className="k-titel dp-titel-block">Modul-Editor</b>
+        <KInput size="sm" value={name} onChange={(e) => setName(e.target.value)} data-testid="modul-name" className="dp-w110" />
+        <KInput size="sm" mono type="number" value={modB} step={50} onChange={(e) => setModB(Number(e.target.value) || 2500)} className="dp-w66" />
         <span>×</span>
-        <KInput size="sm" mono type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} style={{ width: 66 }} />
-        <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>mm</span>
-        <div style={{ flex: 1 }} />
+        <KInput size="sm" mono type="number" value={modH} step={50} onChange={(e) => setModH(Number(e.target.value) || 3000)} className="dp-w66" />
+        <span className="dp-einheit dp-fussnote">mm</span>
+        <div className="dp-fuell" />
         <KButton size="sm" tone={typ === 'fenster' ? 'accent' : 'quiet'} data-testid="typ-fenster" onClick={() => setTyp('fenster')}>
           Fenster
         </KButton>
@@ -92,7 +89,7 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
         data-testid="modul-flaeche"
         width={W}
         height={H}
-        style={{ border: '1px solid var(--k-line-strong)', background: 'var(--k-surface)', cursor: 'crosshair', touchAction: 'none' }}
+        className="me-flaeche"
         onPointerDown={(e) => {
           const p = zuModul(e);
           if (!p) return;
@@ -156,11 +153,11 @@ export function ModulEditor({ onClose }: { onClose: () => void }) {
           />
         )}
       </svg>
-      <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', fontSize: 'var(--k-t-sm)' }}>
-        <span style={{ color: 'var(--k-ink-faint)' }}>
+      <div className="me-fuss">
+        <span className="dp-leer">
           Aufziehen zeichnet ({typ}), Klick wählt, Entf löscht · Snap 5 cm
         </span>
-        <div style={{ flex: 1 }} />
+        <div className="dp-fuell" />
         {bestehend.length > 0 && (
           <KSelect
             size="sm"
