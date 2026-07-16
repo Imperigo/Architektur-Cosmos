@@ -1,0 +1,171 @@
+/* KosmoDoc (v0.8.0B / W8c-A, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
+ * Schicht für `DocWorkspace.tsx`. Reiner Visual-Umbau (Muster
+ * `modules/publish/publish.css`, `modules/data/data.css`): ersetzt die
+ * vorherigen Inline-Styles durch Klassen + Tokens. Modul-Hue
+ * (`moduleHue.draw`) wird als CSS-Custom-Property `--_hue` PRO INSTANZ
+ * übergeben. **Signal-Audit:** KosmoDoc ist eine reine Diagnose-/Lese-
+ * Station (Selbstdiagnose, Hilfe, Berichte, Tech-Radar) ohne datenverändernde
+ * Aktion — Gesetz 1 verlangt hier bewusst KEINE gefüllte Signal-Fläche
+ * (kein Bestand, den man erzeugt); die Station bleibt vollständig auf
+ * `tone="ghost"`/reine Information.
+ */
+
+.doc-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
+.doc-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--k-s5) var(--k-s6);
+  display: grid;
+  gap: var(--k-s4);
+}
+
+.doc-kopf {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+.doc-kopf-leiste {
+  flex-wrap: wrap;
+  background: transparent;
+  border-bottom: none;
+}
+.doc-kopf-satz {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-md);
+}
+.doc-kopf-spacer {
+  flex: 1;
+}
+
+.doc-tab-inhalt {
+  display: grid;
+  gap: var(--k-s3);
+}
+.doc-diagnose-hinweis {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}
+
+/* Hilfe-Karten. */
+.doc-hilfe-karte {
+  display: grid;
+  gap: var(--k-s2);
+}
+.doc-hilfe-titel {
+  font-family: var(--k-font-mono);
+  font-weight: 700;
+  font-size: var(--k-t-md);
+}
+.doc-hilfe-liste {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: var(--k-s2);
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+.doc-hilfe-fuss {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}
+
+/* Tech-Radar. */
+.doc-radar-tab {
+  gap: var(--k-s4);
+}
+.doc-radar-intro {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+  line-height: 1.5;
+}
+.doc-radar-titel {
+  font-size: var(--k-t-md);
+}
+.doc-radar-abschnitt {
+  display: grid;
+  gap: var(--k-s2);
+}
+.doc-radar-posten {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: baseline;
+  font-size: var(--k-t-sm);
+  padding: var(--k-s2) var(--k-s3);
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.doc-radar-entscheid {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  font-weight: 700;
+  min-width: 62px;
+}
+.doc-radar-baustein {
+  font-weight: 600;
+  min-width: 170px;
+}
+.doc-radar-kommentar {
+  flex: 1;
+  color: var(--k-ink-soft);
+  line-height: 1.45;
+}
+.doc-radar-paket {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.doc-radar-fuss {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}
+
+/* Berichte (Lernjournal). */
+.doc-berichte {
+  display: grid;
+  gap: var(--k-s3);
+  padding: var(--k-s4);
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.doc-berichte-kopf {
+  display: flex;
+  gap: var(--k-s5);
+  align-items: baseline;
+}
+.doc-berichte-titel {
+  font-size: var(--k-t-md);
+}
+.doc-berichte-gut {
+  color: var(--k-success);
+}
+.doc-berichte-schlecht {
+  color: var(--k-danger);
+}
+.doc-berichte-liste {
+  display: grid;
+  gap: var(--k-s2);
+}
+.doc-berichte-eintrag {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: baseline;
+  font-size: var(--k-t-sm);
+}
+.doc-berichte-eintrag-text {
+  flex: 1;
+  color: var(--k-ink-soft);
+  line-height: 1.45;
+}
+.doc-berichte-eintrag-zeit {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.doc-berichte-fuss {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-sm);
+}

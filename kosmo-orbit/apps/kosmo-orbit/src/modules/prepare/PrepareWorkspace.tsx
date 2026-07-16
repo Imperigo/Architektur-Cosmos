@@ -23,12 +23,21 @@ import {
   type DriveAccount,
   type DriveItem,
 } from './onedrive';
+import './prepare.css';
 
 /**
  * KosmoPrepare — Grundlagen. Bürodokumente (Normen-Auszüge, Wettbewerbs-
  * programme, Hochbauzeichner-Bibliothek) werden lokal aufgenommen; Kosmo
  * zitiert daraus über «quellen_suchen» mit [Qn]-Belegen. OneDrive-Anbindung (Graph-Login)
  * folgt — die Wissensbasis ist dieselbe.
+ *
+ * v0.8.0B / W8c-A (Spez §2/§3, Owner-Entscheid 16.07. «Scope-Blindpunkt jetzt
+ * nachziehen»): reiner Visual-Umbau auf `prepare.css` (Muster `publish.css`/
+ * `data.css`) — Inline-Styles 60→<5 (Rest: Modul-Hue-Carrier `--_hue`).
+ * **Signal-Audit:** «Dateien wählen» bleibt die EINE gefüllte Signal-Fläche
+ * der Station (der Eintrittspunkt der Wissensaufnahme, Gesetz 1); Dossier-
+ * «Übernehmen», Basis-«Laden» und OneDrive-«Anmelden» sind Neben-/
+ * Abschluss-Aktionen ihrer eigenen (optionalen) Unterflüsse → `tone="quiet"`.
  */
 
 export function PrepareWorkspace() {
@@ -93,15 +102,14 @@ export function PrepareWorkspace() {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 'var(--k-s6)' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', display: 'grid', gap: 'var(--k-s5)' }}>
-        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
-            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
-            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
-        <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.prepare} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
-          <KToolbar data-testid="prepare-werkzeugleiste" style={{ background: 'transparent', borderBottom: 'none' }}>
+    <div className="prepare-viewport">
+      <div className="prepare-content">
+        {/* Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass + Modul-Tönung),
+            Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div className="k-glass prepare-kopf" style={{ ['--_hue' as string]: moduleHue.prepare }}>
+          <KToolbar data-testid="prepare-werkzeugleiste" className="prepare-kopf-leiste">
             <Badge hue={moduleHue.prepare}>Grundlagen</Badge>
-            <span style={{ fontSize: 'var(--k-t-md)', color: 'var(--k-ink-faint)' }}>
+            <span className="prepare-kopf-satz">
               Lokal aufgenommen — Dokumente verlassen das Gerät nie. Kosmo zitiert daraus.
             </span>
           </KToolbar>
@@ -110,26 +118,27 @@ export function PrepareWorkspace() {
         {/* Quellensprung: der von Kosmo zitierte Abschnitt, hervorgehoben */}
         {sprung && (
           <div ref={sprungRef}>
-            <Panel data-testid="quelle-sprung" style={{ padding: 'var(--k-s4)', borderColor: 'var(--k-accent)', display: 'grid', gap: 'var(--k-s2)' }}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--k-s3)' }}>
-                <span className="k-titel" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-accent)' }}>Quellensprung</span>
-                <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>{sprung.titel}</span>
-                <div style={{ flex: 1 }} />
+            <Panel data-testid="quelle-sprung" className="prepare-sprung">
+              <div className="prepare-sprung-kopf">
+                <span className="k-titel prepare-sprung-titel">Quellensprung</span>
+                <span className="prepare-sprung-quelle">{sprung.titel}</span>
+                <div className="prepare-dossier-spacer" />
                 <KButton size="sm" tone="ghost" onClick={() => setSprung(null)} aria-label="Quellensprung schliessen">
                   <KIcon name="schliessen" size={14} title="Quellensprung schliessen" />
                 </KButton>
               </div>
-              <div style={{ fontSize: 'var(--k-t-md)', lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>{sprung.text}</div>
+              <div className="prepare-sprung-text">{sprung.text}</div>
             </Panel>
           </div>
         )}
 
-        {/* Aufnahme-Zone — v0.7.8 Welle D PD3: Glass + dezente Prepare-Hue-
-            Note (40%) im Ruhezustand; der aktive Drag-Zustand (Akzentfarbe/
-            -Wash) bleibt unverändert Vorrang. */}
+        {/* Aufnahme-Zone — Glass + dezente Prepare-Hue-Note (40%) im
+            Ruhezustand; der aktive Drag-Zustand (Akzentfarbe/-Wash) bleibt
+            unverändert Vorrang. */}
         <Panel
-          className="k-glass"
+          className={`k-glass prepare-ingest${dragOver ? ' prepare-ingest--drag' : ''}`}
           data-testid="ingest-zone"
+          style={{ ['--_hue' as string]: moduleHue.prepare }}
           onDragOver={(e) => {
             e.preventDefault();
             setDragOver(true);
@@ -140,32 +149,23 @@ export function PrepareWorkspace() {
             setDragOver(false);
             if (e.dataTransfer.files.length) void addFiles(e.dataTransfer.files);
           }}
-          style={{
-            padding: 'var(--k-s6)',
-            textAlign: 'center',
-            borderStyle: 'dashed',
-            borderColor: dragOver
-              ? 'var(--k-accent)'
-              : `color-mix(in srgb, ${moduleHue.prepare} 40%, var(--k-line-strong))`,
-            background: dragOver ? 'var(--k-accent-wash)' : 'var(--k-glass-fill, var(--k-surface))',
-          }}
         >
-          <div style={{ fontWeight: 550, marginBottom: 'var(--k-s2)' }}>
+          <div className="prepare-ingest-titel">
             PDF, Text oder Markdown hierher ziehen
           </div>
-          <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)', marginBottom: 'var(--k-s4)' }}>
+          <div className="prepare-ingest-hinweis">
             Normen-Auszüge · Wettbewerbsprogramme · Baubeschriebe · Detailbibliothek
           </div>
           <KButton size="sm" tone="accent" onClick={pickFiles} data-testid="pick-files">
             Dateien wählen
           </KButton>
           {busy && (
-            <div style={{ marginTop: 'var(--k-s3)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+            <div className="prepare-ingest-status">
               Nehme «{busy}» auf …
             </div>
           )}
           {error && (
-            <div style={{ marginTop: 'var(--k-s3)', fontSize: 'var(--k-t-sm)', color: 'var(--k-danger, #b3462e)' }}>⚠ {error}</div>
+            <div className="prepare-ingest-fehler">⚠ {error}</div>
           )}
         </Panel>
 
@@ -176,28 +176,21 @@ export function PrepareWorkspace() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Wissensbasis durchsuchen … (z.B. «Brandschutz Treppenhaus»)"
-            style={{ width: '100%' }}
+            className="prepare-w-full"
           />
           {hits.length > 0 && (
-            <div style={{ display: 'grid', gap: 'var(--k-s3)', marginTop: 'var(--k-s3)' }}>
+            <div className="prepare-treffer-liste">
               {hits.map((h) => (
                 <Panel
                   key={h.id}
-                  /* v0.7.8 Welle D PD3: Glass + dezente Prepare-Hue-Note (40%). */
-                  className="k-glass"
+                  className="k-glass prepare-treffer"
                   data-testid="knowledge-hit"
-                  style={{
-                    padding: 'var(--k-s3) var(--k-s4)',
-                    background: 'var(--k-glass-fill, var(--k-surface))',
-                    border: '1px solid var(--k-glass-stroke, var(--k-line))',
-                    borderTopColor: `color-mix(in srgb, ${moduleHue.prepare} 40%, var(--k-glass-stroke, var(--k-line)))`,
-                    borderTopWidth: 2,
-                  }}
+                  style={{ ['--_hue' as string]: moduleHue.prepare }}
                 >
-                  <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)', marginBottom: 'var(--k-s1)' }}>
+                  <div className="prepare-treffer-kopf">
                     {h.docName} · Abschnitt {h.seq + 1}
                   </div>
-                  <div style={{ fontSize: 'var(--k-t-md)', lineHeight: 1.55 }}>
+                  <div className="prepare-treffer-text">
                     {h.text.length > 320 ? `${h.text.slice(0, 320)} …` : h.text}
                   </div>
                 </Panel>
@@ -209,8 +202,8 @@ export function PrepareWorkspace() {
         <BasisSection onGeladen={refresh} />
 
         {/* Dokumente (Basis-Sammlungen erscheinen kompakt oben, nicht als Einzelzeilen) */}
-        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-          <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>
+        <div className="prepare-sektion">
+          <div className="prepare-sektion-titel">
             Aufgenommen ({docs.filter((d) => d.source !== 'basis').length})
           </div>
           {docs.filter((d) => d.source !== 'basis').length === 0 && (
@@ -220,16 +213,12 @@ export function PrepareWorkspace() {
             />
           )}
           {docs.filter((d) => d.source !== 'basis').map((d) => (
-            <Panel
-              key={d.id}
-              data-testid={`doc-${d.id}`}
-              style={{ padding: 'var(--k-s3) var(--k-s4)', display: 'flex', alignItems: 'center', gap: 'var(--k-s4)' }}
-            >
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <Panel key={d.id} data-testid={`doc-${d.id}`} className="prepare-doc-zeile">
+              <div className="prepare-doc-info">
+                <div className="prepare-doc-name">
                   {d.name}
                 </div>
-                <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+                <div className="prepare-doc-meta">
                   {d.pages ? `${d.pages} ${d.pages === 1 ? 'Seite' : 'Seiten'} · ` : ''}
                   {d.chunkCount} Abschnitte · {new Date(d.addedAt).toLocaleDateString('de-CH')} · {d.source}
                 </div>
@@ -303,21 +292,21 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
   }
 
   return (
-    <Panel style={{ padding: 'var(--k-s4)', display: 'grid', gap: 'var(--k-s3)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)' }}>
-        <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>OneDrive (Hochbauzeichner-Bibliothek)</div>
+    <Panel className="prepare-drive">
+      <div className="prepare-drive-kopf">
+        <div className="prepare-drive-titel">OneDrive (Hochbauzeichner-Bibliothek)</div>
         {account && (
           <Badge hue="var(--k-success)">{account.name}</Badge>
         )}
       </div>
       {!account ? (
         <>
-          <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+          <div className="prepare-drive-hinweis">
             Einmalig: App-Registrierung im Azure-Portal (Typ SPA, Redirect-URI = App-Adresse,
             Berechtigungen <code>Files.Read</code> + <code>User.Read</code>) — dann Client-ID hier
             eintragen und anmelden. Es fliesst kein Geheimnis (PKCE).
           </div>
-          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+          <div className="prepare-drive-anmelden">
             <KInput
               value={clientId}
               onChange={(e) => {
@@ -326,21 +315,21 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
               }}
               placeholder="Azure Client-ID (GUID)"
               data-testid="graph-client-id"
-              style={{ flex: 1 }}
+              className="prepare-drive-anmelden-feld"
             />
-            <KButton size="sm" tone="accent" onClick={() => void connect()} data-testid="graph-signin">
+            <KButton size="sm" tone="quiet" onClick={() => void connect()} data-testid="graph-signin">
               Mit Microsoft anmelden
             </KButton>
           </div>
         </>
       ) : (
         <>
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap', fontSize: 'var(--k-t-sm)' }}>
+          <div className="prepare-drive-pfad">
             {path.map((p, i) => (
               <span key={`${p.id ?? 'root'}-${i}`}>
-                {i > 0 && <span style={{ color: 'var(--k-ink-faint)' }}> / </span>}
+                {i > 0 && <span className="prepare-drive-pfad-trenner"> / </span>}
                 <button
-                  style={{ all: 'unset', cursor: 'pointer', color: 'var(--k-accent)' }}
+                  className="prepare-drive-pfad-knopf"
                   onClick={() => {
                     setPath(path.slice(0, i + 1));
                     void browse(p, false);
@@ -351,22 +340,19 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
               </span>
             ))}
           </div>
-          <div style={{ display: 'grid', gap: 'var(--k-s2)', maxHeight: 260, overflow: 'auto' }}>
+          <div className="prepare-drive-liste">
             {items.map((it) => (
-              <div
-                key={it.id}
-                style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', fontSize: 'var(--k-t-md)', padding: 'var(--k-s1)' }}
-              >
+              <div key={it.id} className="prepare-drive-item">
                 <KIcon name={it.isFolder ? 'ordner' : 'dokument'} size={14} />
                 {it.isFolder ? (
                   <button
-                    style={{ all: 'unset', cursor: 'pointer', flex: 1 }}
+                    className="prepare-drive-item-ordner"
                     onClick={() => void browse({ id: it.id, name: it.name }, true)}
                   >
                     {it.name}
                   </button>
                 ) : (
-                  <span style={{ flex: 1, color: isIngestable(it.name) ? 'inherit' : 'var(--k-ink-faint)' }}>
+                  <span className={`prepare-drive-item-datei${isIngestable(it.name) ? '' : ' prepare-drive-item-datei--gesperrt'}`}>
                     {it.name}
                   </span>
                 )}
@@ -378,12 +364,12 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
               </div>
             ))}
             {items.length === 0 && (
-              <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Leerer Ordner.</div>
+              <div className="prepare-drive-leer">Leerer Ordner.</div>
             )}
           </div>
         </>
       )}
-      {status && <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>{status}</div>}
+      {status && <div className="prepare-drive-status">{status}</div>}
     </Panel>
   );
 }
@@ -402,17 +388,13 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
   }, []);
   if (sammlungen.length === 0) return null;
   return (
-    <div style={{ display: 'grid', gap: 'var(--k-s3)' }} data-testid="basis-sektion">
-      <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>Bauwissen-Basis (Kosmos-Bibliothek)</div>
+    <div className="prepare-sektion" data-testid="basis-sektion">
+      <div className="prepare-sektion-titel">Bauwissen-Basis (Kosmos-Bibliothek)</div>
       {sammlungen.map((sa) => (
-        <Panel
-          key={sa.sammlung}
-          data-testid={`basis-${sa.sammlung}`}
-          style={{ padding: 'var(--k-s3) var(--k-s4)', display: 'flex', alignItems: 'center', gap: 'var(--k-s4)' }}
-        >
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <div style={{ fontWeight: 550, fontSize: 'var(--k-t-md)' }}>{sa.label}</div>
-            <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+        <Panel key={sa.sammlung} data-testid={`basis-${sa.sammlung}`} className="prepare-doc-zeile">
+          <div className="prepare-doc-info">
+            <div className="prepare-doc-name">{sa.label}</div>
+            <div className="prepare-doc-meta">
               {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
             </div>
           </div>
@@ -421,7 +403,7 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
           ) : (
             <KButton
               size="sm"
-              tone="accent"
+              tone="quiet"
               data-testid={`basis-laden-${sa.sammlung}`}
               disabled={laufend !== null}
               onClick={() => {
@@ -441,7 +423,7 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
           )}
         </Panel>
       ))}
-      {fehler && <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-danger, #b3462e)' }}>⚠ {fehler}</div>}
+      {fehler && <div className="prepare-ingest-fehler">⚠ {fehler}</div>}
     </div>
   );
 }
@@ -473,26 +455,15 @@ function DossierSection() {
   ] as const;
 
   return (
-    // v0.7.8 Welle D PD3: Glass-Rahmen + dezente Prepare-Hue-Note (40%) um
-    // den ganzen Dossier-Block — reine Kartenoptik, Inhalt/Testid/Logik
-    // unverändert.
-    <div
-      className="k-glass"
-      style={{
-        display: 'grid',
-        gap: 'var(--k-s3)',
-        padding: 'var(--k-s4)',
-        borderTopColor: `color-mix(in srgb, ${moduleHue.prepare} 40%, var(--k-glass-stroke, var(--k-line)))`,
-        borderTopWidth: 2,
-      }}
-      data-testid="dossier"
-    >
-      <div className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>Phase 0 — Wettbewerbsdossier</div>
-      <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>
+    // Glass-Rahmen + dezente Prepare-Hue-Note (40%) um den ganzen
+    // Dossier-Block — reine Kartenoptik, Inhalt/Testid/Logik unverändert.
+    <div className="k-glass prepare-dossier" style={{ ['--_hue' as string]: moduleHue.prepare }} data-testid="dossier">
+      <div className="k-titel prepare-dossier-titel">Phase 0 — Wettbewerbsdossier</div>
+      <span className="prepare-dossier-satz">
         Harte Regeln und Fakten aus dem Programm. Kosmo behandelt sie in jeder Antwort als bindend.
       </span>
       {entwurf.map((e, i) => (
-        <div key={i} style={{ display: 'flex', gap: 'var(--k-s2)', alignItems: 'center' }}>
+        <div key={i} className="prepare-dossier-zeile">
           <KSelect
             size="sm"
             value={e.typ}
@@ -517,21 +488,21 @@ function DossierSection() {
               next[i] = { ...e, text: ev.target.value };
               setEntwurf(next);
             }}
-            style={{ flex: 1 }}
+            className="prepare-dossier-input"
           />
           <KButton size="sm" tone="ghost" onClick={() => setEntwurf(entwurf.filter((_, j) => j !== i))} aria-label="Eintrag entfernen">
             <KIcon name="minus" size={14} title="Eintrag entfernen" />
           </KButton>
         </div>
       ))}
-      <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+      <div className="prepare-dossier-fuss">
         <KButton size="sm" tone="ghost" onClick={() => setEntwurf([...entwurf, { typ: 'do', text: '' }])}>
           <KIcon name="plus" size={14} /> Eintrag
         </KButton>
-        <div style={{ flex: 1 }} />
+        <div className="prepare-dossier-spacer" />
         <KButton
           size="sm"
-          tone="accent"
+          tone="quiet"
           data-testid="dossier-uebernehmen"
           onClick={() => runCommand('design.dossierSetzen', { eintraege: entwurf.filter((e) => e.text.trim().length > 0) })}
         >
@@ -539,7 +510,7 @@ function DossierSection() {
         </KButton>
       </div>
       {doc.settings.dossier.length > 0 && (
-        <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+        <div className="prepare-sektion">
           {doc.settings.dossier.map((e, i) => {
             const zitiert = ziel?.typ === 'dossier' && ziel.index === i;
             return (
@@ -547,21 +518,16 @@ function DossierSection() {
               key={i}
               ref={zitiert ? dossierSprungRef : undefined}
               {...(zitiert ? { 'data-testid': 'quelle-sprung-dossier' } : {})}
-              style={zitiert ? { outline: '2px solid var(--k-accent)', borderRadius: 'var(--k-radius-sm)' } : undefined}
+              className={zitiert ? 'prepare-dossier-eintrag--zitiert' : undefined}
             >
               <Karteikarte nr={i + 1}>
-                <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline', fontSize: 'var(--k-t-sm)' }}>
+                <div className="prepare-dossier-zeile">
                   <span
-                    style={{
-                      fontFamily: 'var(--k-font-mono)',
-                      fontSize: 'var(--k-t-xs)',
-                      fontWeight: 700,
-                      color: e.typ === 'dont' ? 'var(--k-danger)' : e.typ === 'do' ? 'var(--k-success)' : 'var(--k-ink-faint)',
-                    }}
+                    className={`prepare-dossier-typ prepare-dossier-typ--${e.typ}`}
                   >
                     {e.typ === 'dont' ? 'NO-GO' : e.typ === 'do' ? 'GEFORDERT' : 'FAKT'}
                   </span>
-                  <span style={{ color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{e.text}</span>
+                  <span className="prepare-dossier-eintrag-text">{e.text}</span>
                 </div>
               </Karteikarte>
             </div>

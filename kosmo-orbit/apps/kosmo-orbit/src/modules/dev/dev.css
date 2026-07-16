@@ -1,0 +1,111 @@
+/* KosmoDev (v0.8.0B / W8c-A, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
+ * Schicht für `DevWorkspace.tsx`. Reiner Visual-Umbau (Muster
+ * `modules/publish/publish.css`, `modules/data/data.css`): ersetzt die
+ * vorherigen Inline-Styles durch Klassen + Tokens. **Signal-Audit:** «An
+ * HomeStation übergeben» ist die Primäraktion (schliesst den Kreis über die
+ * Bridge, Buildplan E4) — «Fable-Workorder (.md)» ist der dokumentierte
+ * Offline-Fallback (Code-Kommentar Buildplan-Kriterium 5) → `tone="quiet"`.
+ */
+
+.dev-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: var(--k-s5);
+}
+.dev-content {
+  max-width: 880px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s4);
+}
+
+.dev-kopf-leiste {
+  flex-wrap: wrap;
+}
+.dev-kopf-satz {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-md);
+}
+.dev-kopf-spacer {
+  flex: 1;
+}
+
+.dev-job-status {
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3) var(--k-s4);
+}
+.dev-job-zeile {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  font-size: var(--k-t-sm);
+}
+.dev-job-text {
+  color: var(--k-ink-soft);
+}
+
+.dev-erfassen {
+  display: grid;
+  gap: var(--k-s3);
+}
+.dev-erfassen-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.dev-erfassen-zeile {
+  display: flex;
+  gap: var(--k-s3);
+}
+.dev-erfassen-feld {
+  flex: 1;
+}
+
+.dev-liste {
+  display: grid;
+  gap: var(--k-s3);
+}
+.dev-karte {
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3) var(--k-s4);
+}
+.dev-karte-kopf {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.dev-karte-quelle {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+.dev-karte-spacer {
+  flex: 1;
+}
+.dev-karte-text {
+  font-size: var(--k-t-md);
+}
+.dev-karte-ort {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.dev-karte-ergebnis {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: var(--k-t-sm);
+}
+.dev-karte-commit {
+  font-family: var(--k-font-mono);
+  color: var(--k-ink-soft);
+}
+.dev-karte-notiz {
+  color: var(--k-ink-soft);
+}
+.dev-karte-status-zeile {
+  display: flex;
+  gap: var(--k-s2);
+}

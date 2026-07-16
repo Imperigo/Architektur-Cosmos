@@ -1,0 +1,111 @@
+/* KosmoTrain (v0.8.0B / W8c-A, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
+ * Schicht für `TrainWorkspace.tsx`. Reiner Visual-Umbau (Muster
+ * `modules/publish/publish.css`, `modules/data/data.css`): ersetzt die
+ * vorherigen Inline-Styles durch Klassen + Tokens. Modul-Hue
+ * (`moduleHue.train`) wird als CSS-Custom-Property `--_hue` PRO INSTANZ
+ * übergeben. **Signal-Audit:** «JSONL exportieren» war bereits die einzige
+ * `tone="accent"`-Fläche der Station (Gesetz 1 schon erfüllt) — der Glow
+ * bleibt als dezenter Modus-Hinweis (Gesetz 7: Glow ist Informationszustand),
+ * keine Änderung nötig.
+ */
+
+.train-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+}
+.train-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--k-s5) var(--k-s6);
+  display: grid;
+  gap: var(--k-s4);
+}
+
+.train-kopf {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+.train-kopf-leiste {
+  flex-wrap: wrap;
+  background: transparent;
+  border-bottom: none;
+}
+.train-kopf-satz {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-md);
+}
+.train-kopf-spacer {
+  flex: 1;
+}
+.train-export-knopf {
+  box-shadow: 0 0 14px color-mix(in srgb, var(--_hue) 35%, transparent);
+}
+
+.train-stand {
+  display: flex;
+  gap: var(--k-s5);
+  align-items: baseline;
+  flex-wrap: wrap;
+  padding: var(--k-s4);
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.train-stand-titel {
+  font-size: var(--k-t-lg);
+}
+.train-stand-gut {
+  color: var(--k-success);
+}
+.train-stand-schlecht {
+  color: var(--k-danger);
+}
+
+.train-kuration {
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3);
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.train-kuration-eintrag--zitiert {
+  outline: 2px solid var(--k-accent);
+  border-radius: var(--k-radius-sm);
+}
+.train-kuration-zeile {
+  display: grid;
+  gap: var(--k-s2);
+  font-size: var(--k-t-sm);
+}
+.train-kuration-kopf {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: baseline;
+}
+.train-kuration-text {
+  flex: 1;
+  color: var(--k-ink-soft);
+  line-height: 1.45;
+}
+.train-kuration-zeit {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+}
+
+.train-zyklus {
+  display: grid;
+  gap: var(--k-s3);
+}
+.train-zyklus-titel {
+  font-size: var(--k-t-lg);
+}
+.train-zyklus-text {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  line-height: 1.5;
+}
+.train-zyklus-fuss {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+}

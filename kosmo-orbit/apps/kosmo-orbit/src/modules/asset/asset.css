@@ -1,0 +1,256 @@
+/* KosmoAsset (v0.8.0B / W8c-A, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
+ * Schicht für `AssetWorkspace.tsx`. Reiner Visual-Umbau (Muster
+ * `modules/publish/publish.css`, `modules/data/data.css`): ersetzt die
+ * vorherigen Inline-Styles durch Klassen + Tokens. Modul-Hue
+ * (`moduleHue.asset`) wird als CSS-Custom-Property `--_hue` PRO INSTANZ
+ * übergeben (kein beanstandeter Inline-Style, Token-Carrier wie in den
+ * Vorwellen). **Signal-Audit:** «Ins Modell» im Detail-Aside ist die
+ * Primäraktion (einzige Aktion, die Bibliotheks-Daten in den Entwurf
+ * überführt, Muster KosmoData «Referenz-3D ins Modell laden»); «GLB
+ * importieren» (Bibliotheks-Verwaltung) demotet auf `tone="quiet"`. */
+
+.asset-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.asset-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--k-s5);
+}
+.asset-content {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s4);
+}
+
+/* Kosmos-Kopf. */
+.asset-kopf {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+.asset-kopf-leiste {
+  flex-wrap: wrap;
+  background: transparent;
+  border-bottom: none;
+}
+.asset-kopf-anzahl {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-md);
+}
+.asset-kopf-spacer {
+  flex: 1;
+}
+
+.asset-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+
+.asset-facetten {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--k-s4);
+}
+
+/* Karte — Glass + dezente Asset-Hue-Note (40%); ausgewählt bleibt die
+   volle Akzentfarbe. */
+.asset-karte {
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  background: var(--k-glass-fill, var(--k-surface));
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-top-width: 2px;
+  border-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.asset-karte--aktiv {
+  border-color: var(--k-accent);
+  border-top-color: var(--k-accent);
+}
+.asset-karte-stern {
+  all: unset;
+  cursor: pointer;
+  position: absolute;
+  top: var(--k-s2);
+  right: var(--k-s3);
+  z-index: 2;
+  display: flex;
+  color: var(--k-ink-faint);
+  filter: drop-shadow(0 0 3px var(--k-raised));
+}
+.asset-karte-stern--aktiv {
+  color: var(--k-warning);
+}
+.asset-karte-inhalt {
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3);
+}
+.asset-karte-kopf {
+  display: flex;
+  gap: var(--k-s3);
+  align-items: baseline;
+}
+.asset-karte-titel {
+  font-weight: 600;
+  font-size: var(--k-t-sm);
+  overflow-wrap: anywhere;
+}
+.asset-karte-spacer {
+  flex: 1;
+}
+.asset-karte-badges {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.asset-karte-aktionen {
+  display: flex;
+  gap: var(--k-s2);
+}
+
+/* Vorschau-Kacheln. */
+.asset-preview-swatch {
+  height: 120px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line);
+}
+.asset-preview-wireframe {
+  height: 120px;
+  display: grid;
+  place-items: center;
+  gap: var(--k-s2);
+  border: 1px dashed var(--k-line-strong);
+  border-radius: var(--k-radius-sm);
+  background: var(--k-plan-paper);
+}
+.asset-preview-wireframe-label {
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.asset-preview-canvas {
+  width: 100%;
+  height: 120px;
+  border: 1px solid var(--k-line);
+  background: var(--k-plan-paper);
+}
+
+/* Detail-Aside. */
+.asset-detail {
+  width: 420px;
+  background: var(--k-glass-fill, var(--k-surface));
+  overflow: auto;
+  padding: var(--k-s5);
+  display: grid;
+  gap: var(--k-s3);
+  align-content: start;
+  border-radius: 0;
+  border-left: 1px solid color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.asset-detail-kopf {
+  display: flex;
+  align-items: center;
+}
+.asset-detail-titel {
+  font-size: var(--k-t-lg);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.asset-detail-badges {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.asset-detail-tags {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.asset-detail-label {
+  font-size: var(--k-t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--k-ink-faint);
+}
+.asset-detail-formats {
+  display: grid;
+  gap: var(--k-s2);
+}
+.asset-detail-format-zeile {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  font-size: var(--k-t-sm);
+}
+.asset-detail-format-groesse {
+  color: var(--k-ink-soft);
+}
+.asset-detail-rechte {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  display: grid;
+  gap: var(--k-s1);
+}
+.asset-detail-leer {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+.asset-detail-ref {
+  display: grid;
+  gap: var(--k-s3);
+}
+.asset-detail-ref-zeile {
+  display: grid;
+  gap: var(--k-s1);
+  font-size: var(--k-t-sm);
+}
+.asset-detail-ref-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.asset-detail-ref-meta {
+  color: var(--k-ink-faint);
+}
+.asset-detail-ref-notiz {
+  font-style: italic;
+  color: var(--k-ink-soft);
+}
+.asset-detail-picker {
+  display: grid;
+  gap: var(--k-s2);
+}
+.asset-detail-picker-treffer {
+  display: grid;
+  gap: var(--k-s2);
+  max-height: 220px;
+  overflow: auto;
+}
+.asset-detail-picker-eintrag {
+  all: unset;
+  cursor: pointer;
+  padding: var(--k-s2) var(--k-s3);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line);
+  font-size: var(--k-t-sm);
+}
+.asset-detail-picker-ort {
+  color: var(--k-ink-faint);
+}
+.asset-detail-fuss {
+  display: flex;
+  gap: var(--k-s2);
+}

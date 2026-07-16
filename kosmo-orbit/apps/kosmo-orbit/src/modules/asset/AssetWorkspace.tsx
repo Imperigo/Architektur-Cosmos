@@ -21,6 +21,7 @@ import {
   type RightsStatus,
 } from '../../state/asset-bibliothek';
 import { pruefeGlbHeader } from '../../state/glb-guard';
+import './asset.css';
 
 /**
  * KosmoAsset (V1-Finish P3, Owner-Q14) — die Bibliothek der Dinge:
@@ -34,6 +35,13 @@ import { pruefeGlbHeader } from '../../state/glb-guard';
  * (Stern + localStorage) und ein Detail-Aside, das das reiche
  * KosmoAsset-Manifest aus Batch 3 zeigt (Formate, Rechte, Sichtbarkeit,
  * Masse, KosmoData-Bezüge). Bauteil-/Materialkatalog-Tabs bleiben unverändert.
+ *
+ * v0.8.0B / W8c-A (Spez §2/§3, Owner-Entscheid 16.07. «Scope-Blindpunkt jetzt
+ * nachziehen»): reiner Visual-Umbau auf `asset.css` (Muster `publish.css`/
+ * `data.css`) — Inline-Styles 50→<5 (Rest: Modul-Hue-Carrier `--_hue`).
+ * **Signal-Audit:** «Ins Modell» im Detail-Aside bleibt die EINE gefüllte
+ * Signal-Fläche (überführt Bibliotheks-Daten in den Entwurf, Muster
+ * KosmoData); «GLB importieren» (Bibliotheks-Verwaltung) → `tone="quiet"`.
  */
 
 const assetTypeLabel: Record<AssetType, string> = {
@@ -344,24 +352,23 @@ export function AssetWorkspace() {
   };
 
   return (
-    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, display: 'flex' }}>
-      <div style={{ flex: 1, overflow: 'auto', padding: 'var(--k-s5)' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', display: 'grid', gap: 'var(--k-s4)' }}>
-          {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
-              Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
-              v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
-          <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.asset} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
-            <KToolbar data-testid="asset-werkzeugleiste" style={{ flexWrap: 'wrap', background: 'transparent', borderBottom: 'none' }}>
+    <div className="k-einblenden asset-viewport">
+      <div className="asset-scroll">
+        <div className="asset-content">
+          {/* Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass + Modul-Tönung),
+              Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+          <div className="k-glass asset-kopf" style={{ ['--_hue' as string]: moduleHue.asset }}>
+            <KToolbar data-testid="asset-werkzeugleiste" className="asset-kopf-leiste">
               <Badge hue={moduleHue.asset}>KosmoAsset</Badge>
               <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as typeof tab)} size="sm" />
               {tab === 'objekte' && objekte !== null && (
-                <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+                <span className="asset-kopf-anzahl">
                   {filtered.length} von {objekte.length} Objekten
                 </span>
               )}
-              <div style={{ flex: 1 }} />
+              <div className="asset-kopf-spacer" />
               {tab === 'objekte' && (
-                <KButton size="sm" tone="accent" onClick={importieren} data-testid="glb-import">
+                <KButton size="sm" tone="quiet" onClick={importieren} data-testid="glb-import">
                   <KIcon name="plus" size={14} /> GLB importieren
                 </KButton>
               )}
@@ -374,7 +381,7 @@ export function AssetWorkspace() {
 
           {tab === 'objekte' && (
             <>
-              <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+              <span className="asset-hinweis">
                 Projektübergreifende Objekt-Bibliothek — Möbel, Bäume, Kontextbauten als GLB.
                 «Ins Modell» legt das Objekt als Referenz-Kontext in den Design-Viewport
                 (studierbar, nicht Teil der Pläne). «Als FreeMesh übernehmen» wandelt ein
@@ -389,7 +396,7 @@ export function AssetWorkspace() {
                 onChange={(e) => setQuery(e.target.value)}
               />
 
-              <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+              <div className="asset-facetten">
                 <KButton
                   size="sm"
                   tone={nurSammlung ? 'accent' : 'quiet'}
@@ -419,29 +426,17 @@ export function AssetWorkspace() {
                 <Messrahmen height={220} caption="Kein Objekt passt zur Suche — Begriff lockern oder Filter lösen" />
               )}
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 'var(--k-s4)' }}>
+              <div className="asset-grid">
                 {filtered.map((o) => (
                   <Panel
                     key={o.id}
                     pad={false}
-                    /* v0.7.8 Welle D PD3: Glass + dezente Asset-Hue-Note
-                       (40%) — ausgewählt bleibt die volle Akzentfarbe
-                       (borderColor gewinnt dank späterer Objekt-Position). */
-                    className="k-glass"
+                    /* Glass + dezente Asset-Hue-Note (40%) — ausgewählt
+                       bleibt die volle Akzentfarbe. */
+                    className={`k-glass asset-karte${selected?.id === o.id ? ' asset-karte--aktiv' : ''}`}
                     data-testid="asset-card"
                     onClick={() => setSelected(o)}
-                    style={{
-                      cursor: 'pointer',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      background: 'var(--k-glass-fill, var(--k-surface))',
-                      border: '1px solid var(--k-glass-stroke, var(--k-line))',
-                      borderColor: selected?.id === o.id ? 'var(--k-accent)' : 'var(--k-glass-stroke, var(--k-line))',
-                      borderTopColor: selected?.id === o.id
-                        ? 'var(--k-accent)'
-                        : `color-mix(in srgb, ${moduleHue.asset} 40%, var(--k-glass-stroke, var(--k-line)))`,
-                      borderTopWidth: 2,
-                    }}
+                    style={{ ['--_hue' as string]: moduleHue.asset }}
                   >
                     <button
                       aria-label="Zur Sammlung"
@@ -450,32 +445,22 @@ export function AssetWorkspace() {
                         ev.stopPropagation();
                         toggleSammlung(o.id);
                       }}
-                      style={{
-                        all: 'unset',
-                        cursor: 'pointer',
-                        position: 'absolute',
-                        top: 'var(--k-s2)',
-                        right: 'var(--k-s3)',
-                        zIndex: 2,
-                        display: 'flex',
-                        color: sammlung.has(o.id) ? 'var(--k-warning)' : 'var(--k-ink-faint)',
-                        filter: 'drop-shadow(0 0 3px var(--k-raised))',
-                      }}
+                      className={`asset-karte-stern${sammlung.has(o.id) ? ' asset-karte-stern--aktiv' : ''}`}
                     >
                       <KIcon name={sammlung.has(o.id) ? 'stern-voll' : 'stern'} size={16} title="Zur Sammlung" />
                     </button>
-                    <div data-testid="glb-karte" style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3)' }}>
+                    <div data-testid="glb-karte" className="asset-karte-inhalt">
                       <AssetPreviewView asset={o} />
-                      <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
-                        <span style={{ fontWeight: 600, fontSize: 'var(--k-t-sm)', overflowWrap: 'anywhere' }}>{o.title}</span>
-                        <div style={{ flex: 1 }} />
+                      <div className="asset-karte-kopf">
+                        <span className="asset-karte-titel">{o.title}</span>
+                        <div className="asset-karte-spacer" />
                         <Measure>{(assetBytes(o) / 1024).toFixed(0)} KB</Measure>
                       </div>
-                      <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                      <div className="asset-karte-badges">
                         <Badge hue={moduleHue.asset}>{assetTypeLabel[o.asset_type] ?? o.asset_type}</Badge>
                         <Badge hue="var(--k-ink-faint)">{categoryLabel[o.category] ?? o.category}</Badge>
                       </div>
-                      <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
+                      <div className="asset-karte-aktionen">
                         {o.asset_type === 'glb_model' && (
                           <KButton
                             size="sm"
@@ -527,23 +512,13 @@ export function AssetWorkspace() {
         // v0.7.8 Welle D PD3: Glass + dezente Asset-Hue-Note (40%) am
         // linken Rand — reine Flächenoptik, Inhalt/Testid/Logik unverändert.
         <aside
-          className="k-glass"
+          className="k-glass asset-detail"
           data-testid="asset-detail"
-          style={{
-            width: 420,
-            borderLeft: `1px solid color-mix(in srgb, ${moduleHue.asset} 40%, var(--k-glass-stroke, var(--k-line)))`,
-            background: 'var(--k-glass-fill, var(--k-surface))',
-            overflow: 'auto',
-            padding: 'var(--k-s5)',
-            display: 'grid',
-            gap: 'var(--k-s3)',
-            alignContent: 'start',
-            borderRadius: 0,
-          }}
+          style={{ ['--_hue' as string]: moduleHue.asset }}
         >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="asset-detail-kopf">
             <Badge hue={moduleHue.asset}>Objekt</Badge>
-            <div style={{ flex: 1 }} />
+            <div className="asset-kopf-spacer" />
             <KButton size="sm" tone="ghost" onClick={() => setSelected(null)} aria-label="Detail schliessen">
               <KIcon name="schliessen" size={14} title="Detail schliessen" />
             </KButton>
@@ -551,9 +526,9 @@ export function AssetWorkspace() {
 
           <AssetPreviewView asset={selected} />
 
-          <div style={{ fontSize: 'var(--k-t-lg)', fontWeight: 600, overflowWrap: 'anywhere' }}>{selected.title}</div>
+          <div className="asset-detail-titel">{selected.title}</div>
 
-          <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+          <div className="asset-detail-badges">
             <Badge hue={moduleHue.asset}>{assetTypeLabel[selected.asset_type] ?? selected.asset_type}</Badge>
             <Badge hue="var(--k-ink-faint)">{categoryLabel[selected.category] ?? selected.category}</Badge>
             <span data-testid="asset-visibility">
@@ -564,7 +539,7 @@ export function AssetWorkspace() {
           </div>
 
           {selected.tags.length > 0 && (
-            <div style={{ display: 'flex', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+            <div className="asset-detail-tags">
               {selected.tags.map((t) => (
                 <KChip key={t} size="sm" tone="fuellung" hue="var(--k-ink-soft)">
                   {t}
@@ -574,25 +549,21 @@ export function AssetWorkspace() {
           )}
 
           <Hairline />
-          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
-            Formate
-          </div>
-          <div data-testid="asset-formats" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+          <div className="asset-detail-label">Formate</div>
+          <div data-testid="asset-formats" className="asset-detail-formats">
             {selected.formats.map((f, i) => (
-              <div key={`${f.format}-${i}`} style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s3)', fontSize: 'var(--k-t-sm)' }}>
+              <div key={`${f.format}-${i}`} className="asset-detail-format-zeile">
                 <Measure>{f.format.toUpperCase()}</Measure>
-                <span style={{ color: 'var(--k-ink-soft)' }}>{(f.bytes / 1024).toFixed(0)} KB</span>
-                <div style={{ flex: 1 }} />
+                <span className="asset-detail-format-groesse">{(f.bytes / 1024).toFixed(0)} KB</span>
+                <div className="asset-kopf-spacer" />
                 <Badge hue={formatStatusHue[f.status]}>{formatStatusLabel[f.status]}</Badge>
               </div>
             ))}
           </div>
 
           <Hairline />
-          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
-            Rechte
-          </div>
-          <div data-testid="asset-rights" style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', display: 'grid', gap: 'var(--k-s1)' }}>
+          <div className="asset-detail-label">Rechte</div>
+          <div data-testid="asset-rights" className="asset-detail-rechte">
             <div>Status: {rightsStatusLabel[selected.rights_status] ?? selected.rights_status}</div>
             <div>Öffentliche Nutzung: {selected.public_use_allowed ? 'Erlaubt' : 'Nicht erlaubt'}</div>
           </div>
@@ -600,9 +571,7 @@ export function AssetWorkspace() {
           {selected.dimensions && (
             <>
               <Hairline />
-              <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
-                Masse
-              </div>
+              <div className="asset-detail-label">Masse</div>
               <div data-testid="asset-dimensions">
                 <Measure>
                   {[
@@ -619,17 +588,15 @@ export function AssetWorkspace() {
           )}
 
           <Hairline />
-          <div style={{ fontSize: 'var(--k-t-xs)', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--k-ink-faint)' }}>
-            KosmoData-Bezüge
-          </div>
+          <div className="asset-detail-label">KosmoData-Bezüge</div>
           {selected.kosmodata_refs.length === 0 && (
-            <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Noch keine Referenz verknüpft</span>
+            <span className="asset-detail-leer">Noch keine Referenz verknüpft</span>
           )}
           {selected.kosmodata_refs.length > 0 && (
-            <div data-testid="asset-refs" style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+            <div data-testid="asset-refs" className="asset-detail-ref">
               {selected.kosmodata_refs.map((r, i) => (
-                <div key={`${r.entry_id}-${i}`} style={{ display: 'grid', gap: 'var(--k-s1)', fontSize: 'var(--k-t-sm)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--k-s2)', flexWrap: 'wrap' }}>
+                <div key={`${r.entry_id}-${i}`} className="asset-detail-ref-zeile">
+                  <div className="asset-detail-ref-kopf">
                     <KButton
                       size="sm"
                       tone="ghost"
@@ -640,7 +607,7 @@ export function AssetWorkspace() {
                       {r.entry_id}
                     </KButton>
                     <Badge hue="var(--k-info)">{r.relation.replace(/_/g, ' ')}</Badge>
-                    <div style={{ flex: 1 }} />
+                    <div className="asset-kopf-spacer" />
                     <KButton
                       size="sm"
                       tone="ghost"
@@ -651,10 +618,10 @@ export function AssetWorkspace() {
                       <KIcon name="schliessen" size={14} title="Verknüpfung entfernen" />
                     </KButton>
                   </div>
-                  <div style={{ color: 'var(--k-ink-faint)' }}>
+                  <div className="asset-detail-ref-meta">
                     {kosmodataRefKindLabel[r.kind] ?? r.kind} · {r.review_status.replace(/_/g, ' ')}
                   </div>
-                  {r.notes && <div style={{ fontStyle: 'italic', color: 'var(--k-ink-soft)' }}>{r.notes}</div>}
+                  {r.notes && <div className="asset-detail-ref-notiz">{r.notes}</div>}
                 </div>
               ))}
             </div>
@@ -674,7 +641,7 @@ export function AssetWorkspace() {
           </KButton>
 
           {refPickerOffen && (
-            <div data-testid="asset-ref-picker" style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+            <div data-testid="asset-ref-picker" className="asset-detail-picker">
               <KInput
                 data-testid="asset-ref-picker-suche"
                 placeholder="Referenz suchen: Titel, Ort …"
@@ -683,26 +650,19 @@ export function AssetWorkspace() {
               />
               {refs === null && <KLade text="Referenzen laden …" height={60} />}
               {refs !== null && refTreffer.length === 0 && (
-                <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-faint)' }}>Kein Treffer</span>
+                <span className="asset-detail-leer">Kein Treffer</span>
               )}
               {refTreffer.length > 0 && (
-                <div style={{ display: 'grid', gap: 'var(--k-s2)', maxHeight: 220, overflow: 'auto' }}>
+                <div className="asset-detail-picker-treffer">
                   {refTreffer.map((entry) => (
                     <button
                       key={entry.id}
                       data-testid={`asset-ref-treffer-${entry.id}`}
                       onClick={() => void verknuepfen(entry)}
-                      style={{
-                        all: 'unset',
-                        cursor: 'pointer',
-                        padding: 'var(--k-s2) var(--k-s3)',
-                        borderRadius: 'var(--k-radius-sm)',
-                        border: '1px solid var(--k-line)',
-                        fontSize: 'var(--k-t-sm)',
-                      }}
+                      className="asset-detail-picker-eintrag"
                     >
                       {entry.title}
-                      <span style={{ color: 'var(--k-ink-faint)' }}>
+                      <span className="asset-detail-picker-ort">
                         {' '}
                         · {[entry.city, entry.country].filter(Boolean).join(', ')}
                       </span>
@@ -717,7 +677,7 @@ export function AssetWorkspace() {
           <Measure>{new Date(selected.createdAt).toLocaleString('de-CH')}</Measure>
 
           <Hairline />
-          <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
+          <div className="asset-detail-fuss">
             {selected.asset_type === 'glb_model' && (
               <KButton size="sm" tone="accent" data-testid="asset-detail-ins-modell" onClick={() => insModell(selected)}>
                 Ins Modell
@@ -762,37 +722,24 @@ function MaterialSwatchVorschau({ asset }: { asset: KosmoAsset }) {
     <div
       data-testid="asset-preview-swatch"
       title="Material-Swatch (Platzhalter — Farbwert folgt mit PBR-Daten)"
-      style={{
-        height: 120,
-        borderRadius: 'var(--k-radius-sm)',
-        border: '1px solid var(--k-line)',
-        background: `linear-gradient(135deg, hsl(${hue} 35% 55%), hsl(${hue} 35% 72%))`,
-      }}
+      className="asset-preview-swatch"
+      // Datengetrieben (Hash → Farbton, kein PBR-Wert im Manifest) — der
+      // Verlauf selbst bleibt inline, keine zweite Wahrheitsquelle.
+      style={{ background: `linear-gradient(135deg, hsl(${hue} 35% 55%), hsl(${hue} 35% 72%))` }}
     />
   );
 }
 
 function WireframeVorschau({ kind }: { kind: 'axis_marker' | 'wireframe_component' }) {
   return (
-    <div
-      data-testid="asset-preview-wireframe"
-      style={{
-        height: 120,
-        display: 'grid',
-        placeItems: 'center',
-        gap: 'var(--k-s2)',
-        border: '1px dashed var(--k-line-strong)',
-        borderRadius: 'var(--k-radius-sm)',
-        background: 'var(--k-plan-paper)',
-      }}
-    >
+    <div data-testid="asset-preview-wireframe" className="asset-preview-wireframe">
       <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden>
         <polygon points="20,4 36,12 36,28 20,36 4,28 4,12" fill="none" stroke="var(--k-technik)" strokeWidth="1" />
         <line x1="4" y1="12" x2="20" y2="20" stroke="var(--k-technik)" strokeWidth="1" />
         <line x1="36" y1="12" x2="20" y2="20" stroke="var(--k-technik)" strokeWidth="1" />
         <line x1="20" y1="20" x2="20" y2="36" stroke="var(--k-technik)" strokeWidth="1" />
       </svg>
-      <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <span className="asset-preview-wireframe-label">
         {kind === 'axis_marker' ? 'Achsmarker' : 'Wireframe'}
       </span>
     </div>
@@ -837,5 +784,5 @@ function GlbVorschau({ objekt }: { objekt: KosmoAsset }) {
   }, [objekt]);
 
   if (fehler) return <Messrahmen height={120} caption="Vorschau nicht lesbar — GLB prüfen" />;
-  return <canvas ref={ref} style={{ width: '100%', height: 120, border: '1px solid var(--k-line)', background: 'var(--k-plan-paper)' }} />;
+  return <canvas ref={ref} className="asset-preview-canvas" />;
 }

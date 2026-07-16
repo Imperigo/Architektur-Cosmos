@@ -4,6 +4,7 @@ import { Badge, Hairline, Karteikarte, KButton, KIcon, KInput, KToolbar, Measure
 import { listDocs } from '../prepare/knowledge';
 import { useQuellen } from '../../state/quellen';
 import { journalStore } from '../../state/journal-store';
+import './train.css';
 
 /**
  * KosmoTrain — das Lernprogramm als Oberfläche (Q8, Vision Persona 4):
@@ -11,6 +12,12 @@ import { journalStore } from '../../state/journal-store';
  * das Trainingspaket (JSONL + Rezept). Das eigentliche LoRA-Training
  * läuft auf der HomeStation (docs/KOSMOTRAIN.md) — hier wird der
  * Datensatz gepflegt, ehrlich und ohne Attrappen.
+ *
+ * v0.8.0B / W8c-A (Spez §2/§3, Owner-Entscheid 16.07. «Scope-Blindpunkt jetzt
+ * nachziehen»): reiner Visual-Umbau auf `train.css` (Muster `publish.css`/
+ * `data.css`) — Inline-Styles 20→<5 (Rest: Modul-Hue-Carrier `--_hue`).
+ * **Signal-Audit:** «JSONL exportieren» war bereits die einzige gefüllte
+ * Signal-Fläche (Gesetz 1 schon erfüllt), keine Änderung nötig.
  */
 
 export function TrainWorkspace() {
@@ -56,27 +63,26 @@ export function TrainWorkspace() {
   ];
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: 'var(--k-s5) var(--k-s6)', display: 'grid', gap: 'var(--k-s4)' }}>
-        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
-            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
-            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
-        <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.train} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
-          <KToolbar data-testid="train-werkzeugleiste" style={{ flexWrap: 'wrap', background: 'transparent', borderBottom: 'none' }}>
+    <div className="train-viewport">
+      <div className="train-content">
+        {/* Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass + Modul-Tönung),
+            Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div className="k-glass train-kopf" style={{ ['--_hue' as string]: moduleHue.train }}>
+          <KToolbar data-testid="train-werkzeugleiste" className="train-kopf-leiste">
             <Badge hue={moduleHue.train}>KosmoTrain</Badge>
-            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+            <span className="train-kopf-satz">
               Das System lernt DICH — Journal kuratieren, Trainingspaket schnüren.
             </span>
-            <div style={{ flex: 1 }} />
-            {/* v0.7.8 Welle D PD3: dezenter Train-Hue-Glow (35%) auf der
-                Primäraktion — reine Optik, Logik/Testid unverändert. */}
+            <div className="train-kopf-spacer" />
+            {/* Dezenter Train-Hue-Glow (35%) auf der Primäraktion — reine
+                Optik, Logik/Testid unverändert. */}
             <KButton
               size="sm"
               tone="accent"
               onClick={exportJsonl}
               data-testid="train-export"
               disabled={eintraege.length === 0}
-              style={{ boxShadow: `0 0 14px color-mix(in srgb, ${moduleHue.train} 35%, transparent)` }}
+              className="train-export-knopf"
             >
               JSONL exportieren
             </KButton>
@@ -84,24 +90,14 @@ export function TrainWorkspace() {
         </div>
         <Hairline />
 
-        {/* Lernstand — v0.7.8 Welle D PD3: Glass + dezente Train-Hue-Note (40%). */}
-        <div
-          className="k-glass"
-          style={{
-            display: 'flex',
-            gap: 'var(--k-s5)',
-            alignItems: 'baseline',
-            flexWrap: 'wrap',
-            padding: 'var(--k-s4)',
-            borderTopColor: `color-mix(in srgb, ${moduleHue.train} 40%, var(--k-glass-stroke, var(--k-line)))`,
-            borderTopWidth: 2,
-          }}
-          data-testid="train-stand"
-        >
-          <span className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Lernstand</span>
+        {/* Lernstand — Glass + dezente Train-Hue-Note (40%). */}
+        <div className="k-glass train-stand" style={{ ['--_hue' as string]: moduleHue.train }} data-testid="train-stand">
+          <span className="k-titel train-stand-titel">Lernstand</span>
           <Measure>{eintraege.length} Journal-Einträge</Measure>
-          <Measure style={{ color: 'var(--k-success)' }}>{gut} 👍</Measure>
-          <Measure style={{ color: 'var(--k-danger)' }}>{eintraege.length - gut} 👎</Measure>
+          {/* `Measure` (kosmo-ui) nimmt kein `className` — die Farbe erbt
+              darum über einen klassenbasierten Wrapper. */}
+          <span className="train-stand-gut"><Measure>{gut} 👍</Measure></span>
+          <span className="train-stand-schlecht"><Measure>{eintraege.length - gut} 👎</Measure></span>
           <Measure>{wissen ? `${wissen.docs} Grundlagen-Dokumente` : '… Wissensbasis'}</Measure>
         </div>
 
@@ -112,18 +108,12 @@ export function TrainWorkspace() {
             caption="Noch nichts zu kuratieren — 👍/👎 unter Kosmo-Antworten sammelt Beispiele"
           />
         ) : (
-          // v0.7.8 Welle D PD3: Glass-Rahmen + dezente Train-Hue-Note (40%)
-          // um die Kuration-Liste — die einzelnen Karteikarte-Einträge
-          // behalten ihre eigene (geschnittene) Kartenoptik unangetastet.
+          // Glass-Rahmen + dezente Train-Hue-Note (40%) um die Kuration-
+          // Liste — die einzelnen Karteikarte-Einträge behalten ihre eigene
+          // (geschnittene) Kartenoptik unangetastet.
           <div
-            className="k-glass"
-            style={{
-              display: 'grid',
-              gap: 'var(--k-s2)',
-              padding: 'var(--k-s3)',
-              borderTopColor: `color-mix(in srgb, ${moduleHue.train} 40%, var(--k-glass-stroke, var(--k-line)))`,
-              borderTopWidth: 2,
-            }}
+            className="k-glass train-kuration"
+            style={{ ['--_hue' as string]: moduleHue.train }}
             data-testid="train-kuration"
           >
             {[...eintraege].reverse().map((e) => {
@@ -133,14 +123,14 @@ export function TrainWorkspace() {
                 key={e.ts}
                 ref={zitiert ? sprungRef : undefined}
                 {...(zitiert ? { 'data-testid': 'quelle-sprung-journal' } : {})}
-                style={zitiert ? { outline: '2px solid var(--k-accent)', borderRadius: 'var(--k-radius-sm)' } : undefined}
+                className={zitiert ? 'train-kuration-eintrag--zitiert' : undefined}
               >
               <Karteikarte>
-                <div style={{ display: 'grid', gap: 'var(--k-s2)', fontSize: 'var(--k-t-sm)' }}>
-                  <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline' }}>
+                <div className="train-kuration-zeile">
+                  <div className="train-kuration-kopf">
                     <span>{e.sentiment === 'gut' ? '👍' : '👎'}</span>
-                    <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>{e.context}</span>
-                    <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                    <span className="train-kuration-text">{e.context}</span>
+                    <span className="train-kuration-zeit">
                       {e.ts.slice(0, 16).replace('T', ' ')}
                     </span>
                     <KButton
@@ -177,14 +167,14 @@ export function TrainWorkspace() {
         <Hairline />
 
         {/* Trainings-Zyklus */}
-        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-          <span className="k-titel" style={{ fontSize: 'var(--k-t-lg)' }}>Trainings-Zyklus (HomeStation)</span>
+        <div className="train-zyklus">
+          <span className="k-titel train-zyklus-titel">Trainings-Zyklus (HomeStation)</span>
           {REZEPT.map((r, i) => (
             <Karteikarte key={i} nr={i + 1}>
-              <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>{r}</span>
+              <span className="train-zyklus-text">{r}</span>
             </Karteikarte>
           ))}
-          <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-xs)' }}>
+          <span className="train-zyklus-fuss">
             Ehrlich: Schritte 3–5 brauchen die 5090 — das volle Rezept steht in docs/KOSMOTRAIN.md.
             Hier entsteht der Datensatz; trainiert wird zuhause.
           </span>

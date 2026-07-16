@@ -1,0 +1,274 @@
+/* KosmoPrepare (v0.8.0B / W8c-A, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
+ * Schicht für `PrepareWorkspace.tsx`. Reiner Visual-Umbau (Muster
+ * `modules/publish/publish.css`, `modules/data/data.css`): ersetzt die
+ * vorherigen Inline-Styles durch Klassen + Tokens. Modul-Hue
+ * (`moduleHue.prepare`) wird wie in `KCard`/`KPill`/`k-publish-*` als
+ * CSS-Custom-Property `--_hue` PRO INSTANZ übergeben — kein beanstandeter
+ * Inline-Style, sondern derselbe Token-Carrier wie in den Vorwellen. */
+
+.prepare-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  padding: var(--k-s6);
+}
+.prepare-content {
+  max-width: 860px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s5);
+}
+.prepare-w-full {
+  width: 100%;
+}
+
+/* Kosmos-Kopf — Glass + Modul-Tönung (Owner-Fix identisch zu publish/data). */
+.prepare-kopf {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+.prepare-kopf-leiste {
+  background: transparent;
+  border-bottom: none;
+}
+.prepare-kopf-satz {
+  font-size: var(--k-t-md);
+  color: var(--k-ink-faint);
+}
+
+/* Quellensprung — der von Kosmo zitierte Abschnitt, hervorgehoben. */
+.prepare-sprung {
+  padding: var(--k-s4);
+  border-color: var(--k-accent);
+  display: grid;
+  gap: var(--k-s2);
+}
+.prepare-sprung-kopf {
+  display: flex;
+  align-items: baseline;
+  gap: var(--k-s3);
+}
+.prepare-sprung-titel {
+  font-size: var(--k-t-sm);
+  color: var(--k-accent);
+}
+.prepare-sprung-quelle {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+.prepare-sprung-text {
+  font-size: var(--k-t-md);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+/* Aufnahme-Zone (Drag&Drop). */
+.prepare-ingest {
+  padding: var(--k-s6);
+  text-align: center;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--_hue) 40%, var(--k-line-strong));
+  background: var(--k-glass-fill, var(--k-surface));
+}
+.prepare-ingest--drag {
+  border-color: var(--k-accent);
+  background: var(--k-accent-wash);
+}
+.prepare-ingest-titel {
+  font-weight: 550;
+  margin-bottom: var(--k-s2);
+}
+.prepare-ingest-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+  margin-bottom: var(--k-s4);
+}
+.prepare-ingest-status {
+  margin-top: var(--k-s3);
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.prepare-ingest-fehler {
+  margin-top: var(--k-s3);
+  font-size: var(--k-t-sm);
+  color: var(--k-danger, #b3462e);
+}
+
+/* Suchfeld + Treffer. */
+.prepare-treffer-liste {
+  display: grid;
+  gap: var(--k-s3);
+  margin-top: var(--k-s3);
+}
+.prepare-treffer {
+  padding: var(--k-s3) var(--k-s4);
+  background: var(--k-glass-fill, var(--k-surface));
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+  border-top-width: 2px;
+}
+.prepare-treffer-kopf {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+  margin-bottom: var(--k-s1);
+}
+.prepare-treffer-text {
+  font-size: var(--k-t-md);
+  line-height: 1.55;
+}
+
+/* Sektionen (Aufgenommen/Basis) + Dokument-Zeile. */
+.prepare-sektion {
+  display: grid;
+  gap: var(--k-s3);
+}
+.prepare-sektion-titel {
+  font-weight: 550;
+  font-size: var(--k-t-md);
+}
+.prepare-doc-zeile {
+  padding: var(--k-s3) var(--k-s4);
+  display: flex;
+  align-items: center;
+  gap: var(--k-s4);
+}
+.prepare-doc-info {
+  min-width: 0;
+  flex: 1;
+}
+.prepare-doc-name {
+  font-weight: 550;
+  font-size: var(--k-t-md);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.prepare-doc-meta {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+
+/* Dossier (Phase 0). */
+.prepare-dossier {
+  display: grid;
+  gap: var(--k-s3);
+  padding: var(--k-s4);
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+  border-top-width: 2px;
+}
+.prepare-dossier-titel {
+  font-size: var(--k-t-md);
+}
+.prepare-dossier-satz {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+.prepare-dossier-zeile {
+  display: flex;
+  gap: var(--k-s2);
+  align-items: center;
+}
+.prepare-dossier-input {
+  flex: 1;
+}
+.prepare-dossier-fuss {
+  display: flex;
+  gap: var(--k-s3);
+}
+.prepare-dossier-spacer {
+  flex: 1;
+}
+.prepare-dossier-eintrag--zitiert {
+  outline: 2px solid var(--k-accent);
+  border-radius: var(--k-radius-sm);
+}
+.prepare-dossier-typ {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  font-weight: 700;
+}
+.prepare-dossier-typ--dont {
+  color: var(--k-danger);
+}
+.prepare-dossier-typ--do {
+  color: var(--k-success);
+}
+.prepare-dossier-typ--fakt {
+  color: var(--k-ink-faint);
+}
+.prepare-dossier-eintrag-text {
+  color: var(--k-ink-soft);
+  line-height: 1.45;
+}
+
+/* OneDrive-Sektion. */
+.prepare-drive {
+  display: grid;
+  gap: var(--k-s3);
+}
+.prepare-drive-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.prepare-drive-titel {
+  font-weight: 550;
+  font-size: var(--k-t-md);
+}
+.prepare-drive-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.prepare-drive-anmelden {
+  display: flex;
+  gap: var(--k-s3);
+}
+.prepare-drive-anmelden-feld {
+  flex: 1;
+}
+.prepare-drive-pfad {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+  font-size: var(--k-t-sm);
+}
+.prepare-drive-pfad-trenner {
+  color: var(--k-ink-faint);
+}
+.prepare-drive-pfad-knopf {
+  all: unset;
+  cursor: pointer;
+  color: var(--k-accent);
+}
+.prepare-drive-liste {
+  display: grid;
+  gap: var(--k-s2);
+  max-height: 260px;
+  overflow: auto;
+}
+.prepare-drive-item {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  font-size: var(--k-t-md);
+  padding: var(--k-s1);
+}
+.prepare-drive-item-ordner {
+  all: unset;
+  cursor: pointer;
+  flex: 1;
+}
+.prepare-drive-item-datei {
+  flex: 1;
+}
+.prepare-drive-item-datei--gesperrt {
+  color: var(--k-ink-faint);
+}
+.prepare-drive-leer {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+.prepare-drive-status {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}

@@ -14,6 +14,7 @@ import {
 } from '../../state/auftragsbuch';
 import { bridgeVermutlichCspGeblockt, istAuthFehler } from '../vis/vis-jobs';
 import { useProject } from '../../state/project-store';
+import './dev.css';
 
 /**
  * KosmoDev (V1-Finish P3) — das Auftragsbuch: «Verbesserungen sprechen».
@@ -24,6 +25,13 @@ import { useProject } from '../../state/project-store';
  * V2-Technik Block 2 / AB3 (Buildplan E4): daneben schliesst «An HomeStation
  * übergeben» den Kreis über die Bridge (Job-Typ `dev-`) — der Download-Export
  * bleibt unverändert der Offline-Fallback (Buildplan Abnahme-Kriterium 5).
+ *
+ * v0.8.0B / W8c-A (Spez §2/§3, Owner-Entscheid 16.07. «Scope-Blindpunkt jetzt
+ * nachziehen»): reiner Visual-Umbau auf `dev.css` (Muster `publish.css`/
+ * `data.css`) — Inline-Styles 24→<5. **Signal-Audit:** «An HomeStation
+ * übergeben» bleibt die EINE gefüllte Signal-Fläche (schliesst den Kreis über
+ * die Bridge); «Fable-Workorder (.md)» ist der dokumentierte Offline-
+ * Fallback → `tone="quiet"`.
  */
 
 /** Ehrliche Statuszeile je gemerktem Dev-Job (Buildplan E5: `queued` heisst
@@ -181,14 +189,14 @@ export function DevWorkspace() {
   const offene = (auftraege ?? []).filter((a) => a.status === 'offen').length;
 
   return (
-    <div className="k-einblenden" style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: 'var(--k-s5)' }}>
-      <div style={{ maxWidth: 880, margin: '0 auto', display: 'grid', gap: 'var(--k-s4)' }}>
-        <KToolbar data-testid="dev-werkzeugleiste" style={{ flexWrap: 'wrap' }}>
+    <div className="k-einblenden dev-viewport">
+      <div className="dev-content">
+        <KToolbar data-testid="dev-werkzeugleiste" className="dev-kopf-leiste">
           <Badge hue={moduleHue.dev}>KosmoDev</Badge>
-          <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+          <span className="dev-kopf-satz">
             Auftragsbuch — {offene} offen
           </span>
-          <div style={{ flex: 1 }} />
+          <div className="dev-kopf-spacer" />
           <KButton
             size="sm"
             tone="accent"
@@ -198,35 +206,35 @@ export function DevWorkspace() {
           >
             <KIcon name="pfeil-oben" size={14} /> An HomeStation übergeben
           </KButton>
-          <KButton size="sm" tone="accent" onClick={exportieren} data-testid="workorder-export" disabled={offene === 0}>
+          <KButton size="sm" tone="quiet" onClick={exportieren} data-testid="workorder-export" disabled={offene === 0}>
             <KIcon name="export" size={14} /> Fable-Workorder (.md)
           </KButton>
         </KToolbar>
 
         {devJobs.length > 0 && (
-          <Panel data-testid="dev-job-status" style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3) var(--k-s4)' }}>
+          <Panel data-testid="dev-job-status" className="dev-job-status">
             {devJobs.map((p) => (
-              <div key={p.jobId} style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', fontSize: 'var(--k-t-sm)' }}>
+              <div key={p.jobId} className="dev-job-zeile">
                 <Badge hue={p.problem ? 'var(--k-warning)' : 'var(--k-info)'}>{p.jobId}</Badge>
-                <span style={{ color: 'var(--k-ink-soft)' }}>{devJobLabel(p)}</span>
+                <span className="dev-job-text">{devJobLabel(p)}</span>
               </div>
             ))}
           </Panel>
         )}
 
-        <Panel style={{ display: 'grid', gap: 'var(--k-s3)' }}>
-          <span style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>
+        <Panel className="dev-erfassen">
+          <span className="dev-erfassen-hinweis">
             Verbesserung erfassen — oder im Kosmo-Panel «⚑» drücken bzw. @kosmodev sagen,
             was besser werden soll (Kosmo strukturiert Gesprochenes selbst ins Buch).
           </span>
-          <div style={{ display: 'flex', gap: 'var(--k-s3)' }}>
+          <div className="dev-erfassen-zeile">
             <KInput
               data-testid="auftrag-text"
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && erfassen()}
               placeholder="z.B. «Im Grundriss sollen Türanschläge wählbar sein — Werkzeugleiste Design»"
-              style={{ flex: 1 }}
+              className="dev-erfassen-feld"
             />
             <KButton size="sm" tone="quiet" onClick={erfassen} data-testid="auftrag-erfassen">
               <KIcon name="fahne" size={14} /> Erfassen
@@ -238,37 +246,34 @@ export function DevWorkspace() {
         {auftraege !== null && auftraege.length === 0 && (
           <Messrahmen height={220} caption="Das Buch ist leer — jede erfasste Verbesserung erscheint hier" />
         )}
-        <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+        <div className="dev-liste">
           {(auftraege ?? []).map((a) => (
-            <Panel key={a.id} style={{ display: 'grid', gap: 'var(--k-s2)', padding: 'var(--k-s3) var(--k-s4)' }} data-testid="auftrag-karte">
-              <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Panel key={a.id} className="dev-karte" data-testid="auftrag-karte">
+              <div className="dev-karte-kopf">
                 <Badge hue={STATUS_HUE[a.status]}>{a.status}</Badge>
                 <Badge hue="var(--k-ink-faint)">{a.station}</Badge>
-                <span style={{ fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>{QUELLE_LABEL[a.quelle]}</span>
-                <div style={{ flex: 1 }} />
+                <span className="dev-karte-quelle">{QUELLE_LABEL[a.quelle]}</span>
+                <div className="dev-karte-spacer" />
                 <Measure>{new Date(a.ts).toLocaleString('de-CH')}</Measure>
               </div>
-              <div style={{ fontSize: 'var(--k-t-md)' }}>{a.text}</div>
-              {a.ort && <div style={{ fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)' }}>wo: {a.ort}</div>}
+              <div className="dev-karte-text">{a.text}</div>
+              {a.ort && <div className="dev-karte-ort">wo: {a.ort}</div>}
               {a.ergebnis && (
-                <div
-                  data-testid="auftrag-ergebnis"
-                  style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'center', flexWrap: 'wrap', fontSize: 'var(--k-t-sm)' }}
-                >
+                <div data-testid="auftrag-ergebnis" className="dev-karte-ergebnis">
                   <Badge hue="var(--k-success)">
                     {a.ergebnis.worker}
                     {a.ergebnis.worker === 'fake-worker' ? ' · Simulation' : ''}
                   </Badge>
                   {a.ergebnis.commit && (
-                    <span style={{ fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>
+                    <span className="dev-karte-commit">
                       Commit {a.ergebnis.commit}
                     </span>
                   )}
-                  {a.ergebnis.notiz && <span style={{ color: 'var(--k-ink-soft)' }}>{a.ergebnis.notiz}</span>}
+                  {a.ergebnis.notiz && <span className="dev-karte-notiz">{a.ergebnis.notiz}</span>}
                 </div>
               )}
               <Hairline />
-              <div style={{ display: 'flex', gap: 'var(--k-s2)' }}>
+              <div className="dev-karte-status-zeile">
                 {(['offen', 'an-worker', 'erledigt'] as const).map((s) => (
                   <KButton
                     key={s}
@@ -279,7 +284,7 @@ export function DevWorkspace() {
                     {s}
                   </KButton>
                 ))}
-                <div style={{ flex: 1 }} />
+                <div className="dev-karte-spacer" />
                 <KButton
                   size="sm"
                   tone="ghost"

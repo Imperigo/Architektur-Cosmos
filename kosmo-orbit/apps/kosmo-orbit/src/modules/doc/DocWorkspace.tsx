@@ -4,11 +4,19 @@ import { Badge, Hairline, Karteikarte, KTabs, KToolbar, Measure, Messrahmen, mod
 import { DiagnosePanel } from '../../shell/Diagnose';
 import { journalStore } from '../../state/journal-store';
 import { entscheidFarbe, RADAR_BEREICHE, RADAR_STAND, TECH_RADAR } from './tech-radar';
+import './doc.css';
 
 /**
  * KosmoDoc — der Projektdoktor als eigenes Modul (Owner-Q24, Vision Persona 3):
  * Selbstdiagnose, Hilfe (Werkzeug-Wissen der App selbst) und Berichte
  * (Lernjournal — echte Daten, keine Attrappen).
+ *
+ * v0.8.0B / W8c-A (Spez §2/§3, Owner-Entscheid 16.07. «Scope-Blindpunkt jetzt
+ * nachziehen»): reiner Visual-Umbau auf `doc.css` (Muster `publish.css`/
+ * `data.css`) — Inline-Styles 33→<5 (Rest: Modul-Hue-Carrier `--_hue`).
+ * **Signal-Audit:** KosmoDoc ist reine Diagnose/Lese-Station ohne
+ * datenverändernde Aktion — bewusst KEINE gefüllte Signal-Fläche (Gesetz 1
+ * verlangt eine Primäraktion nur, wo eine existiert).
  */
 
 type Tab = 'diagnose' | 'hilfe' | 'berichte' | 'radar';
@@ -79,27 +87,26 @@ export function DocWorkspace() {
   const gut = eintraege.filter((e) => e.sentiment === 'gut').length;
 
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'auto' }}>
-      <div style={{ maxWidth: 860, margin: '0 auto', padding: 'var(--k-s5) var(--k-s6)', display: 'grid', gap: 'var(--k-s4)' }}>
-        {/* v0.7.7 Stream C1: Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass +
-            Modul-Tönung, analog dem additiven Kosmos-Token-Fundament aus
-            v0.7.6), Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
-        <div className="k-glass" style={{ borderTopColor: `color-mix(in srgb, ${moduleHue.draw} 65%, var(--k-glass-stroke, var(--k-line)))`, borderTopWidth: 2 }}>
-          <KToolbar data-testid="doc-werkzeugleiste" style={{ flexWrap: 'wrap', background: 'transparent', borderBottom: 'none' }}>
+    <div className="doc-viewport">
+      <div className="doc-content">
+        {/* Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass + Modul-Tönung),
+            Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
+        <div className="k-glass doc-kopf" style={{ ['--_hue' as string]: moduleHue.draw }}>
+          <KToolbar data-testid="doc-werkzeugleiste" className="doc-kopf-leiste">
             <Badge hue={moduleHue.draw}>KosmoDoc</Badge>
-            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-md)' }}>
+            <span className="doc-kopf-satz">
               Der Projektdoktor — Diagnose, Hilfe, Berichte.
             </span>
-            <div style={{ flex: 1 }} />
+            <div className="doc-kopf-spacer" />
             <KTabs items={TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as Tab)} size="sm" />
           </KToolbar>
         </div>
         <Hairline />
 
         {tab === 'diagnose' && (
-          <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+          <div className="doc-tab-inhalt">
             <DiagnosePanel />
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+            <span className="doc-diagnose-hinweis">
               Prüft Kern, Ableitung, Kosmo-LLM, Bridge, Wissensbasis und Speicher — mit konkretem
               Befund statt grüner Lampe.
             </span>
@@ -107,12 +114,12 @@ export function DocWorkspace() {
         )}
 
         {tab === 'hilfe' && (
-          <div style={{ display: 'grid', gap: 'var(--k-s3)' }}>
+          <div className="doc-tab-inhalt">
             {HILFE.map((h, i) => (
               <Karteikarte key={h.titel} nr={i + 1}>
-                <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-                  <div style={{ fontFamily: 'var(--k-font-mono)', fontWeight: 700, fontSize: 'var(--k-t-md)' }}>{h.titel}</div>
-                  <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 'var(--k-s2)', fontSize: 'var(--k-t-sm)', color: 'var(--k-ink-soft)', lineHeight: 1.5 }}>
+                <div className="doc-hilfe-karte">
+                  <div className="doc-hilfe-titel">{h.titel}</div>
+                  <ul className="doc-hilfe-liste">
                     {h.punkte.map((p) => (
                       <li key={p}>{p}</li>
                     ))}
@@ -120,51 +127,44 @@ export function DocWorkspace() {
                 </div>
               </Karteikarte>
             ))}
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+            <span className="doc-hilfe-fuss">
               Für alles andere: frag Kosmo direkt im Panel rechts — er kennt Modell und Werkzeuge.
             </span>
           </div>
         )}
 
         {tab === 'radar' && (
-          <div style={{ display: 'grid', gap: 'var(--k-s4)' }} data-testid="doc-radar">
-            <span style={{ color: 'var(--k-ink-soft)', fontSize: 'var(--k-t-sm)', lineHeight: 1.5 }}>
+          <div className="doc-tab-inhalt doc-radar-tab" data-testid="doc-radar">
+            <span className="doc-radar-intro">
               Worauf diese Software technisch steht — und was beobachtet wird. {RADAR_STAND}.
               Posten mit ⚠ stammen aus den Notion-Scans und sind noch nicht selbst verifiziert.
             </span>
             {RADAR_BEREICHE.map((bereich) => (
-              <div key={bereich} style={{ display: 'grid', gap: 'var(--k-s2)' }}>
-                <div className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>{bereich}</div>
-                {/* v0.7.8 Welle D PD3: Glass + dezente Doc-Hue-Note (40%,
-                    passend zum Stationskopf, der bewusst moduleHue.draw
-                    trägt) je Radar-Zeile — reine Kartenoptik. */}
+              <div key={bereich} className="doc-radar-abschnitt">
+                <div className="k-titel doc-radar-titel">{bereich}</div>
+                {/* Glass + dezente Doc-Hue-Note (40%, passend zum
+                    Stationskopf, der bewusst moduleHue.draw trägt) je
+                    Radar-Zeile — reine Kartenoptik. */}
                 {TECH_RADAR.filter((p) => p.bereich === bereich).map((p) => (
                   <div
                     key={p.baustein}
-                    className="k-glass"
+                    className="k-glass doc-radar-posten"
                     data-testid="radar-posten"
-                    style={{
-                      display: 'flex',
-                      gap: 'var(--k-s3)',
-                      alignItems: 'baseline',
-                      fontSize: 'var(--k-t-sm)',
-                      padding: 'var(--k-s2) var(--k-s3)',
-                      borderTopColor: `color-mix(in srgb, ${moduleHue.draw} 40%, var(--k-glass-stroke, var(--k-line)))`,
-                      borderTopWidth: 2,
-                    }}
+                    style={{ ['--_hue' as string]: moduleHue.draw }}
                   >
                     <span
-                      style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', fontWeight: 700, color: entscheidFarbe(p.entscheid), minWidth: 62 }}
+                      className="doc-radar-entscheid"
+                      style={{ color: entscheidFarbe(p.entscheid) }}
                       title={p.unverifiziert ? 'Scan-Aussage — noch nicht selbst verifiziert' : undefined}
                     >
                       {p.entscheid}
                       {p.unverifiziert ? ' ⚠' : ''}
                     </span>
-                    <span style={{ fontWeight: 600, minWidth: 170 }}>{p.baustein}</span>
-                    <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>
+                    <span className="doc-radar-baustein">{p.baustein}</span>
+                    <span className="doc-radar-kommentar">
                       {p.kommentar}
                       {p.paket ? (
-                        <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                        <span className="doc-radar-paket">
                           {' '}· {p.paket}{p.lizenz ? ` (${p.lizenz})` : ''}
                         </span>
                       ) : null}
@@ -173,32 +173,28 @@ export function DocWorkspace() {
                 ))}
               </div>
             ))}
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+            <span className="doc-radar-fuss">
               Vollständige, begründete Fassung inkl. Lizenz-Politik: kosmo-orbit/docs/TECH-RADAR.md.
             </span>
           </div>
         )}
 
         {tab === 'berichte' && (
-          // v0.7.8 Welle D PD3: Glass-Rahmen + dezente Doc-Hue-Note (40%,
-          // passend zum Stationskopf) — die einzelnen Karteikarte-Einträge
-          // behalten ihre eigene Kartenoptik unangetastet.
+          // Glass-Rahmen + dezente Doc-Hue-Note (40%, passend zum
+          // Stationskopf) — die einzelnen Karteikarte-Einträge behalten ihre
+          // eigene Kartenoptik unangetastet.
           <div
-            className="k-glass"
-            style={{
-              display: 'grid',
-              gap: 'var(--k-s3)',
-              padding: 'var(--k-s4)',
-              borderTopColor: `color-mix(in srgb, ${moduleHue.draw} 40%, var(--k-glass-stroke, var(--k-line)))`,
-              borderTopWidth: 2,
-            }}
+            className="k-glass doc-berichte"
+            style={{ ['--_hue' as string]: moduleHue.draw }}
             data-testid="doc-berichte"
           >
-            <div style={{ display: 'flex', gap: 'var(--k-s5)', alignItems: 'baseline' }}>
-              <span className="k-titel" style={{ fontSize: 'var(--k-t-md)' }}>Lernjournal</span>
+            <div className="doc-berichte-kopf">
+              <span className="k-titel doc-berichte-titel">Lernjournal</span>
               <Measure>{eintraege.length} Einträge</Measure>
-              <Measure style={{ color: 'var(--k-success)' }}>{gut} 👍</Measure>
-              <Measure style={{ color: 'var(--k-danger)' }}>{eintraege.length - gut} 👎</Measure>
+              {/* `Measure` (kosmo-ui) nimmt kein `className` — die Farbe
+                  erbt darum über einen klassenbasierten Wrapper. */}
+              <span className="doc-berichte-gut"><Measure>{gut} 👍</Measure></span>
+              <span className="doc-berichte-schlecht"><Measure>{eintraege.length - gut} 👎</Measure></span>
             </div>
             {eintraege.length === 0 ? (
               <Messrahmen
@@ -206,16 +202,16 @@ export function DocWorkspace() {
                 caption="Noch keine Einträge — 👍/👎 unter Kosmo-Antworten füttert das Journal (Q8: daraus wird der LoRA-Trainingssatz)"
               />
             ) : (
-              <div style={{ display: 'grid', gap: 'var(--k-s2)' }}>
+              <div className="doc-berichte-liste">
                 {[...eintraege].reverse().slice(0, 12).map((e, i) => (
                   <Karteikarte key={`${e.ts}-${i}`}>
-                    <div style={{ display: 'flex', gap: 'var(--k-s3)', alignItems: 'baseline', fontSize: 'var(--k-t-sm)' }}>
+                    <div className="doc-berichte-eintrag">
                       <span>{e.sentiment === 'gut' ? '👍' : '👎'}</span>
-                      <span style={{ flex: 1, color: 'var(--k-ink-soft)', lineHeight: 1.45 }}>
+                      <span className="doc-berichte-eintrag-text">
                         {e.context}
                         {e.note ? ` — «${e.note}»` : ''}
                       </span>
-                      <span style={{ fontFamily: 'var(--k-font-mono)', fontSize: 'var(--k-t-xs)', color: 'var(--k-ink-faint)' }}>
+                      <span className="doc-berichte-eintrag-zeit">
                         {e.ts.slice(0, 16).replace('T', ' ')}
                       </span>
                     </div>
@@ -223,7 +219,7 @@ export function DocWorkspace() {
                 ))}
               </div>
             )}
-            <span style={{ color: 'var(--k-ink-faint)', fontSize: 'var(--k-t-sm)' }}>
+            <span className="doc-berichte-fuss">
               Export als JSONL im Kosmo-Panel (Zahnrad) — das Rezept für den Trainings-Zyklus auf der
               HomeStation steht in docs/KOSMOTRAIN.md. Code-Qualität wacht in der CI (Unit + Golden +
               E2E bei jedem Push).
