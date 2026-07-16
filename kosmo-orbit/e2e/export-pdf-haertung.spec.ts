@@ -9,8 +9,10 @@ import { readFileSync } from 'node:fs';
  *  - Der Nutzer SIEHT den (Plancode-basierten) Export-Dateinamen VOR dem
  *    Export (`export-dateiname` im `PlankopfPanel`, additiv, byte-gleich
  *    zum tatsächlichen `exportSetSvgs()`-Dateinamen).
- *  - Set-PDF-Export mit vollen Stammdaten + Büro-Logo (PNG) läuft durch:
- *    Datei existiert, beginnt mit `%PDF`, ist über einer Mindestgrösse.
+ *  - Set-PDF-Export mit vollen Stammdaten + Büro-Logo (JPG — seit v0.8.1 P7,
+ *    `docs/V081-SPEZ.md` §6.1/§7(e) C-24, akzeptiert `publish.bueroSetzen`
+ *    SVG/JPG statt PNG) läuft durch: Datei existiert, beginnt mit `%PDF`,
+ *    ist über einer Mindestgrösse.
  *  - Text-Layer-Beweis: der Plancode-String erscheint im PDF-Textlayer
  *    (svg2pdf rendert den Plankopf als echten Vektortext, nicht als Bild —
  *    `pdfjs-dist` liest ihn zurück, derselbe Font-Pfad wie
@@ -32,11 +34,14 @@ declare global {
   }
 }
 
-/** Mini-1×1-PNG (dieselbe Fixture wie `plankopf-commands.test.ts`/
- * `haerte.test.ts` — reicht, um den echten PNG-IHDR-Weg + die svg2pdf-
- * Bildeinbettung zu beweisen, ohne eine echte Logodatei ins Repo zu legen). */
-const MINI_PNG_BASE64 =
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+/** Echtes Mini-4×4-JPEG (v0.8.1 P7, `docs/V081-SPEZ.md` §6.1/§7(e) C-24:
+ * `publish.bueroSetzen` akzeptiert seither SVG/JPG statt PNG, s.
+ * `plankopf-commands.test.ts`/`plankopf.spec.ts`) — ECHTE, gültige JPEG-Bytes
+ * (nicht nur ein Mime-Label wie beim reinen Kernel-Guard-Test), damit
+ * svg2pdf/der Browser das Bild tatsächlich dekodieren und als
+ * `paintImageXObject` einbetten kann. */
+const MINI_JPEG_BASE64 =
+  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAEAAQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDlaKKK+ZP3A//Z';
 
 async function ladeUndOeffnePublish(page: import('@playwright/test').Page) {
   await page.addInitScript(() => {
@@ -115,9 +120,9 @@ test('Set-PDF mit Stammdaten + Büro-Logo: Datei existiert, %PDF-Header, Plancod
   await page.locator('[data-testid="plankopf-inhalt"]').blur();
 
   await page.setInputFiles('[data-testid="plankopf-buero-logo"]', {
-    name: 'logo.png',
-    mimeType: 'image/png',
-    buffer: Buffer.from(MINI_PNG_BASE64, 'base64'),
+    name: 'logo.jpg',
+    mimeType: 'image/jpeg',
+    buffer: Buffer.from(MINI_JPEG_BASE64, 'base64'),
   });
   await expect(page.locator('[data-testid="meldung-erfolg"]')).toContainText('Büro-Logo aktualisiert');
 
@@ -180,4 +185,44 @@ test('Set-PDF mit Stammdaten + Büro-Logo: Datei existiert, %PDF-Header, Plancod
   // das zu beweisen.
   const opList = await pdfPage.getOperatorList();
   expect(opList.fnArray).toContain(pdfjsLib.OPS.paintImageXObject);
+});
+
+// v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-25 «Einzelblatt-PDF mit
+// Plancode-Namen», ROADMAP 378-Kandidat «Bündel-PDF bewusst ohne Einzel-
+// Plancode») — die neue «Blatt PDF»-Aktion (`export-blatt-pdf`,
+// `PublishWorkspace.tsx`) exportiert NUR das aktive Blatt und benennt die
+// Datei nach dessen eigenem Plancode (`exportSheetPdf()`/
+// `pdfBlattDateiname()`, `export-sheets.ts`) — anders als «Plansatz PDF»
+// (getestet oben), dessen Dateiname unverändert der Projekt-/Set-Name bleibt.
+test('Einzelblatt-PDF («Blatt PDF»): Dateiname trägt den Plancode, %PDF-Header vorhanden', async ({ page }) => {
+  await ladeUndOeffnePublish(page);
+  await page.evaluate(() => window.__kosmo.run('design.projektNameSetzen', { name: 'Testprojekt ASCII' }));
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="publish-plankopf"]');
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
+
+  await page.fill('[data-testid="plankopf-buero-kuerzel"]', 'MAA');
+  await page.locator('[data-testid="plankopf-buero-kuerzel"]').blur();
+  await page.fill('[data-testid="plankopf-projekt-code"]', 'SEE');
+  await page.locator('[data-testid="plankopf-projekt-code"]').blur();
+  await page.fill('[data-testid="plankopf-disziplin"]', 'A');
+  await page.locator('[data-testid="plankopf-disziplin"]').blur();
+  await page.fill('[data-testid="plankopf-geschoss"]', 'EG');
+  await page.locator('[data-testid="plankopf-geschoss"]').blur();
+  await page.fill('[data-testid="plankopf-plan-nummer"]', '101');
+  await page.locator('[data-testid="plankopf-plan-nummer"]').blur();
+  await page.click('[data-testid="plankopf-schliessen"]');
+
+  const [download] = await Promise.all([
+    page.waitForEvent('download'),
+    page.click('[data-testid="export-blatt-pdf"]'),
+  ]);
+  // Plancode im Dateinamen (nicht der Projekt-/Set-Name wie beim Bündel-PDF).
+  expect(download.suggestedFilename()).toMatch(/^MAA-SEE-[A-Z]{2}-A-EG-101_.+\.pdf$/);
+
+  const pfad = await download.path();
+  expect(pfad).not.toBeNull();
+  const bytes = readFileSync(pfad!);
+  expect(bytes.subarray(0, 4).toString('latin1')).toBe('%PDF');
+  expect(bytes.length).toBeGreaterThan(5_000);
 });

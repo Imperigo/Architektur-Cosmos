@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KSwitch, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
   imagePaperBounds,
@@ -15,11 +15,20 @@ import {
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
 import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
-import { exportSetSvgs, exportSheetSetPdf } from './export-sheets';
+import { useDockZustand } from '../../state/dock-zustand';
+import { PRESET_IDS, presetOffenMap, type PresetId } from '../../state/dock-presets';
+import { exportSetSvgs, exportSheetPdf, exportSheetSetPdf } from './export-sheets';
 import { DossierPanel } from './DossierPanel';
 import { PlankopfPanel } from './PlankopfPanel';
 import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
 import './publish.css';
+
+/** v0.8.1 P7 (`docs/V081-SPEZ.md` §6.1/§7(e), C-13) — kurze Beschriftung des
+ *  Preset-Schnellzugriffs, identisch zu `DesignWorkspace.tsx`/
+ *  `VisWorkspace.tsx`s `PRESET_KURZLABEL` (dieselbe Registry, `dock-
+ *  presets.ts`s `DockPreset.titel`, hier als eigene Konstante geführt statt
+ *  importiert — Konvention dieser drei Stationen, s. dortige Kopfkommentare). */
+const PRESET_KURZLABEL: Record<PresetId, string> = { fokus: 'Fokus', arbeiten: 'Arbeiten', pruefen: 'Prüfen' };
 
 /**
  * KosmoPublish — Blatteditor. Blätter sind Kernel-Entities (Undo/Sync/.kosmo
@@ -79,6 +88,55 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   const [aussenbemassungVorschau, setAussenbemassungVorschau] = useState(false);
   const svgHostRef = useRef<HTMLDivElement>(null);
   const bildDateiRef = useRef<HTMLInputElement>(null);
+
+  // v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-13 «Publish-Preset-Wähler +
+  // Erststart-Trigger») — die seit ROADMAP 380 bestehende Preset-Registry
+  // (`state/dock-presets.ts`, drei Presets Fokus/Arbeiten/Prüfen je Station)
+  // bekam für `design`/`vis` schon in PD2 (v0.8.0) einen UI-Wähler + globalen
+  // App-Erststart-Trigger (`state/dock-preset-anwendung.ts`); Publish blieb
+  // damals BEWUSST aussen vor (s. dortigen Kommentar «Publish-Erststart-
+  // Trigger bleibt bewusst bei design/vis», ROADMAP 380). Jetzt nachgezogen —
+  // aber NICHT über `presetAnwenden()`/`wendeErststartPresetFallsNoetigAn()`
+  // (beide in `state/dock-preset-anwendung.ts`, deren Konsumenten `App.tsx`/
+  // `Einstellungen.tsx` ausserhalb dieses Auftrags-Dateikreises liegen,
+  // s. Auftrag: nur `modules/publish/**` + additive `state/`): `dossier`/
+  // `plankopf` sind reiner LOKALER `useState` in dieser Komponente (kein
+  // globaler Store-Setter, den `presetAnwenden()` ansteuern könnte, s.
+  // Kopfkommentar oben) — das WIE (Overrides/aktivesPreset) läuft über die
+  // ohnehin stationsgenerische `useDockZustand.getState().presetSetzen()`,
+  // das OB (offen/zu) wird hier lokal aus `presetOffenMap('publish', id)`
+  // gelesen und auf die beiden lokalen Setter angewendet — dieselben
+  // PRIMITIVEN wie `presetAnwenden()`, nur mit dem publish-eigenen
+  // OB-Ziel statt eines globalen Store-Zugriffs.
+  const aktivesPresetPublish = useDockZustand((s) => s.aktivesPreset['publish']);
+
+  function wendePublishPresetAn(id: PresetId): void {
+    useDockZustand.getState().presetSetzen('publish', id);
+    const offenMap = presetOffenMap('publish', id);
+    const dossierSoll = offenMap.get('dossier');
+    if (dossierSoll !== undefined) setDossierOffen(dossierSoll);
+    const plankopfSoll = offenMap.get('plankopf');
+    if (plankopfSoll !== undefined) setPlankopfOffen(plankopfSoll);
+  }
+
+  // Erststart-Trigger (Spez C-13: «löst beim ersten Besuch der Publish-
+  // Station aus») — bewusst PRO STATION geprüft (`aktivesPreset['publish']`
+  // aus derselben `kosmo.dock.v1`-Persistenz wie design/vis), NICHT über den
+  // globalen «existiert überhaupt ein kosmo.dock.v1» Bestandsschutz von
+  // `wendeErststartPresetFallsNoetigAn()`: ein Bestandsnutzer, der schon
+  // lange design/vis-Layouts personalisiert hat, aber noch NIE die
+  // Publish-Station besucht hat, soll dort trotzdem den echten Erststart-
+  // Komfort bekommen — genau das, was «beim ERSTEN BESUCH DER STATION»
+  // wörtlich verlangt, unabhängig vom App-weiten Erststart. Feuert nur
+  // einmal: `presetSetzen()` schreibt `aktivesPreset.publish` sofort, jeder
+  // weitere Mount dieser Komponente (Stationswechsel hin und zurück) sieht
+  // das Feld gesetzt und lässt die Hände weg.
+  useEffect(() => {
+    if (useDockZustand.getState().aktivesPreset['publish'] === undefined) {
+      wendePublishPresetAn('fokus');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // v0.8.0B / W4 (ROADMAP 381, «1400px-Umbruch-Fix») — die Blattbreiten-Formel
   // unten (`k-publish-blatt`, `--k-publish-chrome-h`) deckelt die Blattbreite
@@ -327,6 +385,21 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     } catch (err) {
       meldeFehler(err);
     }
+  }
+
+  /**
+   * Einzelblatt-PDF (v0.8.1 P7, `docs/V081-SPEZ.md` §6.1/§7(e), C-25 —
+   * ROADMAP-378-Kandidat «Bündel-PDF bewusst ohne Einzel-Plancode»): EIN
+   * Blatt als EIN-Seiten-Vektor-PDF, Dateiname trägt seinen eigenen Plancode
+   * (`export-sheets.ts`s `exportSheetPdf()`/`pdfBlattDateiname()`). Anders
+   * als «Plansatz PDF» (`export-set`, tone="accent" — die EINE Signal-Fläche
+   * der Station, Gesetz 1) bleibt dieser Knopf `quiet`: eine Werkzeug-Aktion
+   * INNERHALB des Editierens für genau das aktive Blatt, kein Stations-
+   * Abschluss.
+   */
+  function exportBlattPdf() {
+    if (!sheet) return;
+    void exportSheetPdf(sheet.id).catch((err) => meldeFehler(err));
   }
 
   /** Datei-Picker: gewähltes Bild in den ausgewählten Slot einbetten. */
@@ -857,6 +930,36 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               </KButton>
             ))}
           </KToolGruppe>
+          {/* v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-13 «Publish-Preset-
+              Wähler + Erststart-Trigger») — derselbe Preset-Schnellzugriff
+              wie die Design-Statusleiste/Vis-Toolbar (identische testids
+              `dock-preset-schnellzugriff`/`dock-preset-{id}`, additiv — die
+              Registry existiert seit ROADMAP 380, nur der UI-Wähler fehlte
+              für Publish). `wendePublishPresetAn()` ist der EINE Anwend-Weg
+              dieser Station (s. Kopfkommentar oben zu den lokalen
+              dossier/plankopf-Setzern). */}
+          <KToolGruppe label="Oberfläche">
+            <span
+              data-testid="dock-preset-schnellzugriff"
+              role="group"
+              aria-label="Oberflächen-Preset"
+              title="Fokus/Arbeiten/Prüfen — kuratierte Layout-Presets für Dossier/Plankopf"
+              className="pub-preset-schnellzugriff"
+            >
+              {PRESET_IDS.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  data-testid={`dock-preset-${id}`}
+                  aria-pressed={aktivesPresetPublish === id}
+                  onClick={() => wendePublishPresetAn(id)}
+                  className={`pub-preset-eintrag${aktivesPresetPublish === id ? ' pub-preset-eintrag--aktiv' : ''}`}
+                >
+                  {PRESET_KURZLABEL[id]}
+                </button>
+              ))}
+            </span>
+          </KToolGruppe>
           {/* v0.8.0 P6 (Spez §8 V-K8/§9 V-I5): reine Vorschau-Toggles — NIE
               ins Doc, NIE in den Export, lokaler State (`zonenVorschau`/
               `aussenbemassungVorschau` oben). «Zonen» tönt die Ränder
@@ -878,6 +981,25 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               onChange={(e) => setAussenbemassungVorschau(e.target.checked)}
               label="Aussenbemassung"
             />
+          </KToolGruppe>
+          {/* v0.8.1 P7 (Spez §6.1/§7(e), C-25 «Einzelblatt-PDF mit
+              Plancode-Namen») — die bisher fehlende Ergänzung zu «Plansatz
+              PDF» (Sidebar-Fuss, bündelt IMMER alle Blätter eines Sets):
+              GENAU das aktive Blatt als eigene PDF-Datei, benannt nach
+              seinem Plancode. Bündel-PDF bleibt bewusst unverändert (ROADMAP
+              378), `quiet` statt `accent` (Gesetz 1: EINE gefüllte
+              Signal-Fläche bleibt «Plansatz PDF»). */}
+          <KToolGruppe label="Export">
+            <KButton
+              size="sm"
+              tone="quiet"
+              onClick={exportBlattPdf}
+              data-testid="export-blatt-pdf"
+              disabled={!sheet}
+              title="Nur dieses Blatt als eigenes PDF — Dateiname nach Plancode (fehlen Stammdaten, bleibt der bisherige Alt-Name)"
+            >
+              Blatt PDF
+            </KButton>
           </KToolGruppe>
           {selectedPlacement && sheet && (() => {
             const pl = sheet.placements.find((x) => x.id === selectedPlacement);

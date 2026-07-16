@@ -650,6 +650,10 @@ Hardware zwingend fehlen — alles andere bekommt einen Bauauftrag.
   Formate + `.kxp`.
 - [ ] **C-31** AF-Stempel-Spez-Präzisierung → **W6/P7** · Abnahme: §6.1-Default
   (Prozent+Mindestmass) implementiert und dokumentiert.
+  **(P7-Befund, Fable-Entscheid: VERTAGT — die fixierte Formel bricht zwingend das
+  golden-eingefrorene `plankopf-framework.svg:42` (`stroke-width` aus Stempelhöhe eingebacken);
+  der EINE Sammelwechsel 081 ist abgeschlossen. Owner-Entscheid nötig: eigener künftiger
+  Golden-Nachtrag oder Rückholung des Ist-Verhaltens. In V-NAECHSTE-KANDIDATEN A aufgenommen.)**
 - [ ] **C-32** 0.7.2-Reste (Schwarm-Orbs/Schliessen-Choreografie/Viz-Viewport,
   GPU-Telemetrie **GRENZE**) → **W6/P8** · Abnahme: §6.2, GPU-Anzeige ehrlich
   «nicht verfügbar» im Container statt erfundener Werte.

@@ -19,6 +19,11 @@
 - [ ] **iPad-Touch-Drehbuch** (`docs/IPAD-TOUCH-DREHBUCH.md`) — Owner-Aktion am
   echten Gerät, seit v0.7.9 offen. *(367/381/393)*
 
+- [ ] **AF-Stempel-Präzisierung (C-31 der v0.8.1):** Spez-Formel (6% Blattbreite +
+  Mindestmass) bricht zwingend das eingefrorene `plankopf-framework.svg` —
+  braucht einen eigenen deklarierten Golden-Nachtrag ODER Owner-Rückholung des
+  Ist-Verhaltens (6% Stempelhöhe). *(v0.8.1/P7, ROADMAP 408)*
+
 ## B · UI-Restrunden (klarer Scope, kein Entscheid nötig)
 
 - [ ] **OnboardingWizard-Vollumbau** (54 Rest-Inline-Styles) + **StarterGuide-Rest** (10)

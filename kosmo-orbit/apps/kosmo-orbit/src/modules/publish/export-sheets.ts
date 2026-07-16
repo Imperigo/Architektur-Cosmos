@@ -79,6 +79,37 @@ async function betteD4PdfFontsEin(pdf: jsPDF): Promise<void> {
   }
 }
 
+/**
+ * Rendert EIN Blatt in ein bereits vorbereitetes jsPDF-Dokument (als
+ * aktuelle Seite — der Aufrufer entscheidet, ob das die erste Seite ist oder
+ * per `pdf.addPage()` eine neue) — gemeinsamer Kern für Bündel-
+ * (`exportSheetSetPdf`) UND Einzelblatt-PDF (`exportSheetPdf`, v0.8.1 P7,
+ * C-25), damit es nur EINEN svg2pdf-/Rasterbild-Einbettungspfad gibt statt
+ * einer zweiten, driftgefährdeten Kopie.
+ */
+async function renderSheetInPdf(doc: KosmoDoc, sheet: Sheet, pdf: jsPDF): Promise<void> {
+  const paper = sheetPaperSize(sheet);
+  // Vektoren via svg2pdf; Rasterbilder setzt addImage danach mm-genau
+  // (svg2pdf rendert <image> nicht zuverlässig — deshalb ohneRaster).
+  const markup = sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName, ohneRaster: true });
+  const holder = document.createElement('div');
+  holder.innerHTML = markup;
+  const svgEl = holder.querySelector('svg')!;
+  document.body.appendChild(svgEl);
+  try {
+    await svg2pdf(svgEl, pdf, { x: 0, y: 0, width: paper.width, height: paper.height });
+  } finally {
+    svgEl.remove();
+  }
+  for (const b of sheet.bilder ?? []) {
+    const asset = b.assetId ? doc.get<ImageAsset>(b.assetId) : undefined;
+    if (!asset) continue;
+    const typ = asset.mime === 'image/jpeg' ? 'JPEG' : asset.mime === 'image/webp' ? 'WEBP' : 'PNG';
+    const r = imagePaperBounds(doc, b);
+    pdf.addImage(`data:${asset.mime};base64,${asset.data}`, typ, r.x, r.y, r.width, r.height);
+  }
+}
+
 /** Ganzer Plansatz (oder ein Publikations-Set, A4) als mehrseitiges Vektor-PDF. */
 export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
   const { doc } = useProject.getState();
@@ -107,31 +138,69 @@ export async function exportSheetSetPdf(set?: PublikationsSet): Promise<void> {
     } else {
       pdf.addPage(format, orientation);
     }
-    // Vektoren via svg2pdf; Rasterbilder setzt addImage danach mm-genau
-    // (svg2pdf rendert <image> nicht zuverlässig — deshalb ohneRaster).
-    const markup = sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName, ohneRaster: true });
-    const holder = document.createElement('div');
-    holder.innerHTML = markup;
-    const svgEl = holder.querySelector('svg')!;
-    document.body.appendChild(svgEl);
-    try {
-      await svg2pdf(svgEl, pdf, { x: 0, y: 0, width: paper.width, height: paper.height });
-    } finally {
-      svgEl.remove();
-    }
-    for (const b of sheet.bilder ?? []) {
-      const asset = b.assetId ? doc.get<ImageAsset>(b.assetId) : undefined;
-      if (!asset) continue;
-      const typ = asset.mime === 'image/jpeg' ? 'JPEG' : asset.mime === 'image/webp' ? 'WEBP' : 'PNG';
-      const r = imagePaperBounds(doc, b);
-      pdf.addImage(`data:${asset.mime};base64,${asset.data}`, typ, r.x, r.y, r.width, r.height);
-    }
+    await renderSheetInPdf(doc, sheet, pdf);
   }
   // Herkunftskennung als PDF-Metadaten (Serie I / B5) — dezent, im
   // `keywords`-Feld grep-bar; der Plansatz-Inhalt selbst (svg2pdf-Vektoren
   // oben) bleibt unberührt.
   pdf!.setProperties({ keywords: herkunftKennzeichnung(herkunft) });
   pdf!.save(`${pdfSetDateiname(doc, set)}.pdf`);
+}
+
+/**
+ * Dateiname (ohne Endung) des Einzelblatt-PDFs (v0.8.1 P7, `docs/V081-
+ * SPEZ.md` §6.1/§7(e), C-25 «Einzelblatt-PDF mit Plancode-Namen») — dieselbe
+ * `setDateiname()`-Regel wie `exportSetSvgs()`/die «Export-Dateiname
+ * (Vorschau)» im `PlankopfPanel` (`export-dateiname`-Testid): GENAU EIN
+ * Blatt, darum ist dessen EIGENER Plancode nie irreführend (anders als beim
+ * Bündel, `pdfSetDateiname()` oben, das bewusst UNVERÄNDERT bleibt — ROADMAP
+ * 378-Entscheid, mehrere Blätter mit potenziell unterschiedlichen Plancodes
+ * teilen sich EINEN Bündel-Namen). Ohne volle Stammdaten (Daten-Guard in
+ * `setDateiname`/`sheetPlancode` selbst) bleibt der Name die bewährte
+ * `NAMENSREGEL_DEFAULT`-Form, byte-gleich zur bisherigen Vorschau.
+ */
+export function pdfBlattDateiname(doc: KosmoDoc, sheet: Sheet): string {
+  const plancode = sheetPlancode(doc, sheet);
+  return setDateiname(undefined, {
+    nr: 1,
+    blatt: sheet.name,
+    projekt: doc.settings.projectName,
+    massstab: sheet.placements[0]?.scale ?? null,
+    format: `${sheet.format}-${sheet.orientation}`,
+    ...(plancode !== undefined ? { plancode } : {}),
+  });
+}
+
+/**
+ * Einzelblatt als EIN-Seiten-Vektor-PDF, benannt nach seinem Plancode
+ * (v0.8.1 P7, C-25) — die bisher fehlende «kleine Schwester» von
+ * `exportSheetSetPdf()`: die trägt IMMER den Projekt-/Set-Namen (Bündel,
+ * bleibt unverändert), dieser Export hier ist für den Fall gedacht, in dem
+ * genau EIN Blatt versendet/abgelegt wird und der Dateiname selbst schon den
+ * Plancode zeigen soll (Ablage/Transmittal-Konvention). Teilt sich mit dem
+ * Bündel-Export denselben Font-/svg2pdf-/Rasterbild-Kern
+ * (`renderSheetInPdf`) — kein zweiter Rendering-Pfad.
+ */
+export async function exportSheetPdf(sheetId: string): Promise<void> {
+  const { doc } = useProject.getState();
+  const sheet = doc.get<Sheet>(sheetId);
+  if (!sheet || sheet.kind !== 'sheet') return;
+
+  const herkunft = baueHerkunft({
+    json: doc.toJSON(),
+    editionId: ermittleEditionId(),
+    exportedAt: new Date().toISOString(),
+  });
+
+  const paper = sheetPaperSize(sheet);
+  const orientation = paper.width >= paper.height ? 'landscape' : 'portrait';
+  const format: [number, number] = [paper.width, paper.height];
+  const pdf = new jsPDF({ orientation, unit: 'mm', format });
+  await betteD4PdfFontsEin(pdf);
+  await renderSheetInPdf(doc, sheet, pdf);
+
+  pdf.setProperties({ keywords: herkunftKennzeichnung(herkunft) });
+  pdf.save(`${pdfBlattDateiname(doc, sheet)}.pdf`);
 }
 
 /** Publikations-Set als Einzel-SVGs — jede Datei nach der Namensregel

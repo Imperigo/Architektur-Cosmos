@@ -491,3 +491,31 @@
   line-height: 1.5;
   pointer-events: none;
 }
+
+/* Preset-Schnellzugriff (v0.8.1 P7, docs/V081-SPEZ.md §6.1/§7(e) C-13) — 1:1
+   dieselbe Auswahl-Zustand-Semantik wie `design.css` `.dw-preset-item`/
+   `.dw-preset-item--aktiv` (Signal-Rest-Audit, Gesetz 1: kein Accent-Fill,
+   nur Flächenstufe), hier eigene Klassen statt geteilter Import — Konvention
+   dieser drei Stationen (design/vis/publish führen den Preset-Chip je
+   eigenständig, s. dortige Kopfkommentare). */
+.pub-preset-schnellzugriff {
+  display: inline-flex;
+  border: 1px solid var(--k-line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.pub-preset-eintrag {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  padding: 3px 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--k-ink-soft);
+  background: var(--k-surface);
+}
+.pub-preset-eintrag--aktiv {
+  font-weight: 650;
+  color: var(--k-ink);
+  background: var(--k-raised);
+}

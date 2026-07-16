@@ -102,9 +102,9 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
         runCommand('publish.bueroSetzen', { logoDataUrl: String(reader.result) });
         melde('Büro-Logo aktualisiert', { ton: 'erfolg' });
       } catch (err) {
-        // Ehrliche Command-Fehlermeldung («PNG erforderlich — SVG/JPG folgt
-        // in einer späteren Version», `commands/publish.ts` `setBuero`) —
-        // kein stiller Fehlschlag (Spez §4.3/§8).
+        // Ehrliche Command-Fehlermeldung («SVG oder JPG erforderlich — PNG
+        // wird nicht unterstützt», v0.8.1 P7, `commands/publish.ts`
+        // `setBuero`) — kein stiller Fehlschlag (Spez §4.3/§8).
         meldeFehler(err);
       }
     };
@@ -315,7 +315,15 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
             onBlur={(e) => bueroPatch('kuerzel', e.target.value)}
           />
         </KField>
-        <KField label="Büro-Logo (PNG)" hinweis="Nur PNG — SVG/JPG folgen in einer späteren Version.">
+        {/* v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-24): SVG und JPG sind
+            jetzt die zwei akzeptierten Logo-Formate — PNG bleibt bewusst
+            abgelehnt (`commands/publish.ts`s `LOGO_ERLAUBTE_MIMES`, dieselbe
+            ehrliche Fehlermeldung wie zuvor, nur mit vertauschter Formatliste).
+            `accept` steuert nur den Datei-Dialog-Vorfilter des Browsers (rein
+            kosmetisch) — die echte Gate-Prüfung bleibt serverseitig im
+            Command, ein umgangener `accept`-Filter (Drag&Drop, o.ä.) landet
+            trotzdem bei derselben ehrlichen Fehlermeldung. */}
+        <KField label="Büro-Logo (SVG/JPG)" hinweis="Nur SVG oder JPG — PNG wird nicht unterstützt.">
           <div className="k-publish-logo-zeile">
             <KButton size="sm" tone="quiet" onClick={() => logoInputRef.current?.click()} data-testid="plankopf-buero-logo-knopf">
               Logo laden…
@@ -327,7 +335,7 @@ export function PlankopfPanel({ sheetId, selectedPlacementId, onClose }: Plankop
           <input
             ref={logoInputRef}
             type="file"
-            accept="image/*"
+            accept="image/svg+xml,image/jpeg"
             data-testid="plankopf-buero-logo"
             className="k-publish-versteckt-input"
             onChange={(e) => {

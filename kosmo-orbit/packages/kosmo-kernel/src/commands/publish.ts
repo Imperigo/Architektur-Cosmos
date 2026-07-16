@@ -904,14 +904,26 @@ export const setBlattLayout = registerCommand({
 });
 
 /**
+ * Erlaubte MIME-Typen fürs Büro-Logo (v0.8.1 P7, `docs/V081-SPEZ.md` §6.1/
+ * §7(e) «Logo-Export: SVG/JPG») — SVG (Vektor, verlustfrei, braucht keinen
+ * Sanitizing-Pfad, weil `derive/plankopf.ts` es nur als `<image href="data:…">`
+ * einbettet, nie ausführt/inlined) und JPG (zweites reales Rasterformat) sind
+ * die zwei sanktionierten Formate. PNG bleibt bewusst aussen vor (C-24-
+ * Abnahme: «PNG bleibt ehrlich abgelehnt») — dieselbe Ehrlichkeits-Haltung wie
+ * zuvor, nur mit vertauschten Vorzeichen (v0.8.0 P2 akzeptierte NUR PNG,
+ * dieses Paket dreht die Formatliste laut Owner-fixiertem Spez-Default um,
+ * kein stiller Fallback in beide Richtungen).
+ */
+const LOGO_ERLAUBTE_MIMES = new Set(['image/svg+xml', 'image/jpeg']);
+
+/**
  * Büro-Stammdaten (v0.8.0 P2, `BueroInfo` in `model/doc.ts`) — Name, Adresse,
  * Kürzel und Logo fürs Plankopf-Bürofeld. Merge-Semantik wie
  * `design.projektInfoSetzen` (nur übergebene Top-Level-Felder ändern sich,
  * kein Löschen — anders als `plankopfSetzen`/`blattLayoutSetzen` oben, die
  * ein verschachteltes `patch`-Objekt mit Lösch-Semantik tragen). `logoDataUrl`
- * akzeptiert bewusst NUR PNG: SVG bräuchte einen eigenen Sanitizing-/
- * Render-Pfad, JPG eine verlustbehaftete Neucodierung fürs IHDR-Massmuster —
- * beides ist ehrlich vertagt, kein stiller Fallback. EHRLICH (wie
+ * akzeptiert seit v0.8.1 P7 SVG und JPG (`LOGO_ERLAUBTE_MIMES`) — PNG wird
+ * bewusst weiterhin abgelehnt (s. Kommentar dort). EHRLICH (wie
  * `ProjektInfo`, s. `doc.ts` Kommentar bei `ProjektInfo`/`BueroInfo`, Zeilen
  * um 277–281 bzw. bei `BueroInfo` selbst): dieser Command schreibt eine
  * SettingsPatch — die läuft über Yjs/Undo/`.kosmo`-Export wie jede andere
@@ -925,7 +937,7 @@ export const setBuero = registerCommand({
   id: 'publish.bueroSetzen',
   title: 'Büro-Stammdaten setzen',
   description:
-    'Setzt/ergänzt die Büro-Stammdaten fürs Plankopf-Bürofeld (Name, Adresse, Kürzel, Logo) — additiv wie design.projektInfoSetzen: nur übergebene Felder ändern sich, der Rest bleibt. logoDataUrl akzeptiert AUSSCHLIESSLICH eine base64-PNG-data:-URL (data:image/png;base64,…) — jedes andere Format (SVG, JPG, …) löst einen Fehler aus, weil dafür noch kein Verarbeitungsweg gebaut ist. Ein neues Logo ersetzt ein vorheriges; der alte Bild-Asset wird entsorgt, falls ihn kein Blatt mehr braucht.',
+    'Setzt/ergänzt die Büro-Stammdaten fürs Plankopf-Bürofeld (Name, Adresse, Kürzel, Logo) — additiv wie design.projektInfoSetzen: nur übergebene Felder ändern sich, der Rest bleibt. logoDataUrl akzeptiert AUSSCHLIESSLICH eine base64-data:-URL im Format SVG (data:image/svg+xml;base64,…) oder JPG (data:image/jpeg;base64,…) — PNG und jedes andere Format lösen einen Fehler aus. Ein neues Logo ersetzt ein vorheriges; der alte Bild-Asset wird entsorgt, falls ihn kein Blatt mehr braucht.',
   params: z.object({
     name: z.string().optional(),
     adresse: z.string().optional(),
@@ -933,7 +945,7 @@ export const setBuero = registerCommand({
     logoDataUrl: z
       .string()
       .optional()
-      .describe('data:image/png;base64,… — nur PNG; SVG/JPG folgen in einer späteren Version'),
+      .describe('data:image/svg+xml;base64,… oder data:image/jpeg;base64,… — PNG wird nicht unterstützt'),
   }),
   summarize: (p) => {
     const teile: string[] = [];
@@ -950,8 +962,8 @@ export const setBuero = registerCommand({
 
     if (p.logoDataUrl !== undefined) {
       const asset = assetAusDataUrl('Büro-Logo', p.logoDataUrl);
-      if (asset.mime !== 'image/png') {
-        throw new CommandError('Logo: PNG erforderlich — SVG/JPG folgt in einer späteren Version');
+      if (!LOGO_ERLAUBTE_MIMES.has(asset.mime)) {
+        throw new CommandError('Logo: SVG oder JPG erforderlich — PNG wird nicht unterstützt');
       }
       patches.push({ id: asset.id, before: null, after: asset });
       // Alten Logo-Asset entsorgen, falls kein Blatt (Bild-Slot) ihn noch

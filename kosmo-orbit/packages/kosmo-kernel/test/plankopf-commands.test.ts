@@ -19,13 +19,21 @@ import {
  * `derive/`-Paket, hier nur die Datenhaltung + der Byte-Guard.
  */
 
-/** Mini-1×1-PNG (aus test/haerte.test.ts wiederverwendet). */
+/** Mini-1×1-PNG (aus test/haerte.test.ts wiederverwendet) — seit v0.8.1 P7
+ *  (`docs/V081-SPEZ.md` §6.1, C-24) das Format, das `publish.bueroSetzen`
+ *  bewusst ABLEHNT (s. `commands/publish.ts` `LOGO_ERLAUBTE_MIMES`). */
 const MINI_PNG_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
 
 /** Beliebiges Mini-JPEG-artiges data-url (Base64-Inhalt ist irrelevant — nur
- * der mime-Teil zählt für den PNG-Guard). */
+ * der mime-Teil zählt für den Format-Guard) — seit v0.8.1 P7 das
+ * standard-akzeptierte Logo-Rasterformat. */
 const FAKE_JPEG_DATA_URL = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD/2wBD';
+
+/** Minimales echtes SVG («<svg .../>», 1×1), base64-kodiert — das zweite
+ *  seit v0.8.1 P7 akzeptierte Logo-Format (Vektor, s. `LOGO_ERLAUBTE_MIMES`). */
+const FAKE_SVG_DATA_URL =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4=';
 
 function neuesBlatt(): { doc: KosmoDoc; sheetId: string } {
   const doc = new KosmoDoc();
@@ -191,9 +199,9 @@ describe('publish.bueroSetzen', () => {
     expect(doc.settings.buero).toEqual({});
   });
 
-  it('PNG-Logo: legt ein ImageAsset an und setzt logoAssetId', () => {
+  it('JPG-Logo: legt ein ImageAsset an und setzt logoAssetId', () => {
     const doc = new KosmoDoc();
-    const r = execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: MINI_PNG_DATA_URL });
+    const r = execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: FAKE_JPEG_DATA_URL });
     expect(r.summary).toContain('Name');
     expect(r.summary).toContain('Logo aktualisiert');
 
@@ -202,19 +210,36 @@ describe('publish.bueroSetzen', () => {
     const asset = doc.get<ImageAsset>(buero.logoAssetId!);
     expect(asset).toBeDefined();
     expect(asset!.kind).toBe('imageasset');
-    expect(asset!.mime).toBe('image/png');
-    expect(asset!.width).toBe(1);
-    expect(asset!.height).toBe(1);
+    expect(asset!.mime).toBe('image/jpeg');
   });
 
-  it('Nicht-PNG-Logo wird mit ehrlicher Fehlermeldung abgelehnt', () => {
+  it('SVG-Logo: legt ein ImageAsset an und setzt logoAssetId (v0.8.1 P7, C-24)', () => {
     const doc = new KosmoDoc();
-    expect(() => execute(doc, 'publish.bueroSetzen', { logoDataUrl: FAKE_JPEG_DATA_URL })).toThrowError(
-      /PNG erforderlich/,
+    const r = execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: FAKE_SVG_DATA_URL });
+    expect(r.summary).toContain('Logo aktualisiert');
+
+    const buero = doc.settings.buero!;
+    const asset = doc.get<ImageAsset>(buero.logoAssetId!);
+    expect(asset).toBeDefined();
+    expect(asset!.mime).toBe('image/svg+xml');
+  });
+
+  it('PNG-Logo wird mit ehrlicher Fehlermeldung abgelehnt (v0.8.1 P7, C-24: PNG bleibt ehrlich abgelehnt)', () => {
+    const doc = new KosmoDoc();
+    expect(() => execute(doc, 'publish.bueroSetzen', { logoDataUrl: MINI_PNG_DATA_URL })).toThrowError(
+      /SVG oder JPG erforderlich/,
     );
     // Kein halber Zustand — weder Asset noch buero-Feld entstehen bei Ablehnung.
     expect(doc.settings.buero).toBeUndefined();
     expect(doc.byKind('imageasset')).toHaveLength(0);
+  });
+
+  it('irgendein anderes Format (z.B. GIF) wird ebenfalls ehrlich abgelehnt', () => {
+    const doc = new KosmoDoc();
+    const fakeGif = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7';
+    expect(() => execute(doc, 'publish.bueroSetzen', { logoDataUrl: fakeGif })).toThrowError(
+      /SVG oder JPG erforderlich/,
+    );
   });
 
   it('eine kaputte data-url wirft einen CommandError', () => {
@@ -226,11 +251,11 @@ describe('publish.bueroSetzen', () => {
 
   it('ein neues Logo entsorgt den alten Asset, wenn ihn sonst niemand mehr referenziert', () => {
     const doc = new KosmoDoc();
-    execute(doc, 'publish.bueroSetzen', { logoDataUrl: MINI_PNG_DATA_URL });
+    execute(doc, 'publish.bueroSetzen', { logoDataUrl: FAKE_JPEG_DATA_URL });
     const alterAssetId = doc.settings.buero!.logoAssetId!;
     expect(doc.get<ImageAsset>(alterAssetId)).toBeDefined();
 
-    execute(doc, 'publish.bueroSetzen', { logoDataUrl: MINI_PNG_DATA_URL });
+    execute(doc, 'publish.bueroSetzen', { logoDataUrl: FAKE_SVG_DATA_URL });
     const neuerAssetId = doc.settings.buero!.logoAssetId!;
     expect(neuerAssetId).not.toBe(alterAssetId);
     expect(doc.get<ImageAsset>(alterAssetId)).toBeUndefined(); // GC gelöscht
@@ -239,7 +264,7 @@ describe('publish.bueroSetzen', () => {
 
   it('GC-Schutz: der alte Logo-Asset bleibt erhalten, wenn ihn noch ein Bild-Slot referenziert', () => {
     const doc = new KosmoDoc();
-    execute(doc, 'publish.bueroSetzen', { logoDataUrl: MINI_PNG_DATA_URL });
+    execute(doc, 'publish.bueroSetzen', { logoDataUrl: FAKE_JPEG_DATA_URL });
     const logoAssetId = doc.settings.buero!.logoAssetId!;
 
     const blatt = execute(doc, 'publish.blattErstellen', { name: 'Deckblatt', format: 'A3', orientation: 'hoch' });
@@ -254,14 +279,14 @@ describe('publish.bueroSetzen', () => {
     expect(doc.get<Sheet>(sheetId)!.bilder![0]!.assetId).toBe(logoAssetId);
 
     // Neues Logo setzen — der alte (jetzt vom Blatt mitbenutzte) Asset MUSS bleiben.
-    execute(doc, 'publish.bueroSetzen', { logoDataUrl: MINI_PNG_DATA_URL });
+    execute(doc, 'publish.bueroSetzen', { logoDataUrl: FAKE_JPEG_DATA_URL });
     expect(doc.get<ImageAsset>(logoAssetId)).toBeDefined();
     expect(doc.get<Sheet>(sheetId)!.bilder![0]!.assetId).toBe(logoAssetId);
   });
 
   it('GC-Schutz umgekehrt: publish.bildEntfernen lässt den Asset stehen, wenn er noch das Büro-Logo ist', () => {
     const doc = new KosmoDoc();
-    execute(doc, 'publish.bueroSetzen', { logoDataUrl: MINI_PNG_DATA_URL });
+    execute(doc, 'publish.bueroSetzen', { logoDataUrl: FAKE_JPEG_DATA_URL });
     const logoAssetId = doc.settings.buero!.logoAssetId!;
 
     const blatt = execute(doc, 'publish.blattErstellen', { name: 'Deckblatt', format: 'A3', orientation: 'hoch' });
@@ -284,7 +309,7 @@ describe('publish.bueroSetzen', () => {
     const history = new History();
     expect(doc.settings.buero).toBeUndefined();
 
-    const r = execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: MINI_PNG_DATA_URL });
+    const r = execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: FAKE_JPEG_DATA_URL });
     history.record(r.patches);
     expect(r.patches).toHaveLength(2); // Asset-Patch + Settings-Patch
     const assetId = doc.settings.buero!.logoAssetId!;
@@ -364,7 +389,7 @@ describe('Guard: ohne v0.8.0-Daten bleibt die Serialisierung unverändert', () =
     const sheetId = (blatt.patches[0] as { id: string }).id;
     execute(doc, 'publish.plankopfSetzen', { sheetId, patch: { inhalt: 'Grundriss EG', planNummer: 'A-101' } });
     execute(doc, 'publish.blattLayoutSetzen', { sheetId, patch: { heftrand: true, nordpfeil: true } });
-    execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: MINI_PNG_DATA_URL });
+    execute(doc, 'publish.bueroSetzen', { name: 'Baubüro Andrin', logoDataUrl: FAKE_SVG_DATA_URL });
     execute(doc, 'design.projektInfoSetzen', { projektCode: 'BG-2026-014' });
 
     const wieder = KosmoDoc.fromJSON(JSON.parse(JSON.stringify(doc.toJSON())));

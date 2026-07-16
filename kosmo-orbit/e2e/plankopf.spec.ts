@@ -16,8 +16,10 @@ import { expect, test } from '@playwright/test';
  *  - Massstab-Chip MIT Selektion ändert den Massstab der Platzierung (+
  *    Undo), OHNE Selektion bleiben die Chips deaktiviert (reine
  *    Empfehlungsanzeige, Spez §2.3).
- *  - Nicht-PNG-Logo an `publish.bueroSetzen` → ehrliche Fehlermeldung
- *    (`meldung-fehler`), kein stiller Fehlschlag (Spez §4.3/§8).
+ *  - PNG-Logo an `publish.bueroSetzen` → ehrliche Fehlermeldung
+ *    (`meldung-fehler`), kein stiller Fehlschlag (Spez §4.3/§8) — seit
+ *    v0.8.1 P7 (`docs/V081-SPEZ.md` §6.1/§7(e), C-24) umgekehrtes Vorzeichen:
+ *    SVG/JPG werden jetzt akzeptiert, PNG bleibt ehrlich abgelehnt.
  *
  * Bootstrap wie `e2e/baugesuch.spec.ts`/`e2e/module.spec.ts`: TKB-Demo laden
  * (Default-Doc, `siaPhase: 'wettbewerb'` → Matrix-Stufe VS, `docs/
@@ -199,7 +201,41 @@ test('Massstab-Chips: ohne Selektion deaktiviert, mit Selektion ändern sie den 
   await expect.poll(liesScale).toBe(scaleVorClick);
 });
 
-test('Büro-Logo: Nicht-PNG-Datei löst die ehrliche Fehlermeldung des Commands aus', async ({ page }) => {
+// v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-24 «Büro-Logo SVG/JPG») — Format-
+// Flip gegenüber v0.8.0 P2: PNG wird jetzt ehrlich abgelehnt, SVG/JPG laufen
+// durch. `MINI_JPEG_BASE64`/`MINI_SVG_BASE64` sind ECHTE, gültige Bilddaten
+// (kein Fake-Byte-String wie im PNG-Ablehnungsfall — nur der Mime-Typ zählt
+// dort für den Guard, s. `plankopf-commands.test.ts`), damit ein etwaiger
+// Browser-Decode-Schritt (z.B. beim späteren PDF-Export, `export-pdf-
+// haertung.spec.ts`) nicht an unechten Bytes scheitert.
+const MINI_JPEG_BASE64 =
+  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAEAAQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDlaKKK+ZP3A//Z';
+const MINI_SVG_BASE64 = Buffer.from(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><rect width="24" height="24" fill="#c83c3c"/></svg>',
+).toString('base64');
+
+test('Büro-Logo: PNG-Datei löst die ehrliche Fehlermeldung des Commands aus', async ({ page }) => {
+  await ladeUndOeffnePublish(page);
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="publish-plankopf"]');
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
+
+  await page.setInputFiles('[data-testid="plankopf-buero-logo"]', {
+    name: 'logo.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    ),
+  });
+
+  const toast = page.locator('[data-testid="meldung-fehler"]');
+  await expect(toast).toContainText('SVG oder JPG erforderlich');
+  // Kein stiller Fehlschlag: das Panel bleibt offen, kein Logo gesetzt.
+  await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
+});
+
+test('Büro-Logo: echte JPG-Datei wird akzeptiert, Plankopf zeigt das Logo-Bild im Vorschau-SVG', async ({ page }) => {
   await ladeUndOeffnePublish(page);
   await page.click('[data-testid="add-sheet"]');
   await page.click('[data-testid="publish-plankopf"]');
@@ -208,13 +244,32 @@ test('Büro-Logo: Nicht-PNG-Datei löst die ehrliche Fehlermeldung des Commands 
   await page.setInputFiles('[data-testid="plankopf-buero-logo"]', {
     name: 'logo.jpg',
     mimeType: 'image/jpeg',
-    buffer: Buffer.from('DAS IST KEIN PNG'),
+    buffer: Buffer.from(MINI_JPEG_BASE64, 'base64'),
   });
+  await expect(page.locator('[data-testid="meldung-erfolg"]')).toContainText('Büro-Logo aktualisiert');
 
-  const toast = page.locator('[data-testid="meldung-fehler"]');
-  await expect(toast).toContainText('PNG erforderlich');
-  // Kein stiller Fehlschlag: das Panel bleibt offen, kein Logo gesetzt.
+  // Das Vorschau-SVG (`sheetToSvg`, Blattfläche) bettet das Logo als echtes
+  // `<image>` mit `data:image/jpeg;base64,…` ein (Golden-Guard: NUR mit
+  // hochgeladenem Logo, s. `derive/plankopf.ts` `plankopfSvg()`).
+  const bildHref = await page.locator('[data-testid="sheet-canvas"] image').first().getAttribute('href');
+  expect(bildHref).toContain('data:image/jpeg;base64,');
+});
+
+test('Büro-Logo: echte SVG-Datei wird ebenfalls akzeptiert', async ({ page }) => {
+  await ladeUndOeffnePublish(page);
+  await page.click('[data-testid="add-sheet"]');
+  await page.click('[data-testid="publish-plankopf"]');
   await expect(page.locator('[data-testid="plankopf-panel"]')).toBeVisible();
+
+  await page.setInputFiles('[data-testid="plankopf-buero-logo"]', {
+    name: 'logo.svg',
+    mimeType: 'image/svg+xml',
+    buffer: Buffer.from(MINI_SVG_BASE64, 'base64'),
+  });
+  await expect(page.locator('[data-testid="meldung-erfolg"]')).toContainText('Büro-Logo aktualisiert');
+
+  const bildHref = await page.locator('[data-testid="sheet-canvas"] image').first().getAttribute('href');
+  expect(bildHref).toContain('data:image/svg+xml;base64,');
 });
 
 // v0.8.0B / W4 (Spez §4/§2 Gesetz 9, B-58) — «Publish ist der ERSTE

@@ -313,8 +313,8 @@ export interface BueroInfo {
   name?: string;
   adresse?: string;
   kuerzel?: string;
-  /** ImageAsset-Id des Büro-Logos — nur PNG (s. `publish.bueroSetzen`-
-   * Kommentar zum Format-Guard). */
+  /** ImageAsset-Id des Büro-Logos — SVG oder JPG (seit v0.8.1 P7; PNG bleibt
+   * abgelehnt, s. `publish.bueroSetzen`-Kommentar zum Format-Guard). */
   logoAssetId?: string;
 }
 
