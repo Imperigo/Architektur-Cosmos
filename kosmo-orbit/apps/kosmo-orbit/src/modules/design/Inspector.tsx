@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KInput, KPanelZweiStufen, KSelect, Measure, melde, meldeFehler } from '@kosmo/ui';
 import './design-panels.css';
 import {
   areaOf,
@@ -16,10 +16,23 @@ import {
   type Patch,
 } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 
 /**
  * Inspector — Eigenschaften des ausgewählten Elements, editierbar.
  * Jede Änderung läuft als Command (Undo, Journal, Kosmo-sichtbar).
+ *
+ * v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+ * §2.2/§2.4) — migriert auf `KPanelZweiStufen`: Kernkennzahl ist
+ * Elementtyp + Kurzbezeichnung (§2.2 explizites Beispiel «WAND · W-014»,
+ * s. `kurzbezeichnung()` unten). EIN Tab («Eigenschaften», alle
+ * kind-spezifischen Zeilen unverändert): `apps/kosmo-orbit/test/
+ * beschlag-inspector.test.tsx` rendert den Inspector für eine `opening`-
+ * Entität und erwartet die Beschlag-Katalog-Checkboxen SOFORT im DOM, ohne
+ * einen Tab-Wechsel zu simulieren — ein Eigenschaften/Erweitert-Split
+ * (Fenster-/Beschlag-Abschnitt hinter einem zweiten Tab) hätte diesen
+ * bestehenden Vertrag zerschnitten, da `KPanelZweiStufen` nur den AKTIVEN
+ * Tab mountet.
  */
 
 const kindLabel: Record<string, string> = {
@@ -32,6 +45,16 @@ const kindLabel: Record<string, string> = {
   freemesh: 'FreeMesh',
 };
 
+/** §2.2 Kopfzeile-Rezept («WAND · W-014») — Kurzbezeichnung ist der Zonen-
+ *  Name (falls vorhanden) oder ein kurzes ID-Fragment, sonst wäre die
+ *  Kopfzeile für unbenannte Elemente leer (§2.2 Grundsatz «nie leer»). */
+function kurzbezeichnung(entity: Entity): string {
+  const typ = (kindLabel[entity.kind] ?? entity.kind).toUpperCase();
+  const name = 'name' in entity && typeof (entity as { name?: unknown }).name === 'string' ? (entity as { name: string }).name : undefined;
+  const kurz = name && name.trim().length > 0 ? name : entity.id.slice(-6).toUpperCase();
+  return `${typ} · ${kurz}`;
+}
+
 export function Inspector() {
   const selection = useProject((s) => s.selection);
   const revision = useProject((s) => s.revision);
@@ -39,6 +62,14 @@ export function Inspector() {
   const select = useProject((s) => s.select);
   const setMeshEditId = useProject((s) => s.setMeshEditId);
   const doc = useProject.getState().doc;
+
+  // Hooks bleiben VOR dem `if (!entity) return null` unten (Rules of Hooks) —
+  // wie `useMemo`/`useProject` oben schon, keine neue Konvention.
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['inspector']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
 
   const entity = useMemo<Entity | null>(() => {
     const id = selection[0];
@@ -57,32 +88,8 @@ export function Inspector() {
 
   const assemblies = doc.byKind<Assembly>('assembly');
 
-  return (
-    <div
-      data-testid="inspector"
-      // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen».
-      //
-      // v0.7.8 Welle 2 (P4, Rechts-Stack-Migration): vorher ein eigener
-      // `position:'absolute'`-Overlay — H-43s `bottom: calc(var(--k-s4) +
-      // 78px)`-Anhebung existierte NUR, um NavLeiste (right:88/bottom:50) und
-      // das freistehende Kosmo-Symbol nicht zu schneiden (s. `git blame`/
-      // `inspector-layout.spec.ts`). Jetzt ein Dock-Panel-INHALT
-      // (`dock-stationen.ts` `'inspector'`, wichtigkeit 82): Position/Breite/
-      // Höhe kommen aus `DockPanel.tsx`/`dock-kern.ts`s Solver, der DIESELBE
-      // Kollisionsfreiheit strukturell garantiert (der rechte Stack reicht
-      // nie in den unteren Chrome-Streifen, s. `DockFlaeche.tsx`s
-      // BOT-Reserve) — der H-43-Sonderabstand entfällt ersatzlos. Doppel-
-      // Chrome bewusst (wie `RasterPanel.tsx`): Hintergrund/Rahmen/Schatten
-      // bleiben, Position/Breiten-/Höhen-Deckel entfallen.
-      className="k-dialog dp-panel"
-    >
-      <div className="dp-kopf">
-        <Badge hue={moduleHue.design}>{kindLabel[entity.kind] ?? entity.kind}</Badge>
-        <div className="dp-fuell" />
-        <KButton size="sm" tone="ghost" onClick={() => select([])} aria-label="Auswahl aufheben">
-          <KIcon name="schliessen" size={14} />
-        </KButton>
-      </div>
+  const koerper = (
+    <div className="insp-koerper">
       <Hairline />
 
       {entity.kind === 'wall' && (
@@ -341,6 +348,50 @@ export function Inspector() {
       >
         Löschen
       </KButton>
+    </div>
+  );
+
+  return (
+    <div
+      data-testid="inspector"
+      // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen».
+      //
+      // v0.7.8 Welle 2 (P4, Rechts-Stack-Migration): vorher ein eigener
+      // `position:'absolute'`-Overlay — H-43s `bottom: calc(var(--k-s4) +
+      // 78px)`-Anhebung existierte NUR, um NavLeiste (right:88/bottom:50) und
+      // das freistehende Kosmo-Symbol nicht zu schneiden (s. `git blame`/
+      // `inspector-layout.spec.ts`). Jetzt ein Dock-Panel-INHALT
+      // (`dock-stationen.ts` `'inspector'`, wichtigkeit 82): Position/Breite/
+      // Höhe kommen aus `DockPanel.tsx`/`dock-kern.ts`s Solver, der DIESELBE
+      // Kollisionsfreiheit strukturell garantiert (der rechte Stack reicht
+      // nie in den unteren Chrome-Streifen, s. `DockFlaeche.tsx`s
+      // BOT-Reserve) — der H-43-Sonderabstand entfällt ersatzlos. Doppel-
+      // Chrome bewusst (wie `RasterPanel.tsx`): Hintergrund/Rahmen/Schatten
+      // bleiben, Position/Breiten-/Höhen-Deckel entfallen.
+      className="k-dialog dp-panel"
+    >
+      {/* Gate-Nachtrag (P5c): Action-Row nur in Stufe 'offen' — s.
+          MaengelPanel-Kommentar (KPanelZweiStufen-Kopf muss in Stufe
+          'kompakt' zuerst gemalt werden, kein Vorlauf davor). */}
+      {stufe === 'offen' && (
+        <div className="dp-kopf">
+          <div className="dp-fuell" />
+          <KButton size="sm" tone="ghost" onClick={() => select([])} aria-label="Auswahl aufheben">
+            <KIcon name="schliessen" size={14} />
+          </KButton>
+        </div>
+      )}
+
+      <KPanelZweiStufen
+        data-testid="inspector-koerper"
+        titel="Inspector"
+        kernkennzahl={kurzbezeichnung(entity)}
+        stufe={stufe}
+        onStufeUmschalten={() => panelOverrideSetzen('design', 'inspector', { stufe: stufeUmschalten(stufeRoh) })}
+        aktiverTab="eigenschaften"
+        onTabWechseln={() => {}}
+        tabs={[{ id: 'eigenschaften', label: 'Eigenschaften', inhalt: koerper }]}
+      />
     </div>
   );
 }

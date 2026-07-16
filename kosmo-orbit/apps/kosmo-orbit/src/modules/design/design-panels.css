@@ -165,11 +165,22 @@
   gap: var(--k-s4);
   font-size: var(--k-t-sm);
 }
-/* Modifikator: Panels mit potenziell langem Inhalt (Tabellen/Listen) scrollen
-   intern, statt den Dock-Rahmen zu sprengen (T4b-Grundsatz). */
-.dp-dialog--scroll {
-  overflow: auto;
-}
+/* v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md` §2.3
+   Nie-Scroll-Gebot) — der frühere Modifikator `.dp-dialog--scroll` (interner
+   `overflow:auto` auf Tabellen-/Listen-Panels) ist ERSATZLOS entfernt: alle
+   acht bisherigen Konsumenten (Mängel/Splat/Unternehmerplan-Bericht/
+   SubmissionsCheck/Kv/Varianten/Berechnungsliste/Bauablauf) sind auf
+   `KPanelZweiStufen` migriert und tragen die Klasse nicht mehr (Beweis:
+   `grep -rn "dp-dialog--scroll"` trifft nur noch diesen Kommentar). Die
+   PHYSISCHE Scroll-Absicherung für inhaltlich sehr lange Panels bleibt —
+   ehrlich dokumentiert, kein stiller Verlust — der ÄUSSERE
+   `.k-dock-panel-inhalt` (`dock-flaeche.css`), der sein `overflow:auto`
+   NICHT verlieren kann, solange `raster`/`cwSetzen`/`studie` (Alt-Default,
+   ausserhalb des P5c-Scopes) sowie `ModulEditor`/`unternehmerplan`
+   (Diff-Stufe, §2.3-Fixed/Anker-Ausnahme) denselben Dock-Rahmen teilen und
+   selbst keine interne Nie-Scroll-Garantie tragen (s. Abschlussbericht P5c).
+   `.dp-dialog--fixed` (ModulEditor)/`.dp-dialog--anker`
+   (Unternehmerplan-Diff) bleiben unverändert unten stehen. */
 /* DrawPanel: eigene Kopf-/Tab-/Körper-Gliederung statt der generischen
    Kopf+Grid-Struktur — volle Höhe, Kopf/Hairline/Scroll-Körper als Flex. */
 .dp-dialog--flex {
@@ -834,4 +845,25 @@
 .sp-textsoft-sm {
   color: var(--k-ink-soft);
   font-size: var(--k-t-sm);
+}
+
+/* v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout) — je EIN `-koerper`-
+   Wrapper je migriertem Panel, dieselbe Grammatik wie `.kp-koerper`/
+   `.draw-koerper` (P5b): der Tab-Inhalt braucht seine eigene grid+gap-
+   Struktur, weil `.k-panel-zwei-koerper` (aura.css) nur EIN Kind aufnimmt
+   (den jeweils aktiven Tab-Body), nicht die Original-Kette aus einzelnen
+   Geschwister-Elementen, die vorher direkt im `.dp-dialog`-Grid lagen. Kein
+   `overflow:auto` hier (Nie-Scroll-Gebot §2.3). */
+.mg-koerper,
+.sp-koerper,
+.sub-koerper,
+.kv-koerper,
+.bp-koerper,
+.vp-koerper,
+.bl-koerper,
+.insp-koerper,
+.up-koerper {
+  padding: 0 var(--k-s4) var(--k-s4);
+  display: grid;
+  gap: var(--k-s3);
 }

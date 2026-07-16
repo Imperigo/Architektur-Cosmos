@@ -19,6 +19,32 @@ const auraCss = readFileSync(
   'utf8',
 );
 
+const designPanelsCss = readFileSync(
+  path.resolve(__dirname, '../src/modules/design/design-panels.css'),
+  'utf8',
+);
+const dockFlaecheCss = readFileSync(
+  path.resolve(__dirname, '../src/shell/dock/dock-flaeche.css'),
+  'utf8',
+);
+
+// v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+// §2.4 P5c: «T4b auf dp-dialog/dock-panel-inhalt ausweiten») — die neun auf
+// `KPanelZweiStufen` migrierten Design-Panels dieses Pakets (byte-gleiche
+// Anzahl: Mängel/Splat/Unternehmerplan-Bericht/SubmissionsCheck/Kv/
+// Varianten/Berechnungsliste/Bauablauf/Inspector).
+const P5C_MIGRIERTE_PANELS = [
+  'MaengelPanel.tsx',
+  'SplatPanel.tsx',
+  'UnternehmerplanPanel.tsx',
+  'SubmissionsCheckPanel.tsx',
+  'KvPanel.tsx',
+  'VariantenPanel.tsx',
+  'BerechnungslistePanel.tsx',
+  'BauablaufPanel.tsx',
+  'Inspector.tsx',
+] as const;
+
 describe('Popup-Layout (T4b): zentrale k-dialog-Regeln statt Ad-hoc-Scroll', () => {
   it('aura.css: .k-dialog-scrim zentriert im Viewport, .k-dialog bricht Text um und deckelt die Höhe', () => {
     expect(auraCss).toMatch(/\.k-dialog-scrim\s*{[^}]*position:\s*fixed/);
@@ -45,5 +71,33 @@ describe('Popup-Layout (T4b): zentrale k-dialog-Regeln statt Ad-hoc-Scroll', () 
     // Keine ad-hoc Scrollleiste am Popup selbst
     expect(html).not.toMatch(/overflow(-y)?:\s*auto/i);
     expect(html).not.toMatch(/overflow(-y)?:\s*scroll/i);
+  });
+
+  // v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+  // §2.3/§2.4) — additive Erweiterung: T4b galt bisher nur `KBestaetigung`
+  // (globaler Confirm-Dialog). Die acht ehemaligen `dp-dialog--scroll`-
+  // Dock-Panels + Inspector sind jetzt auf `KPanelZweiStufen` migriert; diese
+  // Tests beweisen den Scroll-Abbau strukturell (Quelltext-Grep), nicht nur
+  // per Beobachtung.
+  it('P5c: `.dp-dialog--scroll` ist aus design-panels.css entfernt (nur noch als erklärender Kommentar erwähnt)', () => {
+    expect(designPanelsCss).not.toMatch(/\.dp-dialog--scroll\s*{/);
+  });
+
+  it.each(P5C_MIGRIERTE_PANELS)('P5c: %s referenziert `dp-dialog--scroll` nicht mehr als className', (datei) => {
+    const quelle = readFileSync(
+      path.resolve(__dirname, `../src/modules/design/${datei}`),
+      'utf8',
+    );
+    expect(quelle).not.toContain('dp-dialog--scroll');
+  });
+
+  it('P5c: die neuen `-koerper`-Tab-Wrapper der migrierten Panels setzen kein overflow:auto/scroll (Nie-Scroll-Gebot §2.3)', () => {
+    expect(designPanelsCss).not.toMatch(
+      /\.(mg|sp|sub|kv|bp|vp|bl|insp|up)-koerper[^{]*{[^}]*overflow:\s*(auto|scroll)/,
+    );
+  });
+
+  it('P5c: `.k-dock-panel-inhalt` behält sein `overflow:auto` bewusst — dokumentierter Rest-Scroll, solange nicht ALLE Design-Panels migriert sind (raster/cwSetzen/studie bleiben Alt-Default, ModulEditor/Unternehmerplan-Diff bleiben §2.3-Fixed/Anker-Ausnahmen)', () => {
+    expect(dockFlaecheCss).toMatch(/\.k-dock-panel-inhalt\s*{[^}]*overflow:\s*auto/);
   });
 });

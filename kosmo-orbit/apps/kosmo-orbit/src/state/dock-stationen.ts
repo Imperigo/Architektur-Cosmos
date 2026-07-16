@@ -147,6 +147,18 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    // v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+    // §2.4/§9, P5b-Befund «Kompakt-Höhe floort auf min») — `min` bleibt HIER
+    // bewusst UNVERÄNDERT (160): `e2e/dock-layout.spec.ts` Z. 239-241 rechnet
+    // «raster 160 + cwSetzen 170 + splat 160 + maengel 180 + submission 170 =
+    // 840px Minimum» als Bestandsschutz-Vertrag für das Schmalfenster-Kollaps-
+    // Verhalten (raster muss als unwichtigstes Panel zuerst einklappen) —
+    // eine Senkung hier hätte diese Summe verändert und riskiert, dass
+    // `raster` in diesem Szenario nicht mehr kollabiert (Test bricht). Die
+    // Kompakt-Stufe floort darum ehrlich weiterhin bei 160 (kein optischer
+    // Gewinn ggü. der alten 66%-Stufe für DIESES Panel) — dokumentierter,
+    // bewusst in Kauf genommener Rest-Befund, s. Abschlussbericht P5c.
+    groesseKompakt: { w: 160, h: 150 },
   },
   {
     id: 'maengelOffen',
@@ -159,6 +171,9 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    // s. `splatPanelOffen`-Kommentar oben — `min` bleibt 180 (Teil derselben
+    // 840px-Summe in `dock-layout.spec.ts` Z. 239-241).
+    groesseKompakt: { w: 180, h: 160 },
   },
   {
     id: 'submissionOffen',
@@ -171,6 +186,9 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    // s. `splatPanelOffen`-Kommentar oben — `min` bleibt 170 (Teil derselben
+    // 840px-Summe in `dock-layout.spec.ts` Z. 239-241).
+    groesseKompakt: { w: 170, h: 150 },
   },
   {
     id: 'bauablaufOffen',
@@ -178,11 +196,32 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     rolle: 'pn',
     wichtigkeit: 44,
     dock: 'left',
-    min: 190,
+    // v0.8.1 Welle 4 / Paket P5c — `min` gesenkt (190 → 84), NACHTRAG nach
+    // Gate-Befund (Live-Probe zeigte den Kopf VOLLSTÄNDIG unterhalb des
+    // sichtbaren Panel-Rechtecks): dieses Panel ist in KEINER hartcodierten
+    // Mindesthöhen-Summe der E2E-Verträge referenziert (verifiziert per Grep
+    // über `e2e/dock-layout.spec.ts`/`dock-interaktion.spec.ts` — anders als
+    // `raster`/`cwSetzen`/`splat`/`maengel`/`submission` oben), darum darf
+    // die Kompakt-Stufe hier tatsächlich schrumpfen — aber NICHT auf den
+    // reinen `KPanelZweiStufen`-Kopf allein: der erste Ansatz (64px)
+    // budgetierte nur `.k-panel-zwei-kopf` (~33px), vergass aber ZWEI
+    // strukturelle Vorlauf-Schichten, die IMMER vor unserem Panel-Inhalt
+    // liegen — `DockPanel.tsx`s EIGENER `.k-dock-panel-kopf` (28px fix,
+    // `dock-flaeche.css`) UND das `padding-top` des `.dp-dialog`-Wrappers
+    // (`var(--k-s4)`=12px). Live vermessen (Playwright `boundingBox()`,
+    // 1600×1000, `kv-oeffnen`): Dock-Kopf 28px + dp-dialog-Padding 12px +
+    // `.k-panel-zwei-kopf` 33.4px ≈ 74px reales Minimum, wenn der Panel-
+    // eigene Action-Row (Export-/Schliessen-Knopf) in Stufe `'kompakt'`
+    // NICHT gerendert wird (s. Panel-Kopfkommentar, `stufe === 'offen' &&`-
+    // Guard) — `min`=84/`groesseKompakt.h`=88 lassen ~10-14px Sicherheits-
+    // puffer für Sub-Pixel-Rundung/Font-Rendering-Varianz. `groesse`
+    // (Höchstmass) bleibt unverändert.
+    min: 84,
     groesse: 380,
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    groesseKompakt: { w: 200, h: 88 },
   },
   {
     id: 'kvOffen',
@@ -190,11 +229,15 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     rolle: 'pn',
     wichtigkeit: 45,
     dock: 'left',
-    min: 190,
+    // s. `bauablaufOffen`-Kommentar oben (`min` 190 → 84, Gate-Nachtrag:
+    // Dock-Kopf 28 + dp-dialog-Padding 12 + KPanelZweiStufen-Kopf ~33.4 ≈
+    // 74px real, `min`/`groesseKompakt.h` = 84/88 mit Sicherheitspuffer).
+    min: 84,
     groesse: 380,
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    groesseKompakt: { w: 200, h: 88 },
   },
   {
     id: 'listeOffen',
@@ -202,11 +245,13 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     rolle: 'generator',
     wichtigkeit: 46,
     dock: 'left',
-    min: 200,
+    // s. `bauablaufOffen`-Kommentar oben (`min` 200 → 84, Gate-Nachtrag).
+    min: 84,
     groesse: 400,
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    groesseKompakt: { w: 210, h: 88 },
   },
   {
     id: 'variantenPanelOffen',
@@ -214,11 +259,13 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     rolle: 'generator',
     wichtigkeit: 50,
     dock: 'left',
-    min: 200,
+    // s. `bauablaufOffen`-Kommentar oben (`min` 200 → 84, Gate-Nachtrag).
+    min: 84,
     groesse: 420,
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    groesseKompakt: { w: 210, h: 88 },
   },
   {
     id: 'studieOffen',
@@ -240,11 +287,19 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     rolle: 'ak',
     wichtigkeit: 47,
     dock: 'right',
-    min: 180,
+    // v0.8.1 Welle 4 / Paket P5c — `min` gesenkt (180 → 84, Gate-Nachtrag: s.
+    // `bauablaufOffen`-Kommentar weiter oben für die Live-Vermessung/
+    // Herleitung 84/88). Keine hartcodierte Mindesthöhen-Summe referenziert
+    // dieses Panel. Gilt nur für den PDF-Hinweis-Zweig («Unternehmerplan-
+    // Bericht», jetzt `KPanelZweiStufen`) — der Diff-Karten-Zweig
+    // («Unternehmerplan-Diff», `dp-dialog--anker`) bleibt Alt-Default und
+    // liest `stufe` nicht, s. `UnternehmerplanPanel.tsx`-Kopfkommentar.
+    min: 84,
     groesse: 360,
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    groesseKompakt: { w: 190, h: 88 },
   },
   {
     id: 'drawOffen',
@@ -329,7 +384,16 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     rolle: 'system',
     wichtigkeit: 82,
     dock: 'right',
-    min: 180,
+    // v0.8.1 Welle 4 / Paket P5c — `min` gesenkt (180 → 84, Gate-Nachtrag: s.
+    // `bauablaufOffen`-Kommentar weiter oben für die Live-Vermessung/
+    // Herleitung 84/88 — der erste Wert 56 budgetierte nur den
+    // `KPanelZweiStufen`-Kopf allein und liess den Dock-Kopf (28px) +
+    // `.dp-dialog`-Padding (12px) aussen vor, wodurch der Kopf real
+    // UNTERHALB des sichtbaren Panel-Rechtecks landete — per Live-Probe
+    // gefunden und hier korrigiert). `inspector-layout.spec.ts` (H-43) misst
+    // zusätzlich jetzt auch, dass der Kopf INNERHALB des Panel-Rechtecks
+    // liegt (nicht nur Bounding-Box-Disjunktion gegen NavLeiste/Kosmo-Symbol).
+    min: 84,
     groesse: 320,
     // `start` ist wie bei `unternehmerplan` oben irrelevant für die Design-
     // Station: `DockFlaeche.tsx` überschreibt `geschlossen` bei JEDEM Panel
@@ -338,6 +402,7 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    groesseKompakt: { w: 190, h: 88 },
   },
 
   // ---- v0.7.8 Welle 2 (P5) — Viewport-HUDs als echte Dock-Floats ----------

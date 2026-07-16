@@ -91,3 +91,86 @@ test('H-43: Inspector offen (1280×800) — Umbau-KSelect, NavLeiste und linke L
   // Inspector ist nach alldem unverändert offen (nichts hat ihn weggeklickt).
   await expect(inspector).toBeVisible();
 });
+
+// v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+// §2.4/§8 Sanktion 5) — additive Kompakt-Stufen-Assertion: die H-43-Garantie
+// (kein physischer Überlapp mit NavLeiste/Kosmo-Symbol) muss auch gelten,
+// wenn der Inspector über den neuen `KPanelZweiStufen`-Kopf auf die Kompakt-
+// Stufe umgeschaltet wird (`min` P5c gesenkt, 180→84 — Gate-Nachtrag, s.
+// `dock-stationen.ts`-Kommentar: der erste Wert 56 vergass den Dock-eigenen
+// `.k-dock-panel-kopf` + `.dp-dialog`-Padding vor dem `KPanelZweiStufen`-
+// Kopf, wodurch dieser real UNTERHALB des sichtbaren Panel-Rechtecks lag —
+// «leere Fläche + X»). Bestehende Assertion oben bleibt unverändert.
+test('H-43 + P5c: Inspector-Kompakt-Stufe überlappt NavLeiste/Kosmo-Symbol ebenfalls nicht, Umschalten zurück auf offen funktioniert', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+  await page.click('[data-testid="view-2d"]');
+
+  const wallId = await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const aw = st.doc.byKind('assembly').find((a) => a.name?.startsWith('AW'))!;
+    const r = k.run('design.wandZeichnen', {
+      storeyId: st.activeStoreyId,
+      a: { x: 0, y: 0 },
+      b: { x: 8000, y: 0 },
+      assemblyId: aw.id,
+    });
+    return r.patches[0]!.id;
+  });
+  await page.evaluate((id) => window.__kosmo.state().select([id]), wallId);
+  const inspector = page.locator('[data-testid="inspector"]');
+  await expect(inspector).toBeVisible();
+
+  await page.click('[data-testid="inspector-koerper-umschalten"]');
+  await expect(page.locator('[data-testid="inspector-koerper"]')).toHaveClass(/k-panel-zwei--kompakt/);
+  // Der Kopf (Titel+Kernkennzahl) bleibt sichtbar — nur der Körper klappt weg.
+  await expect(page.locator('[data-testid="inspector-koerper-umschalten"]')).toBeVisible();
+
+  const inspBoxKompakt = (await page.locator('[data-testid="dock-panel-inspector"]').boundingBox())!;
+
+  // Gate-Beweis (der eigentliche Fund): der `KPanelZweiStufen`-Kopf muss
+  // VOLLSTÄNDIG innerhalb des Dock-Panel-Rechtecks liegen, nicht darunter
+  // hinausragen — UND die Kernkennzahl («TYP · Kurzbezeichnung», z.B.
+  // «WAND · …», §2.2) muss als nicht-leerer, sichtbarer Text im Kopf stehen.
+  const inspKopfBox = (await page.locator('[data-testid="inspector-koerper"] .k-panel-zwei-kopf').boundingBox())!;
+  expect(inspKopfBox, 'Kopf muss messbar sein').not.toBeNull();
+  expect(inspKopfBox.y, 'Kopf-Oberkante darf nicht über dem Panel-Rechteck liegen').toBeGreaterThanOrEqual(
+    inspBoxKompakt.y - 1,
+  );
+  expect(
+    inspKopfBox.y + inspKopfBox.height,
+    'Kopf-Unterkante muss innerhalb des Panel-Rechtecks liegen (das Gate-Symptom: Kopf lag VOLLSTÄNDIG darunter)',
+  ).toBeLessThanOrEqual(inspBoxKompakt.y + inspBoxKompakt.height + 1);
+  const kernkennzahlText = await page
+    .locator('[data-testid="inspector-koerper"] .k-panel-zwei-kernkennzahl')
+    .innerText();
+  expect(kernkennzahlText, 'Kernkennzahl muss Elementtyp + Kurzbezeichnung tragen (§2.2, z.B. «WAND · …»)').toMatch(
+    /WAND · /,
+  );
+
+  for (const testid of ['nav-fit', 'kosmo-symbol']) {
+    const box = await page.locator(`[data-testid="${testid}"]`).boundingBox();
+    expect(box, `${testid} muss sichtbar sein`).not.toBeNull();
+    const schneidet =
+      box!.x < inspBoxKompakt.x + inspBoxKompakt.width &&
+      box!.x + box!.width > inspBoxKompakt.x &&
+      box!.y < inspBoxKompakt.y + inspBoxKompakt.height &&
+      box!.y + box!.height > inspBoxKompakt.y;
+    expect(schneidet, `${testid} darf den kompakten Inspector nicht schneiden`).toBe(false);
+  }
+
+  // Zurück auf 'offen' — die Eigenschaften-Zeilen (z.B. «Umbau») sind wieder
+  // erreichbar, derselbe echte Klickweg wie oben.
+  await page.click('[data-testid="inspector-koerper-umschalten"]');
+  await expect(page.locator('[data-testid="inspector-koerper"]')).toHaveClass(/k-panel-zwei--offen/);
+  await page.click('[data-testid="inspector-renovation"]', { timeout: 8000 });
+  await expect(page.locator('[data-testid="inspector-renovation-popup"]')).toBeVisible();
+});

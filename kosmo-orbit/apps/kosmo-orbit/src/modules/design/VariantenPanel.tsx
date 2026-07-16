@@ -11,8 +11,9 @@ import {
   type VariantenGewichte,
   type Zone,
 } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, KIcon, KInput, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KInput, KPanelZweiStufen, Measure, melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 import './design-panels.css';
 
 /**
@@ -34,6 +35,18 @@ import './design-panels.css';
  * Laufzeit-Daten hat ausschliesslich dieses Panel nötig, nichts sonst liest
  * sie — anders als `vis-runtime.ts`, dessen Node-Läufe mehrere Viewport-
  * Komponenten gleichzeitig lesen.
+ *
+ * v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+ * §2.3/§2.4, «Bericht-artiges Panel») — migriert auf `KPanelZweiStufen`:
+ * Kernkennzahl ist der Live-Zähler («N geprüft», derselbe Text, der schon
+ * heute permanent sichtbar läuft). EIN Tab (kein Suche/Ergebnisse-Split,
+ * obwohl §2.3 «Abschnitte werden zu Tabs» für Bericht-Panels empfiehlt):
+ * `e2e/varianten-suche.spec.ts` klickt Start auf der Konfigurationsseite und
+ * prüft Top-Karte/Matrix DANACH im selben Zug, ohne Tab-Wechsel — ein Split
+ * (Gewichte/Start auf einem Tab, Ergebnisse auf einem zweiten) hätte diesen
+ * bestehenden Vertrag zerschnitten, ein automatisches Umschalten bei
+ * Ergebnis-Eintreffen wäre eine überraschende Nebenwirkung gewesen, die den
+ * Stopp-Knopf (auf dem Konfigurationstab) unerreichbar gemacht hätte.
  */
 
 const GEWICHT_KEYS = ['programmErfuellung', 'kompaktheit', 'mixTreue', 'flaechenNutzung'] as const;
@@ -241,6 +254,12 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
     [revision, activeStoreyId],
   );
 
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['variantenPanelOffen']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
+
   const zeitscheibe = useRef<() => void>(() => {});
   zeitscheibe.current = () => {
     const gen = generatorRef.current;
@@ -336,109 +355,129 @@ export function VariantenPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div data-testid="varianten-panel" className="k-dialog dp-dialog dp-dialog--scroll">
-      <div className="dp-kopf">
-        <Badge hue={moduleHue.design}>Varianten (Anytime-Suche)</Badge>
-        <div className="dp-fuell" />
-        <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          <KIcon name="schliessen" size={14} />
-        </KButton>
-      </div>
-      <Hairline />
-
-      {!kontext && (
-        <div className="vp-hinweis-text">
-          Footprint- und Korridor-Zone (Raumtyp «korridor») zeichnen sowie ein Raumprogramm erfassen — daraus baut die Suche ihren Soll-Mix.
+    <div data-testid="varianten-panel" className="k-dialog dp-dialog">
+      {/* Gate-Nachtrag (P5c): Action-Row nur in Stufe 'offen', s. MaengelPanel-
+          Kommentar. */}
+      {stufe === 'offen' && (
+        <div className="dp-kopf">
+          <div className="dp-fuell" />
+          <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
+            <KIcon name="schliessen" size={14} />
+          </KButton>
         </div>
       )}
 
-      <div className="vp-gewichte-spalte">
-        {GEWICHT_KEYS.map((k) => (
-          <label key={k} className="vp-gewicht-zeile">
-            <span className="vp-gewicht-label">{GEWICHT_LABEL[k]}</span>
-            <input
-              type="range"
-              min={0}
-              max={3}
-              step={0.1}
-              value={gewichte[k]}
-              disabled={laeuft}
-              data-testid={`varianten-panel-gewicht-${k}`}
-              onChange={(e) => setGewichte((g) => ({ ...g, [k]: Number(e.target.value) }))}
-              className="vp-slider"
-            />
-            <Measure>×{gewichte[k].toFixed(1)}</Measure>
-          </label>
-        ))}
-        <label className="vp-gewicht-zeile">
-          <span className="vp-gewicht-label">Seed</span>
-          <KInput
-            size="sm"
-            mono
-            type="number"
-            data-testid="varianten-panel-seed"
-            value={seed}
-            disabled={laeuft}
-            onChange={(e) => setSeed(Math.trunc(Number(e.target.value)) || 0)}
-            className="dp-w90"
-          />
-        </label>
-      </div>
+      <KPanelZweiStufen
+        data-testid="varianten-panel-koerper"
+        titel="Varianten (Anytime-Suche)"
+        kernkennzahl={<span data-testid="varianten-panel-zaehler">{anzahl} Varianten geprüft</span>}
+        stufe={stufe}
+        onStufeUmschalten={() => panelOverrideSetzen('design', 'variantenPanelOffen', { stufe: stufeUmschalten(stufeRoh) })}
+        aktiverTab="uebersicht"
+        onTabWechseln={() => {}}
+        tabs={[
+          {
+            id: 'uebersicht',
+            label: 'Übersicht',
+            inhalt: (
+              <div className="vp-koerper">
+                {!kontext && (
+                  <div className="vp-hinweis-text">
+                    Footprint- und Korridor-Zone (Raumtyp «korridor») zeichnen sowie ein Raumprogramm erfassen — daraus
+                    baut die Suche ihren Soll-Mix.
+                  </div>
+                )}
 
-      <div className="vp-start-zeile">
-        {!laeuft ? (
-          <KButton size="sm" tone="accent" data-testid="varianten-panel-start" onClick={start} disabled={!kontext}>
-            Start
-          </KButton>
-        ) : (
-          <KButton size="sm" tone="quiet" data-testid="varianten-panel-stopp" onClick={stopp}>
-            Stopp
-          </KButton>
-        )}
-        <span data-testid="varianten-panel-zaehler" className="vp-zaehler">
-          {anzahl} Varianten geprüft
-        </span>
-      </div>
-      {hinweis && <div className="vp-fehlertext">{hinweis}</div>}
+                <div className="vp-gewichte-spalte">
+                  {GEWICHT_KEYS.map((k) => (
+                    <label key={k} className="vp-gewicht-zeile">
+                      <span className="vp-gewicht-label">{GEWICHT_LABEL[k]}</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={3}
+                        step={0.1}
+                        value={gewichte[k]}
+                        disabled={laeuft}
+                        data-testid={`varianten-panel-gewicht-${k}`}
+                        onChange={(e) => setGewichte((g) => ({ ...g, [k]: Number(e.target.value) }))}
+                        className="vp-slider"
+                      />
+                      <Measure>×{gewichte[k].toFixed(1)}</Measure>
+                    </label>
+                  ))}
+                  <label className="vp-gewicht-zeile">
+                    <span className="vp-gewicht-label">Seed</span>
+                    <KInput
+                      size="sm"
+                      mono
+                      type="number"
+                      data-testid="varianten-panel-seed"
+                      value={seed}
+                      disabled={laeuft}
+                      onChange={(e) => setSeed(Math.trunc(Number(e.target.value)) || 0)}
+                      className="dp-w90"
+                    />
+                  </label>
+                </div>
 
-      {top.length > 0 && (
-        <div className="vp-top-spalte">
-          <div className="vp-top-titel">Top-{top.length} nach Score</div>
-          {top.map((v, i) => (
-            <div key={i} data-testid={`varianten-panel-karte-${i}`} className="k-karte vp-karte">
-              <div className="vp-karte-kopf">
-                <span className="vp-zug-label">
-                  #{i + 1} · {ZUG_LABEL[v.zug]}
+                <div className="vp-start-zeile">
+                  {!laeuft ? (
+                    <KButton size="sm" tone="accent" data-testid="varianten-panel-start" onClick={start} disabled={!kontext}>
+                      Start
+                    </KButton>
+                  ) : (
+                    <KButton size="sm" tone="quiet" data-testid="varianten-panel-stopp" onClick={stopp}>
+                      Stopp
+                    </KButton>
+                  )}
+                </div>
+                {hinweis && <div className="vp-fehlertext">{hinweis}</div>}
+
+                {top.length > 0 && (
+                  <div className="vp-top-spalte">
+                    <div className="vp-top-titel">Top-{top.length} nach Score</div>
+                    {top.map((v, i) => (
+                      <div key={i} data-testid={`varianten-panel-karte-${i}`} className="k-karte vp-karte">
+                        <div className="vp-karte-kopf">
+                          <span className="vp-zug-label">
+                            #{i + 1} · {ZUG_LABEL[v.zug]}
+                          </span>
+                          <span data-testid={`varianten-panel-score-${i}`}>
+                            <Measure>{(v.score * 100).toFixed(0)} %</Measure>
+                          </span>
+                        </div>
+                        <WohnungsSkizze wohnungen={v.wohnungen} />
+                        <div className="vp-karte-teilscores">
+                          Programm {(v.teilScores.programmErfuellung * 100).toFixed(0)}% · Kompaktheit{' '}
+                          {(v.teilScores.kompaktheit * 100).toFixed(0)}% · Mix{' '}
+                          {(v.teilScores.mixTreue * 100).toFixed(0)}% · Fläche{' '}
+                          {(v.teilScores.flaechenNutzung * 100).toFixed(0)}%
+                        </div>
+                        <div>
+                          <KButton
+                            size="sm"
+                            tone="quiet"
+                            data-testid={`varianten-panel-uebernehmen-${i}`}
+                            onClick={() => uebernehmen(v)}
+                          >
+                            Übernehmen
+                          </KButton>
+                        </div>
+                      </div>
+                    ))}
+                    <SegmentMatrixSvg top={top} />
+                  </div>
+                )}
+                <span className="vp-fussnote">
+                  Deterministischer Ruin-&amp;-Recreate-Hill-Climber (derive/variantensuche.ts) — kein
+                  Cloud-Optimierer, kein Worker. Übernahme ist ein Undo-Schritt.
                 </span>
-                <span data-testid={`varianten-panel-score-${i}`}>
-                  <Measure>{(v.score * 100).toFixed(0)} %</Measure>
-                </span>
               </div>
-              <WohnungsSkizze wohnungen={v.wohnungen} />
-              <div className="vp-karte-teilscores">
-                Programm {(v.teilScores.programmErfuellung * 100).toFixed(0)}% · Kompaktheit{' '}
-                {(v.teilScores.kompaktheit * 100).toFixed(0)}% · Mix {(v.teilScores.mixTreue * 100).toFixed(0)}% ·
-                Fläche {(v.teilScores.flaechenNutzung * 100).toFixed(0)}%
-              </div>
-              <div>
-                <KButton
-                  size="sm"
-                  tone="quiet"
-                  data-testid={`varianten-panel-uebernehmen-${i}`}
-                  onClick={() => uebernehmen(v)}
-                >
-                  Übernehmen
-                </KButton>
-              </div>
-            </div>
-          ))}
-          <SegmentMatrixSvg top={top} />
-        </div>
-      )}
-      <span className="vp-fussnote">
-        Deterministischer Ruin-&amp;-Recreate-Hill-Climber (derive/variantensuche.ts) — kein Cloud-Optimierer, kein
-        Worker. Übernahme ist ein Undo-Schritt.
-      </span>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

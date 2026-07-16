@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { deriveKostenschaetzung, kvBlattSvg, KV_HINWEIS, siaPhaseLabel, type KvKennwerte } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, KIcon, KInput, Measure } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KInput, KPanelZweiStufen, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 import './design-panels.css';
 
 /**
@@ -17,6 +18,15 @@ import './design-panels.css';
  * AUSDRÜCKLICH kein Devis: keine CRB/NPK-Positionen, keine eBKP-
  * Feingliederung — der Hinweis steht permanent sichtbar, nicht nur beim
  * Export.
+ *
+ * v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+ * §2.2/§2.4) — migriert auf `KPanelZweiStufen`: Kernkennzahl ist die
+ * Kostentotal-Summe (das Panel ist ein Kosten-Panel, nicht bloss eine
+ * Zeilenliste — die Summe ist die «wichtigste Kennzahl», nicht der
+ * Zeilenzähler). EIN Tab (kein Kosten/Kennwerte-Split): `e2e/kv-
+ * schaetzung.spec.ts` ändert `kv-chf-m2` (ein Kennwert-Feld) und prüft
+ * `kv-summe` (die Kostentabelle) im SELBEN Zug ohne Tab-Wechsel — ein
+ * Kosten/Kennwerte-Split hätte diesen bestehenden Vertrag zerschnitten.
  */
 
 const fmt = (v: number) => v.toLocaleString('de-CH', { maximumFractionDigits: 0 });
@@ -51,6 +61,12 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
     URL.revokeObjectURL(a.href);
   };
 
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['kvOffen']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
+
   const kennwertFeld = (
     label: string,
     feld: keyof KvKennwerte,
@@ -77,81 +93,103 @@ export function KvPanel({ onClose }: { onClose: () => void }) {
   );
 
   return (
-    <div data-testid="kv-panel" className="dp-dialog dp-dialog--scroll">
-      <div className="dp-kopf">
-        <Badge hue="var(--k-mod-design)">Kostenschätzung</Badge>
-        <div className="dp-fuell" />
-        <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="kv-blatt">
-          KV-Blatt (SVG)
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          <KIcon name="schliessen" size={14} />
-        </KButton>
-      </div>
-
-      <div data-testid="kv-hinweis" className="dp-hinweis">
-        {KV_HINWEIS}
-      </div>
-
-      <div className="dp-meta">
-        GF-Basis: <Measure>{kv.flaecheGf > 0 ? `${fmt(kv.flaecheGf)} m²` : '—'}</Measure>
-        {' · '}
-        {siaPhaseLabel(doc.settings.siaPhase)}
-      </div>
-
-      <Hairline />
-
-      {kv.positionen.length === 0 ? (
-        <div data-testid="kv-leer" className="dp-leer">
-          Keine Geometrie gezeichnet — zuerst Decken oder Volumenkörper anlegen, dann rechnet die
-          Schätzung mit.
+    <div data-testid="kv-panel" className="dp-dialog">
+      {/* Gate-Nachtrag (P5c): Action-Row nur in Stufe 'offen', s. MaengelPanel-
+          Kommentar. */}
+      {stufe === 'offen' && (
+        <div className="dp-kopf">
+          <div className="dp-fuell" />
+          <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="kv-blatt">
+            KV-Blatt (SVG)
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
+            <KIcon name="schliessen" size={14} />
+          </KButton>
         </div>
-      ) : (
-        <table className="dp-tabelle" data-testid="kv-tabelle">
-          <thead>
-            <tr>
-              <th>BKP</th>
-              <th>Bezeichnung</th>
-              <th>CHF</th>
-            </tr>
-          </thead>
-          <tbody>
-            {kv.positionen.map((p) => (
-              <tr key={p.bkp}>
-                <td>{p.bkp}</td>
-                <td>{p.bezeichnung}</td>
-                <td className="dp-num">
-                  <Measure>{fmt(p.betrag)}</Measure>
-                </td>
-              </tr>
-            ))}
-            <tr className="dp-tabelle-summe">
-              <td colSpan={2}>Total</td>
-              <td className="dp-num" data-testid="kv-summe">
-                <Measure>{fmt(kv.total)}</Measure>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       )}
 
-      <Hairline />
+      <KPanelZweiStufen
+        data-testid="kv-panel-koerper"
+        titel="Kostenschätzung"
+        kernkennzahl={kv.positionen.length > 0 ? `CHF ${fmt(kv.total)}` : 'Keine Geometrie'}
+        stufe={stufe}
+        onStufeUmschalten={() => panelOverrideSetzen('design', 'kvOffen', { stufe: stufeUmschalten(stufeRoh) })}
+        aktiverTab="uebersicht"
+        onTabWechseln={() => {}}
+        tabs={[
+          {
+            id: 'uebersicht',
+            label: 'Übersicht',
+            inhalt: (
+              <div className="kv-koerper">
+                <div data-testid="kv-hinweis" className="dp-hinweis">
+                  {KV_HINWEIS}
+                </div>
 
-      <div className="dp-spalte">
-        <div className="k-titel dp-titel-block">Kennwerte (Annahme Owner-Guideline, kein verbindlicher Wert)</div>
-        <div className="dp-reihe">
-          {kennwertFeld('BKP 2 Basis', 'chfProM2Gf', 'kv-chf-m2', false, 'CHF pro m² GF für BKP 2 (Gebäude)')}
-          {kennwertFeld('Rohbau', 'anteilRohbau', 'kv-anteil-rohbau', true, 'Anteil Rohbau am BKP-2-Basiswert')}
-          {kennwertFeld('Ausbau', 'anteilAusbau', 'kv-anteil-ausbau', true, 'Anteil Ausbau am BKP-2-Basiswert')}
-          {kennwertFeld('Technik', 'anteilTechnik', 'kv-anteil-technik', true, 'Anteil Gebäudetechnik am BKP-2-Basiswert')}
-          {kennwertFeld('Umgebung (BKP 4)', 'zuschlagUmgebung', 'kv-zuschlag-umgebung', true, 'Zuschlag BKP 4 als Anteil der BKP-2-Summe')}
-          {kennwertFeld('Baunebenkosten (BKP 5)', 'zuschlagBaunebenkosten', 'kv-zuschlag-baunebenkosten', true, 'Zuschlag BKP 5 als Anteil der BKP-2-Summe')}
-          {kennwertFeld('Reserve', 'reserve', 'kv-reserve', true, 'Reserve als Anteil der Zwischensumme BKP 2+4+5')}
-        </div>
-        <span className="dp-fussnote">
-          Jede Änderung ist ein eigener Undo-Schritt (Command design.kvKennwerteSetzen).
-        </span>
-      </div>
+                <div className="dp-meta">
+                  GF-Basis: <Measure>{kv.flaecheGf > 0 ? `${fmt(kv.flaecheGf)} m²` : '—'}</Measure>
+                  {' · '}
+                  {siaPhaseLabel(doc.settings.siaPhase)}
+                </div>
+
+                <Hairline />
+
+                {kv.positionen.length === 0 ? (
+                  <div data-testid="kv-leer" className="dp-leer">
+                    Keine Geometrie gezeichnet — zuerst Decken oder Volumenkörper anlegen, dann rechnet die
+                    Schätzung mit.
+                  </div>
+                ) : (
+                  <table className="dp-tabelle" data-testid="kv-tabelle">
+                    <thead>
+                      <tr>
+                        <th>BKP</th>
+                        <th>Bezeichnung</th>
+                        <th>CHF</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {kv.positionen.map((p) => (
+                        <tr key={p.bkp}>
+                          <td>{p.bkp}</td>
+                          <td>{p.bezeichnung}</td>
+                          <td className="dp-num">
+                            <Measure>{fmt(p.betrag)}</Measure>
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="dp-tabelle-summe">
+                        <td colSpan={2}>Total</td>
+                        <td className="dp-num" data-testid="kv-summe">
+                          <Measure>{fmt(kv.total)}</Measure>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                )}
+
+                <Hairline />
+
+                <div className="dp-spalte">
+                  <div className="k-titel dp-titel-block">Kennwerte (Annahme Owner-Guideline, kein verbindlicher Wert)</div>
+                  <div className="dp-reihe">
+                    {kennwertFeld('BKP 2 Basis', 'chfProM2Gf', 'kv-chf-m2', false, 'CHF pro m² GF für BKP 2 (Gebäude)')}
+                    {kennwertFeld('Rohbau', 'anteilRohbau', 'kv-anteil-rohbau', true, 'Anteil Rohbau am BKP-2-Basiswert')}
+                    {kennwertFeld('Ausbau', 'anteilAusbau', 'kv-anteil-ausbau', true, 'Anteil Ausbau am BKP-2-Basiswert')}
+                    {kennwertFeld('Technik', 'anteilTechnik', 'kv-anteil-technik', true, 'Anteil Gebäudetechnik am BKP-2-Basiswert')}
+                    {kennwertFeld('Umgebung (BKP 4)', 'zuschlagUmgebung', 'kv-zuschlag-umgebung', true, 'Zuschlag BKP 4 als Anteil der BKP-2-Summe')}
+                    {kennwertFeld('Baunebenkosten (BKP 5)', 'zuschlagBaunebenkosten', 'kv-zuschlag-baunebenkosten', true, 'Zuschlag BKP 5 als Anteil der BKP-2-Summe')}
+                    {kennwertFeld('Reserve', 'reserve', 'kv-reserve', true, 'Reserve als Anteil der Zwischensumme BKP 2+4+5')}
+                  </div>
+                  <span className="dp-fussnote">
+                    Jede Änderung ist ein eigener Undo-Schritt (Command design.kvKennwerteSetzen).
+                  </span>
+                </div>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

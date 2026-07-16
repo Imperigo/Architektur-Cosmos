@@ -805,3 +805,172 @@ test('viele Geschosse (Hochhaus-Fall): die Geschossleiste endet über dem Entwur
   // derselbe Weg wie jeder andere Test in dieser Datei.
   await pruefeDisjunktion(page, selektorMap(['kennzahlen']));
 });
+
+// v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+// §2.4/§8 Sanktion 5) — additive Kompakt-Stufen-Assertions: die neun in
+// diesem Paket migrierten Panels tragen jetzt `KPanelZweiStufen`, deren Kopf
+// einen `-koerper-umschalten`-Knopf trägt (P5b-Muster,
+// `panel-zwei-stufen.tsx`). Zwei Stichproben statt aller neun: `kvOffen`
+// (P5c hat `min` gesenkt, 190→84 — die Kompakt-Stufe MUSS hier sichtbar
+// kleiner werden als die alte 66%-Stufe) und `maengelOffen` (P5c hat `min`
+// bewusst UNVERÄNDERT gelassen, 180 — die Kompakt-Stufe floort dort ehrlich
+// weiter bei 180, s. `dock-stationen.ts`-Kommentar). Bestehende Assertions
+// oben bleiben unverändert.
+//
+// GATE-NACHTRAG: eine Live-Probe fand, dass der `KPanelZweiStufen`-Kopf in
+// Stufe 'kompakt' bei den `min`-gesenkten Panels VOLLSTÄNDIG UNTERHALB des
+// sichtbaren Panel-Rechtecks lag (der erste `min`-Wert von 56-64px
+// budgetierte nur den Kopf selbst, vergass aber den Dock-eigenen
+// `.k-dock-panel-kopf` (28px, `dock-flaeche.css`) + das `.dp-dialog`-
+// Padding (12px), die IMMER davor liegen). Fix: `min`/`groesseKompakt.h`
+// auf 84/88 angehoben (Live vermessen: 28+12+33.4≈74px real, +Puffer) UND
+// die Panel-eigene Action-Row (Export-/Schliessen-Knöpfe) rendert jetzt NUR
+// in Stufe 'offen' (`stufe === 'offen' &&`-Guard je Panel), damit der
+// `KPanelZweiStufen`-Kopf in Stufe 'kompakt' das ERSTE gemalte Element ist.
+// Die Tests unten beweisen das jetzt EXPLIZIT per Bounding-Box-Vergleich
+// (Kopf muss innerhalb des Panel-Rechtecks liegen), nicht nur per Höhe.
+test('P5c Kompakt-Stufe: KV-Panel schrumpft spürbar (min gesenkt) UND der Kopf bleibt innerhalb des Panel-Rechtecks; Mängel-Panel floort ehrlich am unveränderten min', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+
+  await page.click('[data-testid="kv-oeffnen"]');
+  await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
+
+  await page.click('[data-testid="kv-panel-koerper-umschalten"]');
+  await expect(page.locator('[data-testid="kv-panel-koerper"]')).toHaveClass(/k-panel-zwei--kompakt/);
+  // `expect.poll()` statt eines einzelnen `stabileBox()`-Schnappschusses —
+  // s. Begründung bei der Rück-Messung weiter unten (später Content-Re-Solve).
+  await expect
+    .poll(async () => (await page.locator('[data-testid="dock-panel-kvOffen"]').boundingBox())?.height ?? 0, {
+      timeout: 6000,
+    })
+    .toBeLessThan(150);
+  const kvKompaktBox = await stabileBox(page.locator('[data-testid="dock-panel-kvOffen"]'));
+  // Kompakt zielt auf `groesseKompakt.h`=88 (`dock-stationen.ts`), UNABHÄNGIG
+  // vom verfügbaren Feld (anders als die alte 66%-/neue 25%-Stufe, die beide
+  // `avail`-abhängig sind — ein Vergleich gegen den VOR-Toggle-Alt-Default-
+  // Wert wäre hier fragil, weil dessen `avail*0.66`-Ziel bei einem knappen
+  // Testfeld selbst nahe am `min`-Boden liegen kann, s. Gate-Nachtrag-Fund).
+  // Ein fester Bereich [84, 150] beweist dieselbe Kernaussage robust: klar
+  // unter der historischen 190px-`min`-Schwelle UND weit unter `groesse`=380.
+  expect(kvKompaktBox.height).toBeGreaterThanOrEqual(84);
+  expect(kvKompaktBox.height).toBeLessThan(150);
+
+  // Gate-Beweis: der Kopf (Titel+Kernkennzahl) liegt VOLLSTÄNDIG innerhalb
+  // des Panel-Rechtecks — nicht darunter/darüber hinausragend — UND trägt
+  // die Kernkennzahl als sichtbaren Text (kein leeres Chrome).
+  const kvKopfBox = (await page.locator('[data-testid="kv-panel-koerper"] .k-panel-zwei-kopf').boundingBox())!;
+  expect(kvKopfBox.y).toBeGreaterThanOrEqual(kvKompaktBox.y - 1);
+  expect(kvKopfBox.y + kvKopfBox.height).toBeLessThanOrEqual(kvKompaktBox.y + kvKompaktBox.height + 1);
+  await expect(page.locator('[data-testid="kv-panel-koerper"] .k-panel-zwei-kernkennzahl')).toBeVisible();
+  const kvKopfText = await page.locator('[data-testid="kv-panel-koerper"] .k-panel-zwei-kernkennzahl').innerText();
+  expect(kvKopfText.length).toBeGreaterThan(0);
+
+  // Zurück auf 'offen' — Grösse wächst wieder auf das Viertelflächen-Ziel
+  // (`avail*0.25`, §2.1) — NICHT auf die alte 66%-Stufe: das ist by design
+  // (Owner-Auftrag «aufgeklappt nur ~1/4 der Oberfläche»). Der Klassenwechsel
+  // wird ZUERST bewiesen (Klick tatsächlich verarbeitet). Gemessen wird per
+  // `expect.poll()` statt eines einzelnen `stabileBox()`-Schnappschusses:
+  // derselbe «später Content-Re-Solve»-Befund wie beim row-Splitter (ROADMAP
+  // P2) zeigte sich hier live — die CSS-Klasse wechselt sofort, der Solver-
+  // Rect braucht in Einzelfällen einen zweiten, spät nachlaufenden Re-Solve,
+  // bis `rect.h` tatsächlich über `groesseKompakt.h` wächst. `stabileBox()`s
+  // festes 700+300ms-Fenster kann diesen Nachlauf knapp verpassen; Polling
+  // mit grosszügigem Timeout wartet, bis der reale Endwert erreicht ist,
+  // statt einen Zwischenstand als «stabil» zu akzeptieren.
+  await page.click('[data-testid="kv-panel-koerper-umschalten"]');
+  await expect(page.locator('[data-testid="kv-panel-koerper"]')).toHaveClass(/k-panel-zwei--offen/);
+  await expect
+    .poll(
+      async () => (await page.locator('[data-testid="dock-panel-kvOffen"]').boundingBox())?.height ?? 0,
+      { timeout: 6000 },
+    )
+    .toBeGreaterThan(kvKompaktBox.height);
+
+  // Mängel: `min` bewusst unverändert (180, `dock-layout.spec.ts` Z. 239-241
+  // — dieselbe Summenformel, die dieser Test-Datei zugrunde liegt) — die
+  // Kompakt-Stufe floort ehrlich bei 180, ist also NICHT kleiner als die
+  // alte 66%-Stufe in einem entspannten Feld, bleibt aber ein gültiger,
+  // funktionierender Umschalt-Knopf (kein Absturz, `k-panel-zwei--kompakt`
+  // greift) — UND auch hier bleibt der Kopf innerhalb des Rechtecks.
+  await page.click('[data-testid="maengel-oeffnen"]');
+  await expect(page.locator('[data-testid="maengel-panel"]')).toBeVisible();
+  await page.click('[data-testid="maengel-panel-koerper-umschalten"]');
+  const maengelKompaktBox = await stabileBox(page.locator('[data-testid="dock-panel-maengelOffen"]'));
+  expect(maengelKompaktBox.height).toBeGreaterThanOrEqual(180 - 1);
+  await expect(page.locator('[data-testid="maengel-panel-koerper"]')).toHaveClass(/k-panel-zwei--kompakt/);
+  const maengelKopfBox = (await page.locator('[data-testid="maengel-panel-koerper"] .k-panel-zwei-kopf').boundingBox())!;
+  expect(maengelKopfBox.y).toBeGreaterThanOrEqual(maengelKompaktBox.y - 1);
+  expect(maengelKopfBox.y + maengelKopfBox.height).toBeLessThanOrEqual(maengelKompaktBox.y + maengelKompaktBox.height + 1);
+});
+
+// Gate-Nachtrag (P5c) — Schleife über ALLE NEUN migrierten Panels: je Panel
+// öffnen, auf 'kompakt' umschalten, beweisen dass (a) der Kopf vollständig
+// innerhalb des Dock-Panel-Rechtecks liegt (das eigentliche Gate-Symptom —
+// «leere Fläche + X» bedeutete, der Kopf lag ausserhalb) und (b) die
+// Kernkennzahl als nicht-leerer, sichtbarer Text im Kopf steht. Deckt damit
+// sowohl die 6 `min`-gesenkten Panels (kv/varianten/liste/bauablauf/
+// unternehmerplan/inspector) als auch die 3 `min`-unveränderten (maengel/
+// splat/submission) einheitlich ab. Splat/Submission werden über den
+// generischen Test-Hook `ui.panelSetzen` geöffnet (dasselbe Muster wie im
+// Schmalfenster-Test oben), da ihr Werkzeug-Klick heute einen Datei-Dialog
+// öffnet bzw. hinter dem Fähigkeiten-Überlauf sitzt.
+test('P5c Kompakt-Stufe (Schleife über alle migrierten Panels): Kopf bleibt IMMER innerhalb des Panel-Rechtecks und trägt sichtbaren Kernkennzahl-Text', async ({
+  page,
+}) => {
+  await oeffneDesignMitTkb(page);
+
+  const panels: Array<{ dockId: string; koerper: string; oeffnen: () => Promise<void> }> = [
+    { dockId: 'kvOffen', koerper: 'kv-panel-koerper', oeffnen: () => page.click('[data-testid="kv-oeffnen"]') },
+    { dockId: 'bauablaufOffen', koerper: 'bauablauf-panel-koerper', oeffnen: () => page.click('[data-testid="bauablauf-oeffnen"]') },
+    { dockId: 'listeOffen', koerper: 'berechnungsliste-panel-koerper', oeffnen: () => page.click('[data-testid="liste-toggle"]') },
+    { dockId: 'variantenPanelOffen', koerper: 'varianten-panel-koerper', oeffnen: () => page.click('[data-testid="varianten-oeffnen"]') },
+    { dockId: 'maengelOffen', koerper: 'maengel-panel-koerper', oeffnen: () => page.click('[data-testid="maengel-oeffnen"]') },
+    {
+      dockId: 'submissionOffen',
+      koerper: 'submission-panel-koerper',
+      oeffnen: () =>
+        page.evaluate(() => {
+          (
+            window as unknown as { __kosmoUiBefehle: { ausfuehren: (id: string, params: unknown) => unknown } }
+          ).__kosmoUiBefehle.ausfuehren('ui.panelSetzen', { panel: 'submissionOffen', offen: true });
+        }),
+    },
+    {
+      dockId: 'splatPanelOffen',
+      koerper: 'splat-panel-koerper',
+      oeffnen: () =>
+        page.evaluate(() => {
+          (
+            window as unknown as { __kosmoUiBefehle: { ausfuehren: (id: string, params: unknown) => unknown } }
+          ).__kosmoUiBefehle.ausfuehren('ui.panelSetzen', { panel: 'splatPanelOffen', offen: true });
+        }),
+    },
+  ];
+
+  for (const p of panels) {
+    await p.oeffnen();
+    const koerper = page.locator(`[data-testid="${p.koerper}"]`);
+    await expect(koerper).toBeVisible();
+    await page.click(`[data-testid="${p.koerper}-umschalten"]`);
+    await expect(koerper).toHaveClass(/k-panel-zwei--kompakt/);
+    const panelBox = await stabileBox(page.locator(`[data-testid="dock-panel-${p.dockId}"]`));
+    const kopf = koerper.locator('.k-panel-zwei-kopf');
+    const kopfBox = (await kopf.boundingBox())!;
+    expect(kopfBox, `${p.dockId}: Kopf muss messbar sein`).not.toBeNull();
+    expect(kopfBox.y, `${p.dockId}: Kopf-Oberkante darf nicht über dem Panel liegen`).toBeGreaterThanOrEqual(
+      panelBox.y - 1,
+    );
+    expect(
+      kopfBox.y + kopfBox.height,
+      `${p.dockId}: Kopf-Unterkante muss innerhalb des Panel-Rechtecks liegen (das Gate-Symptom: Kopf lag VOLLSTÄNDIG darunter)`,
+    ).toBeLessThanOrEqual(panelBox.y + panelBox.height + 1);
+    const kernkennzahlText = await koerper.locator('.k-panel-zwei-kernkennzahl').innerText();
+    expect(kernkennzahlText.trim().length, `${p.dockId}: Kernkennzahl darf nicht leer sein`).toBeGreaterThan(0);
+    // Zurück auf 'offen', damit das nächste Panel aus einem sauberen
+    // Ausgangszustand startet (kein Übertrag von Kompakt-Overrides).
+    await page.click(`[data-testid="${p.koerper}-umschalten"]`);
+    await expect(koerper).toHaveClass(/k-panel-zwei--offen/);
+  }
+});

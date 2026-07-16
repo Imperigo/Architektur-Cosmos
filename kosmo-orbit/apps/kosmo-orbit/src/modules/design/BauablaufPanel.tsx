@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { bauablaufBlattSvg, BAUABLAUF_HINWEIS, deriveBauablauf, siaPhaseLabel } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, KIcon, Measure } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KPanelZweiStufen, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 import './design-panels.css';
 
 /**
@@ -14,6 +15,12 @@ import './design-panels.css';
  *
  * AUSDRÜCKLICH kein Ersatz für Bauleitungssoftware: relative Wochen, kein
  * Kalenderbezug, keine Ressourcen-/Kapazitätsprüfung.
+ *
+ * v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+ * §2.2/§2.4) — migriert auf `KPanelZweiStufen`: Kernkennzahl ist die
+ * Gewerkezahl («N Einträge», §2.2 Tabellen-Rezept). EIN Tab: das Panel ist
+ * rein lesend (Hinweis+Meta+eine Tabelle, kein Formular), ein Split hätte
+ * keinen Nie-Scroll-Gewinn (nur eine einzige Tabelle existiert).
  */
 
 export function BauablaufPanel({ onClose }: { onClose: () => void }) {
@@ -25,6 +32,12 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [revision],
   );
+
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['bauablaufOffen']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
 
   const exportSvg = () => {
     const svg = bauablaufBlattSvg(ablauf, {
@@ -41,71 +54,93 @@ export function BauablaufPanel({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div data-testid="bauablauf-panel" className="dp-dialog dp-dialog--scroll">
-      <div className="dp-kopf">
-        <Badge hue="var(--k-mod-design)">Bauablauf</Badge>
-        <div className="dp-fuell" />
-        <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="bauablauf-blatt">
-          Bauablaufblatt (SVG)
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          <KIcon name="schliessen" size={14} />
-        </KButton>
-      </div>
-
-      <div data-testid="bauablauf-hinweis" className="dp-hinweis">
-        {BAUABLAUF_HINWEIS}
-      </div>
-
-      <div className="dp-meta">
-        Gesamtdauer:{' '}
-        <Measure>{ablauf.gesamtWochen > 0 ? `${ablauf.gesamtWochen} Wochen` : '—'}</Measure>
-        {' · '}
-        {siaPhaseLabel(doc.settings.siaPhase)}
-      </div>
-
-      <Hairline />
-
-      {ablauf.phasen.length === 0 ? (
-        <div data-testid="bauablauf-leer" className="dp-leer">
-          Keine Geometrie gezeichnet — zuerst mindestens ein Geschoss anlegen, dann rechnet der
-          Grob-Terminplan mit.
+    <div data-testid="bauablauf-panel" className="dp-dialog">
+      {/* Gate-Nachtrag (P5c): Action-Row nur in Stufe 'offen', s. MaengelPanel-
+          Kommentar. */}
+      {stufe === 'offen' && (
+        <div className="dp-kopf">
+          <div className="dp-fuell" />
+          <KButton size="sm" tone="ghost" onClick={exportSvg} data-testid="bauablauf-blatt">
+            Bauablaufblatt (SVG)
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
+            <KIcon name="schliessen" size={14} />
+          </KButton>
         </div>
-      ) : (
-        <table className="dp-tabelle" data-testid="bauablauf-tabelle">
-          <thead>
-            <tr>
-              <th>Gewerk</th>
-              <th>Dauer</th>
-              <th>Wochen</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ablauf.phasen.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  {p.gewerk}
-                  {p.parallel ? <span className="dp-fussnote"> (überlappt)</span> : null}
-                </td>
-                <td className="dp-num">
-                  <Measure>{`${p.dauerWochen} W.`}</Measure>
-                </td>
-                <td className="dp-num">
-                  <Measure>{`${p.startWoche}–${p.endWoche}`}</Measure>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       )}
 
-      <Hairline />
+      <KPanelZweiStufen
+        data-testid="bauablauf-panel-koerper"
+        titel="Bauablauf"
+        kernkennzahl={`${ablauf.phasen.length} Einträge`}
+        stufe={stufe}
+        onStufeUmschalten={() => panelOverrideSetzen('design', 'bauablaufOffen', { stufe: stufeUmschalten(stufeRoh) })}
+        aktiverTab="uebersicht"
+        onTabWechseln={() => {}}
+        tabs={[
+          {
+            id: 'uebersicht',
+            label: 'Übersicht',
+            inhalt: (
+              <div className="bp-koerper">
+                <div data-testid="bauablauf-hinweis" className="dp-hinweis">
+                  {BAUABLAUF_HINWEIS}
+                </div>
 
-      <span className="dp-fussnote">
-        Gewerke-Reihenfolge und Dauern sind aus der gezeichneten Geometrie und konfigurierbaren
-        Leistungswerten abgeleitet (Annahme Owner-Guideline, kein verbindlicher Wert) — Wochen sind
-        relativ (Woche 1 = Baubeginn), ohne Kalenderbezug.
-      </span>
+                <div className="dp-meta">
+                  Gesamtdauer:{' '}
+                  <Measure>{ablauf.gesamtWochen > 0 ? `${ablauf.gesamtWochen} Wochen` : '—'}</Measure>
+                  {' · '}
+                  {siaPhaseLabel(doc.settings.siaPhase)}
+                </div>
+
+                <Hairline />
+
+                {ablauf.phasen.length === 0 ? (
+                  <div data-testid="bauablauf-leer" className="dp-leer">
+                    Keine Geometrie gezeichnet — zuerst mindestens ein Geschoss anlegen, dann rechnet der
+                    Grob-Terminplan mit.
+                  </div>
+                ) : (
+                  <table className="dp-tabelle" data-testid="bauablauf-tabelle">
+                    <thead>
+                      <tr>
+                        <th>Gewerk</th>
+                        <th>Dauer</th>
+                        <th>Wochen</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ablauf.phasen.map((p) => (
+                        <tr key={p.id}>
+                          <td>
+                            {p.gewerk}
+                            {p.parallel ? <span className="dp-fussnote"> (überlappt)</span> : null}
+                          </td>
+                          <td className="dp-num">
+                            <Measure>{`${p.dauerWochen} W.`}</Measure>
+                          </td>
+                          <td className="dp-num">
+                            <Measure>{`${p.startWoche}–${p.endWoche}`}</Measure>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                <Hairline />
+
+                <span className="dp-fussnote">
+                  Gewerke-Reihenfolge und Dauern sind aus der gezeichneten Geometrie und konfigurierbaren
+                  Leistungswerten abgeleitet (Annahme Owner-Guideline, kein verbindlicher Wert) — Wochen sind
+                  relativ (Woche 1 = Baubeginn), ohne Kalenderbezug.
+                </span>
+              </div>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Badge, Hairline, Karteikarte, KButton, melde, meldeFehler } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KButton, KPanelZweiStufen, melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 import './design-panels.css';
 import {
   baueKarten,
@@ -32,6 +33,20 @@ import {
  * erkannt und NICHT geparst), zeigt das Panel statt der Karten den
  * ehrlichen Betriebsarten-Gate-Text (`pdf-hinweis`) — kein Karten-Rendering,
  * keine Attrappe.
+ *
+ * v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+ * §2.3/§2.4) — NUR der PDF-Hinweis-Zweig («Unternehmerplan-Bericht» in der
+ * §2.3-Liste der 8 `--scroll`-Panels) migriert auf `KPanelZweiStufen`;
+ * Kernkennzahl ist der Dateiname des PDFs (§2.2 Grundsatz «nie leer» — der
+ * Dateiname ist hier die einzige stabile Kurzinfo). Der ZWEITE Zweig unten
+ * (Diff-Karten, `dp-dialog--anker`) ist «Unternehmerplan-Diff» aus §2.3 und
+ * bleibt bewusst beim Alt-Default stehen (Fixed/Anker-Ausnahme — sein
+ * rechts angedockter Anker-Layout ist bereits ohne Scroll konstruiert,
+ * Migration ist laut Spec optional). Beide Zweige teilen dieselbe
+ * Dock-Registry-Zeile (`unternehmerplan`, `dock-stationen.ts`) — ein
+ * `stufe`-Override, der im Hinweis-Zweig gesetzt wurde, wirkt im
+ * Diff-Zweig einfach nicht (der liest `stufe` gar nicht), s.
+ * Abschlussbericht P5c für den dokumentierten Grenzfall.
  */
 
 type KartenStatus = 'offen' | 'uebernommen' | 'manuell';
@@ -50,29 +65,51 @@ export function UnternehmerplanPanel() {
     return baueKarten(abgleich, dxf.bericht);
   }, [dxf, abgleich]);
 
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['unternehmerplan']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
+
   // Daten-Guard: ohne geladenen DXF gibt es entweder den ehrlichen
   // PDF-Hinweis oder gar kein Panel.
   if (!dxf || !abgleich) {
     if (!pdfHinweis) return null;
     return (
-      <div data-testid="unternehmerplan-panel" className="k-dialog dp-dialog dp-dialog--scroll">
-        <div className="dp-kopf">
-          <Badge hue="var(--k-mod-design)">Unternehmerplan</Badge>
-          <span className="up-dateiname">{pdfHinweis.dateiname}</span>
-        </div>
-        <span data-testid="pdf-hinweis" className="up-hinweistext">
-          {pdfHinweis.text}
-        </span>
-        {/* K5 (Owner-Rundgang 0.6.2, S. 10): die ausführliche Begründung
-            (WARUM keine automatische Analyse möglich ist) steckt nicht mehr
-            als Dauer-Textblock im Panel, sondern hinter einem einklappbaren
-            «?»-Hinweis — die Kernaussage oben bleibt immer sichtbar. */}
-        {pdfHinweis.detail && (
-          <details data-testid="pdf-hinweis-mehr">
-            <summary className="up-mehr-titel">? Warum keine automatische Analyse</summary>
-            <p className="up-mehr-text">{pdfHinweis.detail}</p>
-          </details>
-        )}
+      <div data-testid="unternehmerplan-panel" className="k-dialog dp-dialog">
+        <KPanelZweiStufen
+          data-testid="unternehmerplan-panel-koerper"
+          titel="Unternehmerplan"
+          kernkennzahl={pdfHinweis.dateiname}
+          stufe={stufe}
+          onStufeUmschalten={() => panelOverrideSetzen('design', 'unternehmerplan', { stufe: stufeUmschalten(stufeRoh) })}
+          aktiverTab="hinweis"
+          onTabWechseln={() => {}}
+          tabs={[
+            {
+              id: 'hinweis',
+              label: 'Hinweis',
+              inhalt: (
+                <div className="up-koerper">
+                  <span data-testid="pdf-hinweis" className="up-hinweistext">
+                    {pdfHinweis.text}
+                  </span>
+                  {/* K5 (Owner-Rundgang 0.6.2, S. 10): die ausführliche Begründung
+                      (WARUM keine automatische Analyse möglich ist) steckt nicht
+                      mehr als Dauer-Textblock im Panel, sondern hinter einem
+                      einklappbaren «?»-Hinweis — die Kernaussage oben bleibt
+                      immer sichtbar. */}
+                  {pdfHinweis.detail && (
+                    <details data-testid="pdf-hinweis-mehr">
+                      <summary className="up-mehr-titel">? Warum keine automatische Analyse</summary>
+                      <p className="up-mehr-text">{pdfHinweis.detail}</p>
+                    </details>
+                  )}
+                </div>
+              ),
+            },
+          ]}
+        />
       </div>
     );
   }

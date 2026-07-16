@@ -10,15 +10,30 @@ import {
   type SegmentierungsErgebnis,
   type Zone,
 } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, KIcon, KInput, KSelect, Measure } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KInput, KPanelZweiStufen, KSelect, Measure } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import { anfangsEntwurf } from './berechnungsliste-entwurf';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 import './design-panels.css';
 
 /**
  * Berechnungsliste Volumenstudien — der Owner-Excel-Workflow als lebendes
  * Panel (Phase 3, Punkt 25): Raumprogramm erfassen, beim Zeichnen zusehen,
  * wie sich «ausgezogen» gegen das aGF-Ziel füllt; Δ Max und Tie-out wachen.
+ *
+ * v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+ * §2.2/§2.4) — migriert auf `KPanelZweiStufen`: Kernkennzahl ist die
+ * Zeilenzahl der lebenden Tabelle («N Einträge», §2.2 Tabellen-Rezept). EIN
+ * Tab (kein Raumprogramm/Liste/Segmentieren-Split, obwohl das Panel fachlich
+ * in genau diese drei Abschnitte zerfällt): `e2e/module.spec.ts` («Wohnungs-
+ * Segmentierer», Z. 121-144) erfasst einen Raumprogramm-Posten,
+ * klickt «Übernehmen» UND prüft `liste-tabelle`/`liste-delta-max` im selben
+ * Zug — ein Split hätte diesen bestehenden Vertrag zerschnitten (ebenso die
+ * Segmentierer-Journeys, die `segmentierer-ergebnis` direkt nach
+ * `segmentierer-lauf` prüfen). Das Panel bleibt darum das grösste
+ * Alt-Struktur-Panel dieser Migration — sein Kompakt-/Offen-Umschalter
+ * wirkt trotzdem (Kopf/Kernkennzahl/Nie-Scroll-Architektur sind vorhanden),
+ * nur das KTabs-Menü selbst bleibt ungenutzt (ein Tab), s. Abschlussbericht.
  */
 
 const fmt = (v: number) => v.toLocaleString('de-CH', { maximumFractionDigits: 0 });
@@ -51,6 +66,12 @@ export function BerechnungslistePanel({
   const [importMeldung, setImportMeldung] = useState<string | null>(null);
   const [faktor, setFaktor] = useState(String(doc.settings.programmFaktor));
   const [maxAgf, setMaxAgf] = useState(doc.settings.maxAgf === null ? '' : String(doc.settings.maxAgf));
+
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['listeOffen']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
 
   const uebernehmen = () => {
     const maxWert = Number(maxAgf);
@@ -110,34 +131,8 @@ export function BerechnungslistePanel({
     pdf.save('Berechnungsliste.pdf');
   };
 
-  return (
-    <div data-testid="berechnungsliste-panel" className="dp-dialog dp-dialog--scroll">
-      <div className="dp-kopf">
-        <Badge hue="var(--k-mod-design)">Berechnungsliste</Badge>
-        <div className="dp-fuell" />
-        <KButton
-          size="sm"
-          tone="ghost"
-          data-testid="variante-archivieren"
-          title="Stand samt Kennzahlen und Mini-Plan ins Varianten-Archiv einfrieren (Zentrale)"
-          onClick={() => {
-            void import('../../state/variant-archive').then(({ archiviereVariante }) =>
-              archiviereVariante(`${doc.settings.projectName} — ${new Date().toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })}`)
-                .then((v) => setImportMeldung(`Variante «${v.name}» archiviert — Vergleich in der Zentrale.`))
-                .catch((e: unknown) => setImportMeldung(e instanceof Error ? e.message : String(e))),
-            );
-          }}
-        >
-          Variante
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={() => void exportPdf()} data-testid="liste-pdf">
-          A4-PDF
-        </KButton>
-        <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
-          <KIcon name="schliessen" size={14} />
-        </KButton>
-      </div>
-
+  const koerper = (
+    <div className="bl-koerper">
       {/* Raumprogramm-Erfassung */}
       <div className="dp-spalte">
         <div className="dp-kopf">
@@ -368,6 +363,50 @@ export function BerechnungslistePanel({
 
       <Hairline />
       <SegmentiererSektion />
+    </div>
+  );
+
+  return (
+    <div data-testid="berechnungsliste-panel" className="dp-dialog">
+      {/* Gate-Nachtrag (P5c): Action-Row nur in Stufe 'offen', s. MaengelPanel-
+          Kommentar. */}
+      {stufe === 'offen' && (
+        <div className="dp-kopf">
+          <div className="dp-fuell" />
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="variante-archivieren"
+            title="Stand samt Kennzahlen und Mini-Plan ins Varianten-Archiv einfrieren (Zentrale)"
+            onClick={() => {
+              void import('../../state/variant-archive').then(({ archiviereVariante }) =>
+                archiviereVariante(`${doc.settings.projectName} — ${new Date().toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })}`)
+                  .then((v) => setImportMeldung(`Variante «${v.name}» archiviert — Vergleich in der Zentrale.`))
+                  .catch((e: unknown) => setImportMeldung(e instanceof Error ? e.message : String(e))),
+              );
+            }}
+          >
+            Variante
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={() => void exportPdf()} data-testid="liste-pdf">
+            A4-PDF
+          </KButton>
+          <KButton size="sm" tone="ghost" onClick={onClose} aria-label="Schliessen">
+            <KIcon name="schliessen" size={14} />
+          </KButton>
+        </div>
+      )}
+
+      <KPanelZweiStufen
+        data-testid="berechnungsliste-panel-koerper"
+        titel="Berechnungsliste"
+        kernkennzahl={`${liste.zeilen.length} Einträge`}
+        stufe={stufe}
+        onStufeUmschalten={() => panelOverrideSetzen('design', 'listeOffen', { stufe: stufeUmschalten(stufeRoh) })}
+        aktiverTab="uebersicht"
+        onTabWechseln={() => {}}
+        tabs={[{ id: 'uebersicht', label: 'Übersicht', inhalt: koerper }]}
+      />
     </div>
   );
 }

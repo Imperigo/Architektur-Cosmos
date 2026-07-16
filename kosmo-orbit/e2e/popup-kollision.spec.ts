@@ -60,3 +60,39 @@ test('K3: Geschossleiste und Volumenstudien-Panel überlappen nie (Bounding-Box,
   // Studien-Panel beginnt UNTERHALB der Geschossleiste (rückt darunter).
   expect(sBox!.y).toBeGreaterThanOrEqual(gBox!.y + gBox!.height);
 });
+
+// v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
+// §2.4/§8 Sanktion 5) — additive Kompakt-Stufen-Assertion: dieselbe
+// K3-Kollisionsgarantie (kein Überlapp mit EntwurfsDock/Geschossleiste) muss
+// auch in der neuen, kleineren Kompakt-Stufe eines migrierten Panels gelten
+// (ein kleineres Rechteck kann strukturell nicht NEU kollidieren, wenn die
+// grosse Stufe es schon nicht tat — dieser Test beweist es trotzdem explizit,
+// statt es nur anzunehmen). Bestehende Assertion oben bleibt unverändert.
+test('P5c Kompakt-Stufe: Kv-Panel überlappt EntwurfsDock/Geschossleiste auch in der Kompakt-Stufe nicht', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.setItem('kosmo.starterGuide.done', '1');
+  });
+  await page.reload();
+  await page.click('[data-testid="module-design"]');
+
+  await page.click('[data-testid="kv-oeffnen"]');
+  await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
+  await page.click('[data-testid="kv-panel-koerper-umschalten"]');
+  await expect(page.locator('[data-testid="kv-panel-koerper"]')).toHaveClass(/k-panel-zwei--kompakt/);
+
+  const kvBox = (await page.locator('[data-testid="dock-panel-kvOffen"]').boundingBox())!;
+  for (const testid of ['entwurf-dock', 'geschossleiste']) {
+    const box = await page.locator(`[data-testid="${testid}"]`).boundingBox();
+    expect(box, `${testid} muss sichtbar sein`).not.toBeNull();
+    const schneidet =
+      box!.x < kvBox.x + kvBox.width &&
+      box!.x + box!.width > kvBox.x &&
+      box!.y < kvBox.y + kvBox.height &&
+      box!.y + box!.height > kvBox.y;
+    expect(schneidet, `${testid} darf das kompakte KV-Panel nicht schneiden`).toBe(false);
+  }
+});
