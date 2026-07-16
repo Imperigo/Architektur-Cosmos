@@ -235,70 +235,62 @@ test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt vo
   // Probe-Lauf ohne jede Fremdlast reproduziert). Das ist keine reine
   // Zeitfenster-Frage der MESSUNG (wie oben), sondern eine Eigenschaft der
   // SYNTHETISCHEN EINGABE selbst: ihre realen Browser-Zeitstempel hängen vom
-  // CDP-Roundtrip dieser Umgebung ab — `eingabe-3d.ts`/`PlanView.tsx` liegen
-  // ausserhalb des Dateikreises dieses Auftrags, die 80ms-Konstante bleibt
-  // unangetastet.
+  // CDP-Roundtrip dieser Umgebung ab.
   // AUSPROBIERT UND VERWORFEN: eine rohe CDP-Session
   // (`Input.dispatchMouseEvent` ohne Einzel-Await, `Promise.all`) erzeugte
   // zwar nachweislich <30ms-Zwischenproben (statt 100–250ms) — löste aber
   // real einen App-Absturz aus («KosmoDesign ist auf einen Fehler gelaufen…
   // Cannot read properties of null (reading 'cx')», reproduzierbar isoliert
   // NUR mit dieser Dispatch-Art, ein identischer plain-`page.mouse`-Zug
-  // crasht NICHT). Ursache nicht abschliessend geklärt (vermutlich fehlt dem
-  // roh dispatchten Event etwas, das `PlanView.tsx`s Pointer-Pfad
-  // voraussetzt) — Produktcode liegt ausserhalb des Dateikreises, ein
-  // Absturz ist inakzeptabel riskanter als die ursprüngliche Flake. Verworfen
-  // zugunsten des Plain-Playwright-Wegs unten.
-  // Ehrliche Test-Härtung (kein Assertion-Abbau): EIN interpolierter
-  // `mouse.move({steps: VIELE})`-Aufruf erzeugt viele eng getaktete
-  // Zwischenpunkte (statt weniger, weit auseinanderliegender Einzel-Calls) —
-  // gemessen liegen einzelne dieser Zwischenschritte durchaus < 80ms
-  // auseinander, auch wenn nicht alle. Zusätzlich wird die komplette Geste
-  // bis zu `MAX_VERSUCHE`-mal wiederholt (grösserer Zug + mehr Schritte je
-  // Versuch), bis ein Fling TATSÄCHLICH registriert wurde. Bleibt die
-  // Eingabe über alle Versuche hinweg wirkungslos, schlägt die anschliessende
-  // Assertion unverändert (>3px, korrekte Richtung) real fehl statt verdeckt
-  // zu werden. Restrisiko ehrlich benannt: bei ungünstigem CDP-Timing kann
-  // auch dieser Weg vereinzelt alle Versuche verbrauchen (s. Abschlussbericht).
-  const MAX_VERSUCHE = 6;
-  let sofortNachLoslassen = { e: 0, f: 0 };
+  // crasht NICHT). Ursache nicht abschliessend geklärt — verworfen zugunsten
+  // des Plain-Playwright-Wegs unten.
+  //
+  // v0.8.1/P4 — ECHTER FIX statt Zufalls-Retry (P2-Übergabe, Owner-Auftrag
+  // §1.6 der V081-SPEZ): `eingabe-3d.ts` bekam einen TEST-ONLY Browser-Hook
+  // (`window.__kosmoFling.setSampleFensterMs`, Produktions-Default
+  // `FLING_SAMPLE_FENSTER_MS`/80ms bleibt für `PlanView.tsx` UNVERÄNDERT) —
+  // dieser Test weitet das Sample-Fenster VOR der Geste testweise auf 500ms:
+  // damit fallen praktisch ALLE CDP-getakteten Zwischenproben (~100–250ms
+  // auseinander) sicher ins Fenster, unabhängig vom genauen Roundtrip-Timing.
+  // Die vormals bis zu 6-fache Wiederholschleife (grösserer Zug + mehr
+  // Schritte je Versuch, bis zufällig ein <80ms-Paar traf) schrumpft auf
+  // EINEN einzigen, deterministisch verlässlichen Versuch.
+  await page.evaluate(() => {
+    (window as unknown as { __kosmoFling: { setSampleFensterMs: (ms: number) => void } }).__kosmoFling.setSampleFensterMs(
+      500,
+    );
+  });
+
+  const zugWeite = 380;
+  await page.mouse.move(cx, cy);
+  await page.mouse.down();
+  // EIN interpolierter Zug mit vielen Zwischenpunkten — im geweiteten
+  // 500ms-Fenster liegen davon garantiert mehrere beisammen.
+  await page.mouse.move(cx + zugWeite, cy, { steps: 30 });
+  await page.mouse.up();
+
+  // Erst settlen lassen (derselbe Render-Nachlauf-Grund wie im reduced-
+  // motion-Test unten — die Baseline soll NICHT den regulären Drag-Render
+  // nachlaufend als «Momentum» missverstehen).
+  await page.waitForTimeout(400);
+  const sofortNachLoslassen = await holeVerschiebung(page);
+
+  // v0.8.1/P2 (s. `wartetBisRuhig()`-Kopfkommentar) — Assertion #1 bleibt
+  // dieselbe Behauptung («die Ansicht bewegt sich nach dem Loslassen WEITER,
+  // ohne dass Maus/Taste noch aktiv sind») und dieselbe Mindest-Distanz
+  // (>3px), nur über ein grosszügigeres Poll-Fenster (statt eines EINEN
+  // festen 150ms-Zeitpunkts, der unter seltener rAF-Taktung zufällig leer
+  // bleiben kann) gemessen: die WEITESTE seither erreichte Position zählt.
   let weiteste = sofortNachLoslassen;
-  let momentumDelta = 0;
-  for (let versuch = 0; versuch < MAX_VERSUCHE; versuch++) {
-    const zugWeite = 380 + versuch * 90;
-    const schritte = 20 + versuch * 10; // mehr Zwischenpunkte je Versuch — mehr Chancen auf ein <80ms-Paar
-    await page.mouse.move(cx, cy);
-    await page.mouse.down();
-    // EIN interpolierter Zug (statt mehrerer weit auseinanderliegender
-    // Einzel-Calls, s. Kopfkommentar) → dicht getaktete Zwischenproben im
-    // `flingTracker`-Fenster.
-    await page.mouse.move(cx + zugWeite, cy, { steps: schritte });
-    await page.mouse.up();
-
-    // Erst settlen lassen (derselbe Render-Nachlauf-Grund wie im reduced-
-    // motion-Test unten — die Baseline soll NICHT den regulären Drag-Render
-    // nachlaufend als «Momentum» missverstehen).
-    await page.waitForTimeout(400);
-    sofortNachLoslassen = await holeVerschiebung(page);
-
-    // v0.8.1/P2 (s. `wartetBisRuhig()`-Kopfkommentar) — Assertion #1 bleibt
-    // dieselbe Behauptung («die Ansicht bewegt sich nach dem Loslassen WEITER,
-    // ohne dass Maus/Taste noch aktiv sind») und dieselbe Mindest-Distanz
-    // (>3px), nur über ein grosszügigeres Poll-Fenster (statt eines EINEN
-    // festen 150ms-Zeitpunkts, der unter seltener rAF-Taktung zufällig leer
-    // bleiben kann) gemessen: die WEITESTE seither erreichte Position zählt.
-    weiteste = sofortNachLoslassen;
-    const momentumStart = Date.now();
-    while (Date.now() - momentumStart < 1500) {
-      await new Promise((r) => setTimeout(r, 50));
-      const probe = await holeVerschiebung(page);
-      const deltaJetzt = Math.abs(probe.e - sofortNachLoslassen.e) + Math.abs(probe.f - sofortNachLoslassen.f);
-      const deltaBisher = Math.abs(weiteste.e - sofortNachLoslassen.e) + Math.abs(weiteste.f - sofortNachLoslassen.f);
-      if (deltaJetzt > deltaBisher) weiteste = probe;
-    }
-    momentumDelta = Math.abs(weiteste.e - sofortNachLoslassen.e) + Math.abs(weiteste.f - sofortNachLoslassen.f);
-    if (momentumDelta > 3) break; // Fling registriert — kein weiterer Versuch nötig.
+  const momentumStart = Date.now();
+  while (Date.now() - momentumStart < 1500) {
+    await new Promise((r) => setTimeout(r, 50));
+    const probe = await holeVerschiebung(page);
+    const deltaJetzt = Math.abs(probe.e - sofortNachLoslassen.e) + Math.abs(probe.f - sofortNachLoslassen.f);
+    const deltaBisher = Math.abs(weiteste.e - sofortNachLoslassen.e) + Math.abs(weiteste.f - sofortNachLoslassen.f);
+    if (deltaJetzt > deltaBisher) weiteste = probe;
   }
+  const momentumDelta = Math.abs(weiteste.e - sofortNachLoslassen.e) + Math.abs(weiteste.f - sofortNachLoslassen.f);
   expect(momentumDelta).toBeGreaterThan(3);
   // Bewegungsrichtung des Fling stimmt mit der Zugrichtung überein (nach rechts
   // gezogen → Inhalt wandert weiter nach rechts, e wächst weiter).

@@ -141,9 +141,10 @@ Import ignoriert den Layer dokumentiert.
   «Flügeltyp». IFC/DXF crash-frei (kein Beschlag-Detail — ehrlich).
 
 ## Vertrags-Audit
-- `toBe(18)`-Werkzeugzähler: lebt in `e2e/oberflaeche-minimal.spec.ts:132`
-  — KEIN neues Leisten-Werkzeug in diesem Auftrag (Import-Knopf sitzt im
-  Standort-Panel, nicht in der Werkzeugleiste).
+- `toBe(18)`-Werkzeugzähler (seit v0.8.1: 17, Splat-Fusion §8 Sanktion 1):
+  lebt in `e2e/oberflaeche-minimal.spec.ts:132` — KEIN neues Leisten-
+  Werkzeug in diesem Auftrag (Import-Knopf sitzt im Standort-Panel, nicht in
+  der Werkzeugleiste).
 - Goldens: alle neuen Derive-Ausgaben hinter Daten-/Typ-Guards
   (Nachbarn nur bei Nachbar-Zonen, Terrain nur bei Terrain-Entity,
   Flügel-Symbolik nur bei fluegelTyp, Glas-Artefakte ändern PLAN nicht).

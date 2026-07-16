@@ -73,11 +73,29 @@ export type { NutzungsProfil } from './oberflaeche-adaption-kern';
 // hätte diese Pflicht-Regression zerstört). Die Fähigkeiten-Icons sind
 // zusätzliche, gleichwertige Zugänge zu denselben Handlern — kein Duplikat
 // der Logik, nur ein zweiter Knopf.
-export type LeistenGruppe = 'zeichnen' | 'ansicht' | 'export' | 'ebenen' | 'faehigkeiten' | 'projekt' | 'verlauf';
+// v0.8.1 / P4 (Spez §1.2, Werkzeug-Umbau): neue Gruppe `schnitt` — die
+// einknöpfige Kontextzeilen-Gruppe, in die das Schnitt-Werkzeug aus der
+// Zeichenzeile zieht (`DesignWorkspace.tsx` `leiste-gruppe-schnitt`,
+// unmittelbar links von `leiste-gruppe-export`). Owner-Spez wollte hier
+// wörtlich denselben Schlüssel wie die BESTEHENDE `ansicht`-Gruppe
+// (Hauptzeile, 3D/Split/Quad/2D-Umschalter, `DesignWorkspace.tsx` ~Z. 2069)
+// — das kollidiert real: `ansicht` ist bereits ein belegter `LeistenGruppe`-
+// Schlüssel mit eigener `TAETIGKEITS_REGELN`/`LEISTEN_BASIS`-Zeile für einen
+// FUNKTIONAL ANDEREN Chrome-Block (View-Mode-Umschalter, nicht Schnitt);
+// eine Wiederverwendung hätte entweder zwei DOM-Elemente mit identischem
+// `data-testid="leiste-gruppe-ansicht"` erzeugt (Playwright-Strict-Mode-
+// Bruch) oder Schnitts Fokus-/Dimm-Verhalten unbeabsichtigt an das des
+// View-Mode-Umschalters gekoppelt. Diese eigene Gruppe trägt exakt dieselbe
+// Basis-/Regel-Zeile wie `ansicht` (immer `sekundaer`, keine Demotion beim
+// Zeichnen — fachlich identische Begründung: Schnitt ist eine Ansichts-
+// Ableitung, s. Spec §1.2), nur unter einem kollisionsfreien eigenen
+// Schlüssel.
+export type LeistenGruppe = 'zeichnen' | 'ansicht' | 'schnitt' | 'export' | 'ebenen' | 'faehigkeiten' | 'projekt' | 'verlauf';
 
 const LEISTEN_GRUPPEN: readonly LeistenGruppe[] = [
   'zeichnen',
   'ansicht',
+  'schnitt',
   'export',
   'ebenen',
   'faehigkeiten',
@@ -143,6 +161,7 @@ export interface TaetigkeitsKontext {
 const TAETIGKEITS_REGELN: Record<LeistenGruppe, { beimZeichnen: FokusStufe | 'basis' }> = {
   zeichnen: { beimZeichnen: 'basis' }, // immer primär
   ansicht: { beimZeichnen: 'basis' }, // immer sekundär
+  schnitt: { beimZeichnen: 'basis' }, // immer sekundär (wie ansicht, s. Kommentar bei LeistenGruppe)
   export: { beimZeichnen: 'selten' }, // wird beim Zeichnen zurückgestellt
   ebenen: { beimZeichnen: 'selten' }, // wird beim Zeichnen zurückgestellt
   faehigkeiten: { beimZeichnen: 'selten' }, // wie ebenen: Spezialfähigkeiten treten beim Zeichnen zurück
@@ -182,6 +201,7 @@ function istZeichenKontext(tool: string): boolean {
 export const LEISTEN_BASIS: Record<LeistenGruppe, FokusStufe> = {
   zeichnen: 'primaer',
   ansicht: 'sekundaer',
+  schnitt: 'sekundaer',
   export: 'sekundaer',
   ebenen: 'sekundaer',
   faehigkeiten: 'sekundaer',

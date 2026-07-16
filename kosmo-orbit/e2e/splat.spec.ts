@@ -48,9 +48,12 @@ test('Splat-Werkzeug: Import → Zuschneiden → Ausdünnen → Export (voll lok
     { pos: [50, 50, 50], scale: 0.05, rgba: [255, 255, 0, 255] }, // ausserhalb der Test-Crop-Box
   ]);
 
+  // v0.8.1 / P4 (Spez §1.3, Splat-Fusion): `import-splat` ist in
+  // `splat-werkzeug` aufgegangen — ohne geladene Cloud (frischer Reload,
+  // dieser Fall hier) öffnet der Klick weiterhin denselben Datei-Dialog.
   const [chooser] = await Promise.all([
     page.waitForEvent('filechooser'),
-    page.click('[data-testid="import-splat"]'),
+    page.click('[data-testid="splat-werkzeug"]'),
   ]);
   await chooser.setFiles({ name: 'testwolke.splat', mimeType: 'application/octet-stream', buffer: datei });
 
@@ -90,7 +93,18 @@ test('Video → Splat: lokale Frame-Extraktion + ehrliche Bridge-Übergabe (kein
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
   await page.click('[data-testid="module-design"]');
-  await page.click('[data-testid="splat-werkzeug-toggle"]');
+  // v0.8.1 / P4 (Spez §1.3, Splat-Fusion): der fusionierte `splat-werkzeug`-
+  // Knopf öffnet OHNE geladene Cloud den Datei-Dialog statt das Panel zu
+  // togglen (die Video→Splat-Prüfung hier braucht bewusst KEINE Cloud) — das
+  // Panel wird darum über den generischen Test-Hook `ui.panelSetzen` direkt
+  // geöffnet (derselbe Weg wie `e2e/dock-kosmo.spec.ts`), statt den
+  // Werkzeug-Klick (der jetzt einen Dateiwahl-Dialog auslösen würde)
+  // nachzuspielen.
+  await page.evaluate(() => {
+    (
+      window as unknown as { __kosmoUiBefehle: { ausfuehren: (id: string, params: unknown) => unknown } }
+    ).__kosmoUiBefehle.ausfuehren('ui.panelSetzen', { panel: 'splatPanelOffen', offen: true });
+  });
   await expect(page.locator('[data-testid="splat-panel"]')).toBeVisible();
 
   // Eine winzige, gültige WebM-Datei wird im Browser nicht zwingend

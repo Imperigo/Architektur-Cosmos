@@ -270,6 +270,58 @@ export function flingSchritt(v: FlingVektor, dt: number): FlingVektor | null {
 }
 
 /**
+ * v0.8.1 / P4 (Owner-Auftrag §1.6, P2-Übergabe aus der v0.8.1/P2-Technik-
+ * Härtung, `e2e/kurztasten-pan.spec.ts` Fling-Test): TEST-ONLY Überschreibung
+ * des Sample-Fensters. Produktions-Default bleibt `FLING_SAMPLE_FENSTER_MS`
+ * (80ms, UNVERÄNDERT) — `flingTracker()` ohne Argument nutzt weiterhin exakt
+ * diesen Wert, kein Verhaltenswechsel für `PlanView.tsx` (ruft `flingTracker()`
+ * ohne Parameter auf, ausserhalb des Dateikreises dieses Pakets).
+ *
+ * Hintergrund (HEAD-bewiesen, s. `kurztasten-pan.spec.ts`-Kopfkommentar am
+ * Fling-Test): einzeln awaitete `page.mouse.move()`-Aufrufe landen in dieser
+ * Cloud-Umgebung real ~100–250ms auseinander (CDP-Roundtrip) — WEIT über den
+ * 80ms des Produktions-Fensters. Der Vorbestand kompensierte das mit einer
+ * bis zu 6-fachen Wiederholschleife (mehr/dichtere `mouse.move`-Zwischen-
+ * schritte je Versuch), bis zufällig ein <80ms-Probenpaar traf. Diese
+ * Überschreibung erlaubt der E2E-Spec stattdessen, das Fenster GEZIELT zu
+ * weiten (`setFlingSampleFensterMsFuerTests`, Browser-Testhook
+ * `window.__kosmoFling`, Muster `window.__kosmoUiBefehle` in
+ * `state/dock-befehle.ts`) — die Retry-Schleife kann dadurch schrumpfen statt
+ * auf reinem Zufall zu beruhen. Wirkt NUR auf `flingTracker()`-Instanzen ohne
+ * expliziten Parameter (s.u.) und wird live in `sample()` gelesen (nicht bei
+ * `flingTracker()`-Aufruf eingefroren) — betrifft darum auch einen VOR dem
+ * Testhook-Aufruf bereits erzeugten Tracker (z.B. `PlanView.tsx`s
+ * `flingRef.current`, der beim ersten Render entsteht).
+ */
+let fensterMsUeberschreibungFuerTests: number | null = null;
+
+/** Test-Hook: weitet (oder engt) das Fling-Sample-Fenster für ALLE künftigen
+ *  `sample()`-Aufrufe, unabhängig davon, wann der jeweilige `flingTracker()`
+ *  erzeugt wurde. `null`/`resetFlingSampleFensterMsFuerTests()` stellt den
+ *  Produktions-Default (`FLING_SAMPLE_FENSTER_MS`) wieder her. */
+export function setFlingSampleFensterMsFuerTests(ms: number): void {
+  fensterMsUeberschreibungFuerTests = ms;
+}
+
+/** Test-Hook: hebt die Überschreibung auf — künftige `sample()`-Aufrufe ohne
+ *  expliziten `flingTracker(fensterMs)`-Parameter nutzen wieder den echten
+ *  Produktions-Default `FLING_SAMPLE_FENSTER_MS`. */
+export function resetFlingSampleFensterMsFuerTests(): void {
+  fensterMsUeberschreibungFuerTests = null;
+}
+
+// Browser-Testhook (Playwright), Muster `window.__kosmoUiBefehle`
+// (`state/dock-befehle.ts`) — nur gesetzt, wenn `window` existiert (Vitest/
+// Node-Umgebungen ohne jsdom bleiben unberührt, `typeof window`-Guard wie
+// dort). Reines Test-Werkzeug, kein Produktionspfad ruft dies auf.
+if (typeof window !== 'undefined') {
+  (window as never as Record<string, unknown>)['__kosmoFling'] = {
+    setSampleFensterMs: (ms: number) => setFlingSampleFensterMsFuerTests(ms),
+    resetSampleFensterMs: () => resetFlingSampleFensterMsFuerTests(),
+  };
+}
+
+/**
  * Serie J / Welle 2 Stream C — Loslass-Geschwindigkeit aus den Samples der
  * letzten `FLING_SAMPLE_FENSTER_MS` (~80ms) vor dem Loslassen: eine kleine,
  * DOM-freie Ringpuffer-Sammlung, die der Aufrufer (PlanView) während einer
@@ -277,8 +329,14 @@ export function flingSchritt(v: FlingVektor, dt: number): FlingVektor | null {
  * füttert — bei jedem `pointermove`. `loslassGeschwindigkeit()` liefert beim
  * Loslassen die mittlere Geschwindigkeit über das Fenster (älteste vs.
  * neueste Probe im Fenster), `null` ohne genug Daten (kein Fling).
+ *
+ * v0.8.1 / P4: optionaler `fensterMs`-Parameter (Test-Hook/Unit-Test-
+ * Konfigurierbarkeit, s.o.) — fehlt er (jeder bestehende Aufrufer, allen
+ * voran `PlanView.tsx`), gilt weiterhin exakt der Produktions-Default
+ * `FLING_SAMPLE_FENSTER_MS` (80ms, UNVERÄNDERT), sofern kein E2E-Testhook
+ * (`window.__kosmoFling`) das Fenster überschrieben hat.
  */
-export function flingTracker(): {
+export function flingTracker(fensterMs?: number): {
   sample(t: number, x: number, y: number): void;
   reset(): void;
   loslassGeschwindigkeit(): FlingVektor | null;
@@ -287,7 +345,8 @@ export function flingTracker(): {
   return {
     sample(t, x, y) {
       proben.push({ t, x, y });
-      const grenze = t - FLING_SAMPLE_FENSTER_MS;
+      const aktivesFenster = fensterMs ?? fensterMsUeberschreibungFuerTests ?? FLING_SAMPLE_FENSTER_MS;
+      const grenze = t - aktivesFenster;
       // Chronologisch sortierte Proben — von vorn abschneiden reicht.
       while (proben.length > 1 && proben[0]!.t < grenze) proben.shift();
     },

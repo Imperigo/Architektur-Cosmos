@@ -609,7 +609,19 @@
    Theme-Attribut-Selektor gezielt NUR im orbit-Theme überschreiben kann —
    `EntwurfsDock.tsx` selbst importiert diese Datei NICHT eigens, das
    Bundle lädt sie bereits global über `OrbitStart.tsx`/`App.tsx`, s.
-   Kopfkommentar dieser Datei). */
+   Kopfkommentar dieser Datei).
+   v0.8.1 / P4 (Spez §1.1, Werkzeug-Umbau): `gap`/`padding` 4px→2px — der
+   hierher gezogene `tool-skizze`-Knopf macht die untere Rail-Reihe um einen
+   Knopf länger (287px statt 253px Gesamthöhe bei 8 statt 7 Knöpfen); der
+   Dock ist vertikal ZENTRIERT (`top:50%`), die Mehrhöhe wächst also je zur
+   Hälfte nach oben UND unten. Bei sehr niedrigen Fenstern (1400×520,
+   `e2e/dock-layout.spec.ts` «zuletztGeoeffnet») reichte die alte 15px-Luft
+   zur Statusleiste (`dw-statusleiste`, design.css, `bottom:12`) sonst nicht
+   mehr — HEAD-bewiesen (A/B-Isolationstest: 7 Knöpfe/253px blieb
+   überlappungsfrei, 8 Knöpfe/287px überlappte um 1.5px). Die engere
+   Abstands-Grammatik (2px statt 4px, s. auch die Hairline-Wrapper-Padding
+   unten) gewinnt ca. 24px zurück — Sichtbeweis bestätigt weiterhin klar
+   getrennte Kreis-Knöpfe, kein optischer Verlust. */
 .orbit065-dock {
   position: absolute;
   left: 12px;
@@ -618,8 +630,8 @@
   z-index: 3;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 4px;
+  gap: 2px;
+  padding: 2px;
   border-radius: var(--k-radius-pill);
   background: var(--k-surface);
   border: 1px solid var(--k-line);

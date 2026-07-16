@@ -383,9 +383,14 @@ describe('ZEICHEN_WERKZEUG_IDS — EINE Quelle der Werkzeugliste (Fable-Review-1
 
 describe('LEISTEN_BASIS — T7-Basis je Gruppe (2.2, Basis-Spalte), einzige Quelle für DesignWorkspace', () => {
   it('entspricht exakt der Buildplan-Tabelle', () => {
+    // v0.8.1 / P4 (Spez §1.2, Werkzeug-Umbau): neue Gruppe `schnitt` —
+    // dieselbe Basis-Stufe wie `ansicht` (immer sekundär), s. Kommentar bei
+    // `LeistenGruppe` (oberflaeche-adaption.ts) für die Kollisions-
+    // Begründung gegen eine Wiederverwendung des `ansicht`-Schlüssels.
     expect(LEISTEN_BASIS).toEqual({
       zeichnen: 'primaer',
       ansicht: 'sekundaer',
+      schnitt: 'sekundaer',
       export: 'sekundaer',
       ebenen: 'sekundaer',
       faehigkeiten: 'sekundaer',

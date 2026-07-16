@@ -369,7 +369,8 @@ Bestand.
 - **Plangrafik/Kernel:** `derive/stilblatt.ts`, `beschlag.ts`, D1–D6-Werte (Stifte 0.18/0.25/0.35/
   0.5, Grau-Treppe #111/#3A3A3A/#666/#8A8A8A, Linientypen, mm-Typo), 24 Golden-SVGs (byte-
   identisch, svg-qa Pflicht), `--k-plan-paper #fdfcf9`, SIA-Bemassung mit hochgestelltem mm-Rest,
-  `toBe(18)`-Werkzeugzähler. Der Neubau stylt nur den Rahmen ums Blatt, nie das Blatt.
+  `toBe(18)`-Werkzeugzähler (seit v0.8.1: 17, Splat-Fusion §8 Sanktion 1 der
+  V081-SPEZ). Der Neubau stylt nur den Rahmen ums Blatt, nie das Blatt.
 - **Verträge:** 975 `data-testid` + 111 `aria-label` byte-genau; `window.__kosmo` (App.tsx:427)
   formidentisch; 117 E2E-Specs mit 2891 testid-Referenzen sind der Prüfstein.
 - **Packages** kosmo-kernel/-data/-ai/-contracts/-sync/-lizenz; alle reinen Logik-`.ts` in shell/
@@ -696,8 +697,9 @@ Vertagungs-Grund. Dies ist die Grundlage, gegen die W8 (Matrix-Abnahme, adversar
 - [x] **B-111** D6 Beschlag S0 (6 Symbole) `[P73,P731]` → NICHT ANGEFASST
 - [x] **B-112** Golden-Regime (2 Sammelwechsel D1/D4 im Originalpaket) `[P73,P731]` → für B gilt
   stattdessen «alle 33 byte-identisch» — **VERTAGT** (Owner-Entscheid 5)
-- [x] **B-113** SIA-Bemassung/`toBe(18)`-Werkzeugzähler/Stiftsystem-Frage Nr. 1 `[P71]` → NICHT
-  ANGEFASST, ausserhalb Scope B
+- [x] **B-113** SIA-Bemassung/`toBe(18)`-Werkzeugzähler (seit v0.8.1: 17,
+  Splat-Fusion §8 Sanktion 1 der V081-SPEZ)/Stiftsystem-Frage Nr. 1 `[P71]` →
+  NICHT ANGEFASST, ausserhalb Scope B
 - [x] **B-114** 3 Darstellungsmodi 3D (Textur/Weissmodell/Schwarzmodus), Glas immer transparent
   `[P71]` → NICHT ANGEFASST (Kernel/Viewport3D-Logik bleibt; nur Chrome ums Blatt/Viewport neu)
 - [x] **B-115** Plan-Symbolik (Tür/Fenster/Bemassung SIA) `[P71]` → NICHT ANGEFASST
@@ -773,7 +775,11 @@ Vertagungs-Grund. Dies ist die Grundlage, gegen die W8 (Matrix-Abnahme, adversar
 - [x] **B-117** Wählbare Akzentfamilien/Modul-Farben bleiben unverändert `[P71]` → kein
   Bauauftrag, Bestandsschutz (identisch mit B-20, hier als Layoutregel-Beleg geführt)
 - [x] **B-118** Kein 19. Werkzeug ohne Owner-Entscheid (`toBe(18)`) `[P71]` → kein Bauauftrag,
-  Bestandsschutz
+  Bestandsschutz — **Riegel v0.8.1/P4 gezogen:** Owner-Entscheid 5 (V081-SPEZ
+  §0.2/§1.3) sanktioniert die Splat-Fusion (`import-splat`+`splat-werkzeug-
+  toggle` → EIN `splat-werkzeug`); der Vertrag ist seither `toBe(17)`
+  (`e2e/oberflaeche-minimal.spec.ts:132`), einzige testid-Streichung der
+  Version (§8 Sanktion 1 der V081-SPEZ).
 
 ### 9.17 · Offene Punkte (Sammelliste, nicht in dieser Spez abschliessend geklärt)
 

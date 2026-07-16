@@ -14,7 +14,8 @@ import { expect, test, type Page } from '@playwright/test';
  * ehrliche Rundlauf-Fall («Unternehmer liefert unverändert zurück») und
  * beweist nebenbei, dass Export/Import zueinander passen. Die Datei geht
  * anschliessend über den echten Dateiwahl-Dialog (`filechooser`-Event) in
- * `import-dxf` — dasselbe Playwright-Muster wie `import-ifc`/`import-splat`
+ * `import-dxf` — dasselbe Playwright-Muster wie `import-ifc`/`splat-werkzeug`
+ * (seit v0.8.1/P4 Splat-Fusion der fusionierte Knopf, vormals `import-splat`)
  * in `module.spec.ts`/`splat.spec.ts` (das dort vom Auftrag vorgeschlagene
  * `page.setInputFiles` griffe hier ins Leere: der `<input type="file">` wird
  * dynamisch erzeugt und nie ins DOM gehängt, exakt wie bei den beiden
@@ -88,7 +89,7 @@ test('Unternehmerplan-Overlay: DXF laden → Toggle erscheint → Overlay sichtb
   const { readFileSync } = await import('node:fs');
   const dxfInhalt = readFileSync(pfad!);
 
-  // Import über den echten Dateiwahl-Dialog, wie bei import-ifc/import-splat.
+  // Import über den echten Dateiwahl-Dialog, wie bei import-ifc/splat-werkzeug.
   const [chooser] = await Promise.all([
     page.waitForEvent('filechooser'),
     page.click('[data-testid="import-dxf"]'),

@@ -244,7 +244,16 @@ test('schmales Fenster (1000×800): unwichtigstes offenes Panel klappt zum Tab, 
   // deterministisch das kleinste `wichtigkeit`).
   await page.click('[data-testid="raster-toggle"]');
   await page.click('[data-testid="cw-setzen-oeffnen"]');
-  await page.click('[data-testid="splat-werkzeug-toggle"]');
+  // v0.8.1 / P4 (Spez §1.3, Splat-Fusion): der fusionierte `splat-werkzeug`-
+  // Knopf öffnet ohne geladene Cloud den Datei-Dialog statt das Panel zu
+  // togglen — dieser Dock-Layout-Test braucht nur das offene Panel, keine
+  // Cloud, darum über den generischen Test-Hook `ui.panelSetzen` direkt
+  // geöffnet (derselbe Weg wie `e2e/dock-kosmo.spec.ts`).
+  await page.evaluate(() => {
+    (
+      window as unknown as { __kosmoUiBefehle: { ausfuehren: (id: string, params: unknown) => unknown } }
+    ).__kosmoUiBefehle.ausfuehren('ui.panelSetzen', { panel: 'splatPanelOffen', offen: true });
+  });
   await page.click('[data-testid="maengel-oeffnen"]');
   await page.click('[data-testid="faehigkeit-submission"]');
 

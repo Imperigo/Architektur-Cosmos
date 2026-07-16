@@ -927,6 +927,7 @@ additive Features (Belege: `docs/GOLDEN-WECHSEL-D1.md` / `-D4.md` /
   (D2/D3/D6, 1 verfeinert + 4 neu). Gates am Finale grün nachgefahren: Kernel
   752/752 · App 847/847 · Typecheck alle Workspaces · svg-qa 28 Goldens,
   0 harte Fehler (1 bekannte `abnahmeprotokoll.svg`-Text-Overlap-Warnung,
-  Bestand). Schutzliste unangetastet (`toBe(18)`, orbit-start, kosmo-symbol,
-  Journeys, Goldens ausserhalb der dokumentierten Wechsel).
+  Bestand). Schutzliste unangetastet (`toBe(18)` — seit v0.8.1: 17, Splat-
+  Fusion §8 Sanktion 1 —, orbit-start, kosmo-symbol, Journeys, Goldens
+  ausserhalb der dokumentierten Wechsel).
 \n

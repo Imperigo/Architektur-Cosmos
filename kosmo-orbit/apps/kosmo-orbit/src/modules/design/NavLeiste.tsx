@@ -23,15 +23,25 @@ export function NavLeiste({ aktionen, testid }: { aktionen: NavAktion[]; testid:
         position: 'absolute',
         // v0.6.5 (W2, SK-D5): vorher `left:8` — stapelte sich optisch mit der
         // Geschossleiste/dem Entwurfs-Dock, die beide an der linken Kante
-        // sitzen. Wandert nach unten RECHTS (Owner-Befund «Statuszeile +
-        // Viewport-Nav-Pillen stapeln sich in derselben Ecke»); die
-        // Statusleiste (DesignWorkspace.tsx) bleibt unten LINKS — beide
-        // Ecken sind jetzt entstapelt. testids/aria-labels unverändert.
-        // Integration-Fix: `right:8` schob nav-fit UNTER das fixe Kosmo-Symbol
-        // (right:22/bottom:22, 54px, z-110) — dessen Container fing die Klicks
-        // ab (eingabe-3d.spec komplett rot). 88px = 22+54+12 Abstand lassen
-        // dem Symbol seine Ecke; die Pillen sitzen links daneben.
-        right: 88,
+        // sitzen. Wanderte darum nach unten RECHTS (Owner-Befund «Statuszeile
+        // + Viewport-Nav-Pillen stapeln sich in derselben Ecke»); Integration-
+        // Fix von damals: `right:8` schob nav-fit UNTER das fixe Kosmo-Symbol
+        // (right:22/bottom:22, 54px, z-110) — dessen Container fing die
+        // Klicks ab (eingabe-3d.spec komplett rot). 88px = 22+54+12 Abstand
+        // liessen dem Symbol seine Ecke.
+        //
+        // v0.8.1 / P4 (Spez §1.4): Rückverlegung nach LINKS UNTEN — die
+        // Statusleiste (`dw-statusleiste`, design.css) belegt `left:12,
+        // bottom:12, right:88`, 30px hoch; `EntwurfsDock`/`.orbit065-dock`
+        // sitzt links, aber VERTIKAL ZENTRIERT (`top:50%`) — keine Kollision
+        // mit einer bodennahen Position. `left:12` reiht sich exakt an die
+        // linke Kante der Statusleiste; `bottom:50` lässt denselben 8px-
+        // Luftraum über deren Oberkante (12+30=42 → 50-42=8px), identisch zur
+        // bisherigen Abstands-Norm. Das fixe Kosmo-Symbol bleibt rechts
+        // (right:22/bottom:22) — die `right:88`-Klärung war NUR für die
+        // vorige rechte Position dieser Leiste nötig, entfällt jetzt mit dem
+        // Umzug ersatzlos. testids/aria-labels bleiben unverändert.
+        left: 12,
         // Bewusst über der Statuszeile (bottom:12, ~30px hoch) — sonst
         // überlappen sich Cursor-Koordinaten und die Nav-Knöpfe.
         bottom: 50,

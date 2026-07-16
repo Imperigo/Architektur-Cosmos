@@ -162,7 +162,9 @@ test.describe('V1.6 Block H — Vollhaus', () => {
     });
 
     // Skizzen-Werkzeug an → Overlay im Plan. Der Tool-Umschalter rendert die
-    // Knöpfe als `tool-${id}` (DesignWorkspace), das Skizzen-Tool ist 'skizze'.
+    // Knöpfe als `tool-${id}` (DesignWorkspace); seit v0.8.1/P4 sitzt
+    // `tool-skizze` in der unteren Rail-Reihe des EntwurfsDock (Spez §1.1),
+    // die testid selbst bleibt unverändert. Das Skizzen-Tool ist 'skizze'.
     await page.click('[data-testid="view-2d"]');
     await page.click('[data-testid="tool-skizze"]');
     const overlay = page.locator('[data-testid="sketch-overlay"]');

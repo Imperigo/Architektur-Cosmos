@@ -143,10 +143,11 @@ v0.7.0 baut die TIEFE:
   + Entkopplung) — beide bleiben per Design wahr; keine Optionszählung.
 - KEINE 3D-Farb-/Screenshot-Asserts in e2e (Grep verifiziert).
 - plan-lod.spec.ts = Gate für PlanView-Umbauten (2A).
-- Werkzeugzähler toBe(18): KEINE neuen Toolbar-Werkzeuge — neue Schalter
-  leben im Projekt-Menü. Seed 112/«19× Beton» unberührt (Poché = reine
-  Darstellungsebene). exactOptionalPropertyTypes: neue optionale Settings
-  mit konditionalen Spreads.
+- Werkzeugzähler toBe(18) (seit v0.8.1: 17, Splat-Fusion §8 Sanktion 1):
+  KEINE neuen Toolbar-Werkzeuge — neue Schalter leben im Projekt-Menü. Seed
+  112/«19× Beton» unberührt (Poché = reine Darstellungsebene).
+  exactOptionalPropertyTypes: neue optionale Settings mit konditionalen
+  Spreads.
 
 ## Wellen & Besitz (Dateidisjunktheit = Merge-Gesetz)
 

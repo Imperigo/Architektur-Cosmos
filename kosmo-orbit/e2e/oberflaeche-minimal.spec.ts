@@ -126,10 +126,12 @@ test('«Mehr…»-Menü: erscheint nur bei zurückgestellten Werkzeugen, listet 
   const eintraege = await liste
     .locator('[data-testid^="werkzeuge-mehr-eintrag-"]')
     .evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')));
-  // Export (8 Werkzeuge) + Ebenen (9 Werkzeuge, seit Stream B/W1b inkl.
-  // Bauablauf/Mängel) + Fähigkeiten (1 Werkzeug, Submissions-Check — kein
-  // Alt-Knopf in Ebenen) sind alle drei zurückgestellt.
-  expect(eintraege.length).toBe(18);
+  // Export (7 Werkzeuge, seit v0.8.1/P4 Splat-Fusion — `import-splat`/
+  // `splat-werkzeug-toggle` zu EINEM `splat-werkzeug` verschmolzen, §8
+  // Sanktion 1, Owner-Entscheid 5) + Ebenen (9 Werkzeuge, seit Stream B/W1b
+  // inkl. Bauablauf/Mängel) + Fähigkeiten (1 Werkzeug, Submissions-Check —
+  // kein Alt-Knopf in Ebenen) sind alle drei zurückgestellt.
+  expect(eintraege.length).toBe(17);
   expect(eintraege).toContain('werkzeuge-mehr-eintrag-ebenen-raster');
   expect(eintraege).toContain('werkzeuge-mehr-eintrag-export-pdf');
   // Stream B (W1b): die zuvor fehlenden Einträge sind jetzt erreichbar.

@@ -57,6 +57,23 @@ import { STATION_ZU_TOOLID, toolNutzungMelden } from '../../state/orbit-rang';
  * eigene Zweit-Tabelle hier). ALLE testids/titles/DOM-Struktur/Icons/Klick-
  * Callbacks aus W1-B bleiben exakt — nur Optik + der zusätzliche
  * `nutzungMelden`-Seiteneffekt sind neu.
+ *
+ * v0.8.1 / P4 (Spez §1.1, Werkzeug-Umbau): das Zeichen-Werkzeug **Skizze**
+ * (`tool-skizze`, Kürzel `F`) zieht aus der klassischen Zeichenzeile
+ * (`DesignWorkspace.tsx` `ZEICHEN_WERKZEUGE_LEISTE`) HIERHER, in die untere
+ * Stations-Icon-Reihe — als EIGENER Knopf NEBEN Draw/Vis/Publish/Prepare,
+ * NICHT als weiterer Eintrag in `EINTRAEGE` oben (das wäre ein zweiter
+ * «Skizzieren»-Knopf im selben Drei-Knopf-Cluster mit anderer Wirkung als
+ * `entwurf-skizzieren` — die Spec verwirft genau diese Verschmelzung). Die
+ * testid `tool-skizze` bleibt WÖRTLICH, nur ihr DOM-Elternkontext wechselt;
+ * Kürzel `F` bleibt unabhängig vom neuen Ort aktiv (`kurztasten.ts`, dort
+ * unverändert). Anders als die vier `STATIONS_EINTRAEGE`-Knöpfe trägt dieser
+ * Knopf eine echte `aria-pressed`-Zustandsmarkierung (aktives Werkzeug, wie
+ * die drei Modus-Knöpfe oben) statt eines reinen Stations-Sprungs — er ruft
+ * darum NICHT den gemeinsamen `klick()`-Helfer (der `STATION_ZU_TOOLID`
+ * erwartet), sondern `onSkizzeWerkzeug` direkt; der Aufrufer
+ * (`DesignWorkspace.tsx`) meldet `nutzungMelden('zeichnen:skizze')` bereits
+ * selbst — dieselbe Zeichenkette wie zuvor am alten Ort.
  */
 
 export type EntwurfsModus = 'sprechen' | 'skizzieren' | 'cad';
@@ -75,6 +92,15 @@ export interface EntwurfsDockProps {
   onDockPublish: () => void;
   /** A7: wechselt zu KosmoPrepare. */
   onDockPrepare: () => void;
+  /** v0.8.1 / P4 (Spez §1.1): ist das Zeichen-Werkzeug «Skizze» (`tool==='skizze'`)
+   *  gerade aktiv? Steuert die `aria-pressed`-Markierung des hierher gezogenen
+   *  `tool-skizze`-Knopfs (untere Rail-Reihe). */
+  skizzeAktiv: boolean;
+  /** v0.8.1 / P4: setzt das Zeichen-Werkzeug auf «Skizze» — identischer Effekt
+   *  wie der frühere `tool-skizze`-Knopf in der klassischen Zeichenzeile
+   *  (`setTool('skizze')` + `nutzungMelden('zeichnen:skizze')`, beide bleiben
+   *  Sache des Aufrufers). */
+  onSkizzeWerkzeug: () => void;
 }
 
 const EINTRAEGE: {
@@ -122,6 +148,8 @@ export function EntwurfsDock({
   onDockVis,
   onDockPublish,
   onDockPrepare,
+  skizzeAktiv,
+  onSkizzeWerkzeug,
 }: EntwurfsDockProps) {
   const aktion: Record<EntwurfsModus, () => void> = {
     sprechen: onSprechen,
@@ -196,9 +224,44 @@ export function EntwurfsDock({
           </KButton>
         );
       })}
-      <div style={{ padding: '2px 0' }}>
+      {/* v0.8.1 / P4 (Spez §1.1): Wrapper-Padding 2px→0 — Teil derselben
+          engeren Abstands-Grammatik wie `.orbit065-dock` (orbit-065.css,
+          gap/padding 4px→2px), nötig geworden durch den 8. Knopf in dieser
+          Rail (s. dortiger Kopfkommentar, HEAD-bewiesene Statusleisten-
+          Kollision bei 1400×520 sonst). */}
+      <div style={{ padding: 0 }}>
         <Hairline />
       </div>
+      {/* v0.8.1 / P4 (Spez §1.1): Skizze — der Zwilling der «Skizzieren»-
+          Modus-Kachel oben, aber ein echtes Zeichen-Werkzeug (`tool-skizze`).
+          Eigener Klick-Pfad (kein `klick()`-Helfer, s. Datei-Kopfkommentar) —
+          `onSkizzeWerkzeug` meldet die Nutzung selbst. */}
+      <KButton
+        size="sm"
+        tone={skizzeAktiv ? 'accent' : 'quiet'}
+        title="Freihand-Skizze (F)"
+        aria-label="Freihand-Skizze (F)"
+        aria-pressed={skizzeAktiv}
+        data-testid="tool-skizze"
+        className={`orbit065-dock-knopf k-werkzeug-kreis${skizzeAktiv ? ' k-werkzeug-kreis--aktiv' : ''}${poppendId === 'tool-skizze' ? ' orbit065-dock-pop' : ''}`}
+        onClick={() => {
+          setPoppendId('tool-skizze');
+          onSkizzeWerkzeug();
+        }}
+        onAnimationEnd={() => setPoppendId((id) => (id === 'tool-skizze' ? null : id))}
+        style={{
+          width: 30,
+          height: 30,
+          padding: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 'var(--k-radius-pill)',
+        }}
+      >
+        <WerkzeugGlyphe art="skizze" rolle="--k-rolle-manuell" size={20} />
+        {skizzeAktiv && <span className="k-werkzeug-kreis-punkt" aria-hidden="true" />}
+      </KButton>
       {STATIONS_EINTRAEGE.map(({ testid, titel, station }) => (
         <KButton
           key={testid}

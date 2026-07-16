@@ -116,7 +116,12 @@ Wechsel). Kürzel `F` bleibt aktiv, unabhängig vom neuen Ort.
   bleibt unverändert (Schnitt ist weiterhin ein «Zeichenwerkzeug» im State-Sinn), nur die
   **Chrome-Position** ändert sich.
 
-**Fixierter Platz:** neue, eigene, einknöpfige Kontextzeilen-Gruppe `leiste-gruppe-ansicht`
+**Fixierter Platz:** neue, eigene, einknöpfige Kontextzeilen-Gruppe `leiste-gruppe-schnitt`
+*(P4-Korrektur, Fable-sanktioniert: der ursprünglich hier fixierte Name `leiste-gruppe-ansicht`
+kollidiert real — dieser String ist bereits die Hauptzeilen-View-Mode-Gruppe, DesignWorkspace
+~Z. 2117; wörtliche Umsetzung hätte doppelte data-testids (Playwright-Strict-Bruch) und eine
+falsche Fokus-Kopplung erzeugt. Neuer kollisionsfreier `LeistenGruppe`-Schlüssel `schnitt`,
+identische Basis-Stufe `sekundaer`.)*
 (analog `leiste-gruppe-export`/`leiste-gruppe-ebenen`), platziert in der Kontextzeile
 unmittelbar links von `leiste-gruppe-export` — sichtbar getrennt von der Zeichenzeile,
 Icon+Textlabel-Vertrag bleibt («Schnitt», wie heute, `oberflaeche-minimal.spec.ts`-taugend).
@@ -211,7 +216,7 @@ drawOffen`; modellieren: `splatPanelOffen` — nach der Splat-Fusion bleibt der 
 `splatPanelOffen` identisch, nur der auslösende Klick fusioniert) · `kosmo-ui-werkzeuge.ts`
 `TOOL_LABEL` (Z. 92) + `PANEL_LABEL` (Z. 70) · `dock-stationen.ts` `splatPanel`-Eintrag
 (Z. 140) · `DesignWorkspace.tsx` selbst (`UEBERLAUFFAEHIGE_WERKZEUGE`, Kontextzeilen-Gruppen,
-`leiste-gruppe-ansicht` neu) · `EntwurfsDock.tsx` (untere Icon-Reihe + `tool-skizze`) ·
+`leiste-gruppe-schnitt` neu, s. §1.2-Korrektur) · `EntwurfsDock.tsx` (untere Icon-Reihe + `tool-skizze`) ·
 `NavLeiste.tsx` (Positions-Konstanten) · rund 12 E2E-Specs mit Skizze/Schnitt/Splat/Pan-
 Fundstellen: `sketch-3d-a4.spec.ts:49,113`, `eingabe-3d.spec.ts:115`, `sim-vollhaus.
 spec.ts:167`, `module.spec.ts:2073`, `entwurfs-icons.spec.ts:52,79,80`, `starter-guide-
@@ -536,7 +541,7 @@ verändert). Diese Liste ist die einzige Owner-sanktionierte Ausnahme-Menge:
    §1.4) — Positions-Konstanten, keine testid-/aria-Änderung.
 3. **Skizze/Schnitt-Chrome-Umzug** (§1.1/§1.2/§1.5) — `EntwurfsDock.tsx` (neue untere
    Rail-Zeile für `tool-skizze`), `DesignWorkspace.tsx` (neue Gruppe
-   `leiste-gruppe-ansicht` für Schnitt, `UEBERLAUFFAEHIGE_WERKZEUGE`-Fusion §1.3) —
+   `leiste-gruppe-schnitt` für Schnitt (§1.2-Korrektur), `UEBERLAUFFAEHIGE_WERKZEUGE`-Fusion §1.3) —
    testids `tool-skizze`/`tool-schnitt` bleiben wörtlich, nur ihr DOM-Elternkontext
    ändert sich; `import-splat`/`splat-werkzeug-toggle` entfallen zugunsten von
    `splat-werkzeug` (einzige testid-Streichung, gedeckt durch Sanktion 1).
@@ -682,7 +687,7 @@ Hardware zwingend fehlen — alles andere bekommt einen Bauauftrag.
 
 - [ ] **C-43** Skizze-Platz (EntwurfsDock-Rail, untere Zeile) → **W3/P4** · Abnahme: §1.1
   umgesetzt, `tool-skizze` unverändert, kein Doppel-«Skizzieren» im selben Cluster.
-- [ ] **C-44** Schnitt-Platz (`leiste-gruppe-ansicht`) → **W3/P4** · Abnahme: §1.2
+- [ ] **C-44** Schnitt-Platz (`leiste-gruppe-schnitt`, §1.2-Korrektur) → **W3/P4** · Abnahme: §1.2
   umgesetzt, `tool-schnitt` unverändert, eigene Kontextzeilen-Gruppe sichtbar getrennt.
 - [ ] **C-45** Splat-Fusion (ein Werkzeug, Laden+Panel-Toggle) → **W3/P4** · Abnahme:
   §1.3 umgesetzt, `import-splat`/`splat-werkzeug-toggle` entfallen, `splat-werkzeug`

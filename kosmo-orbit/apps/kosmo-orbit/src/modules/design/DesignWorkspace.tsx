@@ -216,6 +216,7 @@ const FLUCHT_TOLERANZ = 150; // mm — grosszügig wie der bestehende Trefferzon
 const GRUPPEN_LABEL: Record<LeistenGruppe, string> = {
   zeichnen: 'Zeichnen',
   ansicht: 'Ansicht',
+  schnitt: 'Schnitt',
   export: 'Export',
   ebenen: 'Ebenen',
   faehigkeiten: 'Fähigkeiten',
@@ -227,10 +228,17 @@ const GRUPPEN_LABEL: Record<LeistenGruppe, string> = {
  * Serie K A5 (K15): die vier meistgenutzten Zeichenwerkzeuge tragen ein
  * Inline-SVG-Icon statt Textlabel (Owner «kein Text wo möglich») — Text bleibt
  * als `title`+`aria-label` erhalten (Zugänglichkeit, keine Kontraktänderung:
- * `data-testid`s unverändert). Die restlichen Werkzeuge (Dach/Treppe/Stütze/
- * Schnitt/Skizze) bleiben Text — seltener genutzt, teils geometrisch nicht auf
- * ein Icon reduzierbar. Begründung der Auswahl: Kommentar in
- * `werkzeug-icons.tsx`.
+ * `data-testid`s unverändert). Die restlichen Bauteil-Werkzeuge (Dach/Treppe/
+ * Stütze) bleiben Text — seltener genutzt, teils geometrisch nicht auf ein
+ * Icon reduzierbar. Begründung der Auswahl: Kommentar in `werkzeug-icons.tsx`.
+ *
+ * v0.8.1 / P4 (Spez §1.1/§1.2, Werkzeug-Umbau): Skizze UND Schnitt ziehen aus
+ * dieser Zeichenzeile aus — Skizze in die untere Rail-Reihe des
+ * `EntwurfsDock` (§1.1, testid `tool-skizze` bleibt wörtlich), Schnitt in die
+ * neue Kontextzeilen-Gruppe `leiste-gruppe-schnitt` (§1.2, testid
+ * `tool-schnitt` bleibt wörtlich). Diese Zeile trägt jetzt ausschliesslich
+ * die reinen Bauteil-Werkzeuge (Auswahl/Wand/Volumen/Zone/Dach/Treppe/
+ * Stütze) + Mesh (Block 3 / E4, separat unten).
  */
 const ZEICHEN_WERKZEUGE_LEISTE: readonly {
   id: ToolId;
@@ -250,8 +258,6 @@ const ZEICHEN_WERKZEUGE_LEISTE: readonly {
   { id: 'dach', label: 'Dach', Icon: IconDach, iconMitText: true },
   { id: 'treppe', label: 'Treppe', Icon: IconTreppe, iconMitText: true },
   { id: 'stuetze', label: 'Stütze', Icon: IconStuetze, iconMitText: true },
-  { id: 'schnitt', label: 'Schnitt', Icon: IconSchnitt, iconMitText: true },
-  { id: 'skizze', label: '✎ Skizze' },
 ];
 
 /** F5 (v0.6.4): Tastenkürzel je Werkzeug — grossgeschrieben fürs Tooltip
@@ -422,6 +428,29 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     // höchstens den Skizzenmodus zurück zur Auswahl (ArchiCAD-Grundzustand).
     if (tool === 'skizze') setTool('auswahl');
     nutzungMelden('zeichnen:entwurf-cad');
+  };
+  // v0.8.1 / P4 (Spez §1.1): der hierher (EntwurfsDock, untere Rail-Reihe)
+  // gezogene `tool-skizze`-Knopf — identischer Effekt wie der frühere Klick
+  // in der klassischen Zeichenzeile (`setTool('skizze')` +
+  // `nutzungMelden('zeichnen:skizze')`, dieselbe Zeichenkette wie zuvor).
+  // Kein `zeigePunktBurst('skizze')` mehr: der Burst-Overlay rendert nur
+  // innerhalb der `ZEICHEN_WERKZEUGE_LEISTE`-Knöpfe (dort verlässt 'skizze'
+  // jetzt das Array) — der Dock trägt mit `orbit065-dock-pop` bereits sein
+  // eigenes Nutzungs-Pop (450ms, s. `EntwurfsDock.tsx`), kein zweiter Effekt
+  // nötig.
+  const klickSkizzeWerkzeug = () => {
+    setTool('skizze');
+    nutzungMelden('zeichnen:skizze');
+  };
+  // v0.8.1 / P4 (Spez §1.2): Schnitt zieht in die neue Kontextzeilen-Gruppe
+  // `leiste-gruppe-schnitt` — identischer Effekt wie der frühere Klick in der
+  // klassischen Zeichenzeile (`setTool('schnitt')` +
+  // `nutzungMelden('zeichnen:schnitt')` + Punkt-Burst, unverändert aus der
+  // `ZEICHEN_WERKZEUGE_LEISTE`-Map übernommen).
+  const klickSchnittWerkzeug = () => {
+    setTool('schnitt');
+    nutzungMelden('zeichnen:schnitt');
+    zeigePunktBurst('schnitt');
   };
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const viewMode = useUiZustand((s) => s.viewMode);
@@ -1554,9 +1583,26 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     };
     input.click();
   };
+  /**
+   * v0.8.1 / P4 (Spez §1.3, Splat-Fusion, sanktioniert durch Owner-Entscheid 5
+   * — `toBe(18)` → `toBe(17)`, §8 Sanktion 1): EIN Werkzeug `splat-werkzeug`
+   * ersetzt die beiden vorigen getrennten Einträge (`import-splat`/
+   * `splat-werkzeug-toggle`). Fallunterscheidung ist reine Chrome-Logik auf
+   * bestehenden Stores, kein neuer State: ist bereits eine Splat-Cloud in
+   * diesem Projekt geladen (`splatCloud !== null`, derselbe lokale State, den
+   * `SplatPanel`/`Viewport3D` schon konsumieren), togglet der Klick nur noch
+   * das Panel (bisheriges `splat-werkzeug-toggle`-Verhalten, unverändert
+   * übernommen). Ohne geladene Cloud ruft der Klick unverändert
+   * `klickImportSplat()` auf (bisheriger Datei-Dialog .splat/.ply; nach
+   * erfolgreichem Parse öffnet sich das Panel automatisch wie heute).
+   */
   const klickSplatWerkzeug = () => {
-    setSplatPanelOffen(!splatPanelOffen);
-    nutzungMelden('export:splat-werkzeug');
+    if (splatCloud) {
+      setSplatPanelOffen(!splatPanelOffen);
+      nutzungMelden('export:splat-werkzeug');
+    } else {
+      klickImportSplat();
+    }
   };
   const klickTextur = () => {
     setTexturModus(!texturen);
@@ -1730,8 +1776,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     { gruppe: 'export', id: 'ifc', label: 'IFC', aktion: klickExportIfc },
     { gruppe: 'export', id: 'import-ifc', label: 'IFC laden', aktion: klickImportIfc },
     { gruppe: 'export', id: 'import-dxf', label: 'DXF laden', aktion: klickImportDxf },
-    { gruppe: 'export', id: 'import-splat', label: 'Splat laden', aktion: klickImportSplat },
-    { gruppe: 'export', id: 'splat-werkzeug', label: 'Splat-Werkzeug', aktion: klickSplatWerkzeug },
+    // v0.8.1 / P4 (Spez §1.3, Splat-Fusion, §8 Sanktion 1): die vorigen ZWEI
+    // Einträge (`import-splat`/`splat-werkzeug`) sind zu EINEM fusioniert —
+    // export-Gruppe schrumpft von 8 auf 7, Gesamtzahl 7+9+1=17 statt 18.
+    { gruppe: 'export', id: 'splat-werkzeug', label: 'Splat', aktion: klickSplatWerkzeug },
     { gruppe: 'ebenen', id: 'textur', label: 'Textur', aktion: klickTextur },
     { gruppe: 'ebenen', id: 'sonne', label: 'Sonne', aktion: klickSonne },
     { gruppe: 'ebenen', id: 'studie', label: 'Varianten', aktion: klickStudie },
@@ -2185,12 +2233,45 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               ))}
             </KSelect>
           )}
+          {/* v0.8.1 / P4 (Spez §1.2, Werkzeug-Umbau): Schnitt — eigene,
+              einknöpfige Kontextzeilen-Gruppe, unmittelbar links von
+              `leiste-gruppe-export` (analog `leiste-gruppe-export`/
+              `leiste-gruppe-ebenen`). Fachliche Begründung (Spec §1.2): Schnitt
+              erzeugt eine ANSICHT (Schnittebene + abgeleitete Darstellung),
+              näher an Ansichts-/Navigationsfunktionen als an den Bauteil-
+              Werkzeugen (Wand/Volumen/Zone/Dach/Treppe/Stütze) — bleibt aber im
+              State-Sinn weiterhin ein Zeichenwerkzeug (`ZEICHEN_WERKZEUG_IDS`
+              unverändert, `oberflaeche-adaption.ts`). testid `tool-schnitt`
+              bleibt wörtlich, nur der DOM-Elternkontext wechselt (Sanktion 3,
+              §8). Eigener `LeistenGruppe`-Schlüssel `schnitt` statt des
+              spec-wörtlichen `ansicht` — Kollisions-Begründung im Kommentar
+              bei `LeistenGruppe` (`oberflaeche-adaption.ts`). */}
+          <span
+            data-testid="leiste-gruppe-schnitt"
+            className={`${fokusKlasse(stufeFuerGruppe('schnitt'))} dw-gruppe-inline`}
+            style={gruppeHatGehobenesElement('schnitt') ? { opacity: 1 } : undefined}
+          >
+            <KButton
+              size="sm"
+              tone={tool === 'schnitt' ? 'accent' : 'quiet'}
+              className="k-fb-punkt-burst-anker"
+              onClick={klickSchnittWerkzeug}
+              data-testid="tool-schnitt"
+              title={`Schnitt${KURZTASTE_JE_WERKZEUG.schnitt ? ` (${KURZTASTE_JE_WERKZEUG.schnitt})` : ''}`}
+              aria-label={`Schnitt${KURZTASTE_JE_WERKZEUG.schnitt ? ` (${KURZTASTE_JE_WERKZEUG.schnitt})` : ''}`}
+              {...elementStil('schnitt', 'schnitt')}
+            >
+              <IconSchnitt /> Schnitt
+              {punktBurst?.id === 'schnitt' && <PunktBurst key={punktBurst.key} />}
+            </KButton>
+          </span>
+          <Hairline vertical />
           {/* SK-D1 Massnahme 2 («EIN KMenu Export»): echter Auf/Zu-Trigger,
               STANDARDMÄSSIG OFFEN. Grund für «offen» als Default (dokumentierte
               Wahl, s. Bericht/Grenzen): ein Grep über alle Specs zeigte, dass
               zahlreiche NICHT-W2-Dateien (module.spec, abnahme, splat,
               unternehmerplan*, sim-*, studienbericht) `export-pdf`/`export-dxf`/
-              `export-ifc`/`import-*`/`splat-werkzeug-toggle` DIREKT anklicken,
+              `export-ifc`/`import-*`/`splat-werkzeug` DIREKT anklicken,
               ohne zuvor ein Menü zu öffnen. Mit Default «offen» sehen diese
               Specs die Gruppe unverändert wie vorher (sie rühren
               `export-menu-toggle` nie an); nur wer bewusst zuklappt (hier
@@ -2258,23 +2339,23 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               >
                 DXF laden
               </KButton>
+              {/* v0.8.1 / P4 (Spez §1.3, Splat-Fusion): EIN Knopf statt der
+                  vorigen zwei («Splat laden» + «Splat-Werkzeug») — ohne
+                  geladene Cloud öffnet der Klick den Datei-Dialog (bisheriges
+                  `import-splat`-Verhalten), mit geladener Cloud togglet er nur
+                  noch das Panel (bisheriges `splat-werkzeug-toggle`-
+                  Verhalten). `import-splat`/`splat-werkzeug-toggle` entfallen
+                  als testids — einzige sanktionierte testid-Streichung dieser
+                  Version (§8 Sanktion 1, Owner-Entscheid 5). */}
               <KButton
                 size="sm"
-                tone="ghost"
-                data-testid="import-splat"
-                onClick={klickImportSplat}
-                {...elementStil('export', 'import-splat')}
-              >
-                Splat laden
-              </KButton>
-              <KButton
-                size="sm"
-                tone={splatPanelOffen ? 'accent' : 'ghost'}
-                data-testid="splat-werkzeug-toggle"
+                tone={splatCloud && splatPanelOffen ? 'accent' : 'ghost'}
+                data-testid="splat-werkzeug"
+                title={splatCloud ? 'Splat-Panel auf-/zuklappen' : 'Splat laden (.splat/.ply)'}
                 onClick={klickSplatWerkzeug}
                 {...elementStil('export', 'splat-werkzeug')}
               >
-                Splat-Werkzeug
+                Splat
               </KButton>
             </span>
               )}
@@ -3060,6 +3141,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           onDockVis={() => onStationOeffnen?.('vis')}
           onDockPublish={() => onStationOeffnen?.('publish')}
           onDockPrepare={() => onStationOeffnen?.('prepare')}
+          skizzeAktiv={tool === 'skizze'}
+          onSkizzeWerkzeug={klickSkizzeWerkzeug}
         />
 
         {/* Geschossleiste — v0.6.5 (W2, SK-D3): gerahmter Karteikarten-
@@ -3113,8 +3196,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             ⧉
           </KButton>
           {/* H-7 (Sim-Befund): design.deckeZeichnen hatte keine UI-Fläche.
-              Statt eines 19. Werkzeugs (Vertrag toBe(18) im Mehr…-Menü bliebe
-              sonst instabil) ein Panel-Knopf hier — er braucht ein Umriss-
+              Statt eines 18. Werkzeugs (Vertrag toBe(17) seit der Splat-Fusion
+              v0.8.1/P4, vorher toBe(18) — im Mehr…-Menü bliebe sonst instabil)
+              ein Panel-Knopf hier — er braucht ein Umriss-
               Polygon, das leiten wir ehrlich aus der Bounding-Box aller Zonen
               des aktiven Geschosses ab (kein Freihand-Zeichnen einer Decke). */}
           <KButton
@@ -3156,7 +3240,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           </KButton>
           {/* v0.6.9 Stream F: design.curtainWallSetzen hatte keine UI-Fläche.
               Gleiches Muster wie «Decke» oben (H-7): ein Panel-Knopf statt
-              eines 19. Werkzeugs — der Vertrag toBe(18) im Mehr…-Menü
+              eines 18. Werkzeugs — der Vertrag toBe(17) (seit v0.8.1/P4,
+              vorher toBe(18)) im Mehr…-Menü
               (e2e/oberflaeche-minimal.spec.ts, UEBERLAUFFAEHIGE_WERKZEUGE)
               bleibt so unberührt. */}
           <KButton
@@ -3170,8 +3255,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           </KButton>
           {/* v0.7.0 Stream 5A: derive/variantensuche.ts (E5-i) hatte keine
               UI-Fläche. Gleiches Muster wie «Fensterband»/«Decke» oben (H-7):
-              ein Panel-Knopf statt eines 19. Werkzeugs — der Vertrag toBe(18)
-              (e2e/oberflaeche-minimal.spec.ts, UEBERLAUFFAEHIGE_WERKZEUGE)
+              ein Panel-Knopf statt eines 18. Werkzeugs — der Vertrag toBe(17)
+              (seit v0.8.1/P4, vorher toBe(18);
+              e2e/oberflaeche-minimal.spec.ts, UEBERLAUFFAEHIGE_WERKZEUGE)
               bleibt unberührt. Lebt neben «Wohnungen schneiden»
               (BerechnungslistePanel.tsx, listeOffen) im selben Sinn: beides
               Werkzeuge rund um die Wohnungs-Segmentierung des aktiven

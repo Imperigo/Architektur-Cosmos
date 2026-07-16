@@ -162,7 +162,8 @@ test('Submissions-Testlauf: vorprojekt → Werkplan-Reife → DXF-Ausschreibung 
 
   // ---------------------------------------------------------------------
   // 6) Unternehmer-Rücklauf laden — echter Dateiwahl-Dialog (`filechooser`),
-  //    wie import-ifc/import-splat/unternehmerplan.spec.ts (der dynamisch
+  //    wie import-ifc/splat-werkzeug (Splat-Fusion, v0.8.1/P4, vormals
+  //    import-splat)/unternehmerplan.spec.ts (der dynamisch
   //    erzeugte `<input type="file">` hängt nie im DOM, `setInputFiles`
   //    griffe ins Leere). Panel sichtbar, Bericht-Text da.
   // ---------------------------------------------------------------------
