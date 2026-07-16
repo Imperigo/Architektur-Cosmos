@@ -80,7 +80,29 @@ test('KosmoData-Wissen: Import-Sektion zeigt die Fixture-Notiz mit Herkunftszeil
   await page.reload();
 
   await page.click('[data-testid="module-data"]');
+
+  // v0.8.1/P2 (Technik-/Flake-Härtung, ROADMAP-Auftrag «Fixture-Skip
+  // auflösen») — ECHTER Befund, KEIN fehlendes Fixture: `import.json` ist
+  // seit 85fcbe1 (v0.6.8) committet und wird im Preview-Build unter
+  // `wissen/import.json` korrekt ausgeliefert (per Fetch verifiziert). Der
+  // Skip unten war eine RACE im Test selbst: `holeWissenImport()`
+  // (`DataWorkspace.tsx`) fetcht das Manifest ASYNCHRON erst beim Mounten
+  // des Wissen-Tabs — bis die Antwort da ist, zeigt die Sektion ihren
+  // initialen LEER-Zustand (`importEintraege === []`). Der Vorbestand
+  // akzeptierte `eintrag.first().or(leer)` als „settled" — das trifft aber
+  // GENAUSO auf den LEER-Zustand VOR dem Fetch zu; traf `anzahlEintraege`
+  // GENAU in diesem Zwischenmoment (unter Last reproduziert), skippte der
+  // Test einen echten, funktionierenden Pfad. Fix: explizit auf die
+  // TATSÄCHLICHE Netzwerkantwort des Manifests warten (Listener VOR dem
+  // Tab-Klick registriert, der den Fetch erst auslöst), bevor der Render-
+  // Zustand geprüft wird — deterministisch statt auf ein Timing-Fenster
+  // gewettet. Antwortet der Server nie (z.B. Build ohne Manifest), greift
+  // der 15s-Timeout-Fallback — der ehrliche Skip-Pfad danach bleibt intakt.
+  const importAntwort = page
+    .waitForResponse((res) => res.url().includes('/wissen/import.json'), { timeout: 15_000 })
+    .catch(() => null);
   await page.click('[data-testid="tab-wissen"]');
+  await importAntwort;
 
   const wissenTab = page.locator('[data-testid="kosmodata-wissen"]');
   await expect(wissenTab).toBeVisible();

@@ -856,12 +856,38 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   const setzeOrbRects = useDockOrbRuntime((s) => s.setzeRects);
   const setzeZeichenfeld = useDockZeichenfeld((s) => s.setzen);
   const zeichenfeldZuruecksetzen = useDockZeichenfeld((s) => s.zuruecksetzen);
+  // v0.8.1 / P2 (Technik-/Flake-Härtung, ROADMAP 390/393-Diagnose) —
+  // deterministisches «ein Solve-Durchlauf wurde angewendet»-Signal für E2E:
+  // `stabileBox()` (dock-interaktion.spec.ts) pollt seit P3 die BBox eines
+  // Panels und gilt als «fertig», sobald zwei Messungen im Abstand von
+  // `intervalMs` übereinstimmen. Real gemessen (HEAD-Beweis P8/P8b): nach
+  // einem Panel-Öffnen-Klick löst DockFlaeche zunächst SOFORT einen Solve
+  // aus, aber ein zweiter, FELD-getriebener Re-Solve folgt oft erst ~500ms
+  // später (Ursache: der ResizeObserver auf Container/Geschwistern feuert
+  // rAF-debounced, unter Last — SwiftShader + laufende 3D-Szene — mit
+  // spürbarer Verzögerung, s. Kopfkommentar «Feld-Messung» oben) und ändert
+  // dieselbe Panel-Höhe ein zweites Mal (real 573px→272px beobachtet).
+  // `stabileBox()`s 4s-Fenster rastete unter genug Last auf dem ERSTEN (noch
+  // nicht endgültigen) Wert ein, weil zwischen den beiden Solves genügend
+  // Ruhe lag, um fälschlich als «stabil» zu gelten.
+  // Produktlösung statt Test-Timeout: `solveGeneration` zählt JEDEN
+  // `ergebnis`-Wechsel (identisch zu den `naechste`/`setzeOrbRects`-Zeilen
+  // unten — dieselbe Stelle, dieselbe Abhängigkeit) und wird unten als
+  // `data-solve-generation` auf den Feld-Container gespiegelt. Tests können
+  // damit auf «keine Generation-Änderung mehr» statt auf ein BBox-Zeitfenster
+  // warten — ein einziges, günstig lesbares Signal statt wiederholter
+  // `getBoundingClientRect()`-Aufrufe, das GENAU dann hochzählt, wenn ein
+  // neues Solve-Ergebnis tatsächlich gerendert wurde (kein Rätselraten über
+  // Transition-Dauer o.ä.). Rein additiv: kein bestehender Leser kennt das
+  // Attribut, `ergebnis` selbst bleibt unverändert.
+  const [solveGeneration, setSolveGeneration] = useState(0);
   useEffect(() => {
     const naechste: Record<string, { x: number; y: number; w: number; h: number }> = {};
     for (const [id, r] of Object.entries(ergebnis.rects)) {
       naechste[id] = { x: r.x, y: r.y, w: r.w, h: r.h };
     }
     setzeOrbRects(naechste);
+    setSolveGeneration((g) => g + 1);
     // v0.8.0B P8b (Matrix-Abnahme «element-fang») — zusätzlich das freie
     // ZENTRUM (`ergebnis.viewport`, container-lokal wie `feld`) in CLIENT-
     // Koordinaten an `dock-zeichenfeld-runtime.ts` melden: `PlanView.tsx`s
@@ -967,7 +993,14 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   if (feld.w <= 0 || feld.h <= 0) {
     // Erster Messlauf noch nicht gelaufen (Layout-Effekt läuft nach dem
     // ersten Paint) — nichts rendern statt kollabierter Rechtecke zu zeigen.
-    return <div ref={wurzelRef} className="k-dock-flaeche" data-testid="dock-flaeche" />;
+    return (
+      <div
+        ref={wurzelRef}
+        className="k-dock-flaeche"
+        data-testid="dock-flaeche"
+        data-solve-generation={solveGeneration}
+      />
+    );
   }
 
   // v0.8.0B / W3 (Spez §4/§2 Gesetz 9, B-58) — Closed-Chip-Kandidaten: nur
@@ -977,7 +1010,12 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   const geschlosseneMitOeffnen = panels.filter((p) => !p.sichtbar && p.oeffnen);
 
   return (
-    <div ref={wurzelRef} className="k-dock-flaeche" data-testid="dock-flaeche">
+    <div
+      ref={wurzelRef}
+      className="k-dock-flaeche"
+      data-testid="dock-flaeche"
+      data-solve-generation={solveGeneration}
+    >
       <DockAutoHinweisChip text={hinweisText} />
       {geschlosseneMitOeffnen.length > 0 && (
         <div className="k-dock-closed-leiste" data-testid="dock-closed-leiste" style={{ left: feld.x, top: feld.y }}>

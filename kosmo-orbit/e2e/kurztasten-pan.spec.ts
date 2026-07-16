@@ -124,6 +124,88 @@ async function holeVerschiebung(page: import('@playwright/test').Page): Promise<
   });
 }
 
+/**
+ * v0.8.1 / P2 (Technik-/Flake-Härtung, ROADMAP 390/393-Diagnose
+ * «SwiftShader-Timing») — Diagnose des Fling/Momentum-Tests unten: die
+ * PHYSIK selbst ist bereits deterministisch — `flingSchritt()`
+ * (`modules/design/eingabe-3d.ts`) dämpft über das ECHTE `dt` zwischen zwei
+ * `requestAnimationFrame`-Aufrufen (`performance.now()`-Differenz, gedeckelt
+ * auf 48ms gegen rAF-Aussetzer), NIE über eine angenommene Wanduhr-Framerate
+ * — «Momentum aus rAF-Delta statt Wanduhr» ist also schon der Produktstand,
+ * kein Fix nötig (und `PlanView.tsx`/`eingabe-3d.ts` liegen ausserhalb des
+ * Dateikreises dieses Auftrags — Solver/Render-Kern anderer Pakete).
+ *
+ * Die Flake-Quelle sitzt auf der TEST-Seite: der Vorbestand nahm mit ZWEI
+ * FESTEN Wartezeiten (150ms bzw. 3500ms+300ms) implizit eine ungefähre
+ * ~60fps-Rendertaktung an. Unter SwiftShader-Softwarerendering (+ der
+ * laufenden 3D-Szene daneben) feuert `requestAnimationFrame` unter Last
+ * SELTENER und UNREGELMÄSSIG — ein einzelnes 150ms-Fenster kann dann
+ * zufällig ganz ohne einen einzigen Frame bleiben (Momentum-Delta ≈ 0,
+ * Assertion «läuft aus» flackert), oder umgekehrt bleiben nach 3500ms noch
+ * Frames aus, deren longsame Restbewegung sich erst danach zeigt (Assertion
+ * «stoppt von selbst» flackert).
+ *
+ * Fix bleibt eine TEST-Härtung (kein Assertion-Abbau — beide Beweise bleiben
+ * exakt dieselben Behauptungen, nur zeitlich robuster gemessen): Pollen über
+ * ein grosszügiges Fenster statt EINER festen Wartezeit — dieselbe Idee wie
+ * `stabileBox()` in `dock-interaktion.spec.ts`, hier auf den CTM-Transform
+ * angewendet. `wartetBisRuhig()` liefert erst zurück, wenn die Position für
+ * `ruheMs` am Stück TATSÄCHLICH unverändert blieb, mit grosszügigem
+ * Gesamt-Timeout (deckt auch seltene rAF-Taktung sicher ab).
+ *
+ * v0.8.1/P2 — NACHBESSERUNG (HEAD-bewiesen, s. Verifikationsbericht): die
+ * erste Fassung pollte `getScreenCTM()` von AUSSEN (Node→Browser-IPC,
+ * 100ms-Intervall) und liess die Ruhe-Uhr ab dem AUFRUF-Zeitpunkt laufen —
+ * dieselbe Klasse Race wie bei `warteAufSolveStabilitaet()` in
+ * `dock-interaktion.spec.ts`: kam der reguläre Drag-Render-Nachlauf (der
+ * `<g transform=…>`-Knoten in `PlanView.tsx`, GANZ OHNE eigenes Momentum)
+ * erst NACH Ablauf von `ruheMs` seit Aufruf an, galt die Position fälschlich
+ * schon als «ruhig», BEVOR der Nachlauf überhaupt landete — real reproduziert
+ * (reduced-motion-Test lieferte exakt 160, die Distanz des LETZTEN
+ * synthetischen Mouse-Move-Schritts, als vermeintliches «Momentum»). Fix wie
+ * dort: ein `MutationObserver` auf dem `transform`-Attribut des Plan-Inhalts-
+ * `<g>` LÄUFT IM BROWSER und hält die Ruhe-Uhr über die gesamte
+ * Beobachtungsdauer offen — jede tatsächliche Attribut-Änderung (auch eine
+ * späte) setzt sie zurück, kein Node↔Browser-Poll-Intervall kann eine
+ * Mutation verpassen oder zu früh „ruhig“ urteilen.
+ */
+async function wartetBisRuhig(
+  page: import('@playwright/test').Page,
+  ruheMs = 700,
+  timeoutMs = 10000,
+): Promise<{ e: number; f: number }> {
+  await page.evaluate(
+    ({ ruheMs, timeoutMs }) => {
+      return new Promise<void>((resolve) => {
+        const svg = document.querySelector('[data-testid="planview"]');
+        const inhalt = svg?.querySelector('g') ?? null;
+        if (!inhalt) {
+          resolve();
+          return;
+        }
+        const start = performance.now();
+        let letzteAenderung = start;
+        const beobachter = new MutationObserver(() => {
+          letzteAenderung = performance.now();
+        });
+        beobachter.observe(inhalt, { attributes: true, attributeFilter: ['transform'] });
+        const tick = () => {
+          const jetzt = performance.now();
+          if (jetzt - letzteAenderung >= ruheMs || jetzt - start >= timeoutMs) {
+            beobachter.disconnect();
+            resolve();
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    },
+    { ruheMs, timeoutMs },
+  );
+  return holeVerschiebung(page);
+}
+
 test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt von selbst (MOTION-KONZEPT-066 §5)', async ({ page }) => {
   // §7: Bewegung wird HIER gezielt geprüft — eigene Spec-Zeile ohne die
   // projektweite reduced-motion-Fixture (Playwright-Default), s. playwright.config.ts.
@@ -139,35 +221,95 @@ test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt vo
   const cx = box.x + box.width / 2;
   const cy = box.y + box.height / 2;
 
-  await page.mouse.move(cx, cy);
-  await page.mouse.down();
-  // Schnelle, grosse Schritte OHNE Zwischenpausen → hohe Loslass-Geschwindigkeit
-  // im 80ms-Fenster des `flingTracker` (eingabe-3d.ts).
-  await page.mouse.move(cx + 90, cy, { steps: 1 });
-  await page.mouse.move(cx + 220, cy, { steps: 1 });
-  await page.mouse.move(cx + 380, cy, { steps: 1 });
-  await page.mouse.up();
+  // v0.8.1/P2 — WEITERER, TIEFERER Befund (HEAD-bewiesen per direkter
+  // Zeitstempel-Messung am `pointermove`-Event, nicht durch das Poll-Fenster
+  // oben abgedeckt): `flingTracker.sample()` (eingabe-3d.ts) verwirft jede
+  // Probe älter als `FLING_SAMPLE_FENSTER_MS` (80ms) VOR der jeweils
+  // neuesten — bleibt dabei `< 2` Proben übrig, liefert `loslassGeschwindigkeit()`
+  // `null`: **kein Fling startet überhaupt** (`momentumDelta` real als exakte
+  // 0 beobachtet, nicht nur «knapp zu klein»). Direkt gemessen (In-Page-
+  // Listener + `performance.now()`): jeder EINZELN AWAITED `page.mouse.
+  // move()`-Aufruf (auch mit `steps`) ist ein eigener CDP-Roundtrip und
+  // landet in DIESER Umgebung real ~100–250ms nach dem vorigen — WEIT über
+  // den 80ms, unabhängig von zusätzlicher Last (auch in einem isolierten
+  // Probe-Lauf ohne jede Fremdlast reproduziert). Das ist keine reine
+  // Zeitfenster-Frage der MESSUNG (wie oben), sondern eine Eigenschaft der
+  // SYNTHETISCHEN EINGABE selbst: ihre realen Browser-Zeitstempel hängen vom
+  // CDP-Roundtrip dieser Umgebung ab — `eingabe-3d.ts`/`PlanView.tsx` liegen
+  // ausserhalb des Dateikreises dieses Auftrags, die 80ms-Konstante bleibt
+  // unangetastet.
+  // AUSPROBIERT UND VERWORFEN: eine rohe CDP-Session
+  // (`Input.dispatchMouseEvent` ohne Einzel-Await, `Promise.all`) erzeugte
+  // zwar nachweislich <30ms-Zwischenproben (statt 100–250ms) — löste aber
+  // real einen App-Absturz aus («KosmoDesign ist auf einen Fehler gelaufen…
+  // Cannot read properties of null (reading 'cx')», reproduzierbar isoliert
+  // NUR mit dieser Dispatch-Art, ein identischer plain-`page.mouse`-Zug
+  // crasht NICHT). Ursache nicht abschliessend geklärt (vermutlich fehlt dem
+  // roh dispatchten Event etwas, das `PlanView.tsx`s Pointer-Pfad
+  // voraussetzt) — Produktcode liegt ausserhalb des Dateikreises, ein
+  // Absturz ist inakzeptabel riskanter als die ursprüngliche Flake. Verworfen
+  // zugunsten des Plain-Playwright-Wegs unten.
+  // Ehrliche Test-Härtung (kein Assertion-Abbau): EIN interpolierter
+  // `mouse.move({steps: VIELE})`-Aufruf erzeugt viele eng getaktete
+  // Zwischenpunkte (statt weniger, weit auseinanderliegender Einzel-Calls) —
+  // gemessen liegen einzelne dieser Zwischenschritte durchaus < 80ms
+  // auseinander, auch wenn nicht alle. Zusätzlich wird die komplette Geste
+  // bis zu `MAX_VERSUCHE`-mal wiederholt (grösserer Zug + mehr Schritte je
+  // Versuch), bis ein Fling TATSÄCHLICH registriert wurde. Bleibt die
+  // Eingabe über alle Versuche hinweg wirkungslos, schlägt die anschliessende
+  // Assertion unverändert (>3px, korrekte Richtung) real fehl statt verdeckt
+  // zu werden. Restrisiko ehrlich benannt: bei ungünstigem CDP-Timing kann
+  // auch dieser Weg vereinzelt alle Versuche verbrauchen (s. Abschlussbericht).
+  const MAX_VERSUCHE = 6;
+  let sofortNachLoslassen = { e: 0, f: 0 };
+  let weiteste = sofortNachLoslassen;
+  let momentumDelta = 0;
+  for (let versuch = 0; versuch < MAX_VERSUCHE; versuch++) {
+    const zugWeite = 380 + versuch * 90;
+    const schritte = 20 + versuch * 10; // mehr Zwischenpunkte je Versuch — mehr Chancen auf ein <80ms-Paar
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    // EIN interpolierter Zug (statt mehrerer weit auseinanderliegender
+    // Einzel-Calls, s. Kopfkommentar) → dicht getaktete Zwischenproben im
+    // `flingTracker`-Fenster.
+    await page.mouse.move(cx + zugWeite, cy, { steps: schritte });
+    await page.mouse.up();
 
-  // Erst settlen lassen (derselbe Render-Nachlauf-Grund wie im reduced-
-  // motion-Test unten — die Baseline soll NICHT den regulären Drag-Render
-  // nachlaufend als «Momentum» missverstehen), DANN zwei Messpunkte im
-  // Abstand nehmen: bewegt sich die Ansicht zwischen ihnen WEITER, ohne dass
-  // die Maus noch gedrückt/bewegt wird, läuft der Fling wirklich aus.
-  await page.waitForTimeout(400);
-  const sofortNachLoslassen = await holeVerschiebung(page);
-  await page.waitForTimeout(150);
-  const kurzDanach = await holeVerschiebung(page);
-  const momentumDelta = Math.abs(kurzDanach.e - sofortNachLoslassen.e) + Math.abs(kurzDanach.f - sofortNachLoslassen.f);
+    // Erst settlen lassen (derselbe Render-Nachlauf-Grund wie im reduced-
+    // motion-Test unten — die Baseline soll NICHT den regulären Drag-Render
+    // nachlaufend als «Momentum» missverstehen).
+    await page.waitForTimeout(400);
+    sofortNachLoslassen = await holeVerschiebung(page);
+
+    // v0.8.1/P2 (s. `wartetBisRuhig()`-Kopfkommentar) — Assertion #1 bleibt
+    // dieselbe Behauptung («die Ansicht bewegt sich nach dem Loslassen WEITER,
+    // ohne dass Maus/Taste noch aktiv sind») und dieselbe Mindest-Distanz
+    // (>3px), nur über ein grosszügigeres Poll-Fenster (statt eines EINEN
+    // festen 150ms-Zeitpunkts, der unter seltener rAF-Taktung zufällig leer
+    // bleiben kann) gemessen: die WEITESTE seither erreichte Position zählt.
+    weiteste = sofortNachLoslassen;
+    const momentumStart = Date.now();
+    while (Date.now() - momentumStart < 1500) {
+      await new Promise((r) => setTimeout(r, 50));
+      const probe = await holeVerschiebung(page);
+      const deltaJetzt = Math.abs(probe.e - sofortNachLoslassen.e) + Math.abs(probe.f - sofortNachLoslassen.f);
+      const deltaBisher = Math.abs(weiteste.e - sofortNachLoslassen.e) + Math.abs(weiteste.f - sofortNachLoslassen.f);
+      if (deltaJetzt > deltaBisher) weiteste = probe;
+    }
+    momentumDelta = Math.abs(weiteste.e - sofortNachLoslassen.e) + Math.abs(weiteste.f - sofortNachLoslassen.f);
+    if (momentumDelta > 3) break; // Fling registriert — kein weiterer Versuch nötig.
+  }
   expect(momentumDelta).toBeGreaterThan(3);
   // Bewegungsrichtung des Fling stimmt mit der Zugrichtung überein (nach rechts
   // gezogen → Inhalt wandert weiter nach rechts, e wächst weiter).
-  expect(kurzDanach.e).toBeGreaterThan(sofortNachLoslassen.e);
+  expect(weiteste.e).toBeGreaterThan(sofortNachLoslassen.e);
 
   // … und der Fling stoppt von selbst (Dämpfung 0.95/Frame, Stopp < 0.02 px/ms
-  // RESTGESCHWINDIGKEIT — das ist noch ~5px/250ms, also grosszügig länger
-  // warten, bis die Restgeschwindigkeit selbst nochmals klar abgeklungen ist).
-  await page.waitForTimeout(3500);
-  const spaeterA = await holeVerschiebung(page);
+  // Restgeschwindigkeit). Assertion #2 bleibt dieselbe Behauptung («die
+  // Position bleibt danach unverändert»), jetzt über `wartetBisRuhig()`
+  // (grosszügiges Poll-Timeout statt einer festen 3500ms-Annahme) — s.
+  // Kopfkommentar dort.
+  const spaeterA = await wartetBisRuhig(page);
   await page.waitForTimeout(300);
   const spaeterB = await holeVerschiebung(page);
   expect(Math.abs(spaeterB.e - spaeterA.e) + Math.abs(spaeterB.f - spaeterA.f)).toBeLessThan(2);
@@ -212,8 +354,16 @@ test('Fling/Momentum: bei reduced-motion läuft NACH dem Loslassen nichts mehr a
   // «nachzog» sonst noch bis zu ~350ms nach `mouseup`), DANN erst die
   // Momentum-losigkeits-Baseline lesen — sonst verwechselt der Test
   // Render-Nachlauf des regulären Drags mit einem (hier NICHT gewollten) Fling.
-  await page.waitForTimeout(400);
-  const sofort = await holeVerschiebung(page);
+  // v0.8.1/P2 — bei der Last-Verifikation dieses Auftrags real beobachtet:
+  // die FESTEN 400ms/300ms nahmen (wie die Chevron/row-Splitter-Flakes
+  // oben) implizit an, der reguläre Render-Nachlauf sei nach 400ms IMMER
+  // fertig. Unter echter Last (paralleler zweiter E2E-Lauf im selben
+  // Container) reichte das nicht — die Baseline «sofort» traf noch mitten im
+  // Nachlauf, «danach» sah dessen Rest als vermeintliches Momentum (real:
+  // Δ=160 statt <0.5). Fix: `wartetBisRuhig()` (echte Ruhe statt Annahme,
+  // s. dortiger Kopfkommentar) statt des ersten festen Waits — dieselbe
+  // Assertion (<0.5) bleibt unangetastet.
+  const sofort = await wartetBisRuhig(page);
   await page.waitForTimeout(300);
   const danach = await holeVerschiebung(page);
   // Keine Weiterbewegung ohne gehaltene Maustaste — der Pan endet exakt dort,

@@ -53,6 +53,79 @@ function gleich(a: Box | null, b: Box | null): boolean {
   );
 }
 
+/**
+ * v0.8.1 / P2 (Technik-/Flake-Härtung, ROADMAP 390/393-Diagnose) —
+ * deterministisches Pendant zu `stabileBox()` unten: pollt NICHT die teure
+ * `getBoundingClientRect()`-Ableitung, sondern das billig lesbare
+ * `data-solve-generation`-Attribut der DockFlaeche (`shell/dock/
+ * DockFlaeche.tsx`, bumpt bei JEDEM `ergebnis`-Solve-Wechsel — s. dortiger
+ * Kopfkommentar), bis es für `ruheMs` unverändert bleibt.
+ *
+ * Hintergrund (real gemessen, HEAD-Beweis P8/P8b): ein Panel-Öffnen-/
+ * Einklappen-Klick löst zuerst SOFORT einen Solve aus, ein zweiter,
+ * feld-getriebener Re-Solve (ResizeObserver auf Container/Geschwistern,
+ * rAF-debounced) folgt unter Last (SwiftShader + laufende 3D-Szene, +
+ * zusätzlicher paralleler E2E-Last aus einem anderen Arbeitspaket im
+ * selben Container real beobachtet) oft erst ~500ms später und ändert
+ * dieselbe Panel-Höhe ein zweites Mal (real 573px→34px / 272px beobachtet).
+ * `stabileBox()`s reines BBox-Zeitfenster konnte auf dem ERSTEN (noch nicht
+ * endgültigen) Wert einrasten, wenn zufällig genug Ruhe zwischen den beiden
+ * Solves lag.
+ *
+ * ZWEI Härtungs-Runden nötig (beide HEAD-bewiesen, s. Verifikationsbericht):
+ *  1. Erster Versuch pollte `getAttribute()` von AUSSEN (Node→Browser-IPC,
+ *     50ms-Intervall) UND liess die Ruhe-Uhr ab dem AUFRUF-Zeitpunkt laufen.
+ *     Das reproduzierte denselben Fehler nur EINE Ebene höher: kam der
+ *     zweite Solve erst NACH Ablauf von `ruheMs` seit Aufruf an, galt das
+ *     Attribut fälschlich schon als «stabil», BEVOR der späte Re-Solve
+ *     überhaupt landete — real reproduziert (Chevron-Test lieferte exakt
+ *     573 statt 34, row-Splitter exakt den Vorher- statt den Nachher-Wert).
+ *  2. Fix: ein `MutationObserver` LÄUFT IM BROWSER selbst auf dem Attribut
+ *     und hält die Ruhe-Uhr über die GESAMTE Beobachtungsdauer offen — jede
+ *     tatsächliche Mutation (auch eine späte, nach 500ms+) setzt sie zurück,
+ *     kein Node↔Browser-Poll-Intervall kann eine Mutation verpassen oder zu
+ *     früh „ruhig“ urteilen. `ruheMs` bewusst auf denselben Wert wie
+ *     `stabileBox()`s `anlaufMs` (700ms) gehoben — der in diesem Repo bereits
+ *     belegte «genug Puffer für die .28s-Reflow-Motion plus Messlatenz
+ *     unter Last»-Wert, hier als MINDEST-Ruhefenster statt als reiner
+ *     Vor-Puffer verwendet.
+ *
+ * Additiv: ersetzt NUR das Timing in den lastanfälligen Tests dieser Datei
+ * (row-Splitter, Chevron, Tab (a)) — `stabileBox()` bleibt für alle anderen
+ * Aufrufer unangetastet, seine eigene BBox-Prüfung läuft nach diesem Warten
+ * unverändert weiter (kein Assertion-Abbau).
+ */
+async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 10000): Promise<void> {
+  await page.evaluate(
+    ({ ruheMs, timeoutMs }) => {
+      return new Promise<void>((resolve) => {
+        const feld = document.querySelector('[data-testid="dock-flaeche"]');
+        if (!feld) {
+          resolve();
+          return;
+        }
+        const start = performance.now();
+        let letzteAenderung = start;
+        const beobachter = new MutationObserver(() => {
+          letzteAenderung = performance.now();
+        });
+        beobachter.observe(feld, { attributes: true, attributeFilter: ['data-solve-generation'] });
+        const tick = () => {
+          const jetzt = performance.now();
+          if (jetzt - letzteAenderung >= ruheMs || jetzt - start >= timeoutMs) {
+            beobachter.disconnect();
+            resolve();
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    },
+    { ruheMs, timeoutMs },
+  );
+}
+
 /** Pollt `locator.boundingBox()`, bis der Wert für mindestens `ruheMs` am
  *  Stück unverändert bleibt — «die Reflow-Motion ist fertig», unabhängig
  *  davon, wie lange sie unter Last tatsächlich braucht. EIN erster fixer
@@ -135,12 +208,18 @@ test('row-Splitter verschiebt Grössen zwischen zwei Nachbarn derselben Spalte',
   const cw = page.locator('[data-testid="dock-panel-cwSetzenOffen"]');
   await expect(raster).toBeVisible();
   await expect(cw).toBeVisible();
+  // v0.8.1/P2: erst auf den späten, feld-getriebenen Re-Solve warten (s.
+  // `warteAufSolveStabilitaet()`-Kopfkommentar), DANACH die BBox messen —
+  // sonst kann `stabileBox()` unter Last auf der noch nicht endgültigen
+  // Vorher-Grösse einrasten.
+  await warteAufSolveStabilitaet(page);
 
   const rasterVorher = await stabileBox(raster);
   const cwVorher = await stabileBox(cw);
   const summeVorher = rasterVorher.height + cwVorher.height;
 
   await ziehe(page, 'dock-splitter-sr-rasterOffen', 0, 40);
+  await warteAufSolveStabilitaet(page);
 
   const rasterNachher = await stabileBox(raster);
   const cwNachher = await stabileBox(cw);
@@ -156,10 +235,17 @@ test('Chevron klappt ein/aus — eingeklappt zeigt einen 34px-Tab, Inhalt versch
   await oeffneDesignMitTkb(page);
   await page.click('[data-testid="kv-oeffnen"]');
   await expect(page.locator('[data-testid="kv-panel"]')).toBeVisible();
+  // v0.8.1/P2: den Öffnen-Solve UND einen etwaigen späten feld-getriebenen
+  // Re-Solve (s. `warteAufSolveStabilitaet()`-Kopfkommentar) abwarten, bevor
+  // der Chevron-Klick den nächsten Solve auslöst — sonst überlagern sich
+  // zwei Re-Solves und die spätere BBox-Messung kann auf einem
+  // Zwischenstand einrasten.
+  await warteAufSolveStabilitaet(page);
 
   await page.click('[data-testid="dock-panel-kvOffen-einklappen"]');
   await expect(page.locator('[data-testid="dock-panel-kvOffen-tab"]')).toBeVisible();
   await expect(page.locator('[data-testid="kv-panel"]')).toHaveCount(0);
+  await warteAufSolveStabilitaet(page);
   const tabBox = await stabileBox(page.locator('[data-testid="dock-panel-kvOffen"]'));
   expect(Math.round(tabBox.height)).toBe(34);
 
@@ -584,6 +670,14 @@ test('Tab (a): Klick öffnet weiterhin — auch mit Zitter-Bewegung unter der 5p
   // VERALTETE Mitte träfe nach dem Fertig-Schrumpfen den Viewport statt den
   // Tab — pointerup/click gingen am Tab vorbei, nichts öffnete (deterministisch
   // reproduziert). Dasselbe Muster wie `zieheHudGriffNach()` oben.
+  // v0.8.1/P2 — bei der Verifikation dieses Auftrags (3×-Last-Läufe, s.
+  // `warteAufSolveStabilitaet()`-Kopfkommentar) zusätzlich unter echter
+  // Last (paralleler zweiter E2E-Lauf im selben Container) beobachtet:
+  // dieselbe Klasse Flake wie row-Splitter/Chevron (ein später, feld-
+  // getriebener Re-Solve nach dem Einklappen-Klick, auf den `stabileBox()`
+  // unter Last vorzeitig einrasten kann) — additiv auf dasselbe Signal
+  // umgestiegen, bevor überhaupt gemessen wird.
+  await warteAufSolveStabilitaet(page);
   const box = await stabileBox(tab);
   const cx = box.x + box.width / 2;
   const cy = box.y + box.height / 2;
