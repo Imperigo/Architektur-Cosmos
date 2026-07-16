@@ -121,14 +121,26 @@ export class AnthropicProvider implements ChatProvider {
             model: this.cfg.model,
             max_tokens: this.cfg.maxTokens ?? 4096,
             stream: true,
-            ...(system ? { system } : {}),
+            // v0.8.1 KI2 (Kandidat 8, `docs/V081-SPEZ.md` §3): Prompt-Caching
+            // — `cache_control: {type:'ephemeral'}` auf dem letzten (hier
+            // einzigen) System-Textblock UND auf dem letzten Tool-Eintrag.
+            // Render-Reihenfolge der API ist tools → system → messages; ein
+            // Breakpoint auf dem letzten System-Block cacht Tools+System
+            // zusammen (`shared/prompt-caching.md`). System muss dafür als
+            // Block-Array statt als reiner String gehen — harmlos, wenn der
+            // Prefix unter dem Modell-Minimum bleibt (dann greift die Cache
+            // schlicht nicht, kein Fehler, s. `usage.cache_creation_input_tokens`).
+            ...(system
+              ? { system: [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }] }
+              : {}),
             messages,
             ...(req.tools && req.tools.length > 0
               ? {
-                  tools: req.tools.map((t) => ({
+                  tools: req.tools.map((t, i, arr) => ({
                     name: t.name,
                     description: t.description,
                     input_schema: t.parameters,
+                    ...(i === arr.length - 1 ? { cache_control: { type: 'ephemeral' } } : {}),
                   })),
                 }
               : {}),

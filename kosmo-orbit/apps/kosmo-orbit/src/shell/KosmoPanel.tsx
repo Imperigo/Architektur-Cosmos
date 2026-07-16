@@ -96,29 +96,17 @@ interface Bubble {
 
 const journal = new LearningJournal(journalStore());
 
-/** Wettbewerbsdossier (Phase 0) als harter Prompt-Block — Do's/Don'ts zuerst. */
-function dossierPromptBlock(): string {
-  const dossier = useProject.getState().doc.settings.dossier;
-  if (!dossier || dossier.length === 0) return '';
-  const zeile = (t: { typ: string; text: string }) =>
-    t.typ === 'dont' ? `- NO-GO: ${t.text}` : t.typ === 'do' ? `- GEFORDERT: ${t.text}` : `- FAKT: ${t.text}`;
-  const sortiert = [...dossier].sort(
-    (a, b) => (a.typ === 'dont' ? 0 : a.typ === 'do' ? 1 : 2) - (b.typ === 'dont' ? 0 : b.typ === 'do' ? 1 : 2),
-  );
-  return `\n\nWettbewerbsdossier dieses Projekts (bindend):\n${sortiert.slice(0, 20).map(zeile).join('\n')}`;
-}
-
-/** D2: Rollen-Vorstufe — die gewählte Arbeitsrolle färbt Kosmos Blick. */
-function rollePromptBlock(): string {
-  const rolle = useProject.getState().doc.settings.rolle;
-  if (!rolle) return '';
-  const fokus = {
-    entwurf: 'Volumen, Grundrisse, Kennzahlen, Varianten und Referenzen zuerst.',
-    ausfuehrung: 'Werkpläne, Details, Mengen/Ausmass und Umbau-Status zuerst.',
-    admin: 'Projektstand, Diagnose, Datenpflege und Exporte zuerst.',
-  }[rolle];
-  return `\n\nArbeitsrolle des Menschen: ${rolle} — ${fokus}`;
-}
+/**
+ * v0.8.1 KI2 (§3 Kandidat 4, `docs/V081-SPEZ.md`): Dossier- und Rollen-
+ * Prompt-Bausteine sind nach `@kosmo/ai` (`systemprompt.ts`, `dossierBlock`/
+ * `rolleBlock`) umgezogen — `ChatSession.send()` leitet sie jeden Zug frisch
+ * aus dem `doc`, das die Session hält, ab (dieselbe `KosmoDoc`-Instanz wie
+ * hier, Mutationen laufen in-place). Was hier bleibt: NUR das Lernjournal
+ * als `systemSuffix`-Lieferant (App-eigen, `journal` lebt hier) — als
+ * Funktion statt vorab berechnetem String, damit `ChatSession` es JEDEN Zug
+ * frisch abruft statt nur einmal beim Session-Bau («Journal nur bei
+ * Session-Neubau frisch» war die alte Lücke, s. Erkundung §1).
+ */
 
 interface PendingCard extends Proposal {
   state: 'offen' | 'angewendet' | 'abgelehnt';
@@ -723,7 +711,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         // (Begründung der Grenze: `state/kosmo-ui-werkzeuge.ts`).
         ...kosmoUiWerkzeuge((m) => push('system', m.text, m.art)),
       ],
-      journal.toPromptBlock() + dossierPromptBlock() + rollePromptBlock(),
+      () => journal.toPromptBlock(),
       // Kuratierte Werkzeug-Untermenge (Begründung: KOSMO_AUSGESCHLOSSENE_COMMANDS).
       { ohne: KOSMO_AUSGESCHLOSSENE_COMMANDS },
     );

@@ -10,6 +10,7 @@ import {
   type Wall,
 } from '@kosmo/kernel';
 import type { ToolCall, ToolDefinition } from './provider';
+import { schaetzeTokens } from './systemprompt';
 
 /**
  * Tool-Registry — die Kernel-Commands werden automatisch zu LLM-Tools.
@@ -91,10 +92,55 @@ export function externalTools(specs: readonly ExternalToolSpec[]): ToolDefinitio
   }));
 }
 
+/**
+ * `modell_lesen`-Wände (v0.8.1 KI2, Kandidat 5): Budget-Selektion statt
+ * starrem 40er-Deckel (`walls.slice(0, 40)`, verlor stillschweigend jede Wand
+ * ab der 41., unabhängig davon, woran der Architekt gerade arbeitet).
+ * Priorität: Wände im AKTIVEN Geschoss zuerst, dann der Rest in Doc-
+ * Reihenfolge — bis das Token-Budget (`schaetzeTokens`, s. `systemprompt.ts`)
+ * ausgeschöpft ist. Kein Abbruch bei der ersten Überschreitung: eine
+ * spätere, kürzere Wandzeile darf eine frühere grössere überholen (gleiches
+ * Bin-Packing wie `baueSystemprompt`).
+ */
+const MODELL_LESEN_WAND_BUDGET_TOKENS = 500;
+
+function waehleWaendeNachBudget(
+  walls: readonly Wall[],
+  zeileFuer: (w: Wall) => string,
+  aktivesGeschoss: string | undefined,
+  budgetTokens: number,
+): { gewaehlt: Wall[]; ausgelassen: number } {
+  const prioritaet = (w: Wall) => (aktivesGeschoss && w.storeyId === aktivesGeschoss ? 0 : 1);
+  const geordnet = walls
+    .map((w, i) => ({ w, i, p: prioritaet(w) }))
+    .sort((a, b) => a.p - b.p || a.i - b.i)
+    .map((e) => e.w);
+  const gewaehlt: Wall[] = [];
+  let rest = budgetTokens;
+  for (const w of geordnet) {
+    const kosten = schaetzeTokens(zeileFuer(w));
+    if (kosten > rest) continue;
+    gewaehlt.push(w);
+    rest -= kosten;
+  }
+  return { gewaehlt, ausgelassen: walls.length - gewaehlt.length };
+}
+
 /** Read-only-Tool: Modellzustand für Kosmo lesbar machen (blender-mcp-Muster). */
-export function modelQueryTool(doc: KosmoDoc): ToolDefinition & {
+export function modelQueryTool(
+  doc: KosmoDoc,
+  /**
+   * Derselbe App-Kontext-Lieferant wie `ChatSession.applyDefaults`
+   * (aktives Geschoss, gewählter Aufbau) — hier NUR gelesen, um `modell_lesen`
+   * die Wände des aktiven Geschosses zuerst zeigen zu lassen. Fehlt er (z.B.
+   * reine Tool-Tests), verhält sich die Auswahl wie bisher: Doc-Reihenfolge.
+   */
+  kontext?: () => Record<string, unknown>,
+  optionen?: { wandBudgetTokens?: number },
+): ToolDefinition & {
   execute: () => string;
 } {
+  const wandBudgetTokens = optionen?.wandBudgetTokens ?? MODELL_LESEN_WAND_BUDGET_TOKENS;
   return {
     name: 'modell_lesen',
     description:
@@ -119,10 +165,17 @@ export function modelQueryTool(doc: KosmoDoc): ToolDefinition & {
         );
       }
       lines.push(`WÄNDE: ${walls.length}`);
-      for (const w of walls.slice(0, 40)) {
+      const wandZeile = (w: Wall) => {
         const len = Math.round(Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y));
+        return `- ${w.id}: (${w.a.x},${w.a.y})→(${w.b.x},${w.b.y}) mm, L=${formatLength(len)}, Öffnungen: ${doc.openingsOf(w.id).length}`;
+      };
+      const aktiv = kontext?.();
+      const aktivesGeschoss = typeof aktiv?.['storeyId'] === 'string' ? (aktiv['storeyId'] as string) : undefined;
+      const { gewaehlt, ausgelassen } = waehleWaendeNachBudget(walls, wandZeile, aktivesGeschoss, wandBudgetTokens);
+      for (const w of gewaehlt) lines.push(wandZeile(w));
+      if (ausgelassen > 0) {
         lines.push(
-          `- ${w.id}: (${w.a.x},${w.a.y})→(${w.b.x},${w.b.y}) mm, L=${formatLength(len)}, Öffnungen: ${doc.openingsOf(w.id).length}`,
+          `… ${ausgelassen} weitere Wand(en) nicht aufgeführt (Budget) — aktives Geschoss zuerst, ruf modell_lesen bei Bedarf gezielter über die Wand-IDs oben ab.`,
         );
       }
       const slabs = doc.byKind('slab');

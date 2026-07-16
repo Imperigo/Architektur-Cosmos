@@ -2,6 +2,7 @@ import { allCommands, type KosmoDoc } from '@kosmo/kernel';
 import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './provider';
 import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type CommandToolsOptionen, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
+import { baueSystemprompt, dossierBlock, rolleBlock, projektKontextBlock } from './systemprompt';
 
 /** Read-Only-Tool: läuft sofort (ungated), z.B. Referenzsuche in KosmoData. */
 export interface ReadTool extends ToolDefinition {
@@ -48,13 +49,21 @@ export class ChatSession {
     /** App-Kontext (aktives Geschoss, gewählter Aufbau): füllt fehlende Argumente. */
     private contextDefaults?: () => Record<string, unknown>,
     extraReadTools: ReadTool[] = [],
-    /** Wird an jeden Persona-Systemprompt angehängt (z.B. Lernjournal). */
-    private systemSuffix = '',
+    /**
+     * Zusätzlicher Prompt-Baustein oberster Priorität («Kritik-Journal»,
+     * z.B. `journal.toPromptBlock()`) — geht als höchstpriorisierter Block in
+     * `baueSystemprompt()` ein (§3 Kandidat 4, `docs/V081-SPEZ.md`).
+     * String bleibt erlaubt (rückwärtskompatibel, wie bisher einmalig
+     * berechnet); eine Funktion `() => string` wird JEDEN Zug frisch
+     * aufgerufen — das macht z.B. ein Lernjournal, das sich zwischen zwei
+     * Chat-Zügen ändert, sofort sichtbar statt erst nach einem Session-Neubau.
+     */
+    private systemSuffix: string | (() => string) = '',
     /** Kuratierung der Command-Werkzeuge (z.B. `{ ohne: [...] }` — die App
      * entscheidet und begründet, WAS Kosmo nicht vorschlagen soll). */
     toolOptionen?: CommandToolsOptionen,
   ) {
-    this.queryTool = modelQueryTool(doc);
+    this.queryTool = modelQueryTool(doc, contextDefaults);
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
     this.tools = [
       { name: this.queryTool.name, description: this.queryTool.description, parameters: this.queryTool.parameters },
@@ -77,8 +86,19 @@ export class ChatSession {
    */
   async send(userText: string, images?: ChatMessage['images']): Promise<void> {
     const { persona, cleaned } = routePersona(userText);
-    // Persona-Wechsel: Systemprompt der Runde austauschen (eine sichtbare Stimme)
-    const system = persona.systemPrompt + this.systemSuffix;
+    // Persona-Wechsel: Systemprompt der Runde austauschen (eine sichtbare Stimme).
+    // Frisch gebaut JEDEN Zug (nicht einmalig bei Session-Bau) — Priorität
+    // Kritik-Journal > Dossier-NO-GOs > Rolle > Kontext, budgetiert (§3
+    // Kandidat 4, `docs/V081-SPEZ.md`): der Suffix-Lieferant löst z.B. ein
+    // sich änderndes Lernjournal jeden Zug neu auf; Dossier/Rolle/Kontext
+    // kommen direkt aus dem aktuellen Doc-Stand.
+    const suffixText = typeof this.systemSuffix === 'function' ? this.systemSuffix() : this.systemSuffix;
+    const system = baueSystemprompt(persona.systemPrompt, [
+      { label: 'kritik-journal', text: suffixText },
+      { label: 'dossier-nogo', text: dossierBlock(this.doc) },
+      { label: 'rolle', text: rolleBlock(this.doc) },
+      { label: 'kontext', text: projektKontextBlock(this.doc) },
+    ]);
     if (this.messages[0]?.role === 'system') {
       this.messages[0] = { role: 'system', content: system };
     } else {
