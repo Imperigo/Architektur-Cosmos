@@ -94,9 +94,104 @@ Kosmo bekommt lokal **dieselbe Drei-Stufen-Staffelung** wie bei Claude, mit
   Deshalb sitzt die **Orchestrierung (Leiter) nie auf dem kleinsten Modell**;
   der Zeichner braucht mindestens solides Function-Calling.
 
-**Status:** Teil C ist **Design**, noch nicht gebaut. Umsetzung als V2-Build —
-nach unserer eigenen Guideline: Fable legt den Plan/Entwurf, Opus orchestriert
-die Batches, Sonnet baut. Verknüpft mit `docs/AUFTRAG-FABLE-2026-07-06.md`.
+**Status (v0.8.1 / KI4, `docs/V081-SPEZ.md` §3+§7 Kandidat 1): gebaut.** Die
+Rollen→Modell-Karte + Aufgaben-Klassifikation aus diesem Teil C sind jetzt
+eine echte, containertestbare Abstraktion in
+`packages/kosmo-ai/src/staffelung.ts` — nicht mehr nur Design:
+
+- **`KosmoRolle`** (`staffelung.ts:54`) — `'meister' | 'leiter' | 'zeichner'`,
+  wörtlich die drei Stufen dieser Tabelle.
+- **`STANDARD_ROLLEN_MODELL_KARTE`** (`staffelung.ts:82-93`) — die
+  Vorschlags-Modelle dieser Tabelle (lokal: `qwen3:72b`/`qwen3:30b`/
+  `qwen3-coder:30b`) plus die Cloud-Seite (Teil B): Meister UND Leiter auf dem
+  Opus-Boden (`CLOUD_MODELL_MIN`, `betrieb.ts:37`), Zeichner auf
+  `claude-sonnet-5` — kein erfundener dritter Cloud-Tier, da im Repo keine
+  eigene «Fable»-Cloud-Modell-Konstante existiert.
+- **`Aufgabenklasse`** (`staffelung.ts:129-146`) — sieben aus dem
+  *bestehenden* `kosmo-ai`-Code abgeleitete Klassen (nicht erfunden), je mit
+  Fundstelle+Begründung im Code (`staffelung.ts:95-127`):
+  `werkzeug-schreibend`/`strategie-urteil` → Meister, `orchestrierung`/
+  `chat-standard` → Leiter, `werkzeug-lesend`/`zusammenfassung`/`journal` →
+  Zeichner.
+- **`waehleModellFuerRolle`/`waehleModellFuerAufgabe`** (`staffelung.ts:204-
+  228`) — reine Auswahlfunktionen; Cloud-Meister/-Leiter bleiben über
+  `mindestensOpus` (`betrieb.ts:149-152`) mindestens-Opus-gesichert, exakt die
+  bestehende Owner-Garantie, hier nur wiederverwendet.
+- **Ehrlicher Fallback** (`staffelung.ts:161-169`, `einzelModell`): ist nur
+  EIN Modell konfiguriert (der Stand vor KI4), spielen alle drei Rollen
+  dieses eine Modell — additiv, kein Bruch der bisherigen Ein-Modell-API.
+  **Ein-GPU-Fall** (`lokalEinGpuModell`, `staffelung.ts:178-189`): Leiter und
+  Zeichner teilen sich ein Modell, der Meister bleibt eigenständig — wörtlich
+  die Ein-GPU-Regel oben.
+- **Tests:** `packages/kosmo-ai/test/staffelung.test.ts` (25 Tests) — Mapping,
+  Fallback-Ketten, Opus-Garantie, Ein-GPU-Fall, `OllamaConfig`/
+  `AnthropicConfig`-Bau.
+
+**Deklarierte HomeStation-Grenze (Owner-Entscheid 6, keine Attrappe):** was
+hier NICHT gebaut ist — echte Multi-Modell-Verifikation, also mehrere reale
+lokale Modelle GLEICHZEITIG geladen und im tatsächlichen Ollama-Betrieb
+gegeneinander gemessen (Speicherbedarf, Ladezeiten, echte Tool-Calling-Güte
+je Modellgrösse). Das braucht die RTX-5090-HomeStation und ist nicht
+container-baubar — der Container kennt kein Ollama mit mehreren geladenen
+Multi-Gigabyte-Modellen. Container-baubar und real gebaut ist die
+Auswahl-Abstraktion selbst (welche Rolle bekommt welches Modell/welchen
+Provider).
+
+**Offen (spätere App-Anbindung, nicht Teil dieses Pakets):** `KosmoPanel`/
+`ChatSession` (App-Schicht, `apps/kosmo-orbit`) wählen weiterhin EIN
+Provider+Modell für die ganze Sitzung und rufen `staffelung.ts` noch nicht
+auf — die Verdrahtung «welche Aufgabenklasse feuert wann, wann wechselt
+`ChatSession` den Provider» ist ein eigenes, späteres Paket.
+
+### C-42 — LoRA-Export-Pipeline geschlossen (`docs/V081-SPEZ.md` §3 Kandidat 7)
+
+**Status: gebaut.** `LearningJournal.toJsonl()` (`memory.ts:116-118`) hatte
+bis dahin keinen Abnehmer — das im Kopfkommentar des Journals versprochene
+«später der Trainingsdatensatz für die LoRA-Rezepte auf der HomeStation»
+(`memory.ts:5-6`) war unbelegt. Der Export-Pfad ist jetzt in
+`packages/kosmo-ai/src/lora-training.ts` geschlossen:
+
+- **`baueLoraDatensatzAusJsonl`/`baueLoraDatensatzAusEintraegen`** —
+  Validierung/Aufbereitung: jede Journal-Zeile wird geprüft
+  (`sentiment`/`context`/`ts` müssen vorhanden und sinnvoll sein); untaugliche
+  Einträge werden ehrlich mit Begründung aussortiert (`AussortierterJournal
+  Eintrag.grund`), nie stillschweigend verschluckt — eine kaputte einzelne
+  JSONL-Zeile wirft den Rest des Exports nicht weg.
+- **`LoraTrainer`-Schnittstelle + `FakeLoraTrainer`** — der Fake-Trainer-Stub
+  (Muster «Fake-Bridge», analog `_fake_embed`/`MockProvider`): nimmt den
+  Datensatz entgegen, «trainiert» deterministisch (reproduzierbarer
+  Fingerabdruck über den Inhalt, KEIN echtes Gewicht, keine GPU) und liefert
+  einen ehrlichen Bericht (`fake: true`, Anzahl Beispiele/Aussortierte,
+  Klartext-Hinweis).
+- **`exportiereUndTrainiere`** — der geschlossene Pfad in einem Aufruf: echtes
+  `LearningJournal` → `toJsonl()` → Datensatz → Trainer (Default
+  `FakeLoraTrainer`, austauschbar).
+- **Tests:** `packages/kosmo-ai/test/lora-training.test.ts` (18 Tests) —
+  Validierungs-/Aussortier-Fälle, Determinismus des Fake-Berichts, der
+  End-zu-End-Pfad über ein echtes `LearningJournal`.
+
+**Entscheidung gegen einen Bridge-Endpunkt (begründet, s. Kopfkommentar
+`lora-training.ts`):** `tools/homestation-bridge/kosmo_bridge/main.py` bietet
+zwei Muster (Job-Lebenszyklus `POST /jobs` bzw. einen simplen synchronen
+Fake-Endpunkt wie `/embed`) — ein `/lora-train`-Endpunkt hätte zum zweiten
+Muster gepasst, hätte aber KEINEN Aufrufer gehabt (nichts in `kosmo-ai`/der
+App ruft die Bridge für KI-Aufgaben per HTTP auf, Ollama/Anthropic laufen
+direkt aus dem Browser). Ein unbenutzter Endpunkt wäre selbst eine Attrappe
+gewesen (Owner-Entscheid 6). Die Guideline verlangt für den Stub ausdrücklich
+nur «eine reine Funktion ODER Schnittstelle mit Fake-Implementierung» — genau
+das liefert `lora-training.ts`, vollständig containertestbar per Vitest, ohne
+einen Python-Prozess. Die `LoraTrainer`-Schnittstelle ist so geschnitten, dass
+eine spätere echte HomeStation-Anbindung (ggf. über einen dann wirklich
+gebrauchten Bridge-Endpunkt) sie ohne Änderung an der Aufbereitung
+implementieren kann.
+
+**Deklarierte HomeStation-Grenze:** echtes LoRA-Fine-Tuning (Gewichte
+aktualisieren, GPU-Speicherbedarf, Trainingszeit) braucht die
+RTX-5090-HomeStation und ist nicht container-baubar. Container-baubar und
+real gebaut: Datensatz-Aufbereitung, Validierung, die Trainer-Schnittstelle
+und der deterministische Fake-Stub.
+
+Verknüpft mit `docs/AUFTRAG-FABLE-2026-07-06.md`.
 
 ## In einem Satz
 
