@@ -1742,6 +1742,29 @@ progress {
   border-radius: 10px;
   overflow: hidden;
   background: var(--k-line-subtil, var(--k-line));
+  /* v0.8.0B P8b (Matrix-Abnahme W6-Befund, ROADMAP 388) — Chromium kollabiert
+     einen Flex-Column-Container als UNMITTELBARES Kind eines `display:grid`-
+     Containers ohne `grid-auto-rows` auf Höhe 0 (reproduziert in
+     `DataWorkspace.tsx`s Geo-/Materialprofil-Stapeln, `.kd-dossier-panel`).
+     `min-height:0`/`min-width:0` allein genügt NICHT (empirisch geprüft,
+     echtes Chromium via Playwright — die Box bleibt bei 0px) — der Kollaps
+     hängt am Default `align-self: stretch`: das Grid stretcht die Zeile auf
+     eine Höhe, die selbst zirkulär von der (durch `overflow:hidden`
+     unterbrochenen) Content-Grösse dieses Flex-Containers abhängt, und
+     Chromium löst diesen Zirkel auf 0 auf. `align-self: start` nimmt den
+     Container aus dem Stretch, die Höhe kommt dann direkt aus dem eigenen
+     Content — behebt den Kollaps an der Quelle, ohne dass Aufrufstellen
+     einen Block-Wrapper brauchen (s. `DataWorkspace.tsx`, wo der frühere
+     Wrapper damit entfällt). Wirkt NUR in Grid-/Flex-Elternteilen (dort
+     bestätigt no-op-sicher an allen bestehenden Einsatzorten, die schon
+     korrekt rendern: `KennzahlenPanel.tsx`/`Einstellungen.tsx`/
+     `KuratierInspektor.tsx` docken alle in `display:grid`-Eltern an,
+     `ViewportChromeHuds.tsx` in gewöhnliche Block-Container ohne Flex/Grid,
+     wo `align-self` wirkungslos bleibt) — `min-height`/`min-width:0` bleiben
+     als dokumentierte Verteidigungslinie stehen. */
+  min-height: 0;
+  min-width: 0;
+  align-self: start;
 }
 .k-keyvalue-zeile {
   position: relative;

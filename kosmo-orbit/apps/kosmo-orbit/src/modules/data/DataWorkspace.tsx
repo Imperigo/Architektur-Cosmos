@@ -1088,18 +1088,15 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                     ? [{ key: 'Sekundär', wert: (selected.materials_detail!.secondary ?? []).join(', ') }]
                     : []),
                 ];
-                // Grid-Kind-Sizing-Eigenheit (Chromium): `.k-keyvalue` (flex-
-                // column + overflow:hidden) berechnet als UNMITTELBARES Kind
-                // eines `display:grid`-Containers ohne `grid-auto-rows` eine
-                // Höhe von 0 (Content bleibt vorhanden, nur die Box kollabiert
-                // — reproduzierbar isoliert getestet). Ein simpler Block-
-                // Wrapper dazwischen behebt es zuverlässig (`DossierGruppe`s
-                // `kd-dossier-body`-Wrapper zeigt dasselbe Muster bereits).
-                return zeilen.length > 0 ? (
-                  <div>
-                    <KKeyValue zeilen={zeilen} />
-                  </div>
-                ) : null;
+                // P8b (Matrix-Abnahme W6-Befund, ROADMAP 388): der frühere
+                // Block-Wrapper gegen Chromiums Grid-Kind-Sizing-Kollaps
+                // (`.k-keyvalue` als UNMITTELBARES Kind eines `display:grid`-
+                // Containers ohne `grid-auto-rows` fiel auf Höhe 0) entfällt
+                // — `aura.css`s `.k-keyvalue` trägt jetzt selbst
+                // `min-height:0`/`min-width:0` und behebt den Kollaps direkt
+                // an der Quelle (verifiziert: `kosmodata-dossier.spec.ts`
+                // `ref-geo`, s.u., bleibt ohne Wrapper sichtbar/nicht-leer).
+                return zeilen.length > 0 ? <KKeyValue zeilen={zeilen} /> : null;
               })()}
               {selected.materials_detail.notes && (
                 <div className="kd-fs-sm kd-c-faint kd-italic">{selected.materials_detail.notes}</div>
@@ -1128,13 +1125,9 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                     : []),
                   ...(region ? [{ key: 'Region', wert: region }] : []),
                 ];
-                // s. Kommentar oben (Materialprofil) — derselbe Grid-Kind-
-                // Sizing-Fall, derselbe Block-Wrapper als Behebung.
-                return (
-                  <div>
-                    <KKeyValue data-testid="ref-geo" zeilen={zeilen} />
-                  </div>
-                );
+                // s. Kommentar oben (Materialprofil) — derselbe Fall, seit
+                // P8b ohne Wrapper (Fix sitzt in `aura.css`s `.k-keyvalue`).
+                return <KKeyValue data-testid="ref-geo" zeilen={zeilen} />;
               })()}
             </>
           )}

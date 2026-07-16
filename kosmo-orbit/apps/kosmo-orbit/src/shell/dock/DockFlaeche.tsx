@@ -14,6 +14,7 @@ import { stationsPanels, type DockStation } from '../../state/dock-stationen';
 import { eingeklappteDiff, useDockZustand } from '../../state/dock-zustand';
 import { useAktiveDockStation } from '../../state/dock-aktive-station';
 import { useDockOrbRuntime } from '../../state/dock-orb-runtime';
+import { useDockZeichenfeld } from '../../state/dock-zeichenfeld-runtime';
 import { DockPanel } from './DockPanel';
 import { DockSplitter } from './DockSplitter';
 import { DockSnapZonen, type DockGeistZustand } from './DockSnapZonen';
@@ -853,13 +854,30 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
   // ausgelöst) — `KosmoOrdnetOrb.tsx` liest nur diesen Store, kennt den
   // Solver selbst nicht.
   const setzeOrbRects = useDockOrbRuntime((s) => s.setzeRects);
+  const setzeZeichenfeld = useDockZeichenfeld((s) => s.setzen);
+  const zeichenfeldZuruecksetzen = useDockZeichenfeld((s) => s.zuruecksetzen);
   useEffect(() => {
     const naechste: Record<string, { x: number; y: number; w: number; h: number }> = {};
     for (const [id, r] of Object.entries(ergebnis.rects)) {
       naechste[id] = { x: r.x, y: r.y, w: r.w, h: r.h };
     }
     setzeOrbRects(naechste);
-  }, [ergebnis, setzeOrbRects]);
+    // v0.8.0B P8b (Matrix-Abnahme «element-fang») — zusätzlich das freie
+    // ZENTRUM (`ergebnis.viewport`, container-lokal wie `feld`) in CLIENT-
+    // Koordinaten an `dock-zeichenfeld-runtime.ts` melden: `PlanView.tsx`s
+    // «Einpassen» holt den Grundriss damit in den nicht von Dock-Spalten
+    // überdeckten Bereich (s. Store-Kopfkommentar). Umrechnung hier, weil
+    // nur diese Komponente ihren Mess-Container kennt.
+    const container = wurzelRef.current?.parentElement;
+    if (container) {
+      const c = container.getBoundingClientRect();
+      const vp = ergebnis.viewport;
+      setzeZeichenfeld(station, { x: c.left + vp.x, y: c.top + vp.y, w: vp.w, h: vp.h });
+    }
+  }, [ergebnis, setzeOrbRects, setzeZeichenfeld, station]);
+  // Beim Unmount (Stationswechsel) das Zeichenfeld räumen — Leser fallen
+  // dann auf ihre volle Fläche zurück statt auf ein veraltetes Layout.
+  useEffect(() => zeichenfeldZuruecksetzen, [zeichenfeldZuruecksetzen]);
 
   // -----------------------------------------------------------------------
   // C6 — Auto-Reaktions-Hinweis (P5): vergleicht die Menge eingeklappter

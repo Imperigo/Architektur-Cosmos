@@ -52,7 +52,12 @@ export function NavLeiste({ aktionen, testid }: { aktionen: NavAktion[]; testid:
           // v0.6.6 MOTION-KONZEPT-066 §3: «jedes klickbare Element trägt
           // .k-druck» — dieser Knopf ist roh (kein KButton, das die Klasse
           // bereits automatisch trägt), darum hier explizit nachgezogen.
-          className="k-druck"
+          // v0.8.0B P8b (Matrix-Abnahme, Gesetz-1-Fix): volle Akzent-Füllung
+          // ersetzt durch die Kreis-Grammatik (`k-werkzeug-kreis`, dasselbe
+          // Muster wie `EntwurfsDock.tsx`, W3/P3) — Ring + 4px-Punkt statt
+          // Volltonfläche. `data-testid`/`aria-label`/`aria-pressed`/`title`/
+          // `onClick` bleiben byte-gleich.
+          className={`k-druck k-werkzeug-kreis${a.aktiv ? ' k-werkzeug-kreis--aktiv' : ''}`}
           title={a.titel}
           aria-label={a.titel}
           aria-pressed={a.aktiv}
@@ -61,19 +66,12 @@ export function NavLeiste({ aktionen, testid }: { aktionen: NavAktion[]; testid:
           style={{
             width: 28,
             height: 28,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 'var(--k-radius-sm)',
-            border: '1px solid transparent',
-            cursor: 'pointer',
-            background: a.aktiv ? 'var(--k-accent)' : 'transparent',
-            color: a.aktiv ? 'white' : 'var(--k-ink-soft)',
             fontSize: 14,
             lineHeight: 1,
           }}
         >
           {a.icon}
+          {a.aktiv && <span className="k-werkzeug-kreis-punkt" aria-hidden="true" />}
         </button>
       ))}
     </div>

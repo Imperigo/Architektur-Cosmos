@@ -12,6 +12,7 @@ import { planLod, type PlanLod } from './planLod';
 import { cursor2dFuer, istEingabefeld } from './kurztasten';
 import { FLING_STOPP_GESCHWINDIGKEIT, flingSchritt, flingTracker, gestenDetektor } from './eingabe-3d';
 import { tick as haptikTick } from '../../state/haptik';
+import { useDockZeichenfeld } from '../../state/dock-zeichenfeld-runtime';
 import { ViewportKontextmenue, type KontextAktion } from './ViewportKontextmenue';
 
 /**
@@ -494,13 +495,47 @@ export function PlanView({
       setView({ cx: 5000, cy: 3000, scale: 0.05 });
       return;
     }
+    // v0.8.0B P8b (Matrix-Abnahme «element-fang»): «Einpassen» holt den
+    // Grundriss in den SICHTBAREN Bereich — die Dock-Spalten (z.B. das immer
+    // sichtbare Kennzahlen-Panel rechts) überdecken Teile dieses SVGs, und
+    // ein Fit auf die volle Fläche legte den Modellrand DARUNTER (Hover/
+    // Element-Fang liefen dort ins Panel statt in den Plan). Das freie
+    // Zentrum kommt vom Dock-Solver (`dock-zeichenfeld-runtime.ts`, von
+    // `DockFlaeche` in Client-Koordinaten gemeldet); Schnittmenge mit der
+    // eigenen SVG-Fläche, und NUR wenn die noch eine brauchbare Zeichen-
+    // fläche ist (>= 380px, der `MIN_VIEWPORT`-Wert des Solvers — darunter,
+    // z.B. in der schmalen Split-Ansicht, bleibt bewusst der bisherige
+    // Voll-Flächen-Fit, statt den Plan winzig zu quetschen). Fallbacks
+    // (kein Dock gemountet, andere Station, kein Schnitt) = exakt das alte
+    // Verhalten.
+    let ziel = { x: rect.left, y: rect.top, w: rect.width, h: rect.height };
+    const zf = useDockZeichenfeld.getState();
+    if (zf.station === 'design' && zf.rect) {
+      const ix = Math.max(rect.left, zf.rect.x);
+      const iy = Math.max(rect.top, zf.rect.y);
+      const iw = Math.min(rect.right, zf.rect.x + zf.rect.w) - ix;
+      const ih = Math.min(rect.bottom, zf.rect.y + zf.rect.h) - iy;
+      if (iw >= 380 && ih >= 200) ziel = { x: ix, y: iy, w: iw, h: ih };
+    }
     const w = Math.max(b.maxX - b.minX, 2000);
     const h = Math.max(b.maxY - b.minY, 2000);
-    const scale = Math.min(1, Math.max(0.005, Math.min(rect.width / (w * 1.25), rect.height / (h * 1.25))));
+    const scale = Math.min(1, Math.max(0.005, Math.min(ziel.w / (w * 1.25), ziel.h / (h * 1.25))));
     // v0.7.4 P7: «Einpassen» zentriert exakt auf die Modell-Bbox — das liegt
     // per Konstruktion innerhalb der Pan-Grenze, der rohe Setter reicht hier
     // (kein Zusatznutzen durch `setViewGeklemmt`, aber auch kein Schaden).
-    setView({ cx: (b.minX + b.maxX) / 2, cy: (b.minY + b.maxY) / 2, scale });
+    // P8b: … und zwar auf die MITTE des Zielbereichs — `view.cx/cy` ist der
+    // Weltpunkt in der SVG-Mitte (s. `clientZuWelt` oben), darum wird die
+    // Differenz Zielmitte↔SVG-Mitte in Weltkoordinaten übersetzt (y-Achse
+    // gespiegelt, Kern-y wächst nach oben).
+    const zielCx = ziel.x + ziel.w / 2;
+    const zielCy = ziel.y + ziel.h / 2;
+    const svgCx = rect.left + rect.width / 2;
+    const svgCy = rect.top + rect.height / 2;
+    setView({
+      cx: (b.minX + b.maxX) / 2 - (zielCx - svgCx) / scale,
+      cy: (b.minY + b.maxY) / 2 + (zielCy - svgCy) / scale,
+      scale,
+    });
   };
 
   // Bewusst NUR beim Mount: während des Zeichnens darf die Ansicht nie springen.
