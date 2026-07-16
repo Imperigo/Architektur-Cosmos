@@ -61,6 +61,18 @@
   --k-accent-wash: rgba(62, 150, 162, 0.12);
   --k-success: #4e6d49;
   --k-warning: #a37b22;
+  /* v0.8.1 / P3 (Spez §4.3/C-16) — kanonisiert: waren zuvor NUR als
+     `var(--k-warning-wash, #f6f2e6)`/`var(--k-warning-line, #c9bfa0)`-
+     Fallback-Hexe in den Konsumenten (`design-panels.css` `.dp-hinweis`,
+     `publish.css`) verstreut, nirgends als echtes Token definiert — der
+     Fallback war darum faktisch der einzig je genutzte Wert, theme-
+     invariant (kein `orbit`-Override existierte). Hier real definiert,
+     bewusst NUR in diesem gemeinsamen Block (wie `--k-warning` selbst,
+     das ebenfalls kein `orbit`-Gegenstück hat) — reine Verschiebung,
+     0 Optik-Änderung: derselbe Hexwert gilt jetzt wie zuvor in BEIDEN
+     Themes (geerbt, nicht dupliziert). */
+  --k-warning-wash: #f6f2e6;
+  --k-warning-line: #c9bfa0;
   --k-danger: #a33d31;
   --k-info: #46617a;
   --k-shadow-raised: 0 1px 0 rgba(26, 24, 21, 0.08);

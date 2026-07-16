@@ -55,6 +55,15 @@ export const paper = {
 export const semantic = {
   success: '#4e6d49',
   warning: '#a37b22',
+  /**
+   * v0.8.1 / P3 (Spez §4.3/C-16) — kanonisiert aus den vormals verstreuten
+   * `var(--k-warning-wash, #f6f2e6)`/`var(--k-warning-line, #c9bfa0)`-
+   * Fallback-Hexen (`design-panels.css` `.dp-hinweis`, `publish.css`).
+   * Spiegelt `--k-warning-wash`/`--k-warning-line`, theme-invariant wie
+   * `warning` selbst.
+   */
+  warningWash: '#f6f2e6',
+  warningLine: '#c9bfa0',
   danger: '#a33d31',
   info: '#46617a',
 } as const;

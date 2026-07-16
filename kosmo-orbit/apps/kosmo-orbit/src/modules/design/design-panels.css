@@ -223,8 +223,10 @@
 /* Ehrlichkeits-Hinweisbox (KV/Bauablauf/Mängel — «Richtwert, kein
    Normersatz») — bleibt permanent sichtbar, nicht nur beim Export. */
 .dp-hinweis {
-  background: var(--k-warning-wash, #f6f2e6);
-  border: 1px solid var(--k-warning-line, #c9bfa0);
+  /* v0.8.1 / P3 (Spez §4.3/C-16) — kanonisiert: `--k-warning-wash`/-`line`
+     sind jetzt echte Tokens in aura.css (kein Fallback-Hex mehr nötig). */
+  background: var(--k-warning-wash);
+  border: 1px solid var(--k-warning-line);
   border-radius: var(--k-radius-sm);
   padding: var(--k-s3) var(--k-s4);
   font-weight: 600;

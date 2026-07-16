@@ -1734,9 +1734,15 @@ export function BauteilkatalogView() {
                         />
                       ))}
                     </div>
-                    <div className="kd-flex kd-items-center kd-g3 kd-fs-sm kd-c-faint">
-                      <span>{dicke} mm</span>
-                      <span>U ≈ {u.toFixed(2)} W/m²K</span>
+                    {/* v0.8.1 / P3 (Spez §4.3/C-17) — Label/Wert-Inline-Muster raus,
+                        KKeyValue-Anatomie (B-41) statt zweier freier <span>. */}
+                    <KKeyValue
+                      zeilen={[
+                        { key: 'Dicke', wert: `${dicke} mm` },
+                        { key: 'U-Wert', wert: `U ≈ ${u.toFixed(2)} W/m²K` },
+                      ]}
+                    />
+                    <div className="kd-flex kd-items-center kd-g3">
                       <div className="kd-fill" />
                       {schonDa ? (
                         <Badge hue="var(--k-success)">Im Projekt</Badge>
@@ -2028,23 +2034,22 @@ export function MaterialkatalogView() {
             {...(selected.pbr.metalness !== undefined ? { metallisch: selected.pbr.metalness } : {})}
             materialKey={selected.key}
           />
-          <div data-testid="material-detail-quelle" className="kd-fs-sm kd-c-soft">
-            Quelle: {selected.quelle}
-          </div>
+          {/* v0.8.1 / P3 (Spez §4.3/C-17) — Label/Wert-Inline-Muster raus,
+              KKeyValue-Anatomie (B-41), wie bereits im ReferenzTabelle-Dossier
+              dieser Datei (`ref-geo`/`ref-programm` u.a.) etabliert. */}
+          <KKeyValue
+            zeilen={[
+              { key: 'Quelle', wert: selected.quelle, testid: 'material-detail-quelle' },
+              selected.dimensionen
+                ? { key: 'Lieferbar', wert: selected.dimensionen.lieferbar.map(formatMaterialGroesse).join(' · ') }
+                : { key: 'Lieferbar', wert: 'Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.' },
+            ]}
+          />
+          {selected.dimensionen?.hinweis && <div className="kd-fs-sm kd-c-faint">{selected.dimensionen.hinweis}</div>}
           <div className="kd-flex kd-g2 kd-wrap">
             <Badge hue={materialArtHue[selected.materialArt]}>{materialArtLabel[selected.materialArt]}</Badge>
             {selected.region && <Badge hue="var(--k-ink-faint)">{selected.region}</Badge>}
           </div>
-          {selected.dimensionen ? (
-            <div className="kd-fs-sm kd-c-faint">
-              Lieferbar: {selected.dimensionen.lieferbar.map(formatMaterialGroesse).join(' · ')}
-              {selected.dimensionen.hinweis && <div>{selected.dimensionen.hinweis}</div>}
-            </div>
-          ) : (
-            <div className="kd-fs-sm kd-c-faint">
-              Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.
-            </div>
-          )}
         </div>
       )}
 
@@ -2086,7 +2091,7 @@ export function MaterialkatalogView() {
               data-testid="material-art"
               value={formArt}
               onChange={(e) => setFormArt(e.target.value as MaterialArt | '')}
-              style={{ flex: 1 }}
+              className="kd-fill"
             >
               <option value="">Materialart (optional)</option>
               <option value="rohmaterial">Rohmaterial</option>
@@ -2182,22 +2187,23 @@ export function MaterialkatalogView() {
               ? { groesse: selectedErfasst.materialDimensionen.lieferbar[0] }
               : {})}
           />
-          <div className="kd-fs-sm kd-c-soft">Quelle: {selectedErfasst.quelle}</div>
+          <KKeyValue
+            zeilen={[
+              { key: 'Quelle', wert: selectedErfasst.quelle },
+              selectedErfasst.materialDimensionen
+                ? {
+                    key: 'Lieferbar',
+                    wert: selectedErfasst.materialDimensionen.lieferbar.map(formatMaterialGroesse).join(' · '),
+                  }
+                : { key: 'Lieferbar', wert: 'Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.' },
+            ]}
+          />
           <div className="kd-flex kd-g2 kd-wrap">
             {selectedErfasst.materialArt && (
               <Badge hue={materialArtHue[selectedErfasst.materialArt]}>{materialArtLabel[selectedErfasst.materialArt]}</Badge>
             )}
             {selectedErfasst.region && <Badge hue="var(--k-ink-faint)">{selectedErfasst.region}</Badge>}
           </div>
-          {selectedErfasst.materialDimensionen ? (
-            <div className="kd-fs-sm kd-c-faint">
-              Lieferbar: {selectedErfasst.materialDimensionen.lieferbar.map(formatMaterialGroesse).join(' · ')}
-            </div>
-          ) : (
-            <div className="kd-fs-sm kd-c-faint">
-              Keine lieferbare Grösse hinterlegt — Würfel zeigt den Platzhalter 1:1:1.
-            </div>
-          )}
         </div>
       )}
     </div>

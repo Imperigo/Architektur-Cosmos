@@ -230,47 +230,25 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
       data-testid="onboarding"
       role="region"
       aria-label="KosmoOrbit einrichten"
-      className="k-glass k-einblenden"
-      style={{
-        position: 'relative',
-        display: 'flex',
-        minHeight: 460,
-        overflow: 'hidden',
-        color: 'var(--k-ink)',
-      }}
+      className="k-glass k-einblenden ow-root"
     >
       {/* Atmosphärischer Hintergrund (README §10: «atmosphärischer Kosmos-
           Hintergrund») — reine CSS-Gradienten aus Bord-Tokens, kein Asset. */}
-      <div aria-hidden className="onboarding-tiefe" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
-      <div
-        aria-hidden
-        className="onboarding-sternenfeld"
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-      />
+      <div aria-hidden className="onboarding-tiefe" />
+      <div aria-hidden className="onboarding-sternenfeld" />
 
       {/* LINKS — Stepper */}
-      <aside
-        style={{
-          position: 'relative',
-          zIndex: 1,
-          width: 'clamp(240px, 30%, 360px)',
-          flex: 'none',
-          borderRight: '1px solid var(--k-line)',
-          background: 'color-mix(in srgb, var(--k-sunken, var(--k-field)) 60%, transparent)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <div style={{ padding: '26px 26px 22px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid var(--k-line)' }}>
+      <aside className="ow-stepper-spalte">
+        <div className="ow-marke-zeile">
           <OrbitMark module="orbit" size={30} />
           <div>
-            <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: '0.06em' }}>KosmoOrbit</div>
-            <div style={{ fontFamily: 'var(--k-font-mono, monospace)', fontSize: 10.5, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--k-ink-faint)', marginTop: 2 }}>
+            <div className="ow-marke-titel">KosmoOrbit</div>
+            <div className="ow-marke-sub">
               Einrichtung
             </div>
           </div>
         </div>
-        <div style={{ flex: 1, padding: '20px 26px', overflowY: 'auto' }}>
+        <div className="ow-stepper-liste">
           {ONBOARDING_SCHRITTE.map((s, i) => {
             const fertig = i < schritt;
             const aktiv = i === schritt;
@@ -290,14 +268,13 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                   >
                     {fertig ? <KIcon name="haken" size={14} /> : s.nummer}
                   </span>
-                  <span style={{ paddingTop: 3 }}>
+                  <span className="ow-stepper-text">
                     <div
-                      className="onboarding-stepper-titel"
-                      style={{ fontWeight: 700, fontSize: 13.5, color: aktiv ? 'var(--k-ink)' : fertig ? 'var(--k-ink-soft)' : 'var(--k-ink-faint)' }}
+                      className={`onboarding-stepper-titel${aktiv ? ' onboarding-stepper-titel--aktiv' : fertig ? ' onboarding-stepper-titel--fertig' : ''}`}
                     >
                       {s.railTitel}
                     </div>
-                    <div style={{ fontFamily: 'var(--k-font-mono, monospace)', fontSize: 10.5, letterSpacing: '0.04em', color: 'var(--k-ink-faint)', marginTop: 2 }}>
+                    <div className="ow-stepper-untertitel">
                       {s.railUntertitel}
                     </div>
                   </span>
@@ -306,45 +283,44 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
             );
           })}
         </div>
-        <div style={{ padding: '18px 26px', borderTop: '1px solid var(--k-line)', display: 'flex', alignItems: 'center', gap: 9 }}>
-          <span aria-hidden style={{ color: 'var(--k-rolle-manuell)', display: 'inline-flex' }}>
+        <div className="ow-stepper-fuss">
+          <span aria-hidden className="ow-icon-schloss">
             <KIcon name="schloss" size={14} />
           </span>
-          <span style={{ fontSize: 11.5, color: 'var(--k-ink-soft)', lineHeight: 1.4 }}>
+          <span className="ow-stepper-fuss-text">
             Alles läuft lokal auf deinem Core. Kein Upload, keine Cloud.
           </span>
         </div>
       </aside>
 
       {/* RECHTS — aktiver Schritt */}
-      <main style={{ position: 'relative', zIndex: 1, flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '16px 28px 0' }}>
+      <main className="ow-hauptbereich">
+        <div className="ow-skip-zeile">
           <KButton size="sm" tone="ghost" data-testid="onboarding-ueberspringen" onClick={() => beenden(false)}>
             Später einrichten
           </KButton>
         </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 28px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div style={{ maxWidth: 640, width: '100%', margin: '0 auto' }}>
+        <div className="ow-inhalt-scroll">
+          <div className="ow-inhalt-mitte">
             <div
               key={aktuell.id}
-              className="k-einblenden"
-              style={{ fontFamily: 'var(--k-font-mono, monospace)', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: aktuell.farbe, marginBottom: 10 }}
+              className="k-einblenden ow-schritt-label"
+              style={{ ['--_farbe' as string]: aktuell.farbe }}
             >
               Schritt {aktuell.nummer} · von 04
             </div>
-            <h1 style={{ margin: 0, fontSize: 30, lineHeight: 1.12, letterSpacing: '-0.01em', color: 'var(--k-ink)' }}>{aktuell.titel}</h1>
-            <p style={{ fontSize: 14.5, lineHeight: 1.55, color: 'var(--k-ink-soft)', margin: '12px 0 0', maxWidth: 560 }}>
+            <h1 className="ow-titel">{aktuell.titel}</h1>
+            <p className="ow-beschreibung">
               {aktuell.beschreibung}
             </p>
 
             {/* Schritt-Inhalt */}
             <div
-              className="k-glass"
-              style={{ marginTop: 26, padding: 20, display: 'grid', gap: 14 }}
+              className="k-glass ow-schritt-karte"
             >
               {aktuell.id === 'konto' && (
                 <>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                  <label className="ow-feld-label">
                     Rolle
                     <KSelect
                       size="sm"
@@ -355,7 +331,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                           .getState()
                           .runCommand('design.rolleSetzen', e.target.value ? { rolle: e.target.value } : {})
                       }
-                      style={{ maxWidth: 260 }}
+                      className="ow-feld-schmal"
                     >
                       {ROLLEN.map((r) => (
                         <option key={r.wert} value={r.wert}>
@@ -372,7 +348,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
 
               {aktuell.id === 'zentrale' && (
                 <>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <div className="ow-status-zeile">
                     <span data-testid="onboarding-zentrale-status">
                       <Badge hue={aktuell.farbe}>
                         {betriebsart === 'cloud'
@@ -384,7 +360,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                               : 'nicht gefunden — manuell koppeln'}
                       </Badge>
                     </span>
-                    <div style={{ flex: 1 }} />
+                    <div className="ow-spacer" />
                     {betriebsart !== 'cloud' && (
                       <KButton size="sm" tone="ghost" data-testid="onboarding-zentrale-pruefen" onClick={() => setPruefLauf((n) => n + 1)}>
                         Erneut prüfen
@@ -392,7 +368,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                     )}
                   </div>
                   {betriebsart === 'cloud' ? (
-                    <div style={{ fontSize: 13, color: 'var(--k-ink-soft)', lineHeight: 1.55 }}>
+                    <div className="ow-hinweis-text">
                       Cloud-Betrieb — keine eigene Zentrale nötig. Kosmo läuft über Claude (mind. Opus 4.8).
                     </div>
                   ) : (
@@ -419,13 +395,13 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                           schon Kontakt zur selben Zentrale hat. */}
                       {bridgeErreichbar === false && (
                         <>
-                          <div style={{ fontSize: 12.5, color: 'var(--k-warning)', lineHeight: 1.55 }}>
+                          <div className="ow-warn-text">
                             Keine Bridge auf {bridgeUrl} erreichbar. Richte sie über «Werkzeuge einrichten» ein, trag
                             eine andere Adresse ein oder koppel ein bereits verbundenes Gerät über den Code.
                           </div>
-                          <label style={{ display: 'grid', gap: 6, fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                          <label className="ow-feld-label">
                             Bridge-Adresse manuell
-                            <span style={{ display: 'flex', gap: 8 }}>
+                            <span className="ow-feld-inline">
                               <KInput
                                 size="sm"
                                 value={manuelleBridgeUrl}
@@ -433,7 +409,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                                 onChange={(e) => setManuelleBridgeUrl(e.target.value)}
                                 onBlur={uebernehmeManuelleBridgeUrl}
                                 onKeyDown={(e) => e.key === 'Enter' && uebernehmeManuelleBridgeUrl()}
-                                style={{ maxWidth: 260 }}
+                                className="ow-feld-schmal"
                               />
                               <KButton size="sm" tone="ghost" onClick={uebernehmeManuelleBridgeUrl}>
                                 Übernehmen
@@ -453,11 +429,11 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
 
               {aktuell.id === 'werkzeuge' && (
                 <>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>
+                  <div className="ow-reihe-gap10">
+                    <div className="ow-text-soft-125">
                       {werkzeugeFertig} von {pflichtWerkzeuge.length} Kern-Werkzeugen laufen
                     </div>
-                    <div style={{ flex: 1 }} />
+                    <div className="ow-spacer" />
                     <KButton size="sm" tone="ghost" onClick={() => setPruefLauf((n) => n + 1)}>
                       Neu prüfen
                     </KButton>
@@ -467,7 +443,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                     anteil={pflichtWerkzeuge.length ? werkzeugeFertig / pflichtWerkzeuge.length : 0}
                     farbe={aktuell.farbe}
                   />
-                  <div style={{ display: 'grid', gap: 2 }}>
+                  <div className="ow-werkzeug-liste">
                     {pflichtWerkzeuge.map((w) => (
                       <WerkzeugStatusZeile key={w.id} w={w} status={werkzeugStatus[w.id] ?? 'prueft'} />
                     ))}
@@ -480,7 +456,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
 
               {aktuell.id === 'projekt' && (
                 <>
-                  <label style={{ display: 'grid', gap: 6, fontSize: 12, color: 'var(--k-ink-soft)' }}>
+                  <label className="ow-feld-label">
                     Projektname
                     <KInput
                       size="sm"
@@ -488,21 +464,21 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                       data-testid="onboarding-projektname"
                       onChange={(e) => setProjektName(e.target.value)}
                       onBlur={commitProjektName}
-                      style={{ maxWidth: 320 }}
+                      className="ow-feld-mittel"
                     />
                   </label>
-                  <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', lineHeight: 1.55 }}>
+                  <div className="ow-hinweis-klein">
                     Grundriss, Mengen und Visualisierung leiten sich automatisch aus dem Doc ab, sobald du zu
                     zeichnen beginnst — kein eigener «Zweig» nötig.
                   </div>
                 </>
               )}
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
-                <span aria-hidden style={{ color: 'var(--k-rolle-manuell)', display: 'inline-flex' }}>
+              <div className="ow-lock-zeile">
+                <span aria-hidden className="ow-icon-schloss">
                   <KIcon name="schloss" size={14} />
                 </span>
-                <span style={{ fontSize: 12.5, color: 'var(--k-ink-soft)' }}>{aktuell.hinweis}</span>
+                <span className="ow-text-soft-125">{aktuell.hinweis}</span>
               </div>
             </div>
           </div>
@@ -522,14 +498,14 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
           <span className="onboarding-footer-zaehler">
             {aktuell.nummer} / 04
           </span>
-          <div style={{ flex: 1 }} />
+          <div className="ow-spacer" />
           <KButton
             size="sm"
             tone="ghost"
             data-testid="onboarding-zurueck"
             disabled={istErster}
             onClick={() => setSchritt((s) => Math.max(0, s - 1))}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            className="ow-btn-inhalt"
           >
             <KIcon name="pfeil-links" size={14} />
             Zurück
@@ -539,7 +515,7 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
             tone="accent"
             data-testid={istLetzter ? 'onboarding-start' : 'onboarding-weiter'}
             onClick={weiter}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            className="ow-btn-inhalt"
           >
             {aktuell.cta}
             <KIcon name="pfeil-rechts" size={14} />
@@ -562,19 +538,11 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
 
 function SchrittZeile({ label, wert, mono = false }: { label: string; wert: string; mono?: boolean }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '8px 0', borderBottom: '1px solid var(--k-line)' }}>
-      <span style={{ fontFamily: 'var(--k-font-mono, monospace)', fontSize: 10.5, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--k-ink-faint)' }}>
+    <div className="ow-kv-zeile">
+      <span className="ow-kv-label">
         {label}
       </span>
-      <span
-        style={{
-          fontSize: 12.5,
-          color: 'var(--k-ink-soft)',
-          fontFamily: mono ? 'var(--k-font-mono, monospace)' : undefined,
-          textAlign: 'right',
-          overflowWrap: 'anywhere',
-        }}
-      >
+      <span className={`ow-kv-wert${mono ? ' ow-kv-wert--mono' : ''}`}>
         {wert}
       </span>
     </div>
@@ -591,16 +559,16 @@ function SchrittZeile({ label, wert, mono = false }: { label: string; wert: stri
 function ZentralePairingCode() {
   const { svg, grund } = zentralePairingSvg();
   return (
-    <div data-testid="onboarding-zentrale-qr" style={{ display: 'flex', gap: 14, alignItems: 'center', paddingTop: 4 }}>
+    <div data-testid="onboarding-zentrale-qr" className="ow-qr-zeile">
       {svg ? (
         <div
-          style={{ width: 120, height: 120, flexShrink: 0, border: '1px solid var(--k-line)', background: '#fff' }}
+          className="ow-qr-bild"
           dangerouslySetInnerHTML={{ __html: svg }}
         />
       ) : (
-        <div style={{ width: 120, flexShrink: 0, fontSize: 11.5, color: 'var(--k-danger)' }}>{grund}</div>
+        <div className="ow-qr-fehler">{grund}</div>
       )}
-      <span style={{ fontSize: 12, color: 'var(--k-ink-soft)', maxWidth: 380, lineHeight: 1.5 }}>
+      <span className="ow-qr-text">
         Läuft die Zentrale bereits auf einem anderen Gerät im selben Netz? Mit dessen Kamera scannen — KosmoOrbit
         öffnet sich dort und verbindet automatisch mit demselben Sync-Raum. Die Verbindung steckt im Link-Fragment,
         nie in Server-Logs.
@@ -613,10 +581,10 @@ function WerkzeugStatusZeile({ w, status }: { w: Werkzeug; status: PruefStatus }
   return (
     <div
       data-testid={`onboarding-werkzeug-${w.id}`}
-      style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0' }}
+      className="ow-werkzeug-zeile"
     >
-      <span style={{ fontSize: 12.5, color: 'var(--k-ink)', flex: 1, overflowWrap: 'anywhere' }}>{w.name}</span>
-      <span style={{ fontSize: 11, color: STATUS_FARBE[status] }}>● {STATUS_TEXT[status]}</span>
+      <span className="ow-werkzeug-name">{w.name}</span>
+      <span className="ow-werkzeug-status" style={{ ['--_farbe' as string]: STATUS_FARBE[status] }}>● {STATUS_TEXT[status]}</span>
     </div>
   );
 }

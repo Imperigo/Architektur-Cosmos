@@ -82,50 +82,19 @@ export function StarterGuide({ screen, kosmoOffen, wandAnzahl, onSchliessen }: S
   return (
     <div
       data-testid="starter-guide"
-      style={{
-        position: 'fixed',
-        // v0.6.4 / F7 (Owner-Befund, wiederholt: «kann in 3D-Viewer immer noch
-        // nicht skizzieren»): bei `left:20, bottom:20` sass die Karte GENAU auf
-        // dem 3D-/2D-Viewport-Bodenstreifen (NavLeiste `bottom:50`, KosmoSketch-
-        // Batch-/Vorschlagsleisten `bottom:18`, beide links/mittig in JEDER
-        // Pane) — ihr eigener Knopfsatz (Weiter/Überspringen) landete pixel-
-        // genau auf «Übergeben» & Co. und schluckte den Klick (bewiesen per
-        // Playwright: "starter-guide-schritt … intercepts pointer events" auf
-        // `sketch3d-uebergeben`). Wer beim Erststart «Ja, zeig mir den
-        // Rundgang» wählt und dann (statt der Wand-Mini-Aufgabe) gleich
-        // «Skizzieren» ausprobiert, zeichnet zwar einen Strich, kann ihn aber
-        // nie übergeben — sieht aus wie «Skizzieren geht nicht». Fix: die
-        // Karte steht jetzt deutlich höher (`bottom:100`) und weiter rechts
-        // (`left:60`) — ausserhalb des Boden-Streifens UND des vertikal
-        // mittigen Entwurfs-Docks (`left:12`, K16 A6) — ohne Position/Grösse
-        // sonst zu verändern.
-        left: 60,
-        bottom: 100,
-        width: 340,
-        zIndex: 120,
-        // Ehrlich nicht-modal: kein Scrim, kein Klick-Fänger über der App —
-        // nur diese Karte selbst reagiert auf Zeiger-Events.
-        pointerEvents: 'none',
-      }}
+      className="sg-karte"
     >
       <Panel
         data-testid="starter-guide-schritt"
         data-schritt-id={schritt.id}
-        className="k-einblenden"
-        style={{
-          pointerEvents: 'auto',
-          display: 'grid',
-          gap: 10,
-          border: '1px solid var(--k-accent)',
-          boxShadow: '0 6px 24px color-mix(in srgb, var(--k-ink) 18%, transparent)',
-        }}
+        className="k-einblenden sg-panel"
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="sg-kopf-zeile">
           <Badge hue="var(--k-accent)">
             Rundgang · {index + 1}/{STARTER_GUIDE_SCHRITTE.length}
           </Badge>
-          <div style={{ flex: 1 }} />
-          <span style={{ fontSize: 11, color: 'var(--k-ink-faint)', fontFamily: 'var(--k-font-mono)' }}>
+          <div className="sg-spacer" />
+          <span className="sg-prozent">
             {fortschrittProzent(index)}%
           </span>
         </div>
@@ -138,21 +107,17 @@ export function StarterGuide({ screen, kosmoOffen, wandAnzahl, onSchliessen }: S
             style={{ width: `${fortschrittProzent(index)}%` }}
           />
         </div>
-        <div style={{ fontWeight: 550, fontSize: 14.5 }}>{schritt.titel}</div>
-        <div style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--k-ink-soft)' }}>{schritt.text}</div>
+        <div className="sg-titel">{schritt.titel}</div>
+        <div className="sg-text">{schritt.text}</div>
         {schritt.automatisch && (
           <div
             data-testid="starter-guide-haekchen"
-            style={{
-              fontSize: 12.5,
-              color: erledigtGeradeEben ? 'var(--k-success)' : 'var(--k-ink-faint)',
-              opacity: erledigtGeradeEben ? 1 : 0.65,
-            }}
+            className={`sg-haekchen ${erledigtGeradeEben ? 'sg-haekchen--fertig' : 'sg-haekchen--offen'}`}
           >
             {erledigtGeradeEben ? '✓ Erledigt — weiter geht’s' : 'Kosmo erkennt selbst, wenn du das erledigt hast.'}
           </div>
         )}
-        <div style={{ display: 'flex', gap: 8, marginTop: 2 }}>
+        <div className="sg-knopf-zeile">
           {letzter ? (
             <KButton size="sm" tone="accent" data-testid="starter-guide-fertig" onClick={schliessen}>
               Fertig

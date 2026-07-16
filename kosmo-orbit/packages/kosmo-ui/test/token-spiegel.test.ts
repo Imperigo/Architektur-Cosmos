@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { motion, orbit, paper, radius, radiusHub, scale, shadow, type, typeGross } from '../src/tokens';
+import { motion, orbit, paper, radius, radiusHub, scale, semantic, shadow, type, typeGross } from '../src/tokens';
 
 /**
  * Token-Spiegel-Wächter (W0, UI-KONZEPT-065 §2): `aura.css` ist die einzige
@@ -188,5 +188,20 @@ describe('token-spiegel (W0): aura.css ist die Wahrheit, tokens.ts folgt exakt',
     for (const [key, cssVar] of paare) {
       expect(shadow.orbit[key], `shadow.orbit.${key} vs. ${cssVar}`).toBe(lies(orbitBlock, cssVar, 'orbit'));
     }
+  });
+
+  /**
+   * NEU (v0.8.1 / P3, Spez §4.3/C-16) — Warning-Wash-Kanonisierung: die
+   * vormals nur als Fallback-Hex in Konsumenten verstreuten Werte sind jetzt
+   * echte, theme-invariante Tokens (kein `orbit`-Gegenstück, wie `warning`
+   * selbst) — hier erstmals gegen `tokens.semantic` bewacht.
+   */
+  it('NEU (P3) Warning-Wash-Tokens (--k-warning-wash/-line) stimmen mit tokens.semantic überein', () => {
+    expect(semantic.warningWash, 'semantic.warningWash vs. --k-warning-wash').toBe(
+      lies(paperBlock, '--k-warning-wash', 'paper'),
+    );
+    expect(semantic.warningLine, 'semantic.warningLine vs. --k-warning-line').toBe(
+      lies(paperBlock, '--k-warning-line', 'paper'),
+    );
   });
 });

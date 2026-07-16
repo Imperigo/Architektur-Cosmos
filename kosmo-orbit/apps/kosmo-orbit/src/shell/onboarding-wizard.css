@@ -9,12 +9,18 @@
  */
 
 .onboarding-tiefe {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background:
     radial-gradient(120% 85% at 74% 8%, color-mix(in srgb, var(--k-accent) 10%, transparent), transparent 60%),
     radial-gradient(90% 70% at 12% 92%, color-mix(in srgb, var(--k-rolle-generator) 7%, transparent), transparent 62%);
 }
 
 .onboarding-sternenfeld {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background-image:
     radial-gradient(1.4px 1.4px at 20% 30%, color-mix(in srgb, var(--k-ink) 55%, transparent), transparent),
     radial-gradient(1.2px 1.2px at 70% 62%, color-mix(in srgb, var(--k-ink) 45%, transparent), transparent),
@@ -49,6 +55,22 @@
 }
 .onboarding-stepper-zeile:hover .onboarding-stepper-titel {
   color: var(--k-ink);
+}
+
+/* v0.8.1 / P3 — Rest-Inline-Umbau: Basis + Zustandsfarbe des Rail-Titels,
+   vormals als Inline-Style mit ternärer Farbwahl (aktiv/fertig/offen)
+   berechnet. Drei diskrete Zustands-Modifier statt einer CSS-Variable, damit
+   das mit `.onboarding-stepper-badge--*` konsistente Muster bleibt. */
+.onboarding-stepper-titel {
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--k-ink-faint);
+}
+.onboarding-stepper-titel--aktiv {
+  color: var(--k-ink);
+}
+.onboarding-stepper-titel--fertig {
+  color: var(--k-ink-soft);
 }
 
 /* v0.8.0B / P7 — Akzentpunkte-Audit (P3-Audit): der Rail-Nummernkreis
@@ -111,4 +133,288 @@
   font-family: var(--k-font-mono, monospace);
   font-size: 11px;
   color: var(--k-ink-faint);
+}
+
+/* v0.8.1 / P3 — OnboardingWizard-Vollumbau (54 Rest-Inline-Styles → Klassen,
+   Muster wie `einstellungen.css`/W7: kurze Datei-Präfix-Klassen, Werte
+   unverändert 1:1 aus den bisherigen Inline-Objekten übernommen, keine
+   Optik-Änderung. testids/aria/Texte byte-genau unangetastet, hier nur
+   `style={{...}}` → `className`. */
+
+.ow-root {
+  position: relative;
+  display: flex;
+  min-height: 460px;
+  overflow: hidden;
+  color: var(--k-ink);
+}
+
+.ow-stepper-spalte {
+  position: relative;
+  z-index: 1;
+  width: clamp(240px, 30%, 360px);
+  flex: none;
+  border-right: 1px solid var(--k-line);
+  background: color-mix(in srgb, var(--k-sunken, var(--k-field)) 60%, transparent);
+  display: flex;
+  flex-direction: column;
+}
+
+.ow-marke-zeile {
+  padding: 26px 26px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--k-line);
+}
+.ow-marke-titel {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
+.ow-marke-sub {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  margin-top: 2px;
+}
+
+.ow-stepper-liste {
+  flex: 1;
+  padding: 20px 26px;
+  overflow-y: auto;
+}
+.ow-stepper-text {
+  padding-top: 3px;
+}
+.ow-stepper-untertitel {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--k-ink-faint);
+  margin-top: 2px;
+}
+
+.ow-stepper-fuss {
+  padding: 18px 26px;
+  border-top: 1px solid var(--k-line);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.ow-stepper-fuss-text {
+  font-size: 11.5px;
+  color: var(--k-ink-soft);
+  line-height: 1.4;
+}
+
+/* Wiederverwendetes Schloss-Icon (Stepper-Fuss + Schritt-Karte-Hinweiszeile). */
+.ow-icon-schloss {
+  color: var(--k-rolle-manuell);
+  display: inline-flex;
+}
+
+.ow-hauptbereich {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.ow-skip-zeile {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 28px 0;
+}
+.ow-inhalt-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.ow-inhalt-mitte {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Schritt-Label-Farbe kommt aus den Daten (`aktuell.farbe`) — via CSS-
+   Variable gesetzt, gleiches Muster wie `--_farbe` am Rail-Badge oben. */
+.ow-schritt-label {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--_farbe, var(--k-accent));
+  margin-bottom: 10px;
+}
+
+.ow-titel {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--k-ink);
+}
+.ow-beschreibung {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--k-ink-soft);
+  margin: 12px 0 0;
+  max-width: 560px;
+}
+
+.ow-schritt-karte {
+  margin-top: 26px;
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.ow-feld-label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--k-ink-soft);
+}
+.ow-feld-schmal {
+  max-width: 260px;
+}
+.ow-feld-mittel {
+  max-width: 320px;
+}
+.ow-feld-inline {
+  display: flex;
+  gap: 8px;
+}
+
+.ow-status-zeile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ow-reihe-gap10 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ow-spacer {
+  flex: 1;
+}
+.ow-hinweis-text {
+  font-size: 13px;
+  color: var(--k-ink-soft);
+  line-height: 1.55;
+}
+.ow-hinweis-klein {
+  font-size: 12.5px;
+  color: var(--k-ink-soft);
+  line-height: 1.55;
+}
+.ow-text-soft-125 {
+  font-size: 12.5px;
+  color: var(--k-ink-soft);
+}
+.ow-warn-text {
+  font-size: 12.5px;
+  color: var(--k-warning);
+  line-height: 1.55;
+}
+.ow-werkzeug-liste {
+  display: grid;
+  gap: 2px;
+}
+.ow-lock-zeile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+/* `.k-btn` compound (statt Solo-Klasse) für garantierte Priorität gegenüber
+   der Basis-`gap: var(--k-s2)` (4px) aus `aura.css` — die beiden Footer-
+   Knöpfe (Zurück/Weiter) hatten schon vorher inline `gap:6` als bewusste
+   Abweichung vom Standard-Button-Abstand (Icon+Text). */
+.k-btn.ow-btn-inhalt {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* SchrittZeile (Kennzahlen-Zeile Label/Wert, «kv» = Key/Value). */
+.ow-kv-zeile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--k-line);
+}
+.ow-kv-label {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+}
+.ow-kv-wert {
+  font-size: 12.5px;
+  color: var(--k-ink-soft);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.ow-kv-wert--mono {
+  font-family: var(--k-font-mono, monospace);
+}
+
+/* ZentralePairingCode (Schritt 02 QR-Rückweg). */
+.ow-qr-zeile {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding-top: 4px;
+}
+.ow-qr-bild {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border: 1px solid var(--k-line);
+  background: #fff;
+}
+.ow-qr-fehler {
+  width: 120px;
+  flex-shrink: 0;
+  font-size: 11.5px;
+  color: var(--k-danger);
+}
+.ow-qr-text {
+  font-size: 12px;
+  color: var(--k-ink-soft);
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+/* WerkzeugStatusZeile (Schritt 03 Kern-Werkzeug-Liste). */
+.ow-werkzeug-zeile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+}
+.ow-werkzeug-name {
+  font-size: 12.5px;
+  color: var(--k-ink);
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+/* Statusfarbe kommt aus `STATUS_FARBE[status]` (Daten) — via CSS-Variable,
+   gleiches Muster wie `.ow-schritt-label`. */
+.ow-werkzeug-status {
+  font-size: 11px;
+  color: var(--_farbe, var(--k-ink-faint));
 }
