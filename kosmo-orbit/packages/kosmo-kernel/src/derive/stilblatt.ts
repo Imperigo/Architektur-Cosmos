@@ -16,6 +16,21 @@
 
 import type { BauPhase, ProjektInfo } from '../model/doc';
 
+/**
+ * XML-Attribut-/Text-Escaping — v0.8.1/P6 (Vollplankopf) aus `derive/plansvg.ts`
+ * HIERHER verschoben (nicht dorthin gehörend im engeren Sinn, aber die
+ * einzige zyklusfreie gemeinsame Quelle): `derive/plankopf.ts` braucht
+ * dieselbe Funktion, importierte sie bisher aus `plansvg.ts` — sobald
+ * `plansvg.ts` selbst aus `plankopf.ts` importiert (der neue Vollplankopf-Pfad
+ * in `planToSvg`), entstünde sonst ein Modul-Zyklus `plansvg → plankopf →
+ * plansvg`. `plansvg.ts` re-exportiert diese Funktion weiterhin unter
+ * demselben Namen (`export * from './stilblatt'`), jeder bestehende
+ * `import { escapeXml } from './plansvg'`-Aufrufer bleibt unverändert.
+ */
+export function escapeXml(s: string): string {
+  return s.replace(/[<>&'"]/g, (c) => `&#${c.charCodeAt(0)};`);
+}
+
 // ───────────────────────────────────────────────────────────────────────────
 // Achse 1 · STIFT = konstruktive Bedeutung (Papier-mm, massstabskonstant)
 // 0.50 primär geschnitten · 0.35 sekundär geschnitten/Terrain neu ·

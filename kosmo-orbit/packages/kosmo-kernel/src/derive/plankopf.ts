@@ -33,9 +33,9 @@
  */
 import type { SiaPhase } from '../model/doc';
 import { plankopfRect, type BlattRect } from './blattlayout';
-import { escapeXml } from './plansvg';
 import {
   BLATT,
+  escapeXml,
   messbarAttr,
   PHASEN_AKZENTE,
   PLANKOPF_TYPO_MM,

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297" font-family="Helvetica, Arial, sans-serif">
 <rect width="420" height="297" fill="white"/>
-<g transform="translate(175.50, 162.00) scale(0.01)">
+<g transform="translate(175.50, 140.50) scale(0.01)">
 <path d="M 8045 45 L 8045 -6045 L -45 -6045 L -45 45 Z M 205 -5795 L 7795 -5795 L 7795 -205 L 205 -205 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="50"/>
 <path d="M -45 45 L 8045 45 L 8205 205 L -205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="35"/>
 <path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="35"/>
@@ -23,16 +23,32 @@
 <text x="-1320" y="-3000" text-anchor="middle" font-size="260" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none" transform="rotate(-90 -1320 -3000)">600</text>
 </g>
 </g>
-<g stroke="black" fill="none" stroke-width="0.35">
-<circle cx="404" cy="16" r="4"/>
-<path d="M 404 19 L 404 13 M 402.6 14.6 L 404 13 L 405.4 14.6" />
-<text x="404" y="26" text-anchor="middle" font-size="3" font-family="'Lato', Helvetica, Arial, sans-serif" stroke="none" fill="black">N</text>
+<g data-teil="nordpfeil" stroke="black" fill="none" stroke-width="0.35">
+<circle cx="404.00" cy="16.00" r="4"/>
+<path d="M 404.00 19.00 L 404.00 13.00 M 402.60 14.60 L 404.00 13.00 L 405.40 14.60"/>
+<text x="404.00" y="26.00" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="3" font-feature-settings="'tnum'" font-weight="bold" stroke="none" fill="black">N</text>
 </g>
-<g font-size="3.2">
-<line x1="10" y1="279" x2="410" y2="279" stroke="black" stroke-width="0.35"/>
-<text x="10" y="285" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="4.2">GOLDEN-SATTELDACH-2G</text>
-<text x="10" y="290.5" font-family="'Lato', Helvetica, Arial, sans-serif">Grundriss EG · EG</text>
-<text x="410" y="285" text-anchor="end" font-family="'IBM Plex Mono', ui-monospace, monospace" font-feature-settings="'tnum'">1:100 · Masse in cm/m</text>
-<text x="410" y="290.5" text-anchor="end" font-family="'IBM Plex Mono', ui-monospace, monospace" font-feature-settings="'tnum'">10.07.2026 · Werkplan (SIA 51)</text>
+<g data-teil="plankopf">
+<rect x="230" y="232" width="180" height="55" fill="white" stroke="black" stroke-width="0.35"/>
+<rect x="230" y="232" width="180" height="1.3" fill="#94704F"/>
+<line x1="278" y1="233.3" x2="278" y2="287" stroke="black" stroke-width="0.25"/>
+<line x1="348" y1="233.3" x2="348" y2="287" stroke="black" stroke-width="0.25"/>
+<rect x="231.5" y="234.8" width="45" height="15" fill="none" stroke="black" stroke-width="0.25" stroke-dasharray="1.5 1"/>
+<text x="254.00" y="243.80" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="5.6" font-feature-settings="'tnum'" font-weight="bold" fill="#94704F">—</text>
+<text x="254.00" y="248.30" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">BÜRO-LOGO</text>
+<text x="279.50" y="241.00" text-anchor="start" font-family="'Lato', Helvetica, Arial, sans-serif" font-size="2.4">Golden-Satteldach-2G</text>
+<text x="279.50" y="284.50" text-anchor="start" font-family="'Lato', Helvetica, Arial, sans-serif" font-size="2.9">Grundriss EG · EG</text>
+<text x="349.50" y="236.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">MASSSTAB</text>
+<text x="349.50" y="239.50" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">1:100</text>
+<text x="380.00" y="236.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">FORMAT</text>
+<text x="380.00" y="239.50" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">A3</text>
+<text x="349.50" y="241.70" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">PHASE</text>
+<text x="349.50" y="245.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">VS · SIA 21</text>
+<text x="380.00" y="241.70" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">DATUM</text>
+<text x="380.00" y="245.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">10.07.2026</text>
+<text x="349.50" y="247.30" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">GEZEICHNET</text>
+<text x="380.00" y="247.30" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">GEPRÜFT</text>
+<text x="349.50" y="254.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">PLAN-NR.</text>
+<text x="349.50" y="258.70" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="3" font-feature-settings="'tnum'" font-weight="bold">—-—-VS-—-—-—</text>
 </g>
 </svg>

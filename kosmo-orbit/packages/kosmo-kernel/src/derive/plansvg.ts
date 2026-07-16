@@ -1,5 +1,5 @@
-import { phaseLabel, type KosmoDoc } from '../model/doc';
-import type { Assembly, Furniture, Slab, Storey, Wall } from '../model/entities';
+import { type KosmoDoc } from '../model/doc';
+import type { Assembly, Furniture, ImageAsset, Slab, Storey, Wall } from '../model/entities';
 import { moebelGeometrie, moebelTyp } from './moebel';
 import { beschlagSymbol, beschlagTyp } from './beschlag';
 import { axisDirection, wallFrame } from '../geometry/wall';
@@ -10,24 +10,21 @@ import { schraffurFuer, schraffurLinien } from './schraffur';
 import { pocheEntscheid } from './poche';
 import { fruehePhase } from '../model/doc';
 import { deriveAxo, type AxoSpec } from './axo';
+import { BLATT_FORMATE, BLATT_RAENDER, plankopfReserveMm, type BlattFormat, type BlattRect } from './blattlayout';
+import { nordpfeilSvg, plancode, plankopfSvg, siaZuMatrixStufe, type PlankopfDaten } from './plankopf';
 import {
-  BLATT,
-  BLATT_TYPO_MM,
   DASH,
   dashWelt,
+  escapeXml,
   GRAU,
   GRAU_SONDER,
   LINIENTYP_SOLL,
   MASS_STIFT,
-  plankopfStammdatenZeile,
   RADIER_WEISS,
   SCHRIFT_MESSBAR,
-  SCHRIFT_TITEL,
   STIFT,
-  titelAttr,
   UMBAU_FLAECHEN,
   UMBAU_STIFTE,
-  versal,
   ZONENTUER_LUECKE_STIFT,
 } from './stilblatt';
 
@@ -668,6 +665,67 @@ export function axoInnerSvg(doc: KosmoDoc, spec: AxoSpec, scale: number): InnerS
   return { inner: parts.join('\n'), bounds };
 }
 
+/** Reverse-Lookup `paper`-Masse → `BlattFormat`-Kürzel (Vollplankopf-Feld
+ * «Format», v0.8.1/P6) — prüft beide Ausrichtungen (quer/hoch) gegen
+ * `BLATT_FORMATE`. `undefined` bei einem Custom-Papierformat, das keinem
+ * ISO-Format entspricht (kein erfundener Wert, Guard-Prinzip §3.2 wie jedes
+ * andere `PlankopfDaten`-Feld). */
+function formatLabelFuerPapier(paper: { width: number; height: number }): BlattFormat | undefined {
+  for (const format of Object.keys(BLATT_FORMATE) as BlattFormat[]) {
+    const masse = BLATT_FORMATE[format];
+    if (
+      (masse.breite === paper.width && masse.hoehe === paper.height) ||
+      (masse.hoehe === paper.width && masse.breite === paper.height)
+    ) {
+      return format;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * `planToSvg` — Design-Einzelexport eines einzelnen Storey-Plans
+ * (`export-plan.ts`: `exportPlanPdf`/`exportPlanSvg`). v0.8.1/P6
+ * (`docs/GOLDEN-WECHSEL-081.md`, Owner-Entscheid 4 der v0.8.0,
+ * `docs/V080-PLANKOPF-SPEZ.md` §5.3): löst den bisherigen kompakten
+ * ~18-mm-Fussstreifen-Plankopf ab und rendert denselben 180×55-mm-
+ * Plankopf-Framework-Baustein wie `sheetToSvg` (`derive/sheet.ts`) —
+ * `derive/plankopf.ts` + `derive/blattlayout.ts`, dieselbe mm-Typoleiter
+ * (`PLANKOPF_TYPO_MM`) und dieselbe Titel-/Messbar-Stimme (D4-Nachschärfung:
+ * die Design-Einzelexport-Typografie spricht jetzt exakt dieselbe Skala wie
+ * der Publish-Pfad, statt der alten Ad-hoc-Grössen 3.2/4/3.6 mm). Der
+ * Nordpfeil wandert aus derselben Begründung auf die kanonische
+ * `nordpfeilSvg()` (D1-Nachschärfung: EINE Stift×Grau×Linientyp-Quelle statt
+ * einer zweiten, divergenten Handschrift) — bei identischer Geometrie
+ * (`NORDPFEIL_RANDABSTAND_MM=6` auf einem symmetrischen 10-mm-Rand ergibt
+ * exakt `cx=paper.width−16`/`cy=16`, wie zuvor hart codiert).
+ *
+ * Anders als `sheetToSvg` kennt der Design-Einzelexport keinen Heftrand-
+ * Begriff (kein Sheet-Entity, keine Blattbindung) — die Zeichenfläche für
+ * Nordpfeil/Zentrierung bleibt der bisherige symmetrische 10-mm-Rand
+ * (`BLATT_RAENDER.oben` auf allen vier Seiten), NICHT `rahmenRect()`
+ * (Heftrand 20 mm links wäre hier unbegründet). `plankopfRect()` selbst
+ * hängt nur von der rechten/unteren 10-mm-Kante ab (s. `sheet.ts`-Kommentar)
+ * und liefert daher unverändert dieselbe 180×55-Box.
+ *
+ * Bewusste Konsequenzen (dokumentiert, `GOLDEN-WECHSEL-081.md`):
+ * - Die Zentrierungs-Reserve wächst von den alten pauschalen 22 mm auf
+ *   `plankopfReserveMm().hoehe` (65 mm) — dieselbe Quelle wie die P7-Auto-
+ *   Füllung (`blattfuellung.ts`), keine zweite Schätzung.
+ * - Die kombinierte «Bauherr: X · Verfasser: Y»-Stammdatenzeile
+ *   (`plankopfStammdatenZeile()`) entfällt zugunsten des dedizierten
+ *   `PlankopfDaten.bauherr`-Felds der Vollplankopf-Gruppe (colM
+ *   «Bauherrschaft», rohe Werte ohne Label) — identisch zum bereits
+ *   ausgelieferten `sheetToSvg`-Verhalten (das ebenfalls kein `verfasser`-
+ *   Feld kennt); `Verfasser` erscheint darum im Design-Einzelexport nicht
+ *   mehr separat (kein Plankopf-Feld dafür in der Vorlage, Spez §1.5).
+ * - Ohne `opts.date` bleibt das Datumsfeld leer statt des alten
+ *   `new Date().toLocaleDateString()`-Fallbacks — Guard-Prinzip (kein
+ *   erfundenes «heute»), identisch zu `sheetToSvg`/`sheet.plankopf?.datum`.
+ * - Phase erscheint neu als Matrix-Stufe (`MatrixStufe · SIA-Nr.`, aus
+ *   `doc.settings.siaPhase`) statt `phaseLabel(doc.settings.phase)` — exakt
+ *   dieselbe Entkopplung wie in `sheetToSvg` (Owner-Entscheid 1, v0.8.0).
+ */
 export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOptions): string {
   const storey = doc.get<Storey>(storeyId);
   const { scale, paper } = opts;
@@ -675,8 +733,9 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
   const { inner, bounds: b } = planInnerSvg(doc, storeyId, scale);
 
   const parts: string[] = [];
-  // Zeichnung zentriert aufs Blatt (Plankopf-Streifen unten 18 mm)
-  const contentH = paper.height - 22;
+  // Zeichnung zentriert aufs Blatt — Reserve für den 180×55-Vollplankopf
+  // (Ecke unten rechts) statt der alten pauschalen 22mm, s. Funktionskommentar.
+  const contentH = paper.height - plankopfReserveMm().hoehe;
   let tx = paper.width / 2;
   let ty = contentH / 2;
   if (b) {
@@ -692,38 +751,47 @@ export function planToSvg(doc: KosmoDoc, storeyId: string, opts: PlanSheetOption
     '</g>',
   );
 
-  // Nordpfeil oben rechts (SIA 400 C.2.1: Grundriss mit Nordrichtung)
-  const nx = paper.width - 16;
-  parts.push(
-    `<g stroke="${BLATT.tinte}" fill="none" stroke-width="${BLATT.rahmenStift}">`,
-    `<circle cx="${nx}" cy="16" r="4"/>`,
-    `<path d="M ${nx} 19 L ${nx} 13 M ${nx - 1.4} 14.6 L ${nx} 13 L ${nx + 1.4} 14.6" />`,
-    `<text x="${nx}" y="26" text-anchor="middle" font-size="3" font-family="${SCHRIFT_TITEL}" stroke="none" fill="${BLATT.tinte}">N</text>`,
-    `</g>`,
-  );
+  // Nordpfeil oben rechts (SIA 400 C.2.1) — kanonischer Renderer, s. Kommentar oben.
+  const zfRect: BlattRect = {
+    x: BLATT_RAENDER.oben,
+    y: BLATT_RAENDER.oben,
+    breite: paper.width - BLATT_RAENDER.oben * 2,
+    hoehe: paper.height - BLATT_RAENDER.oben * 2,
+  };
+  parts.push(nordpfeilSvg(zfRect));
 
-  // Plankopf (SIA-angelehnt, schlicht)
-  const y0 = paper.height - 18;
-  // v0.7.5 A2: Bauherr-/Verfasser-Zeile NUR wenn `DocSettings.projekt`
-  // Stammdaten trägt (Golden-Guard — s. `plankopfStammdatenZeile`-Kommentar).
-  // Ohne Daten bleibt der Plankopf byte-identisch zu vor A2.
-  const stammdatenZeile = plankopfStammdatenZeile(doc.settings.projekt);
-  parts.push(
-    `<g font-size="3.2">`,
-    `<line x1="10" y1="${y0}" x2="${paper.width - 10}" y2="${y0}" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
-    `<text x="10" y="${y0 + 6}" ${titelAttr(BLATT_TYPO_MM.titel)}>${escapeXml(versal(opts.projectName))}</text>`,
-    `<text x="10" y="${y0 + 11.5}" font-family="${SCHRIFT_TITEL}">${escapeXml(opts.planTitle)} · ${escapeXml(storey?.name ?? '')}</text>`,
-    `<text x="${paper.width - 10}" y="${y0 + 6}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">1:${scale} \u00b7 Masse in cm/m</text>`,
-    `<text x="${paper.width - 10}" y="${y0 + 11.5}" text-anchor="end" font-family="${SCHRIFT_MESSBAR}" font-feature-settings="'tnum'">${escapeXml(opts.date ?? new Date().toLocaleDateString('de-CH'))} · ${escapeXml(phaseLabel(doc.settings.phase))}</text>`,
-    ...(stammdatenZeile !== null
-      ? [`<text x="10" y="${y0 + 16}" font-size="2.6" font-family="${SCHRIFT_MESSBAR}">${escapeXml(stammdatenZeile)}</text>`]
-      : []),
-    `</g>`,
-    '</svg>',
-  );
+  // Vollplankopf (180×55mm, derselbe Renderer wie `sheetToSvg`).
+  const matrixStufe = siaZuMatrixStufe(doc.settings.siaPhase);
+  const buero = doc.settings.buero;
+  const logoAsset = buero?.logoAssetId ? doc.get<ImageAsset>(buero.logoAssetId) : undefined;
+  const formatLabel = formatLabelFuerPapier(paper);
+  const daten: PlankopfDaten = {
+    ...(buero
+      ? {
+          buero: {
+            ...(buero.name !== undefined ? { name: buero.name } : {}),
+            ...(buero.adresse !== undefined ? { adresse: buero.adresse } : {}),
+            ...(buero.kuerzel !== undefined ? { kuerzel: buero.kuerzel } : {}),
+            ...(logoAsset ? { logoDataUrl: `data:${logoAsset.mime};base64,${logoAsset.data}` } : {}),
+          },
+        }
+      : {}),
+    ...(doc.settings.projekt?.bauherr !== undefined ? { bauherr: doc.settings.projekt.bauherr } : {}),
+    projektName: opts.projectName,
+    ...(doc.settings.projekt?.adresse !== undefined ? { adresse: doc.settings.projekt.adresse } : {}),
+    ...(doc.settings.projekt?.parzelleNr !== undefined ? { parzelleNr: doc.settings.projekt.parzelleNr } : {}),
+    inhalt: storey?.name ? `${opts.planTitle} · ${storey.name}` : opts.planTitle,
+    massstab: scale,
+    ...(formatLabel !== undefined ? { format: formatLabel } : {}),
+    ...(opts.date !== undefined ? { datum: opts.date } : {}),
+    plancode: plancode({
+      ...(buero?.kuerzel !== undefined ? { buero: buero.kuerzel } : {}),
+      ...(doc.settings.projekt?.projektCode !== undefined ? { projekt: doc.settings.projekt.projektCode } : {}),
+      phase: matrixStufe,
+    }),
+  };
+  parts.push(plankopfSvg(paper.width, paper.height, matrixStufe, daten));
+
+  parts.push('</svg>');
   return parts.join('\n');
-}
-
-export function escapeXml(s: string): string {
-  return s.replace(/[<>&'"]/g, (c) => `&#${c.charCodeAt(0)};`);
 }

@@ -112,14 +112,25 @@ describe('Default-Doc & fromJSON — additiver Block bricht den Altbestand nicht
   });
 });
 
-describe('Plankopf-Guard (v0.7.5 A2) — Bauherr-/Verfasser-Zeile nur bei gesetzten Daten', () => {
+describe('Plankopf-Guard (v0.7.5 A2, v0.8.1/P6 auf den Vollplankopf nachgezogen) — Bauherr/Adresse/Parzelle nur bei gesetzten Daten', () => {
+  // v0.8.1/P6 (GOLDEN-WECHSEL-081.md, Owner-Entscheid 4 der v0.8.0):
+  // `planToSvg` rendert den 180×55-Vollplankopf (`derive/plankopf.ts`) statt
+  // des alten ~18mm-Fussstreifens. Die kombinierte «Bauherr: X · Verfasser:
+  // Y»-Zeile (`plankopfStammdatenZeile()`) entfällt zugunsten der Vollplankopf-
+  // eigenen Felder: `PlankopfDaten.bauherr` erscheint ROH (kein «Bauherr:»-
+  // Label) in der colM-«Bauherrschaft»-Zeile, `adresse`/`parzelleNr` fliessen
+  // NEU in die «Standort»-Zeile (` · `-getrennt) — identisch zum bereits
+  // ausgelieferten `sheetToSvg`-Verhalten. `Verfasser` hat in der
+  // Vollplankopf-Vorlage KEIN eigenes Feld (Spez §1.5) und erscheint darum im
+  // Design-Einzelexport nicht mehr separat — dieselbe Grenze wie bei
+  // Publish-Blättern.
   function planMitEinerWand(): { doc: KosmoDoc; storeyId: string } {
     const doc = new KosmoDoc();
     const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
     return { doc, storeyId: (eg.patches[0] as { id: string }).id };
   }
 
-  it('ohne `projekt` bleibt die Plankopf-Ausgabe wie vor A2 (keine Bauherr-/Verfasser-Zeile)', () => {
+  it('ohne `projekt` bleiben Bauherrschaft-/Standort-Zeile leer', () => {
     const { doc, storeyId } = planMitEinerWand();
     const svg = planToSvg(doc, storeyId, {
       scale: 100,
@@ -128,11 +139,11 @@ describe('Plankopf-Guard (v0.7.5 A2) — Bauherr-/Verfasser-Zeile nur bei gesetz
       planTitle: 'Grundriss EG',
       date: '12.07.2026',
     });
-    expect(svg).not.toContain('Bauherr:');
-    expect(svg).not.toContain('Verfasser:');
+    expect(svg).not.toContain('Bauherr');
+    expect(svg).not.toContain('Verfasser');
   });
 
-  it('mit `projekt.bauherr` erscheint die Bauherr-Zeile im Plankopf', () => {
+  it('mit `projekt.bauherr` erscheint der rohe Wert in der Bauherrschaft-Zeile (kein «Bauherr:»-Label mehr)', () => {
     const { doc, storeyId } = planMitEinerWand();
     execute(doc, 'design.projektInfoSetzen', { bauherr: 'Baugenossenschaft Ahorn' });
     const svg = planToSvg(doc, storeyId, {
@@ -142,10 +153,11 @@ describe('Plankopf-Guard (v0.7.5 A2) — Bauherr-/Verfasser-Zeile nur bei gesetz
       planTitle: 'Grundriss EG',
       date: '12.07.2026',
     });
-    expect(svg).toContain('Bauherr: Baugenossenschaft Ahorn');
+    expect(svg).toContain('>Baugenossenschaft Ahorn<');
+    expect(svg).not.toContain('Bauherr:');
   });
 
-  it('mit `projekt.bauherr` UND `.verfasser` erscheinen beide, durch " · " getrennt', () => {
+  it('mit `projekt.bauherr` UND `.verfasser` erscheint NUR Bauherr — Verfasser hat kein Vollplankopf-Feld', () => {
     const { doc, storeyId } = planMitEinerWand();
     execute(doc, 'design.projektInfoSetzen', {
       bauherr: 'Baugenossenschaft Ahorn',
@@ -158,12 +170,15 @@ describe('Plankopf-Guard (v0.7.5 A2) — Bauherr-/Verfasser-Zeile nur bei gesetz
       planTitle: 'Grundriss EG',
       date: '12.07.2026',
     });
-    expect(svg).toContain('Bauherr: Baugenossenschaft Ahorn · Verfasser: Baubüro Andrin');
+    expect(svg).toContain('>Baugenossenschaft Ahorn<');
+    expect(svg).not.toContain('Baubüro Andrin');
+    expect(svg).not.toContain('Verfasser');
   });
 
-  it('mit `projekt.adresse`/`.parzelleNr` allein (ohne Bauherr/Verfasser) bleibt der Plankopf unverändert', () => {
-    // adresse/parzelleNr fliessen (noch) nicht in den Plankopf — nur Bauherr/
-    // Verfasser sind Plankopf-Felder (s. `plankopfStammdatenZeile`).
+  it('mit `projekt.adresse`/`.parzelleNr` erscheinen beide, " · "-getrennt, in der Standort-Zeile', () => {
+    // v0.8.1/P6: anders als beim alten Fussstreifen fliessen adresse/
+    // parzelleNr jetzt in den Vollplankopf (colM «Standort»), identisch zu
+    // `sheetToSvg`.
     const { doc, storeyId } = planMitEinerWand();
     execute(doc, 'design.projektInfoSetzen', { adresse: 'Ahornweg 12, 6000 Luzern', parzelleNr: '1847' });
     const svg = planToSvg(doc, storeyId, {
@@ -173,13 +188,14 @@ describe('Plankopf-Guard (v0.7.5 A2) — Bauherr-/Verfasser-Zeile nur bei gesetz
       planTitle: 'Grundriss EG',
       date: '12.07.2026',
     });
+    expect(svg).toContain('Ahornweg 12, 6000 Luzern · 1847');
     expect(svg).not.toContain('Bauherr:');
-    expect(svg).not.toContain('Verfasser:');
+    expect(svg).not.toContain('Verfasser');
   });
 });
 
-describe('Golden: plankopf-stammdaten (neues Golden, v0.7.5 A2)', () => {
-  it('Grundriss mit gesetzten Stammdaten (Bauherr + Verfasser) zeigt die neue Plankopf-Zeile', () => {
+describe('Golden: plankopf-stammdaten (v0.7.5 A2, v0.8.1/P6 auf den Vollplankopf umgestellt)', () => {
+  it('Grundriss mit gesetzten Stammdaten (Bauherr + Verfasser) zeigt Bauherr in der Vollplankopf-Bauherrschaft-Zeile', () => {
     const { doc, storeyId } = testhausStammdaten();
     const svg = planToSvg(doc, storeyId, {
       scale: 100,
@@ -188,7 +204,10 @@ describe('Golden: plankopf-stammdaten (neues Golden, v0.7.5 A2)', () => {
       planTitle: 'Grundriss EG',
       date: '12.07.2026',
     });
-    expect(svg).toContain('Bauherr: Baugenossenschaft Ahorn · Verfasser: Baubüro Andrin');
+    // v0.8.1/P6: der Vollplankopf zeigt Bauherr roh (kein «Bauherr:»-Label,
+    // kein kombinierter Verfasser-Zusatz — s. Beschreibung oben).
+    expect(svg).toContain('>Baugenossenschaft Ahorn<');
+    expect(svg).not.toContain('Baubüro Andrin');
     pruefeGolden(svg, new URL('./golden/plankopf-stammdaten.svg', import.meta.url));
   });
 });
