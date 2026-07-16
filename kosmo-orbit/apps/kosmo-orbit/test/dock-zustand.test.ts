@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { DOCK_KONSTANTEN } from '../src/state/dock-kern';
 import { dockbarePanelIds, stationsPanels } from '../src/state/dock-stationen';
-import { eingeklappteDiff, neuLadenAusSpeicher, useDockZustand } from '../src/state/dock-zustand';
+import { eingeklappteDiff, neuLadenAusSpeicher, stufeUmschalten, useDockZustand } from '../src/state/dock-zustand';
 import { PANEL_IDS } from '../src/state/ui-zustand';
 
 /**
@@ -578,5 +578,50 @@ describe('dock-stationen — Registry-Invarianten (vis)', () => {
 
   it('dockbarePanelIds(vis) liefert dieselben IDs wie stationsPanels(vis)', () => {
     expect(dockbarePanelIds('vis')).toEqual(panels.map((p) => p.id));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// v0.8.1 Welle 4 / Paket P5b — `PanelOverride.stufe` (Zwei-Stufen-Popups,
+// KPanelZweiStufen-Verdrahtung, `docs/V081-SPEZ.md` §2.4)
+// ---------------------------------------------------------------------------
+
+describe('dock-zustand — PanelOverride.stufe (P5b, additiv zum P5a-Fundament)', () => {
+  it('stufe übersteht einen simulierten Neustart (Persistenz-Roundtrip)', () => {
+    useDockZustand.getState().panelOverrideSetzen('design', 'kennzahlen', { stufe: 'kompakt' });
+    neuLadenAusSpeicher();
+    const layout = useDockZustand.getState().layoutFuer('design');
+    expect(layout.panels['kennzahlen']).toEqual({ stufe: 'kompakt' });
+  });
+
+  it('ein kaputter/fremder stufe-Wert im rohen Speicher wird beim Laden verworfen (kein Crash)', () => {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        modus: 'A',
+        layouts: { 'A:design': { panels: { kennzahlen: { stufe: 'riesig' } } } },
+      }),
+    );
+    neuLadenAusSpeicher();
+    const layout = useDockZustand.getState().layoutFuer('design');
+    expect(layout.panels['kennzahlen']).toEqual({});
+  });
+
+  it('stufe lässt sich unabhängig von anderen Override-Feldern setzen/löschen (additiver Patch-Weg)', () => {
+    useDockZustand.getState().panelOverrideSetzen('design', 'drawOffen', { angeheftet: true });
+    useDockZustand.getState().panelOverrideSetzen('design', 'drawOffen', { stufe: 'offen' });
+    let layout = useDockZustand.getState().layoutFuer('design');
+    expect(layout.panels['drawOffen']).toEqual({ angeheftet: true, stufe: 'offen' });
+
+    useDockZustand.getState().panelOverrideSetzen('design', 'drawOffen', { stufe: undefined });
+    layout = useDockZustand.getState().layoutFuer('design');
+    expect(layout.panels['drawOffen']).toEqual({ angeheftet: true });
+  });
+
+  it('stufeUmschalten(): undefined→kompakt, kompakt→offen, offen→kompakt', () => {
+    expect(stufeUmschalten(undefined)).toBe('kompakt');
+    expect(stufeUmschalten('kompakt')).toBe('offen');
+    expect(stufeUmschalten('offen')).toBe('kompakt');
   });
 });

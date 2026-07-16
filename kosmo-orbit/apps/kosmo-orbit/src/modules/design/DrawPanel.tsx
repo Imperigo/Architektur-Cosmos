@@ -1,14 +1,29 @@
 import { useMemo, useState } from 'react';
 import { ausmassAlsCsv, deriveAusmass, deriveMengen, raumTypVorschlag, type Entity, type MassBody, type Roof, type Slab, type Stair, type Wall, type Zone, type Assembly } from '@kosmo/kernel';
-import { Badge, Hairline, KButton, Measure } from '@kosmo/ui';
+import { KButton, KPanelZweiStufen, Measure, type KPanelZweiStufenTab } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 import './design-panels.css';
 
 /**
  * KosmoDraw — der sichtbare BIM-Verständnisträger (Vision Q9/Q15):
  * Modellbaum (jedes Element mit IFC-Identität, Klick = Auswahl) und
  * Mengenauszug (ehrliche Vorausmasse aus der Parametrik, kein NPK-Ausmass).
+ *
+ * v0.8.1 Welle 4 / Paket P5b («Zwei-Stufen-Popups», Pilot, `docs/V081-
+ * SPEZ.md` §2.2/§2.4) — migriert auf `KPanelZweiStufen`: die alten
+ * KButton-Tabs (`draw-tab-*`-Halbmuster, drei Ad-hoc-`KButton`s mit
+ * `tone`-Umschaltung) sind ersetzt durch EIN `KTabs`-Durchklick-Menü — die
+ * drei testids (`draw-tab-baum`/`-mengen`/`-ausmass`) wandern dabei
+ * BYTE-GLEICH auf `KTabItem.testid` mit, nur die Render-Implementierung
+ * ändert sich. Die Kernkennzahl im Kopf ist der Name des aktiv gewählten
+ * Tabs (§2.2: «Kopf zeigt den Namen des aktiv gewählten Tabs»). Die
+ * Zwei-Stufen-Stufe (`PanelOverride.stufe`) ist unabhängig vom Tab-State —
+ * `tab` bleibt lokaler React-State wie zuvor, nur `stufe` kommt neu aus dem
+ * Dock-Store.
  */
+
+const TAB_LABEL = { baum: 'Modellbaum', mengen: 'Mengen', ausmass: 'Ausmass' } as const;
 
 function elementLabel(doc: ReturnType<typeof useProject.getState>['doc'], e: Entity): string {
   switch (e.kind) {
@@ -84,6 +99,11 @@ export function DrawPanel() {
   const setActiveStorey = useProject((s) => s.setActiveStorey);
   const doc = useProject.getState().doc;
   const [tab, setTab] = useState<'baum' | 'mengen' | 'ausmass'>('baum');
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['drawOffen']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
 
   const mengen = useMemo(
     () => deriveMengen(doc),
@@ -110,26 +130,14 @@ export function DrawPanel() {
   const fmt = (v: number | undefined, einheit: string) =>
     v === undefined ? '—' : `${v.toLocaleString('de-CH', { maximumFractionDigits: 1 })} ${einheit}`;
 
-  return (
-    <div data-testid="draw-panel" className="dp-dialog--flex">
-      <RaumTypCopilot />
-      <div className="draw-kopf">
-        <Badge hue="var(--k-mod-draw)">KosmoDraw</Badge>
-        <div className="dp-fuell" />
-        <KButton size="sm" tone={tab === 'baum' ? 'accent' : 'ghost'} onClick={() => setTab('baum')} data-testid="draw-tab-baum">
-          Modellbaum
-        </KButton>
-        <KButton size="sm" tone={tab === 'mengen' ? 'accent' : 'ghost'} onClick={() => setTab('mengen')} data-testid="draw-tab-mengen">
-          Mengen
-        </KButton>
-        <KButton size="sm" tone={tab === 'ausmass' ? 'accent' : 'ghost'} onClick={() => setTab('ausmass')} data-testid="draw-tab-ausmass">
-          Ausmass
-        </KButton>
-      </div>
-      <Hairline />
-      <div className="draw-koerper">
-        {tab === 'baum' ? (
-          storeys.length === 0 ? (
+  const tabs: readonly KPanelZweiStufenTab[] = [
+    {
+      id: 'baum',
+      label: 'Modellbaum',
+      testid: 'draw-tab-baum',
+      inhalt: (
+        <div className="draw-koerper">
+          {storeys.length === 0 ? (
             <span className="dp-leer">Noch kein Geschoss.</span>
           ) : (
             storeys.map((s) => {
@@ -156,9 +164,64 @@ export function DrawPanel() {
                 </div>
               );
             })
-          )
-        ) : tab === 'ausmass' ? (
-          ausmass.positionen.length === 0 ? (
+          )}
+        </div>
+      ),
+    },
+    {
+      id: 'mengen',
+      label: 'Mengen',
+      testid: 'draw-tab-mengen',
+      inhalt: (
+        <div className="draw-koerper">
+          {mengen.positionen.length === 0 ? (
+            <span className="dp-leer">Noch keine Bauteile im Modell.</span>
+          ) : (
+            <table className="dp-tabelle draw-tabelle-links" data-testid="mengen-tabelle">
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th className="dp-num">Stk</th>
+                  <th className="dp-num">Fläche</th>
+                  <th className="dp-num">Volumen</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mengen.positionen.map((p) => (
+                  <tr key={p.kind + p.bezeichnung}>
+                    <td>
+                      {p.bezeichnung}
+                      <div className="draw-zeile-detail">{p.ifcKlasse}</div>
+                    </td>
+                    <td className="dp-num">
+                      <Measure>{p.anzahl}</Measure>
+                    </td>
+                    <td className="dp-num">
+                      <Measure>{fmt(p.flaeche, 'm²')}</Measure>
+                    </td>
+                    <td className="dp-num">
+                      <Measure>{fmt(p.volumen, 'm³')}</Measure>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {mengen.positionen.length > 0 && (
+            <span className="draw-fussnote">
+              Vorausmasse aus der Parametrik (Wände netto, Dächer als Grundfläche) — kein NPK-Ausmass.
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      id: 'ausmass',
+      label: 'Ausmass',
+      testid: 'draw-tab-ausmass',
+      inhalt: (
+        <div className="draw-koerper">
+          {ausmass.positionen.length === 0 ? (
             <span className="dp-leer">Noch keine Bauteile im Modell.</span>
           ) : (
             <>
@@ -196,46 +259,31 @@ export function DrawPanel() {
                 </span>
               </div>
             </>
-          )
-        ) : mengen.positionen.length === 0 ? (
-          <span className="dp-leer">Noch keine Bauteile im Modell.</span>
-        ) : (
-          <table className="dp-tabelle draw-tabelle-links" data-testid="mengen-tabelle">
-            <thead>
-              <tr>
-                <th>Position</th>
-                <th className="dp-num">Stk</th>
-                <th className="dp-num">Fläche</th>
-                <th className="dp-num">Volumen</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mengen.positionen.map((p) => (
-                <tr key={p.kind + p.bezeichnung}>
-                  <td>
-                    {p.bezeichnung}
-                    <div className="draw-zeile-detail">{p.ifcKlasse}</div>
-                  </td>
-                  <td className="dp-num">
-                    <Measure>{p.anzahl}</Measure>
-                  </td>
-                  <td className="dp-num">
-                    <Measure>{fmt(p.flaeche, 'm²')}</Measure>
-                  </td>
-                  <td className="dp-num">
-                    <Measure>{fmt(p.volumen, 'm³')}</Measure>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-        {tab === 'mengen' && mengen.positionen.length > 0 && (
-          <span className="draw-fussnote">
-            Vorausmasse aus der Parametrik (Wände netto, Dächer als Grundfläche) — kein NPK-Ausmass.
-          </span>
-        )}
-      </div>
+          )}
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div data-testid="draw-panel" className="dp-dialog--flex">
+      <RaumTypCopilot />
+      <KPanelZweiStufen
+        // Additive testid (Regel «additive neue testids der Komponente ok»)
+        // — `draw-panel` selbst BLEIBT byte-gleich auf dem äusseren Wrapper
+        // (`RaumTypCopilot` ist dessen Geschwister, kein Kind von
+        // `KPanelZweiStufen`); dieser eigene Testid gibt der Kopf-/Tab-Zone
+        // einen stabilen Ankerpunkt für den Kompakt/Offen-Umschalt-Knopf
+        // (`draw-panel-koerper-umschalten`), den es vorher nicht gab.
+        data-testid="draw-panel-koerper"
+        titel="KosmoDraw"
+        kernkennzahl={TAB_LABEL[tab]}
+        stufe={stufe}
+        onStufeUmschalten={() => panelOverrideSetzen('design', 'drawOffen', { stufe: stufeUmschalten(stufeRoh) })}
+        aktiverTab={tab}
+        onTabWechseln={(id) => setTab(id as 'baum' | 'mengen' | 'ausmass')}
+        tabs={tabs}
+      />
     </div>
   );
 }

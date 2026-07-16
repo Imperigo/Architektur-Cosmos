@@ -20,3 +20,6 @@ export * from './node';
 export * from './variantenkarte';
 export * from './card';
 export * from './switch';
+// v0.8.1 Welle 4 / Paket P5b (Spez §2, Zwei-Stufen-Popups) — ersetzt die
+// KennzahlenPanel-/DrawPanel-Halbmuster, s. Kopfkommentar der Datei.
+export * from './panel-zwei-stufen';

@@ -168,6 +168,15 @@ function normalisierePanelOverride(wert: unknown): PanelOverride {
     ...(typeof w['fw'] === 'number' ? { fw: w['fw'] } : {}),
     ...(typeof w['fh'] === 'number' ? { fh: w['fh'] } : {}),
     ...(typeof w['geschlossen'] === 'boolean' ? { geschlossen: w['geschlossen'] } : {}),
+    // v0.8.1 Welle 4 / Paket P5b (Zwei-Stufen-Popups, `PanelOverride.stufe`
+    // P5a-Feld) — additive Whitelist-Ergänzung: ohne diesen Zweig würde ein
+    // persistierter `stufe`-Wert bei jedem `localStorage`-Roundtrip
+    // (`ladeSpeicherRoh()` → `normalisiere()` → hier) STILL verworfen, weil
+    // diese Funktion jedes unbekannte Feld defensiv wegfiltert. Gültige Werte
+    // sind exakt die beiden `PanelOverride['stufe']`-Literale, alles andere
+    // (falscher Typ, alter/kaputter Speicherstand) fällt auf „kein Override“
+    // zurück — identisches Härtungsmuster wie `dock`/`anker` oben.
+    ...(w['stufe'] === 'kompakt' || w['stufe'] === 'offen' ? { stufe: w['stufe'] } : {}),
   };
 }
 
@@ -492,6 +501,25 @@ export const useDockZustand = create<DockZustand>((set, get) => ({
  */
 export function neuLadenAusSpeicher(): void {
   useDockZustand.setState(anfangsZustand());
+}
+
+// ---------------------------------------------------------------------------
+// stufeUmschalten — v0.8.1 Welle 4 / Paket P5b («Zwei-Stufen-Popups»,
+// `KPanelZweiStufen`-Verdrahtung, `docs/V081-SPEZ.md` §2.4). Reine, additive
+// Hilfsfunktion (kein Hook, kein neuer Store) für den Umschalt-Klick im Kopf
+// eines migrierten Panels: liest den AKTUELLEN `PanelOverride.stufe`-Wert
+// einer Instanz und liefert den NÄCHSTEN. `undefined` (Alt-Default, noch nie
+// umgeschaltet) verhält sich dabei wie `'offen'` — der erste Klick klappt
+// darum zuerst nach `'kompakt'` zusammen (die Panels selbst rendern
+// `undefined` ebenfalls wie `'offen'`, s. `KennzahlenPanel.tsx`/
+// `DrawPanel.tsx`), jeder weitere Klick wechselt danach zwischen den beiden
+// EXPLIZITEN Werten. Aufrufer: `panelOverrideSetzen(station, panelId, {
+// stufe: stufeUmschalten(aktuell) })` — derselbe Patch-Weg wie jeder andere
+// Override, keine Sonderbehandlung.
+// ---------------------------------------------------------------------------
+
+export function stufeUmschalten(aktuell: PanelOverride['stufe']): NonNullable<PanelOverride['stufe']> {
+  return aktuell === 'kompakt' ? 'offen' : 'kompakt';
 }
 
 // ---------------------------------------------------------------------------

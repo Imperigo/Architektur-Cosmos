@@ -1340,6 +1340,65 @@ progress {
   cursor: default;
 }
 
+/* KPanelZweiStufen (v0.8.1 Welle 4 / Paket P5b, Spez §2.1 «C» / §2.2 / §2.3)
+   — Kopf (immer sichtbar) + optionale Tab-Leiste + Körper. Bewusst OHNE
+   `display`/`height`/Chrome (Hintergrund/Rand/Schatten) auf `.k-panel-zwei`
+   selbst: die migrierten Panels bringen ihre eigene Hülle bereits mit
+   (`.dp-panel`/`.dp-dialog--flex`, `design-panels.css`) — zwei konkurrierende
+   `display`-Deklarationen auf demselben Element wären ein stilles Cascade-
+   Rennen. `.k-panel-zwei` liefert nur die INNEREN Bausteine (Kopf/Tabs/
+   Körper), keine Aussenwirkung. Nie-Scroll-Gebot (§2.3): keine Zeile hier
+   setzt `overflow:auto`/`scroll`. */
+.k-panel-zwei-kopf {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  padding: var(--k-s3) var(--k-s4);
+  width: 100%;
+}
+.k-panel-zwei-titel {
+  font-family: var(--k-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.k-panel-zwei-kernkennzahl {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-sm);
+  font-weight: 600;
+  color: var(--k-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.k-panel-zwei-fuell {
+  flex: 1 1 auto;
+}
+.k-panel-zwei-toggle-icon {
+  color: var(--k-ink-faint);
+  flex: 0 0 auto;
+}
+.k-panel-zwei-tabreihe {
+  padding: 0 var(--k-s4);
+}
+.k-panel-zwei-koerper {
+  padding: 0 var(--k-s4) var(--k-s4);
+  display: grid;
+  gap: var(--k-s3);
+  min-height: 0;
+}
+
 /* KMenu — Papier-Karte mit --k-shadow-overlay; öffnet über CSS-Klasse
    (`.offen`), bleibt (wie `.k-orbit-faecher`) immer im DOM — Opazität/
    pointer-events signalisieren offen/zu, Öffnungs-Animation ausschliesslich

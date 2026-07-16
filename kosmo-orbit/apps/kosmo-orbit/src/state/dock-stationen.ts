@@ -257,6 +257,23 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    // v0.8.1 Welle 4 / Paket P5b (Zwei-Stufen-Popups, Pilot DrawPanel,
+    // `docs/V081-SPEZ.md` §2.1/§2.4) — Viertelflächen-Ziel-Formel (h ≈ 0.25 ×
+    // eine typische Feld-Höhe, hier grob mit ~760px als Diskussions-
+    // grundlage angesetzt, da zur Registrierzeit kein realer `feld`-Messwert
+    // vorliegt — der LAUFENDE 'offen'-Viertel-Ziel wird ohnehin dynamisch aus
+    // `opts.feld` berechnet, s. `zielKompakt()` in `dock-kern.ts`; dieser Wert
+    // wirkt NUR für die Stufe `'kompakt'`). `stack()`s `zielKompakt()` klemmt
+    // das Ergebnis zusätzlich auf `[min, groesse]` = `[170, 320]` — 190 liegt
+    // knapp über `min`, die Kompakt-Stufe bleibt darum spürbar kleiner als
+    // die heutige 66%-Stufe, aber nicht kleiner als der bisherige Boden.
+    // `w` hat für rechte STACK-Panels (anders als Floats) keinen Effekt auf
+    // `stack()` — die Spaltenbreite kommt aus `rightW`, nicht aus `PanelDef`
+    // (s. Kommentar `PanelDef.groesseKompakt`, `dock-kern.ts`); hier trotzdem
+    // gesetzt, damit das Feld nicht halb-definiert bleibt (API verlangt
+    // `{w,h}` als Paar) und für eine künftige Float-Migration bereits einen
+    // sinnvollen Wert bereithält.
+    groesseKompakt: { w: 190, h: 190 },
   },
   // ---- v0.7.8 Welle 2 (P4) — Rechts-Stack-Migration -----------------------
   // `kennzahlen` (KennzahlenPanel.tsx) und `inspector` (Inspector.tsx) waren
@@ -293,6 +310,14 @@ const DESIGN_PANELS: readonly PanelDef[] = [
     start: 'zu',
     schliessbar: true,
     bewegbar: true,
+    // v0.8.1 Welle 4 / Paket P5b (Zwei-Stufen-Popups, Pilot KennzahlenPanel,
+    // `docs/V081-SPEZ.md` §2.1/§2.4) — dieselbe Viertelflächen-Herleitung wie
+    // bei `drawOffen` oben (grobe ~0.25×feld.h-Diskussionsgrundlage zur
+    // Registrierzeit, geklemmt von `zielKompakt()` auf `[min, groesse]` =
+    // `[200, 380]`; 210 liegt knapp über `min`). `w` ebenso wirkungslos für
+    // diese rechte STACK-Spalte (s. Kommentar dort), nur der API-Form halber
+    // gesetzt.
+    groesseKompakt: { w: 210, h: 210 },
   },
   {
     id: 'inspector',

@@ -1,14 +1,28 @@
 import { useMemo, useState } from 'react';
-import { Badge, Hairline, KButton, KIcon, KKeyValue, moduleHue } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KKeyValue, KPanelZweiStufen } from '@kosmo/ui';
 import './design-panels.css';
 import { areaReport, kennzahlenAuswerten, pruefeGrundriss } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 
 /**
  * Live-Kennzahlen (Vorform/Finch-Muster, Owner-Methodik):
  * SIA-416-Flächen aus Zonen, aGF-Ziel = HNF × Faktor, GF-Schätzung mit
  * Fassadenzuschlag, GF aus Volumenstudien nach Nutzung. Läuft bei jedem
  * Befehl live mit — das Excel stirbt.
+ *
+ * v0.8.1 Welle 4 / Paket P5b («Zwei-Stufen-Popups», Pilot, `docs/V081-
+ * SPEZ.md` §2.2/§2.4) — migriert auf `KPanelZweiStufen`: das alte
+ * `kp-kopf-knopf`-Halbmuster (Kopf-Klapp-Button + `open`-State) ist ersetzt,
+ * NICHT verdoppelt. `open` (lokaler React-State) wird durch die
+ * Dock-Instanz-Stufe (`PanelOverride.stufe`, P5a-Feld) ersetzt — die
+ * gesamte bisherige Kopf-/Körper-Struktur (inkl. ALLER bestehenden testids)
+ * wandert unverändert in EINEN KTabs-Tab («Übersicht»); mit nur einem Tab
+ * unterdrückt `KPanelZweiStufen` die Tab-Leiste selbst (kein sichtbarer
+ * Unterschied zu vorher, ausser dem neuen Kopf-Rezept). Die Kernkennzahl
+ * ist die NGF (bzw. GF-Volumenstudie ohne Zonen) — die «wichtigste
+ * Kennzahl», die das Panel laut Dateikopf-Kommentar schon immer live
+ * mitführt (§2.2: «Kopf trägt bereits die wichtigste Kennzahl»).
  */
 
 const fmt = (m2: number) =>
@@ -18,7 +32,11 @@ export function KennzahlenPanel() {
   const revision = useProject((s) => s.revision);
   const doc = useProject.getState().doc;
   const activeStoreyId = useProject((s) => s.activeStoreyId);
-  const [open, setOpen] = useState(true);
+  const modus = useDockZustand((s) => s.modus);
+  const layouts = useDockZustand((s) => s.layouts);
+  const panelOverrideSetzen = useDockZustand((s) => s.panelOverrideSetzen);
+  const stufeRoh = layouts[`${modus}:design`]?.panels['kennzahlen']?.stufe;
+  const stufe = stufeRoh ?? 'offen';
   // H-15/H-17 (Sim-Befunde): kein 6er-Deckel mehr — die Liste zeigt alle
   // Befunde, gruppiert nach Schwere; ein einfacher Filter blendet Warnungen/
   // Hinweise aus, wenn nur die Fehler interessieren.
@@ -45,9 +63,19 @@ export function KennzahlenPanel() {
 
   const hasZones = report.totalNgf > 0;
   const hasMasses = report.gfVolumen > 0;
+  // §2.2 Kopfzeile-Rezept: GENAU eine Kernkennzahl — die NGF ist die
+  // «wichtigste Kennzahl», die dieses Panel schon immer live nachführt
+  // (Datei-Kopfkommentar); ohne Zonen tritt die Volumenstudien-GF an ihre
+  // Stelle, ohne beides bleibt die Kopfzeile ehrlich statt leer (§2.2
+  // Grundsatz: «nie leer»).
+  const kernkennzahl = hasZones
+    ? `${fmt(report.totalNgf)} m² NGF`
+    : hasMasses
+      ? `${fmt(report.gfVolumen)} m² GF`
+      : 'Keine Fläche';
 
   return (
-    <div
+    <KPanelZweiStufen
       data-testid="kennzahlen"
       // K3 (Owner S. 8): «Popup-Texte dürfen niemals den Block verlassen» —
       // dieselbe zentrale Overflow-Regel wie alle anderen Panels (T4b).
@@ -61,136 +89,137 @@ export function KennzahlenPanel() {
       // Position/Breite/Höhen-Deckel entfallen — der äussere
       // `.k-dock-panel-inhalt` (dock-flaeche.css) übernimmt das Scrollen.
       className="k-dialog dp-panel"
-    >
-      <button onClick={() => setOpen(!open)} className="kp-kopf-knopf">
-        <Badge hue={moduleHue.design}>Kennzahlen</Badge>
-        {befunde.length > 0 && (
-          <Badge hue={befunde[0]!.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)'}>
-            {befunde.length} Check{befunde.length > 1 ? 's' : ''}
-          </Badge>
-        )}
-        <span className="dp-fuell" />
-        <KIcon name={open ? 'minus' : 'plus'} size={14} className="kp-toggle-icon" />
-      </button>
-      {open && (
-        <div className="kp-koerper">
-          {!hasZones && !hasMasses && (
-            <div className="kp-leerzustand">
-              Zeichne Zonen oder Volumen — die Flächen laufen hier live mit.
-            </div>
-          )}
-          {hasZones && (
-            <>
-              <KKeyValue
-                zeilen={[
-                  ...(['HNF', 'NNF', 'VF', 'FF', 'KF'] as const)
-                    .filter((k) => report.total[k] > 0)
-                    .map((k) => ({ key: k, wert: `${fmt(report.total[k])} m²` })),
-                  { key: 'NGF', wert: <strong>{fmt(report.totalNgf)} m²</strong> },
-                  {
-                    key: `aGF-Ziel (×${doc.settings.agfFactor})`,
-                    wert: <strong>{fmt(report.agfZiel)} m²</strong>,
-                  },
-                  {
-                    key: `GF-Schätzung (×${doc.settings.facadeFactor})`,
-                    wert: `${fmt(report.gfSchaetzung)} m²`,
-                  },
-                ]}
-              />
-            </>
-          )}
-          {hasMasses && (
-            <>
-              {hasZones && <Hairline />}
-              <KKeyValue
-                zeilen={[
-                  { key: 'GF Volumenstudie', wert: <strong>{fmt(report.gfVolumen)} m²</strong> },
-                  ...Object.entries(report.gfVolumenNachProgramm).map(([prog, gf]) => ({
-                    key: `· ${prog}`,
-                    wert: `${fmt(gf)} m²`,
-                  })),
-                ]}
-              />
-            </>
-          )}
-          {kennzahlenAuswerten(doc, report).length > 0 && (
-            <>
-              <Hairline />
-              <KKeyValue
-                data-testid="custom-kennzahlen"
-                zeilen={kennzahlenAuswerten(doc, report).map((k) => ({
-                  key: `${k.name} (${k.basis})`,
-                  wert: <strong>{k.betrag.toLocaleString('de-CH')} {k.einheit}</strong>,
-                }))}
-              />
-            </>
-          )}
-          {befunde.length > 0 && (
-            <>
-              <Hairline />
-              <div className="kp-checks-knopfreihe">
-                <KButton
-                  size="sm"
-                  tone={checksFilter === 'alle' ? 'accent' : 'ghost'}
-                  data-testid="checks-filter-alle"
-                  onClick={() => setChecksFilter('alle')}
-                >
-                  Alle
-                </KButton>
-                <KButton
-                  size="sm"
-                  tone={checksFilter === 'fehler' ? 'accent' : 'ghost'}
-                  data-testid="checks-filter-fehler"
-                  onClick={() => setChecksFilter('fehler')}
-                >
-                  Nur Fehler
-                </KButton>
-              </div>
-              <div className="kp-checks-liste" data-testid="checks">
-                {(['fehler', 'warnung', 'hinweis'] as const)
-                  .filter((schwere) => checksFilter === 'alle' || schwere === 'fehler')
-                  .map((schwere) => {
-                    const gruppe = befundeGruppiert.filter((b) => b.schwere === schwere);
-                    if (gruppe.length === 0) return null;
-                    return (
-                      <div key={schwere} data-testid={`checks-gruppe-${schwere}`} className="kp-checks-gruppe">
-                        <span className="kp-checks-gruppentitel">
-                          {schwere} ({gruppe.length})
-                        </span>
-                        {gruppe.map((b, i) => (
-                          <div key={i} className="kp-check-zeile">
-                            {b.schwere === 'hinweis' ? (
-                              <span title={b.schwere} className="kp-check-punkt">
-                                ·
-                              </span>
-                            ) : (
-                              <KIcon
-                                name="warnung"
-                                size={14}
-                                title={b.schwere}
-                                style={{
-                                  color: b.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)',
-                                  flex: '0 0 auto',
-                                }}
-                              />
-                            )}
-                            <span className="kp-check-text">
-                              {b.n > 1 ? `${b.n}× ` : ''}
-                              {b.text}
+      titel="Kennzahlen"
+      kernkennzahl={kernkennzahl}
+      stufe={stufe}
+      onStufeUmschalten={() => panelOverrideSetzen('design', 'kennzahlen', { stufe: stufeUmschalten(stufeRoh) })}
+      aktiverTab="uebersicht"
+      onTabWechseln={() => {}}
+      tabs={[
+        {
+          id: 'uebersicht',
+          label: 'Übersicht',
+          inhalt: (
+            <div className="kp-koerper">
+              {!hasZones && !hasMasses && (
+                <div className="kp-leerzustand">
+                  Zeichne Zonen oder Volumen — die Flächen laufen hier live mit.
+                </div>
+              )}
+              {hasZones && (
+                <>
+                  <KKeyValue
+                    zeilen={[
+                      ...(['HNF', 'NNF', 'VF', 'FF', 'KF'] as const)
+                        .filter((k) => report.total[k] > 0)
+                        .map((k) => ({ key: k, wert: `${fmt(report.total[k])} m²` })),
+                      { key: 'NGF', wert: <strong>{fmt(report.totalNgf)} m²</strong> },
+                      {
+                        key: `aGF-Ziel (×${doc.settings.agfFactor})`,
+                        wert: <strong>{fmt(report.agfZiel)} m²</strong>,
+                      },
+                      {
+                        key: `GF-Schätzung (×${doc.settings.facadeFactor})`,
+                        wert: `${fmt(report.gfSchaetzung)} m²`,
+                      },
+                    ]}
+                  />
+                </>
+              )}
+              {hasMasses && (
+                <>
+                  {hasZones && <Hairline />}
+                  <KKeyValue
+                    zeilen={[
+                      { key: 'GF Volumenstudie', wert: <strong>{fmt(report.gfVolumen)} m²</strong> },
+                      ...Object.entries(report.gfVolumenNachProgramm).map(([prog, gf]) => ({
+                        key: `· ${prog}`,
+                        wert: `${fmt(gf)} m²`,
+                      })),
+                    ]}
+                  />
+                </>
+              )}
+              {kennzahlenAuswerten(doc, report).length > 0 && (
+                <>
+                  <Hairline />
+                  <KKeyValue
+                    data-testid="custom-kennzahlen"
+                    zeilen={kennzahlenAuswerten(doc, report).map((k) => ({
+                      key: `${k.name} (${k.basis})`,
+                      wert: <strong>{k.betrag.toLocaleString('de-CH')} {k.einheit}</strong>,
+                    }))}
+                  />
+                </>
+              )}
+              {befunde.length > 0 && (
+                <>
+                  <Hairline />
+                  <div className="kp-checks-knopfreihe">
+                    <KButton
+                      size="sm"
+                      tone={checksFilter === 'alle' ? 'accent' : 'ghost'}
+                      data-testid="checks-filter-alle"
+                      onClick={() => setChecksFilter('alle')}
+                    >
+                      Alle
+                    </KButton>
+                    <KButton
+                      size="sm"
+                      tone={checksFilter === 'fehler' ? 'accent' : 'ghost'}
+                      data-testid="checks-filter-fehler"
+                      onClick={() => setChecksFilter('fehler')}
+                    >
+                      Nur Fehler
+                    </KButton>
+                  </div>
+                  <div className="kp-checks-liste" data-testid="checks">
+                    {(['fehler', 'warnung', 'hinweis'] as const)
+                      .filter((schwere) => checksFilter === 'alle' || schwere === 'fehler')
+                      .map((schwere) => {
+                        const gruppe = befundeGruppiert.filter((b) => b.schwere === schwere);
+                        if (gruppe.length === 0) return null;
+                        return (
+                          <div key={schwere} data-testid={`checks-gruppe-${schwere}`} className="kp-checks-gruppe">
+                            <span className="kp-checks-gruppentitel">
+                              {schwere} ({gruppe.length})
                             </span>
+                            {gruppe.map((b, i) => (
+                              <div key={i} className="kp-check-zeile">
+                                {b.schwere === 'hinweis' ? (
+                                  <span title={b.schwere} className="kp-check-punkt">
+                                    ·
+                                  </span>
+                                ) : (
+                                  <KIcon
+                                    name="warnung"
+                                    size={14}
+                                    title={b.schwere}
+                                    style={{
+                                      color: b.schwere === 'fehler' ? 'var(--k-danger, #b3462e)' : 'var(--k-warning)',
+                                      flex: '0 0 auto',
+                                    }}
+                                  />
+                                )}
+                                <span className="kp-check-text">
+                                  {b.n > 1 ? `${b.n}× ` : ''}
+                                  {b.text}
+                                </span>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    );
-                  })}
-                <span className="kp-checks-fussnote">
-                  Richtwerte-Checks — kein Normersatz.
-                </span>
-              </div>
-            </>
-          )}
-        </div>
-      )}
-    </div>
+                        );
+                      })}
+                    <span className="kp-checks-fussnote">
+                      Richtwerte-Checks — kein Normersatz.
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          ),
+        },
+      ]}
+    />
   );
 }
