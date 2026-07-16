@@ -6,6 +6,7 @@ import {
   ZUSTAND_INFO,
   auftragsKarten,
   companionKarten,
+  orbZustandFuerKarte,
   phasenSegmente,
   visKarten,
   type CompanionKartenStatus,
@@ -165,5 +166,26 @@ describe('v0.7.6 Welle 2 (Companion orb-zentriert) — ZUSTAND_INFO/ALLE_ZUSTAEN
   it('ALLE_ZUSTAENDE ist exakt eine Permutation der 9 ZUSTAND_INFO-Schlüssel (keine Lücke, keine Dopplung)', () => {
     expect([...ALLE_ZUSTAENDE].sort()).toEqual(Object.keys(ZUSTAND_INFO).sort());
     expect(new Set(ALLE_ZUSTAENDE).size).toBe(ALLE_ZUSTAENDE.length);
+  });
+});
+
+describe('v0.8.1 / P8 (Schwarm-Orbs, §6.2) — orbZustandFuerKarte', () => {
+  it('leitet für jeden CompanionKartenStatus einen gültigen KosmoZustand aus STATUS_TON ab', () => {
+    for (const status of Object.keys(STATUS_TON) as CompanionKartenStatus[]) {
+      const zustand = orbZustandFuerKarte({ status });
+      expect(ZUSTAND_INFO[zustand], status).toBeDefined();
+    }
+  });
+
+  it('laufende Status (Ton «laeuft») zeigen sich als «dispatching» (Generator-Handoff)', () => {
+    expect(orbZustandFuerKarte({ status: 'rendert' })).toBe('dispatching');
+    expect(orbZustandFuerKarte({ status: 'wartetGpu' })).toBe('dispatching');
+    expect(orbZustandFuerKarte({ status: 'an-worker' })).toBe('dispatching');
+  });
+
+  it('Erfolg → done, Fehler → error, Ruhe → idle', () => {
+    expect(orbZustandFuerKarte({ status: 'fertig' })).toBe('done');
+    expect(orbZustandFuerKarte({ status: 'fehler' })).toBe('error');
+    expect(orbZustandFuerKarte({ status: 'offen' })).toBe('idle');
   });
 });

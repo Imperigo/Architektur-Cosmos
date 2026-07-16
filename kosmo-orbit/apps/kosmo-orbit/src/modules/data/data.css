@@ -363,6 +363,12 @@
   inset: 0;
   display: flex;
 }
+/* v0.8.1 / P8 (0.7.5-Welle-2 «Datenstationen-Vollbild», B-101) — die UA-
+   Default-Vollbild-Box füllt bereits den Bildschirm; nur das Hintergrund-
+   Token nachziehen, damit kein UA-Schwarz statt des Stations-Feldes blitzt. */
+.kd-viewport:fullscreen {
+  background: var(--k-field);
+}
 .kd-scroll {
   flex: 1;
   overflow: auto;

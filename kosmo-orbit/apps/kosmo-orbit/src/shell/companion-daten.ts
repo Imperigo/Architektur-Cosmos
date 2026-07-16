@@ -219,3 +219,23 @@ export const ALLE_ZUSTAENDE: readonly KosmoZustand[] = [
   'error',
   'takeover',
 ];
+
+/**
+ * v0.8.1 / P8 (0.7.2-Rest «Schwarm-Orbs», §6.2) — je Karte EIN passender
+ * `KosmoOrb`-Zustand, abgeleitet aus dem bereits bestehenden `STATUS_TON`
+ * (keine zweite Status-Übersetzung): ein laufender Auftrag/Render zeigt sich
+ * als «sendet Auftrag» (Generator-Rollenfarbe, echte Handoff-Bedeutung),
+ * fertig/Fehler/Ruhe spiegeln sich direkt auf die gleichnamigen Orb-
+ * Zustände. Reine, unit-getestete Funktion — `shell/SchwarmOrbs.tsx` ruft nur
+ * das hier auf, kein zweiter Automat.
+ */
+const TON_ZUSTAND: Record<CompanionKartenTon, KosmoZustand> = {
+  ruhe: 'idle',
+  laeuft: 'dispatching',
+  erfolg: 'done',
+  fehler: 'error',
+};
+
+export function orbZustandFuerKarte(karte: Pick<CompanionKarte, 'status'>): KosmoZustand {
+  return TON_ZUSTAND[STATUS_TON[karte.status]];
+}

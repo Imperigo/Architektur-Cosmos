@@ -9,6 +9,7 @@ import { OFFENE_LAUF_STATUS, useVisRuntime, type NodeLauf, type NodeLaufStatus }
 import { abbrechenJob, freigebenJob, mappeJobStatus } from '../modules/vis/vis-jobs';
 import { STATION_GLYPHE, WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkzeug-glyphen';
 import { KosmoOrb } from './KosmoOrb';
+import { SchwarmOrbs } from './SchwarmOrbs';
 import { useKosmoStatus } from '../state/kosmo-status';
 import { GovernanceGate } from './GovernanceGate';
 import { alleFuerJobErlaubt, erlaubeFuerJob, pruefeAutoWiderruf, widerrufeFuerJob } from './governance-speicher';
@@ -188,6 +189,8 @@ function KarteZeile({
   freigabeLaeuft,
   ablehnenLaeuft,
   autoFreigabeAktiv,
+  fokussiert,
+  setRef,
   onFreigeben,
   onFuerJob,
   onAblehnen,
@@ -196,6 +199,10 @@ function KarteZeile({
   freigabeLaeuft: boolean;
   ablehnenLaeuft: boolean;
   autoFreigabeAktiv: boolean;
+  /** v0.8.1 / P8 (Schwarm-Orbs «Klick = Fokus») — kurzzeitig hervorgehoben,
+   *  nachdem der zugehörige Schwarm-Orb angeklickt wurde. */
+  fokussiert: boolean;
+  setRef: (el: HTMLDivElement | null) => void;
   onFreigeben: (karte: CompanionKarte) => void;
   onFuerJob: (karte: CompanionKarte) => void;
   onAblehnen: (karte: CompanionKarte) => void;
@@ -203,9 +210,18 @@ function KarteZeile({
   const art: WerkzeugGlyphenArt = karte.rolle === VIS_ROLLE ? 'viz' : 'pipeline';
   return (
     <div
+      ref={setRef}
       data-testid={`companion-job-${karte.id}`}
       className="k-glass"
-      style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: 14 }}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 12,
+        padding: 14,
+        outline: fokussiert ? '2px solid var(--k-signal)' : '2px solid transparent',
+        outlineOffset: 2,
+        transition: 'outline-color var(--k-motion-base)',
+      }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
         <span
@@ -334,6 +350,16 @@ export function Companion() {
 
   const laeufe = useVisRuntime((s) => s.laeufe);
   const karten = companionKarten(auftraege, laeufe);
+
+  // v0.8.1 / P8 (Schwarm-Orbs, §6.2) — «Klick = Fokus»: hebt die Zeile hervor
+  // und scrollt sie in den sichtbaren Bereich der Liste. Reiner UI-State,
+  // kein Doc/Undo — dieselbe Kategorie wie `freigabeLaeuft` oben.
+  const [fokusId, setFokusId] = useState<string | null>(null);
+  const karteRefsRef = useRef<Map<string, HTMLDivElement>>(new Map());
+  const fokussiere = (id: string) => {
+    setFokusId(id);
+    karteRefsRef.current.get(id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  };
 
   const [freigabeLaeuft, setFreigabeLaeuft] = useState<ReadonlySet<string>>(new Set());
   const [ablehnenLaeuft, setAblehnenLaeuft] = useState<ReadonlySet<string>>(new Set());
@@ -697,7 +723,13 @@ export function Companion() {
                 'radial-gradient(120% 70% at 50% -10%, color-mix(in srgb, var(--k-signal) 5%, transparent), transparent 55%), var(--k-field)',
             }}
           >
-            <div style={MONO_FAINT}>Agenten &amp; Aufträge</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+              <div style={MONO_FAINT}>Agenten &amp; Aufträge</div>
+              {/* v0.8.1 / P8 (0.7.2-Rest «Schwarm-Orbs», §6.2) — max. 3
+                  parallele Neben-Orbs der aktuell laufenden Karten, Klick
+                  fokussiert die zugehörige Zeile unten (Scroll + Ring). */}
+              <SchwarmOrbs karten={karten} fokusId={fokusId} onFokus={fokussiere} />
+            </div>
             {/* v0.7.8 Welle D (PD2) — dezente Quittungszeile je automatischem
                 Widerruf (s. Effekt oben): der Vis-Job selbst ist zu diesem
                 Zeitpunkt schon aus `karten` verschwunden (terminal = nicht
@@ -749,6 +781,11 @@ export function Companion() {
                     freigabeLaeuft={karte.nodeId !== undefined && freigabeLaeuft.has(karte.nodeId)}
                     ablehnenLaeuft={karte.nodeId !== undefined && ablehnenLaeuft.has(karte.nodeId)}
                     autoFreigabeAktiv={karte.nodeId !== undefined && autoFreigabeNodes.has(karte.nodeId)}
+                    fokussiert={fokusId === karte.id}
+                    setRef={(el) => {
+                      if (el) karteRefsRef.current.set(karte.id, el);
+                      else karteRefsRef.current.delete(karte.id);
+                    }}
                     onFreigeben={freigeben}
                     onFuerJob={(k) => k.nodeId && toggleAutoFreigabe(k.nodeId)}
                     onAblehnen={ablehnen}

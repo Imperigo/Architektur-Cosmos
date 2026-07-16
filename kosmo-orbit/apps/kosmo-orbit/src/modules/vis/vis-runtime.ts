@@ -108,10 +108,66 @@ export interface Aufnahme {
   kamera: string;
 }
 
+/**
+ * v0.8.1 / P8 (0.7.2-Rest «Viz gespeicherte Ansichten + Review-Pins», Spec
+ * §6.2, B-92/B-105) — DREI feste Slots (ISO/NORD/DETAIL, wie im Kosmo-Viz-
+ * Handoff benannt), jeder verweist auf eine bestehende `Aufnahme` (kein
+ * zweites Bild-Format). Reiner LAUFZEIT-Zustand wie `aufnahmen`/`laeufe`
+ * selbst — eine gespeicherte Ansicht ist ein Snapshot-Zeiger, kein Doc-Feld.
+ *
+ * Laufzeit- statt Doc-Entscheid (begründet): eine `Aufnahme` selbst lebt
+ * schon bewusst ausserhalb des Doc (`entities.ts:500-505`, «Render-Graph-
+ * Bilder gehen nie durch Undo/Yjs/.kosmo»); ein Zeiger AUF eine Laufzeit-
+ * Ressource kann nicht plötzlich Doc-/Yjs-fähig sein, ohne die Aufnahme
+ * selbst mitzuziehen (Base64 im Sync ist die genau untersagte Eigenschaft).
+ * Bleibt ein Slot leer oder verwaist (referenzierte Aufnahme inzwischen
+ * weg), zeigt die UI ehrlich «kein Snapshot» statt eines toten Verweises.
+ *
+ * `version` ist ein reiner Speicher-Zähler (kein Zeitstempel-Vorwand) — der
+ * «AUTOSAVE · vNNN»-Badge im Kosmo-Viz-Soll wird damit wörtlich, aber
+ * ehrlich: er zählt echte Speicher-Aktionen, keine erfundene Automatik.
+ */
+export type AnsichtSlotId = 'iso' | 'nord' | 'detail';
+export const ANSICHT_SLOTS: readonly AnsichtSlotId[] = ['iso', 'nord', 'detail'];
+export const ANSICHT_SLOT_LABEL: Record<AnsichtSlotId, string> = {
+  iso: 'ISO',
+  nord: 'NORD',
+  detail: 'DETAIL',
+};
+
+export interface GespeicherteAnsicht {
+  aufnahmeId: string;
+  /** Fortlaufender Speicher-Zähler dieses Slots, beginnt bei 1. */
+  version: number;
+  /** Date.now() der letzten Speicherung. */
+  zeit: number;
+}
+
+/**
+ * Review-Kommentar-Pin auf einer `Aufnahme` (Spec §6.2 «Kommentar-Pins auf
+ * dem Viewport»). Eine `Aufnahme` ist ein flaches Bild (dataURL, kein
+ * navigierbarer 3D-Raum in diesem Modul) — die Pin-Position ist darum
+ * ehrlich eine NORMIERTE Bild-Position (0..1 je Achse relativ zur gezeigten
+ * Aufnahme), keine echte 3D-Weltkoordinate.
+ */
+export interface ReviewPin {
+  id: string;
+  x: number;
+  y: number;
+  text: string;
+  wer: string;
+  zeit: number;
+}
+
+let pinZaehler = 0;
+
 interface VisRuntime {
   laeufe: Record<string, NodeLauf>;
   kuration: Record<string, KurationEintrag>;
   aufnahmen: Record<string, Aufnahme>;
+  gespeicherteAnsichten: Partial<Record<AnsichtSlotId, GespeicherteAnsicht>>;
+  /** Review-Pins je `Aufnahme`-Id (aufnahmeId → Liste, jüngste zuletzt). */
+  reviewPins: Record<string, readonly ReviewPin[]>;
   /**
    * v0.7.8 Welle 3 (P6, Dock-Migration) — Sichtbarkeit der Node-Palette
    * (`NodeCanvas.tsx`, Knopf `vis-palette-toggle`). Lebte bisher als
@@ -136,12 +192,22 @@ interface VisRuntime {
    *  kippen). Additiv, `paletteUmschalten`/`paletteSchliessen` bleiben
    *  unverändert für ihre bestehenden Aufrufer (`NodeCanvas.tsx`). */
   paletteOffenSetzen: (offen: boolean) => void;
+  /** Speichert/aktualisiert den Slot — Version zählt hoch (1 beim ersten
+   *  Speichern), `zeit` = Date.now(). */
+  speichereAnsicht: (slot: AnsichtSlotId, aufnahmeId: string) => void;
+  entferneAnsicht: (slot: AnsichtSlotId) => void;
+  /** Legt einen neuen Pin an (id/zeit werden hier vergeben) und liefert ihn
+   *  zurück — der Aufrufer (UI) braucht die `id` für den Bearbeiten-Zustand. */
+  fuegeReviewPinHinzu: (aufnahmeId: string, pin: { x: number; y: number; text: string; wer: string }) => ReviewPin;
+  entferneReviewPin: (aufnahmeId: string, pinId: string) => void;
 }
 
 export const useVisRuntime = create<VisRuntime>((set) => ({
   laeufe: {},
   kuration: {},
   aufnahmen: {},
+  gespeicherteAnsichten: {},
+  reviewPins: {},
   paletteOffen: false,
   setzeLauf: (nodeId, lauf) => set((s) => ({ laeufe: { ...s.laeufe, [nodeId]: lauf } })),
   patchLauf: (nodeId, patch) =>
@@ -161,6 +227,36 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
       return { kuration: { ...s.kuration, [nodeId]: { ...alt, verworfen: !alt.verworfen } } };
     }),
   fuegeAufnahmeHinzu: (a) => set((s) => ({ aufnahmen: { ...s.aufnahmen, [a.id]: a } })),
+  speichereAnsicht: (slot, aufnahmeId) =>
+    set((s) => {
+      const bisher = s.gespeicherteAnsichten[slot];
+      return {
+        gespeicherteAnsichten: {
+          ...s.gespeicherteAnsichten,
+          [slot]: { aufnahmeId, version: (bisher?.version ?? 0) + 1, zeit: Date.now() },
+        },
+      };
+    }),
+  entferneAnsicht: (slot) =>
+    set((s) => {
+      const rest = { ...s.gespeicherteAnsichten };
+      delete rest[slot];
+      return { gespeicherteAnsichten: rest };
+    }),
+  fuegeReviewPinHinzu: (aufnahmeId, pin) => {
+    pinZaehler += 1;
+    const neuerPin: ReviewPin = { id: `pin-${pinZaehler}`, zeit: Date.now(), ...pin };
+    set((s) => ({
+      reviewPins: { ...s.reviewPins, [aufnahmeId]: [...(s.reviewPins[aufnahmeId] ?? []), neuerPin] },
+    }));
+    return neuerPin;
+  },
+  entferneReviewPin: (aufnahmeId, pinId) =>
+    set((s) => {
+      const bisher = s.reviewPins[aufnahmeId];
+      if (!bisher) return s;
+      return { reviewPins: { ...s.reviewPins, [aufnahmeId]: bisher.filter((p) => p.id !== pinId) } };
+    }),
   paletteUmschalten: () => set((s) => ({ paletteOffen: !s.paletteOffen })),
   paletteSchliessen: () => set({ paletteOffen: false }),
   paletteOffenSetzen: (offen) => set({ paletteOffen: offen }),
@@ -194,4 +290,18 @@ export function memoKey(a: {
   presetId?: string;
 }): string {
   return `${a.faithful}|${a.samples}|${a.nurCycles ? 'cycles' : 'ki'}|${a.presetId ?? 'kein-preset'}|${a.prompt}`;
+}
+
+/**
+ * Test-Hook (Playwright) — Muster `window.__kosmoCompanion`/`window.
+ * __kosmoAbspiel`: rein lesend/schreibend, ruft NUR bestehende Store-
+ * Funktionen auf. v0.8.1 / P8 (0.7.2-Rest «Viz gespeicherte Ansichten»):
+ * `e2e/vis-ansichten.spec.ts` seedet darüber eine `Aufnahme`, ohne den
+ * echten 3D-Viewport-Aufnahme-Knopf (`Viewport3D.tsx`, anderes Paket)
+ * durchklicken zu müssen.
+ */
+if (typeof window !== 'undefined') {
+  (window as never as Record<string, unknown>)['__kosmoVisRuntime'] = {
+    fuegeAufnahmeHinzu: (a: Aufnahme) => useVisRuntime.getState().fuegeAufnahmeHinzu(a),
+  };
 }

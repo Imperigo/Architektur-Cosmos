@@ -24,6 +24,10 @@ import { BridgeBild } from './BridgeBild';
 import { presetAnwenden } from '../../state/dock-preset-anwendung';
 import { PRESET_IDS, type PresetId } from '../../state/dock-presets';
 import { useDockZustand } from '../../state/dock-zustand';
+import { GespeicherteAnsichten } from './GespeicherteAnsichten';
+import { GpuStatus } from './GpuStatus';
+import { sollVisOnboardingAutoZeigen, VisOnboarding } from './VisOnboarding';
+import { VisReportDossier } from './VisReportDossier';
 import './vis-visual.css';
 
 /**
@@ -51,6 +55,9 @@ function authKopf(): HeadersInit {
 const VIS_TAB_ITEMS: readonly KTabItem[] = [
   { id: 'graph', label: 'Node-Tree', testid: 'tab-graph' },
   { id: 'einfach', label: 'Einfach', testid: 'tab-einfach' },
+  // v0.8.1 / P8 (0.7.2-Rest «Viz gespeicherte Ansichten + Review-Pins»,
+  // Spec §6.2) — dritter Tab, additiv, ändert nichts an graph/einfach.
+  { id: 'ansichten', label: 'Ansichten', testid: 'tab-ansichten' },
 ];
 
 interface JobRecord {
@@ -109,7 +116,13 @@ export interface VisWorkspaceProps {
 }
 
 export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
-  const [tab, setTab] = useState<'graph' | 'einfach'>('graph');
+  const [tab, setTab] = useState<'graph' | 'einfach' | 'ansichten'>('graph');
+  // v0.8.1 / P8 (0.7.5-Welle-2 «Vis-Onboarding-Stepper», Spec §9.17, B-102) —
+  // zeigt sich einmalig (Muster `kosmo.onboarded`), danach jederzeit über den
+  // «?»-Knopf in der Toolbar erreichbar (s. `VisTabs` unten).
+  const [onboardingOffen, setOnboardingOffen] = useState(() => sollVisOnboardingAutoZeigen());
+  // v0.8.1 / P8 (0.7.5-Welle-2 «Report-Dossier/Print», Spec §9.17, B-103/104).
+  const [reportOffen, setReportOffen] = useState(false);
   const revision = useProject((s) => s.revision);
   void revision;
   const runCommand = useProject((s) => s.runCommand);
@@ -292,17 +305,43 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   if (tab === 'einfach') {
     return (
       <div className="vis-workspace-fuellen">
-        <VisTabs tab={tab} setTab={setTab} />
+        <VisTabs tab={tab} setTab={setTab} onOnboardingOeffnen={() => setOnboardingOffen(true)} />
         <div className="vis-workspace-buehne">
           <EinfachAnsicht />
         </div>
+        {onboardingOffen && <VisOnboarding onClose={() => setOnboardingOffen(false)} />}
+      </div>
+    );
+  }
+
+  if (tab === 'ansichten') {
+    return (
+      <div className="vis-workspace-fuellen">
+        <VisTabs tab={tab} setTab={setTab} onOnboardingOeffnen={() => setOnboardingOffen(true)} />
+        <div className="vis-workspace-buehne vis-ansichten-buehne">
+          <GespeicherteAnsichten />
+          <Hairline />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+            <GpuStatus />
+            <KButton size="sm" tone="ghost" data-testid="vis-report-oeffnen" onClick={() => setReportOffen(true)}>
+              Report öffnen
+            </KButton>
+          </div>
+        </div>
+        {onboardingOffen && <VisOnboarding onClose={() => setOnboardingOffen(false)} />}
+        {reportOffen && <VisReportDossier onClose={() => setReportOffen(false)} />}
       </div>
     );
   }
 
   return (
     <div className="vis-workspace-fuellen">
-      <VisTabs tab={tab} setTab={setTab} {...(onEinstellungen ? { onEinstellungen } : {})}>
+      <VisTabs
+        tab={tab}
+        setTab={setTab}
+        onOnboardingOeffnen={() => setOnboardingOffen(true)}
+        {...(onEinstellungen ? { onEinstellungen } : {})}
+      >
         {/* W1 Massnahme 6: KToolbar/KToolGruppe (UI-KONZEPT-065 §3) — Gruppen
             Graph | Bauen | Automatik. Alle testids + Beschriftungen wörtlich
             erhalten; `node-hinzu` bleibt ein natives Select (KSelect wrappt
@@ -405,6 +444,7 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
           </div>
         )}
       </div>
+      {onboardingOffen && <VisOnboarding onClose={() => setOnboardingOffen(false)} />}
     </div>
   );
 }
@@ -420,22 +460,42 @@ function VisTabs({
   setTab,
   children,
   onEinstellungen,
+  onOnboardingOeffnen,
 }: {
-  tab: 'graph' | 'einfach';
-  setTab: (t: 'graph' | 'einfach') => void;
+  tab: 'graph' | 'einfach' | 'ansichten';
+  setTab: (t: 'graph' | 'einfach' | 'ansichten') => void;
   children?: React.ReactNode;
   onEinstellungen?: () => void;
+  /** v0.8.1 / P8 (Vis-Onboarding-Stepper) — jederzeit erneut aufrufbar. */
+  onOnboardingOeffnen?: () => void;
 }) {
   return (
     <KToolbar>
       <Badge hue={moduleHue.vis}>KosmoVis</Badge>
-      <KTabs items={VIS_TAB_ITEMS} aktiv={tab} onChange={(id) => setTab(id as 'graph' | 'einfach')} size="sm" />
+      <KTabs
+        items={VIS_TAB_ITEMS}
+        aktiv={tab}
+        onChange={(id) => setTab(id as 'graph' | 'einfach' | 'ansichten')}
+        size="sm"
+      />
       <Hairline vertical />
       {children}
       <div className="vis-toolbar-spacer" />
       <span className="vis-toolbar-hinweis">
         Render nur auf «Ausführen» — der Graph ist Teil des Projekts (Undo, Sync)
       </span>
+      {onOnboardingOeffnen && (
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="vis-onboarding-oeffnen"
+          title="Erste Schritte — KosmoVis"
+          aria-label="Erste Schritte — KosmoVis"
+          onClick={onOnboardingOeffnen}
+        >
+          ?
+        </KButton>
+      )}
       {onEinstellungen && (
         <KButton
           size="sm"

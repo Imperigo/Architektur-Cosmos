@@ -1055,6 +1055,17 @@
   align-items: center;
   justify-content: center;
 }
+/* v0.8.1 / P8 (0.7.2-Rest «Viz gespeicherte Ansichten», Spec §6.2) — die
+   «Ansichten»-Bühne ist ein scrollender Formular-/Karten-Bereich, kein
+   Zeichen-Canvas wie graph/einfach — additive Geschwister-Regel, ändert
+   nichts an `.vis-workspace-buehne` selbst. */
+.vis-ansichten-buehne {
+  overflow: auto;
+  padding: var(--k-s6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s5);
+}
 .vis-toolbar-spacer {
   flex: 1;
 }
@@ -1214,4 +1225,144 @@
 .vis-einfach-bild-fest {
   width: 280px;
   border: 1px solid var(--k-line);
+}
+
+/* v0.8.1 / P8 (0.7.5-Welle-2 «Report-Dossier/Print», Spec §6.2/§9.17,
+   B-103/B-104) — «Papier ist Papier»: der Druckbogen bleibt IMMER hell,
+   unabhängig vom aktiven App-Theme (harte Farbliterale statt --k-*-Tokens,
+   analog `derive/dossier.ts`s SVG-Kopf) — kein Glass/Glow im Druck. Additive
+   Klassen, eigene Datei-Sektion, berührt keine bestehende Regel. */
+.vis-report-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 22, 28, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: auto;
+  padding: 32px 16px;
+}
+.vis-report-toolbar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+  max-width: 794px;
+  margin: 0 auto 10px;
+}
+.vis-report-dossier {
+  width: 100%;
+  max-width: 794px;
+  min-height: 1123px;
+  background: #ffffff;
+  color: #1a1a1a;
+  border-radius: 3px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+  padding: 48px 56px;
+  display: grid;
+  gap: 28px;
+  align-content: start;
+  font-family: var(--k-font-ui, sans-serif);
+}
+.vis-report-kopf {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid #1a1a1a;
+  padding-bottom: 12px;
+}
+.vis-report-marke {
+  font-family: var(--k-font-mono, monospace);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-size: 13px;
+}
+.vis-report-titel {
+  font-size: 20px;
+  font-weight: 700;
+}
+.vis-report-meta {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #555;
+}
+.vis-report-label {
+  font-family: var(--k-font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 10px;
+}
+.vis-report-kacheln {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.vis-report-kachel {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.vis-report-kachel img {
+  width: 100%;
+  display: block;
+}
+.vis-report-kachel-bildlos {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  color: #999;
+  background: #f4f4f4;
+}
+.vis-report-kachel-fuss {
+  padding: 6px 8px;
+  font-family: var(--k-font-mono, monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: #444;
+  border-top: 1px solid #ccc;
+}
+.vis-report-governance {
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 6px;
+  font-size: 12.5px;
+}
+.vis-report-fuss {
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+  font-size: 10.5px;
+  color: #777;
+}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .vis-report-scrim,
+  .vis-report-scrim * {
+    visibility: visible;
+  }
+  .vis-report-scrim {
+    position: static;
+    background: none;
+    padding: 0;
+    overflow: visible;
+  }
+  .vis-report-toolbar {
+    display: none;
+  }
+  .vis-report-dossier {
+    box-shadow: none;
+    max-width: none;
+    width: auto;
+  }
 }

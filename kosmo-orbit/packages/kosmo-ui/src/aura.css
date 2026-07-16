@@ -752,6 +752,23 @@ progress {
   from { opacity: 1; transform: none; }
   to { opacity: 0; transform: translateX(12px); }
 }
+/* v0.8.1 / P8 (0.7.2-Rest «Schliessen-Choreografie mit Plopp», Spec §6.2) —
+   additive Variante NUR für `KosmoPanel.tsx`s Austritt («Fenster→Orb-
+   Übergang»): saugt sich zur unteren rechten Ecke, wo `KosmoSymbol` nach dem
+   Unmount wieder erscheint, statt nur seitlich wegzugleiten. `.k-panel-
+   austritt` (oben) bleibt unverändert für seinen anderen Aufrufer
+   (`CommandPalette.tsx`) — reine additive Geschwister-Klasse, kein
+   bestehendes Verhalten geändert. Der begleitende Ton (`state/sounds.ts`
+   `plopp()`) ist ein separater, feature-detected WebAudio-Aufruf, den der
+   Aufrufer selbst auslöst — nicht Teil dieser CSS-Animation. */
+.k-panel-austritt-orb {
+  animation: k-panel-austritt-orb var(--k-motion-base) both;
+  transform-origin: calc(100% - 26px) calc(100% - 26px);
+}
+@keyframes k-panel-austritt-orb {
+  from { opacity: 1; transform: scale(1) translate(0, 0); }
+  to { opacity: 0; transform: scale(0.06) translate(8%, 8%); }
+}
 /* Einmaliger Bestätigungs-Puls (Diff-Karte angewendet, Snap-Fang) */
 .k-puls {
   animation: k-puls var(--k-motion-settle) both;

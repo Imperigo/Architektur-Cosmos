@@ -42,7 +42,7 @@ import {
   mitApiSchluessel,
 } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
-import { wusch } from '../state/sounds';
+import { plopp, wusch } from '../state/sounds';
 import { KOSMO_AUSGESCHLOSSENE_COMMANDS, kosmoUiWerkzeuge } from '../state/kosmo-ui-werkzeuge';
 import {
   blickErfassen,
@@ -394,8 +394,23 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   // (der es tatsächlich unmountet) aufruft. Bei reduced-motion (u.a. jeder
   // E2E-Lauf, `playwright.config.ts`) entfällt die Verzögerung vollständig —
   // exakt dasselbe Timing wie vorher, keine neue Testflakiness.
+  //
+  // v0.8.1 / P8 (0.7.2-Rest «Schliessen-Choreografie mit Plopp», Spec §6.2,
+  // B-84 §8d «Fenster saugt sich zur Ecke … Sound plopp») — der container-
+  // baubare Teil DIESES Rests: innerhalb der SPA saugt sich das Panel zur
+  // Orb-Ecke (unten rechts, wo `KosmoSymbol` nach dem Unmount wieder
+  // erscheint) statt nur seitlich wegzugleiten (`.k-panel-austritt-orb`,
+  // additiv in `aura.css` neben dem unverändert bleibenden `.k-panel-
+  // austritt`), begleitet vom bereits bestehenden `plopp()`-Ton
+  // (`state/sounds.ts`, Default AUS, feature-detected). Die ZWEITE,
+  // choreografierte Übergabe zwischen dem Tauri-Hauptfenster und dem
+  // separaten Desktop-Charakter-Fenster (`shell/KosmoCharakterFenster.tsx`)
+  // bleibt die dort dokumentierte «ehrliche Grenze» — sie bräuchte einen
+  // Rust→JS-Vorlauf, den `lib.rs` heute nicht sendet, und ist NICHT Teil
+  // dieser SPA-internen Choreografie.
   const [schliessend, setSchliessend] = useState(false);
   const handleClose = () => {
+    plopp();
     const reduziert =
       typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if (reduziert) {
@@ -403,7 +418,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       return;
     }
     setSchliessend(true);
-    window.setTimeout(onClose, 120); // --k-motion-fast
+    window.setTimeout(onClose, 200); // --k-motion-base (s. .k-panel-austritt-orb, aura.css)
   };
   // Owner-Befund F1: «ant nicht gefunden» soll eine Anleitung zeigen, keinen
   // blossen Toast — persistiert im Panel, bis der nächste Versuch klappt.
@@ -1245,9 +1260,11 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
     <aside
       data-testid="kosmo-panel"
       // v0.6.6 Stream E — Motion-Politur (MOTION-KONZEPT §4): Feder-Eintritt
-      // beim Erstaufbau, schneller Austritt sobald `handleClose()` ihn
-      // einleitet (s. State oben) — rein additive Klassen, keine Struktur.
-      className={`${schliessend ? 'k-panel-austritt' : 'k-panel-eintritt'} kp-panel`}
+      // beim Erstaufbau. v0.8.1 / P8: der Austritt nutzt jetzt die additive
+      // Orb-Choreografie (`.k-panel-austritt-orb`, s. Kommentar oben bei
+      // `handleClose`) statt der generischen `.k-panel-austritt` — rein
+      // additive Klassen, keine Struktur.
+      className={`${schliessend ? 'k-panel-austritt-orb' : 'k-panel-eintritt'} kp-panel`}
     >
       {showSetup && (
         <WerkzeugSetup betriebsart={settings.betriebsart} onClose={() => setShowSetup(false)} />

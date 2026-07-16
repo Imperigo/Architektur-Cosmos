@@ -499,6 +499,24 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     });
   };
 
+  // v0.8.1 / P8 (0.7.5-Welle-2 «Datenstationen-Vollbild», Spec §6.2/§9.17,
+  // B-101) — NUR der Vollbild-Aspekt dieser Station: derselbe echte
+  // `requestFullscreen()`/`exitFullscreen()`-Weg wie `Viewport3D.tsx`s
+  // `chromeVollbild` (kein simuliertes Vollbild, kein zweiter Mechanismus).
+  const vollbildRef = useRef<HTMLDivElement>(null);
+  const [vollbildAktiv, setVollbildAktiv] = useState(false);
+  useEffect(() => {
+    const onFullscreenChange = () => setVollbildAktiv(document.fullscreenElement != null);
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+  const toggleVollbild = () => {
+    const el = vollbildRef.current;
+    if (!el) return;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void el.requestFullscreen();
+  };
+
   useEffect(() => {
     let verworfen = false;
     setSeedFehler(false);
@@ -750,7 +768,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
   const syncBadge = kosmoDataSyncBadge({ seedFehler, syncState, quelle, entriesCount: entries.length });
 
   return (
-    <div className="k-einblenden kd-viewport">
+    <div ref={vollbildRef} className="k-einblenden kd-viewport">
       <div className="kd-scroll">
         {/* v0.7.6 Welle 2 Stream D: der Referenzen-Tab bekommt eine
             3-Spalten-Tabellenfläche (Quellen/Epochen-Rail + Tabelle) und
@@ -894,6 +912,22 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               className="kd-border-line"
             >
               Oberfläche zurücksetzen
+            </KButton>
+            <Hairline vertical />
+            {/* v0.8.1 / P8 (0.7.5-Welle-2 «Datenstationen-Vollbild», B-101) —
+                echtes Browser-Vollbild (`vollbildRef`, s. oben), analog
+                `viewport-vollbild` in `ViewportChrome.tsx`. */}
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="data-vollbild"
+              title={vollbildAktiv ? 'Vollbild verlassen' : 'Vollbild'}
+              aria-label={vollbildAktiv ? 'Vollbild verlassen' : 'Vollbild'}
+              aria-pressed={vollbildAktiv}
+              onClick={toggleVollbild}
+              className="kd-border-line"
+            >
+              {vollbildAktiv ? 'Vollbild verlassen' : 'Vollbild'}
             </KButton>
             {onEinstellungen && (
               <>
