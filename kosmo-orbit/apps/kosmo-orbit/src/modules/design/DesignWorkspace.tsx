@@ -607,8 +607,22 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // (P3, Dock-Migration): das Studien-Panel ist jetzt ein Dock-Panel — die
   // Kollisionsfreiheit stellt `DockFlaeche`/`dock-kern.ts`s Solver zentral
   // sicher (misst die Geschossleiste selbst per `data-testid`-Abfrage). Die
-  // frühere lokale `offsetHeight`-Messung (Ref + State + Effekt) entfällt
-  // ersatzlos, s. `shell/dock/DockFlaeche.tsx` Kopfkommentar.
+  // frühere lokale `offsetHeight`-Messung (Ref + State + Effekt) entfiel bei
+  // der P3-Migration ERSATZLOS — REGRESSION (v0.8.1/K3-Fix, `67c0fca`):
+  // `DockFlaeche` sicherte danach nur noch die horizontale Trennung
+  // (`xStart`), nicht mehr, dass das Studien-Panel (und jedes andere
+  // `dock:'left'`-Panel) tatsächlich UNTERHALB der Geschossleiste beginnt —
+  // vier Releases lang unbemerkt rot (`e2e/popup-kollision.spec.ts` K3,
+  // Assertion `sBox.y >= gBox.y + gBox.height`). Seit dem K3-Fix übernimmt
+  // `DockFlaeche`s `linksReserve`-Messung (misst dieselbe Geschossleisten-
+  // Unterkante) exakt das, was diese frühere lokale Messung tat — scharf
+  // geschaltet aber NUR, solange ein unterhalb-pflichtiges Panel
+  // (`UNTER_GESCHOSSLEISTE_PFLICHT`, heute: `studieOffen`) offen in der
+  // linken Spalte liegt; die übrigen linken Panels behalten sonst ihr
+  // volles Höhenbudget («vier Panels»-Vertrag). S. `shell/dock/
+  // DockFlaeche.tsx` Kopfkommentare bei `linksReserve`/`TOP_BAND_RECHTS`/
+  // `UNTER_GESCHOSSLEISTE_PFLICHT`. NICHT wieder ersatzlos entfernen, ohne
+  // den K3-Test anzupassen (Owner-Vorgabe).
 
   // v0.7.9 (B2, Owner-Stretch): letzte bekannte Alt-Kollision, seit P3 in
   // `BEKANNTE_VORBESTEHENDE_KOLLISIONEN` (e2e/dock-layout.spec.ts) ausgeklammert

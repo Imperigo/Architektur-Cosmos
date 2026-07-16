@@ -227,13 +227,38 @@ function wickleCtopStreifen(
  *  absolut) wird hier für die rechte Spalte 1:1 übernommen, als KONSTANTE
  *  statt Messung (die Chrome-Zeile ist selbst fest verortet; eine Messung
  *  müsste PlanView-Mounts beobachten — mehr Maschinerie für denselben Wert).
- *  Die LINKE Spalte bekommt das Band bewusst NICHT (links gibt es keine
- *  solche Chrome-Zeile, und das Band würde dort reale Panel-Höhe kosten —
- *  vier offene linke Panels bei 1400×900 brauchen das Budget, s.
- *  `dock-layout.spec.ts` «vier Panels»). Umgesetzt als ZWEITER `solve()`-
- *  Lauf mit einem oben verkürzten Feld, aus dem nur die rechte Spalte
- *  übernommen wird — s. `ergebnis`-useMemo unten. */
+ *  Die LINKE Spalte bekommt DIESES (konstante, rechte) Band bewusst NICHT —
+ *  links gibt es keine Plan-Chrome-Zeile, ein FESTER Abzug hier wäre reine
+ *  Verschwendung realer Panel-Höhe (vier offene linke Panels bei 1400×900
+ *  brauchen das Budget, s. `dock-layout.spec.ts` «vier Panels»). Umgesetzt
+ *  als ZWEITER `solve()`-Lauf mit einem oben verkürzten Feld, aus dem nur die
+ *  rechte Spalte übernommen wird — s. `ergebnis`-useMemo unten.
+ *
+ *  v0.8.1 K3-Fix — NACHTRAG: die linke Spalte bekommt seither TROTZDEM eine
+ *  Reservierung, aber eine strukturell andere: nicht dieses feste Band,
+ *  sondern `linksReserve` (gemessen, nicht konstant, s. Kopfkommentar bei
+ *  dessen Messung im Layout-Effekt oben) — die Owner-Vorgabe (Rundgang
+ *  0.6.2 S.8), dass ein `dock:'left'`-Panel IMMER unterhalb der
+ *  Geschossleiste beginnt, ist keine Chrome-Kollision wie die rechte
+ *  Plan-Zeile, sondern dieselbe Kollisionsklasse, die die Geschossleiste/
+ *  `xStart` oben bereits horizontal löst — nur zusätzlich vertikal
+ *  erzwungen, weil «horizontal getrennt» dem K3-Test nicht genügt
+ *  (`e2e/popup-kollision.spec.ts`, Assertion `sBox.y >= gBox.y + gBox.
+ *  height`). Anders als hier: `linksReserve` ist 0, solange keine
+ *  Geschossleiste gemessen wird (andere Stationen) — dort bleibt das alte
+ *  Budget-Argument dieses Kommentars unangetastet gültig. */
 const TOP_BAND_RECHTS = 34;
+
+/** v0.8.1 / K3-Fix — Panels mit Owner-verbriefter «immer UNTERHALB der
+ *  Geschossleiste»-Pflicht (Rundgang 0.6.2 S.8; kodiert in
+ *  `e2e/popup-kollision.spec.ts` K3). Nur wenn eines davon offen in der
+ *  linken Spalte liegt, bekommt die linke Spalte die gemessene
+ *  `linksReserve` — die übrigen linken Panels (raster, cwSetzen, …) tragen
+ *  diese Pflicht NICHT und behalten sonst ihr volles Höhenbudget
+ *  (`dock-layout.spec.ts» «vier Panels»-Vertrag). App-Wissen bewusst hier
+ *  in der App-Schicht statt als neues `PanelDef`-Feld im 1:1-Port
+ *  `dock-kern.ts`. */
+const UNTER_GESCHOSSLEISTE_PFLICHT: ReadonlySet<string> = new Set(['studieOffen']);
 
 /** Zonenlogik wie im Design-Handoff-Prototyp `hitZone()`: links wenn der
  *  Zeiger < linke Spaltenbreite + Strahl, rechts wenn > Feldbreite − rechte
@@ -308,6 +333,10 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
 
   const wurzelRef = useRef<HTMLDivElement>(null);
   const [feld, setFeld] = useState<FeldRechteck>(LEER_FELD);
+  // v0.8.1 / K3-Fix — gemessene vertikale Reservierung für die linke Spalte
+  // (Unterkante der Geschossleiste, container-relativ), s. `LINKS_BAND`-
+  // Kopfkommentar weiter unten. `0` ausserhalb der Design-Station.
+  const [linksReserve, setLinksReserve] = useState(0);
 
   // ---------------------------------------------------------------------
   // Feld-Messung — ResizeObserver auf Container + den festen Geschwistern,
@@ -347,6 +376,18 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
       }
       xStart += DOCK_KONSTANTEN.GAP;
 
+      // v0.8.1 / K3-Fix (Owner-Rundgang 0.6.2 S.8, Regression seit `67c0fca`
+      // v0.7.8/P3 Dock-Migration, s. Kopfkommentar `LINKS_BAND_KOMMENTAR`
+      // weiter unten für die volle Herleitung) — dasselbe Mess-Muster wie
+      // `xStart` oben (Geschwister-`getBoundingClientRect()`, container-
+      // relativ), aber für die y-Achse: die Unterkante der Geschossleiste,
+      // damit die linke Dock-Spalte IMMER unterhalb von ihr beginnt statt nur
+      // horizontal daneben (was `xStart` bereits sicherstellt, aber die
+      // Owner-Vorgabe verlangt ausdrücklich «darunter», nicht nur
+      // «getrennt»). `0`, wenn die Geschossleiste fehlt (andere Stationen) —
+      // byte-identisches Fallback-Verhalten.
+      const linksYReserve = geschossleiste ? Math.max(0, geschossleiste.getBoundingClientRect().bottom - c.top) : 0;
+
       // P4: kein Kennzahlen-Abzug mehr — das Feld reicht bis zum
       // Container-Rand, `kennzahlen` ist jetzt selbst im Dock.
       const xEnde = c.width - DOCK_KONSTANTEN.GAP;
@@ -381,6 +422,7 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
           ? vorher
           : naechstes,
       );
+      setLinksReserve((vorher) => (vorher === linksYReserve ? vorher : linksYReserve));
     };
     const messenDebounced = () => {
       if (rafHandle) return;
@@ -787,15 +829,34 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
     });
   };
 
-  // Zwei-Felder-Kompromiss (P4, s. `TOP_BAND_RECHTS`-Kommentar): der Solver
-  // kennt nur EIN Feld-Rechteck für beide Spalten — die Plan-Chrome-Zeile
-  // oben rechts braucht aber nur in der RECHTEN Spalte Luft. Darum zweimal
-  // `solve()` (pure Funktion, zwei Aufrufe sind billig): einmal mit dem
-  // vollen Feld (liefert linke Spalte, Viewport, Floats, linke Splitter),
-  // einmal mit einem oben um `TOP_BAND_RECHTS` verkürzten Feld — daraus
-  // werden NUR die Rechtecke/Splitter der rechten Spalte übernommen.
-  // Schwebende Panels (dock 'float') kommen bewusst aus dem HAUPT-Lauf
-  // (voller Viewport, keine Panel-IDs der rechten Spalte).
+  // Zwei-/Drei-Felder-Kompromiss (P4 rechts, K3-Fix v0.8.1 links): der Solver
+  // kennt nur EIN Feld-Rechteck für alle Spalten, aber zwei Ecken brauchen
+  // eine eigene Reservierung, die nur SIE betrifft:
+  //  - RECHTS (P4, `TOP_BAND_RECHTS`): die Plan-Chrome-Zeile oben rechts,
+  //    konstanter Versatz (Begründung s. dortiger Kopfkommentar).
+  //  - LINKS (K3-Fix, `linksReserve`): die Geschossleiste links oben,
+  //    GEMESSENER Versatz (Begründung s. Kopfkommentar bei `linksReserve`-
+  //    Messung im Layout-Effekt oben) — REGRESSION seit `67c0fca` (v0.7.8/P3
+  //    Dock-Migration): die damalige `DesignWorkspace.tsx`-Sonderlogik («das
+  //    Studien-Panel misst die Geschossleisten-Höhe und rückt IMMER
+  //    darunter», s. dortiger historischer Kommentar Z.604-611) wurde beim
+  //    Umzug ins Dock ERSATZLOS entfernt, weil `xStart` bereits eine
+  //    horizontale Trennung lieferte — «getrennt» genügt aber nicht der
+  //    Owner-Vorgabe (Rundgang 0.6.2 S.8): das Studien-Panel (und JEDES
+  //    andere `dock:'left'`-Panel) soll UNTERHALB der Geschossleiste
+  //    beginnen, nicht nur daneben (`e2e/popup-kollision.spec.ts` K3,
+  //    Assertion `sBox.y >= gBox.y + gBox.height`). Vier Releases lang
+  //    unbemerkt rot (s. Diagnose v0.8.1/K3). NICHT wieder ersatzlos
+  //    entfernen, ohne diesen Test anzupassen.
+  //
+  // Darum bis zu DREI `solve()`-Läufe (pure Funktion, billig): einmal mit dem
+  // vollen Feld (liefert Viewport, Floats, rail — die NIE von einer der
+  // beiden Spalten-Reservierungen betroffen sind, s. `solve()`: `lw`/`rw`
+  // hängen nur von `leftW`/`rightW`/Panel-Existenz ab, nicht von deren
+  // Höhen-Reservierung), optional einmal mit einem oben um `linksReserve`
+  // verkürzten Feld (NUR linke Spalte + `spL`/`sr-*`-Splitter übernommen) und
+  // optional einmal mit einem oben um `TOP_BAND_RECHTS` verkürzten Feld (NUR
+  // rechte Spalte + `spR`/`sr-*`-Splitter übernommen).
   const ergebnis = useMemo(() => {
     const basisOpts = {
       modus: dockModus,
@@ -822,31 +883,67 @@ export function DockFlaeche({ station, panels }: DockFlaecheProps) {
             )
             .map((d) => d.id)
         : [];
-    // Effektive rechte Spalte = Registry-Dock ⊕ persistierter Override
+    // Effektive linke/rechte Spalte = Registry-Dock ⊕ persistierter Override
     // (identisch zur `mischePanel`-Regel im Solver: Override gewinnt).
+    const linksIds = new Set(defs.filter((d) => (overrides[d.id]?.dock ?? d.dock) === 'left').map((d) => d.id));
     const rechtsIds = new Set(
       defs.filter((d) => (overrides[d.id]?.dock ?? d.dock) === 'right').map((d) => d.id),
     );
-    if (rechtsIds.size === 0 || feld.h <= TOP_BAND_RECHTS) {
-      const rects: typeof haupt.rects = { ...haupt.rects };
-      wickleCtopStreifen(rects, ctopIds, feld.y, haupt.viewport);
-      return { rects, viewport: haupt.viewport, splitters: haupt.splitters };
-    }
-    const feldRechts = { x: feld.x, y: feld.y + TOP_BAND_RECHTS, w: feld.w, h: feld.h - TOP_BAND_RECHTS };
-    const rechts = solve(defs, { feld: feldRechts, ...basisOpts });
+
     const rects: typeof haupt.rects = { ...haupt.rects };
-    for (const id of rechtsIds) {
-      const r = rechts.rects[id];
-      if (r) rects[id] = r;
-      else delete rects[id];
+    let splitters = haupt.splitters;
+
+    // LINKS (K3-Fix): nur anwenden, wenn tatsächlich etwas in der linken
+    // Spalte steht UND nach der Reservierung noch echte Höhe übrig bleibt —
+    // sonst (keine Geschossleiste gemessen, z.B. `vis`/`publish`, oder eine
+    // theoretisch riesige Reservierung) bleibt die linke Spalte unangetastet
+    // beim HAUPT-Lauf (byte-identisches Fallback-Verhalten).
+    //
+    // Gate-Nachschärfung (Fable, v0.8.1/K3-Fix): die Reservierung greift
+    // ZUSÄTZLICH nur, wenn ein unterhalb-PFLICHTIGES Panel gerade offen in
+    // der linken Spalte liegt. Die Owner-Vorgabe (Rundgang 0.6.2 S.8) und
+    // der K3-Test binden ausdrücklich das VOLUMENSTUDIEN-Panel an die
+    // Unterkante der Geschossleiste — nicht jedes linke Panel. Die erste
+    // Fassung reservierte pauschal für die ganze Spalte und brach damit
+    // drei dock-layout-Verträge real (raster fiel bei «vier Panels»
+    // 1400×900 ganz aus dem Budget; B-Modus-Float-Kollision; KV-Kompakt
+    // verlor 1.6px): `haupt.rects[id]`-Prüfung = «Panel ist offen und
+    // gedockt» (geschlossene Panels bekommen vom Solver kein Rect).
+    const unterLeistePflicht = [...UNTER_GESCHOSSLEISTE_PFLICHT].some(
+      (id) => linksIds.has(id) && haupt.rects[id] !== undefined,
+    );
+    if (unterLeistePflicht && linksIds.size > 0 && linksReserve > 0 && feld.h > linksReserve) {
+      const feldLinks = { x: feld.x, y: feld.y + linksReserve, w: feld.w, h: feld.h - linksReserve };
+      const links = solve(defs, { feld: feldLinks, ...basisOpts });
+      for (const id of linksIds) {
+        const r = links.rects[id];
+        if (r) rects[id] = r;
+        else delete rects[id];
+      }
+      splitters = [
+        ...splitters.filter((s) => s.id !== 'spL' && !(s.a !== undefined && linksIds.has(s.a))),
+        ...links.splitters.filter((s) => s.id === 'spL' || (s.a !== undefined && linksIds.has(s.a))),
+      ];
     }
-    const splitters = [
-      ...haupt.splitters.filter((s) => s.id !== 'spR' && !(s.a !== undefined && rechtsIds.has(s.a))),
-      ...rechts.splitters.filter((s) => s.id === 'spR' || (s.a !== undefined && rechtsIds.has(s.a))),
-    ];
+
+    // RECHTS (P4, unverändert).
+    if (rechtsIds.size > 0 && feld.h > TOP_BAND_RECHTS) {
+      const feldRechts = { x: feld.x, y: feld.y + TOP_BAND_RECHTS, w: feld.w, h: feld.h - TOP_BAND_RECHTS };
+      const rechts = solve(defs, { feld: feldRechts, ...basisOpts });
+      for (const id of rechtsIds) {
+        const r = rechts.rects[id];
+        if (r) rects[id] = r;
+        else delete rects[id];
+      }
+      splitters = [
+        ...splitters.filter((s) => s.id !== 'spR' && !(s.a !== undefined && rechtsIds.has(s.a))),
+        ...rechts.splitters.filter((s) => s.id === 'spR' || (s.a !== undefined && rechtsIds.has(s.a))),
+      ];
+    }
+
     wickleCtopStreifen(rects, ctopIds, feld.y, haupt.viewport);
     return { rects, viewport: haupt.viewport, splitters };
-  }, [defs, feld, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId, zuletztGeoeffnet]);
+  }, [defs, feld, linksReserve, dockModus, leftW, rightW, overrides, redockAktivId, floatDragId, zuletztGeoeffnet]);
 
   // v0.7.8 Welle 3 (P7, «Kosmo ordnet») — exponiert die aktuellen Panel-
   // Kopf-Rechtecke an `useDockOrbRuntime`, NACH jedem `solve()`-Lauf (also
