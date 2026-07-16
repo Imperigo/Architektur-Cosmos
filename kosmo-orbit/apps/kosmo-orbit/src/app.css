@@ -145,6 +145,13 @@
 .app-station-huelle {
   position: absolute;
   inset: 0;
+  /* KEIN z-index hier: die Stations-Hülle muss UNTER der schwebenden
+     Navigations-Chrome (BodenDock 108 + darin eingebettetes KosmoSymbol)
+     bleiben, sonst fängt der Stationsinhalt (z.B. das PlanView-SVG) deren
+     Klicks ab — im W9-Release-Gate als Regression eines Fix-Versuchs
+     bewiesen (boden-dock.spec «Einzel-Instanz» wurde rot). Der Fall
+     «langes Überlaufmenü ragt in die Pille» wird stattdessen an der
+     Quelle gelöst (`design.css` .dw-dropdown: max-height + Scroll). */
 }
 
 .app-zentrale-scroll {

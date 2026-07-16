@@ -1,13 +1,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
-import { version as appVersion } from './package.json';
+
+// v0.8.0B-Versions-Entscheid (siehe STAND.md): npm/Cargo/Tauri verlangen
+// striktes SemVer, darum führt `package.json` technisch "0.8.1-b" (ein
+// Buchstaben-Suffix ohne Trenner wie "0.8.0B" ist kein gültiges SemVer und
+// würde `npm install` in einem Workspace zerbrechen). Die App zeigt trotzdem
+// die Owner-Anzeigeversion "0.8.0B" (Header/Fusszeile/Neuigkeiten) — bewusst
+// EIN von `package.json` entkoppeltes Literal statt der bisherigen direkten
+// Übernahme, nur für diese Teil-Release-Buchstaben-Ausnahme.
+const APP_VERSION = '0.8.0B';
 
 export default defineConfig({
-  // Baut die echte package.json-Version in die App (Header/Fusszeile zeigen
-  // sie statt einer festen «V1» — so ist die installierte Version ablesbar).
+  // Baut die Anzeige-Version in die App (Header/Fusszeile zeigen sie statt
+  // einer festen «V1» — so ist die installierte Version ablesbar).
   define: {
-    __APP_VERSION__: JSON.stringify(appVersion),
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
   },
   plugins: [
     react(),

@@ -1,18 +1,28 @@
 import { describe, expect, it } from 'vitest';
 
-/** Reine Tupel-Semver-Ordnung — reicht für die Kurzform "x.y.z" dieser Liste. */
-function versionTupel(v: string): number[] {
-  return v.split('.').map((n) => Number.parseInt(n, 10));
+/**
+ * Reine Tupel-Semver-Ordnung — reicht für die Kurzform "x.y.z" dieser Liste,
+ * plus ein optionaler Owner-Anzeige-Buchstabensuffix («0.8.0B» ist der
+ * Teil-Release NACH "0.8.0", kein gültiges SemVer selbst — siehe STAND.md-
+ * Versions-Entscheid).
+ */
+function versionTupel(v: string): [number[], string] {
+  const m = /^([0-9.]+)([A-Z]*)$/.exec(v);
+  const numerisch = (m ? m[1] : v)!.split('.').map((n) => Number.parseInt(n, 10));
+  const suffix = m ? m[2]! : '';
+  return [numerisch, suffix];
 }
 
 function vergleicheAbsteigend(a: string, b: string): number {
-  const ta = versionTupel(a);
-  const tb = versionTupel(b);
+  const [ta, sa] = versionTupel(a);
+  const [tb, sb] = versionTupel(b);
   for (let i = 0; i < Math.max(ta.length, tb.length); i++) {
     const d = (tb[i] ?? 0) - (ta[i] ?? 0);
     if (d !== 0) return d;
   }
-  return 0;
+  // Gleicher numerischer Kern: ein Buchstabensuffix ist der spätere
+  // Teil-Release, sortiert also VOR der unsuffigierten Basisversion.
+  return sb.localeCompare(sa);
 }
 
 describe('Neuigkeiten (Serie K / A4, Owner-Befund K14): «Funktionen & Neues»-Daten', () => {
@@ -20,7 +30,7 @@ describe('Neuigkeiten (Serie K / A4, Owner-Befund K14): «Funktionen & Neues»-D
     const { NEUIGKEITEN } = await import('../src/shell/neuigkeiten');
     expect(NEUIGKEITEN.length).toBeGreaterThan(0);
     for (const eintrag of NEUIGKEITEN) {
-      expect(eintrag.version).toMatch(/^\d+\.\d+\.\d+$/);
+      expect(eintrag.version).toMatch(/^\d+\.\d+\.\d+[A-Z]?$/);
       expect(eintrag.datum).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(eintrag.punkte.length, `Version ${eintrag.version}`).toBeGreaterThan(0);
       for (const punkt of eintrag.punkte) {

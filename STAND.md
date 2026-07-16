@@ -1,7 +1,14 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.0 «KosmoPublish Plankopf-Framework + Default-Oberflächen»** (Stand 15.07.2026, ROADMAP 380; Release-Eintrag 381 folgt).
-**Alle Versionen davor (≤ v0.7.6) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.8.0B «UI-Neubau nach ClaudeDesign»** (Stand 16.07.2026, ROADMAP 392; Release-Eintrag 393 folgt).
+**Alle Versionen davor (≤ v0.7.9) sind ARCHIV.** Nie mehr darauf aufbauen.
+
+> **Versions-Hinweis:** «0.8.0B» ist die Owner-Anzeigeversion (Teil-Release-
+> Suffix, kein Punktreleast). npm/Cargo/Tauri verlangen strikt SemVer (ein
+> Buchstaben-Suffix ohne Trenner ist kein gültiges SemVer) — `package.json`/
+> `Cargo.toml`/`tauri.conf.json`/`package-lock.json` führen deshalb technisch
+> **0.8.1-b**. STAND.md/CLAUDE.md/Neuigkeiten/App-Kopf (`__APP_VERSION__`)
+> zeigen weiterhin ehrlich «0.8.0B».
 
 - **Entwicklungs-Branch:** `claude/kosmo-orbit-v1-build-pzxkbj`
 - **Wahrheit ist `origin/<branch>`, nicht der lokale Container.**

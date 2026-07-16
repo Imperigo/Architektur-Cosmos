@@ -35,6 +35,33 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.0B',
+    datum: '2026-07-16',
+    punkte: [
+      {
+        text: 'Die komplette visuelle Schicht ist neu gebaut — streng nach den 7 ClaudeDesign-Paketen (v0.7.1–v0.8.0), der Software-Kern (Commands, Undo, Yjs-Sync, Solver) bleibt byte-gleich unangetastet. Fundament: additive Design-Tokens (Abstände bis 96px, eine Typo-Leiter bis «display», eine Schatten-Skala) und der Alpha-Border-Umstieg im dunklen Thema (Linien werden halbtransparent statt Volltonfarbe — ruhiger, aber ohne Kontrastverlust).',
+      },
+      {
+        text: 'Eine komplett neue Komponentenschicht (KButton, KField, KTabs, KPill, KKeyValue, KCard, KSwitch und mehr) ersetzt rund 2100 einzelne Inline-Styles durch ein einziges, konsistentes Regelwerk — beide Farbwelten (dunkel/hell) durchgehend.',
+      },
+      {
+        text: 'Das Dock-Chrome (schwebende Werkzeug-Panels) und die BodenDock-Pille unten in der Mitte haben ihre endgültige Gestalt bekommen: Panels tragen ihre Rollenfarbe nur noch als schmale Kopflinie statt als Fläche, die Pille sortiert ihre Werkzeuge nach einer Rang-Formel aus Planungsphase und tatsächlicher Nutzung.',
+      },
+      {
+        text: 'Alle 9 Werkstationen (Design, Vis, Data, Publish, Prepare, Asset, Doc, Dev, Train) und alle 13 Design-Werkzeugpanels (Berechnungsliste, Zeichnen, Varianten, Splat, Kennzahlen, Raster, Mängel, Bauablauf, Unternehmerplan, Skizzen-Overlay, Modul-Editor, Ausschreibungs-Check, Vorhangfassade) sind auf die neue Gestaltungsgrammatik umgestellt — Funktionen, Tastenkürzel und Testanker (testids) sind dabei überall byte-gleich geblieben.',
+      },
+      {
+        text: 'Jede Ansicht zeigt jetzt genau eine gefüllte Signal-Fläche (die eine Haupt-Aktion, z. B. «Plansatz PDF») statt mehrerer gleichrangig wirkender Knöpfe — das war das grösste Einzelmerkmal von «unaufgeräumt» und ist jetzt durchgängig behoben.',
+      },
+      {
+        text: 'Die Erststart-Presets Fokus/Arbeiten/Prüfen aus v0.8.0 (Design, Vis, Publish) sind vom Neubau unberührt geblieben und funktionieren weiter über dieselben Knöpfe.',
+      },
+      {
+        text: 'Ehrlich offen: der OnboardingWizard und der Rest des StarterGuide warten noch auf ihre eigene Umbau-Runde; die GovernanceGate-Optik bleibt bewusst beim Bestand (die eingefrorene Datei bräuchte eine Owner-Freigabe zur Auftauung, bevor sie Klassen statt Inline-Styles bekommen kann); die seit v0.8.0B/P1 offene Linien-Skala-Token-Frage (B-135) ist mit diesem Release formell geschlossen — ohne eigenen Bauauftrag, weil ihr bis zuletzt ein echter Verbraucher fehlte; und die BodenDock-Kreisgrössen weichen bewusst von der ursprünglichen Design-Vorlage ab (64/54/46px statt 44/36px), weil die kleineren Masse den bestehenden, getesteten Abstands-Vertrag der Pille gebrochen hätten — der Owner kann das jederzeit als eigenen Entscheid zurückholen.',
+      },
+    ],
+  },
+  {
     version: '0.8.0',
     datum: '2026-07-15',
     punkte: [

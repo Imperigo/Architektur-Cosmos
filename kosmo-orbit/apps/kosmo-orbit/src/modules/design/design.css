@@ -184,7 +184,18 @@
 }
 
 /* Dropdowns (Mehr…/Modus-Menü) — gemeinsame Karten-Anatomie, Anker/Breite
-   als Modifier. */
+   als Modifier. z-index bewusst NUR relativ zu Geschwistern innerhalb der
+   Station (Bestandswert seit dem 0.7.x-Inline-Style-Vorgänger, s. 1d29136).
+   v0.8.0B/W9-Release-Gate-Befund (arbeitsmodi.spec «ausgeblendete Gruppen»):
+   das «Mehr…»-Menü kann im Modus «Zeichnen» >600px lang werden und ragte
+   dann PHYSISCH in die BodenDock-Pille (z-index 108) — deren Knöpfe fingen
+   die Klicks auf die untersten Einträge ab. Die Stations-Hülle über die
+   Pille zu heben ist keine Option (sie würde die Pille komplett verdecken,
+   als Regression bewiesen), und `.k-einblenden`s Animations-Stacking-Context
+   deckelt jedes lokale z-index ohnehin auf die Hüllen-Ebene. Darum die
+   ehrliche geometrische Lösung: das Menü wird scrollbar, BEVOR es die
+   Pillen-Zone erreicht (Pille: bottom 96px + ~86px Höhe ≈ 190px + Puffer;
+   das Menü beginnt unter der ~140px-Werkzeugleisten-Zone). */
 .dw-dropdown {
   position: absolute;
   z-index: 5;
@@ -193,6 +204,8 @@
   gap: 3px;
   padding: 6px;
   min-width: 140px;
+  max-height: max(180px, calc(100dvh - 360px));
+  overflow-y: auto;
   background: var(--k-surface);
   border: 1px solid var(--k-line);
   border-radius: var(--k-radius-md);
