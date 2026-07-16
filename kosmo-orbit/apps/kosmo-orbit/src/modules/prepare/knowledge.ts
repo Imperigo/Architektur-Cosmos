@@ -35,11 +35,19 @@ export interface KnowledgeChunk {
   vector?: number[];
 }
 
-/** Embeddings über die HomeStation-Bridge (bge-m3); null wenn nicht erreichbar. */
-export async function embedTexts(texts: string[]): Promise<number[][] | null> {
+/**
+ * Embeddings über die HomeStation-Bridge (bge-m3); null wenn nicht erreichbar.
+ *
+ * `timeoutMs` ist bewusst ein Parameter statt einer festen Konstante: ein
+ * einzelnes Query-Embedding (searchKnowledge) braucht nur den kurzen
+ * Default, ein ganzer Ingestions-Batch (importiereBasis, viele Texte in
+ * einem Bridge-Aufruf) braucht deutlich mehr Luft — siehe
+ * `BASIS_EMBED_TIMEOUT_MS` unten.
+ */
+export async function embedTexts(texts: string[], timeoutMs = 6000): Promise<number[][] | null> {
   const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 6000);
+  const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(`${bridge}/embed`, {
       method: 'POST',
@@ -292,10 +300,61 @@ export async function geladeneSammlungen(): Promise<Set<string>> {
   return raus;
 }
 
-/** Sammlung in die lokale Wissensbasis laden; je Quelle EIN Dokument. */
+/**
+ * Bridge-Batch für die Basis-Ingestion (v0.8.1/KI1): `main.py` `/embed`
+ * deckelt einen Aufruf hart auf 256 Texte — 64 lässt Luft nach oben, hält
+ * aber einen einzelnen Batch-Fehlschlag (Timeout, Bridge weg mitten im
+ * Lauf) günstig statt einen 256er-Batch riskieren zu müssen.
+ */
+export const BASIS_EMBED_BATCH = 64;
+/**
+ * Timeout je Basis-Embed-Batch. Grösser als der 6s-Default von `embedTexts`
+ * (der für ein einzelnes Query-Embedding in `searchKnowledge` reicht),
+ * weil ein Ingestions-Batch bis zu `BASIS_EMBED_BATCH` Texte auf einmal
+ * durch die Bridge schickt.
+ */
+export const BASIS_EMBED_TIMEOUT_MS = 30_000;
+
+export interface ImportiereBasisFortschritt {
+  quelle: number;
+  quellenGesamt: number;
+  chunksVektorisiert: number;
+  chunksGesamt: number;
+}
+
+export interface ImportiereBasisOptionen {
+  /** Chunks je Bridge-Aufruf (Default `BASIS_EMBED_BATCH`). */
+  batchSize?: number;
+  /** Timeout je Batch in ms (Default `BASIS_EMBED_TIMEOUT_MS`). */
+  timeoutMs?: number;
+  /** Fortschritt nach jeder abgeschlossenen Quelle (für eine Ladeanzeige). */
+  onProgress?: (fortschritt: ImportiereBasisFortschritt) => void;
+}
+
+/**
+ * Sammlung in die lokale Wissensbasis laden; je Quelle EIN Dokument —
+ * inklusive Embeddings (wie `ingestFile`), damit der bestehende Cosine-/
+ * Hybrid-Pfad in `searchKnowledge` auch für die mitgelieferten Basis-
+ * Korpora greift (v0.8.1/KI1, vorher: nur BM25 für `source: 'basis'`).
+ *
+ * Realismus-Design für ~22883 Buch-Abschnitte (grösste Sammlung): Embeddings
+ * laufen in `batchSize`-Häppchen statt aller Chunks einer Quelle auf einmal
+ * — ein Bridge-Aufruf bleibt so klein/schnell genug für den (konfigurierbaren)
+ * Timeout. Fehlertoleranz OHNE Import-Abbruch: sobald ein Batch scheitert
+ * (Bridge nicht erreichbar/Timeout), wird die Bridge für den Rest dieses
+ * Laufs als tot behandelt (kein Sinn, jeden weiteren Batch einzeln in denselben
+ * Timeout laufen zu lassen) — alle noch nicht vektorisierten Chunks werden
+ * trotzdem gespeichert und bleiben über den bestehenden BM25-Pfad auffindbar
+ * (searchKnowledge fällt automatisch dorthin zurück, siehe dort). Nachträgliche
+ * Vektorisierung ist über `vektorisiereFehlende` möglich, sobald die Bridge
+ * wieder da ist.
+ */
 export async function importiereBasis(
   sammlung: string,
-): Promise<{ quellen: number; chunks: number }> {
+  optionen: ImportiereBasisOptionen = {},
+): Promise<{ quellen: number; chunks: number; vektorisiert: number }> {
+  const batchSize = optionen.batchSize ?? BASIS_EMBED_BATCH;
+  const timeoutMs = optionen.timeoutMs ?? BASIS_EMBED_TIMEOUT_MS;
   // v0.6.9 (Stream B «Wissen antwortet»): minimaler, begründeter Sonderfall
   // NUR für die Sammlung-Id `import` — sie kollidiert sonst mit dem bereits
   // bestehenden `import.json` (Docling-Anzeige-Manifest der Import-Sektion,
@@ -317,10 +376,33 @@ export async function importiereBasis(
   );
   let quellen = 0;
   let chunks = 0;
+  let vektorisiert = 0;
+  let bridgeTot = false;
+  const quellenGesamt = daten.quellen.length;
+  const chunksGesamt = daten.quellen.reduce((s, q) => s + q.chunks.length, 0);
   // Quellenweise Transaktionen: abbruchsicher, Fortschritt bleibt erhalten
   for (const q of daten.quellen) {
     const docId = basisDocId(sammlung, q.name);
     if (vorhandene.has(docId)) continue;
+
+    // Embeddings in Batches — Chunks ohne Vektor (Bridge weg) leben danach
+    // ganz normal über searchKnowledge()s BM25-Fallback weiter.
+    const vectors: (number[] | undefined)[] = new Array(q.chunks.length).fill(undefined);
+    if (!bridgeTot) {
+      for (let start = 0; start < q.chunks.length; start += batchSize) {
+        const batchTexte = q.chunks.slice(start, start + batchSize).map((c) => c.text);
+        const batchVectors = await embedTexts(batchTexte, timeoutMs);
+        if (batchVectors === null) {
+          bridgeTot = true;
+          break;
+        }
+        batchVectors.forEach((v, i) => {
+          vectors[start + i] = v;
+          vektorisiert++;
+        });
+      }
+    }
+
     const tx = db.transaction(['docs', 'chunks'], 'readwrite');
     tx.objectStore('docs').put({
       id: docId,
@@ -338,14 +420,66 @@ export async function importiereBasis(
         docName: q.name,
         seq: i,
         text: c.seite ? `[S. ${c.seite}] ${c.text}` : c.text,
+        ...(vectors[i] ? { vector: vectors[i] } : {}),
       } satisfies KnowledgeChunk),
     );
     await txDone(tx);
     quellen++;
     chunks += q.chunks.length;
+    optionen.onProgress?.({ quelle: quellen, quellenGesamt, chunksVektorisiert: vektorisiert, chunksGesamt });
   }
   db.close();
-  return { quellen, chunks };
+  return { quellen, chunks, vektorisiert };
+}
+
+/**
+ * Nachträgliche Vektorisierung: Chunks, die `importiereBasis` (oder
+ * `ingestFile`) ohne Vektor gespeichert hat — weil die Bridge zu dem
+ * Zeitpunkt nicht erreichbar war —, bleiben über BM25 auffindbar, aber ohne
+ * den semantischen Pfad. Diese Funktion holt das nach, sobald die Bridge
+ * wieder da ist: sie sucht Chunks ohne `vector` (optional auf ein Dokument
+ * eingeschränkt) und embedded sie batchweise. Abbruchsicher wie
+ * `importiereBasis`: scheitert ein Batch, endet der Lauf sofort — bereits
+ * vektorisierte Chunks bleiben gespeichert, nichts geht verloren.
+ */
+export async function vektorisiereFehlende(
+  optionen: {
+    docId?: string;
+    batchSize?: number;
+    timeoutMs?: number;
+    onProgress?: (fortschritt: { erledigt: number; gesamt: number }) => void;
+  } = {},
+): Promise<{ gesamt: number; vektorisiert: number }> {
+  const batchSize = optionen.batchSize ?? BASIS_EMBED_BATCH;
+  const timeoutMs = optionen.timeoutMs ?? BASIS_EMBED_TIMEOUT_MS;
+  const db0 = await openDb();
+  const tx0 = db0.transaction('chunks', 'readonly');
+  const all = await reqResult(tx0.objectStore('chunks').getAll() as IDBRequest<KnowledgeChunk[]>);
+  db0.close();
+  const fehlend = all.filter((c) => !c.vector && (!optionen.docId || c.docId === optionen.docId));
+
+  let vektorisiert = 0;
+  for (let start = 0; start < fehlend.length; start += batchSize) {
+    const batch = fehlend.slice(start, start + batchSize);
+    const vectors = await embedTexts(
+      batch.map((c) => c.text),
+      timeoutMs,
+    );
+    if (vectors === null) break; // Bridge (wieder) weg — sauber abbrechen, kein Teilzustand verloren
+    const db = await openDb();
+    const tx = db.transaction('chunks', 'readwrite');
+    const store = tx.objectStore('chunks');
+    batch.forEach((c, i) => {
+      if (vectors[i]) {
+        store.put({ ...c, vector: vectors[i] } satisfies KnowledgeChunk);
+        vektorisiert++;
+      }
+    });
+    await txDone(tx);
+    db.close();
+    optionen.onProgress?.({ erledigt: Math.min(start + batch.length, fehlend.length), gesamt: fehlend.length });
+  }
+  return { gesamt: fehlend.length, vektorisiert };
 }
 
 export interface KnowledgeHit extends KnowledgeChunk {

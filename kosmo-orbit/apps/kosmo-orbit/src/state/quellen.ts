@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { Learning } from '@kosmo/ai';
 import type { DossierEintrag } from '@kosmo/kernel';
-import { searchKnowledge } from '../modules/prepare/knowledge';
+import { bm25Scores, searchKnowledge } from '../modules/prepare/knowledge';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { listeGlb } from './asset-bibliothek';
 
@@ -44,25 +44,6 @@ export const useQuellen = create<QuellenState>((set) => ({
   springe: (ref) => set((s) => ({ ziel: ref, zielSeq: s.zielSeq + 1 })),
 }));
 
-/** Stichwort-Score wie in der Wissensbasis-Suche (Termfrequenz, längennormiert). */
-function kwScore(query: string, text: string): number {
-  const terms = query
-    .toLowerCase()
-    .split(/[^a-z0-9äöüéèàç]+/i)
-    .filter((t) => t.length >= 3);
-  if (terms.length === 0) return 0;
-  const hay = text.toLowerCase();
-  let kw = 0;
-  for (const t of terms) {
-    let i = hay.indexOf(t);
-    while (i !== -1) {
-      kw += 1;
-      i = hay.indexOf(t, i + t.length);
-    }
-  }
-  return kw / Math.sqrt(text.length / 400 + 1);
-}
-
 /**
  * Alle fünf Quellen abfragen und mischen (D1: KosmoData-Dach erweitert die
  * ursprünglichen drei um Referenzen + Assets). Dossier-Treffer werden leicht
@@ -71,6 +52,21 @@ function kwScore(query: string, text: string): number {
  * Bestand. Rückgabe OHNE Nummern — die vergibt die Session. Baut defensiv:
  * eine tote Quelle (kein Seed, kein Vault) wird übersprungen, nicht die
  * ganze Suche zu Fall gebracht.
+ *
+ * v0.8.1/KI1: Journal/Dossier/Referenz/Asset scorten vorher über eine
+ * eigene, naive `kwScore`-Termfrequenz (keine IDF, keine Sättigung) — ein
+ * zweiter, schwächerer Suchweg NEBEN der bereits getesteten BM25-Maschinerie
+ * aus der Wissensbasis-Suche. Jetzt nutzen alle vier `bm25Scores`
+ * (`../modules/prepare/knowledge`, E3, s. dort). Architektur: `bm25Scores`
+ * ist eine reine Funktion (`texte: string[], query: string) → number[]`)
+ * ohne IndexedDB/Bridge-Zugriff — sie lebt bereits im selben App-Modul wie
+ * `searchKnowledge`, `quellen.ts` importierte von dort schon `searchKnowledge`.
+ * Kein Package-Split nötig, keine Zirkularität: `knowledge.ts` kennt
+ * `quellen.ts` nicht (nur die Umkehrung), reiner Baum-Import. Jede Kategorie
+ * bekommt ihren EIGENEN `bm25Scores`-Aufruf (eigene Korpus-Statistik: IDF/
+ * Ø-Länge je Kategorie, nicht über alle Quellen hinweg vermischt) — genau wie
+ * zuvor lief jedes `kwScore` unabhängig pro Item; die Kategorie-Gewichte
+ * (0.9 Journal, 1.2 Dossier) bleiben unverändert.
  */
 export async function sucheQuellen(
   query: string,
@@ -89,21 +85,25 @@ export async function sucheQuellen(
       seq: h.seq,
     });
   }
-  for (const e of kontext.journal) {
-    const text = [e.note, e.context].filter(Boolean).join(' — ');
-    const score = kwScore(query, text);
+
+  const journalTexte = kontext.journal.map((e) => [e.note, e.context].filter(Boolean).join(' — '));
+  const journalScores = bm25Scores(journalTexte, query);
+  kontext.journal.forEach((e, i) => {
+    const score = journalScores[i]!;
     if (score > 0) {
       treffer.push({
         typ: 'journal',
         titel: `Lernjournal ${e.ts.slice(8, 10)}.${e.ts.slice(5, 7)}. (${e.sentiment === 'gut' ? '👍' : '👎'})`,
-        text,
+        text: journalTexte[i]!,
         score: score * 0.9,
         ts: e.ts,
       });
     }
-  }
+  });
+
+  const dossierScores = bm25Scores(kontext.dossier.map((e) => e.text), query);
   kontext.dossier.forEach((e, index) => {
-    const score = kwScore(query, e.text);
+    const score = dossierScores[index]!;
     if (score > 0) {
       treffer.push({
         typ: 'dossier',
@@ -118,8 +118,9 @@ export async function sucheQuellen(
   // D1 (KosmoData-Dach): Referenzen — dieselbe Bibliothek wie das
   // `referenzen_suchen`-Tool, aber jetzt auch mit [Qn]-Beleg zitierbar.
   try {
-    for (const r of await loadReferences()) {
-      const hay = [
+    const referenzen = await loadReferences();
+    const hays = referenzen.map((r) =>
+      [
         r.title,
         r.city,
         r.country,
@@ -130,27 +131,32 @@ export async function sucheQuellen(
         r.short_description,
       ]
         .filter(Boolean)
-        .join(' ');
-      const score = kwScore(query, hay);
+        .join(' '),
+    );
+    const scores = bm25Scores(hays, query);
+    referenzen.forEach((r, i) => {
+      const score = scores[i]!;
       if (score > 0) {
         treffer.push({
           typ: 'referenz',
           titel: `Referenz · ${r.title}`,
-          text: r.one_sentence ?? r.short_description ?? hay.slice(0, 300),
+          text: r.one_sentence ?? r.short_description ?? hays[i]!.slice(0, 300),
           score,
           docId: r.id,
         });
       }
-    }
+    });
   } catch {
     /* Referenz-Seed nicht erreichbar — Sammlung übersprungen */
   }
 
   // D1 (KosmoData-Dach): Assets — die Objekt-Bibliothek (KosmoAsset).
   try {
-    for (const a of await listeGlb()) {
-      const hay = [a.title, a.asset_type, a.category, ...a.tags].filter(Boolean).join(' ');
-      const score = kwScore(query, hay);
+    const assets = await listeGlb();
+    const hays = assets.map((a) => [a.title, a.asset_type, a.category, ...a.tags].filter(Boolean).join(' '));
+    const scores = bm25Scores(hays, query);
+    assets.forEach((a, i) => {
+      const score = scores[i]!;
       if (score > 0) {
         treffer.push({
           typ: 'asset',
@@ -160,7 +166,7 @@ export async function sucheQuellen(
           docId: a.id,
         });
       }
-    }
+    });
   } catch {
     /* Objekt-Vault nicht erreichbar — Sammlung übersprungen */
   }
