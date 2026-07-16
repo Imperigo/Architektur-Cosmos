@@ -215,6 +215,17 @@
   --k-rolle-generator: #cd7670;
   --k-rolle-ak: #b08a6e;
   --k-rolle-office: #8a7b5a;
+  /* v0.8.1 / P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1
+     Entscheid 4/C-4) — neunte Rolle, additiv: die Doc-Station (Diagnose,
+     Hilfe, Berichte, Tech-Radar) bekommt eine EIGENE Rollenfarbe statt
+     weiterhin den Bestands-Hue `draw` mitzubenutzen (`modules/doc/
+     DocWorkspace.tsx`/`doc.css` bezogen bisher `moduleHue.draw`, optisch
+     nicht von KosmoDraw unterscheidbar). Schiefer/Blaugrau — dieselbe
+     Identität, die `moduleHue.doc` in `tokens.ts` schon als «Schiefer —
+     Diagnose und Berichte» führt, hier erstmals auch als echtes
+     `--k-rolle-*`-Token mit `-fill`/`-line`-Paar (s. u.) wie die acht
+     bestehenden Rollen. */
+  --k-rolle-doc: #5d7489;
   /* Easings (additiv — die bestehenden --k-motion-Werte und --k-feder oben
      bleiben unverändert und sind weiterhin die Standard-Übergänge; diese
      drei sind die neuen benannten Kurven aus dem Bewegungsvokabular des
@@ -261,6 +272,10 @@
   --k-rolle-generator: #a05c57;
   --k-rolle-ak: #896c56;
   --k-rolle-office: #6c6046;
+  /* v0.8.1 / P1 (Entscheid 4/C-4) — Papier-Überschreibung der neuen `doc`-
+     Rolle, gleiche Abdunkelungs-Stufe wie die acht Rollen oben (≈78 % des
+     Kosmos-Originals #5d7489). */
+  --k-rolle-doc: #495a6b;
 }
 
 /* v0.7.6 «Kosmo-Viz» §Fundament — Rollen-Tönungen (additiv, themenübergreifend
@@ -288,6 +303,10 @@
   --k-rolle-ak-line: #b08a6e66;
   --k-rolle-office-fill: #8a7b5a1f;
   --k-rolle-office-line: #8a7b5a66;
+  /* v0.8.1 / P1 (Entscheid 4/C-4) — Tönungs-Paar der neuen `doc`-Rolle,
+     gleiches Rezept wie die acht oben (Kosmos-Volltönen + 1f/66-Suffix). */
+  --k-rolle-doc-fill: #5d74891f;
+  --k-rolle-doc-line: #5d748966;
   /* Signal (die «system/teal»-Rolle der Soll-Referenz) als Tönung. */
   --k-signal-fill: #57b6c21f;
   --k-signal-line: #57b6c266;
@@ -323,7 +342,16 @@
   --k-line: rgba(255, 255, 255, 0.11);
   --k-line-strong: rgba(255, 255, 255, 0.18);
   /* Hintergrundraster (Spez §1 B-135-Nachbar/§9.16) — nur Backdrop-Zweck,
-     nie unter Text, opacity ≤.5 an der Einsatzstelle. */
+     nie unter Text, opacity ≤.5 an der Einsatzstelle.
+     v0.8.1 / P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1
+     Entscheid 3/C-3, «48px-Raster») — FORMELL GESCHLOSSEN: dieses Token
+     bleibt AUSSCHLIESSLICH als möglicher Dock-Bühnen-Backdrop erlaubt
+     (Hairline-Raster, opacity ≤.5, nie unter Text) — kein generelles
+     48px-Layout-Raster, kein Bauauftrag ausserhalb dieser Ausnahme. Bislang
+     ohne Verbraucher (dieselbe ehrlich dokumentierte Lage wie B-135, keine
+     Token-Familie ohne Konsument wird um ihrer selbst willen verbaut) —
+     bleibt additiv liegen, bis ein echter Dock-Bühnen-Backdrop es
+     tatsächlich braucht. */
   --k-hairline: rgba(120, 140, 190, 0.14);
   /* Flächenstufe Hover (Spez §1 B-26) — komplettiert sunken→hover; siehe
      Papier-Gegenstück + Begründung oben im `:root, [data-theme='paper']`-

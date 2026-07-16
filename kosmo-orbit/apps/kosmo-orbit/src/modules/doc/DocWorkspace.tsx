@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { LearningJournal } from '@kosmo/ai';
-import { Badge, Hairline, Karteikarte, KTabs, KToolbar, Measure, Messrahmen, moduleHue, type KTabItem } from '@kosmo/ui';
+import { Badge, Hairline, Karteikarte, KTabs, KToolbar, Measure, Messrahmen, type KTabItem } from '@kosmo/ui';
 import { DiagnosePanel } from '../../shell/Diagnose';
 import { journalStore } from '../../state/journal-store';
 import { entscheidFarbe, RADAR_BEREICHE, RADAR_STAND, TECH_RADAR } from './tech-radar';
@@ -17,6 +17,15 @@ import './doc.css';
  * **Signal-Audit:** KosmoDoc ist reine Diagnose/Lese-Station ohne
  * datenverändernde Aktion — bewusst KEINE gefüllte Signal-Fläche (Gesetz 1
  * verlangt eine Primäraktion nur, wo eine existiert).
+ *
+ * v0.8.1 / P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1 Entscheid
+ * 4/C-4, «Doc eigener Hue»): der Modul-Hue-Carrier `--_hue` (Stationskopf-
+ * Rahmen, Badge, Tech-Radar-Karten, Lernjournal-Rahmen) bezog bis hierhin
+ * `moduleHue.draw` — optisch nicht von KosmoDraw unterscheidbar (ehrlich
+ * benannter Bestand, s. `V-NAECHSTE-KANDIDATEN.md` A). Jetzt die neue,
+ * eigene Rolle `--k-rolle-doc` (`packages/kosmo-ui/src/aura.css`, additiv,
+ * beide Themes) — Doc ist damit sichtbar von draw abgesetzt. Reine
+ * Farbquellen-Änderung, keine Struktur-/Logik-/testid-Änderung.
  */
 
 type Tab = 'diagnose' | 'hilfe' | 'berichte' | 'radar';
@@ -91,9 +100,9 @@ export function DocWorkspace() {
       <div className="doc-content">
         {/* Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass + Modul-Tönung),
             Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
-        <div className="k-glass doc-kopf" style={{ ['--_hue' as string]: moduleHue.draw }}>
+        <div className="k-glass doc-kopf" style={{ ['--_hue' as string]: 'var(--k-rolle-doc)' }}>
           <KToolbar data-testid="doc-werkzeugleiste" className="doc-kopf-leiste">
-            <Badge hue={moduleHue.draw}>KosmoDoc</Badge>
+            <Badge hue="var(--k-rolle-doc)">KosmoDoc</Badge>
             <span className="doc-kopf-satz">
               Der Projektdoktor — Diagnose, Hilfe, Berichte.
             </span>
@@ -143,14 +152,15 @@ export function DocWorkspace() {
               <div key={bereich} className="doc-radar-abschnitt">
                 <div className="k-titel doc-radar-titel">{bereich}</div>
                 {/* Glass + dezente Doc-Hue-Note (40%, passend zum
-                    Stationskopf, der bewusst moduleHue.draw trägt) je
-                    Radar-Zeile — reine Kartenoptik. */}
+                    Stationskopf, der die eigene `--k-rolle-doc`-Farbe trägt,
+                    s. v0.8.1/P1 Entscheid 4/C-4 unten) je Radar-Zeile —
+                    reine Kartenoptik. */}
                 {TECH_RADAR.filter((p) => p.bereich === bereich).map((p) => (
                   <div
                     key={p.baustein}
                     className="k-glass doc-radar-posten"
                     data-testid="radar-posten"
-                    style={{ ['--_hue' as string]: moduleHue.draw }}
+                    style={{ ['--_hue' as string]: 'var(--k-rolle-doc)' }}
                   >
                     <span
                       className="doc-radar-entscheid"
@@ -185,7 +195,7 @@ export function DocWorkspace() {
           // eigene Kartenoptik unangetastet.
           <div
             className="k-glass doc-berichte"
-            style={{ ['--_hue' as string]: moduleHue.draw }}
+            style={{ ['--_hue' as string]: 'var(--k-rolle-doc)' }}
             data-testid="doc-berichte"
           >
             <div className="doc-berichte-kopf">

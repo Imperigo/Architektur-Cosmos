@@ -177,16 +177,32 @@ export function sortiereNachRang(toolIds: readonly ToolId[], raengeWert: Record<
 }
 
 /** Grössen-/Betonungs-Tier je Rang-POSITION (0-indexiert, nach `sortiereNachRang`)
- *  — Spec §4 wörtlich: «Top-3 innen (64px, Rollenfarben-Border + Glow),
- *  Mitte 54, aussen 46». Positionen 0-2 = innen, 3-5 = mitte, ab 6 = aussen.
- *  Die meisten OrbitStart-Fächer zeigen NUR 1–4 der 8 Canvas-Tools (s.
- *  `OrbitStart.tsx`, Rang gilt je Hauptwerkzeug-Fächer, nicht global über
- *  alle 8 auf einmal) — bei WENIGER als 3 rang-fähigen Werkzeugen fallen
- *  dann schlicht ALLE in den «innen»-Tier (keine erzwungene 3er-Staffelung,
- *  die Schwellen sind Positions-Grenzen, keine feste Anzahl-Regel). */
+ *  — Positionen 0-2 = innen, 3-5 = mitte, ab 6 = aussen. Die meisten
+ *  OrbitStart-Fächer zeigen NUR 1–4 der 8 Canvas-Tools (s. `OrbitStart.tsx`,
+ *  Rang gilt je Hauptwerkzeug-Fächer, nicht global über alle 8 auf einmal) —
+ *  bei WENIGER als 3 rang-fähigen Werkzeugen fallen dann schlicht ALLE in
+ *  den «innen»-Tier (keine erzwungene 3er-Staffelung, die Schwellen sind
+ *  Positions-Grenzen, keine feste Anzahl-Regel).
+ *
+ * v0.8.1/P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1 Entscheid
+ * 2/C-2, zurückgeholter Bestand aus dem v0.8.0B/P3-Abweichungsvermerk unten)
+ * — `TIER_GROESSE` kehrt auf die ursprüngliche Blaupausen-Masse **44/36px**
+ * zurück (statt der zwischenzeitlichen 64/54/46, s. Historie). Die Blaupause
+ * kennt nur ZWEI Grössen (Top-Werkzeug 44px, alle übrigen 36px) — «aussen»
+ * fällt darum bewusst auf denselben 36px-Wert wie «mitte», keine dritte
+ * Stufe. `tierFuerPosition` selbst (die 0-2/3-5/6+-Positionsgrenzen) bleibt
+ * UNVERÄNDERT — nur die daraus abgeleiteten Pixelgrössen ändern sich; jeder
+ * Konsument dieser Konstante (`BodenDock.tsx`, `OrbitStart.tsx`,
+ * `BODEN_DOCK_RESERVE_PX`) zieht automatisch mit, weil er den Wert importiert
+ * statt ihn zu duplizieren. Historie: v0.8.0B/P3 (ROADMAP 385) hatte die
+ * Blaupausen-Masse bewusst NICHT übernommen, weil das damals den getesteten
+ * `BODEN_DOCK_RESERVE_PX=180`-Vertrag verschoben hätte («B-65» — Owner konnte
+ * das als eigenen state/-Entscheid zurückholen, s. ROADMAP 393) — genau das
+ * ist jetzt dieser Entscheid; `BODEN_DOCK_RESERVE_PX` wird in derselben Runde
+ * neu gerechnet (`shell/BodenDock.tsx`s Kopfkommentar zur Konstante). */
 export type RangTier = 'innen' | 'mitte' | 'aussen';
 
-export const TIER_GROESSE: Record<RangTier, number> = { innen: 64, mitte: 54, aussen: 46 };
+export const TIER_GROESSE: Record<RangTier, number> = { innen: 44, mitte: 36, aussen: 36 };
 
 export function tierFuerPosition(position: number): RangTier {
   if (position < 3) return 'innen';

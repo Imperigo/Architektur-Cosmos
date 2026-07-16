@@ -1,13 +1,17 @@
 /* KosmoDoc (v0.8.0B / W8c-A, `docs/V080B-DESIGN-SPEZ.md` §2/§3) — Chrome-
  * Schicht für `DocWorkspace.tsx`. Reiner Visual-Umbau (Muster
  * `modules/publish/publish.css`, `modules/data/data.css`): ersetzt die
- * vorherigen Inline-Styles durch Klassen + Tokens. Modul-Hue
- * (`moduleHue.draw`) wird als CSS-Custom-Property `--_hue` PRO INSTANZ
- * übergeben. **Signal-Audit:** KosmoDoc ist eine reine Diagnose-/Lese-
- * Station (Selbstdiagnose, Hilfe, Berichte, Tech-Radar) ohne datenverändernde
- * Aktion — Gesetz 1 verlangt hier bewusst KEINE gefüllte Signal-Fläche
- * (kein Bestand, den man erzeugt); die Station bleibt vollständig auf
- * `tone="ghost"`/reine Information.
+ * vorherigen Inline-Styles durch Klassen + Tokens. Modul-Hue wird als
+ * CSS-Custom-Property `--_hue` PRO INSTANZ übergeben — seit v0.8.1/P1
+ * (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1 Entscheid 4/C-4,
+ * «Doc eigener Hue») die neue, eigene Rolle `--k-rolle-doc`
+ * (`packages/kosmo-ui/src/aura.css`), NICHT mehr `moduleHue.draw` (bis
+ * dahin optisch nicht von KosmoDraw unterscheidbar). **Signal-Audit:**
+ * KosmoDoc ist eine reine Diagnose-/Lese-Station (Selbstdiagnose, Hilfe,
+ * Berichte, Tech-Radar) ohne datenverändernde Aktion — Gesetz 1 verlangt
+ * hier bewusst KEINE gefüllte Signal-Fläche (kein Bestand, den man
+ * erzeugt); die Station bleibt vollständig auf `tone="ghost"`/reine
+ * Information.
  */
 
 .doc-viewport {

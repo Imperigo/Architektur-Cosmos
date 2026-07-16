@@ -26,14 +26,21 @@ import './boden-dock.css';
  * (OrbitStart-Hub, module-*-Kacheln, Kopfleiste bleiben WÖRTLICH unverändert
  * — dieses Bauteil ersetzt/entfernt nichts).
  *
- * Rang/Grösse: dieselbe Formel wie der OrbitStart-Hub (Spec
+ * Rang: dieselbe Formel wie der OrbitStart-Hub (Spec
  * `docs/V072-VISUELLES-UPDATE-SPEZ.md` §4, seit v0.8.0B/W3 wörtlich auch
  * `docs/V080B-DESIGN-SPEZ.md` §4 B-67) — `naechsteReihenfolge()` +
- * `tierFuerPosition` (64/54/46 px, `state/orbit-rang.ts`, NUR gelesen, nicht
- * verändert). Seit W3 glättet ein EIGENER Hook (`useBodenRang` unten) die
- * Reihenfolge MIT Hysterese/Anti-Nerv-Kontingent — dieselbe Formel wie
- * OrbitStarts `useHubRang`, hier zusätzlich mit einem Zeit-Timer, weil der
- * Boden-Dock (anders als der Hub) dauerhaft gemountet bleibt.
+ * `tierFuerPosition` (Positions-Grenzen, `state/orbit-rang.ts`, NUR gelesen,
+ * nicht verändert) bestimmen NUR die Reihenfolge/Betonungs-Stufe je Position;
+ * die daraus abgeleiteten Pixelgrössen sind je Aufrufer EIGENSTÄNDIG (Boden-
+ * Dock hier über `TIER_GROESSE`, s. Kopfkommentar zu `BODEN_DOCK_RESERVE_PX`
+ * unten — v0.8.1/P1 auf die Blaupausen-Masse 44/36px zurückgestellt;
+ * OrbitStart hält seine Kreisgrössen 64/54/46 unverändert eigenständig in
+ * `orbit-065.css`, nicht über diese Konstante — beide dürfen seit jeher
+ * unabhängig voneinander sein, `TIER_GROESSE` ist nur EIN Konsument von
+ * `tierFuerPosition`). Seit W3 glättet ein EIGENER Hook (`useBodenRang`
+ * unten) die Reihenfolge MIT Hysterese/Anti-Nerv-Kontingent — dieselbe
+ * Formel wie OrbitStarts `useHubRang`, hier zusätzlich mit einem Zeit-Timer,
+ * weil der Boden-Dock (anders als der Hub) dauerhaft gemountet bleibt.
  *
  * Rollenfarbe/Icon je Knopf: dieselbe Quelle wie OrbitStarts Rang-Kreise —
  * `STATION_GLYPHE` (`werkzeug-glyphen.tsx`, «Station → Glyphe → Rollenfarbe»,
@@ -154,16 +161,28 @@ function werkzeugMeta(toolId: ToolId): WerkzeugMeta {
 
 /** Icon-Grösse je Tier — dieselbe Relation zur Kreisgrösse wie OrbitStarts
  *  `ICON_GROESSE` (`OrbitStart.tsx`), hier separat gehalten (private Konstante
- *  dort, keine exportierte Schnittstelle zum Wiederverwenden). */
-const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 20 };
+ *  dort, keine exportierte Schnittstelle zum Wiederverwenden).
+ *  v0.8.1/P1 (Owner-Entscheid, `TIER_GROESSE` 44/36/36 statt 64/54/46, s.
+ *  `orbit-rang.ts`) — proportional mitgezogen (bisheriges Verhältnis
+ *  Icon≈44 % der Kreisgrösse gehalten: 28/64≈24/54≈20/46≈0.44, jetzt
+ *  20/44≈16/36≈0.44), sonst würde das Icon im geschrumpften Kreis
+ *  unproportional gross/eng wirken. */
+const ICON_GROESSE: Record<RangTier, number> = { innen: 20, mitte: 16, aussen: 16 };
 
 /**
  * v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «BodenDock ins Dock-System») —
  * Gesamt-Reserve vom UNTEREN Viewport-Rand, die der Boden-Dock optisch
  * beansprucht: `bottom:96px` (`boden-dock.css`) + die tatsächliche
- * Container-Höhe der Knopfreihe (Top-3-Tier-Kreis `TIER_GROESSE.innen`=64px,
+ * Container-Höhe der Knopfreihe (Top-3-Tier-Kreis `TIER_GROESSE.innen`,
  * `state/orbit-rang.ts`, die höchste der drei Grössen) + `padding:10px 16px`
- * oben/unten (`boden-dock.css`, 2×10px) = 96 + 64 + 20 = 180px.
+ * oben/unten (`boden-dock.css`, 2×10px).
+ *
+ * v0.8.1/P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1 Entscheid
+ * 2/C-2) — **neu gerechnet**, weil `TIER_GROESSE.innen` auf die Blaupausen-
+ * Masse 44px zurückgestellt wurde (`orbit-rang.ts`s Kopfkommentar zu
+ * `TIER_GROESSE`, vorher 64px): Formel bleibt wörtlich `96 (bottom) +
+ * TIER_GROESSE.innen + 20 (padding 2×10)` = **96 + 44 + 20 = 160px**
+ * (vorher 96 + 64 + 20 = 180px).
  *
  * Benannte Konstante statt Magic Number, für Stationen OHNE eigenen
  * Dock-Feld-Messlauf (`shell/dock/DockFlaeche.tsx` misst dieselbe Reserve
@@ -178,7 +197,7 @@ const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 2
  * `TIER_GROESSE`, muss diese Konstante mitgezogen werden (dieselbe Pflicht
  * gilt für jede andere Stelle, die diese Zahlen kennt).
  */
-export const BODEN_DOCK_RESERVE_PX = 180;
+export const BODEN_DOCK_RESERVE_PX = 160;
 
 /**
  * v0.8.0B / W3 (Spez §4, B-67) — Rang-Formel-Kreislauf des Boden-Docks, MIT

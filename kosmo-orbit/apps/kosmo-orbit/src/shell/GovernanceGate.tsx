@@ -2,6 +2,21 @@ import type { CSSProperties } from 'react';
 import { KButton, KIcon } from '@kosmo/ui';
 
 /**
+ * AUFGETAUT v0.8.1/P1 (Owner-Freigabe 16.07.2026, `docs/V081-SPEZ.md` §4.1
+ * Entscheid 1/C-1) — GENAU EIN Zweck: die bestehenden `.k-approval*`-Klassen
+ * (`packages/kosmo-ui/src/aura.css`, v0.8.0B/P2, B-46/B-99) endlich auf diese
+ * Datei anwenden. Owner-Formel «auftauen, anwenden, einfrieren»: NUR
+ * `className`-Ergänzungen + das Entfernen der dadurch überflüssig gewordenen
+ * Inline-Styles — Struktur/Props/Logik/Texte/testids/aria sind BYTE-GLEICH
+ * geblieben (Diff-Beweis: reine Klassen-Zeilen, keine JSX-Struktur-/Prop-
+ * Änderung). `governance.spec`/alle Aufrufer (`KosmoPanel.tsx` `apply-
+ * proposal`, `Companion.tsx` `companion-job-*`) unverändert grün. **Nach
+ * dieser Anwendung ist die Datei WIEDER EINGEFROREN** — weitere Änderungen
+ * brauchen erneut eine explizite Owner-Freigabe wie diese hier, kein
+ * Dauerzugriff.
+ */
+
+/**
  * GovernanceGate (v0.7.6 Welle 2, Companion/ClaudeDesign-Soll §8.1+§10) — der
  * EINE echte Neubau dieser Welle: eine abgestufte Freigabe-Karte, additiv
  * zum bestehenden BINÄREN Anwenden/Ablehnen (`KosmoPanel.tsx` `applyCard`/
@@ -82,16 +97,8 @@ export function RisikoPill({ risiko, testid }: { risiko: GovernanceRisiko; testi
   return (
     <span
       data-testid={testid ?? 'governance-risiko'}
-      style={{
-        ...MONO_LABEL,
-        flex: '0 0 auto',
-        fontWeight: 600,
-        padding: '3px 9px',
-        borderRadius: 'var(--k-radius-pill)',
-        color: RISK_FARBE[risiko.ton],
-        background: `color-mix(in srgb, ${RISK_FARBE[risiko.ton]} 14%, transparent)`,
-        border: `1px solid color-mix(in srgb, ${RISK_FARBE[risiko.ton]} 45%, transparent)`,
-      }}
+      className="k-approval-risiko"
+      style={{ ['--_risiko' as string]: RISK_FARBE[risiko.ton] }}
     >
       Risk · {risiko.label}
     </span>
@@ -117,44 +124,32 @@ export function GovernanceGate({
   nachfragenTestid,
 }: GovernanceGateProps) {
   return (
-    <div
-      data-testid={testid}
-      className="k-glass"
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 14,
-        padding: 16,
-        border: '1px solid color-mix(in srgb, var(--k-warning) 40%, var(--k-line))',
-      }}
-    >
+    <div data-testid={testid} className="k-glass k-approval">
       <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
         <KIcon name="schloss" size={14} title="Governance · Freigabe" style={{ color: 'var(--k-warning)' }} />
         <span style={{ ...MONO_LABEL, color: 'var(--k-warning)' }}>Governance · Freigabe</span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 14 }}>
+      <div className="k-approval-kopf">
         <div>
-          <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--k-ink)' }}>{titel}</div>
-          {unterzeile && (
-            <div style={{ fontSize: 12.5, color: 'var(--k-ink-soft)', marginTop: 3 }}>{unterzeile}</div>
-          )}
+          <div className="k-approval-titel">{titel}</div>
+          {unterzeile && <div className="k-approval-sub">{unterzeile}</div>}
         </div>
         {risiko && <RisikoPill risiko={risiko} />}
       </div>
 
       {meta && meta.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '4px 16px', fontSize: 12 }}>
+        <div className="k-approval-meta">
           {meta.map((m) => (
             <div key={m.label} style={{ display: 'contents' }}>
-              <span style={{ ...MONO_LABEL, color: 'var(--k-ink-faint)' }}>{m.label}</span>
-              <span style={{ fontFamily: 'var(--k-font-mono)', color: 'var(--k-ink-soft)' }}>{m.wert}</span>
+              <span className="k-approval-meta-key">{m.label}</span>
+              <span className="k-approval-meta-wert">{m.wert}</span>
             </div>
           ))}
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+      <div className="k-approval-aktionen">
         <KButton size="sm" tone="accent" data-testid={einmalTestid} disabled={einmalLaeuft} onClick={onEinmal}>
           {einmalLaeuft ? 'Erlaube …' : 'Einmal erlauben'}
         </KButton>

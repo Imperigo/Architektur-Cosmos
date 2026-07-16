@@ -152,7 +152,7 @@ describe('sortiereNachRang — absteigend, stabil bei Gleichstand', () => {
   });
 });
 
-describe('tierFuerPosition — Grössen-Tiers (Spec §4: Top-3 innen 64 / Mitte 54 / aussen 46)', () => {
+describe('tierFuerPosition — Grössen-Tiers (Positions-Grenzen; Pixelgrössen je Konsument, s. `TIER_GROESSE`)', () => {
   it('Positionen 0-2 = innen (Top-3), 3-5 = mitte, ab 6 = aussen', () => {
     expect(tierFuerPosition(0)).toBe('innen');
     expect(tierFuerPosition(1)).toBe('innen');

@@ -54,15 +54,15 @@
   pointer-events: auto;
 }
 
-/* v0.8.0B / W3 (Spez §4, B-65) — Basis-Randstärke jetzt 1px («übrige Tools
-   1px-Border», Blaupause) statt vorher pauschal 1.5px für ALLE Tiers; die
-   Top-3 (`--innen`, unten) heben sich mit 1.5px + Rollenfarbe ab. Grössen
-   selbst bleiben bei `TIER_GROESSE` (64/54/46, `state/orbit-rang.ts`,
-   NICHT verändert) — die Blaupausen-Masse 44/36px würden die getestete
-   `BODEN_DOCK_RESERVE_PX=180`/`bottom:96px`-Kollisionsrechnung verschieben
-   (Spec-Test-Vertrag, s. Auftrag), darum bewusst NICHT übernommen; die
-   Feingliederung (Randstärke/Rollenpunkt/Trenner) trägt die Blaupause so
-   weit wie ohne Vertragsbruch möglich. */
+/* v0.8.0B / W3 (Spez §4, B-65) — Basis-Randstärke 1px («übrige Tools
+   1px-Border», Blaupause) statt pauschal 1.5px für ALLE Tiers; die Top-3
+   (`--innen`, unten) heben sich mit 1.5px + Rollenfarbe ab.
+   v0.8.1 / P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1
+   Entscheid 2/C-2) — Grössen selbst (`TIER_GROESSE`, `state/orbit-rang.ts`)
+   sind jetzt auf die Blaupausen-Masse **44/36px** zurückgestellt (vorher
+   64/54/46, s. dortiger Kopfkommentar zur Historie); `BODEN_DOCK_RESERVE_PX`
+   (`BodenDock.tsx`) wurde in derselben Runde auf 160 neu gerechnet, damit
+   der Kollisionsvertrag mit `bottom:96px` weiterhin hält. */
 .boden-dock-knopf {
   position: relative;
   flex: none;

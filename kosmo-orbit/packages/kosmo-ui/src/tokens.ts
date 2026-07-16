@@ -273,6 +273,11 @@ export const rolle = {
   generator: '#cd7670',
   ak: '#b08a6e',
   office: '#8a7b5a',
+  /** v0.8.1 / P1 (Owner-Entscheid 16.07.2026, `docs/V081-SPEZ.md` §4.1
+   * Entscheid 4/C-4) — neunte Rolle, additiv (mirrors `--k-rolle-doc` in
+   * `aura.css`): die Doc-Station bekommt eine eigene Rollenfarbe statt
+   * weiterhin `moduleHue.draw` mitzubenutzen (`modules/doc/DocWorkspace.tsx`). */
+  doc: '#5d7489',
 } as const;
 
 /** v0.7.3 D7 (Owner-Entscheid): Tinte (`ink`) entfernt — nur noch das

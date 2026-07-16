@@ -27,7 +27,40 @@
   z-index: 110;
 }
 
+/*
+ * v0.8.1 / P1 (Verifikations-Fund beim Owner-Entscheid 2/C-2, BodenDock
+ * 44/36px) — ECHTER Produktfund, kein Test-Hack: `.ks-popup` sass bisher als
+ * NORMALER Flex-Sibling VOR dem Knopf in `.ks-wrapper` (`flex-direction:
+ * column`), nicht als Overlay. Erscheint die Popup beim Hover/Fokus
+ * (`KosmoSymbol.tsx`s `onMouseEnter`/`onFocus`), wächst der WRAPPER auf die
+ * Popup-Breite (bis 260px) — bei der `eingebettet`-Variante (`position:
+ * relative`, kein `right`-Anker wie `--frei`) verschiebt das den rechts-
+ * ausgerichteten KNOPF SELBST spürbar nach rechts (real gemessen: bis zu
+ * ~87px, HEAD-Beweis via isoliertem Worktree-Vergleich 65553d1 vs. diesem
+ * Stand — bei den alten, breiteren 64/54/46px-Kreisen lag der Knopf schon
+ * näher am rechten Dock-Rand, der SELBE Verschub landete dort zufällig noch
+ * knapp unter dem unbewegten Mauszeiger; die 44/36px-Verschlankung schiebt
+ * die Ruheposition weiter nach links, derselbe Verschub reisst den Knopf
+ * jetzt unter dem Zeiger weg). Ergebnis: `mousedown` trifft den Knopf,
+ * `mouseup`/`click` (Millisekunden später, nach dem Popup-Re-Layout) treffen
+ * nur noch den `.ks-wrapper`-Container (kein Klick-Handler) — das grosse
+ * Panel öffnet sich nicht (`boden-dock.spec.ts` «Einzel-Instanz-Invariante»,
+ * HEAD-bewiesen: identischer Klick auf dem `--frei`-Symbol auf der Zentrale
+ * bleibt stabil, weil `--frei`s `right:22px`-Anker den Knopf ohnehin fix
+ * hält — nur `--eingebettet` ohne solchen Anker war je verwundbar).
+ *
+ * Fix an der Wurzel statt am Symptom: die Popup wird ein ECHTES Overlay
+ * (`position:absolute`, rechtsbündig über dem Wrapper) statt eines
+ * Flex-Geschwisters — der Wrapper (und damit der Knopf) behält seine Grösse/
+ * Position UNABHÄNGIG davon, ob die Popup gerade sichtbar ist, in BEIDEN
+ * Varianten. Rein visuell/geometrisch (derselbe rechtsbündige Abstand
+ * `var(--k-s2)` über dem Knopf wie bisher im Flex-Fluss) — testids/DOM-
+ * Struktur/Text/Logik in `KosmoSymbol.tsx` bleiben unangetastet.
+ */
 .ks-popup {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--k-s2));
   max-width: 260px;
   padding: 10px 12px;
   border-radius: var(--k-radius-md);
