@@ -74,6 +74,24 @@ export interface PanelDef {
    * Feld (`undefined`), rendert `DockPanel` wie bisher den vollen Kopf.
    */
   floatChrome?: 'voll' | 'schlank';
+  /**
+   * v0.8.1 Welle 4 / Paket P5a («Zwei-Stufen-Popups», `docs/V081-SPEZ.md`
+   * §2.1/§8 Sanktion 5) — dokumentiert-additives Fundament, NUR die
+   * Solver-Grössenstufe, kein UI (das kommt in P5b/P5c mit
+   * `KPanelZweiStufen`). Optionale dritte Grössenstufe «kompakt» neben den
+   * bestehenden offen/eingeklappt (34px-Tab, `COLLH`): die Zielgrösse, die
+   * `stack()` für ein Panel ansteuert, dessen Instanz-Override
+   * `PanelOverride.stufe === 'kompakt'` gesetzt hat (s. dort). Fehlt dieses
+   * Feld (`undefined`), verhält sich das Panel exakt wie heute — kein
+   * bestehendes Panel ändert sein Verhalten, bis es explizit auf Zwei-Stufen
+   * migriert wird (§2.4 Migrationsreihenfolge). Empfehlung für den Wert
+   * (Viertelflächen-Ziel-Formel §2.1, panelweise von der aufrufenden Stelle
+   * gewählt): `h ≈ 0.25 × feld.h`, `w` analog für Spaltenbreite bei
+   * rechten/linken Panels — der Solver selbst KLEMMT diesen Wert zusätzlich
+   * auf `[min, groesse]` (s. `stack()`s `zielKompakt()`), verlangt die
+   * Formel also nicht blind vom Aufrufer.
+   */
+  groesseKompakt?: { w: number; h: number };
 }
 
 export interface PanelOverride {
@@ -87,6 +105,18 @@ export interface PanelOverride {
   fw?: number;
   fh?: number;
   geschlossen?: boolean;
+  /**
+   * v0.8.1 Welle 4 / Paket P5a — Grössenstufe DIESER Instanz (additiv, s.
+   * `PanelDef.groesseKompakt`-Kommentar). `'kompakt'` zielt auf
+   * `PanelDef.groesseKompakt` (fällt ohne gesetztes `groesseKompakt` auf die
+   * heutige 66%-Zielgrösse zurück, s. `stack()`); `'offen'` zielt auf das
+   * Viertelflächen-Ziel (`avail * 0.25`, dieselbe Klammer-Logik wie die
+   * bestehende 66%-Stufe, §2.1 `V081-SPEZ.md`). Fehlt `stufe` (`undefined`,
+   * der Alt-Default), rechnet `stack()` exakt wie vor P5a — bestehende
+   * Einklapp-Reihenfolge (rein nach `wichtigkeit`) ist davon unberührt, s.
+   * Kommentar in `stack()`.
+   */
+  stufe?: 'kompakt' | 'offen';
 }
 
 export interface DockRect {
@@ -168,6 +198,9 @@ interface MergedPanel {
   eingeklappt: boolean;
   angeheftet: boolean;
   geschlossen: boolean;
+  /** v0.8.1 P5a — additiv, s. `PanelDef.groesseKompakt`/`PanelOverride.stufe`. */
+  stufe?: 'kompakt' | 'offen';
+  groesseKompakt?: { w: number; h: number };
 }
 
 interface RoutedPanel extends MergedPanel {
@@ -182,6 +215,13 @@ function mischePanel(def: PanelDef, ov: PanelOverride | undefined): MergedPanel 
   const groesse = o.groesse ?? def.groesse;
   const fw = o.fw ?? def.fw;
   const fh = o.fh ?? def.fh;
+  // v0.8.1 P5a: `stufe` kommt NUR aus dem Override (analog `eingeklappt`/
+  // `angeheftet` — instanzbezogen, kein PanelDef-Default), `groesseKompakt`
+  // NUR aus der PanelDef (analog `min`/`groesse` — panelTYP-bezogen, nicht
+  // pro Instanz überschreibbar). Ohne Override bleibt `stufe` `undefined` →
+  // Alt-Default.
+  const stufe = o.stufe;
+  const groesseKompakt = def.groesseKompakt;
   return {
     id: def.id,
     titel: def.titel,
@@ -198,6 +238,8 @@ function mischePanel(def: PanelDef, ov: PanelOverride | undefined): MergedPanel 
     eingeklappt: !!o.eingeklappt,
     angeheftet: !!o.angeheftet,
     geschlossen,
+    ...(stufe !== undefined ? { stufe } : {}),
+    ...(groesseKompakt !== undefined ? { groesseKompakt } : {}),
   };
 }
 
@@ -243,6 +285,14 @@ export interface StackPanel {
   eingeklappt?: boolean;
   min?: number;
   groesse?: number;
+  /**
+   * v0.8.1 Welle 4 / Paket P5a («Zwei-Stufen-Popups», additiv, s.
+   * `PanelDef.groesseKompakt`/`PanelOverride.stufe`-Kommentare). Fehlen
+   * beide Felder (der Alt-Default), rechnet `stack()` byte-identisch zum
+   * Stand vor P5a — s. `zielKompakt()` im Modus-'collapse'-Zweig.
+   */
+  stufe?: 'kompakt' | 'offen';
+  groesseKompakt?: { w: number; h: number };
 }
 
 export function stack(
@@ -262,6 +312,9 @@ export function stack(
     eingeklappt: !!p.eingeklappt,
     min: p.min || 130,
     groesse: p.groesse || 220,
+    // v0.8.1 P5a — additiv durchgereicht, s. `zielKompakt()` unten.
+    ...(p.stufe !== undefined ? { stufe: p.stufe } : {}),
+    ...(p.groesseKompakt !== undefined ? { groesseKompakt: p.groesseKompakt } : {}),
     h: 0,
   }));
   let ch = st.filter((x) => x.eingeklappt).length * DOCK_KONSTANTEN.COLLH;
@@ -270,13 +323,42 @@ export function stack(
 
   if (modus === 'collapse') {
     const targ = (x: (typeof st)[number]) => Math.max(x.min, Math.min(x.groesse, avail * 0.66));
-    // Solange (angeheftete Ziel-Höhen + Σ min(flex)) nicht in avail passt:
-    // das unwichtigste, nicht geschützte Flex-Panel einklappen.
+    // v0.8.1 Welle 4 / Paket P5a («Zwei-Stufen-Popups», `docs/V081-SPEZ.md`
+    // §2.1/§8 Sanktion 5) — additive dritte Zielgrössen-Formel neben `targ()`
+    // (66%-Einklapp-Stufe, unverändert). `zielKompakt()` liefert für ein
+    // Panel MIT gesetzter `stufe`:
+    //  - `'kompakt'`: `groesseKompakt.h`, geklemmt auf `[min, groesse]` —
+    //    dieselbe Klammer-Logik wie `targ()`, nur mit dem vorgegebenen Wert
+    //    statt `avail*0.66`. Fehlt `groesseKompakt` (Panel hat `stufe`
+    //    gesetzt, aber keine Kompakt-Grösse definiert), fällt es auf `targ()`
+    //    zurück — kein halb-definierter Zustand.
+    //  - `'offen'`: das Viertelflächen-Ziel `avail*0.25` (§2.1), ebenfalls
+    //    geklemmt auf `[min, groesse]`.
+    // Panels OHNE `stufe` (der Alt-Default) durchlaufen `zielKompakt()`
+    // unverändert zu `targ()` — Alt-Default ist dadurch strukturell
+    // garantiert byte-gleich, nicht nur per Testfall geprüft.
+    const zielKompakt = (x: (typeof st)[number]): number => {
+      if (x.stufe === 'kompakt' && x.groesseKompakt !== undefined) {
+        return Math.max(x.min, Math.min(x.groesse, x.groesseKompakt.h));
+      }
+      if (x.stufe === 'offen') {
+        return Math.max(x.min, Math.min(x.groesse, avail * 0.25));
+      }
+      return targ(x);
+    };
+    // Solange (angeheftete/stufige Ziel-Höhen + Σ min(flex)) nicht in avail
+    // passt: das unwichtigste, nicht geschützte Flex-Panel einklappen.
+    // WICHTIG (P5a): die Kandidaten-Auswahl (`fx`, sortiert nach
+    // `wichtigkeit`) bleibt UNVERÄNDERT — ein Panel mit gesetzter `stufe`
+    // ist kein Sonderfall für die Einklapp-Reihenfolge, nur `angeheftet`
+    // schützt vor dem automatischen Einklappen (wie zuvor). `stufe`
+    // beeinflusst nur, wie viel Platz ein nicht-eingeklapptes Panel
+    // beansprucht (`need`), nicht OB oder WELCHES Panel kollabiert.
     for (;;) {
       const pn = exp.filter((x) => x.angeheftet);
       const fx = exp.filter((x) => !x.angeheftet);
-      const pH = pn.reduce((s, x) => s + targ(x), 0);
-      const need = fx.reduce((s, x) => s + x.min, 0);
+      const pH = pn.reduce((s, x) => s + zielKompakt(x), 0);
+      const need = fx.reduce((s, x) => s + (x.stufe !== undefined ? zielKompakt(x) : x.min), 0);
       if (pH + need <= avail) break;
       const cand = fx.filter((x) => x.id !== schutzId).sort((a, b) => a.wichtigkeit - b.wichtigkeit)[0];
       if (!cand) break;
@@ -286,10 +368,20 @@ export function stack(
       exp = exp.filter((x) => x !== cand);
     }
     const pinned = exp.filter((x) => x.angeheftet);
-    const flex = exp.filter((x) => !x.angeheftet);
+    // v0.8.1 P5a: Panels mit gesetzter `stufe` bekommen (wie `angeheftet`)
+    // eine deterministische Zielhöhe statt einer waterfill-Anteilshöhe —
+    // das Zwei-Stufen-Ziel (Kopf+Kernkennzahl bzw. Viertelfläche) ist ein
+    // fester Anspruch, kein proportionaler Rest. Ohne `stufe` ist diese
+    // Gruppe leer und `flex` entspricht exakt der Vor-P5a-Menge.
+    const stufig = exp.filter((x) => !x.angeheftet && x.stufe !== undefined);
+    const flex = exp.filter((x) => !x.angeheftet && x.stufe === undefined);
     let ph = 0;
     pinned.forEach((x) => {
-      x.h = targ(x);
+      x.h = zielKompakt(x);
+      ph += x.h;
+    });
+    stufig.forEach((x) => {
+      x.h = zielKompakt(x);
       ph += x.h;
     });
     waterfill(flex, Math.max(0, avail - ph));

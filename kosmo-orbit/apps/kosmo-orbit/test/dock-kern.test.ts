@@ -10,6 +10,7 @@ import {
   type DockRect,
   type FloatItem,
   type PanelDef,
+  type PanelOverride,
   type RowItem,
   type SolveOptionen,
   type StackPanel,
@@ -354,6 +355,232 @@ describe('stack — Modus collapse (Konzept A)', () => {
     stack(items, { x: 0, y: 100, w: 300, h: 500 }, rects, 'collapse', undefined);
     expect(rects.solo!.h).toBeCloseTo(500, 6);
     expect(rects.solo!.y).toBe(100);
+  });
+});
+
+// ===========================================================================
+// stack — Modus 'collapse', Grössenstufe (v0.8.1 Welle 4 / Paket P5a
+// «Zwei-Stufen-Popups», additiv, s. Kopfkommentar in dock-kern.ts).
+// Zwei Testgruppen: (1) Alt-Default-Neutralität — dieselben Eingaben
+// mit/ohne die neuen Felder liefern ein TIEF identisches Ergebnis;
+// (2) Verhalten der neuen Stufen «kompakt»/«offen».
+// ===========================================================================
+
+describe('stack — Modus collapse: Grössenstufe P5a — Alt-Default-Neutralität', () => {
+  it('StackPanel ohne stufe/groesseKompakt: identisches Ergebnis wie vor P5a (Referenzwerte der bestehenden Suite)', () => {
+    // Exakt dieselbe Konfiguration wie der bestehende Test "Pin-Ziel:
+    // avail*0.66, wenn zwischen min und groesse" — beweist, dass der neue
+    // Code-Pfad (zielKompakt()) für stufe-lose Panels bitgenau auf targ()
+    // fällt zurück.
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, angeheftet: true, min: 150, groesse: 400 }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 500 }, rects, 'collapse', undefined);
+    expect(rects.p!.h).toBeCloseTo(330, 6);
+  });
+
+  it('groesseKompakt gesetzt, aber KEINE stufe im Override/Panel: h ist tief identisch zum Lauf ohne groesseKompakt', () => {
+    const basis = (): StackPanel[] => [
+      { id: 'a', wichtigkeit: 10, min: 130, groesse: 220 },
+      { id: 'b', wichtigkeit: 60, angeheftet: true, min: 150, groesse: 400 },
+      { id: 'c', wichtigkeit: 90, min: 100, groesse: 260 },
+    ];
+    const mitGroesseKompakt = (): StackPanel[] =>
+      basis().map((p) => ({ ...p, groesseKompakt: { w: 200, h: 999 } }));
+    const rectsOhne: Record<string, DockRect> = {};
+    const rectsMit: Record<string, DockRect> = {};
+    stack(basis(), { x: 5, y: 20, w: 300, h: 420 }, rectsOhne, 'collapse', undefined);
+    stack(mitGroesseKompakt(), { x: 5, y: 20, w: 300, h: 420 }, rectsMit, 'collapse', undefined);
+    expect(rectsMit).toEqual(rectsOhne);
+  });
+
+  it('solve() über alle 3 Stationen × Breiten-Sweep: PanelDef.groesseKompakt gesetzt, aber keine stufe im Override → tief identisches Ergebnis zur Basis ohne das Feld', () => {
+    const breiten = [600, 900, 1200, 1800];
+    for (const [name, defs] of Object.entries(STATIONEN)) {
+      const defsMitGroesseKompakt: PanelDef[] = defs.map((d) => ({ ...d, groesseKompakt: { w: 180, h: 120 } }));
+      for (const w of breiten) {
+        for (const modus of ['A', 'B'] as const) {
+          const basisErg = solve(defs, grundOptionen(w, modus));
+          const erweitertErg = solve(defsMitGroesseKompakt, grundOptionen(w, modus));
+          expect(erweitertErg, `Station ${name}, Breite ${w}, Modus ${modus}`).toEqual(basisErg);
+        }
+      }
+    }
+  });
+
+  it('stufe="kompakt" OHNE groesseKompakt fällt exakt auf die 66%-targ()-Formel zurück (kein halb-definierter Zustand)', () => {
+    const mitStufeOhneGroesse: StackPanel[] = [{ id: 'p', wichtigkeit: 50, angeheftet: true, min: 150, groesse: 400, stufe: 'kompakt' }];
+    const ohneStufe: StackPanel[] = [{ id: 'p', wichtigkeit: 50, angeheftet: true, min: 150, groesse: 400 }];
+    const rectsA: Record<string, DockRect> = {};
+    const rectsB: Record<string, DockRect> = {};
+    stack(mitStufeOhneGroesse, { x: 0, y: 0, w: 300, h: 500 }, rectsA, 'collapse', undefined);
+    stack(ohneStufe, { x: 0, y: 0, w: 300, h: 500 }, rectsB, 'collapse', undefined);
+    expect(rectsA).toEqual(rectsB);
+  });
+});
+
+describe('stack — Modus collapse: Grössenstufe P5a — Verhalten «kompakt»/«offen»', () => {
+  it('«kompakt»: nutzt groesseKompakt.h als Zielgrösse, wenn es zwischen min und groesse liegt', () => {
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, min: 150, groesse: 400, stufe: 'kompakt', groesseKompakt: { w: 180, h: 220 } }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 500 }, rects, 'collapse', undefined);
+    expect(rects.p!.h).toBeCloseTo(220, 6);
+  });
+
+  it('«kompakt»: groesseKompakt.h unter min wird auf min geklemmt', () => {
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, min: 150, groesse: 400, stufe: 'kompakt', groesseKompakt: { w: 180, h: 50 } }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 500 }, rects, 'collapse', undefined);
+    expect(rects.p!.h).toBeCloseTo(150, 6);
+  });
+
+  it('«kompakt»: groesseKompakt.h über groesse wird auf groesse geklemmt', () => {
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, min: 150, groesse: 400, stufe: 'kompakt', groesseKompakt: { w: 180, h: 999 } }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 500 }, rects, 'collapse', undefined);
+    expect(rects.p!.h).toBeCloseTo(400, 6);
+  });
+
+  it('«offen»: Viertelflächen-Ziel avail*0.25, wenn zwischen min und groesse', () => {
+    // Einzel-Panel, gaps=0 → avail=rect.h=500 → Ziel=125.
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, min: 100, groesse: 400, stufe: 'offen' }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 500 }, rects, 'collapse', undefined);
+    expect(rects.p!.h).toBeCloseTo(125, 6);
+  });
+
+  it('«offen»: avail*0.25 unter min wird auf min geklemmt', () => {
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, min: 100, groesse: 400, stufe: 'offen' }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 200 }, rects, 'collapse', undefined); // avail=200, *0.25=50<100
+    expect(rects.p!.h).toBeCloseTo(100, 6);
+  });
+
+  it('«offen»: avail*0.25 über groesse wird auf groesse geklemmt', () => {
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, min: 100, groesse: 250, stufe: 'offen' }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 2000 }, rects, 'collapse', undefined); // avail=2000, *0.25=500>250
+    expect(rects.p!.h).toBeCloseTo(250, 6);
+  });
+
+  it('min-Garantie bleibt auch mit stufe erhalten: nicht-eingeklappte Panels haben immer h >= min', () => {
+    const items: StackPanel[] = [
+      { id: 'komp', wichtigkeit: 10, min: 130, groesse: 220, stufe: 'kompakt', groesseKompakt: { w: 100, h: 10 } },
+      { id: 'offen', wichtigkeit: 90, min: 130, groesse: 220, stufe: 'offen' },
+    ];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 260 }, rects, 'collapse', undefined);
+    for (const it2 of items) {
+      if (!rects[it2.id]!.eingeklappt) expect(rects[it2.id]!.h).toBeGreaterThanOrEqual(130 - 1e-6);
+    }
+  });
+
+  it('angeheftetes Panel MIT stufe: nutzt zielKompakt() statt der proportionalen waterfill-Anteilshöhe', () => {
+    const items: StackPanel[] = [{ id: 'p', wichtigkeit: 50, angeheftet: true, min: 100, groesse: 400, stufe: 'kompakt', groesseKompakt: { w: 100, h: 180 } }];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 500 }, rects, 'collapse', undefined);
+    expect(rects.p!.h).toBeCloseTo(180, 6);
+  });
+
+  it('gemischte Pin+Stufig+Flex-Menge: Summe aller h + GAPs ergibt exakt rect.h (fixer Kompakt-/Viertel-Anspruch + waterfill-Rest)', () => {
+    const items: StackPanel[] = [
+      { id: 'pin', wichtigkeit: 80, angeheftet: true, min: 100, groesse: 200 },
+      { id: 'komp', wichtigkeit: 60, min: 100, groesse: 300, stufe: 'kompakt', groesseKompakt: { w: 0, h: 150 } },
+      { id: 'offen', wichtigkeit: 50, min: 80, groesse: 500, stufe: 'offen' },
+      { id: 'flex', wichtigkeit: 40, min: 80, groesse: 300 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 900 }, rects, 'collapse', undefined);
+    const summeH = items.reduce((s, it2) => s + rects[it2.id]!.h, 0);
+    const gaps = DOCK_KONSTANTEN.GAP * (items.length - 1);
+    expect(summeH + gaps).toBeCloseTo(900, 6);
+    // die drei fixen Ansprüche exakt wie vorgerechnet, der Rest geht an flex:
+    expect(rects.pin!.h).toBeCloseTo(200, 6); // targ(): clamp(100,200,870*0.66)→200
+    expect(rects.komp!.h).toBeCloseTo(150, 6); // groesseKompakt.h, innerhalb [100,300]
+    expect(rects.offen!.h).toBeCloseTo(217.5, 6); // 870*0.25, innerhalb [80,500]
+    expect(rects.flex!.h).toBeCloseTo(302.5, 6); // Rest: 870-200-150-217.5
+  });
+
+  it('Einklapp-Reihenfolge bleibt REIN wichtigkeitsbasiert — ein stufe-Panel ist kein Sonderfall (1 nötiger Kollaps trifft weiter die niedrigste Wichtigkeit)', () => {
+    // Identisch zur bestehenden Suite ("trifft bei genau einem nötigen
+    // Kollaps strikt die niedrigste Wichtigkeit"), aber 'b' (niedrigste
+    // Wichtigkeit) trägt zusätzlich stufe:'offen' — das Ergebnis (WER
+    // kollabiert) ist unverändert.
+    const items: StackPanel[] = [
+      { id: 'a', wichtigkeit: 5, min: 100, groesse: 150 },
+      { id: 'b', wichtigkeit: 1, min: 100, groesse: 150, stufe: 'offen' },
+      { id: 'c', wichtigkeit: 10, min: 100, groesse: 150 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 280 }, rects, 'collapse', undefined);
+    expect(rects.b!.eingeklappt).toBe(true);
+    expect(rects.a!.eingeklappt).toBe(false);
+    expect(rects.c!.eingeklappt).toBe(false);
+  });
+
+  it('Einklapp-Reihenfolge bleibt REIN wichtigkeitsbasiert bei ZWEI nötigen Kollapsen, auch mit stufe auf dem 1./3. Panel gemischt', () => {
+    // Identische Geometrie/Erwartung wie die bestehende Suite ("zwei nötige
+    // Kollapse wählen aufsteigend nach Wichtigkeit"): w1 (stufe:'kompakt')
+    // und w2 (stufe-los) kollabieren, w3 (stufe:'offen') und w4 (stufe-los)
+    // bleiben offen — die Auswahl folgt weiterhin exakt der Wichtigkeit,
+    // nicht der stufe.
+    const items: StackPanel[] = [
+      { id: 'w1', wichtigkeit: 1, min: 100, groesse: 150, stufe: 'kompakt', groesseKompakt: { w: 0, h: 100 } },
+      { id: 'w2', wichtigkeit: 2, min: 100, groesse: 150 },
+      { id: 'w3', wichtigkeit: 3, min: 100, groesse: 150, stufe: 'offen' },
+      { id: 'w4', wichtigkeit: 4, min: 100, groesse: 150 },
+    ];
+    const rect = { x: 0, y: 0, w: 300, h: 320 };
+    const rects: Record<string, DockRect> = {};
+    stack(items, rect, rects, 'collapse', undefined);
+    expect(rects.w1!.eingeklappt).toBe(true);
+    expect(rects.w2!.eingeklappt).toBe(true);
+    expect(rects.w3!.eingeklappt).toBe(false);
+    expect(rects.w4!.eingeklappt).toBe(false);
+  });
+
+  it('zuletztGeoeffnet-Schutz gilt weiterhin unabhängig von stufe — ein geschütztes stufe-Panel kollabiert nie', () => {
+    const items: StackPanel[] = [
+      { id: 'a', wichtigkeit: 5, min: 100, groesse: 150 },
+      { id: 'b', wichtigkeit: 1, min: 100, groesse: 150, stufe: 'kompakt', groesseKompakt: { w: 0, h: 100 } },
+      { id: 'c', wichtigkeit: 10, min: 100, groesse: 150 },
+    ];
+    const rects: Record<string, DockRect> = {};
+    stack(items, { x: 0, y: 0, w: 300, h: 280 }, rects, 'collapse', 'b');
+    expect(rects.b!.eingeklappt).toBe(false); // geschützt, obwohl niedrigste Wichtigkeit
+    expect(rects.a!.eingeklappt).toBe(true); // nächstniedrigere trifft es stattdessen
+    expect(rects.c!.eingeklappt).toBe(false);
+  });
+});
+
+// ===========================================================================
+// solve() — Grössenstufe P5a: Override-Durchreichung + Neutralität auf
+// Solver-Ebene (nicht nur stack() isoliert).
+// ===========================================================================
+
+describe('solve — Grössenstufe P5a (PanelOverride.stufe) — Neutralität + Durchreichung', () => {
+  it('Neutralität: solve() ohne jedes stufe-Override ist tief identisch, ob PanelDef.groesseKompakt gesetzt ist oder nicht (design-Station, Modus A)', () => {
+    const basis = STATIONEN.design!;
+    const erweitert: PanelDef[] = basis.map((d) => (d.dock === 'left' || d.dock === 'right' ? { ...d, groesseKompakt: { w: 150, h: 100 } } : d));
+    const optionen = grundOptionen(1400, 'A');
+    expect(solve(erweitert, optionen)).toEqual(solve(basis, optionen));
+  });
+
+  it('PanelOverride.stufe="kompakt" auf einem rechten Stack-Panel wirkt sich auf dessen Höhe aus, alle anderen Rects bleiben unverändert', () => {
+    // inspector: min:170, groesse:300 → groesseKompakt.h:220 liegt innerhalb
+    // der Klammer und wird 1:1 zur Zielhöhe (kein Clamp-Grenzfall hier).
+    const defs: PanelDef[] = STATIONEN.design!.map((d) => (d.id === 'inspector' ? { ...d, groesseKompakt: { w: 150, h: 220 } } : d));
+    const optionenOhne = grundOptionen(1400, 'A');
+    const optionenMit: SolveOptionen = { ...optionenOhne, overrides: { inspector: { stufe: 'kompakt' } as PanelOverride } };
+    const ergOhne = solve(defs, optionenOhne);
+    const ergMit = solve(defs, optionenMit);
+    expect(ergMit.rects.inspector!.h).toBeCloseTo(220, 6);
+    expect(ergMit.rects.inspector!.h).not.toBeCloseTo(ergOhne.rects.inspector!.h, 0);
+    // die übrigen rechten Stack-Panels teilen sich jetzt den frei
+    // gewordenen Platz anders auf (waterfill-Rest ändert sich), aber Rail/
+    // Left/Floats/Splitters bleiben unangetastet:
+    expect(ergMit.rects.rail).toEqual(ergOhne.rects.rail);
+    expect(ergMit.rects.geschosse).toEqual(ergOhne.rects.geschosse);
+    expect(ergMit.viewport).toEqual(ergOhne.viewport);
   });
 });
 
