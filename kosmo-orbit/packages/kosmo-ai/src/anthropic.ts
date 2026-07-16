@@ -4,11 +4,11 @@
  * Läuft direkt im Browser (anthropic-dangerous-direct-browser-access); der
  * Schlüssel bleibt in localStorage auf dem Gerät des Architekten.
  */
-import type { ChatProvider, ChatRequest, StreamEvent, ChatMessage } from './provider';
-import { verknuepfeToolIds } from './provider';
+import type { ChatProvider, ChatRequest, StreamEvent, ChatMessage, StreamTimeoutConfig } from './provider';
+import { verknuepfeToolIds, verbindeMitRetry, liesMitIdleTimeout, STANDARD_IDLE_TIMEOUT_MS } from './provider';
 import { bildBudget } from './bild-budget';
 
-export interface AnthropicConfig {
+export interface AnthropicConfig extends StreamTimeoutConfig {
   /** Klassischer Weg: eingetippter API-Schlüssel → `x-api-key`. */
   apiKey?: string;
   /**
@@ -104,9 +104,9 @@ export class AnthropicProvider implements ChatProvider {
       return;
     }
     const { system, messages } = zuAnthropicNachrichten(req.messages);
-    let response: Response;
-    try {
-      response = await fetch(
+    const verbindung = await verbindeMitRetry(
+      (signal) =>
+        fetch(
         `${(this.cfg.baseUrl ?? 'https://api.anthropic.com').replace(/\/$/, '')}/v1/messages`,
         {
           method: 'POST',
@@ -116,7 +116,7 @@ export class AnthropicProvider implements ChatProvider {
             'anthropic-version': '2023-06-01',
             'anthropic-dangerous-direct-browser-access': 'true',
           },
-          signal: req.signal ?? null,
+          signal,
           body: JSON.stringify({
             model: this.cfg.model,
             max_tokens: this.cfg.maxTokens ?? 4096,
@@ -146,15 +146,25 @@ export class AnthropicProvider implements ChatProvider {
               : {}),
           }),
         },
-      );
-    } catch (err) {
+      ),
+      {
+        ...(req.signal ? { nutzerSignal: req.signal } : {}),
+        ...(this.cfg.verbindungsTimeoutMs !== undefined ? { timeoutMs: this.cfg.verbindungsTimeoutMs } : {}),
+      },
+    );
+    if (verbindung.art === 'abgebrochen') {
+      yield { type: 'done', stopReason: 'error', error: 'Abgebrochen.' };
+      return;
+    }
+    if (verbindung.art === 'fehler') {
       yield {
         type: 'done',
         stopReason: 'error',
-        error: `Kosmo erreicht Anthropic nicht: ${err instanceof Error ? err.message : String(err)}`,
+        error: `Kosmo erreicht Anthropic nicht: ${verbindung.nachricht}`,
       };
       return;
     }
+    const response = verbindung.response;
     if (!response.ok || !response.body) {
       const detail = await response.text().catch(() => '');
       const hatBilder = req.messages.some((m) => (m.images?.length ?? 0) > 0);
@@ -203,8 +213,33 @@ export class AnthropicProvider implements ChatProvider {
     };
 
     while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+      const gelesen = await liesMitIdleTimeout(reader, {
+        ...(req.signal ? { nutzerSignal: req.signal } : {}),
+        ...(this.cfg.idleTimeoutMs !== undefined ? { idleTimeoutMs: this.cfg.idleTimeoutMs } : {}),
+      });
+      if (gelesen.art === 'ende') break;
+      if (gelesen.art === 'abgebrochen') {
+        yield { type: 'done', stopReason: 'error', error: 'Abgebrochen.' };
+        return;
+      }
+      if (gelesen.art === 'idle-timeout') {
+        const sekunden = Math.round((this.cfg.idleTimeoutMs ?? STANDARD_IDLE_TIMEOUT_MS) / 1000);
+        yield {
+          type: 'done',
+          stopReason: 'error',
+          error: `Kosmo bekommt seit ${sekunden}s keine Antwort mehr von Anthropic — Verbindung abgebrochen.`,
+        };
+        return;
+      }
+      if (gelesen.art === 'fehler') {
+        yield {
+          type: 'done',
+          stopReason: 'error',
+          error: `Verbindung zu Anthropic mitten im Stream abgebrochen: ${gelesen.nachricht}`,
+        };
+        return;
+      }
+      const value = gelesen.value;
       buffer += decoder.decode(value, { stream: true });
       let nl: number;
       while ((nl = buffer.indexOf('\n')) >= 0) {

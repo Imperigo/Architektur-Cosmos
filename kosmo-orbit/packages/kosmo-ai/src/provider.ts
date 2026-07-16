@@ -80,7 +80,160 @@ export function verknuepfeToolIds(messages: ChatMessage[]): Map<number, string> 
   return zuordnung;
 }
 
-export interface OllamaConfig {
+/**
+ * v0.8.1 KI3 («Stream-Robustheit», `docs/V081-SPEZ.md` §3 Kandidat 6) —
+ * gemeinsame Timeout-Konfiguration für alle Netz-Provider (Ollama/LM Studio/
+ * Anthropic). Additiv: beide Felder optional, Default greift ohne Bruch
+ * bestehender Aufrufer.
+ */
+export interface StreamTimeoutConfig {
+  /**
+   * Verbindungsaufbau-Timeout in ms — ab `fetch()` bis zum ersten Response
+   * (Header/Status), NICHT während des Streams selbst. Default 10 s: ein
+   * lokales LLM (Ollama/LM Studio), das nach 10s noch nicht mal reagiert hat,
+   * ist wahrscheinlich nicht gestartet.
+   */
+  verbindungsTimeoutMs?: number;
+  /**
+   * Idle-Timeout in ms zwischen zwei Stream-Chunks. Default 60s: ein lokales
+   * LLM darf lange rechnen (z.B. ein grosses Modell mit langem Denk-Anteil),
+   * aber nicht ewig schweigen, ohne auch nur ein Zeichen zu liefern.
+   */
+  idleTimeoutMs?: number;
+}
+
+export const STANDARD_VERBINDUNGS_TIMEOUT_MS = 10_000;
+export const STANDARD_IDLE_TIMEOUT_MS = 60_000;
+/** Kurze Pause vor dem einzigen Verbindungs-Retry — kein Backoff-Sturm. */
+const VERBINDUNGS_RETRY_BACKOFF_MS = 200;
+
+export type VerbindungsErgebnis =
+  | { art: 'antwort'; response: Response }
+  | { art: 'abgebrochen' }
+  | { art: 'fehler'; nachricht: string };
+
+/** Wartet `ms`, löst aber SOFORT auf, wenn `signal` währenddessen abbricht. */
+function verzoegerung(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve) => {
+    if (signal?.aborted) {
+      resolve();
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      resolve();
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+/**
+ * Verbindungsaufbau mit Timeout + GENAU EINEM Retry — NIE mitten im Stream
+ * (diese Funktion endet, sobald ein `Response`-Objekt da ist; alles danach
+ * — Body lesen — läuft nicht mehr hier durch, siehe `liesMitIdleTimeout`).
+ * Retry-würdig sind nur: ein Netzfehler VOR dem ersten Byte (fetch wirft)
+ * oder ein HTTP-5xx VOR Stream-Beginn (Server kurz überlastet/noch am
+ * Hochfahren). 4xx/2xx-Antworten gehen unverändert an den Aufrufer zurück —
+ * ein zweiter Versuch mit denselben falschen Argumenten hilft nicht.
+ * Das Nutzer-`signal` gewinnt in JEDER Phase (Versuch 1, Backoff, Versuch 2)
+ * sofort — kein Warten auf einen Timeout oder Retry, der ohnehin verworfen würde.
+ */
+export async function verbindeMitRetry(
+  tuFetch: (signal: AbortSignal) => Promise<Response>,
+  opts: { nutzerSignal?: AbortSignal; timeoutMs?: number } = {},
+): Promise<VerbindungsErgebnis> {
+  const timeoutMs = opts.timeoutMs ?? STANDARD_VERBINDUNGS_TIMEOUT_MS;
+  const protokoll: string[] = [];
+  for (let versuch = 1; versuch <= 2; versuch++) {
+    if (opts.nutzerSignal?.aborted) return { art: 'abgebrochen' };
+    let liefTimeoutAb = false;
+    const eigenerAbbruch = new AbortController();
+    const timer = setTimeout(() => {
+      liefTimeoutAb = true;
+      eigenerAbbruch.abort();
+    }, timeoutMs);
+    const signal = opts.nutzerSignal ? AbortSignal.any([opts.nutzerSignal, eigenerAbbruch.signal]) : eigenerAbbruch.signal;
+    try {
+      const response = await tuFetch(signal);
+      clearTimeout(timer);
+      if (response.ok || response.status < 500) return { art: 'antwort', response };
+      protokoll.push(`Versuch ${versuch}: HTTP ${response.status}`);
+    } catch (err) {
+      clearTimeout(timer);
+      if (opts.nutzerSignal?.aborted) return { art: 'abgebrochen' };
+      protokoll.push(
+        `Versuch ${versuch}: ${liefTimeoutAb ? `Zeitüberschreitung nach ${timeoutMs} ms` : err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+    if (versuch === 1) {
+      await verzoegerung(VERBINDUNGS_RETRY_BACKOFF_MS, opts.nutzerSignal);
+    }
+  }
+  if (opts.nutzerSignal?.aborted) return { art: 'abgebrochen' };
+  return { art: 'fehler', nachricht: `beide Verbindungsversuche scheiterten — ${protokoll.join(' · ')}` };
+}
+
+export type LeseErgebnis =
+  | { art: 'chunk'; value: Uint8Array }
+  | { art: 'ende' }
+  | { art: 'abgebrochen' }
+  | { art: 'idle-timeout' }
+  | { art: 'fehler'; nachricht: string };
+
+/**
+ * EIN `reader.read()` mit Idle-Timeout (zurückgesetzt bei jedem Chunk, hier
+ * also je Aufruf frisch) + Nutzer-Abbruch, der sofort gewinnt. Bricht bei
+ * Timeout/Abbruch den Reader sauber ab (`reader.cancel()`) — bereits VOR
+ * diesem Aufruf gelieferte Events (schon `yield`ed) bleiben unangetastet,
+ * der Aufrufer entscheidet nur, was mit DIESEM einen Read-Versuch passiert.
+ * Kein Retry hier — ein Verbindungsabbruch mitten im Stream würde bei einem
+ * Neuversuch die bereits gestreamte Teilantwort verdoppeln.
+ */
+export async function liesMitIdleTimeout(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+  opts: { nutzerSignal?: AbortSignal; idleTimeoutMs?: number } = {},
+): Promise<LeseErgebnis> {
+  const idleTimeoutMs = opts.idleTimeoutMs ?? STANDARD_IDLE_TIMEOUT_MS;
+  if (opts.nutzerSignal?.aborted) {
+    await reader.cancel().catch(() => {});
+    return { art: 'abgebrochen' };
+  }
+  return new Promise<LeseErgebnis>((resolve) => {
+    let erledigt = false;
+    const abschliessen = (ergebnis: LeseErgebnis) => {
+      if (erledigt) return;
+      erledigt = true;
+      clearTimeout(timer);
+      opts.nutzerSignal?.removeEventListener('abort', aufNutzerAbbruch);
+      resolve(ergebnis);
+    };
+    const timer = setTimeout(() => {
+      reader.cancel().catch(() => {});
+      abschliessen({ art: 'idle-timeout' });
+    }, idleTimeoutMs);
+    const aufNutzerAbbruch = () => {
+      reader.cancel().catch(() => {});
+      abschliessen({ art: 'abgebrochen' });
+    };
+    opts.nutzerSignal?.addEventListener('abort', aufNutzerAbbruch, { once: true });
+    reader
+      .read()
+      .then(({ done, value }) => abschliessen(done ? { art: 'ende' } : { art: 'chunk', value: value! }))
+      .catch((err) =>
+        abschliessen(
+          opts.nutzerSignal?.aborted
+            ? { art: 'abgebrochen' }
+            : { art: 'fehler', nachricht: err instanceof Error ? err.message : String(err) },
+        ),
+      );
+  });
+}
+
+export interface OllamaConfig extends StreamTimeoutConfig {
   /** z.B. http://homestation:11434 oder via Bridge-Proxy http://bridge:8600/ollama */
   baseUrl: string;
   model: string;
@@ -122,39 +275,46 @@ export class OllamaProvider implements ChatProvider {
   constructor(private cfg: OllamaConfig) {}
 
   async *chat(req: ChatRequest): AsyncIterable<StreamEvent> {
-    let response: Response;
-    try {
-      response = await fetch(`${this.cfg.baseUrl.replace(/\/$/, '')}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: req.signal ?? null,
-        body: JSON.stringify({
-          model: this.cfg.model,
-          stream: true,
-          options: { temperature: this.cfg.temperature ?? 0.2 },
-          messages: zuOllamaNachrichten(req.messages),
-          ...(req.tools && req.tools.length > 0
-            ? {
-                tools: req.tools.map((t) => ({
-                  type: 'function',
-                  function: {
-                    name: t.name,
-                    description: t.description,
-                    parameters: t.parameters,
-                  },
-                })),
-              }
-            : {}),
+    const verbindung = await verbindeMitRetry(
+      (signal) =>
+        fetch(`${this.cfg.baseUrl.replace(/\/$/, '')}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal,
+          body: JSON.stringify({
+            model: this.cfg.model,
+            stream: true,
+            options: { temperature: this.cfg.temperature ?? 0.2 },
+            messages: zuOllamaNachrichten(req.messages),
+            ...(req.tools && req.tools.length > 0
+              ? {
+                  tools: req.tools.map((t) => ({
+                    type: 'function',
+                    function: {
+                      name: t.name,
+                      description: t.description,
+                      parameters: t.parameters,
+                    },
+                  })),
+                }
+              : {}),
+          }),
         }),
-      });
-    } catch (err) {
+      { ...(req.signal ? { nutzerSignal: req.signal } : {}), ...(this.cfg.verbindungsTimeoutMs !== undefined ? { timeoutMs: this.cfg.verbindungsTimeoutMs } : {}) },
+    );
+    if (verbindung.art === 'abgebrochen') {
+      yield { type: 'done', stopReason: 'error', error: 'Abgebrochen.' };
+      return;
+    }
+    if (verbindung.art === 'fehler') {
       yield {
         type: 'done',
         stopReason: 'error',
-        error: `Kosmo erreicht das lokale Modell nicht (${this.cfg.baseUrl}): ${err instanceof Error ? err.message : String(err)}`,
+        error: `Kosmo erreicht das lokale Modell nicht (${this.cfg.baseUrl}): ${verbindung.nachricht}`,
       };
       return;
     }
+    const response = verbindung.response;
     if (!response.ok || !response.body) {
       yield {
         type: 'done',
@@ -171,8 +331,33 @@ export class OllamaProvider implements ChatProvider {
     let callSeq = 0;
 
     while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+      const gelesen = await liesMitIdleTimeout(reader, {
+        ...(req.signal ? { nutzerSignal: req.signal } : {}),
+        ...(this.cfg.idleTimeoutMs !== undefined ? { idleTimeoutMs: this.cfg.idleTimeoutMs } : {}),
+      });
+      if (gelesen.art === 'ende') break;
+      if (gelesen.art === 'abgebrochen') {
+        yield { type: 'done', stopReason: 'error', error: 'Abgebrochen.' };
+        return;
+      }
+      if (gelesen.art === 'idle-timeout') {
+        const sekunden = Math.round((this.cfg.idleTimeoutMs ?? STANDARD_IDLE_TIMEOUT_MS) / 1000);
+        yield {
+          type: 'done',
+          stopReason: 'error',
+          error: `Kosmo bekommt seit ${sekunden}s keine Antwort mehr vom lokalen Modell «${this.cfg.model}» (${this.cfg.baseUrl}) — Verbindung abgebrochen.`,
+        };
+        return;
+      }
+      if (gelesen.art === 'fehler') {
+        yield {
+          type: 'done',
+          stopReason: 'error',
+          error: `Verbindung zum lokalen Modell (${this.cfg.baseUrl}) mitten im Stream abgebrochen: ${gelesen.nachricht}`,
+        };
+        return;
+      }
+      const value = gelesen.value;
       buffer += decoder.decode(value, { stream: true });
       let nl: number;
       while ((nl = buffer.indexOf('\n')) >= 0) {

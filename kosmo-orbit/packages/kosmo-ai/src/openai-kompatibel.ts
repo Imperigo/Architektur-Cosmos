@@ -3,10 +3,10 @@
  * (http://localhost:1234/v1) und jedes andere Gateway mit demselben
  * /chat/completions-SSE-Format. Plain fetch, kein SDK.
  */
-import type { ChatProvider, ChatRequest, StreamEvent, ChatMessage } from './provider';
-import { verknuepfeToolIds } from './provider';
+import type { ChatProvider, ChatRequest, StreamEvent, ChatMessage, StreamTimeoutConfig } from './provider';
+import { verknuepfeToolIds, verbindeMitRetry, liesMitIdleTimeout, STANDARD_IDLE_TIMEOUT_MS } from './provider';
 
-export interface OpenAiKompatibelConfig {
+export interface OpenAiKompatibelConfig extends StreamTimeoutConfig {
   /** z.B. http://localhost:1234/v1 (LM Studio) */
   baseUrl: string;
   model: string;
@@ -76,38 +76,48 @@ export class OpenAiKompatibelProvider implements ChatProvider {
   constructor(private cfg: OpenAiKompatibelConfig) {}
 
   async *chat(req: ChatRequest): AsyncIterable<StreamEvent> {
-    let response: Response;
-    try {
-      response = await fetch(`${this.cfg.baseUrl.replace(/\/$/, '')}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(this.cfg.apiKey ? { Authorization: `Bearer ${this.cfg.apiKey}` } : {}),
-        },
-        signal: req.signal ?? null,
-        body: JSON.stringify({
-          model: this.cfg.model,
-          stream: true,
-          temperature: this.cfg.temperature ?? 0.2,
-          messages: zuOpenAiNachrichten(req.messages),
-          ...(req.tools && req.tools.length > 0
-            ? {
-                tools: req.tools.map((t) => ({
-                  type: 'function',
-                  function: { name: t.name, description: t.description, parameters: t.parameters },
-                })),
-              }
-            : {}),
+    const verbindung = await verbindeMitRetry(
+      (signal) =>
+        fetch(`${this.cfg.baseUrl.replace(/\/$/, '')}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(this.cfg.apiKey ? { Authorization: `Bearer ${this.cfg.apiKey}` } : {}),
+          },
+          signal,
+          body: JSON.stringify({
+            model: this.cfg.model,
+            stream: true,
+            temperature: this.cfg.temperature ?? 0.2,
+            messages: zuOpenAiNachrichten(req.messages),
+            ...(req.tools && req.tools.length > 0
+              ? {
+                  tools: req.tools.map((t) => ({
+                    type: 'function',
+                    function: { name: t.name, description: t.description, parameters: t.parameters },
+                  })),
+                }
+              : {}),
+          }),
         }),
-      });
-    } catch (err) {
+      {
+        ...(req.signal ? { nutzerSignal: req.signal } : {}),
+        ...(this.cfg.verbindungsTimeoutMs !== undefined ? { timeoutMs: this.cfg.verbindungsTimeoutMs } : {}),
+      },
+    );
+    if (verbindung.art === 'abgebrochen') {
+      yield { type: 'done', stopReason: 'error', error: 'Abgebrochen.' };
+      return;
+    }
+    if (verbindung.art === 'fehler') {
       yield {
         type: 'done',
         stopReason: 'error',
-        error: `Kosmo erreicht LM Studio nicht (${this.cfg.baseUrl}): ${err instanceof Error ? err.message : String(err)}`,
+        error: `Kosmo erreicht LM Studio nicht (${this.cfg.baseUrl}): ${verbindung.nachricht}`,
       };
       return;
     }
+    const response = verbindung.response;
     if (!response.ok || !response.body) {
       yield {
         type: 'done',
@@ -139,8 +149,33 @@ export class OpenAiKompatibelProvider implements ChatProvider {
     };
 
     while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+      const gelesen = await liesMitIdleTimeout(reader, {
+        ...(req.signal ? { nutzerSignal: req.signal } : {}),
+        ...(this.cfg.idleTimeoutMs !== undefined ? { idleTimeoutMs: this.cfg.idleTimeoutMs } : {}),
+      });
+      if (gelesen.art === 'ende') break;
+      if (gelesen.art === 'abgebrochen') {
+        yield { type: 'done', stopReason: 'error', error: 'Abgebrochen.' };
+        return;
+      }
+      if (gelesen.art === 'idle-timeout') {
+        const sekunden = Math.round((this.cfg.idleTimeoutMs ?? STANDARD_IDLE_TIMEOUT_MS) / 1000);
+        yield {
+          type: 'done',
+          stopReason: 'error',
+          error: `Kosmo bekommt seit ${sekunden}s keine Antwort mehr von LM Studio (${this.cfg.baseUrl}) — Verbindung abgebrochen.`,
+        };
+        return;
+      }
+      if (gelesen.art === 'fehler') {
+        yield {
+          type: 'done',
+          stopReason: 'error',
+          error: `Verbindung zu LM Studio (${this.cfg.baseUrl}) mitten im Stream abgebrochen: ${gelesen.nachricht}`,
+        };
+        return;
+      }
+      const value = gelesen.value;
       buffer += decoder.decode(value, { stream: true });
       let nl: number;
       while ((nl = buffer.indexOf('\n')) >= 0) {
