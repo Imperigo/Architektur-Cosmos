@@ -35,6 +35,24 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.2',
+    datum: '2026-07-17',
+    punkte: [
+      {
+        text: 'Selbstverbesserung, ehrlich zweigeteilt: Claude selbst ist nicht LoRA-trainierbar (Cloud-API, keine eigenen Gewichte) — dafür gibt es jetzt eine git-erfasste Lernschleife (`wissen/training/claude/lehren/`), die jede Version ihre Gates/Konventionen/Fehler/Owner-Entscheide belegt zurückschreibt, bevor die nächste beginnt. Parallel dazu wächst der echte Trainingsdatenraum für Kosmos eigene LoRA-Adapter: ein neu geordneter `wissen/training/`-Baum mit Schema-Validator (jetzt Teil von `release-gate`), ein reproduzierbarer Grundriss-Generator (925 seeded Beispiele, dreifach byte-gleich nachgewiesen), ein Trainer-Vertrag («Trainingspaket schnüren» mit Manifest-Hash-Beweis) und eine erste Signal-Erfassung, die Ablehnungen, Reparaturen und Layout-Entscheidungen nicht mehr im RAM verpuffen lässt, sondern sauber mit Sichtbarkeitsregel exportiert.',
+      },
+      {
+        text: 'Die Rollen-Staffelung (Kosmo-Meister/-Leiter/-Zeichner) ist verdrahtet: jede Kosmo-Antwort trägt jetzt ein Badge, das die automatisch klassifizierte Aufgabenklasse zeigt — ehrlich mit «Ein-Modell-Betrieb» beschriftet, solange keine echte Mehr-Modell-Karte konfiguriert ist. Dazu ein Kuratier-Flow im Trainingsbereich: aussortierte Journal-Einträge zeigen ihren Grund, ein Fake-Probelauf bleibt sichtbar als Übung ohne echtes Training.',
+      },
+      {
+        text: 'Neue Standard-Oberfläche in KosmoDesign: vier schwebende «Islands» an den Bildschirmrändern (Zeichnen/Ansicht/Projekt/Austausch) ersetzen die klassische Werkzeugleiste, das EntwurfsDock und die Statusleiste als Erststart-Default — jedes Werkzeug läuft eine feste Stufenkette (Pille → Leiste → Mini-Popup → Einstellungsfenster) durch. Die bisherige, vollständige Oberfläche bleibt als «Manuell» einen Klick entfernt vollwertig erhalten, inklusive Rückweg. Ein neuer, echter animierter Kosmo-Orb (derselbe Companion-Kern wie das bisherige Kosmo-Symbol) sitzt eigenständig zwischen den Islands und öffnet eine kompakte Konversationskarte mit echtem Vorschlag statt eines Platzhaltertexts.',
+      },
+      {
+        text: 'Ehrlich offen: 11 von 29 Island-Werkzeugen sind noch reine Rahmen mit sichtbarem Hinweis statt echter Wirkung (u. a. Öffnung, Messen, Kommentare, Peers-Anzeige) — jeweils als offene Owner-Frage in `docs/ISLAND-UI-SPEZ.md` §8 dokumentiert, nicht stillschweigend vorgetäuscht. Der `kosmo-zeichner-commands`-Trainingsdatensatz ist bewusst noch leer (der Kurations-Weg existiert, nur ungenutzt). Reales Touch-Verhalten auf Hardware bleibt eine Owner-Prüfung ausserhalb des Containers.',
+      },
+    ],
+  },
+  {
     version: '0.8.1',
     datum: '2026-07-17',
     punkte: [

@@ -1,6 +1,6 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
-> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.1** (Stand 17.07.2026);
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.2** (Stand 17.07.2026);
 > alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
 > älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
 > (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal
@@ -9,7 +9,7 @@
 > (`.claude/hooks/session-start.sh`) erzwingt das automatisch.
 >
 > **Versions-Hinweis:** Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
-> `tauri.conf.json` sind wieder deckungsgleich **0.8.1** (die v0.8.0B-
+> `tauri.conf.json` sind weiterhin deckungsgleich **0.8.2** (die v0.8.0B-
 > Buchstaben-Suffix-Ausnahme galt nur für diesen einen Teil-Release). Details
 > in `../STAND.md`.
 
@@ -20,7 +20,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 
 ## Was du zuerst liest
 
-1. `ROADMAP.md` — 416 nummerierte Einträge (Stand v0.8.1), jeder ein
+1. `ROADMAP.md` — 434 nummerierte Einträge (Stand v0.8.2), jeder ein
    abgeschlossenes Feature mit Belegen. Der jüngste Stand steht **unten** vor
    dem Marker «Phase 3 abgeschlossen».
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
@@ -36,7 +36,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 cd kosmo-orbit
 npm install                 # Root-Workspace (npm workspaces)
 npm run build               # baut alle Pakete + die App
-npm test                    # 964 Kernel + 1217 App + 189 KI + 28 Contracts + 29 Data + 8 Lizenz + 95 UI (Stand v0.8.1)
+npm test                    # 964 Kernel + 1362 App + 239 KI + 39 Contracts + 29 Data + 8 Lizenz + 95 UI = 2736 (Stand v0.8.2)
 npm run typecheck           # 8 Workspaces, exactOptionalPropertyTypes ist AN
 npm run svg-qa              # 35 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
 ```

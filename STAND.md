@@ -1,7 +1,7 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.1 «Vollausbau»** (Stand 17.07.2026, ROADMAP 416).
-**Alle Versionen davor (≤ v0.8.0B) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.8.2 «Selbstverbesserung»** (Stand 17.07.2026, ROADMAP 434).
+**Alle Versionen davor (≤ v0.8.1) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 > **Versions-Hinweis:** die v0.8.0B-Sonderregelung (Owner-Anzeigeversion mit
 > Buchstaben-Suffix entkoppelt von einem strikten SemVer in `package.json`)
