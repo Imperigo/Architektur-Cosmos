@@ -79,6 +79,16 @@
   --k-shadow-overlay: 0 1px 0 rgba(26, 24, 21, 0.12), 0 12px 40px rgba(26, 24, 21, 0.18);
   --k-viewport-sky: #edeae2;
   --k-plan-paper: #fdfcf9;
+  /* v0.8.2 / PD1 (Island-UI-Strom, `docs/ISLAND-UI-SPEZ.md` §5 `--f-glass`-
+     Konfliktzeile/§6 Sanktion 5) — additiv, eng auf die Island-Shell
+     begrenzte Ausnahme vom Gesetz «Papier kennt kein Glas»
+     (`docs/V080B-DESIGN-SPEZ.md` Gesetz 7): gilt NUR für schwebende
+     Island-Elemente (Leiste/Popup/Fenster, analog zu den bestehenden
+     Viewport-HUD-Floats), NICHT für Stationsflächen/Panels — die bleiben
+     glaslos. Wert 1:1 aus dem Gestaltungskonzept §05 (`rgba(255,255,255,.82)`).
+     Verbraucher: `apps/kosmo-orbit/src/modules/design/island/island.css`
+     (`--f-glass`-Papier-Default). Kein bestehender Wert oben verändert. */
+  --k-insel-glas-papier: rgba(255, 255, 255, 0.82);
   color-scheme: light;
 
   /* Spacing-Skala (W0, UI-KONZEPT-065 §2) — ALLE gaps/paddings; rohe
@@ -192,6 +202,15 @@
   --k-motion-fast: 120ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-base: 200ms cubic-bezier(0.3, 0, 0.2, 1);
   --k-motion-settle: 320ms cubic-bezier(0.22, 0.9, 0.28, 1);
+  /* v0.8.2 / PD1 (Island-UI-Strom, `docs/ISLAND-UI-SPEZ.md` §4.3/§6 Sanktion
+     5) — additiv, einziger neuer Dauer-Wert der Island-Motion-Tabelle (die
+     drei Kern-Kurven und zwei der drei Kern-Dauern sind bereits
+     byte-identisch vorhanden, s. Spez-Befund §4.3): Einstellungsfenster-
+     Eintritt (`winIn`, Stufe 3) liegt bewusst zwischen `-base` (200ms) und
+     `-settle` (320ms). Verbraucher: `apps/kosmo-orbit/src/modules/design/
+     island/island.css` (`.isl-anim-winIn`). Kein bestehender Wert oben
+     verändert. */
+  --k-motion-fenster: 260ms;
 
   /* v0.6.6 MOTION-KONZEPT-066 §2 — Federkurve: schnelles Anreissen, weiches
      Setzen mit minimalem Überschwung (~2%). linear()-Approximation einer

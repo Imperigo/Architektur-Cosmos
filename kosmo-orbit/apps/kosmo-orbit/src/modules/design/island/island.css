@@ -1,0 +1,333 @@
+/* Island-UI — PD1 Fundament (`docs/ISLAND-UI-SPEZ.md` §1/§2/§4/§5/§6).
+   App-lokal (Fable-Entscheid, kein zweiter Ort in packages/kosmo-ui — Promotion
+   erst bei einer zweiten Verbraucher-Station). Alles hier ist scoped auf
+   `.isl-root`; kein bestehendes `--k-*`-Token wird verändert, nur referenziert
+   (`var(--k-*)`) — die zwei wirklich globalen additiven Ausnahmen
+   (`--k-motion-fenster`, `--k-insel-glas-papier`) leben additiv in
+   `packages/kosmo-ui/src/aura.css`.
+
+   ── Token-Aufteilung (§5-Tabelle, Konflikt-Entscheide) ────────────────────
+   `--f-*` ist der lokale Alias-Block (Prototyp-Namensraum `.isl-root`/
+   `.isl-root[data-world="kosmos"]`), PAPIER als Default hier unten, KOSMOS als
+   Override im bestehenden Theme-Attribut-Selektor `[data-theme='orbit']`
+   (App.tsx setzt `document.documentElement.dataset.theme` — s. `App.tsx`
+   Z.376/`packages/kosmo-ui/src/tokens.ts:303` `ThemeName='paper'|'orbit'` —
+   KEIN zweiter Farbwelt-Mechanismus, an den bestehenden gehängt). */
+
+.isl-root {
+  /* --f-field/-ink/-accent: `--k-field`/`--k-ink`/`--k-accent` themen bereits
+     automatisch (aura.css `:root,[data-theme='paper']` vs. `[data-theme=
+     'orbit']`) — kein Override hier nötig, EIN Alias reicht für beide Welten.
+     §5-Konfliktentscheid Akzent: `--k-accent` (Teal) bleibt Wahrheit, das
+     Konzept-«Tusche»-Mono wird NICHT übernommen. */
+  --f-field: var(--k-field);
+  --f-ink: var(--k-ink);
+  --f-accent: var(--k-accent);
+
+  /* --f-glass: Papier-Default = additiver, eng begrenzter Ausnahme-Token
+     (aura.css, «Papier kennt kein Glas» bleibt für Stationsflächen in Kraft —
+     s. Kopfkommentar dort); Kosmos überschreibt unten auf das bestehende
+     `--k-glass-fill`. */
+  --f-glass: var(--k-insel-glas-papier);
+  --f-blur: blur(16px) saturate(1.05);
+
+  /* --f-pill: «Pill bleibt in beiden Welten dunkles Glas» (§5 Regel 1) —
+     EIN gemeinsamer Wert, kein Theme-Override (bewusste Vereinheitlichung
+     der beiden nahe beieinanderliegenden Prototyp-Werte `#1A1815`/
+     `rgba(16,19,25,.92)`: die Regel verlangt Invarianz, nicht zwei Werte). */
+  --f-pill: rgba(16, 19, 25, 0.92);
+
+  /* --f-r-sm/-r-md: Island-lokaler Radius-Layer (§5-Konfliktentscheid —
+     rundet NICHT die globale, theme-invariante `--k-radius-*`-Skala um). */
+  --f-r-sm: 4px;
+  --f-r-md: 8px;
+
+  /* --f-gold: eigener Wert statt `--k-rolle-agent` (§5-Entscheid, Kosmo-Orb
+     ist keine Pipeline-Rolle) — in PD1 noch ohne Verbraucher (Kosmo-Orb-
+     Anbindung ist PD4-Scope), hier bereits additiv hinterlegt, damit PD4
+     nicht noch einmal durch die Token-Tabelle muss. */
+  --f-gold: #8c6f2e;
+
+  position: fixed;
+  z-index: 40;
+  font-family: var(--k-font-ui);
+  color: var(--f-ink);
+}
+
+[data-theme='orbit'] .isl-root {
+  --f-glass: var(--k-glass-fill);
+  --f-blur: blur(24px) saturate(1.4);
+  --f-r-sm: 8px;
+  --f-r-md: 13px;
+  --f-gold: #cbb06a;
+  /* --f-field/-ink/-accent/-pill bleiben unverändert — s. Kopfkommentar
+     (theme-invariant bzw. bereits automatisch via `--k-field`/-ink/-accent
+     durchgereicht). */
+}
+
+/* ── Bühnenordnung (§1/§2): vier Islands, Ränder 14px, mittig zentriert ── */
+.isl-rand-links {
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.isl-rand-oben {
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.isl-rand-rechts {
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.isl-rand-unten {
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ── Stufe 0 · Pill (§2/§4.1: 34×104 vertikal / 104×34 horizontal) ── */
+.isl-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--f-pill);
+  backdrop-filter: var(--f-blur);
+  -webkit-backdrop-filter: var(--f-blur);
+  border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
+  border-radius: var(--k-radius-pill);
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  color: #f4f6fa;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+}
+/* §4.2: alle Ziele ≥44px Trefferfläche, auch wenn die visuelle Pill schmaler
+   ist — die schmale 34px-Achse wird per unsichtbarem Pseudo-Element auf 44px
+   gepolstert (Fable-Gate-Fix PD1: min-width/-height allein vergrösserten die
+   Trefferzone NICHT, weil die feste 34px-Seite gewinnt). */
+.isl-pill::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+}
+.isl-vertikal .isl-pill {
+  width: 34px;
+  height: 104px;
+  min-height: 44px;
+}
+.isl-horizontal .isl-pill {
+  width: 104px;
+  height: 34px;
+  min-width: 44px;
+}
+.isl-pill-glyphe {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+/* ── Stufe 1 · Leiste (§4.1) ── */
+.isl-leiste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--k-s3);
+  background: var(--f-glass);
+  backdrop-filter: var(--f-blur);
+  -webkit-backdrop-filter: var(--f-blur);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--f-r-md);
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+}
+.isl-leiste-kopf {
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--f-ink);
+  opacity: 0.7;
+  text-align: center;
+}
+.isl-leiste-werkzeuge {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s1);
+}
+.isl-horizontal .isl-leiste-werkzeuge {
+  flex-direction: row;
+}
+
+.isl-werkzeug {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--k-s2);
+  background: transparent;
+  border: none;
+  border-radius: var(--f-r-sm);
+  color: var(--f-ink);
+  cursor: pointer;
+  /* Zustands-Wechsel (Chips/Toggles, §4.3) — 160ms/standard, direkt aus
+     der bestehenden Skala referenziert, kein neuer Token. */
+  transition:
+    background var(--k-dock-schnell) var(--k-ease-standard),
+    color var(--k-dock-schnell) var(--k-ease-standard);
+}
+.isl-werkzeug:hover,
+.isl-werkzeug[aria-pressed='true'] {
+  background: var(--k-accent-wash);
+}
+.isl-werkzeug-glyphe {
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.isl-werkzeug-titel {
+  font-family: var(--k-font-mono);
+  font-size: 8.5px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ── Stufe 2 · Mini-Popup (§4.1) — PD1: leerer Rahmen, Inhalte folgen PD3 ── */
+.isl-popup {
+  position: absolute;
+  top: calc(100% + var(--k-s3));
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 180px;
+  min-height: 44px;
+  padding: var(--k-s4);
+  background: var(--f-glass);
+  backdrop-filter: var(--f-blur);
+  -webkit-backdrop-filter: var(--f-blur);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--f-r-md);
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+}
+.isl-popup-hinweis {
+  margin: 0;
+  font-family: var(--k-font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--f-ink);
+  opacity: 0.6;
+}
+
+/* ── Stufe 3 · Einstellungsfenster (§4.1) — PD1: leerer Rahmen ── */
+.isl-fenster {
+  position: absolute;
+  top: calc(100% + var(--k-s3));
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 320px;
+  min-height: 120px;
+  padding: var(--k-s5);
+  background: var(--f-glass);
+  backdrop-filter: var(--f-blur);
+  -webkit-backdrop-filter: var(--f-blur);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--f-r-md);
+  box-shadow: var(--k-shadow-xl, var(--k-shadow-overlay));
+}
+
+.isl-schliessen {
+  position: absolute;
+  top: var(--k-s2);
+  right: var(--k-s2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  color: var(--f-ink);
+  cursor: pointer;
+}
+
+/* ── Toast «‹NAME› AKTIV» (§4.2, Werkzeuge ohne Popup, 1.7s) ── */
+.isl-toast {
+  position: absolute;
+  top: calc(100% + var(--k-s3));
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: var(--k-s2) var(--k-s4);
+  background: var(--f-pill);
+  color: #f4f6fa;
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  border-radius: var(--k-radius-pill);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-overlay));
+}
+
+/* ── Motion (§4.3-Tabelle) ──────────────────────────────────────────────
+   Kurven/Dauern sind, bis auf `--k-motion-fenster` (additiv in aura.css),
+   1:1 bestehende Repo-Tokens — hier nur referenziert, nichts neu erfunden. */
+@keyframes islIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes winIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.isl-anim-islIn {
+  animation: islIn var(--k-motion-settle) var(--k-ease-bounce);
+}
+.isl-anim-popIn {
+  animation: popIn var(--k-motion-base) var(--k-ease-entrance);
+}
+.isl-anim-winIn {
+  animation: winIn var(--k-motion-fenster) var(--k-ease-entrance);
+}
+
+/* `prefers-reduced-motion`: der globale Riegel in `aura.css` (`*,*::before,
+   *::after { animation-duration:.01ms!important; … }`) fängt diese drei
+   Animationen bereits ab (§4.2, «Repo-Analogon bereits vorhanden») — die
+   `isl-anim-*`-Klassen werden von `IslandShell.tsx` bei aktivem
+   reduced-motion zusätzlich gar nicht erst gesetzt (s. `data-reduziert`).
+   Diese Regel ist eine zweite, defensive Sicherung (JS-Fehlerfall/
+   verzögerte matchMedia-Änderung), kein Ersatz für den globalen Riegel. */
+.isl-root[data-reduziert='true'] .isl-anim-islIn,
+.isl-root[data-reduziert='true'] .isl-anim-popIn,
+.isl-root[data-reduziert='true'] .isl-anim-winIn {
+  animation: none;
+}
