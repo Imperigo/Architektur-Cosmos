@@ -246,3 +246,39 @@
   align-items: center;
   flex-wrap: wrap;
 }
+
+/* v0.8.1 / P15 (Nutzungszeit-Panel) — reine Anzeigeliste, keine neue
+   Interaktion (kein Klick/Hover-Zustand nötig, s. Einstellungen.tsx). */
+.nz-liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+}
+.nz-zeile {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--k-s3);
+  padding: 4px 0;
+  font-size: var(--k-t-sm);
+  border-bottom: 1px solid var(--k-line);
+}
+.nz-zeile:last-child {
+  border-bottom: none;
+}
+.nz-titel {
+  color: var(--k-ink);
+  font-weight: 550;
+}
+.nz-wert {
+  color: var(--k-ink-faint);
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  white-space: nowrap;
+}
+.nz-werkzeuge-label {
+  display: block;
+  margin-top: var(--k-s4);
+}

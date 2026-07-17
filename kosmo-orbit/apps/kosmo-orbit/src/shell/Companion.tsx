@@ -24,6 +24,7 @@ import {
   type CompanionKarte,
   type CompanionKartenTon,
 } from './companion-daten';
+import './companion-065.css';
 
 /**
  * V0.7.2 W4-G (Paket-Ergänzung «Companion minimal», Spec §10) — die
@@ -61,6 +62,20 @@ import {
  *    stummen No-ops.
  * Auftragsbuch-Karten (`brauchtFreigabe: false`, s. `companion-daten.ts`)
  * bekommen KEIN Gate — sie sind ehrlich nie freigabebedürftig.
+ *
+ * v0.8.1 / P15 (Mobile Companion, `docs/V081-SPEZ.md` §7(f)/§9.5 C-34):
+ * Header/Aside/Main/Dock tragen jetzt zusätzlich `className`s aus
+ * `shell/companion-065.css` (rein additiv — bestehende `data-testid`s/
+ * Inline-Styles für Farbe/Typografie unverändert), die unter 700px Viewport-
+ * Breite von der Zwei-Spalten- auf eine gestapelte Ein-Spalten-Ansicht
+ * umschalten und das 4er-Dock auf eine touch-taugliche Mindestgrösse (44px)
+ * bringen. **Deklarierte Grenze** (Owner-Auftrag wörtlich, `V081-SPEZ.md`
+ * §7(f)): ein echtes physisches Mobilgerät-Testfeld (reales Touch-Verhalten
+ * auf echter Hardware, analog dem offenen iPad-Touch-Drehbuch, §9 C-11)
+ * bleibt Owner-Aktion ausserhalb dieses Containers — diese Ansicht ist mit
+ * SIMULIERTEN Playwright-Viewports getestet (`e2e/companion-responsive.
+ * spec.ts`), nicht auf echter Hardware. Dieselbe Grenze steht wörtlich in der
+ * UI, s. `companion-geraete-grenze` unten in der Statusbar.
  *
  * «Zurück in die Voll-App» (4er-Kreis-Dock): OHNE Zugriff auf `App.tsx`
  * (fremder Dateibesitz, Spec §12) kann diese Ansicht keinen Ziel-Screen
@@ -520,13 +535,12 @@ export function Companion() {
       >
         {/* HEADER */}
         <header
+          className="companion-header"
           style={{
-            height: 56,
             flex: '0 0 auto',
             display: 'flex',
             alignItems: 'center',
             gap: 14,
-            padding: '0 20px',
             borderBottom: '1px solid var(--k-line)',
             background: 'var(--k-surface)',
           }}
@@ -554,11 +568,12 @@ export function Companion() {
                 aria-label={`Zurück zur Voll-App — ${eintrag.label}`}
                 title={eintrag.label}
                 onClick={zurueckZurVollApp}
-                className="k-druck"
+                className="k-druck companion-dock-knopf"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: 2,
                   background: 'var(--k-raised)',
                   border: '1px solid var(--k-line-strong)',
@@ -579,16 +594,14 @@ export function Companion() {
         </header>
 
         {/* BODY */}
-        <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+        <div className="companion-body" style={{ flex: 1, minHeight: 0, display: 'flex' }}>
           {/* LEFT — ORB & KONTEXT */}
           <aside
+            className="companion-aside"
             style={{
-              width: 340,
               flex: '0 0 auto',
-              borderRight: '1px solid var(--k-line)',
               background: 'var(--k-surface)',
               overflowY: 'auto',
-              padding: '26px 22px',
               display: 'flex',
               flexDirection: 'column',
               gap: 22,
@@ -707,15 +720,32 @@ export function Companion() {
             <Hairline />
 
             <Phasenring gruppe={gruppe} titel={projektBereit ? siaPhaseLabel(siaPhase) : 'lädt …'} />
+
+            <Hairline />
+
+            {/* Deklarierte Grenze (Owner-Auftrag wörtlich, `V081-SPEZ.md`
+                §7(f)/§9.5 C-34) — steht wörtlich in der UI, s. Kopfkommentar. */}
+            <div
+              data-testid="companion-geraete-grenze"
+              style={{
+                fontSize: 11,
+                lineHeight: 1.5,
+                color: 'var(--k-ink-faint)',
+                textAlign: 'center',
+              }}
+            >
+              Getestet mit simulierten Viewports. Reales Touch-Verhalten auf echter Hardware bleibt Owner-Prüfung
+              ausserhalb dieses Containers (analog iPad-Touch-Drehbuch).
+            </div>
           </aside>
 
           {/* CENTER — AGENTEN & AUFTRÄGE */}
           <main
+            className="companion-main"
             style={{
               flex: 1,
               minWidth: 0,
               overflowY: 'auto',
-              padding: '26px 32px 40px',
               display: 'flex',
               flexDirection: 'column',
               gap: 14,

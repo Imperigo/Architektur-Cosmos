@@ -194,6 +194,17 @@
      dem NEUEN Zustand, derselbe Trick wie bei `.k-druck`). */
   transition: opacity var(--k-motion-fast), transform var(--k-motion-fast);
 }
+/* v0.8.1 / P15 (Orbit-Hub-Vollausbau, responsives Layout, docs/V081-SPEZ.md
+   §7(f)/§9.5 C-34) — additiv: unter demselben 860px-Breakpoint wie
+   `.orbit065-home-grid` (Ein-Spalten-Kollaps) wird die Fächer-Breite enger
+   begrenzt, damit ein tatsächlich geöffneter rechts-/links-Fächer seltener
+   am schmaleren Container-Rand beschnitten wird (s. `app.css`
+   `.app-zentrale-scroll`-Kommentar für den zugehörigen Seiten-Scroll-Fix). */
+@media (max-width: 860px) {
+  .orbit065-faecher-huelle {
+    width: min(240px, 70vw);
+  }
+}
 .orbit065-faecher-huelle.offen {
   opacity: 1;
   z-index: 20;

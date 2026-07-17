@@ -157,7 +157,23 @@
 .app-zentrale-scroll {
   position: absolute;
   inset: 0;
-  overflow: auto;
+  /* v0.8.1 / P15 (Orbit-Hub-Vollausbau, responsives Layout, docs/V081-
+     SPEZ.md §7(f)/§9.5 C-34): war `overflow: auto` (beide Achsen) — der
+     Orbit-Ring hält seine Fächer-Hüllen laut Harter-Vertrag IMMER im DOM mit
+     realer Boxgrösse, auch geschlossen (nur Opazität ~0 signalisiert zu,
+     s. `OrbitStart.tsx`-Kopfkommentar); rechts/links öffnende Fächer
+     ragen dadurch unterhalb ~860px Viewport-Breite über den rechten Rand
+     hinaus (gemessen: `document.documentElement.scrollWidth` > Viewport-
+     Breite, obwohl nichts davon sichtbar ist). Explizit `overflow-x: hidden`
+     kappt diesen unsichtbaren horizontalen Scroll, `overflow-y: auto`
+     bleibt unverändert. Ehrlicher Rest: ein tatsächlich GEÖFFNETER rechts-/
+     links-Fächer kann auf sehr schmalen Breiten (< ca. 860px) dadurch am
+     Rand beschnitten werden statt scrollbar zu sein — die volle App-Shell
+     bleibt ohnehin Desktop-CAD-Scope (`V080B-DESIGN-SPEZ.md` §9.16 B-138),
+     dieser Fix beseitigt nur den stillen Seiten-Scrollbalken, kein Vollumbau
+     der Fächer-Positionierung. */
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 48px 24px;
 }
 .app-zentrale-inhalt {
@@ -315,4 +331,23 @@
   background: var(--k-raised);
   font-size: 13px;
   width: 240px;
+}
+
+/* v0.8.1 / P15 (Orbit-Hub-Vollausbau, responsives Layout, docs/V081-SPEZ.md
+   §7(f)/§9.5 C-34) — additive Mobil-Regel: die feste `240px`-Feldbreite oben
+   plus der «+ Neues Projekt»-Knopf sprengen ohne Umbruch jeden Viewport
+   < ca. 420px (gemessen: horizontaler Scroll bei 375px Breite, kein
+   bestehender Media-Query deckt das ab). Nur DIESE eine Zeile bekommt einen
+   schmalen Breakpoint — der Rest der Zentrale (Knopf-/Kopfzeilen) trägt
+   bereits `flex-wrap` (s. `.app-knopf-reihe-wrap`/`.app-kopf-reihe-wrap`
+   oben) und braucht keine weitere Regel. */
+@media (max-width: 480px) {
+  .app-projekt-neu-reihe {
+    flex-wrap: wrap;
+  }
+  .app-projekt-neu-feld {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
 }

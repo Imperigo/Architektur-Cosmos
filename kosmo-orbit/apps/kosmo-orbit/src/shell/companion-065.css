@@ -1,0 +1,93 @@
+/* v0.8.1 / P15 (Mobile Companion, docs/V081-SPEZ.md §7(f)/§9.5 C-34) —
+   responsives Kartenlayout für `shell/Companion.tsx`. Companion rendert
+   ANSTELLE von `<App/>` (kein Router/App-Chrome, s. Companion.tsx-Kopf-
+   kommentar) und ist damit die einzige Ansicht, die ein schmaler
+   Mobil-Viewport wirklich zu Gesicht bekommt (die volle App bleibt ein
+   Desktop-CAD-Shell-Scope, s. `V080B-DESIGN-SPEZ.md` §9.16 B-138).
+
+   Nur LAYOUT-kritische Eigenschaften (Breite/Richtung/Innenabstand) wandern
+   hierher — Farben/Typografie bleiben unverändert als Inline-Style in
+   Companion.tsx (kein Optik-Umbau, nur Responsivität). Alle bestehenden
+   `data-testid`s bleiben unverändert; die Klassen hier sind rein additiv
+   (neue `className`-Werte, kein bestehendes Attribut geändert).
+
+   Breakpoint 700px (Owner-Referenz `V080B-DESIGN-SPEZ.md` B-87 «300px-Karte»
+   plus Kopf/Dock-Zeile: die 340px-Aside + min. 300px-Hauptspalte brauchen
+   real ≈680–700px, um nebeneinander noch komfortabel Platz zu haben) —
+   darunter stapelt sich Aside/Main statt nebeneinander zu quetschen. Ein
+   zweiter, engerer Breakpoint (480px) feilt nur noch am Innenabstand für
+   echte Telefon-Breiten (z. B. 375px, iPhone SE/12/13 mini). */
+
+.companion-header {
+  height: 56px;
+  padding: 0 20px;
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+@media (max-width: 700px) {
+  .companion-header {
+    height: auto;
+    min-height: 56px;
+    padding: 10px 14px;
+  }
+}
+
+/* Touch-taugliche Grösse (Owner-Referenz `docs/V080B-DESIGN-SPEZ.md` §9.15
+   B-145 «grosse Tap-Ziele 46–56px», hier untere Grenze 44px WCAG-Standard) —
+   gilt IMMER, nicht nur unter dem Breakpoint: das 4er-Dock ist der einzige
+   Navigationsweg zurück in die Voll-App, er muss auf jedem Gerät zuverlässig
+   treffbar sein. */
+.companion-dock-knopf {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.companion-body {
+  display: flex;
+}
+@media (max-width: 700px) {
+  .companion-body {
+    flex-direction: column;
+  }
+}
+
+.companion-aside {
+  width: 340px;
+  border-right: 1px solid var(--k-line);
+  padding: 26px 22px;
+}
+@media (max-width: 700px) {
+  .companion-aside {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--k-line);
+    padding: 18px 16px;
+  }
+}
+
+.companion-main {
+  padding: 26px 32px 40px;
+}
+@media (max-width: 700px) {
+  .companion-main {
+    padding: 18px 16px 28px;
+  }
+}
+@media (max-width: 480px) {
+  .companion-main {
+    padding: 14px 12px 24px;
+  }
+}
+
+/* Job-/Freigabe-Karten (`companion-job-*`) laufen bereits über `maxWidth: 640`
+   inline — auf sehr schmalen Viewports reicht das ohnehin schon volle
+   Breite, keine weitere Regel nötig. Die Governance-Gate-Knöpfe
+   (`GovernanceGate.tsx`, NICHT ANGEFASST — s. Sanktionsliste) erben ihre
+   Grösse aus `aura.css`s `.k-btn`-Rezept, das bereits >=32px hoch ist; unter
+   700px lässt diese Regel ihnen zusätzlichen Atemraum, ohne die Komponente
+   selbst anzufassen. */
+@media (max-width: 700px) {
+  [data-testid^='companion-governance-'] button {
+    min-height: 40px;
+  }
+}

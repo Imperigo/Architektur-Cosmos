@@ -5,7 +5,13 @@ import './orbit-065.css';
 import './einstellungen.css';
 import { AKZENTE } from './akzente';
 import { NEUIGKEITEN, neuigkeitenFuerStation } from './neuigkeiten';
-import { adaptionAktiv, adaptionZuruecksetzen, setAdaptionAktiv } from '../state/oberflaeche-adaption-kern';
+import { adaptionAktiv, adaptionZuruecksetzen, nutzungsProfil, setAdaptionAktiv } from '../state/oberflaeche-adaption-kern';
+import {
+  formatiereZuletzt,
+  lesbarerElementName,
+  meistgenutzteElemente,
+  stationsNutzung,
+} from '../state/nutzungszeit';
 import {
   effektiveLeistungsStufe,
   formatiereLeistungsBericht,
@@ -119,6 +125,15 @@ export function Einstellungen({
 }: EinstellungenProps) {
   const [werkzeugSetupOffen, setWerkzeugSetupOffen] = useState(false);
   const [adaptionIstAn, setAdaptionIstAn] = useState(() => adaptionAktiv());
+
+  // v0.8.1 / P15 (Nutzungszeit-Panel, docs/V081-SPEZ.md §7(f)/§9.5 C-34):
+  // EINMAL beim Öffnen des Panels aus dem echten, bereits verfallenen
+  // Adaptions-Profil gelesen (`state/nutzungszeit.ts`, reine Ableitung aus
+  // `kosmo.adaption.v1`) — kein Polling nötig, das Panel ist kurzlebig
+  // (dieselbe "Snapshot beim Mount"-Erwartung wie `leistungErgebnis` oben).
+  const [nutzungsSnapshot] = useState(() => nutzungsProfil());
+  const stationsListe = stationsNutzung(nutzungsSnapshot);
+  const meistgenutzt = meistgenutzteElemente(nutzungsSnapshot);
 
   // v0.7.8 Welle 3 (P6): Dock-Modus (Konzept A «Orbit-Zonen» / Konzept B
   // «Raster-Kachel») — derselbe Store, den `DockFlaeche.tsx` liest (`modus`),
@@ -508,6 +523,56 @@ export function Einstellungen({
               Oberfläche zurücksetzen
             </KButton>
           </div>
+        </section>
+        <Hairline />
+
+        {/* v0.8.1 / P15 (Nutzungszeit-Panel, docs/V081-SPEZ.md §7(f)/§9.5
+            C-34) — echte Nutzungsdaten aus demselben Adaptions-Speicher wie
+            die Sektion oben (`kosmo.adaption.v1`), reine Ableitung über
+            `state/nutzungszeit.ts` (kein zweiter Speicher, kein Polling).
+            Ehrlichkeitsgrenze wörtlich benannt: eine durchgehend GEMESSENE
+            Aufenthaltsdauer je Station gibt es heute nicht — nur ein
+            gewichteter Klickzähler + der echte Zeitpunkt der letzten
+            Nutzung, s. Kopfkommentar der Datenquelle. */}
+        <section data-testid="einstellungen-nutzungszeit" className="orbit065-einstellungen-sektion">
+          <div className="orbit065-einstellungen-sektionstitel">Nutzungszeit</div>
+          <div className="es-feld-hinweis">
+            Echte Nutzungsdaten aus dem lokalen Adaptions-Speicher (<code>kosmo.adaption.v1</code>) — Klickgewicht
+            der letzten 7 Tage und der echte Zeitpunkt der letzten Nutzung. Eine durchgehend gemessene
+            Aufenthaltsdauer je Station wird heute nicht erfasst.
+          </div>
+          <ul data-testid="nutzungszeit-stationen" className="nz-liste">
+            {stationsListe.map((e) => (
+              <li key={e.station} data-testid={`nutzungszeit-station-${e.station}`} className="nz-zeile">
+                <span className="nz-titel">{e.titel}</span>
+                <span className="nz-wert">
+                  {e.status === 'nicht-erfasst' && 'nicht separat erfasst'}
+                  {e.status === 'nie-genutzt' && 'noch nie genutzt'}
+                  {e.status === 'genutzt' &&
+                    `Gewicht ${e.gewicht.toFixed(1)} · zuletzt ${formatiereZuletzt(e.zuletztMs!)}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+          {meistgenutzt.length > 0 && (
+            <>
+              <span className="es-feld-label nz-werkzeuge-label">Meistgenutzte Einzel-Werkzeuge</span>
+              <ul data-testid="nutzungszeit-werkzeuge" className="nz-liste">
+                {meistgenutzt.map((e) => (
+                  <li
+                    key={e.elementId}
+                    data-testid={`nutzungszeit-werkzeug-${e.elementId.replace(':', '-')}`}
+                    className="nz-zeile"
+                  >
+                    <span className="nz-titel">{lesbarerElementName(e.elementId)}</span>
+                    <span className="nz-wert">
+                      Gewicht {e.gewicht.toFixed(1)} · zuletzt {formatiereZuletzt(e.zuletztMs)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
         <Hairline />
 
