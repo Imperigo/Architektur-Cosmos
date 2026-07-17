@@ -111,6 +111,16 @@
   (`pointer-events:none`, kein Klick-Blocker, aber optisch unsauber) — vom
   Prüfagenten selbst als «Kandidat für die Restrundenliste» notiert.
   *(v0.8.1/P4, ROADMAP 401)*
+- [ ] **kosmo-ui-bruecke (d) × nav-pan-Überdeckung** (NEU, erstmals im
+  v0.8.2/P3-Gate reproduziert): im `3D | Plan`-Split
+  (`dw-viewport-flex--getrennt`) fängt der schwebende `nav-pan`-HUD-Knopf
+  Klicks auf den `modus-chip` ab («subtree intercepts pointer events»,
+  90s-Timeout in Test d) — 2× unabhängig reproduziert (P3-Agent isoliert +
+  Fable-Gate gegen frisches Bundle :5183), Ursache ausserhalb jedes
+  v0.8.2-Dateikreises (Viewport-HUD-Float × Statuszeile; anders als die
+  Wrap-Zeile darüber ein ECHTER Klick-Blocker). Ausdrücklich NICHT C-28
+  (das ist der «Tab (c)»-Flake in dock-interaktion, von P7a gehärtet).
+  *(v0.8.2/P3-Gate, ROADMAP 424)*
 
 ## D · Grosse vertagte Features (je eigener Plan-Kandidat)
 

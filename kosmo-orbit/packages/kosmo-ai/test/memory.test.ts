@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LearningJournal, localStorageMemory, type Learning, type MemoryStore } from '../src';
+import { LearningJournal, localStorageMemory, type ArchivStore, type Learning, type MemoryStore } from '../src';
 
 /**
  * D4 (KosmoData-Dach): setzeVisibility spiegelt notieren() — Kuration der
@@ -119,5 +119,87 @@ describe('localStorageMemory (Sanity — bestehendes Verhalten unverändert)', (
     // den Fehler defensiv ab und liefert [].
     const store = localStorageMemory('kosmo.test.nichtvorhanden');
     expect(store.load()).toEqual([]);
+  });
+});
+
+/** In-Memory-`ArchivStore` fürs Testen — Muster `memoryStore()` oben. */
+function archivStore(): ArchivStore & { bestand: Learning[] } {
+  const bestand: Learning[] = [];
+  return {
+    bestand,
+    laden: () => bestand,
+    anhaengen: (e) => bestand.push(e),
+  };
+}
+
+describe('LearningJournal — Archiv-Store (v0.8.2/P3, §4.3, additiv)', () => {
+  it('ohne Archiv-Store fällt archivAll ehrlich auf `all` zurück (kein Bruch für bestehende Aufrufer)', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Ohne Archiv' });
+    expect(journal.archivAll).toEqual(journal.all);
+  });
+
+  it('mit Archiv-Store: jeder add()-Aufruf spiegelt zusätzlich ins Archiv', () => {
+    const archiv = archivStore();
+    const journal = new LearningJournal(memoryStore(), archiv);
+    journal.add({ sentiment: 'gut', context: 'Eins' });
+    journal.add({ sentiment: 'schlecht', context: 'Zwei' });
+    expect(archiv.bestand).toHaveLength(2);
+    expect(archiv.bestand.map((e) => e.context)).toEqual(['Eins', 'Zwei']);
+  });
+
+  it('archivAll normalisiert Alteinträge ohne visibility auf private, wie `all`', () => {
+    const archiv = archivStore();
+    archiv.bestand.push({ ts: '2026-01-01T00:00:00.000Z', sentiment: 'gut', context: 'Alt, ohne visibility' });
+    const journal = new LearningJournal(memoryStore(), archiv);
+    expect(journal.archivAll[0]?.visibility).toBe('private');
+  });
+
+  it('das 200er-Fenster (`store.save`) bleibt unverändert, auch wenn ein Archiv-Store injiziert ist', () => {
+    const store = memoryStore();
+    const archiv = archivStore();
+    const journal = new LearningJournal(store, archiv);
+    for (let i = 0; i < 5; i++) journal.add({ sentiment: 'gut', context: `Eintrag ${i}` });
+    // Der capped Store bekommt weiterhin ALLE (< 200) Einträge — das Fenster
+    // selbst wird nur in `localStorageMemory`/`journalStore` gekappt, hier
+    // testen wir nur: der Archiv-Zweig verändert `store.save()` nicht.
+    expect(journal.all).toHaveLength(5);
+    expect(archiv.bestand).toHaveLength(5);
+  });
+});
+
+describe('LearningJournal.toKosmoSignalJsonl (v0.8.2/P3, §4.4 C-17-Fix + §5)', () => {
+  it('Default public: nur öffentliche Einträge, als kosmo-signal/v1 (art: journal)', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Öffentlich' });
+    const [eintrag] = journal.all;
+    journal.setzeVisibility(eintrag!.ts, 'public');
+    journal.add({ sentiment: 'schlecht', context: 'Privat (Default)' });
+
+    const zeilen = journal.toKosmoSignalJsonl().split('\n').map((l) => JSON.parse(l) as Record<string, unknown>);
+    expect(zeilen).toHaveLength(1);
+    expect(zeilen[0]).toMatchObject({ art: 'journal', visibility: 'public' });
+    expect((zeilen[0]!['payload'] as Record<string, unknown>)['context']).toBe('Öffentlich');
+  });
+
+  it('"alle" liefert auch private Einträge (explizit, nie Default)', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Privat' });
+    const zeilen = journal.toKosmoSignalJsonl('alle').split('\n').filter(Boolean);
+    expect(zeilen).toHaveLength(1);
+  });
+
+  it('leerer Bestand → leerer String (kein Crash, keine Fantasiezeile)', () => {
+    const journal = new LearningJournal(memoryStore());
+    expect(journal.toKosmoSignalJsonl()).toBe('');
+  });
+
+  it('bestehendes toJsonl() bleibt unverändert (roh, ungefiltert, kein art-Feld)', () => {
+    const journal = new LearningJournal(memoryStore());
+    journal.add({ sentiment: 'gut', context: 'Roh' });
+    const [zeile] = journal.toJsonl().split('\n');
+    const parsed = JSON.parse(zeile!) as Record<string, unknown>;
+    expect(parsed['art']).toBeUndefined();
+    expect(parsed['context']).toBe('Roh');
   });
 });

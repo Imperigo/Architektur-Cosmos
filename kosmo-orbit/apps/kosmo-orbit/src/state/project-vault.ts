@@ -34,7 +34,14 @@ const DB = 'kosmo-projekte';
 // packages/kosmo-kernel/src/model/doc.ts) ehrlich «Quelle unbelegt
 // (Altbestand)» statt eine erfundene Herkunft — `materialArt`/`region`/
 // `materialDimensionen` bleiben optional und unangetastet.
-const DB_VERSION = 5;
+// v6 (v0.8.2/P3, «Signal-Erfassung», `docs/V082-SPEZ.md` §4.1/§4.3): zwei
+// neue, additive Stores — «lernjournalarchiv» (der NIE gekappte
+// Journal-Bestand, `state/journal-store.ts` `journalArchivStore()`, additiv
+// NEBEN dem bestehenden 400er-Spiegel «lernjournal») und «vorschlagslog»
+// (`state/proposal-log.ts`, jeder Diff-Karten-Ausgang + Reparatur-/
+// Layout-Signale). Beide keyPath-Stores, additiv wie v3 — kein bestehender
+// Tresor migriert.
+const DB_VERSION = 6;
 const AKTIV_KEY = 'kosmo.projekt.aktiv';
 
 /**
@@ -98,7 +105,7 @@ function openDb(): Promise<IDBDatabase> {
       if (!req.result.objectStoreNames.contains('varianten')) {
         req.result.createObjectStore('varianten', { keyPath: 'id' });
       }
-      for (const store of ['auftraege', 'objekte', 'lernjournal'] as const) {
+      for (const store of ['auftraege', 'objekte', 'lernjournal', 'lernjournalarchiv', 'vorschlagslog'] as const) {
         if (!req.result.objectStoreNames.contains(store)) {
           req.result.createObjectStore(store, { keyPath: 'id' });
         }
@@ -114,7 +121,7 @@ function openDb(): Promise<IDBDatabase> {
 
 /** Generische Transaktion auf einem Tresor-Store (auch fürs Varianten-Archiv). */
 export function vaultTx<T>(
-  store: 'projekte' | 'varianten' | 'auftraege' | 'objekte' | 'lernjournal',
+  store: 'projekte' | 'varianten' | 'auftraege' | 'objekte' | 'lernjournal' | 'lernjournalarchiv' | 'vorschlagslog',
   mode: IDBTransactionMode,
   fn: (store: IDBObjectStore) => IDBRequest<T>,
 ): Promise<T> {

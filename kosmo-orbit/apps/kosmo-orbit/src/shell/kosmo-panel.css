@@ -361,3 +361,53 @@
   color: #fff;
   font-size: var(--k-t-md);
 }
+
+/* ── v0.8.2/P3 «Signal-Erfassung» (additiv) ──────────────────────────────── */
+
+/* Ablehnungsgrund-Eingabe (§4.1 C-19) — ersetzt das GovernanceGate nur an
+   der einen offenen Karte, solange die Eingabe aktiv ist. */
+.kp-grund-box {
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: var(--k-s2);
+  background: var(--k-raised);
+  border: 1px solid var(--k-warning);
+}
+.kp-grund-textarea {
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-field);
+  font-size: 12.5px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* kosmo-signal/v1-Export-Dialog (§4.4/§5) */
+.kp-export-scrim {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--k-ink) 55%, transparent);
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  z-index: 500;
+}
+.kp-export-box {
+  display: grid;
+  gap: var(--k-s3);
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--k-raised);
+  border: 1px solid var(--k-line-strong);
+  max-width: 420px;
+  min-width: 320px;
+}
+.kp-export-zeile {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--k-s2);
+  font-size: 12.5px;
+}

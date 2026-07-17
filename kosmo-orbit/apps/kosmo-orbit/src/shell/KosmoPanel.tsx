@@ -20,7 +20,7 @@ import {
   type Proposal,
 } from '@kosmo/ai';
 import { verifiziereLizenz } from '@kosmo/lizenz';
-import type { Assembly } from '@kosmo/kernel';
+import type { Assembly, JournalEntry } from '@kosmo/kernel';
 import { formatiereEreignisse, useProject } from '../state/project-store';
 import { loadReferences } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
@@ -30,7 +30,8 @@ import { DiagnosePanel } from './Diagnose';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { GovernanceGate, RisikoPill } from './GovernanceGate';
 import { alleFuerJobErlaubt, alleWiderrufen, erlaubeFuerJob, widerrufeFuerJob } from './governance-speicher';
-import { hydriereJournal, journalStore } from '../state/journal-store';
+import { hydriereJournal, journalArchivStore, journalStore } from '../state/journal-store';
+import { proposalLog, type ProposalKorrekturSchritt } from '../state/proposal-log';
 import { consumeKosmoFokus } from '../state/kosmo-focus';
 import { auftragErfassen } from '../state/auftragsbuch';
 import {
@@ -94,7 +95,11 @@ interface Bubble {
   blickZeit?: number;
 }
 
-const journal = new LearningJournal(journalStore());
+// v0.8.2/P3 (additiv, §4.3 `docs/V082-SPEZ.md`): zweiter Konstruktor-Parameter
+// `journalArchivStore()` — spiegelt JEDEN Eintrag zusätzlich ins unbegrenzte
+// Archiv (IndexedDB `lernjournalarchiv`), das 200er-Fenster für den
+// Prompt-Block (`toPromptBlock()`) bleibt unverändert.
+const journal = new LearningJournal(journalStore(), journalArchivStore());
 
 /**
  * v0.8.1 KI2 (§3 Kandidat 4, `docs/V081-SPEZ.md`): Dossier- und Rollen-
@@ -441,6 +446,24 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [cards, setCards] = useState<PendingCard[]>([]);
   /**
+   * v0.8.2/P3 (additiv, §4.1 C-19 «Ablehnungs-Grund-Eingabe») — `callId` der
+   * Karte, deren Ablehnen-Klick GERADE die Grund-Eingabe zeigt (statt sofort
+   * abzulehnen); `null` = keine offen. Ersetzt das `proposal-governance-
+   * gate` NUR für diese eine Karte, alle anderen Karten/Pakete unverändert.
+   */
+  const [grundEingabeFuer, setGrundEingabeFuer] = useState<string | null>(null);
+  const [grundText, setGrundText] = useState('');
+  /**
+   * v0.8.2/P3 (additiv, §4.4/§5 «Export kosmo-signal/v1») — `null` = Dialog
+   * geschlossen. `jsonl` ist bereits fertig gebaut (`baueSignalExport()`
+   * unten), damit «Herunterladen» dieselben Zahlen liefert, die der Dialog
+   * gerade zeigt (kein Rennen zwischen Anzeige und Download).
+   */
+  const [signalExport, setSignalExport] = useState<null | {
+    jsonl: string;
+    counts: { journal: number; proposal: number; reparatur: number; layout: number };
+  }>(null);
+  /**
    * v0.7.6 Welle 2 (GovernanceGate, Stufe «Für den Job erlauben») — echtes
    * Auto-Anwenden künftiger EINZEL-Vorschläge (kein Paket) DERSELBEN
    * `commandId`, bis Widerruf. v0.7.7 Stream B1: PERSISTENT über
@@ -464,6 +487,42 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
     // Persistenten Stand einmalig beim Mount einlesen — der Speicher
     // (localStorage) ist die Quelle der Wahrheit, s. `governance-speicher.ts`.
     setAutoErlaubt(new Set(alleFuerJobErlaubt('command')));
+  }, []);
+
+  /**
+   * v0.8.2/P3 (additiv, §4.1 C-19 DPO-Rohpaar-Kern) — «Ablehnung → nächste
+   * manuelle Aktion»: `useProject`s `journal`-Ring (`project-store.ts`, JEDER
+   * `runCommand()`-Aufruf unabhängig vom Actor, unverändert seit v0.6.8)
+   * wird beobachtet; die erste Aktion mit `actor === 'benutzer'` NACH einer
+   * offenen Ablehnung wird als `folgeKorrektur` verknüpft
+   * (`proposalLog.verknuepfeNaechsteKorrektur`). Liest NUR den bestehenden
+   * Store — `project-store.ts` bleibt unangetastet.
+   */
+  useEffect(() => {
+    // Referenz statt Länge: `journal` kappt bei 500 Einträgen (`project-
+    // store.ts` `.slice(-500)`) — ab dieser Kappung bliebe eine reine
+    // Längen-Beobachtung stehen. `lastIndexOf` per Objekt-Referenz (jeder
+    // `JournalEntry` ist ein frisches Literal aus `execute()`, nie mutiert)
+    // findet die zuletzt verarbeitete Zeile auch nach vorherigem Verwerfen
+    // älterer Einträge zuverlässig wieder.
+    let letzterVerarbeiteter: JournalEntry | null = null;
+    return useProject.subscribe((state) => {
+      const alle = state.journal;
+      if (alle.length === 0) return;
+      const idx = letzterVerarbeiteter ? alle.lastIndexOf(letzterVerarbeiteter) : -1;
+      const neue = alle.slice(idx + 1);
+      if (neue.length === 0) return;
+      letzterVerarbeiteter = alle[alle.length - 1]!;
+      for (const eintrag of neue) {
+        if (eintrag.actor !== 'benutzer') continue;
+        const korrektur: ProposalKorrekturSchritt = {
+          commandId: eintrag.commandId,
+          params: eintrag.params,
+          summary: eintrag.summary,
+        };
+        proposalLog.verknuepfeNaechsteKorrektur(korrektur);
+      }
+    });
   }, []);
   const toggleAutoErlaubt = (commandId: string) => {
     setAutoErlaubt((s) => {
@@ -524,6 +583,30 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         ...(blickZeit !== undefined ? { blickZeit } : {}),
       },
     ]);
+  };
+
+  /**
+   * v0.8.2/P3 (additiv, §4.4 C-17-Fix + §5 «Export kosmo-signal/v1») —
+   * kombiniert ALLE Stores (Lernjournal-Archiv `art:'journal'`,
+   * Vorschlags-Log `art:'proposal'|'reparatur'|'layout'`) zu EINER
+   * `kosmo-signal/v1`-JSONL, mit demselben Default-Filter wie die beiden
+   * Store-Methoden selbst (`visibility === 'public'`, Owner-Entscheid 1) —
+   * kein zweiter, abweichender Filter hier.
+   */
+  const baueSignalExport = () => {
+    const journalJsonl = journal.toKosmoSignalJsonl('public');
+    const logJsonl = proposalLog.toKosmoSignalJsonl('public');
+    const jsonl = [journalJsonl, logJsonl].filter(Boolean).join('\n');
+    const logPublic = proposalLog.all.filter((e) => e.visibility === 'public');
+    return {
+      jsonl,
+      counts: {
+        journal: journal.archivAll.filter((e) => e.visibility === 'public').length,
+        proposal: logPublic.filter((e) => e.art === 'proposal').length,
+        reparatur: logPublic.filter((e) => e.art === 'reparatur').length,
+        layout: logPublic.filter((e) => e.art === 'layout').length,
+      },
+    };
   };
 
   const session = useMemo(() => {
@@ -610,6 +693,22 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           if ((p === 'ollama' || p === 'lmstudio') && settingsRef.current.betriebsart !== 'cloud') {
             cloudAnRef.current(zuletztGefragt.current);
           }
+        },
+        // v0.8.2/P3 (additiv, §4.2 C-21): Parameter-Reparatur-Signal — reiner
+        // Beobachter, ändert am bestehenden Fehlerpfad/Kontrollfluss nichts.
+        onReparatur: (vorher, nachher) => {
+          proposalLog.protokolliereReparatur({
+            vorher,
+            nachher: { commandId: nachher.commandId, params: nachher.params, summary: nachher.summary },
+          });
+        },
+        // v0.8.2/P3 (additiv, B1 «Stop-Knopf») — EIGENES Ereignis statt
+        // `onError`: ein bewusster Abbruch soll NICHT den Cloud-Fallback
+        // oben auslösen (das wäre unehrlich — der Architekt wollte anhalten,
+        // nicht auf einen anderen Provider ausweichen).
+        onAborted: () => {
+          useKosmoStatus.getState().setzeZustand('idle');
+          push('system', '⏹ Abgebrochen — Kosmo wartet auf deine nächste Nachricht.', 'abgebrochen');
         },
       },
       personas.kosmo.systemPrompt,
@@ -1107,6 +1206,13 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'angewendet' } : x)));
       void session.resolveApplied(card.callId, result.summary);
       useKosmoStatus.getState().setzeZustand('done');
+      // v0.8.2/P3 (additiv, §4.1 C-18): jeder Diff-Karten-Ausgang ins Log.
+      proposalLog.protokolliereProposal({
+        commandId: card.commandId,
+        params: card.params,
+        summary: card.summary,
+        ausgang: 'angenommen',
+      });
     } catch (err) {
       const meldung = err instanceof Error ? err.message : 'Ausführung fehlgeschlagen';
       // H-28 (`docs/SIM-BEFUNDE.md`): ein gescheitertes Anwenden hinterliess
@@ -1120,15 +1226,33 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       push('kosmo', `⚠ Anwenden fehlgeschlagen: ${meldung}`);
       void session.resolveRejected(card.callId, meldung);
       useKosmoStatus.getState().setzeZustand('error');
+      // v0.8.2/P3 (additiv, §4.1 C-18): auch der gescheiterte Ausgang zählt.
+      proposalLog.protokolliereProposal({
+        commandId: card.commandId,
+        params: card.params,
+        summary: card.summary,
+        ausgang: 'fehlgeschlagen',
+        grund: meldung,
+      });
     }
   };
   // Muster `cloudAnRef` (s. oben): jede Zeile hier aktualisiert die
   // Vorwärtsreferenz auf den JEWEILS aktuellen `applyCard`-Funktionswert.
   applyCardRef.current = applyCard;
 
-  const rejectCard = (card: PendingCard) => {
+  /** v0.8.2/P3 (additiv, §4.1 C-19): `grund` optional — die Grund-Eingabe
+   * (unten am `proposal-governance-gate`) übergibt ihn, der bestehende
+   * `apply-paket`-Ablehnen-Weg lässt ihn weiterhin weg (unverändert). */
+  const rejectCard = (card: PendingCard, grund?: string) => {
     setCards((c) => c.map((x) => (x.callId === card.callId ? { ...x, state: 'abgelehnt' } : x)));
-    void session.resolveRejected(card.callId);
+    void session.resolveRejected(card.callId, grund);
+    proposalLog.protokolliereProposal({
+      commandId: card.commandId,
+      params: card.params,
+      summary: card.summary,
+      ausgang: 'abgelehnt',
+      ...(grund !== undefined ? { grund } : {}),
+    });
   };
 
   /**
@@ -1236,6 +1360,14 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'abgelehnt' } : x)));
         for (const schritt of schritte) {
           await session.resolveRejected(schritt.callId, `Paket abgebrochen: ${fehler}`);
+          // v0.8.2/P3 (additiv, §4.1): auch Paket-Schritte sind Diff-Karten-Ausgänge.
+          proposalLog.protokolliereProposal({
+            commandId: schritt.commandId,
+            params: schritt.params,
+            summary: schritt.summary,
+            ausgang: 'fehlgeschlagen',
+            grund: `Paket abgebrochen: ${fehler}`,
+          });
         }
         useKosmoStatus.getState().setzeZustand('error');
         return;
@@ -1243,6 +1375,12 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'angewendet' } : x)));
       for (let i = 0; i < schritte.length; i++) {
         await session.resolveApplied(schritte[i]!.callId, ergebnisse[i]!);
+        proposalLog.protokolliereProposal({
+          commandId: schritte[i]!.commandId,
+          params: schritte[i]!.params,
+          summary: schritte[i]!.summary,
+          ausgang: 'angenommen',
+        });
       }
       useKosmoStatus.getState().setzeZustand('done');
     } finally {
@@ -1253,7 +1391,17 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   const rejectPaket = async (paketId: string) => {
     const schritte = cards.filter((c) => c.paket?.id === paketId && c.state === 'offen');
     setCards((c) => c.map((x) => (x.paket?.id === paketId ? { ...x, state: 'abgelehnt' } : x)));
-    for (const schritt of schritte) await session.resolveRejected(schritt.callId);
+    for (const schritt of schritte) {
+      await session.resolveRejected(schritt.callId);
+      // v0.8.2/P3 (additiv, §4.1): Paket-Ablehnung ohne Grund-Eingabe (nur
+      // die Einzelkarte hat die additive Grund-UI, s. `proposal-governance-gate`).
+      proposalLog.protokolliereProposal({
+        commandId: schritt.commandId,
+        params: schritt.params,
+        summary: schritt.summary,
+        ausgang: 'abgelehnt',
+      });
+    }
   };
 
   return (
@@ -1611,20 +1759,9 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             size="sm"
             tone="ghost"
             data-testid="journal-export"
-            onClick={() => {
-              const jsonl = journal.toJsonl();
-              if (!jsonl) return;
-              const url = URL.createObjectURL(new Blob([jsonl], { type: 'application/jsonl' }));
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `kosmo-lernjournal-${new Date().toISOString().slice(0, 10)}.jsonl`;
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-              setTimeout(() => URL.revokeObjectURL(url), 10_000);
-            }}
+            onClick={() => setSignalExport(baueSignalExport())}
           >
-            Lernjournal exportieren (JSONL fürs LoRA-Training)
+            Lernjournal exportieren (kosmo-signal/v1 fürs LoRA-Training)
           </KButton>
           {lizenzPublicKey() && (
             <>
@@ -1893,33 +2030,82 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 </>
               )}
               {c.state === 'offen' ? (
-                // v0.7.6 Welle 2 — abgestuftes GovernanceGate, additiv zum
-                // bisherigen binären Anwenden/Ablehnen: `apply-proposal`
-                // bleibt exakt derselbe Knopf/Weg («Einmal erlauben» ist nur
-                // die neue Einordnung desselben `applyCard`-Aufrufs), jede
-                // der vier Aktionen hat echte Wirkung (Kopfkommentar
-                // `GovernanceGate.tsx`).
-                <GovernanceGate
-                  testid="proposal-governance-gate"
-                  titel={c.summary}
-                  unterzeile={c.commandId}
-                  onEinmal={() => applyCard(c)}
-                  einmalTestid="apply-proposal"
-                  onFuerJob={() => {
-                    const warAktiv = autoErlaubt.has(c.commandId);
-                    toggleAutoErlaubt(c.commandId);
-                    // Aktivieren wirkt SOFORT auch auf DIESEN Vorschlag (nicht
-                    // erst auf den nächsten) — Widerrufen lässt die offene
-                    // Karte unangetastet stehen (Status quo, keine Rücknahme
-                    // eines bereits Angewendeten).
-                    if (!warAktiv) applyCard(c);
-                  }}
-                  fuerJobAktiv={autoErlaubt.has(c.commandId)}
-                  fuerJobTestid="governance-fuer-job"
-                  onAblehnen={() => rejectCard(c)}
-                  ablehnenTestid="reject-proposal"
-                  onNachfragen={() => melde('Bleibt offen — wartet auf deine Entscheidung.')}
-                />
+                grundEingabeFuer === c.callId ? (
+                  // v0.8.2/P3 (additiv, §4.1 C-19 «Ablehnungsgrund + Folge-
+                  // Korrektur») — ersetzt das Gate NUR für diese eine Karte,
+                  // solange die Grund-Eingabe offen ist; «Zurück» kehrt ohne
+                  // Ablehnung zum Gate zurück (kein Fake-Fortschritt).
+                  <div data-testid="reject-grund-eingabe" className="kp-grund-box">
+                    <div className="kp-feld-titel">Ablehnen — Grund? (optional, hilft der Korrektur-Kuration)</div>
+                    <textarea
+                      data-testid="reject-grund-input"
+                      className="kp-grund-textarea"
+                      value={grundText}
+                      onChange={(e) => setGrundText(e.target.value)}
+                      placeholder="z.B. «Wandstärke falsch, sollte 200 mm sein»"
+                      rows={2}
+                    />
+                    <div className="kp-knopf-reihe">
+                      <KButton
+                        size="sm"
+                        tone="danger"
+                        data-testid="reject-grund-bestaetigen"
+                        onClick={() => {
+                          const grund = grundText.trim();
+                          rejectCard(c, grund ? grund : undefined);
+                          setGrundEingabeFuer(null);
+                          setGrundText('');
+                        }}
+                      >
+                        Ablehnen
+                      </KButton>
+                      <KButton
+                        size="sm"
+                        tone="ghost"
+                        data-testid="reject-grund-abbrechen"
+                        onClick={() => {
+                          setGrundEingabeFuer(null);
+                          setGrundText('');
+                        }}
+                      >
+                        Zurück
+                      </KButton>
+                    </div>
+                  </div>
+                ) : (
+                  // v0.7.6 Welle 2 — abgestuftes GovernanceGate, additiv zum
+                  // bisherigen binären Anwenden/Ablehnen: `apply-proposal`
+                  // bleibt exakt derselbe Knopf/Weg («Einmal erlauben» ist nur
+                  // die neue Einordnung desselben `applyCard`-Aufrufs), jede
+                  // der vier Aktionen hat echte Wirkung (Kopfkommentar
+                  // `GovernanceGate.tsx`).
+                  <GovernanceGate
+                    testid="proposal-governance-gate"
+                    titel={c.summary}
+                    unterzeile={c.commandId}
+                    onEinmal={() => applyCard(c)}
+                    einmalTestid="apply-proposal"
+                    onFuerJob={() => {
+                      const warAktiv = autoErlaubt.has(c.commandId);
+                      toggleAutoErlaubt(c.commandId);
+                      // Aktivieren wirkt SOFORT auch auf DIESEN Vorschlag (nicht
+                      // erst auf den nächsten) — Widerrufen lässt die offene
+                      // Karte unangetastet stehen (Status quo, keine Rücknahme
+                      // eines bereits Angewendeten).
+                      if (!warAktiv) applyCard(c);
+                    }}
+                    fuerJobAktiv={autoErlaubt.has(c.commandId)}
+                    fuerJobTestid="governance-fuer-job"
+                    onAblehnen={() => {
+                      // v0.8.2/P3 (additiv): NICHT mehr sofort ablehnen —
+                      // erst die Grund-Eingabe zeigen (s. Zweig oben).
+                      setGrundText('');
+                      setGrundEingabeFuer(c.callId);
+                    }}
+                    ablehnenTestid="reject-proposal"
+                    onNachfragen={() => melde('Bleibt offen — wartet auf deine Entscheidung.')}
+                  />
+                )
               ) : (
                 <Badge hue="var(--k-success)">Angewendet — mit ↩ rückgängig</Badge>
               )}
@@ -1995,9 +2181,20 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           placeholder="Sprich mit Kosmo … (@kosmodoc für Hilfe)"
           className="kp-input kp-eingabe-feld"
         />
-        <KButton tone="accent" size="sm" onClick={send} disabled={busy} data-testid="kosmo-send">
-          Senden
-        </KButton>
+        {busy ? (
+          // v0.8.2/P3 (additiv, B1 «req.signal-Stop-Knopf», `docs/V082-SPEZ.md`
+          // §6.3) — NUR sichtbar während `busy` (ein Zug läuft tatsächlich),
+          // ersetzt den «Senden»-Knopf statt ihn zu verdoppeln (derselbe
+          // Platz, dieselbe Geste). `stopStream()` bricht den Zug ehrlich ab
+          // (`chat.ts`), die Abbruch-Bubble kommt über `onAborted` oben.
+          <KButton tone="danger" size="sm" onClick={() => session.stopStream()} data-testid="kosmo-stop">
+            ⏹ Stopp
+          </KButton>
+        ) : (
+          <KButton tone="accent" size="sm" onClick={send} disabled={busy} data-testid="kosmo-send">
+            Senden
+          </KButton>
+        )}
       </div>
       {/* v0.6.9 Stream D: Vollbild-Vorschau der Blick-Miniatur — Muster
           `CommandPalette.tsx` (fixed Scrim, Klick/Escape schliesst, innerer
@@ -2027,6 +2224,59 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 data-testid="kosmo-blick-vollbild-schliessen"
                 onClick={() => setVollbildBlick(null)}
               >
+                Schliessen
+              </KButton>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* v0.8.2/P3 (additiv, §4.4/§5 «Export kosmo-signal/v1») — zeigt VOR
+          dem Download ehrlich, wie viel öffentlich (`visibility:'public'`)
+          markiertes Material tatsächlich exportiert wird (Owner-Entscheid 1:
+          nur `public` verlässt je ein Repo) — kein blinder Sofort-Download
+          mehr. */}
+      {signalExport && (
+        <div data-testid="kosmo-signal-export-dialog" className="kp-export-scrim" onClick={() => setSignalExport(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="kp-export-box">
+            <div className="kp-feld-titel">Export kosmo-signal/v1 (öffentlich, Owner-Entscheid 1)</div>
+            <div className="kp-export-zeile">
+              <span>Journal (art: journal)</span>
+              <span>{signalExport.counts.journal}</span>
+            </div>
+            <div className="kp-export-zeile">
+              <span>Diff-Karten-Ausgänge (art: proposal)</span>
+              <span>{signalExport.counts.proposal}</span>
+            </div>
+            <div className="kp-export-zeile">
+              <span>Parameter-Reparaturen (art: reparatur)</span>
+              <span>{signalExport.counts.reparatur}</span>
+            </div>
+            <div className="kp-export-zeile">
+              <span>Layout-Signale (art: layout)</span>
+              <span>{signalExport.counts.layout}</span>
+            </div>
+            <div className="kp-knopf-reihe">
+              <KButton
+                size="sm"
+                tone="accent"
+                data-testid="kosmo-signal-export-download"
+                onClick={() => {
+                  const url = URL.createObjectURL(
+                    new Blob([signalExport.jsonl], { type: 'application/jsonl' }),
+                  );
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `kosmo-signal-${new Date().toISOString().slice(0, 10)}.jsonl`;
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+                  setSignalExport(null);
+                }}
+              >
+                Herunterladen
+              </KButton>
+              <KButton size="sm" tone="ghost" data-testid="kosmo-signal-export-schliessen" onClick={() => setSignalExport(null)}>
                 Schliessen
               </KButton>
             </div>

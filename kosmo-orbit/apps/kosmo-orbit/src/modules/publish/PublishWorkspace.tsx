@@ -18,7 +18,8 @@ import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche
 import { useDockZustand } from '../../state/dock-zustand';
 import { PRESET_IDS, presetOffenMap, type PresetId } from '../../state/dock-presets';
 import { exportSetSvgs, exportSheetPdf, exportSheetSetPdf } from './export-sheets';
-import { AutoPackPanel } from './AutoPackPanel';
+import { AutoPackPanel, LAYOUT_VORSCHLAG_DEFAULT } from './AutoPackPanel';
+import { proposalLog } from '../../state/proposal-log';
 import { DossierPanel } from './DossierPanel';
 import { PlankopfPanel } from './PlankopfPanel';
 import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
@@ -420,6 +421,15 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       const res = runCommand('publish.blattFuellen', { sheetId: sheet.id });
       const hatHinweise = res.summary.includes('Fehlt im Modell');
       melde(res.summary, { ton: hatHinweise ? 'info' : 'erfolg', dauerMs: hatHinweise ? 9000 : 4000 });
+      // v0.8.2/P3 (§4.5 C-30): auch der einfache Weg ohne Editor ist ein
+      // Layout-Signal — hier ist der angewendete Endzustand per Definition
+      // der Heuristik-Default (keine Umordnung möglich).
+      proposalLog.protokolliereLayout({
+        sheetId: sheet.id,
+        vorschlag: LAYOUT_VORSCHLAG_DEFAULT,
+        endzustand: LAYOUT_VORSCHLAG_DEFAULT,
+        optionen: LAYOUT_VORSCHLAG_DEFAULT,
+      });
     } catch (err) {
       meldeFehler(err);
     }

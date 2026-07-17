@@ -39,6 +39,19 @@ export interface MemoryStore {
   save(entries: Learning[]): void;
 }
 
+/**
+ * v0.8.2/P3 («Signal-Erfassung», `docs/V082-SPEZ.md` §4.3, additiv) — der NIE
+ * gekappte Journal-Bestand. `localStorageMemory`/`MemoryStore.save()` bleiben
+ * unverändert bei ihrem 200er-Fenster (Prompt-Budget, `toPromptBlock()`
+ * unten) — dieses zweite, optionale Depot hält daneben JEDEN je erfassten
+ * Eintrag fest. App-seitige Umsetzung (IndexedDB-Spiegel, unbegrenzt):
+ * `apps/kosmo-orbit/src/state/journal-store.ts` `journalArchivStore()`.
+ */
+export interface ArchivStore {
+  laden(): Learning[];
+  anhaengen(entry: Learning): void;
+}
+
 /** localStorage-Persistenz (Desktop/PWA); Tauri/SQLite folgt über dieselbe Schnittstelle. */
 export function localStorageMemory(key = 'kosmo.lernjournal'): MemoryStore {
   return {
@@ -58,7 +71,16 @@ export function localStorageMemory(key = 'kosmo.lernjournal'): MemoryStore {
 export class LearningJournal {
   private entries: Learning[];
 
-  constructor(private store: MemoryStore) {
+  /**
+   * `archiv` (v0.8.2/P3, additiv) — zweiter, optionaler Konstruktor-
+   * Parameter: ohne ihn verhält sich `LearningJournal` byte-gleich wie vor
+   * P3 (alle bestehenden Aufrufer/Tests unverändert). Mit ihm spiegelt
+   * `add()` JEDEN Eintrag zusätzlich ins unbegrenzte Archiv (§4.3).
+   */
+  constructor(
+    private store: MemoryStore,
+    private archiv?: ArchivStore,
+  ) {
     this.entries = store.load();
   }
 
@@ -68,8 +90,10 @@ export class LearningJournal {
   }
 
   add(l: Omit<Learning, 'ts'>): void {
-    this.entries.push({ ...l, ts: new Date().toISOString() });
+    const eintrag: Learning = { ...l, ts: new Date().toISOString() };
+    this.entries.push(eintrag);
     this.store.save(this.entries);
+    this.archiv?.anhaengen(eintrag);
   }
 
   /** Alteinträge ohne `visibility` erscheinen hier als 'private' (Default beim Lesen, keine Migration). */
@@ -115,5 +139,46 @@ export class LearningJournal {
   /** Export fürs LoRA-Training auf der HomeStation (JSONL). */
   toJsonl(): string {
     return this.entries.map((e) => JSON.stringify(e)).join('\n');
+  }
+
+  /**
+   * §4.3 (`docs/V082-SPEZ.md`, additiv) — der volle, NIE gekappte Bestand
+   * (Default-Normalisierung wie `all`: Alteinträge ohne `visibility` gelten
+   * als 'private'). Ohne injizierten Archiv-Store fällt das ehrlich auf
+   * `this.all` zurück (kein Bruch für bestehende Aufrufer ohne zweiten
+   * Konstruktor-Parameter) — dann ist der «Archiv»-Bestand identisch mit dem
+   * 200er-Fenster, weil kein grösserer Bestand existiert.
+   */
+  get archivAll(): readonly Learning[] {
+    const basis = this.archiv ? this.archiv.laden() : this.entries;
+    return basis.map((e) => (e.visibility === undefined ? { ...e, visibility: 'private' as const } : e));
+  }
+
+  /**
+   * §4.4 (`docs/V082-SPEZ.md`, schliesst C-17 — die bisherige Visibility-
+   * Lücke von `toJsonl()`) + §5 (`kosmo-signal/v1`, `art: 'journal'`):
+   * Owner-Entscheid 1 («nur `public` verlässt je das Repo») ist hier der
+   * DEFAULT, nicht nur eine Option — `toJsonl()` bleibt daneben unverändert
+   * (roh, ungefiltert) für bestehende Aufrufer/Tests. `'alle'` bleibt für
+   * rein lokale Zwecke explizit anforderbar, ist aber nie der Default.
+   */
+  toKosmoSignalJsonl(visibility: LearningVisibility | 'alle' = 'public'): string {
+    return this.archivAll
+      .filter((e) => visibility === 'alle' || e.visibility === visibility)
+      .map((e) =>
+        JSON.stringify({
+          art: 'journal',
+          ts: e.ts,
+          visibility: e.visibility,
+          payload: {
+            sentiment: e.sentiment,
+            context: e.context,
+            ...(e.note !== undefined ? { note: e.note } : {}),
+            ...(e.refId !== undefined ? { refId: e.refId } : {}),
+          },
+          meta: { quelle: 'memory.ts#LearningJournal' },
+        }),
+      )
+      .join('\n');
   }
 }

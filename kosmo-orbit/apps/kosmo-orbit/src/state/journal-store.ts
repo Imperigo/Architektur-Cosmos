@@ -1,4 +1,4 @@
-import type { Learning, MemoryStore } from '@kosmo/ai';
+import type { ArchivStore, Learning, MemoryStore } from '@kosmo/ai';
 import { vaultTx } from './project-vault';
 
 /**
@@ -37,6 +37,46 @@ export function journalStore(): MemoryStore {
         const nurAlt = (alt?.entries ?? []).filter((e) => !bekannt.has(`${e.ts}|${e.context}`));
         const gemischt = [...nurAlt, ...kurz].slice(-400);
         await vaultTx('lernjournal', 'readwrite', (s) => s.put({ id: 'journal', entries: gemischt }));
+      })().catch(() => undefined);
+    },
+  };
+}
+
+const ARCHIV_KEY = 'kosmo.lernjournal.archiv';
+
+/**
+ * v0.8.2/P3 («Signal-Erfassung», `docs/V082-SPEZ.md` §4.3, additiv) — NIE
+ * gekappt, anders als `journalStore()` oben (das bewusst bei seinem
+ * 200/400er-Fenster fürs Prompt-Budget bleibt, unverändert). Jeder je per
+ * `LearningJournal.add()` erfasste Eintrag bleibt hier zusätzlich erhalten;
+ * derselbe Merge-Schutz (ts+context als Schlüssel) wie oben, aber ohne
+ * `.slice(...)` — der eigene IndexedDB-Store `lernjournalarchiv`
+ * (`project-vault.ts` v6) ist additiv, kein bestehender Tresor migriert.
+ */
+export function journalArchivStore(): ArchivStore {
+  const lesen = (): Learning[] => {
+    try {
+      return JSON.parse(localStorage.getItem(ARCHIV_KEY) ?? '[]') as Learning[];
+    } catch {
+      return [];
+    }
+  };
+  return {
+    laden: lesen,
+    anhaengen(entry) {
+      const voll = [...lesen(), entry];
+      localStorage.setItem(ARCHIV_KEY, JSON.stringify(voll));
+      void (async () => {
+        const alt = await vaultTx<{ id: string; entries: Learning[] } | undefined>(
+          'lernjournalarchiv',
+          'readonly',
+          (s) => s.get('archiv') as IDBRequest<{ id: string; entries: Learning[] } | undefined>,
+        );
+        const bekannt = new Set(voll.map((e) => `${e.ts}|${e.context}`));
+        const nurAlt = (alt?.entries ?? []).filter((e) => !bekannt.has(`${e.ts}|${e.context}`));
+        await vaultTx('lernjournalarchiv', 'readwrite', (s) =>
+          s.put({ id: 'archiv', entries: [...nurAlt, ...voll] }),
+        );
       })().catch(() => undefined);
     },
   };

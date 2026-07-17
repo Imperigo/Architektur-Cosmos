@@ -8,6 +8,7 @@ import {
 } from '@kosmo/kernel';
 import { Badge, Hairline, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
+import { proposalLog } from '../../state/proposal-log';
 import './publish.css';
 
 /**
@@ -42,6 +43,20 @@ const ART_LABEL: Record<BlattVorschlag['art'], string> = {
   axo: 'Axonometrie',
   text: 'Kennzahlen',
   bild: 'Render/Platzhalter',
+};
+
+/** v0.8.2/P3 (additiv, §4.5 C-30) — die Heuristik-Default-Optionen, exakt
+ * wie `zuruecksetzen()` unten sie auch fürs Editor-Formular verwendet:
+ * derselbe Default, der ohne Editor liefe (`publish.blattFuellen` ohne
+ * `optionen`). Exportiert, weil der einfache `blattFuellen()`-Weg in
+ * `PublishWorkspace.tsx` denselben Default als Layout-Signal festhält. */
+export const LAYOUT_VORSCHLAG_DEFAULT: BlattPackOptions = {
+  reihenfolge: REIHENFOLGE_STANDARD,
+  spaltenZielMm: BLATT_PACK_DEFAULTS.spaltenZielMm,
+  maxSpalten: BLATT_PACK_DEFAULTS.maxSpalten,
+  zeilenHoeheMm: BLATT_PACK_DEFAULTS.zeilenHoeheMm,
+  gutterMm: BLATT_PACK_DEFAULTS.gutterMm,
+  randMm: BLATT_PACK_DEFAULTS.randMm,
 };
 
 export interface AutoPackPanelProps {
@@ -107,6 +122,19 @@ export function AutoPackPanel({ sheetId, onClose }: AutoPackPanelProps) {
       const res = runCommand('publish.blattFuellen', { sheetId, optionen: entwurf });
       const hatHinweise = res.summary.includes('Fehlt im Modell');
       melde(res.summary, { ton: hatHinweise ? 'info' : 'erfolg', dauerMs: hatHinweise ? 9000 : 4000 });
+      // v0.8.2/P3 (additiv, §4.5 C-30 «KosmoPublish-Layout-Signal») — der
+      // Diff zwischen Heuristik-Default (`vorschlagDefault`, dieselben
+      // Konstanten wie `zuruecksetzen()` oben) und dem tatsächlich
+      // angewendeten Entwurf (`entwurf`, nach Umordnen/Nachjustieren) ist das
+      // Präferenzsignal — reine Erfassung, kein Trainingslauf-Versprechen
+      // (Registry-Zeile `kosmo-publish-layout`, §5.2 Zeile 8: «null, wächst
+      // ab 0.8.2»).
+      proposalLog.protokolliereLayout({
+        sheetId,
+        vorschlag: LAYOUT_VORSCHLAG_DEFAULT,
+        endzustand: entwurf,
+        optionen: entwurf,
+      });
     } catch (err) {
       meldeFehler(err);
     }

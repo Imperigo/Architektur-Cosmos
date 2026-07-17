@@ -32,6 +32,44 @@ export interface SessionEvents {
   onProposal(p: Proposal): void;
   onBusy(busy: boolean): void;
   onError(message: string): void;
+  /**
+   * v0.8.2/P3 (additiv, `docs/V082-SPEZ.md` §4.2/C-21) — reiner
+   * Beobachter-Hook: feuert NUR wenn `validateToolCall` (unten, Z. ~165)
+   * einen Aufruf annimmt, dessen rohe Modell-Argumente KEIN valides JSON
+   * waren (Markdown-Zaun/`jsonrepair` haben ihn gerettet, `tools.ts`) —
+   * BEVOR das Ergebnis als schreibender Vorschlag weiterläuft. Ändert den
+   * bestehenden Fehlerpfad (ungültig bleibende Aufrufe) nicht. Optional —
+   * bestehende Aufrufer/Tests ohne `onReparatur` bleiben unverändert.
+   */
+  onReparatur?(vorher: unknown, nachher: ValidatedCall): void;
+  /**
+   * v0.8.2/P3 (additiv, §6.3 B1 «req.signal-Stop-Knopf») — der Stop-Knopf
+   * hat den laufenden Stream abgebrochen. EIGENES Ereignis statt `onError`:
+   * ein bewusster Nutzer-Abbruch ist kein Netzfehler — der bestehende
+   * `onError`-Aufrufer (`KosmoPanel.tsx`) böte bei ollama/lmstudio sonst
+   * unpassend die Cloud als Fallback an. Optional — bestehende 189 Tests
+   * ohne `onAborted` bleiben unverändert grün (nichts ruft `stopStream()`).
+   */
+  onAborted?(): void;
+}
+
+/**
+ * §4.2 (additiv) — erkennt, ob `validateToolCall` die rohen Modell-Argumente
+ * reparieren MUSSTE (Markdown-Zaun-Strip oder `jsonrepair`, `tools.ts`
+ * Z. 232-247): wahr, wenn die Argumente ein String waren, der NICHT direkt
+ * `JSON.parse`-bar ist. Duplikat-frei zur eigentlichen Reparatur (die bleibt
+ * exklusiv in `tools.ts`) — hier nur ein reiner, seiteneffektfreier Check,
+ * damit `chat.ts` den Hook auslösen kann, ohne `tools.ts`s Rückgabeform zu
+ * erweitern (additiv, kein Vertragswechsel dort).
+ */
+function brauchteReparatur(rohArgs: unknown): boolean {
+  if (typeof rohArgs !== 'string') return false;
+  try {
+    JSON.parse(rohArgs);
+    return false;
+  } catch {
+    return true;
+  }
 }
 
 export class ChatSession {
@@ -40,6 +78,9 @@ export class ChatSession {
   private tools: ToolDefinition[];
   private queryTool: ReturnType<typeof modelQueryTool>;
   private readTools: Map<string, ReadTool>;
+  /** v0.8.2/P3 B1 (additiv): Controller des GERADE laufenden `turn()` —
+   * `stopStream()` bricht genau diesen ab, `null` wenn nichts läuft. */
+  private currentAbort: AbortController | null = null;
 
   constructor(
     private provider: ChatProvider,
@@ -112,9 +153,22 @@ export class ChatSession {
     this.events.onBusy(true);
     let assistantText = '';
     const toolCalls: ToolCall[] = [];
+    // v0.8.2/P3 B1 (additiv, `docs/V082-SPEZ.md` §6.3 — `req.signal` endlich
+    // verdrahtet): eigener Abort JE Zug. Netz-Provider (Ollama/Anthropic/
+    // LM-Studio, `provider.ts`/`anthropic.ts`/`openai-kompatibel.ts`) canceln
+    // ihren Fetch/Reader bereits selbst über `req.signal` — die Schleife
+    // unten prüft das Signal zusätzlich bei jedem Chunk, damit auch ein
+    // Provider ohne eigene Signal-Prüfung (`MockProvider`, Tests/Demo) den
+    // sichtbaren Stream sofort beendet: ein ehrlicher Abbruch (Konsum stoppt
+    // sofort), keine Attrappe. Inert, solange niemand `stopStream()` ruft —
+    // ändert nichts am Verhalten der bestehenden 189 Tests.
+    const abort = new AbortController();
+    this.currentAbort = abort;
+    let abbruchGemeldet = false;
 
     try {
-      for await (const ev of this.provider.chat({ messages: this.messages, tools: this.tools })) {
+      for await (const ev of this.provider.chat({ messages: this.messages, tools: this.tools, signal: abort.signal })) {
+        if (abort.signal.aborted) break;
         if (ev.type === 'text') {
           assistantText += ev.delta;
           this.events.onText(ev.delta);
@@ -122,10 +176,15 @@ export class ChatSession {
           toolCalls.push(ev.call);
         } else if (ev.type === 'done' && ev.stopReason === 'error') {
           this.events.onError(ev.error ?? 'Unbekannter Fehler');
+          abbruchGemeldet = true;
         }
+      }
+      if (abort.signal.aborted && !abbruchGemeldet) {
+        this.events.onAborted?.();
       }
     } finally {
       this.events.onBusy(false);
+      if (this.currentAbort === abort) this.currentAbort = null;
     }
 
     this.messages.push({
@@ -135,6 +194,7 @@ export class ChatSession {
     });
 
     if (toolCalls.length === 0) return;
+    if (abort.signal.aborted) return;
 
     let needsContinue = false;
     const schreibend: { callId: string; commandId: string; params: unknown; summary: string }[] = [];
@@ -163,6 +223,11 @@ export class ChatSession {
       }
       const withDefaults = this.applyDefaults(call);
       const validated = validateToolCall(withDefaults, this.doc);
+      // §4.2 (additiv): reiner Beobachter — feuert VOR dem Weiterlaufen als
+      // schreibender Vorschlag, ändert an `validated`/dem Fehlerpfad unten nichts.
+      if (validated.ok && brauchteReparatur(withDefaults.arguments)) {
+        this.events.onReparatur?.(withDefaults.arguments, validated);
+      }
       if (!validated.ok) {
         this.messages.push({
           role: 'tool',
@@ -225,6 +290,14 @@ export class ChatSession {
       merged[k] = v;
     }
     return { ...call, arguments: merged };
+  }
+
+  /**
+   * v0.8.2/P3 (additiv, B1 «Stop-Knopf») — bricht den GERADE laufenden Zug
+   * ab, No-Op wenn gerade keiner läuft (z.B. Doppelklick nach Fertigstellung).
+   */
+  stopStream(): void {
+    this.currentAbort?.abort();
   }
 
   /** Architekt hat freigegeben: App hat den Command ausgeführt. */
