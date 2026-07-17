@@ -1,0 +1,100 @@
+/* PD3b — Mini-Popup-/Einstellungsfenster-Inhalte PROJEKT+AUSTAUSCH
+   (`docs/ISLAND-UI-SPEZ.md` §4.4). Eigene Datei statt `island.css` (PD1/PD3a-
+   Dateikreis bleibt unangetastet, s. Bauauftrag) — nur additive, auf
+   `.pd3b-*`-Klassen begrenzte Regeln, referenziert ausschliesslich
+   bestehende `--k-*`-Tokens (kein neuer Token, keine Bestandsänderung).
+   Layout-Grammatik bewusst schlank gehalten (Mono-Text, kleine Zeilen) —
+   passt zur Mini-Popup-Ästhetik aus `island.css` (`.isl-popup-hinweis`),
+   ohne diese Datei anzufassen. */
+
+.pd3b-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  min-width: 160px;
+  font-family: var(--k-font-ui);
+  font-size: 12px;
+}
+
+.pd3b-zeile {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--k-s3);
+}
+
+.pd3b-zeile > span:first-child {
+  opacity: 0.75;
+}
+
+.pd3b-knopfreihe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--k-s1);
+}
+
+.pd3b-knopf {
+  min-height: 32px;
+  padding: var(--k-s1) var(--k-s3);
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-xs);
+  color: var(--f-ink, var(--k-ink));
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+}
+
+.pd3b-knopf:hover {
+  background: var(--k-accent-wash);
+}
+
+.pd3b-knopf-aktiv {
+  background: var(--k-accent-wash);
+  border-color: var(--k-accent);
+}
+
+.pd3b-feld {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.pd3b-hinweis {
+  margin: 0;
+  font-family: var(--k-font-mono);
+  font-size: 10.5px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.pd3b-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}
+
+/* Eingebettete Bestands-Panels (KennzahlenPanel/VariantenPanel/
+   BerechnungslistePanel/SubmissionsCheckPanel) — echte Komponenten, direkt
+   im Einstellungsfenster gerendert (DockFlaeche zeigt sie im Island-Modus
+   NICHT, s. `DesignWorkspace.tsx` `designOberflaeche === 'manuell' &&
+   <DockFlaeche .../>` — dieses Fenster ist darum der einzige Weg, sie in
+   der Insel-UI überhaupt zu sehen). Nur Grössen-/Scroll-Eindämmung, kein
+   Eingriff in ihre eigene Optik. */
+.pd3b-eingebettet,
+.pd3b-eingebettet-stapel {
+  max-height: min(70vh, 560px);
+  overflow: auto;
+  min-width: 320px;
+}
+
+.pd3b-eingebettet-stapel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+}
