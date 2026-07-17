@@ -2,14 +2,13 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// v0.8.0B-Versions-Entscheid (siehe STAND.md): npm/Cargo/Tauri verlangen
-// striktes SemVer, darum führt `package.json` technisch "0.8.1-b" (ein
-// Buchstaben-Suffix ohne Trenner wie "0.8.0B" ist kein gültiges SemVer und
-// würde `npm install` in einem Workspace zerbrechen). Die App zeigt trotzdem
-// die Owner-Anzeigeversion "0.8.0B" (Header/Fusszeile/Neuigkeiten) — bewusst
-// EIN von `package.json` entkoppeltes Literal statt der bisherigen direkten
-// Übernahme, nur für diese Teil-Release-Buchstaben-Ausnahme.
-const APP_VERSION = '0.8.0B';
+// v0.8.1-Release: Owner-Anzeigeversion und `package.json`-SemVer sind wieder
+// deckungsgleich (kein Buchstaben-Suffix mehr nötig, anders als beim
+// v0.8.0B-Teil-Release, s. STAND.md-Historie). Das Literal bleibt trotzdem
+// bewusst von `package.json` entkoppelt (statt es zur Build-Zeit
+// auszulesen) — dieselbe Stelle trägt so auch die nächste Teil-Release-
+// Buchstaben-Ausnahme wieder, ohne den Mechanismus neu zu bauen.
+const APP_VERSION = '0.8.1';
 
 export default defineConfig({
   // Baut die Anzeige-Version in die App (Header/Fusszeile zeigen sie statt

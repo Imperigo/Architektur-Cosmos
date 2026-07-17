@@ -136,6 +136,36 @@ function isKnownAlphabetSubstring(token) {
   return KNOWN_ALPHABETS.some((a) => doubled(a).includes(token));
 }
 
+// Bekannte Datei-Magic-Byte-Signaturen, base64-kodiert — Falsch-Positiv-Form
+// entdeckt in v0.8.1/P7 (Büro-Logo-SVG/JPG-Feature, `git log` f888f20):
+// Mini-Bild-Fixtures (JPEG/PNG/GIF/WEBP/BMP/SVG) werden in Test-Dateien als
+// nackte Base64-String-Literale eingebettet (kein `data:…;base64,`-Präfix
+// nötig, s. `e2e/plankopf.spec.ts`/`export-pdf-haertung.spec.ts`), damit ein
+// echter Browser-Decode-Schritt im Test funktioniert. Diese Präfixe sind
+// FESTE Datei-Signaturen (erste Bytes jedes Formats) — kein Zufalls-Geheimnis
+// beginnt zufällig exakt damit UND ist gleichzeitig 40+ hoch-entropische
+// Zeichen lang. Analog zur bestehenden SRI-/Alphabet-Ausnahme oben.
+// Hinweis JPEG: die volle Signatur ist "/9j/" (FF D8 FF), aber `RE_B64_TOKEN`
+// verankert `\b` — der Regex-Treffer beginnt bei sowohl vorangehendem
+// Anführungszeichen als auch führendem "/" NICHT (kein \w↔\W-Übergang
+// zwischen den beiden Nicht-Wortzeichen), sondern erst beim ersten
+// Wortzeichen danach. Der eingefangene Token beginnt also praktisch immer
+// bei "9j/…", nicht bei "/9j/…" — beide Formen bleiben hier zugelassen.
+const KNOWN_IMAGE_B64_PREFIXES = [
+  '/9j/', // JPEG (Magic-Bytes FF D8 FF), falls der Regex-Treffer den Slash mit einfängt
+  '9j/', // JPEG — die praktisch vorkommende, um das führende "/" verkürzte Form
+  'iVBORw0KGgo', // PNG
+  'R0lGOD', // GIF87a/89a
+  'UklGR', // WEBP (RIFF-Container)
+  'Qk0', // BMP
+  'PHN2Zy', // reiner SVG-Text, beginnt mit "<svg"
+  'PD94bWwg', // SVG mit XML-Deklaration, beginnt mit "<?xml "
+];
+
+function looksLikeEmbeddedImageBase64(token) {
+  return KNOWN_IMAGE_B64_PREFIXES.some((p) => token.startsWith(p));
+}
+
 // Shannon-Entropie in Bit/Zeichen — filtert Wiederholungen/Dateipfade/
 // generische Bezeichner (niedrig) von echten Zufalls-Token (hoch).
 export function entropy(str) {
@@ -237,6 +267,7 @@ export function scanText(content, relPath, opts = {}) {
       const token = m[0];
       if (isKnownAlphabetSubstring(token)) continue;
       if (isSriContext(content, m.index)) continue;
+      if (looksLikeEmbeddedImageBase64(token)) continue;
       if (entropy(token) >= B64_ENTROPY_MIN) {
         findings.push({ rule: 'generic-base64-token', file: relPath, snippet: redact(token) });
       }

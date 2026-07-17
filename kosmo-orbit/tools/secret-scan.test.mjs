@@ -146,6 +146,24 @@ const FAKE_B64_TOKEN = 'qW3eR7tY9uI0oP1aS5dF8gH2jK4lZ6xC9vB3nM7q';
   );
   check('Dateipfad-Prosa in .md löst KEINEN Fund aus (generische Regel gilt dort nicht)', findings.length === 0);
 }
+{
+  // Falsch-Positiv-Form aus v0.8.1/P7 (Büro-Logo-SVG/JPG-Feature, echter
+  // Fund bis zu diesem Fix): eine nackte Mini-JPEG-Base64-Fixture (kein
+  // `data:…;base64,`-Präfix nötig) in einem Test-Konstanten-Literal.
+  const miniJpeg =
+    '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAEAAQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDlaKKK+ZP3A//Z';
+  const findings = scanText(`const MINI_JPEG_BASE64 = '${miniJpeg}';`, 'fixture.spec.ts', { genericRule: true });
+  check('Nackte Mini-JPEG-Base64-Fixture (Bild-Magic-Byte-Präfix) löst KEINEN Fund aus', findings.length === 0);
+}
+{
+  // Dieselbe Falsch-Positiv-Form für ein SVG-Fixture (Präfix "PHN2Zy" = "<svg").
+  const miniSvg =
+    'PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4=';
+  const findings = scanText(`const FAKE_SVG_DATA_URL = 'data:image/svg+xml;base64,${miniSvg}';`, 'fixture.test.ts', {
+    genericRule: true,
+  });
+  check('Nackte Mini-SVG-Base64-Fixture (Bild-Magic-Byte-Präfix) löst KEINEN Fund aus', findings.length === 0);
+}
 
 // ---------------------------------------------------------------------------
 // 3) Entropie-Sanity: Wiederholungen haben niedrige, echte Zufalls-Token

@@ -35,6 +35,27 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.1',
+    datum: '2026-07-17',
+    punkte: [
+      {
+        text: 'Drei Owner-Aufträge umgesetzt: das lokale LLM-Framework ist entlang vier Paketen ausgebaut (KI1 echte Vektor-Suche/Hybrid-Suche statt reinem Stichwort-Treffer, KI2 ein Systemprompt-Bauer mit Token-Budget statt hartem 40-Wände-Deckel + Anthropic-Prompt-Caching, KI3 Timeout/Retry für alle Chat-Provider-Streams, KI4 die Meister/Leiter/Zeichner-Modell-Staffelung als testbare Abstraktion — echte Mehr-Modell-Verifikation bleibt HomeStation-Sache). Die Werkzeugleisten sind umgebaut: eine feste Hauptzeile + höchstens eine Kontextzeile in KosmoDesign, das EntwurfsDock trägt neu einen «Skizze»-Knopf, die NavLeiste sitzt jetzt links unten statt mittig, und Splat-Import/-Werkzeug sind zu einem Knopf verschmolzen.',
+      },
+      {
+        text: 'Zwei-Stufen-Popups: Werkzeugpanels können jetzt zusätzlich zu offen/eingeklappt eine dritte, kompakte Stufe zeigen (Kopf mit Titel + einer Kernkennzahl, ohne den vollen Körper) — als Erstes auf KennzahlenPanel und DrawPanel eingeführt, danach systematisch auf die übrigen Werkzeugpanels ausgerollt; wo sinnvoll wandert Tabelleninhalt dabei in Reiter statt zu scrollen.',
+      },
+      {
+        text: 'Sechs grosse Ausbauten («D-Brocken»): der Design-Einzelexport zeichnet jetzt den vollen Plankopf (bisher nur der Blattsatz-Export) und Einzelblätter lassen sich mit Plancode im Dateinamen als eigenes PDF exportieren; ein neuer Auto-Pack-Layout-Editor zeigt die Blatt-Platzierung als echte, umordenbare Vorschau statt eines blinden Knopfs; das Rollen-Format (1600×594 mm) kommt mit Leporello-Faltlinien dazu; ein neuer KosmoPackage-Screen bündelt alle sechs echten Exportformate (PDF/SVG/DXF/IFC/Splat/Büro-Logo) plus `.kxp` ehrlich mit Status je Kachel — keine Kachel-Wand aus erfundenen Formaten; das neue `.kxp`-Dateiformat mit dem KosmoTrust-Viewer bringt ein Freigabe-Gerüst (Entwurf→Zur Freigabe→Freigegeben/Abgelehnt) mit Verlaufsprotokoll, unsigniert und mit offen benannter Konten-/HomeStation-Grenze; und der Orbit-Hub, die mobile Companion-Ansicht sowie ein neues Nutzungszeit-Panel in den Einstellungen (mit echten Klickgewichten aus dem bestehenden Adaptions-Speicher, keinen erfundenen Zahlen) sind fertig ausgebaut.',
+      },
+      {
+        text: 'Eine vier Releases alte, unbemerkte Regression ist behoben: seit v0.7.8 rutschte das Volumenstudien-Panel nicht mehr zuverlässig unter die Geschossleiste — jetzt per Bisect gefunden und mit einem gezielten dritten Solver-Lauf für genau diesen Fall repariert.',
+      },
+      {
+        text: 'Ehrlich offen: die GPU-Telemetrie zeigt im Container mangels echter GPU einen klar beschrifteten «nicht verfügbar»-Zustand statt einer erfundenen Zahl; die Tauri-Zweitfenster-Schliessen-Choreografie bleibt eine Rust-Baustelle; reales Touch-Verhalten auf echter Mobil-Hardware sowie eine echte Mehrbenutzer-Freigabe für KosmoTrust bleiben Owner-Aktionen ausserhalb des Containers; der AF-Stempel aus dem Publish-Auftrag ist wegen eines Konflikts mit einem eingefrorenen Golden-Test formal vertagt.',
+      },
+    ],
+  },
+  {
     version: '0.8.0B',
     datum: '2026-07-16',
     punkte: [

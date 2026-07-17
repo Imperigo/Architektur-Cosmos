@@ -1,6 +1,6 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
-> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.0B** (Stand 16.07.2026);
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.1** (Stand 17.07.2026);
 > alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
 > älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
 > (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal
@@ -8,10 +8,10 @@
 > **[`../STAND.md`](../STAND.md)**. Der SessionStart-Hook
 > (`.claude/hooks/session-start.sh`) erzwingt das automatisch.
 >
-> **Versions-Hinweis:** «0.8.0B» ist die Owner-Anzeigeversion; `package.json`/
-> `Cargo.toml`/`tauri.conf.json` führen SemVer-konform **0.8.1-b** (ein
-> Buchstaben-Suffix ohne Trenner ist kein gültiges SemVer). Details in
-> `../STAND.md`.
+> **Versions-Hinweis:** Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
+> `tauri.conf.json` sind wieder deckungsgleich **0.8.1** (die v0.8.0B-
+> Buchstaben-Suffix-Ausnahme galt nur für diesen einen Teil-Release). Details
+> in `../STAND.md`.
 
 Dies ist die Architektur-Designzentrale des Baubüros Andrin (ArchitekturKosmos):
 ein **lokal-first Monorepo** für Architektur — BIM-Kern, 2D-Pläne, Visualisierung,
@@ -20,9 +20,9 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 
 ## Was du zuerst liest
 
-1. `ROADMAP.md` — 392 nummerierte Einträge (Stand v0.8.0B; der Release-Eintrag 393
-   folgt), jeder ein abgeschlossenes Feature mit Belegen. Der jüngste Stand steht
-   **unten** vor dem Marker «Phase 3 abgeschlossen».
+1. `ROADMAP.md` — 416 nummerierte Einträge (Stand v0.8.1), jeder ein
+   abgeschlossenes Feature mit Belegen. Der jüngste Stand steht **unten** vor
+   dem Marker «Phase 3 abgeschlossen».
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
 3. `docs/GESTALTUNGSKONZEPT.md` + `docs/OWNER-MANDAT.md` — Ästhetik und Owner-Regeln.
 4. `docs/HOMESTATION-AUFTRAG.md` — was auf die RTX-5090-Heimstation wartet.
@@ -33,9 +33,9 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 cd kosmo-orbit
 npm install                 # Root-Workspace (npm workspaces)
 npm run build               # baut alle Pakete + die App
-npm test                    # 924 Kernel + 1092 App + 109 KI + 28 Contracts + 29 Data + 8 Lizenz + 87 UI (Stand v0.8.0B)
+npm test                    # 964 Kernel + 1217 App + 189 KI + 28 Contracts + 29 Data + 8 Lizenz + 95 UI (Stand v0.8.1)
 npm run typecheck           # 8 Workspaces, exactOptionalPropertyTypes ist AN
-npm run svg-qa              # 33 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
+npm run svg-qa              # 35 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
 ```
 
 E2E (Playwright) braucht die Helferserver und den Preview-Build:

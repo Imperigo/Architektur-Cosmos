@@ -1,14 +1,16 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.0B «UI-Neubau nach ClaudeDesign»** (Stand 16.07.2026, ROADMAP 392; Release-Eintrag 393 folgt).
-**Alle Versionen davor (≤ v0.7.9) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.8.1 «Vollausbau»** (Stand 17.07.2026, ROADMAP 416).
+**Alle Versionen davor (≤ v0.8.0B) sind ARCHIV.** Nie mehr darauf aufbauen.
 
-> **Versions-Hinweis:** «0.8.0B» ist die Owner-Anzeigeversion (Teil-Release-
-> Suffix, kein Punktreleast). npm/Cargo/Tauri verlangen strikt SemVer (ein
-> Buchstaben-Suffix ohne Trenner ist kein gültiges SemVer) — `package.json`/
-> `Cargo.toml`/`tauri.conf.json`/`package-lock.json` führen deshalb technisch
-> **0.8.1-b**. STAND.md/CLAUDE.md/Neuigkeiten/App-Kopf (`__APP_VERSION__`)
-> zeigen weiterhin ehrlich «0.8.0B».
+> **Versions-Hinweis:** die v0.8.0B-Sonderregelung (Owner-Anzeigeversion mit
+> Buchstaben-Suffix entkoppelt von einem strikten SemVer in `package.json`)
+> ist mit diesem Release nicht mehr nötig — «0.8.1» ist selbst gültiges
+> SemVer. Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
+> `tauri.conf.json`/`package-lock.json` führen wieder **deckungsgleich
+> 0.8.1**. Der `__APP_VERSION__`-Entkopplungs-Mechanismus (`vite.config.ts`)
+> bleibt trotzdem bestehen — er trägt bei Bedarf die nächste Teil-Release-
+> Buchstaben-Ausnahme, ohne neu gebaut werden zu müssen.
 
 - **Entwicklungs-Branch:** `claude/kosmo-orbit-v1-build-pzxkbj`
 - **Wahrheit ist `origin/<branch>`, nicht der lokale Container.**
