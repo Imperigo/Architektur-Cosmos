@@ -277,3 +277,87 @@ export function anthropicConfigFuerRolle(
 ): AnthropicConfig {
   return { ...basis, model: waehleModellFuerRolle(rolle, { ...konfig, provider: 'anthropic' }) };
 }
+
+/**
+ * v0.8.2/P6 (additiv, `docs/V082-SPEZ.md` §6.7, Owner-Entscheid 3 + C-3/C-11)
+ * — «App-Anbindung» (Kopfkommentar oben, Z. 41-46) war bislang «bewusst NICHT
+ * hier gebaut»; dieser Abschnitt liefert genau das an: eine automatische
+ * Zug-Klassifikation OHNE manuellen Schalter, die `chat.ts` (der erste echte
+ * Aufrufer dieser Datei) je Zug aufruft. Regelbasiert (Kontext aus dem
+ * laufenden Zug + eine Schlüsselwort-Heuristik auf dem letzten Nutzertext) —
+ * KEIN LLM-Klassifikationsaufruf, dieselbe Ehrlichkeits-Haltung wie der Rest
+ * dieser Datei (reine Funktionen, kein `fetch`).
+ *
+ * **Reihenfolge der Prüfung (spezifischstes zuerst):**
+ * 1. `istJournalAufgabe`/`istZusammenfassung` — explizite Kontext-Flags für
+ *    Aufrufer AUSSERHALB eines Chat-Zugs (Lernjournal-Buchhaltung bzw. Diff-
+ *    Karten-Zusammenfassung `cmd.summarize()`, `tools.ts:264`) — diese zwei
+ *    der 7 Klassen entstehen NICHT aus einem laufenden `ChatSession.turn()`
+ *    (Z. 121-127 oben begründet beide als mechanische Nebenaufgaben), darum
+ *    als expliziter Vorrang-Flag statt aus Zug-Daten abgeleitet.
+ * 2. `schreibendAnzahl > 1` — mehrere Tool-Aufrufe im selben Zug = ein Paket
+ *    (`chat.ts`s `paketId`) → Orchestrierung.
+ * 3. `schreibendAnzahl === 1` — genau ein Vorschlag → Werkzeug-schreibend.
+ * 4. `nurLesendAufgerufen` — ausschliesslich `modell_lesen`/`ReadTool`-
+ *    Aufrufe, kein einziger Vorschlag → Werkzeug-lesend.
+ * 5. Ein Schlüsselwort-Treffer im Nutzertext (Entwurfs-/Grundsatzfrage OHNE
+ *    Tool-Aufruf) → Strategie-Urteil.
+ * 6. Sonst: gewöhnlicher Gesprächszug → Chat-Standard.
+ */
+export interface ZugKlassifikationsEingabe {
+  /** Der Text des letzten Nutzerzugs (nach Persona-Routing) — Grundlage der Schlüsselwort-Heuristik. */
+  userText: string;
+  /** Wie viele schreibende Vorschläge DIESER Zug erzeugt hat (0 = keiner). */
+  schreibendAnzahl: number;
+  /** `true`, wenn dieser Zug AUSSCHLIESSLICH Lese-Werkzeuge aufgerufen hat (kein einziger Vorschlag). */
+  nurLesendAufgerufen: boolean;
+  /** Kontext-Flag: dieser "Zug" ist Diff-Karten-Zusammenfassung (`cmd.summarize()`), kein Gesprächszug. */
+  istZusammenfassung?: boolean;
+  /** Kontext-Flag: dieser "Zug" ist Lernjournal-Buchhaltung (`memory.ts`), kein Gesprächszug. */
+  istJournalAufgabe?: boolean;
+}
+
+/**
+ * Schlüsselwörter für echte Entwurfs-/Grundsatzfragen OHNE Tool-Aufruf
+ * (`strategie-urteil`, Z. 105-108 oben) — bewusst konservativ gewählt (lieber
+ * als `chat-standard` durchrutschen als eine Routine-Frage fälschlich zum
+ * Meister zu eskalieren, was die Kosten-Staffelung selbst unterlaufen würde).
+ * Kleinschreibung, Teilstring-Vergleich — kein NLP, keine Heuristik, die ein
+ * Modell bräuchte.
+ */
+const STRATEGIE_SCHLUESSELWOERTER = [
+  'warum',
+  'wieso',
+  'weshalb',
+  'sollte ich',
+  'sollen wir',
+  'welche variante',
+  'was empfiehlst du',
+  'was würdest du',
+  'entwurfsentscheid',
+  'architekturentscheid',
+  'grundsatzfrage',
+  'positionierung',
+  'konzept für',
+] as const;
+
+function enthaeltStrategieSchluesselwort(text: string): boolean {
+  const t = text.toLowerCase();
+  return STRATEGIE_SCHLUESSELWOERTER.some((w) => t.includes(w));
+}
+
+/**
+ * Reine, regelbasierte Zug-Klassifikation → eine der 7 Aufgabenklassen.
+ * KEIN LLM-Aufruf, kein Netz/Seiteneffekt — voll containertestbar, exakt wie
+ * `waehleModellFuerRolle` oben. `rolleFuerAufgabe(klassifiziereZug(...))`
+ * liefert die Rolle für den Rollen-Badge (Owner-Entscheid 3).
+ */
+export function klassifiziereZug(eingabe: ZugKlassifikationsEingabe): Aufgabenklasse {
+  if (eingabe.istJournalAufgabe) return 'journal';
+  if (eingabe.istZusammenfassung) return 'zusammenfassung';
+  if (eingabe.schreibendAnzahl > 1) return 'orchestrierung';
+  if (eingabe.schreibendAnzahl === 1) return 'werkzeug-schreibend';
+  if (eingabe.nurLesendAufgerufen) return 'werkzeug-lesend';
+  if (enthaeltStrategieSchluesselwort(eingabe.userText)) return 'strategie-urteil';
+  return 'chat-standard';
+}

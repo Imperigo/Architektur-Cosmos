@@ -6,6 +6,7 @@ import {
   baueLoraTrainManifest,
   exportiereUndTrainiere,
   generalisiereLoraTrainBericht,
+  type AussortierterJournalEintrag,
   type Learning,
 } from '@kosmo/ai';
 import { LoraTrainBerichtV1, LoraTrainManifest } from '@kosmo/contracts';
@@ -91,6 +92,20 @@ export function TrainWorkspace() {
   const [paket, setPaket] = useState<{ manifest: LoraTrainManifest; jsonl: string } | null>(null);
   const [probelauf, setProbelauf] = useState<LoraTrainBerichtV1 | null>(null);
   const [schnuerenFehler, setSchnuerenFehler] = useState<string | null>(null);
+  /**
+   * v0.8.2 / P6 «Staffelung + Kuratier-Flow» (`docs/V082-SPEZ.md` §6.7) —
+   * der ehrliche Kuratier-Flow bedient den Weg Journal → Kuration →
+   * `exportiereUndTrainiere` bedienbar: `verworfen` (unten, aus derselben
+   * `baueKosmoSftAusJournal`-Logik wie das «Trainingspaket schnüren»)
+   * beweist SOFORT beim Sichten, welche Journal-Einträge (noch) NICHT ins
+   * kuratierte kosmo-buero-Beispiel einfliessen — MIT Begründung
+   * (`AussortierterJournalEintrag.grund`, `lora-training.ts`), nicht als
+   * stilles Verschwinden. `kuratierAussortiert` hält zusätzlich die
+   * Aussortierungs-Gründe des LETZTEN Fake-Probelaufs (`baueLoraDatensatz
+   * AusJsonl`-Pfad über `journal.toJsonl()` — dieselbe Aussortierungs-Logik,
+   * andere Quelle: das RAW Journal statt der kuratierten kosmo-sft-Sicht).
+   */
+  const [kuratierAussortiert, setKuratierAussortiert] = useState<AussortierterJournalEintrag[]>([]);
 
   const kosmoSft = useMemo(() => baueKosmoSftAusJournal(eintraege, 'private'), [eintraege]);
 
@@ -120,8 +135,12 @@ export function TrainWorkspace() {
   };
 
   const fakeProbelauf = async () => {
-    const { bericht } = await exportiereUndTrainiere(journal);
+    const { datensatz, bericht } = await exportiereUndTrainiere(journal);
     setProbelauf(LoraTrainBerichtV1.parse(generalisiereLoraTrainBericht(bericht, 'kosmo-buero')));
+    // v0.8.2/P6 (§6.7, additiv): dieselbe Aussortierungs-mit-Grund-Logik
+    // (`lora-training.ts#baueLoraDatensatzAusJsonl`), hier nur zusätzlich
+    // SICHTBAR gemacht statt nur als Zahl (`bericht.anzahlAussortiert`).
+    setKuratierAussortiert(datensatz.aussortiert);
   };
 
   const exportJsonl = () => {
@@ -266,6 +285,31 @@ export function TrainWorkspace() {
             ))}
           </div>
 
+          {/* v0.8.2 / P6 «Kuratier-Flow» (docs/V082-SPEZ.md §6.7) — Journal →
+              Kuration: SICHTEN, welche Einträge (noch) nicht ins kuratierte
+              kosmo-buero-Beispiel einfliessen, MIT Begründung (dieselbe
+              Aussortierung-mit-Grund-Logik wie exportiereUndTrainiere unten). */}
+          <div className="train-kuratier-flow" data-testid="train-kuratier-flow">
+            <span className="train-kuratier-flow-titel">Kuratier-Flow — sichten &amp; aussortieren (kosmo-buero)</span>
+            {kosmoSft.verworfen.length === 0 ? (
+              <div data-testid="train-kuratier-verworfen-leer">
+                <Measure>
+                  Kein Journal-Eintrag aussortiert — jeder vorhandene Eintrag ist entweder schon kuratiert oder noch
+                  nicht bewertet.
+                </Measure>
+              </div>
+            ) : (
+              <div className="train-kuratier-liste" data-testid="train-kuratier-verworfen">
+                {kosmoSft.verworfen.map((v, i) => (
+                  <div key={v.quelleTs ?? i} className="train-kuratier-eintrag" data-testid="train-kuratier-verworfen-eintrag">
+                    <span className="train-kuratier-eintrag-quelle">{v.quelleTs ?? `Zeile ${v.index}`}</span>
+                    <span className="train-kuratier-eintrag-grund">{v.grund}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="train-paket-aktionen">
             <KButton
               size="sm"
@@ -294,6 +338,18 @@ export function TrainWorkspace() {
                 Fake-Bericht ({probelauf.trainerId}, fake={String(probelauf.fake)}): {probelauf.beispiele} Beispiel(e),{' '}
                 {probelauf.verworfen} verworfen — {probelauf.hinweise[0]}
               </Measure>
+              {/* v0.8.2/P6 (§6.7, additiv): dieselbe Aussortierung-mit-Grund-
+                  Logik, hier je Zeile statt nur als Zahl. */}
+              {kuratierAussortiert.length > 0 && (
+                <div className="train-kuratier-liste" data-testid="train-kuratier-aussortiert">
+                  {kuratierAussortiert.map((a, i) => (
+                    <div key={a.quelleTs ?? i} className="train-kuratier-eintrag" data-testid="train-kuratier-aussortiert-eintrag">
+                      <span className="train-kuratier-eintrag-quelle">{a.quelleTs ?? `Zeile ${a.index}`}</span>
+                      <span className="train-kuratier-eintrag-grund">{a.grund}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -177,6 +177,53 @@
   justify-self: start;
   background: var(--k-raised);
 }
+
+/* v0.8.2/P6 (additiv, `docs/V082-SPEZ.md` §6.7, Owner-Entscheid 3) — das
+ * Rollen-Badge (Kosmo-Meister/-Leiter/-Zeichner). `aura.css` gehört gerade
+ * PD1 (parallele Insel-Arbeit) und trägt KEINE eigenen Meister/Leiter/
+ * Zeichner-Farbtokens — nur die bestehenden `--k-rolle-*`-Rollenfarben
+ * («WER handelt», `aura.css` Z. 238-248, ursprünglich für KosmoVis-Knoten).
+ * Statt aura.css anzufassen (verboten, s. Dateikreis) werden hier DREI
+ * bestehende Tokens zweitverwendet, nach Gewicht/Kontext gewählt: `agent`
+ * (wärmstes Gold — der Meister trifft das seltenste, härteste Urteil),
+ * `pna` (Violett — der Leiter koordiniert/vermittelt) und `generator`
+ * (Rotton — der Zeichner produziert/generiert Ergebnisse mechanisch). Reine
+ * Zweitverwendung bestehender Werte, keine neue Farbe, kein aura.css-Diff. */
+.kp-rollen-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: var(--k-s2);
+  padding: 1px 8px;
+  border-radius: var(--k-radius-pill, 999px);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.kp-rollen-badge--meister {
+  color: var(--k-rolle-agent);
+  background: var(--k-rolle-agent-fill);
+  border: 1px solid var(--k-rolle-agent-line);
+}
+.kp-rollen-badge--leiter {
+  color: var(--k-rolle-pna);
+  background: var(--k-rolle-pna-fill);
+  border: 1px solid var(--k-rolle-pna-line);
+}
+.kp-rollen-badge--zeichner {
+  color: var(--k-rolle-generator);
+  background: var(--k-rolle-generator-fill);
+  border: 1px solid var(--k-rolle-generator-line);
+}
+.kp-rollen-badge-hinweis {
+  opacity: 0.75;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .kp-marken-reihe {
   display: flex;
   gap: var(--k-s2);

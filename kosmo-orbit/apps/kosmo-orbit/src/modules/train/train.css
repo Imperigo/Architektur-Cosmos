@@ -137,6 +137,40 @@
   color: var(--k-ink-faint);
   font-size: var(--k-t-xs);
 }
+/* v0.8.2 / P6 «Kuratier-Flow» (docs/V082-SPEZ.md §6.7) — Journal → Kuration:
+ * dieselbe Glass/Hairline-Optik wie die umgebenden Blöcke, aber innerhalb der
+ * Trainingspaket-Fläche (kein eigenes k-glass-Panel — additiver Unterblock). */
+.train-kuratier-flow {
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3) 0;
+  border-top: 1px solid var(--k-line);
+  border-bottom: 1px solid var(--k-line);
+}
+.train-kuratier-flow-titel {
+  font-size: var(--k-t-sm);
+  font-weight: 600;
+  color: var(--k-ink-soft);
+}
+.train-kuratier-liste {
+  display: grid;
+  gap: var(--k-s2);
+}
+.train-kuratier-eintrag {
+  display: grid;
+  grid-template-columns: minmax(120px, auto) 1fr;
+  gap: var(--k-s3);
+  font-size: var(--k-t-xs);
+  padding: 2px 0;
+}
+.train-kuratier-eintrag-quelle {
+  font-family: var(--k-font-mono);
+  color: var(--k-ink-faint);
+}
+.train-kuratier-eintrag-grund {
+  color: var(--k-danger);
+}
+
 .train-paket-aktionen {
   display: flex;
   gap: var(--k-s3);

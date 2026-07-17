@@ -14,10 +14,13 @@ import {
   leseEdition,
   lizenzHinweis,
   personas,
+  type Aufgabenklasse,
   type Betriebsart,
   type ChatProvider,
   type CloudAuthArt,
+  type KosmoRolle,
   type Proposal,
+  type StaffelungKonfig,
 } from '@kosmo/ai';
 import { verifiziereLizenz } from '@kosmo/lizenz';
 import type { Assembly, JournalEntry } from '@kosmo/kernel';
@@ -93,6 +96,45 @@ interface Bubble {
    * HH:MM:SS») in die Vollbild-Vorschau, ohne sie aus dem Text zu parsen.
    */
   blickZeit?: number;
+  /**
+   * v0.8.2/P6 (additiv, `docs/V082-SPEZ.md` §6.7, Owner-Entscheid 3/C-3/
+   * C-11): NUR bei `who === 'kosmo'` gesetzt, sobald `ChatSession`s additiver
+   * `onRolle`-Beobachter für den Zug dieser Bubble gefeuert hat. Die drei
+   * Felder reisen zusammen (immer alle drei gesetzt oder keins).
+   */
+  rolle?: KosmoRolle;
+  aufgabenklasse?: Aufgabenklasse;
+  einModellBetrieb?: boolean;
+}
+
+/**
+ * v0.8.2/P6 (additiv, §6.7 Owner-Entscheid 3) — Anzeigename je Rolle für das
+ * Rollen-Badge, wörtlich die Kosmo-eigenen Namen aus
+ * `docs/KI-MODELL-GUIDELINE.md` Teil C («Kosmo-Meister/-Leiter/-Zeichner»).
+ * Als eigene, pure Funktion exportiert (statt inline im JSX), damit sie ohne
+ * vollen Panel-Render unit-testbar ist — Rendern selbst bleibt Sache des
+ * E2E-Beweises (`e2e/staffelung-kuratier.spec.ts`).
+ */
+export function rollenBadgeLabel(rolle: KosmoRolle): string {
+  const NAMEN: Record<KosmoRolle, string> = { meister: 'Meister', leiter: 'Leiter', zeichner: 'Zeichner' };
+  return `Kosmo-${NAMEN[rolle]}`;
+}
+
+/** v0.8.2/P6 (additiv, §6.7) — der additive `data-testid` je Rolle («rollen-badge-<rolle>»-Schema). */
+export function rollenBadgeTestId(rolle: KosmoRolle): string {
+  return `rollen-badge-${rolle}`;
+}
+
+/**
+ * v0.8.2/P6 (additiv, §6.7) — der ehrliche Titel/Tooltip-Text: solange KEINE
+ * echte Rollen-Modell-Karte konfiguriert ist (heutiger App-Normalfall, EIN
+ * Modell für die ganze Sitzung), macht der Titel das offen sichtbar statt
+ * einen Modellwechsel vorzutäuschen, der nicht stattfand.
+ */
+export function rollenBadgeTitel(einModellBetrieb: boolean, klasse: Aufgabenklasse): string {
+  return einModellBetrieb
+    ? `Aufgabenklasse: ${klasse} — Ein-Modell-Betrieb (kein Modellwechsel, nur Etikett)`
+    : `Aufgabenklasse: ${klasse}`;
 }
 
 // v0.8.2/P3 (additiv, §4.3 `docs/V082-SPEZ.md`): zweiter Konstruktor-Parameter
@@ -626,6 +668,23 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
     const { doc } = useProject.getState();
     let currentKosmoBubble = -1;
+    // v0.8.2/P6 (additiv, §6.7 C-3/C-11): die App konfiguriert heute EIN
+    // Modell je Provider (kein Rollen-Karten-UI) — `einzelModell` ist darum
+    // der ehrliche Fallback (`staffelung.ts:161-169`): alle drei Rollen
+    // spielen dieses eine Modell, `staffelungIstZusammengefasst` liefert
+    // entsprechend IMMER `true` (kein erfundener Mehrmodell-Betrieb, den es
+    // in der App heute nicht gibt — das wäre eine Attrappe).
+    const staffelungKonfig: StaffelungKonfig = {
+      provider: settings.provider === 'anthropic' ? 'anthropic' : 'ollama',
+      einzelModell:
+        settings.provider === 'anthropic'
+          ? settings.anthropicModel
+          : settings.provider === 'lmstudio'
+            ? settings.lmModel
+            : settings.provider === 'ollama'
+              ? settings.model
+              : settings.provider, // mock/scripted: informativer Platzhalter, nie real konsumiert
+    };
     const s = new ChatSession(
       provider,
       doc,
@@ -709,6 +768,25 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         onAborted: () => {
           useKosmoStatus.getState().setzeZustand('idle');
           push('system', '⏹ Abgebrochen — Kosmo wartet auf deine nächste Nachricht.', 'abgebrochen');
+        },
+        // v0.8.2/P6 (additiv, §6.7 Owner-Entscheid 3/C-3/C-11): trägt die
+        // automatisch bestimmte Rolle auf die GERADE aktive Kosmo-Bubble
+        // dieses Zugs nach — `currentKosmoBubble` (Closure oben) zeigt in
+        // diesem Moment zuverlässig auf sie (onRolle feuert NACH dem
+        // Streaming-Loop, `onBusy(false)` setzt sie nicht zurück, nur das
+        // nächste `onBusy(true)` tut das). Kein Text in diesem Zug (reiner
+        // Tool-Aufruf ohne Antworttext) → keine Bubble zum Anheften, still
+        // übersprungen (kein erfundenes Badge ohne Antwort).
+        onRolle: (info) => {
+          if (currentKosmoBubble === -1) return;
+          const id = currentKosmoBubble;
+          setBubbles((b) =>
+            b.map((x) =>
+              x.id === id
+                ? { ...x, rolle: info.rolle, aufgabenklasse: info.klasse, einModellBetrieb: info.einModellBetrieb }
+                : x,
+            ),
+          );
         },
       },
       personas.kosmo.systemPrompt,
@@ -828,6 +906,8 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       () => journal.toPromptBlock(),
       // Kuratierte Werkzeug-Untermenge (Begründung: KOSMO_AUSGESCHLOSSENE_COMMANDS).
       { ohne: KOSMO_AUSGESCHLOSSENE_COMMANDS },
+      // v0.8.2/P6 (additiv, §6.7): staffelungKonfig für den `onRolle`-Beobachter oben.
+      staffelungKonfig,
     );
     return s;
     // Session bewusst pro Provider-Konfiguration neu
@@ -1849,6 +1929,23 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             key={b.id}
             className={`k-einblenden kp-bubble ${b.who === 'du' ? 'kp-bubble--du' : 'kp-bubble--kosmo'}`}
           >
+            {/* v0.8.2/P6 (additiv, §6.7 Owner-Entscheid 3/C-3/C-11) — das
+                sichtbare Rollen-Badge: NUR wenn `onRolle` für diese Bubble
+                bereits gefeuert hat (`b.rolle` gesetzt). */}
+            {b.who === 'kosmo' && b.rolle && (
+              <span
+                className={`kp-rollen-badge kp-rollen-badge--${b.rolle}`}
+                data-testid={rollenBadgeTestId(b.rolle)}
+                title={rollenBadgeTitel(b.einModellBetrieb ?? true, b.aufgabenklasse ?? 'chat-standard')}
+              >
+                {rollenBadgeLabel(b.rolle)}
+                {b.einModellBetrieb && (
+                  <span className="kp-rollen-badge-hinweis" data-testid="rollen-badge-ein-modell-hinweis">
+                    · Ein-Modell-Betrieb
+                  </span>
+                )}
+              </span>
+            )}
             {b.text}
             {marken.length > 0 && (
               <div className="kp-marken-reihe">

@@ -3,6 +3,14 @@ import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './prov
 import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type CommandToolsOptionen, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
 import { baueSystemprompt, dossierBlock, rolleBlock, projektKontextBlock } from './systemprompt';
+import {
+  klassifiziereZug,
+  rolleFuerAufgabe,
+  staffelungIstZusammengefasst,
+  type Aufgabenklasse,
+  type KosmoRolle,
+  type StaffelungKonfig,
+} from './staffelung';
 
 /** Read-Only-Tool: läuft sofort (ungated), z.B. Referenzsuche in KosmoData. */
 export interface ReadTool extends ToolDefinition {
@@ -51,6 +59,31 @@ export interface SessionEvents {
    * ohne `onAborted` bleiben unverändert grün (nichts ruft `stopStream()`).
    */
   onAborted?(): void;
+  /**
+   * v0.8.2/P6 (additiv, `docs/V082-SPEZ.md` §6.7, Owner-Entscheid 3/C-3/C-11)
+   * — feuert am Ende JEDES abgeschlossenen `turn()` mit der automatisch
+   * bestimmten Aufgabenklasse + Rolle (`staffelung.ts#klassifiziereZug`/
+   * `rolleFuerAufgabe`). Reiner Beobachter, wie `onReparatur`/`onAborted`:
+   * ändert nichts an `schreibend`/`toolCalls`/dem bestehenden Kontrollfluss.
+   * Solange dem Konstruktor KEIN `staffelungKonfig` mit echter Rollen-Modell-
+   * Karte übergeben wird (heutiger App-Normalfall, EIN konfiguriertes
+   * Modell), bleibt `einModellBetrieb: true` — die Rolle ist dann ein
+   * ehrliches Etikett, KEIN Modellwechsel/Provider-Wechsel findet statt.
+   * Optional — bestehende 219 KI-Tests ohne `onRolle` bleiben unverändert grün.
+   */
+  onRolle?(info: ZugRolle): void;
+}
+
+/**
+ * v0.8.2/P6 (additiv, §6.7) — das Ergebnis der automatischen Zug-
+ * Klassifikation, wie es der `onRolle`-Beobachter oben erhält.
+ */
+export interface ZugRolle {
+  klasse: Aufgabenklasse;
+  rolle: KosmoRolle;
+  /** `true` = keine echte Rollen-Modell-Karte konfiguriert (oder Karte fällt
+   * auf dasselbe Modell zusammen) — die Rolle ist reines Etikett. */
+  einModellBetrieb: boolean;
 }
 
 /**
@@ -103,6 +136,14 @@ export class ChatSession {
     /** Kuratierung der Command-Werkzeuge (z.B. `{ ohne: [...] }` — die App
      * entscheidet und begründet, WAS Kosmo nicht vorschlagen soll). */
     toolOptionen?: CommandToolsOptionen,
+    /**
+     * v0.8.2/P6 (additiv, §6.7): OPTIONALE Rollen-Modell-Karte für den
+     * `onRolle`-Beobachter (`einModellBetrieb`-Ableitung über
+     * `staffelungIstZusammengefasst`). Fehlt sie (heutiger App-Normalfall),
+     * gilt die Sitzung immer als Ein-Modell-Betrieb — ehrlich, weil ohne
+     * Karte auch keine echte Differenzierung existiert.
+     */
+    private staffelungKonfig?: StaffelungKonfig,
   ) {
     this.queryTool = modelQueryTool(doc, contextDefaults);
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
@@ -193,10 +234,24 @@ export class ChatSession {
       ...(toolCalls.length ? { toolCalls } : {}),
     });
 
-    if (toolCalls.length === 0) return;
+    if (toolCalls.length === 0) {
+      // v0.8.2/P6 (additiv, §6.7 C-3/C-11): Klassifikation greift auch für
+      // einen reinen Text-Zug OHNE jeden Tool-Aufruf (chat-standard/
+      // strategie-urteil) — vor diesem bestehenden Early-Return, damit
+      // `onRolle` auch für den häufigsten Fall (blosse Antwort) feuert.
+      // NICHT bei einem abgebrochenen Zug (kein echter «Zug» im Sinn des
+      // Badges, `onAborted` deckt diesen Fall bereits ab).
+      if (!abort.signal.aborted) this.meldeRolle(0, false);
+      return;
+    }
     if (abort.signal.aborted) return;
 
     let needsContinue = false;
+    // v0.8.2/P6 (additiv, §6.7): reine Beobachtungs-Variable für die
+    // Zug-Klassifikation unten — `true`, sobald mindestens EIN Lese-Werkzeug
+    // (modell_lesen/ReadTool) in diesem Zug lief. Ändert nichts an der
+    // Verzweigung selbst, nur eine zusätzliche Zeile je Lese-Zweig.
+    let lesendAufgerufen = false;
     const schreibend: { callId: string; commandId: string; params: unknown; summary: string }[] = [];
     for (const call of toolCalls) {
       if (call.name === this.queryTool.name) {
@@ -207,6 +262,7 @@ export class ChatSession {
           content: this.queryTool.execute(),
         });
         needsContinue = true;
+        lesendAufgerufen = true;
         continue;
       }
       const readTool = this.readTools.get(call.name);
@@ -219,6 +275,7 @@ export class ChatSession {
         }
         this.messages.push({ role: 'tool', toolName: call.name, content });
         needsContinue = true;
+        lesendAufgerufen = true;
         continue;
       }
       const withDefaults = this.applyDefaults(call);
@@ -245,6 +302,12 @@ export class ChatSession {
         summary: validated.summary,
       });
     }
+    // v0.8.2/P6 (additiv, §6.7 C-3/C-11): automatische Aufgabenklassen-
+    // Klassifikation für DIESEN Zug — reines Etikett für den `onRolle`-
+    // Beobachter, ändert nichts an `schreibend`/`toolCalls`/dem Kontrollfluss
+    // oben oder unten.
+    this.meldeRolle(schreibend.length, schreibend.length === 0 && lesendAufgerufen);
+
     const paketId = schreibend.length > 1 ? schreibend[0]!.callId : null;
     for (let i = 0; i < schreibend.length; i++) {
       const v = schreibend[i]!;
@@ -258,6 +321,27 @@ export class ChatSession {
     if (needsContinue && this.pending.size === 0) {
       await this.turn();
     }
+  }
+
+  /**
+   * v0.8.2/P6 (additiv, §6.7 C-3/C-11): baut die Klassifikation für DIESEN
+   * Zug (`klassifiziereZug`, `staffelung.ts`) und feuert `onRolle`, falls der
+   * Aufrufer den Hook gesetzt hat — sonst ein No-Op (kein Aufwand für
+   * bestehende Aufrufer ohne `onRolle`). Zwei Aufrufstellen in `turn()`
+   * (reiner Text-Zug ohne Tool-Aufruf vs. Zug mit Tool-Aufrufen), dieselbe
+   * Logik an beiden.
+   */
+  private meldeRolle(schreibendAnzahl: number, nurLesendAufgerufen: boolean): void {
+    if (!this.events.onRolle) return;
+    const letzterUserText = [...this.messages].reverse().find((m) => m.role === 'user')?.content;
+    const klasse = klassifiziereZug({
+      userText: typeof letzterUserText === 'string' ? letzterUserText : '',
+      schreibendAnzahl,
+      nurLesendAufgerufen,
+    });
+    const rolle = rolleFuerAufgabe(klasse);
+    const einModellBetrieb = this.staffelungKonfig ? staffelungIstZusammengefasst(this.staffelungKonfig) : true;
+    this.events.onRolle({ klasse, rolle, einModellBetrieb });
   }
 
   private applyDefaults(call: ToolCall): ToolCall {
