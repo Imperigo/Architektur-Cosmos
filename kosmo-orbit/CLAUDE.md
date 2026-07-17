@@ -26,6 +26,9 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
 3. `docs/GESTALTUNGSKONZEPT.md` + `docs/OWNER-MANDAT.md` — Ästhetik und Owner-Regeln.
 4. `docs/HOMESTATION-AUFTRAG.md` — was auf die RTX-5090-Heimstation wartet.
+5. `wissen/training/claude/lehren/` — die letzten 2–3 Versionsdateien lesen,
+   bevor du mit einem neuen Paket beginnst (Betriebskonzept:
+   `docs/CLAUDE-LERNSCHLEIFE.md`).
 
 ## Setup
 
@@ -104,6 +107,13 @@ Je Block: Feature → Tests (+ E2E) → **ROADMAP-Eintrag** (vor dem Phase-3-Mar
 → deutscher Commit mit Trailern → Push auf den **Entwicklungs-Branch**. Volle
 Suiten je Batch. Ehrlichkeit vor Politur: was die HomeStation/ein Konto/ein
 Schlüssel braucht, wird im UI offen benannt, nicht vorgetäuscht.
+
+**Release-Ritual (zusätzlich, nur beim letzten Paket einer Version):** vor dem
+letzten Release-Commit schreibt der ausführende Agent
+`wissen/training/claude/lehren/vX.md` für die soeben abgeschlossene Version
+(Gate/Konvention/Fehler/Owner-Entscheid, je mit Beleg) — Details in
+`docs/CLAUDE-LERNSCHLEIFE.md`, der volle Release-Ablauf in
+`docs/RELEASE-ABLAUF.md`.
 
 ## Branch
 

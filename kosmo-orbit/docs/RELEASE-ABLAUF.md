@@ -10,6 +10,10 @@ neu erfunden, ausser dem Obsidian-Schritt (5) und der Doku selbst.
 ```
 AI-Scan-Delta auswerten (§0) → Version bumpen → volle Suite
    → node tools/ai-scan-delta.mjs (Wächter, muss grün sein)
+   → npm run release-gate (Typecheck+Tests+svg-qa+secret-scan, Exit 0)
+   → Rundgang-PDF gegen frischen Build/Preview
+   → wissen/training/claude/lehren/vX.md schreiben (NEU, s. §2a)
+   → ROADMAP-Eintrag «🚀 Release vX.Y» + Release-Commit
    → .desktop-build-request anfassen + pushen
    → CI baut die Installer → GitHub-Release-Tag «desktop-latest» aktualisiert sich
    → node tools/release-notiz.mjs → Website zeigt automatisch den neusten Installer
@@ -62,6 +66,44 @@ Jeder Block bekommt ausserdem einen **ROADMAP-Eintrag** (vor dem
 Phase-3-Marker) und einen deutschen Commit mit Trailern — das ist der
 bestehende git-Teil des Owner-Auftrags («bei jedem Update alles auf git») und
 läuft bereits so, batch für batch, auf dem Entwicklungsbranch.
+
+## 2a. Gates, Rundgang-PDF, Lehren zurückschreiben (das Release-Finale)
+
+Dieser Abschnitt hält die **gelebte Praxis** der letzten Release-Finale fest
+(v0.8.0/`ROADMAP 381`, v0.8.0B/`ROADMAP 393`, v0.8.1/`ROADMAP 416`) — nichts
+davon ist neu erfunden, ausser Schritt 4 (Lehren zurückschreiben).
+
+1. **Volle Gates unabhängig nachfahren:** `npm run release-gate` bündelt
+   genau die vier harten Prüfungen, die jedes Release-Finale zeigt —
+   Typecheck über alle Workspaces, die vollen Unit-Suiten, `svg-qa` (alle
+   Goldens byte-identisch/0 harte Fehler) und `security:secrets`
+   (`tools/secret-scan.mjs`). Exit 0 ist die Mindestvoraussetzung fürs
+   Finale — kein Release-Commit vor einem grünen `release-gate`-Lauf.
+2. **Rundgang-PDF gegen einen frischen Build/Preview:** `npm run build -w
+   @kosmo/orbit-app` + Preview, dann das versionseigene Rundgang-Tool
+   (Muster `e2e/tools/rundgang-pdf-<version>.mts`, z. B.
+   `rundgang-pdf-081.mts`) erzeugt `abgabe/RUNDGANG-NOTIZEN-<version>.pdf` —
+   echte Screenshots über die echten UI-Knöpfe, nie über Testhooks
+   (Owner-Kriterium, zuletzt bewiesen in ROADMAP 416).
+3. **Adversariale Matrix-Abnahme**, falls die Version eine verbindliche Spez
+   trägt (Muster `docs/V081-SPEZ.md`/`docs/V082-SPEZ.md` §9): jede
+   Matrix-Zeile einzeln gegen den Code geprüft, Muss-Fixes vor dem Finale
+   gebaut oder formal vertagt (ROADMAP 415 ist das Referenzmuster).
+4. **NEU — Lehren zurückschreiben (Pflichtschritt, `docs/
+   CLAUDE-LERNSCHLEIFE.md` §3):** **vor** dem Release-Commit schreibt der
+   ausführende Agent `wissen/training/claude/lehren/vX.md` für die
+   soeben abgeschlossene Version — alle vier Kategorien (Gate/Konvention/
+   Fehler/Owner-Entscheid), jede Zeile mit Beleg (Datei:Zeile oder
+   ROADMAP-Nr.). Dieser Schritt sitzt bewusst **nach** den Gates (Schritte
+   1–3 liefern die belegbaren Gate-/Fehler-Funde, die die Lehren-Datei
+   zitiert) und **vor** dem Release-Commit (Schritt 5) — die Lehren-Datei
+   ist Teil desselben Commits wie ROADMAP-Eintrag/Version-Stempel, nie ein
+   Nachtrag danach.
+5. **ROADMAP-Eintrag + Release-Commit:** der `🚀 Release vX.Y «Name»`-Eintrag
+   (Neuigkeiten, Gate-Zahlen, ehrliche Offen-Zeile), STAND.md/CLAUDE.md-
+   Stempel, die neue `lehren/vX.md` und der Versions-Bump (Abschnitt 1)
+   landen **in einem** Commit — danach erst folgt Schritt 3 unten
+   (`.desktop-build-request`).
 
 ## 3. Installer anstossen
 
@@ -136,6 +178,13 @@ Branches. Bis dahin sind sie im Arbeitsbaum vorhanden und lokal grün gebaut
       grün (§0)
 - [ ] Version an den drei Stellen gebumpt
 - [ ] `npm run typecheck && npm test && npm run build` grün (kosmo-orbit)
+- [ ] `npm run release-gate` Exit 0 (Typecheck+Tests+svg-qa+secret-scan, §2a.1)
+- [ ] Rundgang-PDF gegen frischen Build/Preview erzeugt (§2a.2)
+- [ ] Adversariale Matrix-Abnahme durchgeführt, falls die Version eine
+      verbindliche Spez trägt (§2a.3)
+- [ ] **`wissen/training/claude/lehren/vX.md` geschrieben** (alle vier
+      Kategorien mit Beleg) — VOR dem Release-Commit, s. §2a.4/
+      `docs/CLAUDE-LERNSCHLEIFE.md` §3
 - [ ] `.desktop-build-request` angefasst + gepusht → CI-Lauf grün
 - [ ] `node tools/release-notiz.mjs --von <N>` ausgeführt → Vault-Notiz liegt
       unter `wissen/vault/Releases/`
