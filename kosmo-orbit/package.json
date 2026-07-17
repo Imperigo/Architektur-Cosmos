@@ -20,7 +20,7 @@
     "e2e": "playwright test",
     "svg-qa": "npx tsx tools/svg-qa/pruefe-goldens.mts",
     "journeys": "playwright test kosmo-journey",
-    "release-gate": "npm run typecheck && npm run test && npm run svg-qa && npm run security:secrets",
+    "release-gate": "npm run typecheck && npm run test && npm run svg-qa && npm run security:secrets && node tools/training/validiere-sft.mjs",
     "security:secrets": "node tools/secret-scan.mjs",
     "validiere-sft": "node tools/training/validiere-sft.mjs",
     "test:secret-scan": "node tools/secret-scan.test.mjs",
