@@ -174,8 +174,16 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
     setStufe('popup');
   }
 
-  /** Zweiter Klick auf die offene Popup-Fläche selbst eskaliert ebenfalls zum Fenster. */
-  function aufPopupKlick(): void {
+  /**
+   * Zweiter Klick auf die offene Popup-FLÄCHE selbst (Hintergrund/Ränder)
+   * eskaliert zum Fenster. Fable-Gate-Fix PD3: NUR wenn der Klick wirklich
+   * die Fläche trifft (`target === currentTarget`) — Klicks auf die
+   * Stufe-2-Schnelleinstellungen (Selects/Knöpfe der `inhalte/`-Module)
+   * bedienen das Werkzeug und dürfen NICHT eskalieren. Der zweite Klick aufs
+   * Werkzeug-SYMBOL eskaliert weiterhin über `aufWerkzeugKlick`.
+   */
+  function aufPopupKlick(e: { target: EventTarget; currentTarget: EventTarget }): void {
+    if (e.target !== e.currentTarget) return;
     setStufe('fenster');
   }
 

@@ -111,13 +111,16 @@ describe('IslandShell — onWerkzeugAktion (PD2, Erst-Aktivierung)', () => {
 });
 
 describe('IslandShell — Popup-Hinweis für unverdrahtete Werkzeuge (PD2, ehrlich)', () => {
-  it('zeigt den Katalog-Hinweistext im Popup eines NEU-Werkzeugs (Messen)', () => {
+  it('Messen zeigt seit PD3a echten Stufe-2-Inhalt statt des Katalog-Hinweises', () => {
+    // PD2 nutzte «Messen» als Beispiel eines unverdrahteten Werkzeugs; seit
+    // PD3a ist es über die Inhalts-Registry voll registriert — der ehrliche
+    // Fallback-Hinweis darf dann NICHT mehr erscheinen (IslandShell rendert
+    // Registry-Inhalt zuerst; Fable-Gate-Nachzug am PD3-Gate).
     render(<IslandShell island="zeichnen" />);
     hoverEnter(q('island-zeichnen-root')!);
     klick(q('island-werkzeug-messen')!);
-    const hinweis = q('island-messen-popup-hinweis');
-    expect(hinweis).not.toBeNull();
-    expect(hinweis!.textContent).toMatch(/Noch nicht gebaut/);
+    expect(q('island-messen-popup')).not.toBeNull();
+    expect(q('island-messen-popup-hinweis')).toBeNull();
   });
 
   it('zeigt KEINEN Hinweistext im Popup eines verdrahteten Werkzeugs (Wand)', () => {
