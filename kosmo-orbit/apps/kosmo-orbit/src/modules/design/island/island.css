@@ -256,6 +256,15 @@
   position: absolute;
   top: var(--k-s2);
   right: var(--k-s2);
+  /* PD4 Touch-Polish-Befund (island-ui.spec.ts, «Wand»-Fenster mit breitem
+     Aufbau-Katalog): `.isl-schliessen` rendert VOR dem Inhalt im DOM
+     (IslandShell.tsx) — ohne `z-index` gewinnt normal fliessender Inhalt
+     (spätere Paint-Reihenfolge) die Klickfläche, sobald er bis unter die
+     obere rechte Ecke reicht (z. B. eine volle Tabellenbreite). `z-index:1`
+     hält den Schliessen-Knopf IMMER zuoberst, unabhängig vom Inhalt jedes
+     einzelnen Werkzeugs — ein Rahmen-Fix (PD1-Eigentum), kein Eingriff in
+     eine einzelne PD3a/PD3b-Inhaltsdatei. */
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -338,11 +347,19 @@
   z-index: 41;
   font-family: var(--k-font-ui);
 }
+/* PD4 (Owner-Nachtrag 17.07.2026, «schwebend oben links: KosmoOrbit-Symbol …
+   daneben klein das farbige KosmoDesign-Logo … vor/neben dem bestehenden
+   Stationen-Orb+Ansichts-Info-Cluster»): die beiden `left`-Werte rücken um
+   48px nach rechts (26→74, 78→126 — derselbe 52px-Abstand wie zuvor bleibt
+   gewahrt), damit die neuen, App.tsx-gerenderten Logos (`island-kopf-logo-*`,
+   `top:14px; left:14px`, ~44px breite Reihe) links davon Platz haben, ohne
+   den 38px-Stationen-Orb zu überlappen. Reiner Wertetausch, keine neue Regel
+   — der Rest des Bühnenkopfs (§1) bleibt unverändert. */
 .isl-buehnenkopf-stationen-orb {
-  left: 26px;
+  left: 74px;
 }
 .isl-buehnenkopf-ansichts-info {
-  left: 78px;
+  left: 126px;
 }
 
 .isl-stationen-orb-pill {
@@ -370,17 +387,21 @@
 .isl-ansichts-info-label {
   display: flex;
   align-items: center;
+  /* PD4 (Owner-Nachtrag 17.07.2026, «Ansichts-Info … etwas kleiner … Schrift-
+     grad/Padding eine Stufe runter»): Schriftgrad 14→12px, horizontales
+     Padding `--k-s3`→`--k-s2` — `min-height:44px` bleibt UNVERÄNDERT (§4.2,
+     Trefferfläche ist kein «Stufe runter»-Kandidat). */
   min-height: 44px;
-  padding: var(--k-s2) var(--k-s3);
+  padding: var(--k-s2) var(--k-s2);
   background: var(--k-glass-fill, rgba(20, 23, 31, 0.62));
   border: 1px solid var(--k-glass-stroke, var(--k-line));
   border-radius: var(--k-radius-sm);
   color: var(--k-ink);
   cursor: pointer;
   font-family: var(--k-font-mono);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -409,7 +430,8 @@
 }
 
 .isl-buehnenkopf-chip {
-  min-height: 32px;
+  /* PD4 Touch-Polish (§4.2 «alle Ziele ≥44px Trefferfläche»): war 32px. */
+  min-height: 44px;
   padding: var(--k-s1) var(--k-s3);
   background: transparent;
   border: 1px solid var(--k-glass-stroke, var(--k-line));
@@ -428,7 +450,8 @@
   display: flex;
   align-items: center;
   gap: var(--k-s2);
-  min-height: 36px;
+  /* PD4 Touch-Polish (§4.2 «alle Ziele ≥44px Trefferfläche»): war 36px. */
+  min-height: 44px;
   padding: var(--k-s1) var(--k-s2);
   background: transparent;
   border: none;
@@ -462,4 +485,173 @@
 .isl-root[data-reduziert='true'] .isl-anim-popIn,
 .isl-root[data-reduziert='true'] .isl-anim-winIn {
   animation: none;
+}
+
+/* ── Kosmo-Orb (PD4, §1-Tabelle/§4.3 Zeile 5 «Kosmo-Orb-Puls») ───────────
+   `right:26px; bottom:24px`, Kreis 52×52px, goldener Grund (`--f-gold`,
+   `.isl-root`-Tokenfamilie), Puls `--k-insel-orb-puls` (2.4s, `aura.css`,
+   additiv). Eigener `position:fixed`-Wurzelknoten statt `.isl-root` (der
+   Orb ist laut §1 AUSSERHALB der vier Islands, teilt sich aber dieselbe
+   `--f-gold`-Variable — die lebt in `.isl-root`, hier lokal noch einmal
+   knapp gesetzt, damit dieser Knoten ohne `.isl-root`-Elternklasse
+   auskommt). Verbraucher: `island/KosmoOrb.tsx`. */
+.isl-orb-wurzel {
+  --f-gold: #8c6f2e;
+  position: fixed;
+  right: 26px;
+  bottom: 24px;
+  z-index: 42;
+  font-family: var(--k-font-ui);
+}
+[data-theme='orbit'] .isl-orb-wurzel {
+  --f-gold: #cbb06a;
+}
+
+.isl-orb {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--f-gold);
+  border: none;
+  border-radius: 999px;
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  color: #14161d;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+}
+.isl-orb-glyphe {
+  font-family: var(--k-font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Puls (§4.3: «weich, zyklisch», 2.4s) — ein sich ausdehnender, verblassender
+   Ring statt einer Skalierung des Orbs selbst (bleibt so bei jeder Puls-
+   Phase exakt 52×52px antippbar, die Trefferfläche wandert nie). */
+@keyframes islOrbPuls {
+  0% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--f-gold) 55%, transparent),
+      var(--k-shadow-lg, var(--k-shadow-overlay));
+  }
+  70% {
+    box-shadow:
+      0 0 0 14px color-mix(in srgb, var(--f-gold) 0%, transparent),
+      var(--k-shadow-lg, var(--k-shadow-overlay));
+  }
+  100% {
+    box-shadow:
+      0 0 0 0 color-mix(in srgb, var(--f-gold) 0%, transparent),
+      var(--k-shadow-lg, var(--k-shadow-overlay));
+  }
+}
+.isl-orb-anim-puls {
+  animation: islOrbPuls var(--k-insel-orb-puls) ease-in-out infinite;
+}
+/* Defensive zweite Sicherung, analog dem `.isl-root`-Block oben — der
+   globale `aura.css`-Riegel fängt `prefers-reduced-motion` bereits ab,
+   `KosmoOrb.tsx` setzt die Animationsklasse bei aktivem reduced-motion
+   zusätzlich gar nicht erst. */
+.isl-orb-wurzel[data-reduziert='true'] .isl-orb-anim-puls {
+  animation: none;
+}
+
+/* 320px-Konversationskarte (§1: «Vorschlagstext + 2 Aktions-Chips +
+   Eingabezeile»), nach oben aufklappend über dem Orb. */
+.isl-orb-karte {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--k-s3));
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+  padding: var(--k-s4);
+  background: var(--k-glass-fill, rgba(20, 23, 31, 0.62));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-xl, var(--k-shadow-overlay));
+  color: var(--k-ink);
+}
+.isl-orb-karte-titel {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-soft, var(--k-ink));
+  padding-right: 28px; /* Platz für den Schliessen-Knopf oben rechts */
+}
+.isl-orb-karte-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--k-ink);
+}
+.isl-orb-karte-hinweis {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--k-ink-faint, var(--k-ink));
+  opacity: 0.75;
+}
+.isl-orb-karte-chips {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.isl-orb-karte-chip {
+  min-height: 44px;
+  padding: 0 var(--k-s3);
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: 999px;
+  color: var(--k-ink);
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.isl-orb-karte-chip:hover {
+  background: var(--k-accent-wash);
+  border-color: var(--k-accent);
+}
+.isl-orb-karte-eingabe-zeile {
+  display: flex;
+  gap: var(--k-s2);
+  align-items: center;
+}
+.isl-orb-karte-eingabe {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 var(--k-s3);
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink);
+  font-family: var(--k-font-ui);
+  font-size: 13px;
+}
+.isl-orb-karte-senden {
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink);
+  cursor: pointer;
 }

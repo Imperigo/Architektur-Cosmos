@@ -102,6 +102,12 @@ import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
 import { IslandBuehne } from './island/IslandShell';
 import { AnsichtsInfo } from './island/AnsichtsInfo';
 import { StationenOrb, type StationenOrbId } from './island/StationenOrb';
+// PD4 (`docs/ISLAND-UI-SPEZ.md` §7 PD4-Zeile): löst den PD3c-Notbehelf
+// (`shell/KosmoSymbol.tsx` freistehend über `App.tsx`) ab — der echte,
+// spezifizierte Kosmo-Orb (52px, `--f-gold`, Puls, 320px-Konversationskarte)
+// nutzt denselben `onKosmoOeffnen`-Handoff, den diese Datei von `App.tsx`
+// schon bekommt (s. `DesignWorkspaceProps`-Kommentar).
+import { KosmoOrb } from './island/KosmoOrb';
 import type { IslandWerkzeug } from './island/island-katalog';
 // PD3c (Owner-Befehl 17.07.): PD3bs vorbereitete Deep-Link-Brücke (§8-4) —
 // verdrahtet `onStationOeffnen` beim Mount (Effekt unten), damit die
@@ -3493,6 +3499,8 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               activeStoreyId={activeStoreyId}
               setActiveStorey={setActiveStorey}
             />
+            {/* PD4: der echte Kosmo-Orb-Zugang, s. Import-Kommentar oben. */}
+            <KosmoOrb {...(onKosmoOeffnen ? { onKosmoOeffnen } : {})} />
           </>
         )}
 

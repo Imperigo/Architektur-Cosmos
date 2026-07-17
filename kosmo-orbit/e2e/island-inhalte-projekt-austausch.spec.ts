@@ -95,7 +95,11 @@ test('Export wirkt: der echte export-plan.ts-Weg löst einen echten Download aus
   expect(download.suggestedFilename()).toMatch(/\.svg$/);
 });
 
-test('Ein Deep-Link-Fall (Rendern → KosmoVis): ehrlicher Hinweis, solange DesignWorkspace.tsx die Brücke nicht verdrahtet', async ({ page }) => {
+test('Ein Deep-Link-Fall (Rendern → KosmoVis): die PD3c-verdrahtete Brücke wechselt wirklich die Station', async ({ page }) => {
+  // PD3c (Owner-Befehl «alles in die Islands») hat `registriereStationsWeg`
+  // beim DesignWorkspace-Mount verdrahtet — der ehrliche «unverdrahtet»-
+  // Hinweis dieses Tests war nur der Zwischenstand von PD3b (Fable-Nachzug
+  // am PD4-Gate: Erwartung an die sanktionierte neue Realität angepasst).
   await ueberspringeOnboarding(page);
   await page.click('[data-testid="module-design"]');
 
@@ -103,10 +107,8 @@ test('Ein Deep-Link-Fall (Rendern → KosmoVis): ehrlicher Hinweis, solange Desi
   await eskaliereZuFenster(page, 'rendern');
   await expect(page.locator('[data-testid="island-rendern-zur-station"]')).toBeVisible();
   await page.click('[data-testid="island-rendern-zur-station"]');
-  await expect(page.locator('[data-testid="island-rendern-zur-station-hinweis"]')).toBeVisible();
-  await expect(page.locator('[data-testid="island-rendern-zur-station-hinweis"]')).toContainText('§8-4');
-  // Ehrlich: kein Stationswechsel geschah (die Brücke ist unverdrahtet).
-  await expect(page.locator('[data-testid="island-austausch-root"]')).toBeVisible();
+  // Echter Stationswechsel: KosmoVis ist offen, die design-Islands sind weg.
+  await expect(page.locator('[data-testid="island-austausch-root"]')).toHaveCount(0);
   await page.screenshot({ path: 'test-results/pd3b-082-rendern-stufe3-deep-link.png' });
 });
 

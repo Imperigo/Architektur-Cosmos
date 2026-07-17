@@ -199,6 +199,35 @@ export function App() {
     }
     mitUebergang(() => setScreen(s));
   };
+  // PD4 (Island-UI-Strom Abschluss, Owner-Nachtrag 17.07.2026 «der oberste
+  // Balken soll es auch nicht mehr geben…»): der Kopfbalken — und mit ihm der
+  // «Öffnen»-Knopf — verschwindet im Island-Modus der design-Station (s.
+  // `bodenDockAusgeblendet` unten + den bedingten Header weiter im Rückgabe-
+  // JSX). Aus dem bisher inline im Knopf-`onClick` verdrahteten Dialog
+  // herausgezogen, damit derselbe Weg zusätzlich als «Öffnen»-Kommando in der
+  // Befehlspalette (⌘K, `registerActions('app', …)` unten) registriert werden
+  // kann — «Speichern» stand dort bereits (`id:'save'`), «Öffnen» fehlte
+  // (Befund: ohne diese Ergänzung wäre das Projekt-Öffnen im Island-Modus,
+  // wo der Kopfbalken-Knopf entfällt, NUR noch über die (weiterhin
+  // vorhandene) Zentrale-Kachel «Projekt öffnen» erreichbar gewesen — die
+  // Palette schliesst diese Lücke zusätzlich). Verhalten byte-identisch zum
+  // bisherigen Knopf-Handler, nur als benannte Funktion statt Inline-Closure.
+  const oeffneProjektDatei = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.kosmo,application/zip';
+    input.onchange = () => {
+      const f = input.files?.[0];
+      if (f) {
+        void openProjectFile(f)
+          .then(() => gehZu('design'))
+          .catch((err) => {
+            meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
+          });
+      }
+    };
+    input.click();
+  };
   // K11 (Owner-Befund, wörtlich: «Kosmo als Copilot-Symbol, nicht Dauerchat»):
   // Default ist ZU — das schwebende Kosmo-Symbol (KosmoSymbol.tsx) ist der
   // Erstkontakt, das grosse Panel ein bewusster Klick. Persistiert unter
@@ -424,6 +453,13 @@ export function App() {
       })),
       { id: 'kosmo', titel: 'Kosmo ein-/ausblenden', gruppe: 'Ansicht', run: () => setKosmoOpen((k) => !k) },
       { id: 'save', titel: 'Projekt speichern (.kosmo)', gruppe: 'Projekt', run: downloadProject },
+      // PD4 (Owner-Nachtrag 17.07.2026): «Öffnen» fehlte hier bisher — im
+      // Island-Modus der design-Station gibt es keinen Kopfbalken-Knopf mehr
+      // (s. `oeffneProjektDatei`-Kommentar oben), die Palette bleibt aber
+      // IMMER gemountet (`<Kurzbefehle>` unten, unabhängig vom Header) —
+      // damit ist «Projekt öffnen» app-weit per ⌘K erreichbar, egal ob der
+      // Kopfbalken gerade sichtbar ist.
+      { id: 'open', titel: 'Projekt öffnen (.kosmo)', gruppe: 'Projekt', run: oeffneProjektDatei },
       {
         id: 'tkb',
         titel: 'Beispielprojekt TKB laden',
@@ -452,12 +488,28 @@ export function App() {
 
   return (
     <div className="app-wurzel">
-      {/* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest,
+      {/* PD4 (Island-UI-Strom Abschluss, Owner-Nachtrag 17.07.2026, wörtlich:
+          «der oberste Balken soll es auch nicht mehr geben…»): der komplette
+          Kopfbalken (Wortmarke, Stations-Badge, Bauphasen-Pille, Sync,
+          Speichern/Öffnen, Kosmo öffnen, «?»-Rundgang, ⚙-Einstellungen)
+          rendert NICHT mehr im Island-Modus der design-Station — derselbe
+          Guard, den `bodenDockAusgeblendet` (unten) für das BodenDock schon
+          nutzt (PD3c), hier zusätzlich auf den Header angewendet. Jede
+          ANDERE Station und der Modus `'manuell'` bleiben byte-gleich (der
+          Guard ist `false` in jedem dieser Fälle). Ersatz unten: die beiden
+          schwebenden Logos oben links (`island-kopf-logo-*`) + der
+          Einstellungs-Kreis oben rechts (`island-einstellungen-kreis`) —
+          «Kosmo öffnen» läuft ab jetzt in diesem Modus ausschliesslich über
+          den Kosmo-Orb (`island/KosmoOrb.tsx`, `DesignWorkspace.tsx`),
+          «Speichern»/«Öffnen» bleiben über die Befehlspalette (⌘K, s.
+          `oeffneProjektDatei`-Kommentar oben) erreichbar. */}
+      {!bodenDockAusgeblendet && (
+      /* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest,
           `--k-sunken` (statt `--k-surface`) + subtile Trennlinie
           (`--k-line-subtil`, orbit-only — Papier fällt über den zweiten
           `var()`-Parameter auf sein bestehendes `--k-line` zurück). Inhalte/
           `data-testid`s/Reihenfolge bleiben WÖRTLICH unverändert, nur
-          Höhe/Fläche/Rand wandern auf die neue Anatomie. */}
+          Höhe/Fläche/Rand wandern auf die neue Anatomie. */
       <header
         className="app-header"
       >
@@ -516,27 +568,7 @@ export function App() {
           <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
             Speichern
           </KButton>
-          <KButton
-            size="sm"
-            tone="ghost"
-            data-testid="open-project"
-            onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = '.kosmo,application/zip';
-              input.onchange = () => {
-                const f = input.files?.[0];
-                if (f) {
-                  void openProjectFile(f)
-                    .then(() => gehZu('design'))
-                    .catch((err) => {
-                      meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`);
-                    });
-                }
-              };
-              input.click();
-            }}
-          >
+          <KButton size="sm" tone="ghost" data-testid="open-project" onClick={oeffneProjektDatei}>
             Öffnen
           </KButton>
         </span>
@@ -598,6 +630,91 @@ export function App() {
             Die Kopfleiste behält nur den Alltag: Sync, Speichern/Öffnen,
             Kosmo, «?» (Rundgang), ⚙ (Einstellungen). */}
       </header>
+      )}
+      {/* PD4-Ersatz für den ausgeblendeten Kopfbalken (s. Kommentar oben):
+          schwebend oben links das KosmoOrbit-Symbol (Klick = Zur Zentrale,
+          derselbe `gehZu('home')`-Weg wie die Wortmarke im Header) + daneben
+          klein das farbige KosmoDesign-Logo — beide ohne Schriftzug, aus dem
+          bestehenden `OrbitMark`-Logo-System (`@kosmo/ui`), kein neues Asset.
+          Positioniert VOR dem PD2-Bühnenkopf-Cluster (Stationen-Orb/Ansichts-
+          Info, `island/island.css` `.isl-buehnenkopf-*`, dort auf
+          `left:74px`/`126px` verschoben, um hier Platz zu machen — s.
+          Kommentar dort). Inline-Styles statt einer neuen CSS-Klasse: App.tsx
+          besitzt hier keine eigene, additive Stylesheet-Datei innerhalb des
+          PD4-Dateikreises. */}
+      {bodenDockAusgeblendet && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 14,
+            left: 14,
+            zIndex: 42,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          <button
+            onClick={() => gehZu('home')}
+            className="k-druck app-druck-reset"
+            aria-label="Zur Zentrale"
+            data-testid="island-kopf-logo-orbit"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 44,
+              height: 44,
+              padding: 0,
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--k-ink)',
+            }}
+          >
+            <OrbitMark module="orbit" size={22} />
+          </button>
+          <span
+            aria-hidden="true"
+            data-testid="island-kopf-logo-design"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28 }}
+          >
+            <OrbitMark module="design" size={18} title="KosmoDesign" />
+          </span>
+        </div>
+      )}
+      {/* PD4-Ersatz Teil 2: Einstellungs-Zugang als einfacher, standalone
+          Kreis oben rechts — ruft denselben `oeffneEinstellungen()`-Weg wie
+          das bisherige Kopfbalken-Zahnrad (ungefiltert, `station` bleibt
+          undefined), kein zweites Einstellungs-Panel. */}
+      {bodenDockAusgeblendet && (
+        <button
+          onClick={() => oeffneEinstellungen()}
+          className="k-druck app-druck-reset"
+          aria-label="Einstellungen öffnen"
+          title="Einstellungen"
+          data-testid="island-einstellungen-kreis"
+          style={{
+            position: 'fixed',
+            top: 14,
+            right: 14,
+            zIndex: 42,
+            width: 44,
+            height: 44,
+            borderRadius: 999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--k-glass-fill, rgba(20, 23, 31, 0.62))',
+            border: '1px solid var(--k-glass-stroke, var(--k-line))',
+            color: 'var(--k-ink)',
+            cursor: 'pointer',
+            padding: 0,
+          }}
+        >
+          <span aria-hidden="true" style={{ fontSize: 15 }}>⚙</span>
+        </button>
+      )}
 
       {syncOpen && (
         <div
@@ -928,12 +1045,21 @@ export function App() {
           lebt die einzige `kosmo-symbol`-Instanz eingebettet im Boden-Dock
           (weiter unten, `screen !== 'home'`-Zweig), damit `data-testid=
           "kosmo-symbol"` app-weit nie doppelt vorkommt.
-          PD3c (Owner-Befehl 17.07.): `bodenDockAusgeblendet` ist der EINE
-          Fall, in dem das BodenDock (und damit sein eingebetteter Kosmo-Orb)
-          nicht rendert — das freistehende Symbol springt hier zusätzlich
-          ein, damit der Kosmo-Orb-Zugang im Island-Modus der design-Station
-          erhalten bleibt (s. Kopfkommentar bei `bodenDockAusgeblendet` oben). */}
-      {!kosmoOpen && (screen === 'home' || bodenDockAusgeblendet) && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
+          PD3c (Owner-Befehl 17.07.): `bodenDockAusgeblendet` war bis PD4 der
+          EINE Fall, in dem das BodenDock (und damit sein eingebetteter
+          Kosmo-Orb) nicht rendert — das freistehende Symbol sprang hier
+          zusätzlich ein, damit der Kosmo-Orb-Zugang im Island-Modus der
+          design-Station erhalten blieb.
+          PD4 (Island-UI-Strom Abschluss): dieser Notbehelf ist jetzt
+          abgelöst — `DesignWorkspace.tsx` rendert im Island-Modus den
+          ECHTEN, spezifizierten Kosmo-Orb (`island/KosmoOrb.tsx`, 52px,
+          `--f-gold`, Puls, 320px-Konversationskarte statt eines direkten
+          Panel-Öffnens) an genau derselben Stelle (`right:26px; bottom:24px`).
+          Ein zweites, überlappendes Symbol wäre doppelt/verwirrend — das
+          generische `KosmoSymbol` bleibt darum auf `screen === 'home'`
+          beschränkt, `bodenDockAusgeblendet` fällt hier bewusst weg (bleibt
+          für das BodenDock selbst weiter unten unverändert massgeblich). */}
+      {!kosmoOpen && screen === 'home' && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
       {/* V1.6 Block E: nicht-modales Guide-Overlay — bewusst AUSSERHALB der
           Fehlerzonen-Stationen, damit es stationsübergreifend sichtbar
           bleibt. `key=guideLauf` sorgt dafür, dass ein erneuter Aufruf immer

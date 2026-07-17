@@ -158,13 +158,15 @@ test.describe('PD3a — Ehrlichkeits-Fall: Trace (ANSICHT, PlanView-lokaler Stat
     await ueberspringeOnboarding(page);
     await page.click('[data-testid="module-design"]');
 
+    // PD3c (Owner-Befehl) hob den Trace-State in `state/plan-ansicht.ts` —
+    // die Insel zeigt seither ECHTE Schalter statt Status+Anleitung
+    // (Fable-Nachzug am PD4-Gate: Erwartung an die neue Realität angepasst).
     await oeffneInsel(page, 'ansicht');
     await page.click('[data-testid="island-werkzeug-trace"]');
     await expect(page.locator('[data-testid="island-trace-popup"]')).toBeVisible();
-    await expect(page.locator('[data-testid="island-trace-hinweis"]')).toContainText('PlanView.tsx');
+    await expect(page.locator('[data-testid="island-trace-ziel"]')).toBeVisible();
 
     await page.click('[data-testid="island-werkzeug-trace"]');
     await expect(page.locator('[data-testid="island-trace-fenster"]')).toBeVisible();
-    await expect(page.locator('[data-testid="island-trace-hinweis"]')).toBeVisible();
   });
 });

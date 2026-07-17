@@ -58,7 +58,15 @@ const ISLAND_RAND_KLASSE: Readonly<Record<IslandId, string>> = {
  * (`state/cursor-zustand.ts`, wiederverwendet statt eines zweiten
  * `matchMedia`-Aufrufmusters).
  */
-function useReduzierteBewegung(): boolean {
+/**
+ * Exportiert (PD4-Ergänzung, additiv): `island/KosmoOrb.tsx` braucht
+ * denselben Live-`prefers-reduced-motion`-Zustand für seinen Puls-Ring
+ * (`orbPulse`, §4.3-Tabelle) — ein zweiter, unabhängiger `matchMedia`-Aufruf
+ * wäre unnötige Duplikation desselben Musters. Verhalten/Signatur bleiben
+ * exakt wie zuvor, nur die Sichtbarkeit ändert sich (`function` → `export
+ * function`).
+ */
+export function useReduzierteBewegung(): boolean {
   const [reduziert, setReduziert] = useState(() => bevorzugtReduzierteBewegung());
 
   useEffect(() => {

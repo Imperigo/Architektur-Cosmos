@@ -211,6 +211,15 @@
      island/island.css` (`.isl-anim-winIn`). Kein bestehender Wert oben
      verändert. */
   --k-motion-fenster: 260ms;
+  /* v0.8.2 / PD4 (Island-UI-Strom Abschluss, `docs/ISLAND-UI-SPEZ.md` §4.3
+     Zeile 5 «Kosmo-Orb-Puls»/§6 Sanktion 5) — additiv, letzter offene Dauer-
+     Wert der Island-Motion-Tabelle: der PD1-Befund («kein 1:1-Repo-Token,
+     `--k-dock-orb` 550ms ist die BodenDock-Entsprechung, andere Dauer,
+     gleiche Familie») ist jetzt aufgelöst — der Kosmo-Orb-Verbraucher
+     existiert seit PD4 real (`apps/kosmo-orbit/src/modules/design/island/
+     KosmoOrb.tsx`, `.isl-orb-puls`-Animation in `island.css`). Kein
+     bestehender Wert oben verändert. */
+  --k-insel-orb-puls: 2.4s;
 
   /* v0.6.6 MOTION-KONZEPT-066 §2 — Federkurve: schnelles Anreissen, weiches
      Setzen mit minimalem Überschwung (~2%). linear()-Approximation einer

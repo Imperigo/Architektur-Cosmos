@@ -98,10 +98,17 @@ test.describe('Island-Modus: radikal leer (PD3c)', () => {
       await expect(page.locator('[data-testid="island-austausch-pill"]')).toBeVisible();
       await expect(page.locator('[data-testid="ansichts-info-root"]')).toBeVisible();
       await expect(page.locator('[data-testid="stationen-orb-pill"]')).toBeVisible();
-      // Kosmo-Orb-Zugang: `BodenDock` (und sein eingebettetes Symbol) ist weg
-      // — `App.tsx` rendert dafür das freistehende `<KosmoSymbol>` zusätzlich
-      // in genau diesem Fall (design + Island), s. dortigen Kopfkommentar.
-      await expect(page.locator('[data-testid="kosmo-symbol"]')).toBeVisible();
+      // Kosmo-Orb-Zugang: `BodenDock` (und sein eingebettetes Symbol) ist weg.
+      // PD4 (Island-UI-Strom Abschluss): bis dahin sprang `App.tsx`s
+      // freistehendes `<KosmoSymbol>` hier zusätzlich ein — PD4 löst das ab,
+      // `DesignWorkspace.tsx` rendert jetzt den echten, spezifizierten
+      // Kosmo-Orb (`island/KosmoOrb.tsx`, `kosmo-orb-knopf`) an derselben
+      // Stelle; `App.tsx` beschränkt `<KosmoSymbol>` seither auf
+      // `screen==='home'` (s. dortigen Kopfkommentar bei der Render-Zeile).
+      // Diese eine Assertion widerspricht dem neuen Soll (zwei überlappende
+      // Orbs wären falsch) und wechselt darum auf den neuen testid — jede
+      // andere Assertion dieser Spec bleibt unverändert.
+      await expect(page.locator('[data-testid="kosmo-orb-knopf"]')).toBeVisible();
 
       await erwarteAusgeblendeteChrome(page);
 
