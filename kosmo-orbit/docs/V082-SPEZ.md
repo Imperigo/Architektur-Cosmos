@@ -747,6 +747,44 @@ mit Ziel-Paket und Abnahmekriterium.
   GRENZE ehrlich re-bestätigt; volle Suiten grün; `svg-qa` 35/0 byte-gleich;
   `release-gate` Exit 0; ROADMAP-Eintrag; Rundgang-PDF; `SendUserFile`.
 
+### 9.9 · Island-UI-Strom (PD, Owner-Nachtrag 17.07.2026 — additive Matrix-Ergänzung, s. §10-Addendum)
+
+Eigener Strom, parallel zum LoRA-Strom wo dateidisjunkt (design-Station unberührt von P3/P5/P7a).
+Details, Mapping-Tabelle und Token-Tabelle in `docs/ISLAND-UI-SPEZ.md` (PD0). Diese Zeilen sind
+additiv — sie ändern nichts an C-1…C-32 oben.
+
+- [ ] **C-33** PD0 Island-Spez (Bühnenordnung, Island→ToolId/Command-Mapping 29/29,
+  4-Stufen-Inhalte je Werkzeug, Token-Mapping `--f-*`, Sanktionsliste, Matrix-Zeilen) →
+  **PD0** · Abnahme: `docs/ISLAND-UI-SPEZ.md` existiert, Mapping-Tabelle 29/29 Zeilen mit
+  Fundstelle oder ehrlichem NEU-Vermerk, Token-Tabelle vollständig gegen Prototyp-Styles
+  geprüft, ≥12 Fundstellen stichprobenverifiziert.
+- [ ] **C-34** PD1 Fundament (Token-Schicht `--f-*`→`--k-*`-Mapping additiv, `IslandShell`-
+  Zustandsmaschine Pill↔Leiste↔Popup↔Fenster, Motion/Timer, `prefers-reduced-motion`) →
+  **PD1** · Abnahme: alle vier Islands rendern Pill+Leiste in beiden Farbwelten, kein
+  bestehender `--k-*`-Token verändert (Diff-Beweis gegen `aura.css`).
+- [ ] **C-35** PD2 Verdrahtung (echte `ToolId`s/Commands, Ansichts-Info + Stationen-Orb,
+  Umschalter Island↔Manuell persistent, Default-Flip design-Station auf Island-UI, globaler
+  E2E-Seed-Helper) → **PD2** · Abnahme: Bestands-E2E-Suite der design-Station grün OHNE
+  Assertion-Änderung (nur Seed ergänzt, `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 2); Default-Flip
+  per Screenshot belegt; Umschalter funktioniert beidseitig.
+- [ ] **C-36** PD3a Mini-Popups + Einstellungsfenster ZEICHNEN+ANSICHT (17 Werkzeuge) →
+  **PD3a** · Abnahme: alle 17 Werkzeuge haben Stufe 2 UND Stufe 3.
+- [ ] **C-37** PD3b Mini-Popups + Einstellungsfenster PROJEKT+AUSTAUSCH (12 Werkzeuge,
+  inkl. Owner-Entscheid Deep-Link vs. native Kopie für Rendern/Blätter/Sync) → **PD3b** ·
+  Abnahme: alle 12 Werkzeuge haben Stufe 2 UND Stufe 3.
+- [ ] **C-38** Hartes Gate «alle 29 Werkzeuge haben Stufe 2 UND Stufe 3, kein Werkzeug endet
+  bei Stufe 1» → **PD3a+PD3b gemeinsam** · Abnahme: adversarial gegen die 29-Zeilen-Tabelle
+  in `docs/ISLAND-UI-SPEZ.md` §3/§4.4 geprüft, 0 Ausnahmen.
+- [ ] **C-39** PD4 Abschluss (Kosmo-Orb-Anbindung an reale Companion-Vorschläge, iPad/Touch-
+  Polish ≥44px, eigene Island-E2E-Suite) → **PD4** · Abnahme: `e2e/island-ui.spec.ts` grün,
+  Touch-Ziele verifiziert.
+- [ ] **C-40** Farbwelten PAPIER/KOSMOS vollständig bedient (Pill bleibt dunkles Glas in
+  beiden Welten, Plangrafik bleibt immer Papier) → **PD1–PD4** · Abnahme: Screenshots beider
+  Welten je Insel-Stufe (PD4), keine UI-Farbe in der Plangrafik.
+- [ ] **C-41** Manuell-Umschalter (AUSTAUSCH→Manuell, beidseitig, Zustand persistent im
+  Projekt-Store, teilt Werkzeugbestand/Commands mit der Island-UI) → **PD2** · Abnahme:
+  Umschalter funktioniert in beide Richtungen, Zustand übersteht einen Reload.
+
 ---
 
 ## 10 · Geprüfte Belege (Gegenprüfung gegen den Code, Repo-Stand `602e25a`)
@@ -801,3 +839,51 @@ mit Ziel-Paket und Abnahmekriterium.
 *Ende der Spezifikation. Diese Datei wird NICHT während der Umsetzung (W1–W3) verändert —
 findet ein Paket einen Widerspruch zu dieser Spez, ist das ein Fall für ein kurzes
 Owner-Review, kein stiller Re-Interpretationsspielraum im Code.*
+
+---
+
+## 10-Addendum · Island-UI-Strom (PD0–PD4, Owner-Nachtrag 17.07.2026)
+
+*Nachtrag zur obigen, abgeschlossenen v0.8.2-Spezifikation — angehängt, NICHTS Bestehendes
+oben (§0–§10, inkl. der bereits verwendeten Nummer „§10" für die Geprüften Belege) wurde dafür
+verändert. Neue Matrix-Zeilen stehen additiv in §9.9. Dieser Addendum-Abschnitt selbst trägt
+bewusst KEINE neue Kapitelnummer, die mit einer bestehenden kollidiert — er ist der im
+Wellenplan (`root-claude-uploads-73575e4c-8c15-5ba3-silly-plum.md`, Abschnitt «Island-UI-Strom
+PD», Satz «Sanktions-Kern (in Spez-Addendum V082-SPEZ §10 zu fixieren)») angekündigte Anhang.*
+
+**Auftrag (Kurzfassung):** eine radikal vereinfachte Default-Oberfläche für KosmoDesign — beim
+Öffnen nur der Viewer sichtbar, sämtliche Werkzeuge in vier «Dynamic Islands» an den Rändern
+(ZEICHNEN 11 / ANSICHT 6 / PROJEKT 6 / AUSTAUSCH 6 = 29 Werkzeuge), Ansichts-Info + Stationen-Orb
+oben links, Kosmo-Orb unten rechts. Die heutige Werkzeugleiste/Dock-Fläche bleibt als
+**«Manuell»** einen Klick entfernt (AUSTAUSCH → Manuell), Umschalter beidseitig, Zustand
+persistent im Projekt-Store. Verbindliches 4-Stufen-Modell (Pill 34×104 → Leiste → Mini-Popup
+2–4 Schnelleinstellungen → Einstellungsfenster) für **alle** 29 Werkzeuge — **kein Werkzeug endet
+bei Stufe 1**. Ein Token-Satz `--f-*` mit zwei Belegungen (PAPIER/KOSMOS), additiv auf die
+bestehende `--k-*`-Skala gemappt.
+
+**Volle Spezifikation:** `docs/ISLAND-UI-SPEZ.md` (PD0) — Bühnenordnung, vollständige
+Island→Werkzeug-Mapping-Tabelle (29/29 mit Repo-Fundstelle oder ehrlichem NEU-Vermerk),
+4-Stufen-Inhalte je Werkzeug, Token-Mapping-Tabelle `--f-*`→`--k-*`, Sanktionsliste, Pakete
+PD1–PD4 mit Gate-Kriterien, offene Owner-Fragen.
+
+**Sanktions-Kern (bindend, wörtlich aus dem Wellenplan-Nachtrag):** Default-Flip der
+design-Station auf Island-UI (PD2); die Bestands-E2E-Verträge der design-Station laufen weiter
+GEGEN DIE MANUELLE FLÄCHE via **einem** globalen `localStorage`-Seed-Helper (ein Fixture, keine
+Assertion-Änderungen — Muster analog zum bestehenden `kosmo.onboarded`-Seed und dem defensiven
+`kosmo.ui.v1`-Parsing, `apps/kosmo-orbit/src/state/ui-zustand.ts:222-241`); neue additive
+`island-*`-testid-Namensschema, disjunkt von allen bestehenden `tool-*`/`view-*`-Namen; KEINE
+Golden-Berührung (die 35 SVG-Goldens bleiben byte-identisch). Details/vollständige Liste in
+`docs/ISLAND-UI-SPEZ.md` §6.
+
+**Pakete:** PD0 (diese Spez, abgeschlossen) → PD1 Fundament (Token-Layer + `IslandShell`) → PD2
+Verdrahtung (echte Commands, Default-Flip, Seed-Helper, Manuell-Umschalter) → PD3a‖PD3b
+(Mini-Popups + Einstellungsfenster für alle 29 Werkzeuge, dateidisjunkt ZEICHNEN+ANSICHT vs.
+PROJEKT+AUSTAUSCH) → PD4 Abschluss (Kosmo-Orb, Touch-Polish, eigene Island-E2E-Suite). Neue
+Matrix-Zeilen C-33…C-41 in §9.9 oben decken jedes Paket + die vier Owner-Nachtrag-Punkte
+(alle 29 Werkzeuge Stufe 2+3, Farbwelten, Manuell-Umschalter, Bestands-E2E-grün) einzeln ab.
+
+**Verhältnis zum LoRA-Strom (P1–P8):** eigener, paralleler Strom — die design-Station ist von
+P3/P5/P7a unberührt (Dateikreis-Disjunktheit, s. `docs/ISLAND-UI-SPEZ.md` §7). Die
+P8-Matrix-Abnahme (§9.8/C-32 oben) deckt beide Ströme; §9.9 ist die Island-eigene Teilmatrix,
+gegen die eine PD-eigene Abnahme adversarial prüft, bevor sie in die gemeinsame P8-Abnahme
+einfliesst.
