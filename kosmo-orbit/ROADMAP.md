@@ -1479,4 +1479,11 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
     - Ehrlich gemeldet: Spez-Widerspruch §2.3/§6.1 (grundriss-v0-Archiv — Fable entscheidet am P2-Gate); P5-Testdatei bricht security:secrets (an P5 mit Muss-Kriterium übergeben); package.json +1 Script-Zeile.
     - Gate: Validator unabhängig 9 Dateien/0 harte Fehler; node --test 20/20 (Fable-Erstlauf mit Verzeichnis-Glob war Fehlaufruf, kein Defekt); Dateikreis exakt.
 
+420. **v0.8.2 / P2: Grundriss-v1 — reproduzierbarer SFT-Generator** *(17.07.2026, W1)*
+    - **Das nicht eingecheckte /tmp-Wegwerf-Skript ist jetzt echtes Werkzeug**: `tools/training/generiere-grundriss-sft.mts` — seeded (mulberry32, literal 0x4b4f534d, XOR-Offsets je Pool), vier Pools (Rechteck-Grid 360 + 220 zufällig · L-Form 144 + 60 · 8 kuratierte Ablehn-/Diagnose-Fälle · Segmentierung 72 + 80 + 2 Kein-Band-Diagnosen), Filter nach checks.ts-Schwellen (Zimmerbreite <2.40 m hart; 21 verworfen = 3.6%).
+    - **`grundriss-v1.jsonl`: 925 Zeilen** kosmo-sft/v1-feldgenau (559 Rechteck / 204 L / 8 Diagnose / 154 Segmentierung), Statistikbericht daneben; **Reproduzierbarkeit dreifach bewiesen** (Agent-Doppellauf + unabhängiger Fable-Drittlauf, alle sha256 426ef4fa… identisch). Validator 0 Fehler/0 Warnungen auf der Datei.
+    - **Eval-Suite** `eval/kosmo-zeichner-grundriss/` (adapter-benannter Pfad — begründete Abweichung vom Dispatch-Wortlaut zugunsten Spez §2.2/REGISTRY, Fable-akzeptiert): 12 feste Prompts inkl. U-Form/Schräge, ausführbarer Prüfer mit Selbstcheck 12/12 + Kandidaten-Modus für künftige HomeStation-Checkpoints (ehrlich als ungenutzt vermerkt).
+    - Ehrlich dokumentiert: der schärfere pruefeGrundriss-Weg über echte Entities existiert im Kernel (kernel.test:4780-4805), bleibt per Spez/LORA-KONZEPT §1.3 bewusst v1.1. **Spez-Widerspruch §2.3/§6.1 per Fable-Entscheid geschlossen**: grundriss-v0.jsonl als Archiv nach sft/kosmo-zeichner-grundriss/ verschoben (Migrationstabelle gewinnt), leerer lora/-Ordner entfernt.
+    - Gate: Kernel 964/964 unabhängig, Typecheck der Tool-Dateien clean, Schema 925/925 valide mit eindeutigen IDs.
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

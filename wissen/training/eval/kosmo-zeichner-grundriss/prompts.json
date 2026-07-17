@@ -1,0 +1,174 @@
+{
+  "adapter": "kosmo-zeichner-grundriss",
+  "beschreibung": "Feste Eval-Suite (v0.8.2/P2, V082-SPEZ.md §6.2/§9.3 C-10, docs/LORA-KONZEPT.md §1.4). Zwölf feste Wohnungs-Konstellationen — vor UND nach jedem HomeStation-Trainingslauf mit demselben Prompt gegen den Basis-Checkpoint und das LoRA gefahren. Referenz-Antworten kommen HIER direkt aus dem deterministischen Kernel-Generator (kein Mensch hat sie erfunden) — `pruefe-eval.mts` nutzt sie als Ground Truth, um die eigenen Kriterien selbst zu verifizieren (Selbstcheck), UND um künftige Kandidaten-Antworten (LoRA-Output) automatisiert zu bewerten.",
+  "kriterien_legende": {
+    "layout": "gültiges Zimmerlayout erwartet: mind. 1 Raum, keine Zimmerbreite < 2.40 m bei einem HNF-Raum (checks.ts-Näherung), Kennzahlen plausibel (HNF+VF ≤ Wohnungsfläche, HNF > 0)",
+    "ablehnung": "der Algorithmus lehnt ehrlich ab: 0 Räume, mindestens eine Diagnose-Zeile erklärt warum",
+    "diagnose": "der Algorithmus liefert ein Layout, ABER mit einer erwarteten Diagnose-Zeile (Teilstring-Match) — ehrliches Benennen einer Einschränkung statt sie zu verschweigen",
+    "unregelmaessig": "zerlegeRektilinear() auf dem Umriss liefert typ:'unregelmaessig' — Algorithmus-Grenze v1 (nur achsparallele Rechteck/L-Formen), ehrlich benannt statt erfunden",
+    "segmentierung-layout": "mind. 1 geschnittene Wohnung, Mix-Erfüllung dokumentiert (kann < Soll sein), Gesamtfläche der Wohnungen ≤ Footprint-Fläche",
+    "segmentierung-ablehnung": "0 geschnittene Wohnungen (kein Band ≥ 3 m Tiefe neben dem Korridor), Diagnose erklärt warum"
+  },
+  "prompts": [
+    {
+      "id": "eval-01-rect-klein",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": { "breiteMm": 6800, "tiefeMm": 7200 },
+        "korridorKante": "unten",
+        "kontext": "rechteckige Wohnung 6.8×7.2 m"
+      },
+      "erwartung": { "typ": "layout" }
+    },
+    {
+      "id": "eval-02-rect-gross",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": { "breiteMm": 12000, "tiefeMm": 9500 },
+        "korridorKante": "rechts",
+        "kontext": "grosse rechteckige Wohnung 12.0×9.5 m"
+      },
+      "erwartung": { "typ": "layout" }
+    },
+    {
+      "id": "eval-03-rect-schmale-randlage",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": { "breiteMm": 6200, "tiefeMm": 9000 },
+        "korridorKante": "links",
+        "kontext": "schmale Randlage 6.2×9.0 m"
+      },
+      "erwartung": { "typ": "layout" }
+    },
+    {
+      "id": "eval-04-rect-ablehn-zu-klein",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": { "breiteMm": 5000, "tiefeMm": 5000 },
+        "korridorKante": "unten",
+        "kontext": "quadratische Kleinstwohnung 5.0×5.0 m"
+      },
+      "erwartung": { "typ": "ablehnung" }
+    },
+    {
+      "id": "eval-05-rect-ablehn-schmal",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": { "breiteMm": 5500, "tiefeMm": 11000 },
+        "korridorKante": "links",
+        "kontext": "sehr schmaler Riegel 5.5×11.0 m"
+      },
+      "erwartung": { "typ": "ablehnung" }
+    },
+    {
+      "id": "eval-06-rect-zu-flach-fuer-flur",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": { "breiteMm": 12500, "tiefeMm": 6200 },
+        "korridorKante": "unten",
+        "kontext": "zu flach für internen Flur 12.5×6.2 m"
+      },
+      "erwartung": { "typ": "diagnose", "diagnoseEnthaelt": "Durchgangszimmer" }
+    },
+    {
+      "id": "eval-07-l-form-normal",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": {
+          "typ": "l",
+          "haupt": { "breiteMm": 9000, "tiefeMm": 7500 },
+          "fluegel": { "breiteMm": 4000, "tiefeMm": 5000, "naht": "rechts-an-haupt" }
+        },
+        "korridorKante": "unten",
+        "kontext": "L-Wohnung Hauptteil 9.0×7.5 m, Flügel 4.0×5.0 m"
+      },
+      "erwartung": { "typ": "layout" }
+    },
+    {
+      "id": "eval-08-l-form-kurze-naht",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": {
+          "typ": "l",
+          "haupt": { "breiteMm": 8500, "tiefeMm": 7000 },
+          "fluegel": { "breiteMm": 3000, "tiefeMm": 800, "naht": "rechts-an-haupt" }
+        },
+        "korridorKante": "unten",
+        "kontext": "L-Wohnung mit sehr kurzer Flügel-Naht (< 90 cm)"
+      },
+      "erwartung": { "typ": "diagnose", "diagnoseEnthaelt": "Flügel-Naht unter 90 cm" }
+    },
+    {
+      "id": "eval-09-unregelmaessig-u-form",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": {
+          "typ": "frei",
+          "outline": [
+            { "x": 0, "y": 0 }, { "x": 12000, "y": 0 }, { "x": 12000, "y": 9000 },
+            { "x": 8000, "y": 9000 }, { "x": 8000, "y": 6000 }, { "x": 4000, "y": 6000 },
+            { "x": 4000, "y": 9000 }, { "x": 0, "y": 9000 }
+          ]
+        },
+        "korridorKante": "unten",
+        "kontext": "U-förmiger Umriss (Innenhof-Kerbe) — zwei Innenecken"
+      },
+      "erwartung": { "typ": "unregelmaessig", "grundEnthaelt": "Innenecke" }
+    },
+    {
+      "id": "eval-10-unregelmaessig-schraege-kante",
+      "aufgabe": "grundriss-generieren",
+      "input": {
+        "aufgabe": "grundriss-generieren",
+        "wohnung": {
+          "typ": "frei",
+          "outline": [
+            { "x": 0, "y": 0 }, { "x": 9000, "y": 0 }, { "x": 9000, "y": 6000 },
+            { "x": 7000, "y": 8000 }, { "x": 0, "y": 8000 }
+          ]
+        },
+        "korridorKante": "unten",
+        "kontext": "Umriss mit gekappter Ecke (schräge Kante)"
+      },
+      "erwartung": { "typ": "unregelmaessig", "grundEnthaelt": "schräge Kanten" }
+    },
+    {
+      "id": "eval-11-segmentierung-normal",
+      "aufgabe": "wohnung-segmentieren",
+      "input": {
+        "aufgabe": "wohnung-segmentieren",
+        "footprint": { "laengeMm": 40000, "tiefeMm": 16000 },
+        "korridor": { "breiteMm": 3000, "lage": "mittig-horizontal" },
+        "mix": [
+          { "typ": "marktgerecht", "groesse": 95, "anzahl": 4 },
+          { "typ": "preisguenstig", "groesse": 75, "anzahl": 4 }
+        ],
+        "optionen": { "kern": true },
+        "kontext": "Geschoss 40.0×16.0 m, Mix «markt-preisguenstig-mix», mit Erschliessungskern"
+      },
+      "erwartung": { "typ": "segmentierung-layout" }
+    },
+    {
+      "id": "eval-12-segmentierung-kein-band",
+      "aufgabe": "wohnung-segmentieren",
+      "input": {
+        "aufgabe": "wohnung-segmentieren",
+        "footprint": { "laengeMm": 24000, "tiefeMm": 6500 },
+        "korridor": { "breiteMm": 3000, "lage": "mittig-horizontal" },
+        "mix": [{ "typ": "marktgerecht", "groesse": 95, "anzahl": 6 }],
+        "optionen": { "kern": false },
+        "kontext": "zu flaches Geschoss 24.0×6.5 m — kein Band ≥ 3 m neben dem Korridor"
+      },
+      "erwartung": { "typ": "segmentierung-ablehnung" }
+    }
+  ]
+}
