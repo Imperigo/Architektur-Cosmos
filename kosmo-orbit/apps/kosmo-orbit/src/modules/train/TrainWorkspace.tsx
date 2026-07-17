@@ -1,10 +1,51 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { LearningJournal, type Learning } from '@kosmo/ai';
-import { Badge, Hairline, Karteikarte, KButton, KIcon, KInput, KToolbar, Measure, Messrahmen, moduleHue } from '@kosmo/ui';
+import {
+  LearningJournal,
+  LORA_ADAPTER_REGISTRY,
+  baueKosmoSftAusJournal,
+  baueLoraTrainManifest,
+  exportiereUndTrainiere,
+  generalisiereLoraTrainBericht,
+  type Learning,
+} from '@kosmo/ai';
+import { LoraTrainBerichtV1, LoraTrainManifest } from '@kosmo/contracts';
+import {
+  Badge,
+  Hairline,
+  Karteikarte,
+  KButton,
+  KDialog,
+  KIcon,
+  KInput,
+  KToolbar,
+  Measure,
+  Messrahmen,
+  moduleHue,
+} from '@kosmo/ui';
 import { listDocs } from '../prepare/knowledge';
 import { useQuellen } from '../../state/quellen';
 import { journalStore } from '../../state/journal-store';
 import './train.css';
+
+/** Ehrliches Ampel-Etikett je Registry-Status (§2.4/§5.2) — reiner Text, keine erfundene Zahl. */
+const STATUS_ETIKETT: Record<(typeof LORA_ADAPTER_REGISTRY)[number]['status'], string> = {
+  leer: 'leer',
+  wächst: 'wächst',
+  reproduzierbar: 'reproduzierbar',
+  vollständig: 'vollständig',
+  wartet: 'wartet auf Owner/HomeStation',
+};
+
+function ladeDatei(name: string, inhalt: string, typ: string) {
+  const url = URL.createObjectURL(new Blob([inhalt], { type: typ }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
 
 /**
  * KosmoTrain — das Lernprogramm als Oberfläche (Q8, Vision Persona 4):
@@ -42,6 +83,46 @@ export function TrainWorkspace() {
 
   const gut = eintraege.filter((e) => e.sentiment === 'gut').length;
   const refresh = () => setEintraege([...journal.all]);
+
+  // v0.8.2 / P5 «Trainer-Contract + Trainingspaket» (docs/V082-SPEZ.md §6.5):
+  // je Adapter eine ehrliche Statuszeile aus der (eigenen) Registry-Logik in
+  // @kosmo/ai; nur kosmo-buero ist heute real aus dem Journal befüllbar —
+  // die anderen zeigen ihren Registry-Hinweis ohne Trainingslauf-Versprechen.
+  const [paket, setPaket] = useState<{ manifest: LoraTrainManifest; jsonl: string } | null>(null);
+  const [probelauf, setProbelauf] = useState<LoraTrainBerichtV1 | null>(null);
+  const [schnuerenFehler, setSchnuerenFehler] = useState<string | null>(null);
+
+  const kosmoSft = useMemo(() => baueKosmoSftAusJournal(eintraege, 'private'), [eintraege]);
+
+  const schnuereTrainingspaket = async () => {
+    setSchnuerenFehler(null);
+    try {
+      const jsonl = kosmoSft.beispiele.map((b) => JSON.stringify(b)).join('\n');
+      const manifestDaten = await baueLoraTrainManifest({
+        adapter: 'kosmo-buero',
+        dateien: [{ pfad: 'kosmo-buero-sft.jsonl', inhalt: jsonl, format: 'kosmo-sft/v1', visibility: 'private' }],
+        rezept: 'docs/KOSMOTRAIN.md §3',
+        evalSuite: 'wissen/training/eval/kosmo-buero/',
+        visibility: 'private',
+        hinweis: `${kosmoSft.beispiele.length} Beispiel(e) aus dem Lernjournal, ${kosmoSft.verworfen.length} ohne Notiz verworfen.`,
+      });
+      const manifest = LoraTrainManifest.parse(manifestDaten);
+      setPaket({ manifest, jsonl });
+    } catch (fehler) {
+      setSchnuerenFehler(fehler instanceof Error ? fehler.message : 'Manifest liess sich nicht bauen.');
+    }
+  };
+
+  const ladeManifestUndJsonl = () => {
+    if (!paket) return;
+    ladeDatei('kosmo-buero-manifest.json', JSON.stringify(paket.manifest, null, 2), 'application/json');
+    ladeDatei('kosmo-buero-sft.jsonl', paket.jsonl, 'application/jsonl');
+  };
+
+  const fakeProbelauf = async () => {
+    const { bericht } = await exportiereUndTrainiere(journal);
+    setProbelauf(LoraTrainBerichtV1.parse(generalisiereLoraTrainBericht(bericht, 'kosmo-buero')));
+  };
 
   const exportJsonl = () => {
     const url = URL.createObjectURL(new Blob([journal.toJsonl()], { type: 'application/jsonl' }));
@@ -165,6 +246,82 @@ export function TrainWorkspace() {
         )}
 
         <Hairline />
+
+        {/* Trainingspaket — Adapter-Status (Registry-Logik) + Schnüren/Probelauf,
+            v0.8.2 / P5 (docs/V082-SPEZ.md §6.5). Nur kosmo-buero ist heute real
+            aus dem Journal befüllbar; die anderen Adapter zeigen ihren
+            ehrlichen Registry-Hinweis, kein Trainingslauf-Versprechen. */}
+        <div className="k-glass train-paket" style={{ ['--_hue' as string]: moduleHue.train }} data-testid="train-paket">
+          <span className="k-titel train-paket-titel">Trainingspaket</span>
+          <div className="train-paket-registry" data-testid="train-adapter-registry">
+            {LORA_ADAPTER_REGISTRY.map((r) => (
+              <div key={r.id} className="train-paket-adapter" data-testid={`train-adapter-${r.id}`}>
+                <span className="train-paket-adapter-id">{r.id}</span>
+                <span className="train-paket-adapter-ziel">{r.ziel}</span>
+                <span className="train-paket-adapter-status" data-testid={`train-adapter-status-${r.id}`}>
+                  {STATUS_ETIKETT[r.status]}
+                </span>
+                <span className="train-paket-adapter-hinweis">{r.hinweis}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="train-paket-aktionen">
+            <KButton
+              size="sm"
+              tone="accent"
+              onClick={() => void schnuereTrainingspaket()}
+              data-testid="train-paket-schnueren"
+              disabled={kosmoSft.beispiele.length === 0}
+            >
+              Trainingspaket schnüren (kosmo-buero)
+            </KButton>
+            <KButton size="sm" tone="ghost" onClick={() => void fakeProbelauf()} data-testid="train-fake-probelauf">
+              Fake-Probelauf
+            </KButton>
+          </div>
+          {kosmoSft.beispiele.length === 0 && (
+            <Measure>Noch keine kuratierten Einträge (mit Notiz) — kein kosmo-sft/v1-Beispiel möglich.</Measure>
+          )}
+          {schnuerenFehler !== null && (
+            <span className="train-paket-fehler" data-testid="train-paket-fehler">
+              {schnuerenFehler}
+            </span>
+          )}
+          {probelauf !== null && (
+            <div className="train-paket-bericht" data-testid="train-fake-bericht">
+              <Measure>
+                Fake-Bericht ({probelauf.trainerId}, fake={String(probelauf.fake)}): {probelauf.beispiele} Beispiel(e),{' '}
+                {probelauf.verworfen} verworfen — {probelauf.hinweise[0]}
+              </Measure>
+            </div>
+          )}
+        </div>
+
+        {paket !== null && (
+          <KDialog
+            titel="Trainingspaket schnüren — kosmo-buero"
+            onClose={() => setPaket(null)}
+            data-testid="train-paket-dialog"
+            fusszeile={
+              <KButton size="sm" tone="accent" onClick={ladeManifestUndJsonl} data-testid="train-paket-download">
+                Manifest + JSONL herunterladen
+              </KButton>
+            }
+          >
+            <div className="train-paket-vorschau">
+              <Measure>Adapter: {paket.manifest.adapter}</Measure>
+              <Measure>Rezept: {paket.manifest.rezept}</Measure>
+              <Measure>Visibility-Deckel: {paket.manifest.visibility}</Measure>
+              {paket.manifest.dateien.map((d) => (
+                <span key={d.pfad} className="train-paket-vorschau-datei" data-testid="train-paket-datei">
+                  {d.pfad} — {d.anzahlZeilen ?? 0} Zeile(n) — sha256 {d.sha256.slice(0, 12)}…
+                </span>
+              ))}
+              {paket.manifest.hinweis !== undefined && <Measure>{paket.manifest.hinweis}</Measure>}
+            </div>
+          </KDialog>
+        )}
 
         {/* Trainings-Zyklus */}
         <div className="train-zyklus">

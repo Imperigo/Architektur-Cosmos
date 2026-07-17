@@ -243,3 +243,294 @@ export async function exportiereUndTrainiere(
   const bericht = await trainer.trainiere(datensatz);
   return { datensatz, bericht };
 }
+
+/**
+ * v0.8.2 / P5 «Trainer-Contract + Trainingspaket» (`docs/V082-SPEZ.md` §6.5)
+ * — additiver Ausbau NEBEN den obigen KI4-Funktionen (die bleiben
+ * byte-gleich, s. `exportiereUndTrainiere` oben). Diese Erweiterung baut das
+ * kanonische `kosmo-sft/v1`-Schema (§3.1) und das `lora-train/v1`-Manifest
+ * (`@kosmo/contracts`) — beides Container-baubar, kein GPU-Zugriff nötig.
+ */
+
+/** Die Adapter-Menge — identisch zur Zielkompetenz-Karte §5.1/§5.2 und zum
+ * `LoraTrainAdapterId`-Enum in `@kosmo/contracts` (bewusst als eigenes,
+ * lokales Literal geführt — `kosmo-ai` hängt heute an KEINEM anderen Paket
+ * ausser `@kosmo/kernel`, ein neuer Cross-Package-Import nur für sechs
+ * String-Literale wäre eine unnötige Kopplung; die App-Schicht validiert das
+ * Ergebnis später ohnehin gegen den echten `LoraTrainManifest`-Vertrag). */
+export type LoraTrainAdapterId =
+  | 'kosmo-buero'
+  | 'kosmo-zeichner-grundriss'
+  | 'kosmo-zeichner-commands'
+  | 'kosmo-buero-dpo'
+  | 'whisper-ch'
+  | 'kosmo-werkplan';
+
+/** Eine Zeile der Adapter-Registry-Logik (§2.4/§5.2) — die ehrliche
+ * Statuszeile je Adapter, die `TrainWorkspace` anzeigt. Eigenständig in
+ * diesem Paket geführt (P1s `wissen/training/REGISTRY.md` ist ein Doku-
+ * Artefakt, kein programmatischer Konsument — dateidisjunkt zu P1). */
+export interface LoraAdapterStatus {
+  readonly id: LoraTrainAdapterId;
+  readonly ziel: string;
+  readonly status: 'leer' | 'wächst' | 'reproduzierbar' | 'vollständig' | 'wartet';
+  /** Ehrliche, deutsche Statuszeile — nie ein Trainingslauf-Versprechen ohne Datenlage. */
+  readonly hinweis: string;
+}
+
+/** Die 6 Adapter-Zeilen (Zielkompetenz-Karte §5.1, Registry-Zeilen 1-6 §5.2). */
+export const LORA_ADAPTER_REGISTRY: readonly LoraAdapterStatus[] = [
+  {
+    id: 'kosmo-buero',
+    ziel: 'Persona/Bürostil',
+    status: 'wächst',
+    hinweis: 'Wächst aus dem Lernjournal — heute real befüllbar (Journal-Export unten).',
+  },
+  {
+    id: 'kosmo-zeichner-grundriss',
+    ziel: 'Grundriss-Generierung',
+    status: 'reproduzierbar',
+    hinweis: 'Datensatz liegt im Repo (wissen/training/sft/kosmo-zeichner-grundriss/) — reproduzierbarer Generator.',
+  },
+  {
+    id: 'kosmo-zeichner-commands',
+    ziel: 'Software-Bedienung/Tool-Calling',
+    status: 'leer',
+    hinweis: 'Wartet auf den zod-zu-commands-Playbook-Lauf (Claude-Strang, P4).',
+  },
+  {
+    id: 'kosmo-buero-dpo',
+    ziel: 'Präferenzen (DPO)',
+    status: 'leer',
+    hinweis: 'Heute leer — wächst erst mit der Signal-Erfassung (Ablehnung+Korrektur, P3).',
+  },
+  {
+    id: 'whisper-ch',
+    ziel: 'CH-Deutsch-STT',
+    status: 'wartet',
+    hinweis: 'Wartet auf Owner/HomeStation — Audio bleibt Wegwerf-Tmp, kein Datensatz.',
+  },
+  {
+    id: 'kosmo-werkplan',
+    ziel: 'Werkplan-Bildstil',
+    status: 'wartet',
+    hinweis: 'Wartet auf Owner/HomeStation — 4 Owner-Entscheide offen (docs/LORA-KONZEPT.md §6).',
+  },
+];
+
+/** Eine Chat-Zeile im kanonischen `kosmo-sft/v1`-Beispiel (§3.1). */
+export interface KosmoSftMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+/** Provenienz — NIE ein Trainingsfeld, nur Herkunft/Qualität (§3.1). */
+export interface KosmoSftMeta {
+  id: string;
+  adapter: LoraTrainAdapterId;
+  quelle: string;
+  visibility: 'public' | 'private';
+  qualitaet: { checksBestanden: boolean; hinweise: string[] };
+}
+
+/** Ein Beispiel im kanonischen `kosmo-sft/v1`-Schema. */
+export interface KosmoSftBeispiel {
+  messages: KosmoSftMessage[];
+  meta: KosmoSftMeta;
+}
+
+const KOSMO_BUERO_SYSTEM = 'Du bist Kosmo, die Büro-KI des Architekturbüros Andrin. Antworte im gelernten Bürostil.';
+
+/**
+ * Playbook `journal-zu-sft.md` (§1.4) als Code: ein kuratierter Journal-
+ * Eintrag (Learning MIT gesetzter Notiz — dieselbe Regel wie
+ * `architekturKorpus()`, `apps/kosmo-orbit/src/state/training-korpus.ts:80-
+ * 95`) wird zu einem `kosmo-sft/v1`-Beispiel für `kosmo-buero`. Anders als
+ * `bewerteEintrag()` oben (die auch Einträge OHNE Notiz zulässt, Kontext als
+ * Ersatz) verlangt diese Funktion bewusst die Notiz — «die Notiz ist der
+ * Trainings-Kern», nicht der rohe Kontext.
+ */
+export function learningZuKosmoSftBeispiel(
+  l: Learning,
+  visibility: 'public' | 'private' = 'private',
+): { ok: true; beispiel: KosmoSftBeispiel } | { ok: false; grund: string } {
+  if (l.sentiment !== 'gut' && l.sentiment !== 'schlecht') {
+    return { ok: false, grund: `sentiment fehlt oder ungültig (erwartet 'gut'|'schlecht', war ${JSON.stringify(l.sentiment)})` };
+  }
+  if (!istNichtLeer(l.context)) {
+    return { ok: false, grund: 'context ist leer — kein Trainingswert ohne Situationsbeschrieb' };
+  }
+  if (!istNichtLeer(l.ts)) {
+    return { ok: false, grund: 'ts fehlt oder ist leer — kein Rückverfolgen zur Quelle möglich' };
+  }
+  if (!istNichtLeer(l.note)) {
+    return {
+      ok: false,
+      grund: 'Notiz fehlt — nur kuratierte Einträge (mit Notiz) werden zu kosmo-sft/v1-Beispielen (dieselbe Regel wie architekturKorpus()).',
+    };
+  }
+  const anweisung = l.sentiment === 'schlecht' ? `Vermeide künftig: ${l.note.trim()}` : `Beibehalten: ${l.note.trim()}`;
+  return {
+    ok: true,
+    beispiel: {
+      messages: [
+        { role: 'system', content: KOSMO_BUERO_SYSTEM },
+        { role: 'user', content: l.context.trim() },
+        { role: 'assistant', content: anweisung },
+      ],
+      meta: {
+        id: `journal-${l.ts}`,
+        adapter: 'kosmo-buero',
+        quelle: `journal:${l.ts}`,
+        visibility,
+        qualitaet: { checksBestanden: true, hinweise: [] },
+      },
+    },
+  };
+}
+
+/** Batch-Variante über ein ganzes Journal — verworfene Einträge (ohne Notiz
+ * o.ä.) gehen nicht verloren, sondern werden ehrlich mit Begründung geführt
+ * (dasselbe Muster wie `baueLoraDatensatzAusEintraegen`). */
+export function baueKosmoSftAusJournal(
+  eintraege: readonly Learning[],
+  visibility: 'public' | 'private' = 'private',
+): { beispiele: KosmoSftBeispiel[]; verworfen: AussortierterJournalEintrag[] } {
+  const beispiele: KosmoSftBeispiel[] = [];
+  const verworfen: AussortierterJournalEintrag[] = [];
+  eintraege.forEach((e, index) => {
+    const r = learningZuKosmoSftBeispiel(e, visibility);
+    if (r.ok) beispiele.push(r.beispiel);
+    else verworfen.push({ index, ...(istNichtLeer(e.ts) ? { quelleTs: e.ts } : {}), grund: r.grund });
+  });
+  return { beispiele, verworfen };
+}
+
+/**
+ * sha256-Hex über Text — Web Crypto (`crypto.subtle.digest`), NICHT Node-
+ * `crypto`: läuft identisch im Browser (App-Bundle) wie unter Vitest/Node
+ * (≥19, `globalThis.crypto` ist die Web-Crypto-Implementierung), kein
+ * Polyfill nötig (dieselbe Bundle-Begründung wie `djb2Hash` oben, aber hier
+ * ist ein echter sha256 verlangt — Manifest-Hash-Gate, §6.5).
+ */
+export async function sha256Hex(text: string): Promise<string> {
+  const bytes = new TextEncoder().encode(text);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function zaehleJsonlZeilen(inhalt: string): number {
+  return inhalt.split('\n').filter((z) => z.trim() !== '').length;
+}
+
+/** Eine Rohdatei, bevor sie gehasht wird — Eingabe für `baueLoraTrainDateien`/`baueLoraTrainManifest`. */
+export interface LoraTrainDateiEingabe {
+  pfad: string;
+  inhalt: string;
+  format: 'kosmo-sft/v1' | 'kosmo-dpo/v1' | 'kosmo-signal/v1';
+  visibility: 'public' | 'private';
+}
+
+/** Dieselbe Datei, jetzt mit Hash + Zeilenzahl — Manifest-Zeile ohne den `@kosmo/contracts`-Import. */
+export interface LoraTrainDateiMitHash {
+  pfad: string;
+  sha256: string;
+  format: 'kosmo-sft/v1' | 'kosmo-dpo/v1' | 'kosmo-signal/v1';
+  visibility: 'public' | 'private';
+  anzahlZeilen: number;
+}
+
+/** Hasht eine Liste roher Dateien — deterministisch: derselbe Inhalt liefert
+ * immer denselben Hash, ein geänderter Inhalt IMMER einen anderen (Manifest-
+ * Hash-Gate). */
+export async function baueLoraTrainDateien(
+  dateien: readonly LoraTrainDateiEingabe[],
+): Promise<LoraTrainDateiMitHash[]> {
+  return Promise.all(
+    dateien.map(async (d) => ({
+      pfad: d.pfad,
+      sha256: await sha256Hex(d.inhalt),
+      format: d.format,
+      visibility: d.visibility,
+      anzahlZeilen: zaehleJsonlZeilen(d.inhalt),
+    })),
+  );
+}
+
+/** Eingabe für ein volles `lora-train/v1`-Manifest (Feldnamen 1:1 zum Vertrag in `@kosmo/contracts`). */
+export interface LoraTrainManifestEingabe {
+  adapter: LoraTrainAdapterId;
+  dateien: readonly LoraTrainDateiEingabe[];
+  /** z.B. "docs/KOSMOTRAIN.md §3". */
+  rezept: string;
+  evalSuite?: string;
+  visibility: 'public' | 'private';
+  hinweis?: string;
+}
+
+/** Die reine Manifest-Nutzlast (noch nicht zod-geparst — das tut die
+ * App-/Test-Schicht gegen `LoraTrainManifest` aus `@kosmo/contracts`, die
+ * hier bewusst NICHT importiert wird, s. Kopfkommentar `LoraTrainAdapterId`). */
+export interface LoraTrainManifestDaten {
+  schema: 'kosmo.lora-train/v1';
+  adapter: LoraTrainAdapterId;
+  erzeugt_um: string;
+  dateien: LoraTrainDateiMitHash[];
+  rezept: string;
+  evalSuite?: string;
+  visibility: 'public' | 'private';
+  hinweis?: string;
+}
+
+/** Baut ein vollständiges Manifest aus einer Dateiliste — hasht jede Datei
+ * und setzt `erzeugt_um` auf jetzt. */
+export async function baueLoraTrainManifest(eingabe: LoraTrainManifestEingabe): Promise<LoraTrainManifestDaten> {
+  const dateien = await baueLoraTrainDateien(eingabe.dateien);
+  return {
+    schema: 'kosmo.lora-train/v1',
+    adapter: eingabe.adapter,
+    erzeugt_um: new Date().toISOString(),
+    dateien,
+    rezept: eingabe.rezept,
+    ...(eingabe.evalSuite !== undefined ? { evalSuite: eingabe.evalSuite } : {}),
+    visibility: eingabe.visibility,
+    ...(eingabe.hinweis !== undefined ? { hinweis: eingabe.hinweis } : {}),
+  };
+}
+
+/** Die verallgemeinerte Bericht-Form (1:1 zu `LoraTrainBerichtV1` aus
+ * `@kosmo/contracts`) — nie ein anderer Feldname als der Vertrag. */
+export interface LoraTrainBerichtGeneralisiert {
+  schema: 'kosmo.lora-train-bericht/v1';
+  adapter: LoraTrainAdapterId;
+  trainerId: string;
+  fake: boolean;
+  beispiele: number;
+  verworfen: number;
+  fingerprint: string;
+  hinweise: string[];
+  erzeugt_um: string;
+}
+
+/** Übersetzt einen bestehenden `LoraTrainBericht` (KI4, s. oben) — egal ob
+ * vom `FakeLoraTrainer` oder einem künftigen echten Trainer — in die
+ * verallgemeinerte, adapterbezogene Form. Reine Feld-Umbenennung/-Ergänzung,
+ * KEINE neue Logik, KEIN verändertes Ergebnis. */
+export function generalisiereLoraTrainBericht(
+  bericht: LoraTrainBericht,
+  adapter: LoraTrainAdapterId,
+): LoraTrainBerichtGeneralisiert {
+  return {
+    schema: 'kosmo.lora-train-bericht/v1',
+    adapter,
+    trainerId: bericht.trainerId,
+    fake: bericht.fake,
+    beispiele: bericht.anzahlBeispiele,
+    verworfen: bericht.anzahlAussortiert,
+    fingerprint: bericht.laufKennzeichen,
+    hinweise: [bericht.hinweis],
+    erzeugt_um: new Date().toISOString(),
+  };
+}

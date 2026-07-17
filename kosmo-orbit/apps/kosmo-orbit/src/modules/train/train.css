@@ -93,6 +93,72 @@
   color: var(--k-ink-faint);
 }
 
+/* Trainingspaket (v0.8.2 / P5, docs/V082-SPEZ.md §6.5) — Adapter-Registry-
+ * Status + Schnüren/Probelauf. Selbes Muster wie .train-kuration/.train-stand
+ * (Glass + dezente Hue-Note über border-top-color). */
+.train-paket {
+  display: grid;
+  gap: var(--k-s3);
+  padding: var(--k-s4);
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 40%, var(--k-glass-stroke, var(--k-line)));
+}
+.train-paket-titel {
+  font-size: var(--k-t-lg);
+}
+.train-paket-registry {
+  display: grid;
+  gap: var(--k-s2);
+}
+.train-paket-adapter {
+  display: grid;
+  grid-template-columns: minmax(150px, auto) minmax(140px, auto) auto 1fr;
+  gap: var(--k-s3);
+  align-items: baseline;
+  font-size: var(--k-t-sm);
+  padding: var(--k-s2) 0;
+  border-bottom: 1px solid var(--k-line);
+}
+.train-paket-adapter-id {
+  font-family: var(--k-font-mono);
+  font-weight: 600;
+}
+.train-paket-adapter-ziel {
+  color: var(--k-ink-soft);
+}
+.train-paket-adapter-status {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.train-paket-adapter-hinweis {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+}
+.train-paket-aktionen {
+  display: flex;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+}
+.train-paket-fehler {
+  color: var(--k-danger);
+  font-size: var(--k-t-sm);
+}
+.train-paket-bericht {
+  color: var(--k-ink-soft);
+}
+.train-paket-vorschau {
+  display: grid;
+  gap: var(--k-s2);
+}
+.train-paket-vorschau-datei {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-soft);
+}
+
 .train-zyklus {
   display: grid;
   gap: var(--k-s3);

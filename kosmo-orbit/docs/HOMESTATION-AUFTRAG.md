@@ -74,6 +74,7 @@ im Repo tatsächlich nachschlagen.
 | Auftrag | Übergabepunkt |
 |---|---|
 | **Erster LoRA-Lauf** (Unsloth → GGUF → Ollama) | Rezept + Datensatz-Export fertig: KosmoTrain-Panel exportiert JSONL, `docs/KOSMOTRAIN.md` beschreibt den Lauf Schritt für Schritt. Gemeinsam mit dem Owner fahren. |
+| **Trainer-Contract** (v0.8.2 / P5, `docs/V082-SPEZ.md` §6.5) | KosmoTrain schnürt ein Trainingspaket (Manifest + JSONL, Browser-Download, kein Bridge-Endpunkt) nach `kosmo.lora-train/v1` (`packages/kosmo-contracts/src/lora-train.ts`) — Adapter, sha256-gehashte Datensatz-Dateien, Rezept-Referenz, visibility-Deckel. Die HomeStation **nimmt das `lora-train/v1`-Manifest entgegen** und startet den echten Unsloth-Lauf daraus; ein `LoraTrainBerichtV1` (verallgemeinerte Form von `LoraTrainBericht`) fasst das Ergebnis adapterbezogen zusammen. |
 | **DPO-Präferenzpaare** | Daumen-runter-Journal sammelt bereits (`@kosmo/ai memory`); Paar-Bildung + Training = V2-Ausbau am Home-PC. |
 | **7 Gross-Atlanten (~3.8 GB) ingesten** | `wissen/tools/ingest.py <ordner> <sammlung>` ist resumierbar (OCR als Subprozess); OneDrive-Pull der Über-250-MB-Scans braucht das Büro-Netz. |
 | **GoodNotes-Handschrift (~60 PDFs)** | tesseract scheitert an Handschrift — Vision-OCR (Qwen-VL lokal) am Home-PC; danach normaler `ingest.py`-Weg in `wissen/vault`. |

@@ -4,3 +4,4 @@ export * from './blender-sim';
 export * from './bridge-api';
 export * from './dev-workorder';
 export * from './kosmo-package';
+export * from './lora-train';
