@@ -10,8 +10,8 @@ Nutzung:
                     [--ohne-ocr] [--max-seiten N] [--ausschluss=teil1,teil2]
 
 Ergebnis:
-  wissen/vault/<sammlung>/<Name>.md      (eine Sektion pro Seite)
-  wissen/training/<sammlung>.jsonl       (Chunks ~1200 Zeichen, Quelle+Seite)
+  wissen/vault/<sammlung>/<Name>.md              (eine Sektion pro Seite)
+  wissen/training/korpora/<sammlung>.jsonl       (Chunks ~1200 Zeichen, Quelle+Seite)
 
 Wiederaufnehmbar: vorhandene Vault-Dateien werden übersprungen, JSONL wird
 je Dokument sofort angehängt.
@@ -142,7 +142,7 @@ def verarbeite(pfad, sammlung, quelle, tags, ohne_ocr, max_seiten):
             if len(c) < 80:
                 continue
             eintraege.append({'text': c, 'quelle': f'{quelle}: {titel}', 'seite': i + 1})
-    with open(os.path.join(BASIS, 'training', f'{sammlung}.jsonl'), 'a') as f:
+    with open(os.path.join(BASIS, 'training', 'korpora', f'{sammlung}.jsonl'), 'a') as f:
         # flock: parallele Läufe dürfen keine Zeilen zerreissen
         fcntl.flock(f, fcntl.LOCK_EX)
         for e in eintraege:

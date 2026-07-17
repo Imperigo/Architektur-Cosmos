@@ -40,7 +40,7 @@ def main():
             if len(c) < 80:
                 continue
             eintraege.append({'text': c, 'quelle': f'Projekt {rel}'})
-    ziel = os.path.join(BASIS, 'training', 'projektwissen.jsonl')
+    ziel = os.path.join(BASIS, 'training', 'korpora', 'projektwissen.jsonl')
     with open(ziel, 'w') as f:
         for e in eintraege:
             f.write(json.dumps(e, ensure_ascii=False) + '\n')

@@ -9,8 +9,17 @@
 |---|---|
 | `lehrhefte/` | Die Original-PDFs der Hochbauzeichner-Lehrmittel (gescannt, Owner-Bibliothek) |
 | `vault/` | **Obsidian-Vault**: OCR-Volltext je Heft als Markdown (Frontmatter + eine Sektion pro Seite) — in Obsidian einfach diesen Ordner als Vault öffnen |
-| `training/` | **LoRA-Futter**: `lehrhefte.jsonl` (Chunks mit Quelle + Seite) und `projektwissen.jsonl` (kosmo-orbit/docs + ROADMAP gechunkt) |
-| `tools/` | Die wiederholbare Pipeline: `ocr-lehrhefte.py` (tesseract deu, 200 dpi) und `projektwissen.py` |
+| `training/korpora/` | **Rohwissen, kein SFT**: die 7 Chunk-Korpora (`briefings/buecher/lehrhefte/normen/persona/projektwissen/vorlesungen.jsonl`, je `{text, quelle, seite}`) — RAG-Futter, Eingabe für Alt→kanonisch-Konverter |
+| `training/sft/<adapter>/` | **`kosmo-sft/v1`**: kanonisierte Trainingsbeispiele je Adapter (`kosmo-buero`, `kosmo-zeichner-grundriss`, `kosmo-zeichner-commands`) |
+| `training/signale/` | **`kosmo-signal/v1`**: kuratierte App-Betriebssignale, NUR nach Visibility-Filter (Owner-Entscheid 1) — heute Gerüst |
+| `training/dpo/<adapter>/` | **`kosmo-dpo/v1`**: Präferenz-Paare (chosen/rejected) — heute Gerüst, wächst ab P3 |
+| `training/eval/<adapter>/` | Feste Eval-Prompt-Sets je Adapter — heute Gerüst |
+| `training/claude/` | Der Claude-Lernschleife-Strang: `lehren/vX.md` + `playbooks/` (exklusiv P4, `docs/CLAUDE-LERNSCHLEIFE.md`) |
+| `training/REGISTRY.md` | Die eine Adapter-Übersicht (8 Zeilen, Status/Eval/HomeStation-Stand je Adapter) |
+| `tools/` | Die wiederholbare Pipeline: `ocr-lehrhefte.py`/`ingest.py` (tesseract deu, 200 dpi) schreiben nach `training/korpora/`, `projektwissen.py`, `export-webbasis.py` |
+
+Details zu Format/Validator/Migration: `kosmo-orbit/docs/V082-SPEZ.md` §2/§3
+(Verzeichnis-Soll, Schemata, `tools/training/validiere-sft.mjs`).
 
 ## Wie das Wissen zu Kosmo kommt
 
@@ -18,9 +27,13 @@
    Kosmo zitiert dann mit `[Qn]`-Belegen und Quellensprung direkt aus den
    Heften. Mit laufender Bridge werden die Chunks zusätzlich semantisch
    eingebettet (bge-m3).
-2. **Später (LoRA, HomeStation):** `training/*.jsonl` + das Lernjournal sind
-   der Datensatz für den Trainingslauf nach `kosmo-orbit/docs/KOSMOTRAIN.md`
-   (Unsloth-QLoRA auf der 5090 → GGUF → `ollama create kosmo-buero`).
+2. **Später (LoRA, HomeStation):** `training/sft/**/*.jsonl` (kanonisch,
+   `kosmo-sft/v1`) sind der Datensatz für den Trainingslauf nach
+   `kosmo-orbit/docs/KOSMOTRAIN.md` (Unsloth-QLoRA auf der 5090 → GGUF →
+   `ollama create kosmo-buero`). `training/korpora/*.jsonl` bleibt Rohwissen
+   (RAG-Futter) — Alt→kanonisch-Konverter (z. B. `tools/training/
+   konvertiere-persona-sft.mjs`) heben daraus SFT-taugliche Teilmengen in
+   `training/sft/` an.
 3. **Obsidian:** `wissen/vault/` als Vault öffnen (lokal geklont) — oder das
    Obsidian-Git-Plugin auf dieses Repo zeigen lassen; jede Ergänzung im Vault
    wandert dann versioniert mit.

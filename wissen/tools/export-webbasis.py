@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Trainings-Korpora → Web-Basis für KosmoPrepare.
 
-Liest wissen/training/*.jsonl, gruppiert Chunks nach Quelle und schreibt je
-Sammlung eine JSON-Datei nach kosmo-orbit/apps/kosmo-orbit/public/wissen/
-plus einen index.json. KosmoPrepare lädt die Sammlungen auf Knopfdruck in
-die lokale Wissensbasis (IndexedDB) — Kosmo zitiert sie dann mit [Q]-Marken.
+Liest wissen/training/korpora/*.jsonl (die 7 rohen Chunk-Korpora, "rohwissen,
+kein SFT" — v0.8.2/P1-Umzug aus dem alten `training/`-Wurzelverzeichnis),
+gruppiert Chunks nach Quelle und schreibt je Sammlung eine JSON-Datei nach
+kosmo-orbit/apps/kosmo-orbit/public/wissen/ plus einen index.json.
+KosmoPrepare lädt die Sammlungen auf Knopfdruck in die lokale Wissensbasis
+(IndexedDB) — Kosmo zitiert sie dann mit [Q]-Marken.
 
 Nach neuen Ingest-Läufen einfach erneut ausführen und committen.
 """
@@ -30,7 +32,7 @@ LABELS = {
 def main():
     os.makedirs(ZIEL, exist_ok=True)
     index = []
-    ordner = os.path.join(BASIS, 'training')
+    ordner = os.path.join(BASIS, 'training', 'korpora')
     for datei in sorted(os.listdir(ordner)):
         if not datei.endswith('.jsonl'):
             continue

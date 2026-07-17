@@ -22,6 +22,7 @@
     "journeys": "playwright test kosmo-journey",
     "release-gate": "npm run typecheck && npm run test && npm run svg-qa && npm run security:secrets",
     "security:secrets": "node tools/secret-scan.mjs",
+    "validiere-sft": "node tools/training/validiere-sft.mjs",
     "test:secret-scan": "node tools/secret-scan.test.mjs",
     "netz-check": "node tools/netz-check.mjs",
     "test:netz-check": "node tools/netz-check.test.mjs"

@@ -2,7 +2,7 @@
 """OCR-Pipeline: Lehrheft-PDFs (gescannt) → Obsidian-Vault + Trainings-JSONL.
 
 Je Heft:  wissen/vault/<Name>.md   — Frontmatter + eine Sektion pro Seite
-Gesamt:   wissen/training/lehrhefte.jsonl — Chunks (~1200 Zeichen) mit Quelle+Seite
+Gesamt:   wissen/training/korpora/lehrhefte.jsonl — Chunks (~1200 Zeichen) mit Quelle+Seite
 
 Läuft lokal (tesseract deu, 200 dpi) — wiederholbar, wenn neue Hefte dazukommen.
 """
@@ -65,7 +65,7 @@ def chunks(text: str, ziel=1200):
 
 def main():
     nur = sys.argv[1] if len(sys.argv) > 1 else None
-    jsonl_pfad = os.path.join(BASIS, 'training', 'lehrhefte.jsonl')
+    jsonl_pfad = os.path.join(BASIS, 'training', 'korpora', 'lehrhefte.jsonl')
     for datei, titel in sorted(HEFTE.items()):
         if nur and nur not in datei:
             continue
