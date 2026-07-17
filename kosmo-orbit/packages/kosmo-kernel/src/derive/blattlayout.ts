@@ -12,12 +12,16 @@
  * unten für die Kalibrierungs-Begründung).
  *
  * Quellen der Zahlen: Owner-Handoff v0.8.0/P1 (Formate/Ränder/Plankopf/
- * Faltmarken DIN 824/Lochung ISO 838). Die Rolle 1600×594mm ist VERTAGT —
- * absichtlich nicht Teil von `BLATT_FORMATE`.
+ * Faltmarken DIN 824/Lochung ISO 838). Die Rolle 1600×594mm war bis v0.8.1/P6
+ * VERTAGT (bewusst freigehaltener Platzhalter); v0.8.1/P13 (`docs/
+ * V081-SPEZ.md` §7(d), C-27) löst das mit dem dort fixierten, owner-
+ * rückholbaren Default auf — s. `ROLLE_BREITE_MM`/`ROLLE_LAENGE_STANDARD_MM`
+ * unten und den `Rolle`-Eintrag in `BLATT_FORMATE`.
  */
 
-/** Unterstützte ISO-Blattformate (Querformat-Masse, siehe `BLATT_FORMATE`). */
-export type BlattFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4';
+/** Unterstützte ISO-Blattformate (Querformat-Masse, siehe `BLATT_FORMATE`)
+ * + `Rolle` (v0.8.1/P13, Plotter-Rollenformat, additiv). */
+export type BlattFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'Rolle';
 
 /** Blattausrichtung: 'quer' = Basis-Masse, 'hoch' = Breite/Höhe getauscht. */
 export type BlattAusrichtung = 'quer' | 'hoch';
@@ -53,14 +57,33 @@ export interface Lochung {
 }
 
 /**
+ * Rollenbreite (mm), v0.8.1/P13 fixierter Default (`docs/V081-SPEZ.md`
+ * §7(d), bindend, owner-rückholbar): identisch zur A1-Breite IM HOCHFORMAT
+ * (`dims('A1','hoch').breite === BLATT_FORMATE.A1.hoehe === 594`) — ein
+ * gängiges Plotter-Rollenmass, reiht sich in die bestehende A-Serien-Logik
+ * ein statt ein neues Breitenmass einzuführen.
+ */
+export const ROLLE_BREITE_MM = 594;
+
+/**
+ * Rollenlänge (mm), v0.8.1/P13 fixierter Standard-Zuschnitt-Default (`docs/
+ * V081-SPEZ.md` §7(d), bindend, owner-rückholbar wie im ursprünglichen
+ * VERTAGT-Kommentar vorgesehen — ein künftiger Owner-Entscheid kann diesen
+ * einen Wert ändern, ohne die Faltlogik anzufassen, da `faltmarken()`/
+ * `leporelloFaltung()` rein aus `breite`/`hoehe` rechnen).
+ */
+export const ROLLE_LAENGE_STANDARD_MM = 1600;
+
+/**
  * Blattformate (mm), Querformat als Basis. Hochformat = Breite/Höhe getauscht
  * (siehe `dims`). Quelle: ISO 216 Lang-Kante-oben-Konvention des Owner-
  * Handoffs (identisch zu den Werten, die `derive/sheet.ts` heute als
  * `ISO_LANG` pflegt — bewusst hier NICHT importiert, siehe Datei-Kopfkommentar).
  *
- * VERTAGT: Rolle 1600×594mm — kein Eintrag hier, bis das Owner-Mandat die
- * Falz-/Lochungsregeln für Rollenformate klärt (kein Heftrand-Analogon
- * definiert). Nicht bauen, nur dieser Kommentar als Platzhalter.
+ * `Rolle` (v0.8.1/P13, additiv): 1600×594mm, s. `ROLLE_LAENGE_STANDARD_MM`/
+ * `ROLLE_BREITE_MM` oben — war bis P6 VERTAGT, jetzt der einzige Nicht-ISO-
+ * 216-Eintrag hier (kein neues Format-Konzept, dieselbe breite×hoehe-Tabelle,
+ * dieselbe Querformat-Konvention breite>hoehe).
  */
 export const BLATT_FORMATE: Record<BlattFormat, BlattMasse> = {
   A0: { breite: 1189, hoehe: 841 },
@@ -68,6 +91,7 @@ export const BLATT_FORMATE: Record<BlattFormat, BlattMasse> = {
   A2: { breite: 594, hoehe: 420 },
   A3: { breite: 420, hoehe: 297 },
   A4: { breite: 297, hoehe: 210 },
+  Rolle: { breite: ROLLE_LAENGE_STANDARD_MM, hoehe: ROLLE_BREITE_MM },
 };
 
 /**
@@ -168,6 +192,46 @@ export function faltmarken(w: number, h: number): Faltmarken {
     horizontal.push(h - FALTMARKE_HORIZONTAL_ZIEL_MM);
   }
   return { vertikal, horizontal };
+}
+
+// --- Leporello-Faltung (Rolle, v0.8.1/P13) ------------------------------
+//
+// «Kein zweiter Faltalgorithmus» (`docs/V081-SPEZ.md` §7(d)): die Zickzack-
+// Feldgrenzen sind eine REINE Ableitung aus `faltmarken().vertikal` (den
+// bestehenden DIN-824-Marken oben) — proportional auf jede Breite (auch die
+// 1600mm-Rollenlänge) anwendbar, weil `faltmarken()` bereits generisch in
+// w/h ist und nie ein Format-Label kennt.
+
+export interface LeporelloFaltung {
+  /** Faltfelder (Panels) von rechts (Deckfläche mit Plankopf, 210mm breit)
+   * nach links (schmalstes Restfeld am Heftrand), `y`/`hoehe` decken die
+   * volle Blatthöhe ab. Genau EIN Feld (volle Breite) ohne Vertikal-Marken. */
+  felder: BlattRect[];
+  /** x-Positionen der Knicklinien — identisch zu `faltmarken(w,h).vertikal`,
+   * hier als Feldgrenzen benannt (jede Grenze zwischen zwei Feldern ausser
+   * der äussersten, das ist die Blattkante/der Heftrand, keine Knicklinie). */
+  knicklinien: number[];
+}
+
+/**
+ * Leitet aus den DIN-824-Vertikal-Marken die tatsächlichen Leporello-
+ * Faltfelder (Panel-Rechtecke) UND die daraus resultierenden Knicklinien-
+ * x-Positionen ab. Ohne Vertikal-Marken (z.B. A4, Breite ≤ 297mm) liefert
+ * die Funktion genau ein Feld über die gesamte Breite und keine Knicklinien.
+ */
+export function leporelloFaltung(w: number, h: number): LeporelloFaltung {
+  const { vertikal } = faltmarken(w, h);
+  const grenzen = vertikal.length > 0 ? [w, ...vertikal, BLATT_RAENDER.links] : [w, BLATT_RAENDER.links];
+  const felder: BlattRect[] = [];
+  for (let i = 0; i < grenzen.length - 1; i++) {
+    const x = grenzen[i + 1]!;
+    const breite = grenzen[i]! - x;
+    felder.push({ x, y: 0, breite, hoehe: h });
+  }
+  // Jede Feldgrenze ausser der äussersten (Blattkante links, `x ===
+  // BLATT_RAENDER.links`) ist eine Knicklinie — identisch zu `vertikal`.
+  const knicklinien = felder.map((f) => f.x).filter((x) => x > BLATT_RAENDER.links);
+  return { felder, knicklinien };
 }
 
 // --- Lochung ISO 838 ----------------------------------------------------

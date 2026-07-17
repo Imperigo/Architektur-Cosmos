@@ -3,7 +3,7 @@ import type { ImageAsset, Sheet, SheetFormat, SheetImage, SheetPlacement } from 
 import { axoInnerSvg, escapeXml, planInnerSvg, sectionInnerSvg, type InnerSvg } from './plansvg';
 import { docFuerUmbau, UMBAU_LABEL } from './umbau';
 import { schwarzplanGeometrie } from './schwarzplan';
-import { BLATT_RAENDER, faltmarken, lochungMm, plankopfRect, rahmenRect, type BlattRect } from './blattlayout';
+import { BLATT_RAENDER, faltmarken, leporelloFaltung, lochungMm, plankopfRect, rahmenRect, type BlattRect } from './blattlayout';
 import {
   afFreigabeStempelSvg,
   massstabsbalkenSvg,
@@ -42,6 +42,11 @@ const ISO_LANG: Record<SheetFormat, { width: number; height: number }> = {
   A2: { width: 594, height: 420 },
   A3: { width: 420, height: 297 },
   A4: { width: 297, height: 210 },
+  // v0.8.1/P13 (docs/V081-SPEZ.md §7(d)): Rollenformat, identisch zu
+  // `blattlayout.ts`s `BLATT_FORMATE.Rolle` (1600×594mm, bewusst NICHT von
+  // dort importiert, s. Datei-Kopfkommentar oben zur Trennung der beiden
+  // Registrierungen bis zum künftigen Sammelwechsel).
+  Rolle: { width: 1600, height: 594 },
 };
 
 export function sheetPaperSize(sheet: Pick<Sheet, 'format' | 'orientation'>): {
@@ -211,6 +216,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
     `<svg xmlns="http://www.w3.org/2000/svg" width="${paper.width}mm" height="${paper.height}mm" viewBox="0 0 ${paper.width} ${paper.height}" font-family="Helvetica, Arial, sans-serif">`,
     `<rect width="${paper.width}" height="${paper.height}" fill="${opts.paperFill ?? 'white'}"/>`,
   );
+  let leporelloTeile: string[] = [];
   {
     const rahmenTeile: string[] = [
       `<rect x="${rahmenNeu.x}" y="${rahmenNeu.y}" width="${rahmenNeu.breite}" height="${rahmenNeu.hoehe}" fill="none" stroke="${BLATT.tinte}" stroke-width="${BLATT.rahmenStift}"/>`,
@@ -231,6 +237,22 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
           `<line x1="${paper.width - 4}" y1="${y}" x2="${paper.width}" y2="${y}" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}"/>`,
         );
       }
+      // Leporello-Faltlinien (v0.8.1/P13, docs/V081-SPEZ.md §7(d), C-27) — NUR
+      // beim Rolle-Format: volle Knicklinien über die ganze Blatthöhe statt der
+      // kurzen DIN-824-Eckstriche oben, damit die Zickzack-Faltfelder der
+      // langen Rolle sichtbar werden. Dieselben Vertikal-Positionen wie oben
+      // (`leporelloFaltung()` ist eine reine Ableitung von `faltmarken()`,
+      // KEIN zweiter Faltalgorithmus) — nur die Darstellung unterscheidet
+      // sich. Guard `sheet.format === 'Rolle'` hält A0–A4 komplett unberührt
+      // (byte-identische Bestandsgoldens): für sie ist dieser Zweig
+      // unerreichbar, `leporelloTeile` bleibt leer, keine neue Gruppe entsteht.
+      if (sheet.format === 'Rolle') {
+        const { knicklinien } = leporelloFaltung(paper.width, paper.height);
+        leporelloTeile = knicklinien.map(
+          (x) =>
+            `<line x1="${x}" y1="0" x2="${x}" y2="${paper.height}" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}" stroke-dasharray="6 3"/>`,
+        );
+      }
     }
     // Lochung (ISO 838, Spez §1.4) sitzt mittig im Heftrand — ergibt ohne
     // Heftrand keinen Sinn, deshalb an denselben Schalter gebunden statt an
@@ -244,6 +266,9 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
       );
     }
     parts.push(`<g data-teil="blattlayout">`, ...rahmenTeile, `</g>`);
+    if (leporelloTeile.length > 0) {
+      parts.push(`<g data-teil="leporello">`, ...leporelloTeile, `</g>`);
+    }
   }
 
   // v0.8.0 P4: «grösste platzierte Ansicht» (Spez §1.6, Massstabsbalken) =

@@ -37,7 +37,11 @@ const PRESET_KURZLABEL: Record<PresetId, string> = { fokus: 'Fokus', arbeiten: '
  * Drag direkt auf dem Papier verschoben (Command beim Loslassen).
  */
 
-const FORMATS: SheetFormat[] = ['A0', 'A1', 'A2', 'A3', 'A4'];
+// v0.8.1/P13 (docs/V081-SPEZ.md §7(d), C-27): `Rolle` additiv angehängt —
+// 1600×594mm Plotter-Rollenformat mit Leporello-Zickzack-Faltlinien
+// (`derive/sheet.ts`, Guard `sheet.format === 'Rolle'`), bestehende A0–A4
+// unverändert an erster Stelle.
+const FORMATS: SheetFormat[] = ['A0', 'A1', 'A2', 'A3', 'A4', 'Rolle'];
 const SCALES = [50, 100, 200, 500];
 
 export interface PublishWorkspaceProps {
@@ -684,6 +688,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
         <div className="k-publish-add-zeile">
           <KSelect
             size="sm"
+            data-testid="new-sheet-format"
             value={newFormat}
             onChange={(e) => setNewFormat(e.target.value as SheetFormat)}
           >

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600mm" height="594mm" viewBox="0 0 1600 594" font-family="Helvetica, Arial, sans-serif">
+<rect width="1600" height="594" fill="white"/>
+<g data-teil="blattlayout">
+<rect x="20" y="10" width="1570" height="574" fill="none" stroke="black" stroke-width="0.35"/>
+<line x1="1390" y1="0" x2="1390" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="1390" y1="590" x2="1390" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="1200" y1="0" x2="1200" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="1200" y1="590" x2="1200" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="1010" y1="0" x2="1010" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="1010" y1="590" x2="1010" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="820" y1="0" x2="820" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="820" y1="590" x2="820" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="630" y1="0" x2="630" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="630" y1="590" x2="630" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="440" y1="0" x2="440" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="440" y1="590" x2="440" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="250" y1="0" x2="250" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="250" y1="590" x2="250" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="60" y1="0" x2="60" y2="4" stroke="black" stroke-width="0.25"/>
+<line x1="60" y1="590" x2="60" y2="594" stroke="black" stroke-width="0.25"/>
+<line x1="0" y1="297" x2="4" y2="297" stroke="black" stroke-width="0.25"/>
+<line x1="1596" y1="297" x2="1600" y2="297" stroke="black" stroke-width="0.25"/>
+<circle cx="10" cy="257" r="3" fill="none" stroke="black" stroke-width="0.25"/>
+<circle cx="10" cy="337" r="3" fill="none" stroke="black" stroke-width="0.25"/>
+</g>
+<g data-teil="leporello">
+<line x1="1390" y1="0" x2="1390" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="1200" y1="0" x2="1200" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="1010" y1="0" x2="1010" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="820" y1="0" x2="820" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="630" y1="0" x2="630" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="440" y1="0" x2="440" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="250" y1="0" x2="250" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+<line x1="60" y1="0" x2="60" y2="594" stroke="black" stroke-width="0.25" stroke-dasharray="6 3"/>
+</g>
+<g data-teil="blattlayout">
+<g data-teil="wasserzeichen" opacity="0.13" transform="rotate(-26 805.00 297.00)">
+<text x="805.00" y="297.00" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="75.36" fill="#94704F">STUDIE — NICHT FÜR AUS…</text>
+</g>
+</g>
+<g data-teil="plankopf">
+<rect x="1410" y="529" width="180" height="55" fill="white" stroke="black" stroke-width="0.35"/>
+<rect x="1410" y="529" width="180" height="1.3" fill="#94704F"/>
+<line x1="1458" y1="530.3" x2="1458" y2="584" stroke="black" stroke-width="0.25"/>
+<line x1="1528" y1="530.3" x2="1528" y2="584" stroke="black" stroke-width="0.25"/>
+<rect x="1411.5" y="531.8" width="45" height="15" fill="none" stroke="black" stroke-width="0.25" stroke-dasharray="1.5 1"/>
+<text x="1434.00" y="540.80" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="5.6" font-feature-settings="'tnum'" font-weight="bold" fill="#94704F">—</text>
+<text x="1434.00" y="545.30" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">BÜRO-LOGO</text>
+<text x="1459.50" y="538.00" text-anchor="start" font-family="'Lato', Helvetica, Arial, sans-serif" font-size="2.4">Unbenannt</text>
+<text x="1529.50" y="533.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">MASSSTAB</text>
+<text x="1560.00" y="533.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">FORMAT</text>
+<text x="1560.00" y="536.50" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">Rolle</text>
+<text x="1529.50" y="538.70" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">PHASE</text>
+<text x="1529.50" y="542.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">VS · SIA 21</text>
+<text x="1560.00" y="538.70" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">DATUM</text>
+<text x="1529.50" y="544.30" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">GEZEICHNET</text>
+<text x="1560.00" y="544.30" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">GEPRÜFT</text>
+<text x="1529.50" y="551.10" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">PLAN-NR.</text>
+<text x="1529.50" y="555.70" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="3" font-feature-settings="'tnum'" font-weight="bold">—-—-VS-—-—-—</text>
+</g>
+</svg>

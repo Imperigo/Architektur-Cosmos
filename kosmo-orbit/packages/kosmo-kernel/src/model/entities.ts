@@ -372,8 +372,10 @@ export interface FreeMesh extends Base {
 export const FREEMESH_MAX_VERTICES = 4096;
 export const FREEMESH_MAX_FACES = 8192;
 
-/** Papierformate (ISO 216) für Plansätze. */
-export type SheetFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4';
+/** Papierformate (ISO 216) für Plansätze + `Rolle` (v0.8.1/P13, Plotter-
+ * Rollenformat 1600×594mm, `docs/V081-SPEZ.md` §7(d), `derive/blattlayout.ts`
+ * `BLATT_FORMATE.Rolle`). */
+export type SheetFormat = 'A0' | 'A1' | 'A2' | 'A3' | 'A4' | 'Rolle';
 
 /** Eine platzierte Ansicht auf einem Blatt — Position in Papier-mm. */
 export interface SheetPlacement {

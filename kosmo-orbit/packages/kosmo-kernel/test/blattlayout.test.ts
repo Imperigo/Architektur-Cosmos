@@ -4,12 +4,15 @@ import {
   BLATT_RAENDER,
   dims,
   faltmarken,
+  leporelloFaltung,
   lochungMm,
   plankopfRect,
   plankopfReserveMm,
   rahmenRect,
   zeichenflaeche,
   PLANKOPF_MM,
+  ROLLE_BREITE_MM,
+  ROLLE_LAENGE_STANDARD_MM,
   type BlattAusrichtung,
   type BlattFormat,
 } from '../src/derive/blattlayout';
@@ -18,17 +21,27 @@ import {
  * Blattgeometrie (v0.8.0 / P1) — reine Mass-Tests, keine Doc-Fixtures nötig.
  * Alle Erwartungswerte für Zeichenfläche/Faltmarken sind von Hand
  * nachgerechnet; die Rechnung steht jeweils im Kommentar direkt beim Test.
+ *
+ * v0.8.1/P13 (docs/V081-SPEZ.md §7(d), C-27): `Rolle` (1600×594mm) löst die
+ * bis P6 geltende VERTAGT-Sperre auf — `FORMATE` unten enthält das Format
+ * jetzt mit, damit alle generischen (Format×Ausrichtung-Schleifen-)Tests
+ * unten die Rolle automatisch mitprüfen (dims/zeichenflaeche/rahmenRect/
+ * plankopfRect/faltmarken sind allesamt reine w/h-Funktionen ohne
+ * Format-Fallunterscheidung, s. deren eigene Doku). Die separaten
+ * handgerechneten Zahlen-Tabellen (A0…A4, feste Tupel) bleiben unverändert
+ * — eigener Abschnitt «Rolle 1600×594» unten für die formatspezifischen
+ * Zahlen + die neue Leporello-Ableitung.
  */
 
-const FORMATE: BlattFormat[] = ['A0', 'A1', 'A2', 'A3', 'A4'];
+const FORMATE: BlattFormat[] = ['A0', 'A1', 'A2', 'A3', 'A4', 'Rolle'];
 const AUSRICHTUNGEN: BlattAusrichtung[] = ['quer', 'hoch'];
 
 describe('BLATT_FORMATE / BLATT_RAENDER — Grunddaten', () => {
-  it('enthält genau die 5 Owner-Formate — Rolle 1600×594 ist VERTAGT und bewusst nicht enthalten', () => {
-    expect(Object.keys(BLATT_FORMATE).sort()).toEqual(['A0', 'A1', 'A2', 'A3', 'A4']);
+  it('enthält genau die 5 ISO-Owner-Formate + Rolle (v0.8.1/P13 löst die VERTAGT-Sperre auf)', () => {
+    expect(Object.keys(BLATT_FORMATE).sort()).toEqual(['A0', 'A1', 'A2', 'A3', 'A4', 'Rolle']);
   });
 
-  it('Querformat ist für alle 5 Formate Landscape (Breite > Höhe)', () => {
+  it('Querformat ist für alle 6 Formate Landscape (Breite > Höhe)', () => {
     for (const f of FORMATE) {
       expect(BLATT_FORMATE[f].breite).toBeGreaterThan(BLATT_FORMATE[f].hoehe);
     }
@@ -86,7 +99,7 @@ describe('zeichenflaeche(w,h) — (B−30)×(H−20)', () => {
     }
   });
 
-  it('ist für alle 10 Format×Ausrichtung-Kombinationen positiv (keine negativen Massregression)', () => {
+  it('ist für alle 12 Format×Ausrichtung-Kombinationen positiv (keine negativen Massregression)', () => {
     for (const f of FORMATE) {
       for (const a of AUSRICHTUNGEN) {
         const { breite: w, hoehe: h } = dims(f, a);
@@ -269,5 +282,89 @@ describe('plankopfReserveMm()', () => {
 
   it('ist ein reiner Konstantenwert — deterministisch bei wiederholtem Aufruf, keine Formatabhängigkeit in der Signatur', () => {
     expect(plankopfReserveMm()).toEqual(plankopfReserveMm());
+  });
+});
+
+// v0.8.1/P13 (docs/V081-SPEZ.md §7(d), C-27) — Rolle 1600×594mm: der
+// generische FORMATE-Loop oben deckt bereits dims/zeichenflaeche/rahmenRect/
+// plankopfRect/faltmarken-Invarianten für Rolle mit ab (reine w/h-Funktionen,
+// kein Format-Sonderfall). Dieser Block prüft die konkreten Zahlen + die
+// neue Leporello-Faltfelder-Ableitung, die es vor P13 nicht gab.
+describe('Rolle 1600×594 (v0.8.1/P13, fixierter Default §7(d))', () => {
+  it('ROLLE_BREITE_MM=594 (identisch A1-Breite im Hochformat), ROLLE_LAENGE_STANDARD_MM=1600', () => {
+    expect(ROLLE_BREITE_MM).toBe(594);
+    expect(ROLLE_LAENGE_STANDARD_MM).toBe(1600);
+    expect(dims('A1', 'hoch').breite).toBe(ROLLE_BREITE_MM);
+  });
+
+  it('BLATT_FORMATE.Rolle = {breite:1600, hoehe:594} — Querformat, Breite>Höhe wie alle anderen Formate', () => {
+    expect(BLATT_FORMATE.Rolle).toEqual({ breite: 1600, hoehe: 594 });
+  });
+
+  it('zeichenflaeche/rahmenRect/plankopfRect quer: konkrete Zahlen', () => {
+    const { breite: w, hoehe: h } = dims('Rolle', 'quer');
+    expect(zeichenflaeche(w, h)).toEqual({ breite: 1570, hoehe: 574 }); // 1600-30, 594-20
+    expect(rahmenRect(w, h)).toEqual({ x: 20, y: 10, breite: 1570, hoehe: 574 });
+    // rechteKante=20+1570=1590, untereKante=10+574=584 -> x=1590-180=1410, y=584-55=529
+    expect(plankopfRect(w, h)).toEqual({ x: 1410, y: 529, breite: 180, hoehe: 55 });
+  });
+
+  it('faltmarken quer: 8 Vertikal-Marken (210, +190×7) bis zum Heftrand, horizontal identisch zu A1 (h=594 -> 297)', () => {
+    // Offsets 210,400,590,780,970,1160,1350,1540 -> x=1390,1200,1010,820,630,440,250,60 (alle >20);
+    // Offset 1730 -> x=-130 -> Abbruch.
+    expect(faltmarken(1600, 594)).toEqual({
+      vertikal: [1390, 1200, 1010, 820, 630, 440, 250, 60],
+      horizontal: [297],
+    });
+  });
+
+  it('faltmarken hoch: dieselben Vertikal-Marken wie A1-hoch/A2-quer (w=594 numerisch gleich), horizontal bei H-297=1303', () => {
+    const { breite: w, hoehe: h } = dims('Rolle', 'hoch');
+    expect(w).toBe(594);
+    expect(h).toBe(1600);
+    expect(faltmarken(w, h)).toEqual({ vertikal: [384, 194], horizontal: [1303] });
+  });
+
+  describe('leporelloFaltung(w,h) — Faltfelder/Knicklinien-Ableitung (reine Funktion, kein zweiter Faltalgorithmus)', () => {
+    it('quer: 9 Faltfelder (Deckfläche 210mm + 7×190mm + Restfeld 40mm am Heftrand), 8 Knicklinien = faltmarken().vertikal', () => {
+      const { breite: w, hoehe: h } = dims('Rolle', 'quer');
+      const { felder, knicklinien } = leporelloFaltung(w, h);
+      expect(knicklinien).toEqual(faltmarken(w, h).vertikal);
+      expect(felder).toHaveLength(9);
+      expect(felder.map((f) => f.breite)).toEqual([210, 190, 190, 190, 190, 190, 190, 190, 40]);
+      // Alle Felder decken die volle Blatthöhe ab (y=0, hoehe=h), keine Lücke/Überlappung.
+      for (const f of felder) {
+        expect(f.y).toBe(0);
+        expect(f.hoehe).toBe(h);
+      }
+      const summe = felder.reduce((acc, f) => acc + f.breite, 0);
+      expect(summe).toBe(w - BLATT_RAENDER.links); // 1600-20=1580, deckt die gesamte Fläche rechts des Heftrands
+      // Feldgrenzen (x + breite) grenzen lückenlos aneinander, von rechts (Deckfläche) nach links.
+      for (let i = 0; i < felder.length - 1; i++) {
+        expect(felder[i]!.x).toBe(felder[i + 1]!.x + felder[i + 1]!.breite);
+      }
+      // Letztes (linkes) Feld beginnt exakt am Heftrand.
+      expect(felder[felder.length - 1]!.x).toBe(BLATT_RAENDER.links);
+      // Erstes (rechtes) Feld = Deckfläche, endet exakt an der Blattkante (Plankopf liegt hier).
+      expect(felder[0]!.x + felder[0]!.breite).toBe(w);
+    });
+
+    it('A4 (Breite 297, keine Vertikal-Marken): genau EIN Feld über die volle Breite, keine Knicklinien', () => {
+      const { felder, knicklinien } = leporelloFaltung(297, 210);
+      expect(knicklinien).toEqual([]);
+      expect(felder).toEqual([{ x: BLATT_RAENDER.links, y: 0, breite: 297 - BLATT_RAENDER.links, hoehe: 210 }]);
+    });
+
+    it('funktioniert für jedes Format/jede Ausrichtung ohne negative Feldbreiten (keine Regression über die generische FORMATE-Liste)', () => {
+      for (const f of FORMATE) {
+        for (const a of AUSRICHTUNGEN) {
+          const { breite: w, hoehe: h } = dims(f, a);
+          const { felder } = leporelloFaltung(w, h);
+          for (const feld of felder) {
+            expect(feld.breite).toBeGreaterThan(0);
+          }
+        }
+      }
+    });
   });
 });
