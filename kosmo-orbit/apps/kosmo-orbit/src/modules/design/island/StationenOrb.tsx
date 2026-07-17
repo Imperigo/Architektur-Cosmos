@@ -21,6 +21,27 @@ import './island.css';
  * (`onStationOeffnen`, App.tsx `oeffneModul`) — additiv erweitert um `data`
  * (Direktzugang zu KosmoData) und `design` (bleibt in der Design-Station,
  * schliesst nur das Popover).
+ *
+ * **PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): «Zentrale»-Eintrag.**
+ * PD4 hatte oben links zusätzlich zwei schwebende Logos ergänzt
+ * (KosmoOrbit-Symbol + KosmoDesign-Logo, `App.tsx` `island-kopf-logo-*`) —
+ * das KosmoOrbit-Symbol war «Zur Zentrale» (`gehZu('home')`, derselbe Weg
+ * wie die Kopfbalken-Wortmarke). Owner-Befund (Screenshot-Review): überlagert
+ * sich mit diesem Orb, uneinheitliches Symbol-Sammelsurium — ein erster PD5-
+ * Entwurf entfernte beide Logos ersatzlos; Owner-Korrektur (unmittelbar
+ * danach, wörtlich «kosmoorbit und kosmodesign … bleiben, gleiche grösse wie
+ * einstellungsknopf»): BEIDE Logos bleiben, nur im selben Glas-Kreis-Stil wie
+ * dieser Orb/der Einstellungs-Kreis (`App.tsx`, `island/island.css`
+ * `.isl-kopf-logo-*`). Der «Zentrale»-Eintrag HIER bleibt zusätzlich additiv
+ * bestehen (Owner: «kann bleiben, schadet nicht») — ein oberster Eintrag im
+ * Popover, separat von der farbigen Stationsliste (kein Rollenpunkt —
+ * «Zentrale» ist keine Pipeline-Station), eigener optionaler `onZentrale`-
+ * Callback (nicht Teil der `StationenOrbId`-Union, weil `App.tsx`s
+ * bestehender `onStationOeffnen`-Handler generisch über `modules.find` läuft
+ * und `'home'` dort kein `ModuleId` ist — ein zweckgleicher, aber eigener
+ * Draht, additiv über `DesignWorkspace.tsx` (`onZurZentrale`-Prop) zu
+ * `App.tsx`s `gehZu('home')` durchgereicht, WÖRTLICH derselbe Navigations-Weg
+ * wie der klickbare `island-kopf-logo-orbit`).
  */
 
 export type StationenOrbId = 'design' | 'data' | 'vis' | 'prepare' | 'publish';
@@ -50,9 +71,13 @@ const STATION_REIHENFOLGE: readonly StationenOrbId[] = ['design', 'data', 'vis',
 
 export interface StationenOrbProps {
   onStationOeffnen: (station: StationenOrbId) => void;
+  /** PD5 (s. Kopfkommentar) — additiv, optional (isoliert gemountete Tests
+   *  brauchen ihn nicht, gleiches Muster wie `onStationOeffnen` in
+   *  `DesignWorkspace.tsx`s eigenen optionalen Props). */
+  onZentrale?: () => void;
 }
 
-export function StationenOrb({ onStationOeffnen }: StationenOrbProps) {
+export function StationenOrb({ onStationOeffnen, onZentrale }: StationenOrbProps) {
   const [offen, setOffen] = useState(false);
   const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -103,6 +128,21 @@ export function StationenOrb({ onStationOeffnen }: StationenOrbProps) {
       </button>
       {offen ? (
         <div className="isl-buehnenkopf-popover" data-testid="stationen-orb-popover">
+          {onZentrale ? (
+            <button
+              type="button"
+              className="isl-stationen-orb-eintrag"
+              data-testid="stationen-orb-eintrag-zentrale"
+              onClick={() => {
+                setOffen(false);
+                onZentrale();
+              }}
+            >
+              {/* Kein Rollenpunkt — «Zentrale» ist keine der fünf farbigen
+                  Pipeline-Stationen (s. Kopfkommentar). */}
+              Zentrale
+            </button>
+          ) : null}
           {STATION_REIHENFOLGE.map((id) => (
             <button
               key={id}

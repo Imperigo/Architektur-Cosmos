@@ -70,6 +70,13 @@ async function erwarteAusgeblendeteChrome(page: Page): Promise<void> {
   // (Sanktion 7 nennt die ganze Zeile, nicht nur Achsen).
   await expect(page.locator('[data-testid="graph-toggle"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="trace-select"]')).toHaveCount(0);
+  // PD5 (Owner-Befund, Screenshot-Review 17.07.2026): `Viewport3D.tsx`s
+  // `.v3d-render-ecke` («Für Vis aufnehmen»/«Rendern», ausserhalb der
+  // AUSTAUSCH-Insel) war der EINE Rest der klassischen Viewport-Fläche ohne
+  // `designOberflaeche === 'manuell'`-Gate — additiv mitgeprüft, exakt hier,
+  // wo «alles weg» bereits die Messlatte ist (Sanktion 7).
+  await expect(page.locator('[data-testid="viewport-aufnahme"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="viewport-render-knopf"]')).toHaveCount(0);
 }
 
 async function erwarteSichtbareChrome(page: Page): Promise<void> {
@@ -80,6 +87,9 @@ async function erwarteSichtbareChrome(page: Page): Promise<void> {
   await expect(page.locator('[data-testid="achsen-toggle"]')).toBeVisible();
   await expect(page.locator('[data-testid="graph-toggle"]')).toBeVisible();
   await expect(page.locator('[data-testid="trace-select"]')).toBeVisible();
+  // PD5: Bestand unverändert im Manuell-Modus (s. `erwarteAusgeblendeteChrome`).
+  await expect(page.locator('[data-testid="viewport-aufnahme"]')).toBeVisible();
+  await expect(page.locator('[data-testid="viewport-render-knopf"]')).toBeVisible();
 }
 
 test.describe('Island-Modus: radikal leer (PD3c)', () => {

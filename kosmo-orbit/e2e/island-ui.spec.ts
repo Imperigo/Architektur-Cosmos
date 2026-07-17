@@ -141,6 +141,17 @@ test.describe('PD4 — Kosmo-Orb', () => {
     await expect(orb).toBeVisible();
     await expect(page.locator('[data-testid="kosmo-orb-karte"]')).toHaveCount(0);
 
+    // PD5 (Owner-Befund, Screenshot-Review 17.07.2026, «gib kosmo wieder
+    // seine animationen und richtiges symbol»): der Orb-Inhalt ist der ECHTE
+    // `shell/KosmoOrb.tsx`-Kern (`data-testid="kosmo-orb"`, dasselbe, das
+    // `KosmoSymbol.tsx` zeigt) — kein leblos-statisches «K»-Glyph mehr, echter
+    // `data-zustand` (idle/thinking/…) treibt die Zustands-Choreografie.
+    const echterOrbKern = orb.locator('[data-testid="kosmo-orb"]');
+    await expect(echterOrbKern).toBeVisible();
+    await expect(echterOrbKern).toHaveAttribute('data-zustand', /.+/);
+    await expect(orb.locator('.isl-orb-glyphe')).toHaveCount(0);
+    await page.screenshot({ path: 'test-results/pd5-082-kosmo-orb-animiert.png' });
+
     await orb.click();
     const karte = page.locator('[data-testid="kosmo-orb-karte"]');
     await expect(karte).toBeVisible();
@@ -155,7 +166,7 @@ test.describe('PD4 — Kosmo-Orb', () => {
     await expect(page.locator('[data-testid="kosmo-orb-karte-eingabe"]')).toBeVisible();
     await expect(page.locator('[data-testid="kosmo-orb-karte-senden"]')).toBeVisible();
 
-    await page.screenshot({ path: 'test-results/pd4-082-paper-kosmo-orb-karte.png' });
+    await page.screenshot({ path: 'test-results/pd5-082-paper-kosmo-orb-karte.png' });
 
     // «Später» schliesst nur die Karte — kein Panel-Öffnen.
     await page.click('[data-testid="kosmo-orb-karte-spaeter"]');
@@ -196,8 +207,10 @@ test.describe('PD4 — reduced-motion', () => {
   });
 });
 
-test.describe('PD4 — Kopfbalken-Ersatz (Owner-Nachtrag 17.07.2026)', () => {
-  test('Island-Modus: Kopfbalken NICHT im DOM, KosmoOrbit-Symbol + Einstellungs-Kreis vorhanden', async ({ page }) => {
+test.describe('PD5 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl + Owner-Korrektur, 17.07.2026)', () => {
+  test('Island-Modus: Kopfbalken NICHT im DOM, KosmoOrbit + KosmoDesign + Stationen-Orb + Einstellungs-Kreis EINHEITLICH, ohne Überlagerung', async ({
+    page,
+  }) => {
     await ueberspringeOnboarding(page);
     await page.click('[data-testid="module-design"]');
 
@@ -209,15 +222,78 @@ test.describe('PD4 — Kopfbalken-Ersatz (Owner-Nachtrag 17.07.2026)', () => {
     await expect(page.locator('[data-testid="starter-guide-start"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="einstellungen-oeffnen"]')).toHaveCount(0);
 
-    await expect(page.locator('[data-testid="island-kopf-logo-orbit"]')).toBeVisible();
-    await expect(page.locator('[data-testid="island-kopf-logo-design"]')).toBeVisible();
+    // PD5 Owner-Korrektur (wörtlich «links oben kosmoorbit und kosmodesign
+    // in gleicher grösse wie einstellungsknopf»): beide Logos bleiben, jetzt
+    // im selben Glas-Kreis-Stil wie Stationen-Orb/Einstellungs-Kreis.
+    const orbitLogo = page.locator('[data-testid="island-kopf-logo-orbit"]');
+    const designLogo = page.locator('[data-testid="island-kopf-logo-design"]');
+    await expect(orbitLogo).toBeVisible();
+    await expect(designLogo).toBeVisible();
     await expect(page.locator('[data-testid="island-einstellungen-kreis"]')).toBeVisible();
 
-    await page.screenshot({ path: 'test-results/pd4-082-orbit-kopfbalken-ersatz.png' });
+    // PD5 «einheitlicher Kreis-Stil für alle vier Kopf-Elemente» (Owner,
+    // wörtlich): KosmoOrbit, KosmoDesign, Stationen-Orb, Einstellungs-Kreis
+    // teilen sich exakt dieselbe visuelle Grösse (38px sichtbar/44px
+    // Trefferfläche, `.isl-stationen-orb-pill`-Basisregel).
+    const orbitBox = await orbitLogo.boundingBox();
+    const designBox = await designLogo.boundingBox();
+    const stationenOrbBox = await page.locator('[data-testid="stationen-orb-pill"]').boundingBox();
+    const ansichtsInfoBox = await page.locator('[data-testid="ansichts-info-label"]').boundingBox();
+    const einstellungenKreisBox = await page.locator('[data-testid="island-einstellungen-kreis"]').boundingBox();
+    for (const box of [orbitBox, designBox, stationenOrbBox, einstellungenKreisBox]) {
+      expect(box).not.toBeNull();
+    }
+    for (const box of [designBox, stationenOrbBox, einstellungenKreisBox]) {
+      expect(box?.width).toBeCloseTo(orbitBox?.width ?? -1, 0);
+      expect(box?.height).toBeCloseTo(orbitBox?.height ?? -1, 0);
+    }
+
+    // PD5 «Überlagerung beheben, saubere Abstände in der Reihe KosmoOrbit →
+    // KosmoDesign → AK-Orb → Ansichts-Info» (Owner, wörtlich) — jedes Paar
+    // benachbarter Kopf-Elemente bleibt disjunkt.
+    function disjunkt(
+      a: { x: number; y: number; width: number; height: number } | null,
+      b: { x: number; y: number; width: number; height: number } | null,
+    ): boolean {
+      if (!a || !b) return false;
+      return a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y;
+    }
+    expect(disjunkt(orbitBox, designBox)).toBe(true);
+    expect(disjunkt(designBox, stationenOrbBox)).toBe(true);
+    expect(disjunkt(stationenOrbBox, ansichtsInfoBox)).toBe(true);
+
+    await page.screenshot({ path: 'test-results/pd5-082-orbit-kopf-bereinigt.png' });
+
+    // KosmoOrbit-Symbol bleibt klickbar (Owner, wörtlich «kosmoorbit symbol
+    // klickbar was zum hauptmenü zurückführt») — derselbe `gehZu('home')`-Weg
+    // wie die Kopfbalken-Wortmarke; die Zentrale-Kachel ist danach wieder da.
+    await orbitLogo.click();
+    await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+    await page.click('[data-testid="module-design"]');
 
     // Einstellungs-Kreis öffnet dasselbe zentrale Panel wie das Zahnrad.
     await page.click('[data-testid="island-einstellungen-kreis"]');
     await expect(page.locator('[data-testid="einstellungen-panel"]')).toBeVisible();
+  });
+
+  test('Island-Modus: «Zentrale» zusätzlich additiv im Stationen-Orb-Popover erreichbar', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+
+    await page.hover('[data-testid="stationen-orb-root"]');
+    const zentraleEintrag = page.locator('[data-testid="stationen-orb-eintrag-zentrale"]');
+    await expect(zentraleEintrag).toBeVisible();
+    // Bewusst der ERSTE Eintrag im Popover (s. `StationenOrb.tsx`-Kopfkommentar).
+    await expect(page.locator('[data-testid="stationen-orb-popover"] > *').first()).toHaveAttribute(
+      'data-testid',
+      'stationen-orb-eintrag-zentrale',
+    );
+
+    await zentraleEintrag.click();
+    // WÖRTLICH derselbe `gehZu('home')`-Weg wie der KosmoOrbit-Logo-Klick —
+    // ein zweiter, additiver Zugang, kein Ersatz (Owner: «kann bleiben»).
+    await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+    await expect(page.locator('[data-testid="stationen-orb-popover"]')).toHaveCount(0);
   });
 
   test('Manuell-Modus: Kopfbalken vollständig da (Bestand unverändert)', async ({ page }) => {

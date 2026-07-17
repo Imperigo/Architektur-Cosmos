@@ -81,6 +81,16 @@ import { CursorEbene } from './shell/CursorEbene';
 import { OnboardingWizard } from './shell/OnboardingWizard';
 import './shell/orbit-065.css';
 import './app.css';
+// PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): `.isl-einstellungen-kreis`
+// UND die beiden Logo-Kreise unten (`.isl-kopf-logo-orbit`/`-design`,
+// Einstellungs-/Navigations-Zugang im Island-Modus) teilen sich jetzt bewusst
+// dieselbe Regel wie `.isl-stationen-orb-pill` — «einheitlicher Kreis-Stil
+// für alle vier Kopf-Elemente» (Owner, wörtlich). Expliziter Import statt
+// sich auf den transitiven Import über die island-Komponenten zu verlassen
+// (dieselbe Datei wird auch von `island/StationenOrb.tsx`/`island/
+// AnsichtsInfo.tsx`/`island/KosmoOrb.tsx` importiert, kein zweiter
+// Stylesheet-Ort).
+import './modules/design/island/island.css';
 
 type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev' | 'trust' | 'paket';
 
@@ -631,86 +641,58 @@ export function App() {
             Kosmo, «?» (Rundgang), ⚙ (Einstellungen). */}
       </header>
       )}
-      {/* PD4-Ersatz für den ausgeblendeten Kopfbalken (s. Kommentar oben):
-          schwebend oben links das KosmoOrbit-Symbol (Klick = Zur Zentrale,
-          derselbe `gehZu('home')`-Weg wie die Wortmarke im Header) + daneben
-          klein das farbige KosmoDesign-Logo — beide ohne Schriftzug, aus dem
-          bestehenden `OrbitMark`-Logo-System (`@kosmo/ui`), kein neues Asset.
-          Positioniert VOR dem PD2-Bühnenkopf-Cluster (Stationen-Orb/Ansichts-
-          Info, `island/island.css` `.isl-buehnenkopf-*`, dort auf
-          `left:74px`/`126px` verschoben, um hier Platz zu machen — s.
-          Kommentar dort). Inline-Styles statt einer neuen CSS-Klasse: App.tsx
-          besitzt hier keine eigene, additive Stylesheet-Datei innerhalb des
-          PD4-Dateikreises. */}
+      {/* PD5 (Owner-Korrektur, wörtlich «links oben kosmoorbit und
+          kosmodesign in gleicher grösse wie einstellungsknopf, kosmoorbit
+          symbol klickbar was zum hauptmenü zurückführt» — revidiert den
+          ersten PD5-Entwurf, der beide Logos ersatzlos entfernt hatte):
+          KosmoOrbit-Symbol + KosmoDesign-Logo BLEIBEN oben links, jetzt aber
+          im selben 38px-Glas-Kreis-Stil wie Stationen-Orb/Einstellungs-Kreis
+          (`.isl-kopf-logo-orbit`/`.isl-kopf-logo-design`, `island/island.css`
+          — teilen sich dieselbe Basis-Regel wie `.isl-stationen-orb-pill`/
+          `.isl-einstellungen-kreis`, s. dortiger Kommentar: «einheitlicher
+          Kreis-Stil für alle vier Kopf-Elemente»). KosmoOrbit bleibt
+          klickbar (Zur Zentrale, derselbe `gehZu('home')`-Weg wie die
+          Kopfbalken-Wortmarke); KosmoDesign bleibt dekorativ (kein zweiter
+          Klick-Weg, wie schon im ursprünglichen PD4-Ersatz). Überlagerung
+          behoben: alle vier Kopf-Elemente (KosmoOrbit → KosmoDesign →
+          Stationen-Orb → Ansichts-Info) sitzen jetzt in EINER Reihe auf
+          `top:14px` mit gleichmässigem 52px-Raster (`island/island.css`,
+          `.isl-buehnenkopf`-Kommentar) — die frühere Owner-Überlagerung kam
+          aus zwei unterschiedlichen `top`-Werten (Logos `top:14`, Bühnenkopf
+          `top:22`) plus zu knappem Lücken; behoben statt kaschiert. */}
       {bodenDockAusgeblendet && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 14,
-            left: 14,
-            zIndex: 42,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-          }}
+        <button
+          onClick={() => gehZu('home')}
+          className="k-druck app-druck-reset isl-kopf-logo-orbit"
+          aria-label="Zur Zentrale"
+          data-testid="island-kopf-logo-orbit"
         >
-          <button
-            onClick={() => gehZu('home')}
-            className="k-druck app-druck-reset"
-            aria-label="Zur Zentrale"
-            data-testid="island-kopf-logo-orbit"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 44,
-              height: 44,
-              padding: 0,
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--k-ink)',
-            }}
-          >
-            <OrbitMark module="orbit" size={22} />
-          </button>
-          <span
-            aria-hidden="true"
-            data-testid="island-kopf-logo-design"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28 }}
-          >
-            <OrbitMark module="design" size={18} title="KosmoDesign" />
-          </span>
-        </div>
+          <OrbitMark module="orbit" size={20} />
+        </button>
       )}
-      {/* PD4-Ersatz Teil 2: Einstellungs-Zugang als einfacher, standalone
-          Kreis oben rechts — ruft denselben `oeffneEinstellungen()`-Weg wie
-          das bisherige Kopfbalken-Zahnrad (ungefiltert, `station` bleibt
-          undefined), kein zweites Einstellungs-Panel. */}
+      {bodenDockAusgeblendet && (
+        <span
+          aria-hidden="true"
+          className="isl-kopf-logo-design"
+          data-testid="island-kopf-logo-design"
+        >
+          <OrbitMark module="design" size={18} title="KosmoDesign" />
+        </span>
+      )}
+      {/* Einstellungs-Zugang als einfacher, standalone Kreis oben rechts —
+          ruft denselben `oeffneEinstellungen()`-Weg wie das bisherige
+          Kopfbalken-Zahnrad (ungefiltert, `station` bleibt undefined), kein
+          zweites Einstellungs-Panel. Layout/Glas/Rand in
+          `.isl-einstellungen-kreis` (`island/island.css`) — bewusst
+          identisch zu `.isl-stationen-orb-pill`/den beiden Logo-Kreisen
+          oben («einheitliche Symbole», s. dortiger Kommentar). */}
       {bodenDockAusgeblendet && (
         <button
           onClick={() => oeffneEinstellungen()}
-          className="k-druck app-druck-reset"
+          className="k-druck app-druck-reset isl-einstellungen-kreis"
           aria-label="Einstellungen öffnen"
           title="Einstellungen"
           data-testid="island-einstellungen-kreis"
-          style={{
-            position: 'fixed',
-            top: 14,
-            right: 14,
-            zIndex: 42,
-            width: 44,
-            height: 44,
-            borderRadius: 999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'var(--k-glass-fill, rgba(20, 23, 31, 0.62))',
-            border: '1px solid var(--k-glass-stroke, var(--k-line))',
-            color: 'var(--k-ink)',
-            cursor: 'pointer',
-            padding: 0,
-          }}
         >
           <span aria-hidden="true" style={{ fontSize: 15 }}>⚙</span>
         </button>
@@ -873,6 +855,12 @@ export function App() {
                   const m = modules.find((mm) => mm.id === id);
                   if (m) oeffneModul(m);
                 }}
+                // PD5: «Zentrale» zusätzlich ADDITIV im `StationenOrb`-
+                // Popover erreichbar (Owner: «kann bleiben, schadet nicht»)
+                // — WÖRTLICH derselbe `gehZu('home')`-Aufruf wie der
+                // klickbare `island-kopf-logo-orbit` oben (Owner-Korrektur:
+                // beide Logos bleiben, kein Ersatz).
+                onZurZentrale={() => gehZu('home')}
               />
             </div>
           </KFehlerzone>

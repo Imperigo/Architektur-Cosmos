@@ -337,32 +337,45 @@
   animation: winIn var(--k-motion-fenster) var(--k-ease-entrance);
 }
 
-/* ── Bühnenkopf (PD2, §1): Stationen-Orb + Ansichts-Info, top:22px/left:26px,
-   Stationen-Orb zuerst (davor), Ansichts-Info daneben mit 14px-Lücke
-   (38px-Orb + 14px = 52px versetzt) — beide fix positioniert, teilen sich
-   `--f-*`-Token-Familie wie `.isl-root` oben (kein zweiter Token-Layer). ── */
+/* ── Bühnenkopf (PD2, §1): Stationen-Orb + Ansichts-Info — beide fix
+   positioniert, teilen sich die `--f-*`-Token-Familie wie `.isl-root` oben
+   (kein zweiter Token-Layer).
+   PD5 (Owner-Korrektur, wörtlich «links oben kosmoorbit und kosmodesign in
+   gleicher grösse wie einstellungsknopf … Überlagerung beheben, saubere
+   Abstände in der Reihe KosmoOrbit → KosmoDesign → AK-Orb → Ansichts-Info»):
+   `top` rückt von 22px auf 14px (deckt sich jetzt mit `.isl-kopf-logo-*`/
+   `.isl-einstellungen-kreis`, EINE Zeile statt zwei leicht versetzter) — die
+   frühere Owner-Überlagerung kam aus genau diesem `top:14` (Logos) vs.
+   `top:22` (Bühnenkopf)-Versatz plus zu knappem Lücken, behoben statt
+   kaschiert. Die vier linken Kopf-Elemente teilen sich jetzt EIN 52px-Raster
+   (38px sichtbarer Kreis + 14px Lücke, wie schon zuvor zwischen Stationen-Orb
+   und Ansichts-Info): KosmoOrbit `left:14`, KosmoDesign `left:66` (beide
+   App.tsx, `.isl-kopf-logo-*` unten), Stationen-Orb `left:118` (war 74),
+   Ansichts-Info `left:170` (war 126) — der bestehende +52-Abstand zwischen
+   Stationen-Orb und Ansichts-Info bleibt dabei UNVERÄNDERT, nur beide rücken
+   gemeinsam um weitere 44px nach rechts, um den zwei Logo-Kreisen Platz zu
+   machen. */
 .isl-buehnenkopf {
   position: fixed;
-  top: 22px;
+  top: 14px;
   z-index: 41;
   font-family: var(--k-font-ui);
 }
-/* PD4 (Owner-Nachtrag 17.07.2026, «schwebend oben links: KosmoOrbit-Symbol …
-   daneben klein das farbige KosmoDesign-Logo … vor/neben dem bestehenden
-   Stationen-Orb+Ansichts-Info-Cluster»): die beiden `left`-Werte rücken um
-   48px nach rechts (26→74, 78→126 — derselbe 52px-Abstand wie zuvor bleibt
-   gewahrt), damit die neuen, App.tsx-gerenderten Logos (`island-kopf-logo-*`,
-   `top:14px; left:14px`, ~44px breite Reihe) links davon Platz haben, ohne
-   den 38px-Stationen-Orb zu überlappen. Reiner Wertetausch, keine neue Regel
-   — der Rest des Bühnenkopfs (§1) bleibt unverändert. */
 .isl-buehnenkopf-stationen-orb {
-  left: 74px;
+  left: 118px;
 }
 .isl-buehnenkopf-ansichts-info {
-  left: 126px;
+  left: 170px;
 }
 
-.isl-stationen-orb-pill {
+/* PD5: EIN gemeinsamer 38px-Glas-Kreis-Stil für alle vier Kopf-Elemente
+   (Owner, wörtlich «gleiche grösse wie einstellungsknopf») — Stationen-Orb,
+   Einstellungs-Kreis UND die beiden Logo-Kreise (`.isl-kopf-logo-orbit`/
+   `.isl-kopf-logo-design`, unten) teilen sich exakt dieselbe Regel. */
+.isl-stationen-orb-pill,
+.isl-einstellungen-kreis,
+.isl-kopf-logo-orbit,
+.isl-kopf-logo-design {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -382,6 +395,53 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   padding: 0;
+}
+
+/* Die beiden Logo-Kreise oben links — eigene `position:fixed`-Koordinaten
+   (kein `.isl-root`-Kind, analog `.isl-einstellungen-kreis`), erstes und
+   zweites Feld im gemeinsamen 52px-Raster (s. `.isl-buehnenkopf`-Kommentar
+   oben). `.isl-kopf-logo-design` ist bewusst NICHT `cursor:pointer`
+   (dekorativ, kein zweiter Klick-Weg) — überschreibt die geerbte Regel oben
+   gezielt zurück auf `default`. */
+.isl-kopf-logo-orbit,
+.isl-kopf-logo-design {
+  position: fixed;
+  top: 14px;
+  z-index: 42;
+  /* Fable-Gate-Fix (Kontrast): `OrbitMark`/`Logo6a` zeichnen ihre Ringe/
+     Quadrate mit `var(--k-ink)` (NICHT `currentColor`) — im Papier-Theme ist
+     `--k-ink` dunkel (#1a1815, korrekt für Tinte auf hellem Papier), auf
+     UNSEREM immer-dunklen Glas-Kreis (`--f-pill`, s. oben) wäre das
+     dunkel-auf-dunkel = kaum sichtbar. Lokaler, auf diese zwei Kreise
+     begrenzter Override (CSS-Custom-Properties vererben sich normal über den
+     DOM-Baum, `--k-ink` bleibt ausserhalb dieser Kreise unverändert) — exakt
+     dasselbe «dunkles Glas bleibt in beiden Welten»-Muster wie `--f-pill`. */
+  --k-ink: #f4f6fa;
+}
+.isl-kopf-logo-orbit {
+  left: 14px;
+}
+.isl-kopf-logo-design {
+  left: 66px;
+  cursor: default;
+}
+
+/* PD5 (Owner-Befund «einheitliche Symbole»): der Einstellungs-Kreis oben
+   rechts (`App.tsx`, `island-einstellungen-kreis`) war 44px voll sichtbar +
+   `--k-glass-fill` — eigenes, drittes Glas neben Stationen-Orb (`--f-pill`)
+   und Ansichts-Info (`--k-glass-fill`, aber 44px-Kasten statt Kreis). Teilt
+   sich jetzt exakt dieselbe Regel wie `.isl-stationen-orb-pill` (oben, s.
+   `,`-Selektor) — 38px sichtbarer Kreis, 44px-Trefferfläche (§4.2), gleiches
+   dunkles Glas, gleicher Rand, in BEIDEN Farbwelten (kein Theme-Override,
+   identisch zum Stationen-Orb). Positionierung (`position:fixed; top:14px;
+   right:14px`) wandert mit hier rein — `App.tsx` behält nur noch
+   `data-testid`/Klick-Handler/Inhalt, keine eigenen Layout-Werte mehr. */
+.isl-einstellungen-kreis {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 42;
+  font-family: var(--k-font-ui);
 }
 
 .isl-ansichts-info-label {
@@ -524,12 +584,10 @@
   padding: 0;
   position: relative;
 }
-.isl-orb-glyphe {
-  font-family: var(--k-font-mono);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
+/* PD5 (Owner-Befund «richtiges Symbol»): `.isl-orb-glyphe` (statisches
+   Mono-«K»-Glyph) ist mit dem Wechsel auf den echten, animierten
+   `shell/KosmoOrb.tsx`-Kern (`island/KosmoOrb.tsx`) verwaist — entfernt statt
+   toter CSS. */
 
 /* Puls (§4.3: «weich, zyklisch», 2.4s) — ein sich ausdehnender, verblassender
    Ring statt einer Skalierung des Orbs selbst (bleibt so bei jeder Puls-

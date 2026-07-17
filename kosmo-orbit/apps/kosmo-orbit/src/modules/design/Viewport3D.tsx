@@ -2282,7 +2282,19 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           Orbit/Pan/Zoom/Fit-Leiste, unter dem fixen Kosmo-Symbol vorbei —
           gleiche Spalte wie `NavLeiste` (`right:88`), aber `bottom:92` statt
           `bottom:50`, damit sich nichts stapelt). Unaufdringlich: im Ruhe-
-          zustand nur der Knopf, das Status-/Ergebnis-Panel wächst darüber. */}
+          zustand nur der Knopf, das Status-/Ergebnis-Panel wächst darüber.
+          PD5 (Owner-Befund, Screenshot-Review 17.07.2026): dieser Block war
+          bislang der EINE Rest der klassischen Viewport-Fläche, den PD3c/PD4
+          nicht auf `designOberflaeche === 'manuell'` gegated hatten (anders
+          als `<ViewportChrome sichtbar=…>` zwei Zeilen oben und `<NavLeiste>`
+          direkt darunter, die beide bereits denselben Guard tragen) — «Für
+          Vis aufnehmen»/«Rendern» schwebten dadurch AUCH im Island-Modus
+          weiter frei über dem Viewport, ausserhalb der AUSTAUSCH-Insel (der
+          E2E-Fund `viewport-panel-aktion`=0 hatte nur die AUSTAUSCH-Insel
+          selbst geprüft, nicht diesen zweiten, älteren Render-Zugang). Additiv
+          derselbe Guard wie die beiden Nachbarn — Manuell-Modus bleibt
+          byte-gleich sichtbar, nur der Island-Modus blendet aus. */}
+      {designOberflaeche === 'manuell' && (
       <div className="v3d-render-ecke">
         {renderStatus !== 'bereit' && (
           <div
@@ -2371,6 +2383,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           </span>
         </KButton>
       </div>
+      )}
       {kontext && (
         <ViewportKontextmenue
           x={kontext.x}

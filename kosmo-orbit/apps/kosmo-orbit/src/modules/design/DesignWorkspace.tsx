@@ -360,9 +360,23 @@ export interface DesignWorkspaceProps {
    *  erweitert — `App.tsx`s Handler (`modules.find` + `oeffneModul`) ist
    *  bereits generisch, keine Änderung an `App.tsx` nötig. */
   onStationOeffnen?: (station: 'vis' | 'publish' | 'prepare' | 'data' | 'design') => void;
+  /** PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): «Zur Zentrale» —
+   *  additiv, derselbe `gehZu('home')`-Weg wie die Kopfbalken-Wortmarke UND
+   *  der (weiterhin gerenderte) klickbare `island-kopf-logo-orbit` (`App.tsx`).
+   *  Nur an `StationenOrb`s zusätzlichen «Zentrale»-Popover-Eintrag
+   *  durchgereicht (s. `StationenOrb.tsx` Kopfkommentar) — ein zweiter,
+   *  additiver Zugang, kein Ersatz — optional aus demselben Grund wie
+   *  `onStationOeffnen`. */
+  onZurZentrale?: () => void;
 }
 
-export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, onStationOeffnen }: DesignWorkspaceProps = {}) {
+export function DesignWorkspace({
+  onEinstellungen,
+  onKosmoOeffnen,
+  kosmoOffen,
+  onStationOeffnen,
+  onZurZentrale,
+}: DesignWorkspaceProps = {}) {
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const runCommand = useProject((s) => s.runCommand);
@@ -3491,7 +3505,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         {designOberflaeche === 'island' && (
           <>
             <IslandBuehne onWerkzeugAktion={aktiviereIslandWerkzeug} />
-            <StationenOrb onStationOeffnen={aktiviereStation} />
+            <StationenOrb
+              onStationOeffnen={aktiviereStation}
+              {...(onZurZentrale !== undefined ? { onZentrale: onZurZentrale } : {})}
+            />
             <AnsichtsInfo
               viewMode={viewMode}
               setViewMode={setViewMode}

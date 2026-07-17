@@ -93,6 +93,25 @@ describe('StationenOrb — Pill + Popover', () => {
   });
 });
 
+describe('StationenOrb — PD5 «Zentrale»-Eintrag (additiv, optional)', () => {
+  it('ohne `onZentrale` erscheint KEIN Zentrale-Eintrag (optional, bestehende Tests ohne die Prop bleiben unverändert)', () => {
+    render(<StationenOrb onStationOeffnen={vi.fn()} />);
+    klick(q('stationen-orb-pill')!);
+    expect(q('stationen-orb-eintrag-zentrale')).toBeNull();
+  });
+
+  it('mit `onZentrale` ist «Zentrale» der ERSTE Eintrag, Klick ruft `onZentrale` auf und schliesst das Popover', () => {
+    const onZentrale = vi.fn();
+    render(<StationenOrb onStationOeffnen={vi.fn()} onZentrale={onZentrale} />);
+    klick(q('stationen-orb-pill')!);
+    const popover = q('stationen-orb-popover')!;
+    expect(popover.firstElementChild).toBe(q('stationen-orb-eintrag-zentrale'));
+    klick(q('stationen-orb-eintrag-zentrale')!);
+    expect(onZentrale).toHaveBeenCalledTimes(1);
+    expect(q('stationen-orb-popover')).toBeNull();
+  });
+});
+
 describe('StationenOrb — Auto-Schliessen 700ms', () => {
   beforeEach(() => {
     vi.useFakeTimers();

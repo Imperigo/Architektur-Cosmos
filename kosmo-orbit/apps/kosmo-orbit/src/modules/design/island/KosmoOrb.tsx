@@ -3,6 +3,21 @@ import { greeting } from '@kosmo/ai';
 import { kurzform, useKosmoStatus } from '../../../state/kosmo-status';
 import { useProject } from '../../../state/project-store';
 import { loadSettings } from '../../../shell/KosmoPanel';
+// PD5 (Owner-Befund, Screenshot-Review 17.07.2026, wörtlich «gib kosmo
+// wieder seine animationen und richtiges symbol»): der Orb-Inhalt war bis
+// hierher ein leblos-statisches «K»-Glyph — der ECHTE, animierte Kosmo-Orb
+// (Kern/Punkte/Zustands-Choreografie, `data-zustand`-Attribut-Wechsel, s.
+// `kosmo-feedback.css`) lebt bereits als wiederverwendbare Komponente in
+// `shell/KosmoOrb.tsx` (dort schon von `KosmoSymbol.tsx` genutzt) — REINER
+// Lese-Import (`shell/**` bleibt laut Bauauftrag unverändert), unter Alias
+// importiert, weil diese Datei selbst ebenfalls eine (andere!) Komponente
+// namens `KosmoOrb` exportiert (der Insel-Wrapper mit Klick→Karte-Verhalten,
+// s. unten). reduced-motion: `shell/KosmoOrb.tsx`s eigene Animationen hängen
+// bereits am globalen `prefers-reduced-motion`-Riegel (aura.css) plus
+// eigenen `animation:none`-Regeln je Klasse (`kosmo-feedback.css`-Kopf-
+// kommentar) — keine zusätzliche Gate-Logik hier nötig, die bestehende
+// Animations-Disziplin der Komponente wird unverändert übernommen.
+import { KosmoOrb as KosmoSymbolOrb } from '../../../shell/KosmoOrb';
 import { useReduzierteBewegung } from './IslandShell';
 import './island.css';
 
@@ -75,6 +90,10 @@ export function KosmoOrb({ onKosmoOeffnen }: KosmoOrbProps) {
   const reduziert = useReduzierteBewegung();
   const beschaeftigt = useKosmoStatus((s) => s.beschaeftigt);
   const letzteAktivitaet = useKosmoStatus((s) => s.letzteAktivitaet);
+  // PD5: derselbe `zustand`-Wert, den `KosmoSymbol.tsx` an den echten Orb
+  // reicht (idle/thinking/listening/writing/dispatching/done/speaking/error/
+  // takeover) — treibt jetzt auch hier die volle Zustands-Choreografie.
+  const zustand = useKosmoStatus((s) => s.zustand);
 
   const vorschlagText = letzteAktivitaet ?? kurzform(begruessung());
   const mockAktiv = loadSettings().provider === 'mock';
@@ -95,9 +114,7 @@ export function KosmoOrb({ onKosmoOeffnen }: KosmoOrbProps) {
         aria-expanded={offen}
         onClick={() => setOffen((o) => !o)}
       >
-        <span className="isl-orb-glyphe" aria-hidden="true">
-          K
-        </span>
+        <KosmoSymbolOrb zustand={zustand} size={30} />
       </button>
       {offen ? (
         <div className="isl-orb-karte" data-testid="kosmo-orb-karte">
