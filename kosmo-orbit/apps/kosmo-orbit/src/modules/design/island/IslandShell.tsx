@@ -8,6 +8,13 @@ import {
   type IslandWerkzeug,
 } from './island-katalog';
 import { bevorzugtReduzierteBewegung } from '../../../state/cursor-zustand';
+import { inhaltFuer } from './inhalte/registry';
+// Registrierung der Stufe-2/3-Inhalte als Import-Seiteneffekt (Fable-Naht
+// für PD3a ‖ PD3b — s. `inhalte/registry.ts`-Kopfkommentar).
+import './inhalte/zeichnen';
+import './inhalte/ansicht';
+import './inhalte/projekt';
+import './inhalte/austausch';
 import './island.css';
 
 /**
@@ -242,10 +249,13 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
           >
             ✕
           </button>
-          {/* PD2: ehrlicher Hinweis, wenn dieses Werkzeug KEINE echte Aktion
-              hat (s. `island-katalog.ts`-Kopfkommentar) — sonst weiterhin
-              leerer Rahmen (PD1), Stufe-2-Inhalte kommen PD3. */}
-          {aktivesWerkzeug.hinweis ? (
+          {/* PD3-Registry zuerst (Stufe-2-Inhalt aus `inhalte/`); sonst der
+              PD2-Hinweis (Werkzeug ohne echte Aktion) bzw. PD1-Rahmen. */}
+          {(() => {
+            const Inhalt = inhaltFuer(aktivesWerkzeug.id)?.Stufe2;
+            return Inhalt ? <Inhalt /> : null;
+          })()}
+          {!inhaltFuer(aktivesWerkzeug.id)?.Stufe2 && aktivesWerkzeug.hinweis ? (
             <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-popup-hinweis`}>
               {aktivesWerkzeug.hinweis}
             </p>
@@ -268,8 +278,13 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
           >
             ✕
           </button>
-          {/* Leerer Rahmen (PD1) — Einstellungsfenster-Inhalte (Stufe-3-Quelle je §4.4) kommen PD3. */}
-          {aktivesWerkzeug.hinweis ? (
+          {/* PD3-Registry zuerst (Stufe-3-Inhalt aus `inhalte/`); sonst der
+              PD2-Hinweis bzw. PD1-Rahmen. */}
+          {(() => {
+            const Inhalt = inhaltFuer(aktivesWerkzeug.id)?.Stufe3;
+            return Inhalt ? <Inhalt /> : null;
+          })()}
+          {!inhaltFuer(aktivesWerkzeug.id)?.Stufe3 && aktivesWerkzeug.hinweis ? (
             <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-fenster-hinweis`}>
               {aktivesWerkzeug.hinweis}
             </p>
