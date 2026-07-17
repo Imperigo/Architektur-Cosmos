@@ -197,6 +197,13 @@ export const ORBIT_HAUPTWERKZEUGE: OrbitHauptwerkzeug[] = [
         kurzbeschrieb: 'Diagnose, Hilfe, Berichte',
         faehigkeit: faehigkeitAus('doc'),
       },
+      {
+        id: 'trust',
+        moduleId: 'trust',
+        titel: 'Trust',
+        kurzbeschrieb: '.kxp-Viewer, Freigabe-Workflow',
+        faehigkeit: faehigkeitAus('trust'),
+      },
     ],
   },
   {

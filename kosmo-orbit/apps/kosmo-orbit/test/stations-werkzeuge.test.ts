@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
 describe('Stations-Werkzeuge (Serie K / A2, Owner-Befund K12): Hover-Stichworte je Kachel', () => {
-  it('deckt ALLE zwölf Zentrale-Kachel-Ids ab, je 3–5 nichtleere Stichworte', async () => {
+  it('deckt ALLE 13 Zentrale-Kachel-Ids ab, je 3–5 nichtleere Stichworte', async () => {
     const { STATIONS_WERKZEUGE, STATIONS_MODUL_IDS } = await import('../src/shell/stations-werkzeuge');
 
     expect(Object.keys(STATIONS_WERKZEUGE).sort()).toEqual([...STATIONS_MODUL_IDS].sort());
-    expect(STATIONS_MODUL_IDS).toHaveLength(12);
+    // v0.8.1 / P11 (docs/V081-SPEZ.md §7(a), C-29): 12 → 13 — KosmoTrust
+    // (.kxp-Viewer + Trust-Layer) ist eine ECHTE 13. Station, kein Kachel-
+    // Attrappen-Zuwachs (s. `stations-werkzeuge.ts` STATIONS_MODUL_IDS).
+    expect(STATIONS_MODUL_IDS).toHaveLength(13);
 
     for (const id of STATIONS_MODUL_IDS) {
       const woerter = STATIONS_WERKZEUGE[id];

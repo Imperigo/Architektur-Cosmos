@@ -1,0 +1,170 @@
+/* KosmoTrust (v0.8.1 / P11, `docs/V081-SPEZ.md` §7(a)) — Chrome-Schicht für
+ * `KxpWorkspace.tsx`. Muster `modules/asset/asset.css`/`modules/data/data.css`:
+ * Klassen statt Inline-Styles, Modul-Hue als `--_hue`-Custom-Property. */
+
+.kxp-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.kxp-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--k-s5);
+}
+.kxp-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s4);
+}
+
+.kxp-kopf {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+.kxp-kopf-leiste {
+  flex-wrap: wrap;
+  background: transparent;
+  border-bottom: none;
+}
+.kxp-kopf-text {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-sm);
+}
+.kxp-fill {
+  flex: 1;
+}
+
+.kxp-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+
+.kxp-fehler {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  padding: var(--k-s3) var(--k-s4);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-warning-line, var(--k-line-strong));
+  background: var(--k-warning-wash, var(--k-surface));
+  color: var(--k-ink);
+  font-size: var(--k-t-sm);
+}
+
+.kxp-label {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  margin-top: var(--k-s3);
+}
+
+.kxp-viewer {
+  display: grid;
+  gap: var(--k-s3);
+}
+.kxp-viewer-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+
+.kxp-plaene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--k-s3);
+}
+.kxp-plan-karte {
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-radius-sm);
+  padding: var(--k-s2) var(--k-s3);
+  background: var(--k-surface);
+}
+.kxp-plan-karte summary {
+  cursor: pointer;
+  font-size: var(--k-t-sm);
+  font-family: var(--k-font-mono);
+}
+.kxp-plan-bild {
+  width: 100%;
+  margin-top: var(--k-s2);
+  border: 1px solid var(--k-line-subtil, var(--k-line));
+  background: #fff;
+}
+
+.kxp-grenze {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--k-s2);
+  padding: var(--k-s3) var(--k-s4);
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-warning-line, var(--k-line-strong));
+  background: var(--k-warning-wash, var(--k-surface));
+  font-size: var(--k-t-xs, 12px);
+  color: var(--k-ink-soft);
+}
+
+.kxp-freigabe-aktionen {
+  display: grid;
+  gap: var(--k-s2);
+}
+.kxp-freigabe-knoepfe {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.kxp-freigabe-terminal {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+}
+
+.kxp-unheruntergeladen {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+  font-size: var(--k-t-xs, 12px);
+  color: var(--k-ink-soft);
+}
+
+.kxp-verlauf-liste {
+  display: grid;
+  gap: var(--k-s2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.kxp-verlauf-liste li {
+  display: flex;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding: var(--k-s2) var(--k-s3);
+  border-radius: var(--k-radius-sm);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line-subtil, var(--k-line));
+  font-size: var(--k-t-sm);
+}
+
+.kxp-mono {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  color: var(--k-ink-faint);
+}
+.kxp-c-soft {
+  color: var(--k-ink-soft);
+}
+.kxp-c-faint {
+  color: var(--k-ink-faint);
+  font-style: italic;
+}
+
+.kxp-export-text {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  margin: 0 0 var(--k-s3) 0;
+}

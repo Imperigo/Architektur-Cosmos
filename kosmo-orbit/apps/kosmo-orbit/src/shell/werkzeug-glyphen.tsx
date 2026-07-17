@@ -202,4 +202,5 @@ export const STATION_GLYPHE: Record<StationModulId, { art: WerkzeugGlyphenArt; r
   speak: { art: 'chat', rolle: '--k-signal' },
   doc: { art: 'odysseus', rolle: '--k-rolle-office' },
   train: { art: 'lernen', rolle: '--k-rolle-memory' },
+  trust: { art: 'connect', rolle: '--k-rolle-office' },
 };

@@ -40,6 +40,7 @@ import { DocWorkspace } from './modules/doc/DocWorkspace';
 import { TrainWorkspace } from './modules/train/TrainWorkspace';
 import { AssetWorkspace } from './modules/asset/AssetWorkspace';
 import { DevWorkspace } from './modules/dev/DevWorkspace';
+import { KxpWorkspace } from './modules/kxp/KxpWorkspace';
 import { CommandPalette } from './shell/CommandPalette';
 import { DockTour } from './shell/dock/DockTour';
 import { wendeErststartPresetFallsNoetigAn } from './state/dock-preset-anwendung';
@@ -79,7 +80,7 @@ import { OnboardingWizard } from './shell/OnboardingWizard';
 import './shell/orbit-065.css';
 import './app.css';
 
-type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev';
+type Screen = 'home' | 'design' | 'vis' | 'data' | 'publish' | 'prepare' | 'doc' | 'train' | 'asset' | 'dev' | 'trust';
 
 /**
  * Aufgabe 3 (0.6.6 MOTION-KONZEPT-066 §3, «jedes klickbare Element trägt
@@ -114,6 +115,7 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
   { id: 'prepare', screen: 'prepare', name: 'KosmoPrepare', desc: 'Grundlagen · Ingestion' },
   { id: 'asset', screen: 'asset', name: 'KosmoAsset', desc: 'Materialien · Bauteile · Objekte' },
   { id: 'dev', screen: 'dev', name: 'KosmoDev', desc: 'Auftragsbuch · Verbesserungen' },
+  { id: 'trust', screen: 'trust', name: 'KosmoTrust', desc: '.kxp-Viewer · Freigabe-Workflow' },
   { id: 'speak', screen: null, name: 'KosmoSpeak', desc: 'Sprechen mit Kosmo · braucht Bridge', deepLink: 'speak' },
   { id: 'doc', screen: 'doc', name: 'KosmoDoc', desc: 'Diagnose · Hilfe · Berichte' },
   { id: 'train', screen: 'train', name: 'KosmoTrain', desc: 'Lernstand · Kuration · Training' },
@@ -121,9 +123,9 @@ const modules: { id: ModuleId; screen: Screen | null; name: string; desc: string
 
 /** D2: Kachel-Reihenfolge je Rolle — die tägliche Arbeit rückt nach vorn. */
 const ROLLEN_REIHENFOLGE: Record<'entwurf' | 'ausfuehrung' | 'admin', ModuleId[]> = {
-  entwurf: ['design', 'sketch', 'vis', 'draw', 'data', 'asset', 'publish', 'prepare', 'speak', 'dev', 'doc', 'train'],
-  ausfuehrung: ['publish', 'draw', 'design', 'doc', 'data', 'asset', 'prepare', 'sketch', 'vis', 'speak', 'dev', 'train'],
-  admin: ['doc', 'train', 'dev', 'data', 'prepare', 'asset', 'publish', 'design', 'draw', 'sketch', 'vis', 'speak'],
+  entwurf: ['design', 'sketch', 'vis', 'draw', 'data', 'asset', 'publish', 'prepare', 'speak', 'dev', 'doc', 'train', 'trust'],
+  ausfuehrung: ['publish', 'draw', 'design', 'doc', 'data', 'asset', 'prepare', 'sketch', 'vis', 'speak', 'dev', 'train', 'trust'],
+  admin: ['doc', 'train', 'dev', 'data', 'prepare', 'asset', 'publish', 'design', 'draw', 'sketch', 'vis', 'speak', 'trust'],
 };
 
 export function App() {
@@ -773,6 +775,10 @@ export function App() {
         ) : screen === 'dev' ? (
           <KFehlerzone bereich="KosmoDev" onDiagnose={() => gehZu('doc')}>
             <DevWorkspace />
+          </KFehlerzone>
+        ) : screen === 'trust' ? (
+          <KFehlerzone bereich="KosmoTrust" onDiagnose={() => gehZu('doc')}>
+            <KxpWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'trust', name: 'KosmoTrust' })} />
           </KFehlerzone>
         ) : (
           <div className="app-zentrale-scroll">

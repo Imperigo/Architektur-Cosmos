@@ -115,10 +115,11 @@ describe('werkzeug-glyphen (V0.7.2 W1-B Paket 02): die 14 Grundformen aus Spec-�
     expect(normal).toContain('r="1.7"');
   });
 
-  it('STATION_GLYPHE deckt alle 12 echten Stationen (STATIONS_MODUL_IDS) ab — je genau ein Eintrag', () => {
+  it('STATION_GLYPHE deckt alle 13 echten Stationen (STATIONS_MODUL_IDS) ab — je genau ein Eintrag', () => {
     const stationen = Object.keys(STATION_GLYPHE).sort();
     expect(stationen).toEqual([...STATIONS_MODUL_IDS].sort());
-    expect(stationen).toHaveLength(12);
+    // v0.8.1 / P11 (C-29): 12 → 13 — KosmoTrust ist die 13. echte Station.
+    expect(stationen).toHaveLength(13);
     for (const [station, eintrag] of Object.entries(STATION_GLYPHE)) {
       expect(ALLE_ARTEN, station).toContain(eintrag.art);
       expect(eintrag.rolle.startsWith('--'), station).toBe(true);

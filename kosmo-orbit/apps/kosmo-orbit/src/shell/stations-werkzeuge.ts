@@ -35,6 +35,7 @@ export const STATIONS_MODUL_IDS: StationModulId[] = [
   'speak',
   'doc',
   'train',
+  'trust',
 ];
 
 export const STATIONS_WERKZEUGE: Record<StationModulId, string[]> = {
@@ -56,6 +57,12 @@ export const STATIONS_WERKZEUGE: Record<StationModulId, string[]> = {
   speak: ['Text-Chat mit Kosmo', 'Push-to-Talk-Mikrofon (Bridge)', 'Vorlesen (TTS)', 'Vorschlagskarten mit Undo'],
   doc: ['Selbstdiagnose', 'Hilfe-Themen (Werkzeug-Wissen)', 'Lernjournal-Berichte'],
   train: ['Lernstand-Übersicht', 'Kuration fürs Training', 'JSONL-Trainingspaket-Export'],
+  trust: [
+    '.kxp-Hyper-Modell exportieren (Modell + Pläne)',
+    '.kxp-Paket read-only öffnen und prüfen',
+    'Freigabe-Zustandsmaschine mit Verlauf (lokal, Platzhalter-Rollen)',
+    'Signatur-Slot ehrlich als unsigniert ausgewiesen',
+  ],
 };
 
 /** Werkzeuge einer Zentrale-Kachel — leer für `orbit`/`kosmo` (nie als

@@ -89,6 +89,9 @@ export const moduleHue = {
   speak: '#4f7a7a', // Petrol — die Stimme im Raum
   asset: '#7a6a55', // Nussbaum — die Bibliothek der Dinge
   dev: '#5e6b52', // Tannengrün — die Werkstatt an der Software
+  // v0.8.1 / P11 (docs/V081-SPEZ.md §7(a), C-29): Indigo — der Vertrauens-
+  // Siegel-Ton fürs .kxp-Hyper-Modell + die Trust-Layer-Freigabe.
+  trust: '#5b5a8a',
 } as const;
 
 export type ModuleId = keyof typeof moduleHue;
