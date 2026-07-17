@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../../../state/project-store';
 import { useViewportChromeRuntime } from '../../../../state/viewport-chrome-runtime';
+import { usePlanAnsicht } from '../../../../state/plan-ansicht';
 import { setSunDate } from '../../Viewport3D';
 import { registriereInhalt } from './registry';
 import './pd3a.css';
@@ -304,28 +305,52 @@ function EbenenStufe3() {
 }
 
 // ---------------------------------------------------------------------------
-// 15 · Trace / 16 · Graph — State lebt PlanView-lokal (`traceId`/`graphAn`,
-// `PlanView.tsx`, ausserhalb dieses Dateikreises) — ehrlich Status +
-// Anleitung statt eines zweiten, konkurrierenden States.
+// 15 · Trace / 16 · Graph — PD3c (Owner-Befehl 17.07. «alles weg bitte alles
+// in die islands...», `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7): `traceId`/
+// `graphAn` leben jetzt im geteilten, additiven `state/plan-ansicht.ts`-Store
+// (NICHT persistiert, reiner Laufzeit-Anzeigezustand wie `tool`/`viewMode`
+// in `ui-zustand.ts`) statt im vorherigen PlanView-lokalen `useState` — genau
+// EIN State, den `PlanView.tsx` UND diese Insel lesen/schreiben. Die PD3a-
+// Vorgänger-Fassung («kein eigener Zustand hier») ist damit überholt: diese
+// Schalter wirken jetzt ECHT im Grundriss, auch wenn dessen eigene HUD-Zeile
+// (`trace-select`/`graph-toggle`) im Island-Modus unsichtbar ist (PD3c blendet
+// sie dort aus, s. `PlanView.tsx`s Kopfkommentar zur Rückgabe-JSX). Achsen
+// (fünftes von sechs ANSICHT-Werkzeugen) bleibt bewusst UNREGISTRIERT
+// (`hatPopup:false`, s. Datei-Kopfkommentar) — sein echter Store-Toggle läuft
+// über `island-katalog.ts`s `hatPopup:false`-Pfad direkt in
+// `DesignWorkspace.tsx`s `aktiviereIslandWerkzeug()` (Fall `'achsen'`,
+// dokumentiert dort), nicht über ein Popup/Fenster hier.
 // ---------------------------------------------------------------------------
 
-function TraceInfo() {
+function TraceAuswahl({ testid }: { testid: string }) {
+  const traceId = usePlanAnsicht((s) => s.traceId);
+  const setTraceId = usePlanAnsicht((s) => s.setTraceId);
+  const revision = useProject((s) => s.revision);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const doc = useProject.getState().doc;
+  void revision; // erzwingt Re-Render, wenn sich die Geschossliste ändert
   return (
-    <>
-      <p className="pd3a-kennzahl">Nur im Grundriss (2D) verfügbar.</p>
-      <Hinweis testid="island-trace-hinweis">
-        Zielgeschoss wählen: unten links in der Grundriss-Werkzeugleiste (trace-select,
-        PlanView.tsx) — kein eigener Zustand hier, um keinen zweiten State neben PlanView zu
-        führen.
-      </Hinweis>
-    </>
+    <Zeile label="Trace">
+      <KSelect size="sm" data-testid={testid} value={traceId} onChange={(e) => setTraceId(e.target.value)}>
+        <option value="">Aus</option>
+        {doc
+          .storeysOrdered()
+          .filter((s) => s.id !== activeStoreyId)
+          .map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+      </KSelect>
+    </Zeile>
   );
 }
 
 function TraceStufe2() {
   return (
     <div className="pd3a-stufe2" data-testid="island-trace-stufe2" onClick={(e) => e.stopPropagation()}>
-      <TraceInfo />
+      <TraceAuswahl testid="island-trace-ziel" />
+      <p className="pd3a-kennzahl">Wirkt nur im Grundriss (2D) sichtbar — der Store-Wert gilt aber sofort.</p>
     </div>
   );
 }
@@ -333,27 +358,32 @@ function TraceStufe2() {
 function TraceStufe3() {
   return (
     <div className="pd3a-stufe3" data-testid="island-trace-stufe3">
-      <TraceInfo />
+      <TraceAuswahl testid="island-trace-fenster-ziel" />
+      <p className="pd3a-kennzahl">Wirkt nur im Grundriss (2D) sichtbar — der Store-Wert gilt aber sofort.</p>
+      <Hinweis testid="island-trace-hinweis">
+        Blasses Unterlegen eines anderen Geschosses, reine Bildschirmhilfe — Druck/Export bleiben
+        unverändert (`derive/plan.ts`).
+      </Hinweis>
     </div>
   );
 }
 
-function GraphInfo() {
+function GraphSchalter({ testid }: { testid: string }) {
+  const graphAn = usePlanAnsicht((s) => s.graphAn);
+  const setGraphAn = usePlanAnsicht((s) => s.setGraphAn);
   return (
-    <>
-      <p className="pd3a-kennzahl">Nur im Grundriss (2D) verfügbar.</p>
-      <Hinweis testid="island-graph-hinweis">
-        An/Aus: unten links in der Grundriss-Werkzeugleiste (graph-toggle, PlanView.tsx) — kein
-        eigener Zustand hier, um keinen zweiten State neben PlanView zu führen.
-      </Hinweis>
-    </>
+    <label className="pd3a-zeile">
+      <input type="checkbox" data-testid={testid} checked={graphAn} onChange={(e) => setGraphAn(e.target.checked)} />
+      Raumgraph anzeigen
+    </label>
   );
 }
 
 function GraphStufe2() {
   return (
     <div className="pd3a-stufe2" data-testid="island-graph-stufe2" onClick={(e) => e.stopPropagation()}>
-      <GraphInfo />
+      <GraphSchalter testid="island-graph-an" />
+      <p className="pd3a-kennzahl">Wirkt nur im Grundriss (2D) sichtbar.</p>
     </div>
   );
 }
@@ -361,7 +391,12 @@ function GraphStufe2() {
 function GraphStufe3() {
   return (
     <div className="pd3a-stufe3" data-testid="island-graph-stufe3">
-      <GraphInfo />
+      <GraphSchalter testid="island-graph-fenster-an" />
+      <p className="pd3a-kennzahl">Wirkt nur im Grundriss (2D) sichtbar.</p>
+      <Hinweis testid="island-graph-hinweis">
+        Knoten auf Raumzentren, Kanten an Raumübergängen — reine Bildschirmhilfe (Finch-Clip),
+        kein Planinhalt.
+      </Hinweis>
     </div>
   );
 }

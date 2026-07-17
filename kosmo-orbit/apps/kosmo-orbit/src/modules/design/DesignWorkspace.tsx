@@ -103,6 +103,15 @@ import { IslandBuehne } from './island/IslandShell';
 import { AnsichtsInfo } from './island/AnsichtsInfo';
 import { StationenOrb, type StationenOrbId } from './island/StationenOrb';
 import type { IslandWerkzeug } from './island/island-katalog';
+// PD3c (Owner-Befehl 17.07.): PD3bs vorbereitete Deep-Link-Brücke (§8-4) —
+// verdrahtet `onStationOeffnen` beim Mount (Effekt unten), damit die
+// AUSTAUSCH-Insel «Zur Station»-Knöpfe (Rendern/Blätter) ECHT navigieren.
+import { registriereStationsWeg } from './island/inhalte/austausch';
+// PD3c: Achsen bleibt `hatPopup:false` (Sofort-Toggle in der Leiste,
+// `island-katalog.ts`) — die echte Wirkung läuft über denselben geteilten
+// Store, den `PlanView.tsx`/`island/inhalte/ansicht.tsx` (Trace/Graph)
+// nutzen (`aktiviereIslandWerkzeug` unten).
+import { usePlanAnsicht } from '../../state/plan-ansicht';
 import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
 import { DockRegeln } from '../../shell/dock/DockRegeln';
 import { useDockZustand } from '../../state/dock-zustand';
@@ -480,7 +489,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   // zentrales Viewport-Rechteck, die Floats würden im 2×2-Raster über alle
   // vier Zellen schweben statt nur über der Viewport3D-Zelle).
   const viewportChromeBereit = useViewportChromeRuntime((s) => s.bereit);
-  const viewportHudFloatsSichtbar = viewportChromeBereit && (viewMode === '3d' || viewMode === 'split');
+  // PD3c-Nachzug (Fable-Gate, Owner-Befehl «alles weg»): die sechs HUD-Floats
+  // (Modusleiste/-karte/Werkzeug-Rail/Orientierung/Statuskarte/Eigenschaften
+  // inkl. «Für Vis aufnehmen»-Aktion) gehören zur klassischen Fläche — im
+  // Island-Modus sind Rendern/Ansicht über die Islands erreichbar.
+  const viewportHudFloatsSichtbar =
+    viewportChromeBereit && (viewMode === '3d' || viewMode === 'split') && designOberflaeche === 'manuell';
   // SK-D1 Massnahme 2: Export-Gruppe hinter einem echten Auf/Zu-Trigger,
   // Default OFFEN (Begründung: Kommentar am `export-menu-toggle`-Knopf unten).
   const exportMenuOffen = useUiZustand((s) => s.exportMenuOffen);
@@ -702,6 +716,20 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     if (ziel === 'draw') setDrawOffen(true);
     if (ziel === 'sketch') setTool('skizze');
   }, []);
+
+  // PD3c (Owner-Befehl 17.07., `island/inhalte/austausch.tsx`s Kopfkommentar
+  // «Deep-Link-Brücke (§8-4)»): verdrahtet die von PD3b vorbereitete Brücke
+  // mit dem bestehenden `onStationOeffnen`-Weg (derselbe Callback, den
+  // `StationenOrb`/`EntwurfsDock` schon nutzen) — die AUSTAUSCH-Insel-
+  // Fenster (Rendern/Blätter, `ZurStationKnopf`) navigieren damit ECHT statt
+  // nur den «noch nicht verdrahtet»-Hinweis zu zeigen. Bei jedem Wechsel
+  // (App.tsx reicht keine memoisierte Funktion durch) neu registriert,
+  // beim Unmount abgemeldet — sonst hielte die Modul-Ebene eine tote
+  // Closure einer bereits entsorgten Instanz.
+  useEffect(() => {
+    registriereStationsWeg(onStationOeffnen);
+    return () => registriereStationsWeg(undefined);
+  }, [onStationOeffnen]);
 
   // C2: Materialkarten im Viewport (prozedurale PBR-Kacheln)
   const [texturen, setTexturen] = useState(localStorage.getItem('kosmo.texturen') !== '0');
@@ -2068,12 +2096,19 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
    *   ausgeblendet ist (Sichtbarkeits-Politur ist PD3-Scope, s. Bericht).
    * - Export/Import: bestehendes Exportmenü-Flag.
    * - Manuell: der PD2-Kernschalter (`setDesignOberflaeche`).
-   * - Alle übrigen 11 Werkzeuge (Öffnung/Messen/Achsen/Trace/Graph/
-   *   Kennzahlen/Checks/Kommentare/Rendern/Blätter/Sync): keine Aktion —
-   *   entweder echtes NEU (kein Fund, §3), lokaler State ausserhalb des
-   *   PD2-Dateikreises (`PlanView.tsx`), kein Toggle vorhanden (immer
-   *   sichtbar) oder andere Station/Shell-Ebene mit offener Owner-Frage
-   *   (§8-4) — Rahmen ohne Aktion, ehrlicher `hinweis` im Popup
+   * - PD3c (Owner-Befehl 17.07.): Achsen togglet jetzt echt den geteilten
+   *   `state/plan-ansicht.ts`-Store (`hatPopup:false` bleibt — Sofort-
+   *   Toggle in der Leiste, kein Popup, s. `island-katalog.ts`-Kommentar) —
+   *   dieselbe Stelle, an der `manuell` (ebenfalls `hatPopup:false`) schon
+   *   real schaltet.
+   * - Alle übrigen 10 Werkzeuge (Öffnung/Messen/Trace/Graph/Kennzahlen/
+   *   Checks/Kommentare/Rendern/Blätter/Sync): keine Aktion hier — Trace/
+   *   Graph wirken jetzt über ihre eigenen Stufe-2/3-Schalter in
+   *   `island/inhalte/ansicht.tsx` (PD3c, derselbe Store), Rendern/Blätter
+   *   über die Deep-Link-Brücke (`island/inhalte/austausch.tsx`); die
+   *   restlichen bleiben echtes NEU (kein Fund, §3), kein Toggle vorhanden
+   *   (immer sichtbar) oder andere Station/Shell-Ebene mit offener Owner-
+   *   Frage (§8-4) — Rahmen ohne Aktion, ehrlicher `hinweis` im Popup
    *   (`island-katalog.ts`).
    */
   function aktiviereIslandWerkzeug(w: IslandWerkzeug): void {
@@ -2092,6 +2127,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         setTexturen(true);
         nutzungMelden('ebenen:textur');
         return;
+      case 'achsen': {
+        const { achsenAn, setAchsenAn } = usePlanAnsicht.getState();
+        setAchsenAn(!achsenAn);
+        nutzungMelden('ansicht:achsen');
+        return;
+      }
       case 'darstellung':
       case 'phase':
         setProjektMenuOffen(true);
@@ -2113,8 +2154,9 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         setDesignOberflaeche('manuell');
         return;
       default:
-        // Öffnung/Messen/Achsen/Trace/Graph/Kennzahlen/Checks/Kommentare/
-        // Rendern/Blätter/Sync — bewusst kein Aufruf, s. Kopfkommentar.
+        // Öffnung/Messen/Trace/Graph/Kennzahlen/Checks/Kommentare/Rendern/
+        // Blätter/Sync — bewusst kein Aufruf hier, s. Kopfkommentar (Trace/
+        // Graph/Rendern/Blätter wirken über ihre eigenen Stufe-2/3-Inhalte).
         return;
     }
   }
@@ -2148,12 +2190,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           `flexWrap:'nowrap'` (+ `overflowX:'auto'` als Sicherheitsventil bei
           sehr schmalem Viewport statt eines dritten Umbruchs). */}
       {/* PD2 Default-Flip (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 1, §7
-          PD2-Zeile): die komplette klassische Werkzeugleiste (Haupt- +
-          Kontextzeile) rendert nur noch im Modus 'manuell' — 'island' zeigt
-          NUR Viewer + Islands + Ansichts-Info/Stationen-Orb + Kosmo-Orb-
-          Bestand (`EntwurfsDock` bleibt unangetastet/sichtbar, §8 Frage 10
-          offen). Ausgeblendet, nicht entfernt: 'manuell' zeigt exakt die
-          heutige Oberfläche, byte-gleich. */}
+          PD2-Zeile), PD3c-Verschärfung (Owner-Befehl 17.07., §6 Sanktion 7,
+          §8 Frage 10 jetzt Owner-entschieden): die komplette klassische
+          Werkzeugleiste (Haupt- + Kontextzeile) rendert nur noch im Modus
+          'manuell' — 'island' zeigt NUR Viewer + Islands + Ansichts-Info/
+          Stationen-Orb + Kosmo-Orb-Zugang (das `EntwurfsDock` entfällt seit
+          PD3c EBENFALLS im Island-Modus, s. dortigen Kommentar bei seinem
+          Render-Ort). Ausgeblendet, nicht entfernt: 'manuell' zeigt exakt
+          die heutige Oberfläche, byte-gleich. */}
       {designOberflaeche === 'manuell' && (
       <div data-testid="design-werkzeugleiste" className="dw-werkzeugleiste">
         {/* Hauptzeile */}
@@ -3263,7 +3307,16 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
 
         {/* K16 A6: Entwurfs-Einstieg — vertikal mittig an der linken Kante,
             kollidiert dadurch weder mit der Geschossleiste (oben) noch mit
-            NavLeiste/Statusleiste (unten). */}
+            NavLeiste/Statusleiste (unten).
+            PD3c (Owner-Befehl 17.07., wörtlich: «achtung ich sehe noch docks
+            und so auf den screenshots z.b die grunddock..alles weg bitte
+            alles in die islands...», `docs/ISLAND-UI-SPEZ.md` §8 Frage 10
+            jetzt Owner-entschieden): im Island-Modus entfällt das
+            EntwurfsDock ersatzlos — `StationenOrb` (unten, immer im Island-
+            Modus gerendert) übernimmt den Direktzugang zu den anderen vier
+            Stationen, `IslandBuehne`s ZEICHNEN-Insel übernimmt Skizze/CAD.
+            Im Modus 'manuell' bleibt der Dock byte-gleich wie heute. */}
+        {designOberflaeche === 'manuell' && (
         <EntwurfsDock
           modus={entwurfsModus}
           onSprechen={klickEntwurfSprechen}
@@ -3286,6 +3339,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           skizzeAktiv={tool === 'skizze'}
           onSkizzeWerkzeug={klickSkizzeWerkzeug}
         />
+        )}
 
         {/* Geschossleiste — v0.6.5 (W2, SK-D3): gerahmter Karteikarten-
             Container statt kontextlos schwebender Knöpfe (Owner-Befund
@@ -3421,9 +3475,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
         )}
 
         {/* PD2 Default-Flip: Island-Bühne (vier Islands + Ansichts-Info +
-            Stationen-Orb) nur im Modus 'island' — Kosmo-Orb-Bestand
-            (KosmoPanel-Öffner) bleibt über `EntwurfsDock`s
-            `entwurf-sprechen`-Kachel erreichbar (oben, unverändert). */}
+            Stationen-Orb) nur im Modus 'island'. PD3c (Owner-Befehl 17.07.):
+            das `EntwurfsDock` — bislang der Kosmo-Orb-Zugang («entwurf-
+            sprechen»-Kachel) — entfällt jetzt selbst im Island-Modus (s.
+            seinen Render-Ort oben); `App.tsx` rendert dafür das freistehende
+            `<KosmoSymbol>` (sonst nur auf der Zentrale/Home) zusätzlich auch
+            hier, damit der Kosmo-Orb-Zugang erhalten bleibt (App.tsx-
+            Kopfkommentar bei `bodenDockAusgeblendet`). */}
         {designOberflaeche === 'island' && (
           <>
             <IslandBuehne onWerkzeugAktion={aktiviereIslandWerkzeug} />
@@ -3453,6 +3511,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             WÖRTLICH; KEIN `text-transform:uppercase` auf den Wert-Chips —
             Playwright vergleicht gerenderten Text (`toContainText(
             'Ausschreibung')`, `faehigkeiten-phasen.spec.ts`). */}
+        {/* PD3c (Owner-Befehl 17.07. «alles weg bitte alles in die
+            islands...», `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7): die
+            komplette Statusleiste (Fokus/Arbeiten/Prüfen-Presets, Modus-Chip,
+            Klick-Hinweise) rendert nur noch im Modus 'manuell' — im Island-
+            Modus tragen Ansichts-Info/Islands dieselbe Information. */}
+        {designOberflaeche === 'manuell' && (
         <div
           data-testid="statusleiste"
           // Kritik-065 Befund [B] «Abgeschnittenes Label unten rechts»:
@@ -3699,6 +3763,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             ))}
           </span>
         </div>
+        )}
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import { KSelect } from '@kosmo/ui';
 import './plan-view-chrome.css';
 import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
+import { useUiZustand } from '../../state/ui-zustand';
+import { usePlanAnsicht } from '../../state/plan-ansicht';
 import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
@@ -138,15 +140,28 @@ export function PlanView({
   const revision = useProject((s) => s.revision);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const doc = useProject.getState().doc;
+  // PD2 Default-Flip: die PlanView-eigene HUD-Zeile (Trace-Select/U-Plan-
+  // Toggle/Graph-Toggle/Achsen-Toggle/NavLeiste) rendert nur im Modus
+  // 'manuell' — im Island-Modus übernimmt die ANSICHT-Insel dieselben drei
+  // Store-Werte (`island/inhalte/ansicht.tsx`, PD3c), s. Rückgabe-JSX unten.
+  const designOberflaeche = useUiZustand((s) => s.designOberflaeche);
+  // PD3c (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7): Achsen/Trace/Graph kommen
+  // jetzt aus dem geteilten `state/plan-ansicht.ts`-Store statt aus lokalem
+  // `useState` — mechanische Migration (Store-Kommentar dort), Verhalten im
+  // Manuell-Modus bleibt byte-gleich, die ANSICHT-Insel kann dieselben Werte
+  // jetzt mit echter Wirkung lesen/schreiben.
   // Raumgraph-Overlay (Finch-Clip): Knoten auf Raumzentren, Kanten an Übergängen
-  const [graphAn, setGraphAn] = useState(false);
+  const graphAn = usePlanAnsicht((s) => s.graphAn);
+  const setGraphAn = usePlanAnsicht((s) => s.setGraphAn);
   // Trace (RE-ARCHICAD A8): anderes Geschoss blass unterlegen — reine
   // Arbeitshilfe am Bildschirm, nie Planinhalt
-  const [traceId, setTraceId] = useState<string>('');
+  const traceId = usePlanAnsicht((s) => s.traceId);
+  const setTraceId = usePlanAnsicht((s) => s.setTraceId);
   // T3: Stützenraster-Achsen (Konstruktionslinien des Tragrasters) standard-
   // mässig aus — nur das Bauteil, nicht die Zeichen-Achse. Über den Umschalter
   // wieder einblendbar (Druck/Export bleibt unverändert, siehe derive/plan.ts).
-  const [achsenAn, setAchsenAn] = useState(false);
+  const achsenAn = usePlanAnsicht((s) => s.achsenAn);
+  const setAchsenAn = usePlanAnsicht((s) => s.setAchsenAn);
   // T3: Navigations-Modus fürs linke Mausdrücken (Trackpad-Komfort) — Rad,
   // Mitteltaste, Rechtsklick/Alt-Klick bleiben unverändert Pan/Zoom.
   const [navModus2d, setNavModus2d] = useState<'werkzeug' | 'pan' | 'zoom'>('werkzeug');
@@ -629,6 +644,16 @@ export function PlanView({
 
   return (
     <div className="pv-root">
+      {/* PD3c (Owner-Befehl 17.07. «alles weg bitte alles in die islands»,
+          `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7): die PlanView-eigene HUD-
+          Zeile (Trace-Select/U-Plan-Toggle/Graph-Toggle/Achsen-Toggle)
+          rendert nur noch im Modus 'manuell' — im Island-Modus wirken
+          dieselben drei Store-Werte (`state/plan-ansicht.ts`) über die
+          ANSICHT-Insel (`island/inhalte/ansicht.tsx`), ohne dass diese Knöpfe
+          hier sichtbar sein müssen. Ausgeblendet, nicht entfernt: 'manuell'
+          zeigt exakt die heutige Zeile, byte-gleich. */}
+      {designOberflaeche === 'manuell' && (
+      <>
       <KSelect
         size="sm"
         data-testid="trace-select"
@@ -672,6 +697,8 @@ export function PlanView({
       >
         Achsen
       </button>
+      </>
+      )}
       <svg
         ref={svgRef}
         data-testid="planview"
@@ -1601,6 +1628,13 @@ export function PlanView({
           onClose={() => setKontext2d(null)}
         />
       )}
+      {/* PD3c: dieselbe Ausblendung wie die HUD-Zeile oben — die Nav-Leiste
+          (Werkzeug/Pan/Zoom/Einpassen) ist reine Viewport-Chrome, kein
+          Bestandteil der vier Islands/der Ansichts-Info. Maus-/Touch-
+          Navigation (Mausrad, Mitteltaste, Rechtsklick/Alt-Klick, Pinch)
+          bleibt unabhängig davon in JEDEM Modus aktiv — nur diese sichtbaren
+          Knöpfe verschwinden. */}
+      {designOberflaeche === 'manuell' && (
       <NavLeiste
         testid="nav-2d"
         aktionen={[
@@ -1610,6 +1644,7 @@ export function PlanView({
           { id: 'fit', icon: '⌂', titel: 'Einpassen — Grundriss ins Bild holen', onClick: einpassen },
         ]}
       />
+      )}
     </div>
   );
 }

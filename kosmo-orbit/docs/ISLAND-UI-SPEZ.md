@@ -317,6 +317,39 @@ Erwartet **additiv/eng begrenzt**, keine Bestandsänderung ohne expliziten Verme
    zusätzliche Präsentationsschicht über demselben Werkzeugbestand/denselben Commands (README-
    Zitat: *«Beide Modi teilen denselben Werkzeugbestand und dieselben Commands — die Island-UI
    ist eine Präsentationsschicht, kein zweites Programm.»*).
+7. **PD3c «Island-Modus radikal leer» (Owner-Befehl 17.07.2026, wörtlich:** *«achtung ich sehe
+   noch docks und so auf den screenshots z.b die grunddock..alles weg bitte alles in die
+   islands...»***):** im Island-Modus (`designOberflaeche==='island'`) ist NUR noch sichtbar:
+   Viewer/Plangrafik, die vier Islands, Ansichts-Info, Stationen-Orb, Kosmo-Orb-Zugang. ALLES
+   andere wird zusätzlich (additiv zur PD2-Ausblendung der klassischen Werkzeugleiste/des Docks,
+   Sanktion 1 oben) bedingt ausgeblendet, nirgends entfernt — der Modus `'manuell'` bleibt in
+   jedem der folgenden Fälle byte-gleich wie heute:
+   - **`EntwurfsDock`** (linke Rail, `DesignWorkspace.tsx`) — entfällt im Island-Modus komplett
+     (§8 Frage 10 jetzt Owner-entschieden, s. dort); der Kosmo-Orb-Zugang («entwurf-sprechen»-
+     Kachel) wandert dafür auf das freistehende `<KosmoSymbol>` in `App.tsx`.
+   - **`BodenDock`** (untere Knopfreihe, `App.tsx`, app-weiter Navigations-Layer) — entfällt NUR
+     für die Kombination `screen==='design'` + Island-Modus; jede andere Station behält ihr
+     BodenDock unverändert.
+   - **Statusleiste** (Fokus/Arbeiten/Prüfen-Presets, Modus-Chip, Klick-Hinweise,
+     `DesignWorkspace.tsx`s `statusleiste`-Div).
+   - **Zoom-Steuerung + Raster/Texturen/Kontext-Chips** (`ViewportChrome.tsx`s Bottom-Leiste,
+     gerendert aus `Viewport3D.tsx`) sowie die Orbit/Pan/Zoom/Einpassen-Nav-Leisten in beiden
+     Ansichten (`NavLeiste.tsx`-Instanzen `nav-3d` in `Viewport3D.tsx` und `nav-2d` in
+     `PlanView.tsx`) — reine Viewport-Chrome, keine Maus-/Touch-Navigation selbst (die bleibt in
+     jedem Modus aktiv).
+   - **PlanView-HUD** (Achsen-/Graph-Toggle, Trace-Select, `PlanView.tsx`).
+
+   **Kern-Arbeit statt reiner Politur:** Achsen/Trace/Graph lebten bis PD3c als PlanView-lokaler
+   `useState` (PD3a-Kommentar: «kein eigener Zustand hier, um keinen zweiten State neben PlanView
+   zu führen»). PD3c hebt sie in den neuen, additiven, NICHT persistierten Store
+   `state/plan-ansicht.ts` (`achsenAn`/`graphAn`/`traceId`) — `PlanView.tsx` konsumiert denselben
+   Store (Verhalten im Modus `'manuell'` bleibt mechanisch unverändert), und
+   `island/inhalte/ansicht.tsx` ersetzt die bisherigen Status+Anleitungs-Texte für Trace/Graph
+   durch ECHTE Schalter auf diesem Store (`island-trace-ziel`/`island-graph-an` u. Fenster-
+   Varianten). Achsen bleibt der einzige `hatPopup:false`-Sofort-Toggle der ANSICHT-Insel
+   (`island-katalog.ts` unverändert) — der gewählte Verdrahtungsweg ist der zweite der beiden
+   erlaubten: `DesignWorkspace.tsx`s `aktiviereIslandWerkzeug()` bekam einen Fall `'achsen'`, der
+   direkt `usePlanAnsicht.getState().setAchsenAn(...)` togglet.
 
 **Ausdrücklich NICHT sanktioniert (bleibt tabu wie in `docs/V080B-DESIGN-SPEZ.md` §7.3):**
 `state/dock-kern.ts`-Solver, `chat.ts`s `turn()`-Schleife, alle bestehenden `testid`s/aria-labels,
@@ -383,6 +416,18 @@ gefundene Lücken:
     Rollenpunkten existiert nicht; PD2 baut es neu. Sollen die bestehenden `dock-*`-Sprünge aus
     `EntwurfsDock.tsx` dabei entfallen (Doppelspurigkeit vermeiden) oder parallel bestehen bleiben
     (Bestandsschutz für die linke Rail)? Owner-Entscheid.
+
+    > **Owner-entschieden 17.07.2026 (PD3c «Island-Modus radikal leer», wörtlich:**
+    > *«achtung ich sehe noch docks und so auf den screenshots z.b die grunddock..alles weg bitte
+    > alles in die islands...»***):** die `dock-*`-Sprünge aus `EntwurfsDock.tsx` entfallen im
+    > Island-Modus — **keine Doppelspurigkeit**. Der `StationenOrb` (PD2, bereits gebaut) ist ab
+    > sofort der EINZIGE Direktzugang zu den anderen vier Stationen, solange die design-Station im
+    > Island-Modus ist. Das `EntwurfsDock` selbst rendert im Island-Modus gar nicht mehr (auch
+    > seine übrigen Kacheln — Sprechen/Skizzieren/CAD — nicht nur die `dock-*`-Sprünge), s. §6
+    > Sanktion 7. **Im Modus `'manuell'` bleibt das `EntwurfsDock` vollständig unverändert** (kein
+    > Bestandsschutz-Bruch für die linke Rail dort) — die Konsolidierung gilt ausschliesslich für
+    > die neue Standard-Oberfläche. Umgesetzt in `DesignWorkspace.tsx` (Render-Ort des
+    > `EntwurfsDock`, PD3c).
 
 ---
 

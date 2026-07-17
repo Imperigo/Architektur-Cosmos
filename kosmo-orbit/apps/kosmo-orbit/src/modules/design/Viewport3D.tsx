@@ -8,6 +8,7 @@ import { aufgeloesteDarstellung3d, offizielleDarstellung3d, deriveAllMitFensterd
 import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import './viewport3d-chrome.css';
 import { useProject } from '../../state/project-store';
+import { useUiZustand } from '../../state/ui-zustand';
 import type { ContextMesh } from './ifc-import';
 import { pbrPalette } from '@kosmo/data';
 import type { Fluchtlinie } from './zeichenhilfen';
@@ -294,6 +295,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   // also automatisch auf `design.darstellung3dSetzen` UND jeden
   // `siaPhase`-Wechsel, ohne einen eigenen Revision-Zähler zu brauchen.
   const darstellung3dAufgeloest = useProject((s) => aufgeloesteDarstellung3d(s.doc.settings));
+  // PD3c (Owner-Befehl 17.07. «alles weg bitte alles in die islands»,
+  // `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7): die Bottom-Leiste (Zoom-
+  // Steuerung + Raster/Texturen/Kontext-Chips, `ViewportChrome.tsx`) und die
+  // Nav-Leiste (Orbit/Pan/Zoom/Einpassen, unten) sind reine Viewport-Chrome
+  // ausserhalb der vier Islands/der Ansichts-Info — im Island-Modus
+  // verschwinden beide (s. Rückgabe-JSX unten), im Modus 'manuell' bleiben
+  // sie byte-gleich wie heute.
+  const designOberflaeche = useUiZustand((s) => s.designOberflaeche);
   const mountRef = useRef<HTMLDivElement>(null);
   const controlsRef = useRef<CameraControls | null>(null);
   const modelRef = useRef<THREE.Group | null>(null);
@@ -2228,7 +2237,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         data-darstellung3d={darstellung3dAufgeloest}
       />
       <ViewportChrome
-        sichtbar={viewportBereit}
+        sichtbar={viewportBereit && designOberflaeche === 'manuell'}
         modus={viewportModus}
         azimutRad={chromeSnapshot.azimutRad}
         polarGrad={chromeSnapshot.polarGrad}
@@ -2258,6 +2267,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         onTexturToggle={chromeTexturToggle}
         versteckeBottomLeiste={sketchModeAn}
       />
+      {designOberflaeche === 'manuell' && (
       <NavLeiste
         testid="nav-3d"
         aktionen={[
@@ -2267,6 +2277,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           { id: 'fit', icon: '⌂', titel: 'Einpassen — Modell ins Bild holen (ohne Modell: Ausgangslage)', onClick: einpassen },
         ]}
       />
+      )}
       {/* V-M1: Render-Knopf — eigene untere Werkzeug-Ecke (rechts, ÜBER der
           Orbit/Pan/Zoom/Fit-Leiste, unter dem fixen Kosmo-Symbol vorbei —
           gleiche Spalte wie `NavLeiste` (`right:88`), aber `bottom:92` statt

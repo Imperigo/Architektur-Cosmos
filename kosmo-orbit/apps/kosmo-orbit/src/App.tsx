@@ -251,6 +251,20 @@ export function App() {
   const revision = useProject((s) => s.revision);
   void revision;
   const rolle = useProject.getState().doc.settings.rolle;
+  // PD3c (Owner-Befehl 17.07., wörtlich: «achtung ich sehe noch docks und so
+  // auf den screenshots z.b die grunddock..alles weg bitte alles in die
+  // islands...», `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7): im Island-Modus
+  // der design-Station verschwindet auch das app-weite `BodenDock` — jede
+  // ANDERE Station behält ihr BodenDock unverändert (der Guard greift NUR
+  // für `screen === 'design'`). Weil die einzige Modul-Ansicht-Instanz des
+  // Kosmo-Orb-Zugangs (`<KosmoSymbol>`) bislang NUR eingebettet im
+  // `BodenDock` lebte (Kopfkommentar `BodenDock.tsx`), rendert diese Datei
+  // jetzt zusätzlich das freistehende Symbol (wie bisher nur auf der
+  // Zentrale/Home) auch in genau diesem Fall — der Kosmo-Orb-Zugang bleibt
+  // damit app-weit IMMER genau eine `data-testid="kosmo-symbol"`-Instanz,
+  // nie zwei, nie keine (s. beide Render-Stellen unten).
+  const designOberflaeche = useUiZustand((s) => s.designOberflaeche);
+  const bodenDockAusgeblendet = screen === 'design' && designOberflaeche === 'island';
   const sortierteModule = (() => {
     if (!rolle) return modules;
     const prio = ROLLEN_REIHENFOLGE[rolle];
@@ -913,8 +927,13 @@ export function App() {
           v0.7.4 P3: NUR noch auf der Zentrale/Home — in einer Modul-Ansicht
           lebt die einzige `kosmo-symbol`-Instanz eingebettet im Boden-Dock
           (weiter unten, `screen !== 'home'`-Zweig), damit `data-testid=
-          "kosmo-symbol"` app-weit nie doppelt vorkommt. */}
-      {!kosmoOpen && screen === 'home' && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
+          "kosmo-symbol"` app-weit nie doppelt vorkommt.
+          PD3c (Owner-Befehl 17.07.): `bodenDockAusgeblendet` ist der EINE
+          Fall, in dem das BodenDock (und damit sein eingebetteter Kosmo-Orb)
+          nicht rendert — das freistehende Symbol springt hier zusätzlich
+          ein, damit der Kosmo-Orb-Zugang im Island-Modus der design-Station
+          erhalten bleibt (s. Kopfkommentar bei `bodenDockAusgeblendet` oben). */}
+      {!kosmoOpen && (screen === 'home' || bodenDockAusgeblendet) && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
       {/* V1.6 Block E: nicht-modales Guide-Overlay — bewusst AUSSERHALB der
           Fehlerzonen-Stationen, damit es stationsübergreifend sichtbar
           bleibt. `key=guideLauf` sorgt dafür, dass ein erneuter Aufruf immer
@@ -970,8 +989,12 @@ export function App() {
           OrbitStart-Hub bereits DIE Navigation ist (sonst doppelt +
           Text-Kollision mit den Hub-Teasern). v0.7.4 P3: das KosmoSymbol
           (oben, Zeile ~935) ist jetzt auf Home beschränkt — hier im Dock
-          lebt die einzige Modul-Ansicht-Instanz (rechter Slot). */}
-      {screen !== 'home' && (
+          lebt die einzige Modul-Ansicht-Instanz (rechter Slot).
+          PD3c (Owner-Befehl 17.07., `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7):
+          `bodenDockAusgeblendet` (design-Station + Island-Modus) blendet
+          NUR diesen einen Fall aus — jede andere Station behält ihr
+          BodenDock unverändert. */}
+      {screen !== 'home' && !bodenDockAusgeblendet && (
         <BodenDock
           onOeffnen={oeffneModulById}
           onSyncToggle={() => setSyncOpen(!syncOpen)}
