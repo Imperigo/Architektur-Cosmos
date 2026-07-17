@@ -28,6 +28,7 @@ const orbitAngle: Record<ModuleId, number> = {
   asset: 180,
   dev: 300,
   trust: 0,
+  paket: 165,
 };
 
 export interface OrbitMarkProps {

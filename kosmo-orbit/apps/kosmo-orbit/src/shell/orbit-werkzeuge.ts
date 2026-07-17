@@ -204,6 +204,13 @@ export const ORBIT_HAUPTWERKZEUGE: OrbitHauptwerkzeug[] = [
         kurzbeschrieb: '.kxp-Viewer, Freigabe-Workflow',
         faehigkeit: faehigkeitAus('trust'),
       },
+      {
+        id: 'paket',
+        moduleId: 'paket',
+        titel: 'Package',
+        kurzbeschrieb: 'Export-Hub — sechs reale Formate + .kxp',
+        faehigkeit: faehigkeitAus('paket'),
+      },
     ],
   },
   {

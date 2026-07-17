@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 describe('Stations-Werkzeuge (Serie K / A2, Owner-Befund K12): Hover-Stichworte je Kachel', () => {
-  it('deckt ALLE 13 Zentrale-Kachel-Ids ab, je 3–5 nichtleere Stichworte', async () => {
+  it('deckt ALLE 14 Zentrale-Kachel-Ids ab, je 3–5 nichtleere Stichworte', async () => {
     const { STATIONS_WERKZEUGE, STATIONS_MODUL_IDS } = await import('../src/shell/stations-werkzeuge');
 
     expect(Object.keys(STATIONS_WERKZEUGE).sort()).toEqual([...STATIONS_MODUL_IDS].sort());
     // v0.8.1 / P11 (docs/V081-SPEZ.md §7(a), C-29): 12 → 13 — KosmoTrust
     // (.kxp-Viewer + Trust-Layer) ist eine ECHTE 13. Station, kein Kachel-
     // Attrappen-Zuwachs (s. `stations-werkzeuge.ts` STATIONS_MODUL_IDS).
-    expect(STATIONS_MODUL_IDS).toHaveLength(13);
+    // v0.8.1 / P14 (§7(e)/C-28/C-30): 13 → 14 — KosmoPackage (Export-Hub +
+    // .kxp-Übersicht) ist die ECHTE 14. Station, sanktioniert im Bau-Auftrag
+    // («literale Stationszahl-Tests 13→14 als direkte Folge sind sanktioniert»).
+    expect(STATIONS_MODUL_IDS).toHaveLength(14);
 
     for (const id of STATIONS_MODUL_IDS) {
       const woerter = STATIONS_WERKZEUGE[id];

@@ -92,6 +92,10 @@ export const moduleHue = {
   // v0.8.1 / P11 (docs/V081-SPEZ.md §7(a), C-29): Indigo — der Vertrauens-
   // Siegel-Ton fürs .kxp-Hyper-Modell + die Trust-Layer-Freigabe.
   trust: '#5b5a8a',
+  // v0.8.1 / P14 (docs/V081-SPEZ.md §7(e), C-28/C-30): gedecktes Zinn —
+  // der Export-Hub/KosmoPackage-Screen, der die sechs realen Formate + .kxp
+  // an einem Ort bündelt.
+  paket: '#6b7a8a',
 } as const;
 
 export type ModuleId = keyof typeof moduleHue;

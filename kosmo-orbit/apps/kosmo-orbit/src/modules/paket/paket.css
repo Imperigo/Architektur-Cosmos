@@ -1,0 +1,122 @@
+/* KosmoPackage (v0.8.1 / P14, `docs/V081-SPEZ.md` §7(e)) — Chrome-Schicht für
+ * `PaketWorkspace.tsx`. Muster `modules/kxp/kxp.css`: Klassen statt Inline-
+ * Styles, Modul-Hue als `--_hue`-Custom-Property. */
+
+.paket-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+.paket-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: var(--k-s5);
+}
+.paket-content {
+  max-width: 980px;
+  margin: 0 auto;
+  display: grid;
+  gap: var(--k-s4);
+}
+
+.paket-kopf {
+  border-top-width: 2px;
+  border-top-color: color-mix(in srgb, var(--_hue) 65%, var(--k-glass-stroke, var(--k-line)));
+}
+.paket-kopf-leiste {
+  flex-wrap: wrap;
+  background: transparent;
+  border-bottom: none;
+}
+.paket-kopf-text {
+  color: var(--k-ink-soft);
+  font-size: var(--k-t-sm);
+}
+.paket-fill {
+  flex: 1;
+}
+
+.paket-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+
+.paket-label {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--k-ink-faint);
+  margin-top: var(--k-s2);
+}
+
+.paket-gruppe {
+  display: grid;
+  gap: var(--k-s3);
+}
+.paket-gruppe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--k-s3);
+}
+
+.paket-karte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}
+.paket-karte-kopf {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--k-s2);
+}
+.paket-karte-titel {
+  font-weight: 600;
+  color: var(--k-ink);
+}
+.paket-karte-format {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+}
+.paket-karte-hinweis {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-soft);
+  flex: 1;
+}
+.paket-karte-fuss {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+
+.paket-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: var(--k-font-mono);
+  padding: 2px 6px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid var(--k-line);
+  color: var(--k-ink-soft);
+}
+.paket-status--verfuegbar {
+  color: var(--k-success);
+  border-color: var(--k-success);
+}
+.paket-status--braucht-kontext {
+  color: var(--k-warning);
+  border-color: var(--k-warning);
+}
+.paket-status--homestation-grenze {
+  color: var(--k-warning);
+  border-color: var(--k-warning);
+}
+
+.paket-kxp-karte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}

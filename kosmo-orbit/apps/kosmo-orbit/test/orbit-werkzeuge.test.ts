@@ -24,7 +24,7 @@ describe('Orbit-Werkzeuge (Serie K / F3, Owner-Auftrag «rund statt Blöcke»): 
     }
   });
 
-  it('jede der 12 echten Stationen (STATIONS_MODUL_IDS) trägt genau EIN kanonisches Untertool mit `module-<id>`-Testid', async () => {
+  it('jede der 14 echten Stationen (STATIONS_MODUL_IDS) trägt genau EIN kanonisches Untertool mit `module-<id>`-Testid', async () => {
     const { alleUntertools } = await import('../src/shell/orbit-werkzeuge');
     const { STATIONS_MODUL_IDS } = await import('../src/shell/stations-werkzeuge');
 

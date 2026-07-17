@@ -203,4 +203,8 @@ export const STATION_GLYPHE: Record<StationModulId, { art: WerkzeugGlyphenArt; r
   doc: { art: 'odysseus', rolle: '--k-rolle-office' },
   train: { art: 'lernen', rolle: '--k-rolle-memory' },
   trust: { art: 'connect', rolle: '--k-rolle-office' },
+  // v0.8.1 / P14 (C-28/C-30): KosmoPackage teilt sich `office` mit `doc`/
+  // `trust` (Büro-/Meta-Rolle) — reine Bündel-/Export-Übersicht, kein neuer
+  // Glyphen-Typ nötig.
+  paket: { art: 'connect', rolle: '--k-rolle-office' },
 };

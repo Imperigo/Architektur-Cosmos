@@ -20,8 +20,10 @@ import type { ModuleId } from '@kosmo/ui';
 
 export type StationModulId = Exclude<ModuleId, 'orbit' | 'kosmo'>;
 
-/** Alle zwölf Stations-Ids, exakt wie in `modules` (App.tsx) — dient der
- *  Vollständigkeitsprüfung im Unit-Test. */
+/** Alle Stations-Ids, exakt wie in `modules` (App.tsx) — dient der
+ *  Vollständigkeitsprüfung im Unit-Test. Stand v0.8.1/P14: 14 (zwölf +
+ *  KosmoTrust seit P11 + KosmoPackage seit P14, s. `STATIONS_WERKZEUGE.paket`
+ *  unten). */
 export const STATIONS_MODUL_IDS: StationModulId[] = [
   'design',
   'draw',
@@ -36,6 +38,7 @@ export const STATIONS_MODUL_IDS: StationModulId[] = [
   'doc',
   'train',
   'trust',
+  'paket',
 ];
 
 export const STATIONS_WERKZEUGE: Record<StationModulId, string[]> = {
@@ -62,6 +65,12 @@ export const STATIONS_WERKZEUGE: Record<StationModulId, string[]> = {
     '.kxp-Paket read-only öffnen und prüfen',
     'Freigabe-Zustandsmaschine mit Verlauf (lokal, Platzhalter-Rollen)',
     'Signatur-Slot ehrlich als unsigniert ausgewiesen',
+  ],
+  paket: [
+    'Sechs reale Exportformate an einem Ort (PDF/SVG/DXF/IFC/Splat/Logo)',
+    'Jede Kachel mit ehrlichem Status statt totem Klick',
+    '.kxp-Paket-Export gebündelt neben den Dateiformaten',
+    'Ein Klick führt zur bestehenden Fach-Station bei fehlendem Kontext',
   ],
 };
 
