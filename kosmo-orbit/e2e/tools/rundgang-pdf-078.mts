@@ -71,13 +71,31 @@ async function main() {
     await page.waitForSelector('[data-testid="dock-panel-kennzahlen"]', { timeout: 15000 });
   }
 
+  // v0.8.1 P16-Fixes / C-47 (`docs/V081-SPEZ.md` §1.3/§1.5, Splat-Fusion):
+  // `import-splat`/`splat-werkzeug-toggle` sind im fusionierten
+  // `splat-werkzeug`-Knopf aufgegangen — OHNE geladene Cloud öffnet ein
+  // Klick darauf jetzt einen echten Datei-Dialog (`filechooser`-Event)
+  // statt das Panel zu togglen (Muster `splat.spec.ts`s zweiter Test). Für
+  // diesen rein visuellen Rundgang (kein echter Cloud-Import nötig, nur das
+  // offene Panel im Screenshot) wird das Panel darum deterministisch über
+  // denselben generischen Test-Hook `ui.panelSetzen` geöffnet wie
+  // `splat.spec.ts`/`dock-kosmo.spec.ts` — kein Dateiwahl-Dialog, den
+  // Playwright sonst offen im Hintergrund stehen liesse.
+  async function oeffneSplatPanel(): Promise<void> {
+    await page.evaluate(() => {
+      (
+        window as unknown as { __kosmoUiBefehle: { ausfuehren: (id: string, params: unknown) => unknown } }
+      ).__kosmoUiBefehle.ausfuehren('ui.panelSetzen', { panel: 'splatPanelOffen', offen: true });
+    });
+  }
+
   // (1) Design-Station mit 3 offenen Dock-Panels — der Bump-Beweis: der
   // App-Kopf (Wordmark) muss «v0.7.8» zeigen.
   await schuss('dock-design', async () => {
     await ladeTkbInDesign();
     await page.click('[data-testid="raster-toggle"]').catch(() => {});
     await page.click('[data-testid="cw-setzen-oeffnen"]').catch(() => {});
-    await page.click('[data-testid="splat-werkzeug-toggle"]').catch(() => {});
+    await oeffneSplatPanel().catch(() => {});
     await page.waitForTimeout(500);
   });
 
@@ -90,7 +108,7 @@ async function main() {
       await page.click('[data-testid="view-split"]').catch(() => {});
       await page.click('[data-testid="raster-toggle"]').catch(() => {});
       await page.click('[data-testid="cw-setzen-oeffnen"]').catch(() => {});
-      await page.click('[data-testid="splat-werkzeug-toggle"]').catch(() => {});
+      await oeffneSplatPanel().catch(() => {});
       await page.click('[data-testid="maengel-oeffnen"]').catch(() => {});
       await page.click('[data-testid="faehigkeit-submission"]').catch(() => {});
       await page.waitForSelector('[data-testid="dock-panel-rasterOffen-tab"]', { timeout: 8000 }).catch(() => {});

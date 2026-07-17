@@ -103,9 +103,25 @@ import type { PanelDef } from './dock-kern';
  *     exportierte Konstante `BODEN_DOCK_RESERVE_PX` (`shell/BodenDock.tsx`),
  *     die Aufrufer als statisches Bottom-Padding einsetzen (s.
  *     `modules/publish/PublishWorkspace.tsx`s Blattfläche). Minimalziel
- *     dieses Pakets war ausschliesslich Publish — `daten`/`wissen`/`chat`/
- *     `pipeline` teilen dieselbe theoretische Lücke, sind aber NICHT Teil
- *     dieser Runde (ehrlich offener Punkt, s. Abschlussbericht P11).
+ *     des P11-Pakets war ausschliesslich Publish — `daten`/`wissen`/`chat`/
+ *     `pipeline` teilten dieselbe theoretische Lücke, waren aber NICHT Teil
+ *     jener Runde (ehrlich offener Punkt, s. Abschlussbericht P11).
+ *     **v0.8.1 P16-Fixes/C-14 (`docs/V081-SPEZ.md` §4.3/§9) — verifiziert:**
+ *     Trockenlauf (:5174) bewies eine ECHTE Kollision bei `daten`/`wissen`
+ *     (`modules/data/DataWorkspace.tsx`, geteilter `.kd-scroll`-Container
+ *     für beide Tabs) und bei `pipeline` (`dev`-Screen,
+ *     `modules/dev/DevWorkspace.tsx`s `.dev-viewport`) — die jeweils letzte
+ *     Tabellenzeile/Karte blieb beim Scrollen-zum-Ende strukturell unter der
+ *     Pille hängen (max. `scrollTop` liess sie exakt am unteren
+ *     Container-Rand stehen, wo `boden-dock.css`s `bottom:96px`-Pille
+ *     liegt). Beide Container bekamen `paddingBottom:
+ *     calc(<bestehendes Padding> + BODEN_DOCK_RESERVE_PX)` (Reserve-Konsum
+ *     wie `PublishWorkspace.tsx`, Konstante importiert statt dupliziert).
+ *     `chat` (KosmoPanel, `deepLink:'speak'`) hat KEINE Kollision — das
+ *     Panel ist eine rechte 340px-Spalte (`kp-panel`), die zentrierte
+ *     Boden-Dock-Zone (`left:50%`, `max-width:640px`) erreicht sie
+ *     horizontal nie. Alle vier Befunde sind e2e-bewiesen,
+ *     `e2e/boden-dock-reserve-c14.spec.ts`.
  */
 
 export type DockStation = 'design' | 'plan' | 'vis' | 'publish';

@@ -22,6 +22,14 @@ export interface AnthropicConfig extends StreamTimeoutConfig {
   /** Überschreibbar für Tests oder ein eigenes Gateway. */
   baseUrl?: string;
   maxTokens?: number;
+  /**
+   * v0.8.1 KI2 (Kandidat 8, `docs/V081-SPEZ.md` §3): Extended Thinking —
+   * OPTIONAL. Gesetzt, sendet der Request `thinking: {type:'enabled',
+   * budget_tokens: N}` (Anthropic-API-Vertrag). Ungesetzt bleibt der Request
+   * byte-identisch zu vorher (Neutralität) — kein bestehender Aufrufer ändert
+   * Verhalten, bis er das Feld explizit setzt.
+   */
+  thinkingBudgetTokens?: number;
 }
 
 /**
@@ -121,6 +129,13 @@ export class AnthropicProvider implements ChatProvider {
             model: this.cfg.model,
             max_tokens: this.cfg.maxTokens ?? 4096,
             stream: true,
+            // v0.8.1 KI2 (Kandidat 8, `docs/V081-SPEZ.md` §3): Extended Thinking
+            // — nur gesendet, wenn `thinkingBudgetTokens` konfiguriert ist.
+            // Ohne Konfiguration bleibt der Request byte-identisch zu vorher
+            // (Neutralität, s. `test/anthropic-thinking.test.ts`).
+            ...(this.cfg.thinkingBudgetTokens !== undefined
+              ? { thinking: { type: 'enabled', budget_tokens: this.cfg.thinkingBudgetTokens } }
+              : {}),
             // v0.8.1 KI2 (Kandidat 8, `docs/V081-SPEZ.md` §3): Prompt-Caching
             // — `cache_control: {type:'ephemeral'}` auf dem letzten (hier
             // einzigen) System-Textblock UND auf dem letzten Tool-Eintrag.
@@ -265,6 +280,19 @@ export class AnthropicProvider implements ChatProvider {
           } else if (ev.delta?.type === 'input_json_delta' && offenerCall) {
             offenerCall.json += ev.delta.partial_json ?? '';
           }
+          // `thinking_delta`/`signature_delta` (Extended-Thinking-Blöcke, nur
+          // wenn `thinkingBudgetTokens` gesetzt ist) landen bewusst in KEINEM
+          // Zweig: `StreamEvent` (`provider.ts`) kennt nur `text`/`tool_call`/
+          // `done` — ein neuer Event-Typ wäre eine Vertragsänderung, die hier
+          // nicht sanktioniert ist (Owner-Auftrag beschränkt sich auf den
+          // `thinking`-Request-Parameter). Thinking-Text als `text`-Delta
+          // auszugeben wäre falsch (Kosmo-Antworttext und Denkprozess sind
+          // verschiedene Dinge) — also wird still verworfen, bis ein
+          // eigener Vertrag dafür entschieden ist. `content_block_start` mit
+          // `content_block.type === 'thinking'` braucht keinen eigenen Zweig:
+          // `offenerCall` bleibt unberührt (nur für `tool_use` gesetzt), und
+          // der zugehörige `content_block_stop` ruft `schliesseCall()` auf,
+          // das ohne offenen Tool-Call sicher `null` liefert (keine Seiteneffekte).
         } else if (ev.type === 'content_block_stop') {
           const call = schliesseCall();
           if (call) yield call;

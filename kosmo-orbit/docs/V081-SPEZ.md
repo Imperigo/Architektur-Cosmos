@@ -605,6 +605,10 @@ Hardware zwingend fehlen — alles andere bekommt einen Bauauftrag.
 
 - [ ] **C-12** OnboardingWizard-Vollumbau (54) + StarterGuide-Rest (10) → **W2/P3** ·
   Abnahme: 0 Rest-Inline-Styles in beiden Dateien, Hooks/testids/aria byte-genau.
+  **(P16-Präzisierung, Fable: «0 Rest» meint 0 LAYOUT-Inline-Styles — die 3 verbliebenen
+  `style={{}}`-Vorkommen sind reine datengetriebene CSS-Custom-Property-/Wert-Carrier
+  (--_farbe ×2, Fortschritts-width ×1), das repo-weit etablierte, sanktionierte Muster
+  für laufzeitberechnete Werte. Erfüllt in diesem Sinn; testids/aria byte-genau bewiesen.)**
 - [ ] **C-13** Publish-Preset-Wähler + Erststart-Trigger → **W6/P7** · Abnahme: Wähler
   zeigt alle registrierten Presets, Erststart-Trigger löst beim ersten Besuch der
   Publish-Station aus.
@@ -680,9 +684,17 @@ Hardware zwingend fehlen — alles andere bekommt einen Bauauftrag.
   `anthropic.ts` setzt Cache-Control-Header, `thinking`-Parameter nutzbar wo unterstützt.
 - [ ] **C-40** (KI3) Stream-Timeout/Retry → **W3** · Abnahme: alle Provider-Streams mit
   Timeout+Retry, Fehlerpfad bleibt ehrlich+deutsch.
+  **(P16-Präzisierung, Fable: «alle Provider-Streams» meint die drei NETZ-Provider
+  Ollama/Anthropic/LM-Studio — Mock/Scripted haben keinen Netzwerkpfad (kein fetch),
+  Timeout/Retry ist dort sachlich gegenstandslos. So gebaut und erfüllt.)**
 - [ ] **C-41** (KI4.1) Rollen→Modell-Staffelung (Meister/Leiter/Zeichner) → **W4** ·
   Abnahme: `betrieb.ts` wählt je Rolle testbar ein Modell/Provider; **Multi-Modell-
   Verifikation mit echten grossen Modellen = GRENZE (HomeStation)**.
+  **(P16-Befund, Fable-Entscheid: App-Anbindung VERTAGT — die Staffelungs-Abstraktion
+  (`staffelung.ts`, 25 Tests, mindestensOpus-Garantie) ist gebaut und erfüllt den
+  Abnahme-Wortlaut; die Verdrahtung «ChatSession wechselt Provider je Aufgabenklasse»
+  hat bewusst 0 App-Aufrufer und ist ein eigenes Folgepaket (UX-Owner-Input nötig,
+  kein Blindeinbau Stunden vor Release). In V-NAECHSTE-KANDIDATEN aufgenommen.)**
 - [ ] **C-42** (KI4.2) LoRA-Export-Pipeline schliessen → **W4** · Abnahme:
   `journal.toJsonl()` (`memory.ts:116`) hat einen echten Konsumenten (Fake-Trainer-Stub),
   containertestbar.

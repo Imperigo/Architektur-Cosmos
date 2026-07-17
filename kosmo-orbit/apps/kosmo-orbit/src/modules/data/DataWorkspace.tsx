@@ -19,6 +19,7 @@ import {
   moduleHue,
 } from '@kosmo/ui';
 import './data.css';
+import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
 import { DataLeerbild } from './DataLeerbild';
 import { RefHeroBild } from './RefHeroBild';
 import { gedaechtnisQuerverweise, type GedaechtnisTreffer } from './data-runtime';
@@ -769,7 +770,19 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
 
   return (
     <div ref={vollbildRef} className="k-einblenden kd-viewport">
-      <div className="kd-scroll">
+      {/* v0.8.1 P3/C-14 (`docs/V081-SPEZ.md` §4.3/§9, BodenDock-Reserve-
+          Verifikation): `data`/`wissen` haben KEINE `DockFlaeche` (die misst
+          die Boden-Dock-Position live, s. `dock-stationen.ts`-Kopfkommentar)
+          — ohne Reserve läuft der letzte Tabellen-/Kartenreihe-Inhalt beim
+          Durchscrollen strukturell unter die fixe Boden-Dock-Pille
+          (`bottom:96px`, `boden-dock.css`) und bleibt dort UNERREICHBAR
+          hängen (max. Scroll-Position lässt die letzte Zeile exakt am
+          unteren Rand des Scroll-Containers stehen, wo die Pille liegt).
+          Reserve-Konsum nach `PublishWorkspace.tsx`-Muster: zusätzliches
+          Bottom-Padding in Höhe der importierten `BODEN_DOCK_RESERVE_PX` on
+          top des bestehenden `--k-s6`-Innenabstands — der Nutzer kann jetzt
+          bis über den Dock-Fussabdruck hinaus scrollen. */}
+      <div className="kd-scroll" style={{ paddingBottom: `calc(var(--k-s6) + ${BODEN_DOCK_RESERVE_PX}px)` }}>
         {/* v0.7.6 Welle 2 Stream D: der Referenzen-Tab bekommt eine
             3-Spalten-Tabellenfläche (Quellen/Epochen-Rail + Tabelle) und
             braucht dafür die volle Breite statt der 980px-Lesespalte der

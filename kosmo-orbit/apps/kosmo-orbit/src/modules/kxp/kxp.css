@@ -47,8 +47,11 @@
   gap: var(--k-s2);
   padding: var(--k-s3) var(--k-s4);
   border-radius: var(--k-radius-sm);
-  border: 1px solid var(--k-warning-line, var(--k-line-strong));
-  background: var(--k-warning-wash, var(--k-surface));
+  /* v0.8.1 P16-Fixes / C-16 (Spez §4.3, Nachzug zu P3) — kanonisiert:
+     `--k-warning-wash`/-`line` sind echte Tokens in aura.css (kein
+     Fallback mehr nötig, Muster `design-panels.css`/`publish.css`). */
+  border: 1px solid var(--k-warning-line);
+  background: var(--k-warning-wash);
   color: var(--k-ink);
   font-size: var(--k-t-sm);
 }
@@ -101,8 +104,11 @@
   gap: var(--k-s2);
   padding: var(--k-s3) var(--k-s4);
   border-radius: var(--k-radius-sm);
-  border: 1px solid var(--k-warning-line, var(--k-line-strong));
-  background: var(--k-warning-wash, var(--k-surface));
+  /* v0.8.1 P16-Fixes / C-16 (Spez §4.3, Nachzug zu P3) — kanonisiert:
+     `--k-warning-wash`/-`line` sind echte Tokens in aura.css (kein
+     Fallback mehr nötig, Muster `design-panels.css`/`publish.css`). */
+  border: 1px solid var(--k-warning-line);
+  background: var(--k-warning-wash);
   font-size: var(--k-t-xs, 12px);
   color: var(--k-ink-soft);
 }

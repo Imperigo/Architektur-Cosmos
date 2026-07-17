@@ -24,6 +24,13 @@
   braucht einen eigenen deklarierten Golden-Nachtrag ODER Owner-Rückholung des
   Ist-Verhaltens (6% Stempelhöhe). *(v0.8.1/P7, ROADMAP 408)*
 
+- [ ] **Rollen-Staffelung App-Anbindung (C-41 der v0.8.1):** `staffelung.ts` ist gebaut
+  und getestet, hat aber 0 App-Aufrufer — ChatSession/KosmoPanel wählen weiter EIN
+  Modell pro Sitzung. Verdrahtung «Provider-Wechsel je Aufgabenklasse» + Kuratier-Flow
+  → `exportiereUndTrainiere` als eigenes Paket (UX-Entscheid nötig). *(v0.8.1/P16)*
+- [ ] **dock-interaktion «Tab (c)»-Volllast-Flake:** 1× im 27-min-Batch gerissen,
+  4× isoliert grün — Kandidat für dieselbe Härtungsklasse wie row-Splitter. *(v0.8.1/P16)*
+
 ## B · UI-Restrunden (klarer Scope, kein Entscheid nötig)
 
 - [ ] **OnboardingWizard-Vollumbau** (54 Rest-Inline-Styles) + **StarterGuide-Rest** (10)

@@ -14,6 +14,7 @@ import {
 } from '../../state/auftragsbuch';
 import { bridgeVermutlichCspGeblockt, istAuthFehler } from '../vis/vis-jobs';
 import { useProject } from '../../state/project-store';
+import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
 import './dev.css';
 
 /**
@@ -189,7 +190,16 @@ export function DevWorkspace() {
   const offene = (auftraege ?? []).filter((a) => a.status === 'offen').length;
 
   return (
-    <div className="k-einblenden dev-viewport">
+    // v0.8.1 P3/C-14 (`docs/V081-SPEZ.md` §4.3/§9, BodenDock-Reserve-
+    // Verifikation): `dev` (pipeline) hat KEINE `DockFlaeche` — ohne Reserve
+    // bleiben die untersten Auftragskarten strukturell hinter der fixen
+    // Boden-Dock-Pille hängen (max. Scroll-Position lässt die letzte Karte
+    // exakt am unteren Rand des Scroll-Containers stehen, wo die Pille
+    // liegt, `boden-dock.css` `bottom:96px`). Reserve-Konsum nach
+    // `PublishWorkspace.tsx`-Muster: zusätzliches Bottom-Padding in Höhe der
+    // importierten `BODEN_DOCK_RESERVE_PX` on top des bestehenden
+    // `--k-s5`-Innenabstands.
+    <div className="k-einblenden dev-viewport" style={{ paddingBottom: `calc(var(--k-s5) + ${BODEN_DOCK_RESERVE_PX}px)` }}>
       <div className="dev-content">
         <KToolbar data-testid="dev-werkzeugleiste" className="dev-kopf-leiste">
           <Badge hue={moduleHue.dev}>KosmoDev</Badge>
