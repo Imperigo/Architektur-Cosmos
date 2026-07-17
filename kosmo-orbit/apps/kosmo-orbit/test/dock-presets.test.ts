@@ -135,8 +135,11 @@ describe('dock-presets — Registry-Validität', () => {
     expect(offenFaehigeIds('vis')).toEqual(['visPalette']);
   });
 
-  it('publish: genau zwei Panel-IDs sind offen-fähig (dossier + plankopf, beide echte Werkzeugleisten-Toggles)', () => {
-    expect(offenFaehigeIds('publish')).toEqual(['dossier', 'plankopf']);
+  it('publish: genau drei Panel-IDs sind offen-fähig (dossier + plankopf + autopack, alle drei echte Werkzeugleisten-Toggles)', () => {
+    // v0.8.1 P12 (Auto-Pack-Layout-Editor, docs/V081-SPEZ.md §7(b)/C-26):
+    // `autopack` additiv nachgezogen, s. `dock-stationen.ts`s `PUBLISH_PANELS`-
+    // Kopfkommentar zum neuen dritten Eintrag.
+    expect(offenFaehigeIds('publish')).toEqual(['dossier', 'plankopf', 'autopack']);
   });
 });
 

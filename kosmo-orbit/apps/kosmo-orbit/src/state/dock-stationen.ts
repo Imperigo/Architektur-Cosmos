@@ -722,6 +722,32 @@ const PUBLISH_PANELS: readonly PanelDef[] = [
     schliessbar: true,
     bewegbar: true,
   },
+  /**
+   * v0.8.1 P12 (Auto-Pack-Layout-Editor, `docs/V081-SPEZ.md` §7(b)/C-26,
+   * `AutoPackPanel.tsx`) — additiver DRITTER Publish-Panel-Eintrag, nach
+   * demselben Muster wie `plankopf` (echter Werkzeugleisten-Toggle
+   * `publish-autopack`, kein Doc-/`ui-zustand.ts`-Flag, lokaler
+   * `autopackOffen`-State in `PublishWorkspace.tsx`). Dock-Zone `right` wie
+   * `plankopf` (kollidiert nicht, weil `wichtigkeit` nur die Rang-Ordnung
+   * INNERHALB derselben Spalte entscheidet, `plankopf` bleibt mit 50 höher
+   * priorisiert). `dock-presets.ts`s `offenFaehigeIds('publish')` wächst
+   * dadurch additiv um `'autopack'` (s. dortigen Test-Nachzug
+   * `dock-presets.test.ts`) — keines der drei bestehenden Presets nimmt es
+   * in `offen` auf (der Editor ist ein punktuelles Werkzeug, kein
+   * Dauerbegleiter irgendeines Presets), es bleibt darum in JEDEM Preset zu.
+   */
+  {
+    id: 'autopack',
+    titel: 'Auto-Pack-Editor',
+    rolle: 'manuell',
+    wichtigkeit: 49,
+    dock: 'right',
+    min: 260,
+    groesse: 420,
+    start: 'zu',
+    schliessbar: true,
+    bewegbar: true,
+  },
 ];
 
 /**

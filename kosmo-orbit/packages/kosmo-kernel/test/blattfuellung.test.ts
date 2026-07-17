@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { pruefeGolden } from './golden-helfer';
 import { readFileSync } from 'node:fs';
 import {
+  BLATT_PACK_DEFAULTS,
   CommandError,
   History,
   KosmoDoc,
@@ -222,6 +223,139 @@ describe('Command publish.blattFuellen', () => {
   it('unbekanntes Blatt wirft CommandError', () => {
     const doc = new KosmoDoc();
     expect(() => execute(doc, 'publish.blattFuellen', { sheetId: 'gibt-es-nicht' })).toThrow(CommandError);
+  });
+});
+
+/**
+ * v0.8.1 P12 (Auto-Pack-Layout-Editor, `docs/V081-SPEZ.md` §7(b)/C-26) —
+ * `BlattPackOptions` sind additiv: der dritte, optionale Parameter von
+ * `schlageBlattBelegungVor`. Neutralitätstests (P5a-Muster): weggelassen
+ * ODER explizit auf `BLATT_PACK_DEFAULTS` gesetzt liefert byte-identische
+ * Ergebnisse zum Alt-Stand; jede einzelne Option verändert das Ergebnis nur,
+ * wenn sie tatsächlich vom Default abweicht.
+ */
+describe('P12 Auto-Pack-Optionen (additiv, Alt-Default bleibt byte-gleich)', () => {
+  it('Neutralität: weggelassene `optionen` === explizit BLATT_PACK_DEFAULTS', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const ohneOptionen = schlageBlattBelegungVor(doc, sheet);
+    const mitDefaults = schlageBlattBelegungVor(doc, sheet, { ...BLATT_PACK_DEFAULTS });
+    expect(mitDefaults).toEqual(ohneOptionen);
+  });
+
+  it('Neutralität: leeres `{}` verhält sich wie weggelassen', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const ohneOptionen = schlageBlattBelegungVor(doc, sheet);
+    const mitLeeremObjekt = schlageBlattBelegungVor(doc, sheet, {});
+    expect(mitLeeremObjekt).toEqual(ohneOptionen);
+  });
+
+  it('Neutralität: Golden-Fixtur bleibt mit BLATT_PACK_DEFAULTS byte-gleich zur Golden-Referenz', () => {
+    const { doc, sheetId } = autofuellungFixtureDoc();
+    execute(doc, 'publish.blattFuellen', { sheetId, optionen: { ...BLATT_PACK_DEFAULTS } });
+    const svg = sheetToSvg(doc, sheetId, { projectName: doc.settings.projectName, date: '11.07.2026' });
+    pruefeGolden(svg, new URL('./golden/blatt-autofuellung.svg', import.meta.url));
+  });
+
+  it('`reihenfolge` reiht die genannte Art nach vorn — Axo vor Grundriss statt umgekehrt', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const vorschlag = schlageBlattBelegungVor(doc, sheet, { reihenfolge: ['axo', 'grundriss'] });
+    const artenReihenfolge = vorschlag.vorschlaege.map((v) => v.art);
+    const idxAxo = artenReihenfolge.indexOf('axo');
+    const idxGrundriss = artenReihenfolge.indexOf('grundriss');
+    expect(idxAxo).toBeGreaterThanOrEqual(0);
+    expect(idxGrundriss).toBeGreaterThanOrEqual(0);
+    expect(idxAxo).toBeLessThan(idxGrundriss);
+  });
+
+  it('`reihenfolge` lässt nicht genannte Arten in ihrer relativen Standard-Reihenfolge, hinten angehängt', () => {
+    const { doc, storeyEg, storeyOg, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const alt = schlageBlattBelegungVor(doc, sheet);
+    const neu = schlageBlattBelegungVor(doc, sheet, { reihenfolge: ['axo'] });
+    // Axo zuerst, danach exakt dieselbe relative Reihenfolge wie im Alt-Stand
+    expect(neu.vorschlaege[0]!.art).toBe('axo');
+    const altOhneAxo = alt.vorschlaege.filter((v) => v.art !== 'axo').map((v) => v.art);
+    const neuOhneAxo = neu.vorschlaege.slice(1).map((v) => v.art);
+    expect(neuOhneAxo).toEqual(altOhneAxo);
+    // Geschoss-Zuordnung unangetastet — reine Reihenfolge, keine Dateninhalte geändert
+    const grundrisse = neu.vorschlaege.filter((v) => v.art === 'grundriss') as Array<{ storeyId: string }>;
+    expect(grundrisse.map((g) => g.storeyId).sort()).toEqual([storeyEg, storeyOg].sort());
+  });
+
+  it('`zeilenHoeheMm` kleiner als Default: mehr Rasterzeilen passen aufs Blatt, weniger «kein freier Platz»-Hinweise', () => {
+    const doc = new KosmoDoc();
+    const aufbau = execute(doc, 'design.aufbauErstellen', {
+      name: 'AW', target: 'wall', layers: [{ material: 'beton', thickness: 250, function: 'tragend' }],
+    });
+    const assemblyId = (aufbau.patches[0] as { id: string }).id;
+    for (let i = 0; i < 6; i++) {
+      const g = execute(doc, 'design.geschossErstellen', { name: `G${i}`, index: i, elevation: i * 3000, height: 3000 });
+      const storeyId = (g.patches[0] as { id: string }).id;
+      const w = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+        execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+      w({ x: 0, y: 0 }, { x: 4000, y: 0 });
+      w({ x: 4000, y: 0 }, { x: 4000, y: 3000 });
+      w({ x: 4000, y: 3000 }, { x: 0, y: 3000 });
+      w({ x: 0, y: 3000 }, { x: 0, y: 0 });
+    }
+    const blatt = execute(doc, 'publish.blattErstellen', { name: 'Kleines Blatt', format: 'A4', orientation: 'quer' });
+    const sheetId = (blatt.patches[0] as { id: string }).id;
+    const sheet = doc.get<Sheet>(sheetId)!;
+
+    const altVorschlag = schlageBlattBelegungVor(doc, sheet);
+    const neuVorschlag = schlageBlattBelegungVor(doc, sheet, { zeilenHoeheMm: 30 });
+    expect(neuVorschlag.vorschlaege.length).toBeGreaterThan(altVorschlag.vorschlaege.length);
+  });
+
+  it('`gutterMm`/`randMm` verändern die Platzierungskoordinaten, gleiche Arten-Auswahl (reine Geometrie-Stellschrauben)', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const alt = schlageBlattBelegungVor(doc, sheet);
+    const neu = schlageBlattBelegungVor(doc, sheet, { gutterMm: 20, randMm: 30 });
+    expect(neu.vorschlaege).not.toEqual(alt.vorschlaege);
+    // Gleiche Arten-Auswahl in gleicher Zahl (moderate Abstandsänderung auf dem
+    // grossen A1-Blatt kostet keine Kapazität) — nur die x/y-Koordinaten weichen ab
+    expect(neu.vorschlaege.map((v) => v.art)).toEqual(alt.vorschlaege.map((v) => v.art));
+  });
+
+  it('`maxSpalten` reduziert die Spaltenzahl: weniger Rasterzellen, überzählige Kandidaten werden ehrlich als Hinweis gemeldet statt verschwunden', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const alt = schlageBlattBelegungVor(doc, sheet);
+    const neu = schlageBlattBelegungVor(doc, sheet, { maxSpalten: 1 });
+    expect(neu.vorschlaege.length).toBeLessThanOrEqual(alt.vorschlaege.length);
+    if (neu.vorschlaege.length < alt.vorschlaege.length) {
+      expect(neu.hinweise.some((h) => h.includes('kein freier Platz im Raster'))).toBe(true);
+    }
+  });
+
+  it('Determinismus bleibt mit `optionen`: zweimalige Ableitung mit denselben Optionen liefert dasselbe Ergebnis', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const sheet = doc.get<Sheet>(sheetId)!;
+    const optionen = { reihenfolge: ['axo', 'text'] as Array<'axo' | 'text'>, zeilenHoeheMm: 120 };
+    const a = schlageBlattBelegungVor(doc, sheet, optionen);
+    const b = schlageBlattBelegungVor(doc, sheet, optionen);
+    expect(a).toEqual(b);
+  });
+
+  it('Command publish.blattFuellen mit `optionen`: bleibt EIN atomarer Patch, Undo macht ihn vollständig rückgängig', () => {
+    const { doc, sheetId } = setupZweiGeschosse();
+    const history = new History();
+    const vorher = doc.get<Sheet>(sheetId)!;
+
+    const res = execute(doc, 'publish.blattFuellen', { sheetId, optionen: { reihenfolge: ['axo'], gutterMm: 10 } });
+    history.record(res.patches);
+    expect(res.patches).toHaveLength(1);
+
+    const nachher = doc.get<Sheet>(sheetId)!;
+    expect(nachher.placements.some((p) => p.view === 'axo')).toBe(true);
+
+    history.undo(doc);
+    const zurueck = doc.get<Sheet>(sheetId)!;
+    expect(zurueck).toEqual(vorher);
   });
 });
 

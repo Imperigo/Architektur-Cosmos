@@ -641,16 +641,51 @@ export const removeSheet = registerCommand({
  * ausserhalb eines einzelnen execute()-Durchlaufs. */
 const letzterBericht = new WeakMap<object, ReturnType<typeof schlageBlattBelegungVor>>();
 
+/**
+ * v0.8.1 P12 (Auto-Pack-Layout-Editor, `docs/V081-SPEZ.md` §7(b)/C-26):
+ * additives, optionales Params-Feld — spiegelt `BlattPackOptions`
+ * (`derive/blattfuellung.ts`) 1:1 als zod-Schema. Weggelassen (wie bei jedem
+ * bestehenden Aufrufer/Test), verhält sich der Command byte-gleich zum
+ * Alt-Stand (`schlageBlattBelegungVor(doc, sheet)` ohne dritten Parameter).
+ */
+const blattPackOptionenSchema = z
+  .object({
+    reihenfolge: z.array(z.enum(['grundriss', 'schnitt', 'axo', 'situationsplan', 'bild', 'text'])).optional(),
+    spaltenZielMm: z.number().positive().optional(),
+    maxSpalten: z.number().int().positive().optional(),
+    zeilenHoeheMm: z.number().positive().optional(),
+    gutterMm: z.number().nonnegative().optional(),
+    randMm: z.number().nonnegative().optional(),
+  })
+  .optional();
+
+/** `exactOptionalPropertyTypes` verlangt, ein zod-optionales Feld (`X |
+ * undefined`) NICHT direkt in ein plain-optionales Interface-Feld (`X`)
+ * durchzureichen — dieselbe konditionale-Spread-Konvention wie bei
+ * `setBuero` (oben, `p.name !== undefined ? { name: p.name } : {}`), hier
+ * einmal für alle sechs `BlattPackOptions`-Felder gebündelt. */
+function packOptionenAus(p: z.infer<typeof blattPackOptionenSchema>) {
+  if (!p) return undefined;
+  return {
+    ...(p.reihenfolge !== undefined ? { reihenfolge: p.reihenfolge } : {}),
+    ...(p.spaltenZielMm !== undefined ? { spaltenZielMm: p.spaltenZielMm } : {}),
+    ...(p.maxSpalten !== undefined ? { maxSpalten: p.maxSpalten } : {}),
+    ...(p.zeilenHoeheMm !== undefined ? { zeilenHoeheMm: p.zeilenHoeheMm } : {}),
+    ...(p.gutterMm !== undefined ? { gutterMm: p.gutterMm } : {}),
+    ...(p.randMm !== undefined ? { randMm: p.randMm } : {}),
+  };
+}
+
 export const fillSheet = registerCommand({
   id: 'publish.blattFuellen',
   title: 'Blatt füllen',
   description:
-    'Befüllt die freie Fläche eines Planblatts automatisch (Owner-Befund K10): platziert fehlende Grundrisse (je Geschoss), bereits im Modell definierte Schnitte, eine Axonometrie, eine Kennzahlen-Zusammenfassung und ein vorhandenes Renderbild (oder einen leeren Platzhalter) — nach einem einfachen Spaltenraster über die freie Blattfläche, KEIN Layout-«KI». Was das Modell nicht hergibt (kein Schnitt definiert, kein Raumprogramm, kein Render) erscheint als ehrlicher Hinweis in der Zusammenfassung statt erfunden zu werden. EIN atomarer Undo-Schritt.',
-  params: z.object({ sheetId: z.string() }),
+    'Befüllt die freie Fläche eines Planblatts automatisch (Owner-Befund K10): platziert fehlende Grundrisse (je Geschoss), bereits im Modell definierte Schnitte, eine Axonometrie, eine Kennzahlen-Zusammenfassung und ein vorhandenes Renderbild (oder einen leeren Platzhalter) — nach einem einfachen Spaltenraster über die freie Blattfläche, KEIN Layout-«KI». Was das Modell nicht hergibt (kein Schnitt definiert, kein Raumprogramm, kein Render) erscheint als ehrlicher Hinweis in der Zusammenfassung statt erfunden zu werden. EIN atomarer Undo-Schritt. Optionales `optionen`-Feld (v0.8.1 P12, Auto-Pack-Editor): Reihenfolge/Spaltenmass/Zeilenhöhe/Abstand des Rasters lassen sich benannt übersteuern — ohne dieses Feld unverändert der Alt-Default.',
+  params: z.object({ sheetId: z.string(), optionen: blattPackOptionenSchema }),
   summarize: (p) => formatBelegungsBericht(letzterBericht.get(p) ?? { vorschlaege: [], hinweise: [] }),
   run: (doc, p) => {
     const sheet = requireSheet(doc, p.sheetId);
-    const vorschlag = schlageBlattBelegungVor(doc, sheet);
+    const vorschlag = schlageBlattBelegungVor(doc, sheet, packOptionenAus(p.optionen));
     letzterBericht.set(p, vorschlag);
     if (vorschlag.vorschlaege.length === 0) return [];
 

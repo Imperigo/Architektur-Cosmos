@@ -18,6 +18,7 @@ import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche
 import { useDockZustand } from '../../state/dock-zustand';
 import { PRESET_IDS, presetOffenMap, type PresetId } from '../../state/dock-presets';
 import { exportSetSvgs, exportSheetPdf, exportSheetSetPdf } from './export-sheets';
+import { AutoPackPanel } from './AutoPackPanel';
 import { DossierPanel } from './DossierPanel';
 import { PlankopfPanel } from './PlankopfPanel';
 import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
@@ -84,6 +85,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   // beides). Preview-lokale Toggles «Zonen»/«Aussenbemassung» (Spez §8 V-K8,
   // §9 V-I5): NIE ins Doc, NIE in den Export — reiner lokaler UI-Zustand.
   const [plankopfOffen, setPlankopfOffen] = useState(false);
+  // v0.8.1 P12 (Auto-Pack-Layout-Editor, docs/V081-SPEZ.md §7(b)/C-26) —
+  // AutoPackPanel öffnet über denselben Werkzeugleisten-Knopf-Weg wie
+  // `plankopfOffen` (kein Doc-Zustand, reiner lokaler Ein/Aus-Zustand, s.
+  // `AutoPackPanel.tsx`-Kopfkommentar «eigenständiges Panel»).
+  const [autopackOffen, setAutopackOffen] = useState(false);
   const [zonenVorschau, setZonenVorschau] = useState(false);
   const [aussenbemassungVorschau, setAussenbemassungVorschau] = useState(false);
   const svgHostRef = useRef<HTMLDivElement>(null);
@@ -117,6 +123,14 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     if (dossierSoll !== undefined) setDossierOffen(dossierSoll);
     const plankopfSoll = offenMap.get('plankopf');
     if (plankopfSoll !== undefined) setPlankopfOffen(plankopfSoll);
+    // v0.8.1 P12: `autopack` ist seit `PUBLISH_PANELS` (dock-stationen.ts)
+    // ebenfalls offen-fähig, aber KEIN Preset listet es in `offen` (der
+    // Editor ist ein punktuelles Werkzeug, kein Dauerbegleiter irgendeines
+    // Presets) — der Wert bleibt darum immer `false`, hier trotzdem
+    // ausgelesen/angewendet, damit `presetOffenMap`s Aussage kein toter
+    // Wert bleibt (derselbe Massstab wie bei dossier/plankopf oben).
+    const autopackSoll = offenMap.get('autopack');
+    if (autopackSoll !== undefined) setAutopackOffen(autopackSoll);
   }
 
   // Erststart-Trigger (Spez C-13: «löst beim ersten Besuch der Publish-
@@ -224,8 +238,28 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           />
         ),
       },
+      // v0.8.1 P12 (Auto-Pack-Layout-Editor, docs/V081-SPEZ.md §7(b)/C-26):
+      // dasselbe Guard-Muster wie `plankopf` — braucht ein aktives Blatt,
+      // sonst gibt es keine `Sheet`-Fläche zum Befüllen. BEWUSST OHNE
+      // `oeffnen`: mit drei gleichzeitig schliessbaren Panels (dossier +
+      // plankopf + autopack) legt `DockFlaeche.tsx`s Closed-Chip-Leiste
+      // (`shell/dock/`, ausserhalb dieses Dateikreises) die Chips in einer
+      // zweiten Zeile ab, die dann den Dock-Kopf-«Schliessen»-Knopf eines
+      // gedockten Panels überdeckt (gefundene Regression in
+      // `plankopf.spec.ts`s Dock-Closed-Chips-Test, reproduziert mit einem
+      // dritten offen-fähigen Panel). `oeffnen` ist laut `DockPanelEintrag`-
+      // Kopfkommentar (`DockFlaeche.tsx`) additiv/optional — ohne dieses Feld
+      // bleibt der Werkzeugleisten-Knopf `publish-autopack` der EINZIGE
+      // Öffnen-Weg (kein Closed-Chip für `autopack`), alle bestehenden
+      // Closed-Chip-Spezifikationen bleiben dadurch unangetastet.
+      {
+        id: 'autopack',
+        sichtbar: autopackOffen && !!sheet,
+        schliessen: () => setAutopackOffen(false),
+        inhalt: <AutoPackPanel sheetId={sheet?.id ?? ''} onClose={() => setAutopackOffen(false)} />,
+      },
     ],
-    [dossierOffen, plankopfOffen, sheet, selectedPlacement, storeys.length],
+    [dossierOffen, plankopfOffen, autopackOffen, sheet, selectedPlacement, storeys.length],
   );
 
   const svgMarkup = useMemo(
@@ -584,6 +618,21 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
             onClick={() => setPlankopfOffen((v) => !v)}
           >
             <KIcon name="stift" size={14} title="Plankopf" />
+          </KButton>
+          {/* v0.8.1 P12 (Auto-Pack-Layout-Editor, docs/V081-SPEZ.md §7(b)/
+              C-26): dasselbe «Projekt geladen» + «aktives Blatt»-Kriterium
+              wie Plankopf — der Editor braucht ein Blatt, um dessen freie
+              Fläche zu berechnen/vorzuschauen. */}
+          <KButton
+            size="sm"
+            tone={autopackOffen ? 'accent' : 'ghost'}
+            data-testid="publish-autopack"
+            title="Auto-Pack-Editor — Reihenfolge/Abstände von «Blatt füllen» einstellen, mit echter Vorschau"
+            aria-label="Auto-Pack-Editor öffnen"
+            disabled={!sheet}
+            onClick={() => setAutopackOffen((v) => !v)}
+          >
+            <KIcon name="ebenen" size={14} title="Auto-Pack-Editor" />
           </KButton>
           {onEinstellungen && (
             <KButton

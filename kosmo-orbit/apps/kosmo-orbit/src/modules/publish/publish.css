@@ -519,3 +519,20 @@
   color: var(--k-ink);
   background: var(--k-raised);
 }
+
+/* AutoPackPanel (v0.8.1 P12, Auto-Pack-Layout-Editor) — Vorschau-/Hinweisliste,
+   dieselbe schmucklose Listen-Optik wie die übrigen Panel-Abschnitte oben,
+   additiv (keine bestehende Klasse verändert). */
+.k-autopack-vorschau-liste,
+.k-autopack-hinweis-liste {
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+}
+.k-autopack-vorschau-eintrag {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink);
+}

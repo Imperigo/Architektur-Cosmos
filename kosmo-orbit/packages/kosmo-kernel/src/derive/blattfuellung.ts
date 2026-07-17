@@ -59,6 +59,72 @@ export interface BlattBelegungsVorschlag {
   hinweise: string[];
 }
 
+/**
+ * v0.8.1 P12 (Auto-Pack-Layout-Editor, `docs/V081-SPEZ.md` §7(b)/C-26):
+ * benannte, dokumentiert-additive Optionen für den Raster-Algorithmus unten
+ * — ALLE Felder optional. Wird der ganze dritte Parameter weggelassen (oder
+ * ein einzelnes Feld darin), reproduziert das Ergebnis exakt das heutige
+ * Verhalten (dieselben Zahlen wie die bisherigen hartcodierten Konstanten,
+ * s. `BLATT_PACK_DEFAULTS`) — jeder bestehende Aufrufer
+ * (`publish.blattFuellen` ohne `optionen`, der Golden-Test, `baugesuch.ts`s
+ * mitgenutzte `alleBekanntenSchnitte`) bleibt byte-gleich. Das ist die echte,
+ * transparente Stellschraube hinter dem Editor-Panel — KEINE «KI»-Magie:
+ * der Editor zeigt/verändert exakt dieselbe Raster-Regel, die schon lief.
+ */
+export interface BlattPackOptions {
+  /** Priorisierte Reihenfolge der Blatt-Arten («Gewichtung» durch Rang: je
+   * früher eine Art in der Liste steht, desto eher bekommt sie eine freie
+   * Rasterzelle). Arten, die hier fehlen, behalten ihre relative
+   * Standard-Reihenfolge und werden HINTER die genannten Arten gereiht.
+   * Default (undefined/leer): unverändert die heutige feste Priorität
+   * (Grundriss je Geschoss → Schnitt → Situationsplan → Axo → Kennzahlen →
+   * Render). */
+  reihenfolge?: BlattVorschlag['art'][];
+  /** Ziel-Spaltenbreite (mm) für die Spaltenzahl-Berechnung. Default 200. */
+  spaltenZielMm?: number;
+  /** Maximale Spaltenzahl. Default 3. */
+  maxSpalten?: number;
+  /** Zeilenhöhe (mm) je Rasterzelle. Default 150. */
+  zeilenHoeheMm?: number;
+  /** Innenabstand (mm) zwischen Zelleninhalt und Zellrand («Luft» je Zelle). Default 6. */
+  gutterMm?: number;
+  /** Aussenrand (mm) um die nutzbare Blattfläche, zusätzlich zur
+   * Plankopf-Reserve (`plankopfReserveMm()`). Default 14. */
+  randMm?: number;
+}
+
+/** Effektive Default-Werte, wenn `optionen`/ein Feld darin weggelassen wird
+ * — dieselben Zahlen wie die bisherigen hartcodierten Konstanten (s. deren
+ * Kalibrierungs-Kommentare weiter unten im Rasterblock). Exportiert, damit
+ * der Editor (`AutoPackPanel.tsx`) sie als Ausgangswerte anzeigen kann, ohne
+ * die Zahlen ein zweites Mal zu pflegen. */
+export const BLATT_PACK_DEFAULTS: Required<BlattPackOptions> = {
+  reihenfolge: [],
+  spaltenZielMm: 200,
+  maxSpalten: 3,
+  zeilenHoeheMm: 150,
+  gutterMm: 6,
+  randMm: 14,
+};
+
+/**
+ * Ordnet Kandidaten nach `reihenfolge` um (stabil: gleicher Rang / nicht
+ * genannte Arten behalten ihre relative Ausgangsreihenfolge). Leere/fehlende
+ * `reihenfolge` ist ein reines No-op (`kandidaten` unverändert zurückgegeben)
+ * — das ist die Neutralitäts-Garantie für den Alt-Default.
+ */
+function ordneNachReihenfolge<T extends { art: BlattVorschlag['art'] }>(
+  kandidaten: T[],
+  reihenfolge: BlattVorschlag['art'][] | undefined,
+): T[] {
+  if (!reihenfolge || reihenfolge.length === 0) return kandidaten;
+  const rang = new Map(reihenfolge.map((a, i) => [a, i]));
+  return kandidaten
+    .map((k, i) => ({ k, i, r: rang.has(k.art) ? rang.get(k.art)! : reihenfolge.length + i }))
+    .sort((x, y) => x.r - y.r || x.i - y.i)
+    .map((x) => x.k);
+}
+
 /** Text-Marker vor der Kennzahlen-Zusammenfassung — verhindert Doppel-Einfügen
  * bei wiederholtem «Blatt füllen». */
 const KENNZAHLEN_MARKER = 'Kennzahlen —';
@@ -126,12 +192,13 @@ export function alleBekanntenSchnitte(doc: KosmoDoc): Map<string, BekannterSchni
  * bereits definierten SectionSpecs) → Axonometrie → Kennzahlen → Renderbild
  * (vorhandenes Asset, sonst leerer Platzhalter-Slot).
  */
-export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBelegungsVorschlag {
+export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet, optionen?: BlattPackOptions): BlattBelegungsVorschlag {
   const hinweise: string[] = [];
   const paper = sheetPaperSize(sheet);
 
   // --- Kandidaten sammeln (nur was die Derivation wirklich hergibt) ---
   type Kandidat = {
+    art: BlattVorschlag['art'];
     label: string;
     breite: number;
     hoehe: number;
@@ -149,6 +216,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
       continue;
     }
     kandidaten.push({
+      art: 'grundriss',
       label: `Grundriss ${storey.name}`,
       breite: bounds.maxX - bounds.minX,
       hoehe: bounds.maxY - bounds.minY,
@@ -172,6 +240,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
         continue;
       }
       kandidaten.push({
+        art: 'schnitt',
         label: spec.title,
         breite: bounds.maxX - bounds.minX,
         hoehe: bounds.maxY - bounds.minY,
@@ -208,6 +277,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
       );
     } else {
       kandidaten.push({
+        art: 'situationsplan',
         label: 'Situationsplan',
         breite: geo.bounds.maxX - geo.bounds.minX,
         hoehe: geo.bounds.maxY - geo.bounds.minY,
@@ -223,6 +293,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
       hinweise.push('Modell noch ohne Baukörper — keine Axonometrie ableitbar');
     } else {
       kandidaten.push({
+        art: 'axo',
         label: 'Axonometrie',
         breite: bounds.maxX - bounds.minX,
         hoehe: bounds.maxY - bounds.minY,
@@ -247,6 +318,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
       const zeilenzahl = zeilen.length;
       const size = 4;
       kandidaten.push({
+        art: 'text',
         label: 'Kennzahlen',
         breite: Math.max(...zeilen.map((z) => z.length)) * size * 0.55,
         hoehe: zeilenzahl * size * 1.35,
@@ -261,6 +333,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
     const asset = assets[assets.length - 1]; // zuletzt eingebettetes Render
     if (asset) {
       kandidaten.push({
+        art: 'bild',
         label: 'Render',
         breite: 200,
         hoehe: (200 * (asset.height ?? 2)) / (asset.width ?? 3),
@@ -269,6 +342,7 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
     } else {
       hinweise.push('Kein Render im Modell — Platzhalter-Slot reserviert, HomeStation liefert später');
       kandidaten.push({
+        art: 'bild',
         label: 'Render-Platzhalter',
         breite: 200,
         hoehe: (200 * 2) / 3,
@@ -279,8 +353,16 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
 
   if (kandidaten.length === 0) return { vorschlaege: [], hinweise };
 
+  // v0.8.1 P12 (Auto-Pack-Layout-Editor): Reihenfolge/«Gewichtung» ist die
+  // EINZIGE Stelle, an der `optionen` die Kandidaten selbst anfasst — leere/
+  // fehlende `reihenfolge` ist ein No-op (`ordneNachReihenfolge`-Kopf-
+  // kommentar), alles danach bleibt unverändert dieselbe Raster-Logik.
+  const geordneteKandidaten = ordneNachReihenfolge(kandidaten, optionen?.reihenfolge);
+
   // --- Einfaches Spaltenraster über die freie Fläche ---
-  const RAND = 14; // Blattrahmen (10 mm) + Luft
+  // Alle fünf Zahlen unten sind seit P12 additiv über `optionen` einstellbar
+  // (Default = die bisherigen hartcodierten Werte, `BLATT_PACK_DEFAULTS`).
+  const RAND = optionen?.randMm ?? BLATT_PACK_DEFAULTS.randMm; // Blattrahmen (10 mm) + Luft
   // v0.8.0 P7 (Golden-Sammelwechsel 080, Spez §5.1): die vormals pauschale
   // «40» ist ersetzt durch die EINZIGE Quelle `plankopfReserveMm().hoehe`
   // (`derive/blattlayout.ts`) — mit dem seit P7 default-aktiven, deutlich
@@ -294,12 +376,13 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
   const usableW = Math.max(0, x1 - x0);
   const usableH = Math.max(0, y1 - y0);
 
-  const SPALTEN_ZIEL = 200; // mm Zielbreite je Spalte
-  const spalten = Math.min(3, Math.max(1, Math.floor(usableW / SPALTEN_ZIEL) || 1));
+  const SPALTEN_ZIEL = optionen?.spaltenZielMm ?? BLATT_PACK_DEFAULTS.spaltenZielMm; // mm Zielbreite je Spalte
+  const MAX_SPALTEN = optionen?.maxSpalten ?? BLATT_PACK_DEFAULTS.maxSpalten;
+  const spalten = Math.min(MAX_SPALTEN, Math.max(1, Math.floor(usableW / SPALTEN_ZIEL) || 1));
   const spaltenBreite = usableW / spalten;
-  const ZEILEN_HOEHE = 150; // mm, generische Zellhöhe
+  const ZEILEN_HOEHE = optionen?.zeilenHoeheMm ?? BLATT_PACK_DEFAULTS.zeilenHoeheMm; // mm, generische Zellhöhe
   const maxZeilen = Math.max(1, Math.floor(usableH / ZEILEN_HOEHE));
-  const GUTTER = 6;
+  const GUTTER = optionen?.gutterMm ?? BLATT_PACK_DEFAULTS.gutterMm;
 
   // Belegte Zellen aus bereits vorhandenem Blattinhalt markieren
   const belegt = new Set<string>();
@@ -323,14 +406,14 @@ export function schlageBlattBelegungVor(doc: KosmoDoc, sheet: Sheet): BlattBeleg
 
   // Freie Zellen in Lesereihenfolge (oben→unten, links→rechts) sammeln
   const freieZellen: { row: number; col: number }[] = [];
-  for (let row = 0; row < maxZeilen && freieZellen.length < kandidaten.length; row++) {
+  for (let row = 0; row < maxZeilen && freieZellen.length < geordneteKandidaten.length; row++) {
     for (let col = 0; col < spalten; col++) {
       if (!belegt.has(`${row}:${col}`)) freieZellen.push({ row, col });
     }
   }
 
   const vorschlaege: BlattVorschlag[] = [];
-  kandidaten.forEach((k, i) => {
+  geordneteKandidaten.forEach((k, i) => {
     const zelle = freieZellen[i];
     if (!zelle) {
       hinweise.push(`«${k.label}» passt nicht mehr aufs Blatt — kein freier Platz im Raster`);
