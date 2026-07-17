@@ -48,6 +48,18 @@ export type ViewMode = '3d' | '2d' | 'split' | 'quad';
 /** Für Validierung (`ui-befehle.ts` `ui.ansichtSetzen`) — 1:1 aus `ViewMode`. */
 export const VIEW_MODES: readonly ViewMode[] = ['3d', '2d', 'split', 'quad'];
 
+/**
+ * PD2 (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 1, §7 PD2-Zeile, `V082-SPEZ.md`
+ * C-35/C-41) — der Island/Manuell-Umschalter der design-Station. Lebt HIER
+ * (Fable-Entscheid, additiv) statt im Yjs-Projekt-Doc: eine UI-Präferenz ist
+ * Gerätezustand, kein Modellzustand (Repo-Regel «Laufzeit ≠ Modell»,
+ * CLAUDE.md). **Default `'island'` — das IST der Default-Flip (C-35).**
+ */
+export type DesignOberflaeche = 'island' | 'manuell';
+
+/** Für Validierung/Defensiv-Parsing — 1:1 aus `DesignOberflaeche`. */
+export const DESIGN_OBERFLAECHEN: readonly DesignOberflaeche[] = ['island', 'manuell'];
+
 /** Panel-/Menü-Flag-Namen, über die `ui.panelSetzen` (Paket 3) generisch schreibt. */
 export const PANEL_IDS = [
   'studieOffen',
@@ -121,6 +133,8 @@ export interface UiZustand {
   modusManuell: Arbeitsmodus | undefined;
   /** SIA-Phasen-Preset-Fokus (A8) — bleibt persistiert wie bisher (kein Verhaltenswechsel). */
   phasenFokus: ReadonlySet<FaehigkeitId> | null;
+  /** PD2 Default-Flip (C-35/C-41) — `'island'` ist der neue Default. */
+  designOberflaeche: DesignOberflaeche;
 
   setTool: (v: ToolId) => void;
   setViewMode: (v: ViewMode) => void;
@@ -145,6 +159,7 @@ export interface UiZustand {
   setModusFesthalten: (v: boolean) => void;
   setModusManuell: (v: Arbeitsmodus | undefined) => void;
   setPhasenFokus: (v: ReadonlySet<FaehigkeitId> | null) => void;
+  setDesignOberflaeche: (v: DesignOberflaeche) => void;
 
   /** Generischer Panel-Setter über den Flag-Namen (`ui-befehle.ts` `ui.panelSetzen`). */
   setzePanel: (panel: PanelId, offen: boolean) => void;
@@ -164,10 +179,12 @@ interface UiSpeicher {
   modusFesthalten: boolean;
   modusManuell?: Arbeitsmodus;
   phasenFokus: FaehigkeitId[] | null;
+  /** PD2 — immer normalisiert vorhanden (Default `'island'`, s. `normalisiere`). */
+  designOberflaeche: DesignOberflaeche;
 }
 
 function basisSpeicher(): UiSpeicher {
-  return { version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null };
+  return { version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null, designOberflaeche: 'island' };
 }
 
 /**
@@ -219,6 +236,10 @@ function istGueltigeFaehigkeit(wert: unknown): wert is FaehigkeitId {
   return typeof wert === 'string' && (ALLE_FAEHIGKEITEN as readonly string[]).includes(wert);
 }
 
+function istGueltigeOberflaeche(wert: unknown): wert is DesignOberflaeche {
+  return typeof wert === 'string' && (DESIGN_OBERFLAECHEN as readonly string[]).includes(wert);
+}
+
 function istGueltigerSpeicher(wert: unknown): wert is UiSpeicher {
   if (typeof wert !== 'object' || wert === null) return false;
   const w = wert as Record<string, unknown>;
@@ -237,6 +258,13 @@ function istGueltigerSpeicher(wert: unknown): wert is UiSpeicher {
     if (!Array.isArray(pf)) return false;
     if (!pf.every(istGueltigeFaehigkeit)) return false;
   }
+  // PD2: FEHLEND ist gültig (Default 'island' greift beim Normalisieren) —
+  // exakt dasselbe defensive Muster wie `modusFesthalten`/`phasenFokus` oben,
+  // damit der globale E2E-Seed-Helper (`e2e/helpers/manuell-seed.ts`) mit nur
+  // `version`+`modusAutomatik`+`designOberflaeche` ein gültiger Datensatz ist.
+  if ('designOberflaeche' in w && w['designOberflaeche'] !== undefined && !istGueltigeOberflaeche(w['designOberflaeche'])) {
+    return false;
+  }
   return true;
 }
 
@@ -252,6 +280,7 @@ function normalisiere(wert: unknown): UiSpeicher {
     modusFesthalten: typeof w['modusFesthalten'] === 'boolean' ? w['modusFesthalten'] : false,
     ...(typeof w['modusManuell'] === 'string' ? { modusManuell: w['modusManuell'] as Arbeitsmodus } : {}),
     phasenFokus: Array.isArray(w['phasenFokus']) ? (w['phasenFokus'] as FaehigkeitId[]) : null,
+    designOberflaeche: istGueltigeOberflaeche(w['designOberflaeche']) ? w['designOberflaeche'] : 'island',
   };
 }
 
@@ -285,8 +314,11 @@ function schreibeSpeicher(speicher: UiSpeicher): void {
   }
 }
 
-/** Persistiert NUR die vier Modus-Felder + `phasenFokus` (nie tool/viewMode/Panels). */
-function persistiere(zustand: Pick<UiZustand, 'arbeitsmodus' | 'modusAutomatik' | 'modusFesthalten' | 'modusManuell' | 'phasenFokus'>): void {
+/** Persistiert die vier Modus-Felder + `phasenFokus` + `designOberflaeche`
+ *  (nie tool/viewMode/Panels). */
+function persistiere(
+  zustand: Pick<UiZustand, 'arbeitsmodus' | 'modusAutomatik' | 'modusFesthalten' | 'modusManuell' | 'phasenFokus' | 'designOberflaeche'>,
+): void {
   const speicher: UiSpeicher = {
     version: 1,
     ...(zustand.arbeitsmodus !== undefined ? { arbeitsmodus: zustand.arbeitsmodus } : {}),
@@ -294,6 +326,7 @@ function persistiere(zustand: Pick<UiZustand, 'arbeitsmodus' | 'modusAutomatik' 
     modusFesthalten: zustand.modusFesthalten,
     ...(zustand.modusManuell !== undefined ? { modusManuell: zustand.modusManuell } : {}),
     phasenFokus: zustand.phasenFokus ? [...zustand.phasenFokus] : null,
+    designOberflaeche: zustand.designOberflaeche,
   };
   schreibeSpeicher(speicher);
 }
@@ -328,6 +361,7 @@ function anfangsZustand() {
     modusFesthalten: gespeichert.modusFesthalten,
     modusManuell: gespeichert.modusManuell,
     phasenFokus: gespeichert.phasenFokus ? new Set(gespeichert.phasenFokus) : null,
+    designOberflaeche: gespeichert.designOberflaeche,
   };
 }
 
@@ -372,6 +406,10 @@ export const useUiZustand = create<UiZustand>((set, get) => ({
   },
   setPhasenFokus: (v) => {
     set({ phasenFokus: v });
+    persistiere(get());
+  },
+  setDesignOberflaeche: (v) => {
+    set({ designOberflaeche: v });
     persistiere(get());
   },
 }));

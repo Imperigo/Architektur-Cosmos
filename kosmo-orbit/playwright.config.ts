@@ -1,4 +1,5 @@
 import { defineConfig } from '@playwright/test';
+import { kosmoUiV1SeedMitManuell } from './e2e/helpers/manuell-seed';
 
 /**
  * Visuelle E2E-Suite (Owner-Auftrag: visuell testen, nicht nur Code).
@@ -45,6 +46,14 @@ export default defineConfig({
     // liest sie defensiv mit Default nach), stehen hier trotzdem explizit,
     // damit dieser Seed für sich allein bereits ein vollständiger, gültiger
     // Datensatz ist.
+    //
+    // v0.8.2 / PD2 (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 2, `docs/V082-SPEZ.
+    // md` C-35): der Default-Flip macht `designOberflaeche:'island'` zum
+    // echten Produktions-Default (`state/ui-zustand.ts`) — dieser EINE Seed
+    // zwingt ALLE Bestands-Specs zurück auf `'manuell'` (die heutige
+    // Werkzeugleiste/Dock-Fläche/Geschossleiste), ohne dass eine einzelne
+    // Spec-Datei angefasst werden muss. Ausführliche Begründung («warum EIN
+    // Ort reicht»): `e2e/helpers/manuell-seed.ts`-Kopfkommentar.
     // v0.6.6 Welle 2 / Stream D (V-M1 Commit 2): `kosmo.leistung.v1` mit
     // `renderBeiBedarf: false` vorbelegt — der neue on-demand-Renderloop
     // (Viewport3D.tsx, state/leistung.ts) ist für echte Nutzer:innen ohne
@@ -62,7 +71,7 @@ export default defineConfig({
           localStorage: [
             {
               name: 'kosmo.ui.v1',
-              value: JSON.stringify({ version: 1, modusAutomatik: false, modusFesthalten: false, phasenFokus: null }),
+              value: kosmoUiV1SeedMitManuell(),
             },
             {
               name: 'kosmo.leistung.v1',

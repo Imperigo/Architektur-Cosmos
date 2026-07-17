@@ -35,9 +35,16 @@ async function oeffneMitAutomatikAn(page: Page): Promise<void> {
     // Überschreibt den Playwright-Default (`modusAutomatik: false`) gezielt
     // für diese Suite — Konzept §8: nur NEUE Specs schalten die Automatik
     // ausdrücklich ein.
+    //
+    // v0.8.2 / PD2 (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 2): `designOberflaeche`
+    // MUSS hier explizit auf 'manuell' stehen, weil dieser Aufruf den
+    // GESAMTEN globalen Playwright-Seed (`playwright.config.ts`) überschreibt
+    // — ohne dieses Feld würde die design-Station in den neuen Island-
+    // Default fallen und `view-2d`/`tool-wand` (unten) existierten nicht mehr
+    // im DOM. Reine Setup-Zeile, KEIN Test-Assert geändert.
     localStorage.setItem(
       'kosmo.ui.v1',
-      JSON.stringify({ version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null }),
+      JSON.stringify({ version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null, designOberflaeche: 'manuell' }),
     );
   });
   await page.reload();

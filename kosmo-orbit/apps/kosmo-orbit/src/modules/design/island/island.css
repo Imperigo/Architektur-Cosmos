@@ -65,9 +65,18 @@
      durchgereicht). */
 }
 
-/* ── Bühnenordnung (§1/§2): vier Islands, Ränder 14px, mittig zentriert ── */
+/* ── Bühnenordnung (§1/§2): vier Islands, Ränder 14px, mittig zentriert ──
+   PD2-Fund (Bericht): `EntwurfsDock` (`orbit-065.css` `.orbit065-dock`) sitzt
+   BEREITS bei `left:12px; top:50%` — exakt derselbe «links, mittig»-Platz,
+   den §2 der ZEICHNEN-Island zuweist. EntwurfsDock bleibt unangetastet
+   (§8 Frage 10 offen, Bauauftrag), darum weicht NUR die Island-Seite aus:
+   `left:64px` (statt 14px) räumt EntwurfsDocks ~12-50px-Spalte frei — sonst
+   verdeckt die aufgefächerte ZEICHNEN-Leiste (11 Werkzeuge, deutlich höher
+   als EntwurfsDocks 8-Knopf-Spalte) den gesamten Dock (z-index 40 > 3),
+   inklusive des «Sprechen»-Knopfs, den PD2 als Kosmo-Orb-Bestand-Öffner
+   voraussetzt. */
 .isl-rand-links {
-  left: 14px;
+  left: 64px;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -317,6 +326,129 @@
 }
 .isl-anim-winIn {
   animation: winIn var(--k-motion-fenster) var(--k-ease-entrance);
+}
+
+/* ── Bühnenkopf (PD2, §1): Stationen-Orb + Ansichts-Info, top:22px/left:26px,
+   Stationen-Orb zuerst (davor), Ansichts-Info daneben mit 14px-Lücke
+   (38px-Orb + 14px = 52px versetzt) — beide fix positioniert, teilen sich
+   `--f-*`-Token-Familie wie `.isl-root` oben (kein zweiter Token-Layer). ── */
+.isl-buehnenkopf {
+  position: fixed;
+  top: 22px;
+  z-index: 41;
+  font-family: var(--k-font-ui);
+}
+.isl-buehnenkopf-stationen-orb {
+  left: 26px;
+}
+.isl-buehnenkopf-ansichts-info {
+  left: 78px;
+}
+
+.isl-stationen-orb-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -3px;
+  background: var(--f-pill, rgba(16, 19, 25, 0.92));
+  border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
+  border-radius: 999px;
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  color: #f4f6fa;
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0;
+}
+
+.isl-ansichts-info-label {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--k-s2) var(--k-s3);
+  background: var(--k-glass-fill, rgba(20, 23, 31, 0.62));
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink);
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.isl-buehnenkopf-popover {
+  position: absolute;
+  top: calc(100% + var(--k-s3));
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  min-width: 200px;
+  padding: var(--k-s4);
+  background: var(--k-glass-fill, rgba(20, 23, 31, 0.62));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-sm);
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+}
+
+.isl-buehnenkopf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--k-s1);
+}
+
+.isl-buehnenkopf-chip {
+  min-height: 32px;
+  padding: var(--k-s1) var(--k-s3);
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: 999px;
+  color: var(--k-ink);
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+}
+.isl-buehnenkopf-chip[aria-pressed='true'] {
+  background: var(--k-accent-wash);
+  border-color: var(--k-accent);
+}
+
+.isl-stationen-orb-eintrag {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  min-height: 36px;
+  padding: var(--k-s1) var(--k-s2);
+  background: transparent;
+  border: none;
+  border-radius: var(--k-radius-xs);
+  color: var(--k-ink);
+  cursor: pointer;
+  font-family: var(--k-font-ui);
+  font-size: 13px;
+  text-align: left;
+}
+.isl-stationen-orb-eintrag:hover {
+  background: var(--k-accent-wash);
+}
+
+.isl-rollenpunkt {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
 }
 
 /* `prefers-reduced-motion`: der globale Riegel in `aura.css` (`*,*::before,

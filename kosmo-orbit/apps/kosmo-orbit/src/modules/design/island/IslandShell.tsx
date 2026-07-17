@@ -67,10 +67,21 @@ function useReduzierteBewegung(): boolean {
 
 export interface IslandShellProps {
   island: IslandId;
+  /**
+   * PD2 (`docs/ISLAND-UI-SPEZ.md` §7 PD2-Zeile, Bullet 1 «Klick... aktiviert
+   * das ECHTE Werkzeug»): optionaler Aufruf bei JEDER Erst-Aktivierung eines
+   * Werkzeugs (einmal pro Übergang zu einem neuen `w.id`, s. `aufWerkzeugKlick`
+   * unten) — der eigentliche Command-/Store-Aufruf lebt beim Aufrufer
+   * (`DesignWorkspace.tsx`s `aktiviereIslandWerkzeug()`), NICHT hier (dieser
+   * Automat bleibt reiner Präsentationszustand, s. Datei-Kopfkommentar).
+   * Optional, damit der PD1-Unit-Test (`island-shell.test.tsx`, rendert
+   * `IslandShell` STANDALONE ohne dieses Prop) unverändert grün bleibt.
+   */
+  onWerkzeugAktion?: (werkzeug: IslandWerkzeug) => void;
 }
 
 /** Eine einzelne Island — Zustandsmaschine + Rendering für Pill/Leiste/Popup/Fenster. */
-export function IslandShell({ island }: IslandShellProps) {
+export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
   const werkzeuge = werkzeugeFuerIsland(island);
   const orientierung = ISLAND_ORIENTIERUNG[island];
   const reduziert = useReduzierteBewegung();
@@ -139,12 +150,19 @@ export function IslandShell({ island }: IslandShellProps) {
   function aufWerkzeugKlick(w: IslandWerkzeug): void {
     if (!w.hatPopup) {
       zeigeToast(w.name);
+      // Sofort-Umschaltung (Achsen-Toggle/Manuell, §4.4) — Erst-Aktivierung,
+      // exakt EIN Aufruf, wie beim Popup-Pfad unten.
+      onWerkzeugAktion?.(w);
       return;
     }
     if (stufe === 'popup' && aktivesWerkzeugId === w.id) {
       setStufe('fenster');
       return;
     }
+    // Erst-Aktivierung dieses Werkzeugs (Wechsel auf eine neue/andere Id) —
+    // die Eskalation Popup→Fenster (Zweig oben) ruft NICHT erneut auf,
+    // dasselbe Werkzeug ist bereits aktiv.
+    if (aktivesWerkzeugId !== w.id) onWerkzeugAktion?.(w);
     setAktivesWerkzeugId(w.id);
     setStufe('popup');
   }
@@ -224,7 +242,14 @@ export function IslandShell({ island }: IslandShellProps) {
           >
             ✕
           </button>
-          {/* Leerer Rahmen (PD1) — Stufe-2-Inhalte (2–4 Schnelleinstellungen je §4.4) kommen PD3. */}
+          {/* PD2: ehrlicher Hinweis, wenn dieses Werkzeug KEINE echte Aktion
+              hat (s. `island-katalog.ts`-Kopfkommentar) — sonst weiterhin
+              leerer Rahmen (PD1), Stufe-2-Inhalte kommen PD3. */}
+          {aktivesWerkzeug.hinweis ? (
+            <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-popup-hinweis`}>
+              {aktivesWerkzeug.hinweis}
+            </p>
+          ) : null}
           <p className="isl-popup-hinweis">NOCHMALS KLICKEN → ALLE EINSTELLUNGEN</p>
         </div>
       ) : null}
@@ -244,6 +269,11 @@ export function IslandShell({ island }: IslandShellProps) {
             ✕
           </button>
           {/* Leerer Rahmen (PD1) — Einstellungsfenster-Inhalte (Stufe-3-Quelle je §4.4) kommen PD3. */}
+          {aktivesWerkzeug.hinweis ? (
+            <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-fenster-hinweis`}>
+              {aktivesWerkzeug.hinweis}
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -256,17 +286,20 @@ export function IslandShell({ island }: IslandShellProps) {
   );
 }
 
+export interface IslandBuehneProps {
+  /** PD2: durchgereicht an jede der vier `IslandShell`-Instanzen, s. dortigen Kommentar. */
+  onWerkzeugAktion?: (werkzeug: IslandWerkzeug) => void;
+}
+
 /**
- * Alle vier Islands an ihren Rändern (§1/§2) — für PD1s Eigenständigkeits-
- * Anforderung («muss exportiert und eigenständig renderbar sein») UND als
- * spätere Einbindungsstelle für PD2 (Default-Flip in `DesignWorkspace.tsx`,
- * noch NICHT verdrahtet in PD1).
+ * Alle vier Islands an ihren Rändern (§1/§2) — der PD2-Einbindungspunkt in
+ * `DesignWorkspace.tsx` (Default-Flip, nur im Island-Modus gerendert).
  */
-export function IslandBuehne() {
+export function IslandBuehne({ onWerkzeugAktion }: IslandBuehneProps = {}) {
   return (
     <>
       {ISLAND_REIHENFOLGE.map((island) => (
-        <IslandShell key={island} island={island} />
+        <IslandShell key={island} island={island} {...(onWerkzeugAktion ? { onWerkzeugAktion } : {})} />
       ))}
     </>
   );

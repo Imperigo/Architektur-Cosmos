@@ -14,6 +14,13 @@ import { expect, test, type Page } from '@playwright/test';
  * diese Suite ist (neben `arbeitsmodi.spec.ts`) eine der wenigen, die sie
  * ausdrücklich wieder einschaltet, um den `ui.modusSetzen`/`ui.
  * modusAutomatik`-Pfad am lebenden Objekt zu beweisen.
+ *
+ * v0.8.2 / PD2 (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 2): beide `kosmo.ui.v1`-
+ * Überschreibungen unten (hier + Z. ~100) tragen zusätzlich
+ * `designOberflaeche: 'manuell'` — sie ersetzen den GESAMTEN globalen
+ * Playwright-Seed, ohne dieses Feld fiele die design-Station auf den neuen
+ * Island-Default zurück und `tool-treppe` (unten) existierte nicht mehr im
+ * DOM. Reine Setup-Zeilen, KEIN Test-Assert geändert.
  */
 async function bootstrap(page: Page): Promise<void> {
   await page.goto('/');
@@ -24,7 +31,7 @@ async function bootstrap(page: Page): Promise<void> {
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
     localStorage.setItem(
       'kosmo.ui.v1',
-      JSON.stringify({ version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null }),
+      JSON.stringify({ version: 1, modusAutomatik: true, modusFesthalten: false, phasenFokus: null, designOberflaeche: 'manuell' }),
     );
   });
   await page.reload();
@@ -99,7 +106,7 @@ test('(d) Kosmo schaltet die Automatik wieder ein — ein von Hand gehaltener Mo
     // Kosmo (ui.modusAutomatik), während ein Modus von Hand gehalten wird.
     localStorage.setItem(
       'kosmo.ui.v1',
-      JSON.stringify({ version: 1, modusAutomatik: false, modusFesthalten: false, phasenFokus: null }),
+      JSON.stringify({ version: 1, modusAutomatik: false, modusFesthalten: false, phasenFokus: null, designOberflaeche: 'manuell' }),
     );
   });
   await page.reload();

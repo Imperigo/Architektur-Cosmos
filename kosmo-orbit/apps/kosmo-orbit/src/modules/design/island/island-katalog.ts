@@ -1,17 +1,29 @@
 /**
- * Island-Werkzeug-Katalog (PD1 Fundament, `docs/ISLAND-UI-SPEZ.md` §2/§3).
+ * Island-Werkzeug-Katalog (PD1 Fundament + PD2 Verdrahtung, `docs/ISLAND-UI-
+ * SPEZ.md` §2/§3).
  *
  * Statischer, reiner Datensatz — die vollständige 29-Werkzeug-Zuordnung auf
  * die vier Islands (ZEICHNEN 11 / ANSICHT 6 / PROJEKT 6 / AUSTAUSCH 6),
  * Reihenfolge und Zählung 1:1 aus der Mapping-Tabelle §3.1–§3.4 übernommen.
  *
- * **PD1-Grenze (bewusst):** `toolId` ist bereits als Feld angelegt, aber in
- * PD1 bei KEINEM Eintrag gesetzt — die echte `ToolId`-/Command-Verdrahtung
- * (§3-Fundstellen, z. B. `ui-zustand.ts`s `ToolId 'wand'`) ist PD2-Scope
- * (`docs/ISLAND-UI-SPEZ.md` §7, PD2-Zeile). `glyphe` ist ein reiner
- * Text-Platzhalter (zweistellige Mono-Kürzel) — echte Symbole/Inline-SVG
- * sind ein späterer Politur-Schritt (PD3/PD4), keine Blockade fürs
- * Fundament.
+ * **PD2 (diese Fassung): `toolId` echt gesetzt**, wo eine Insel-Id 1:1 einer
+ * bestehenden `ui-zustand.ts`-`ToolId` entspricht (die neun Zeichenwerkzeuge
+ * mit direktem `setTool`-Weg). Für die übrigen «Vorhanden»/«Teilweise»-
+ * Werkzeuge, deren echte Aktion KEIN `ToolId`-Setzen ist (z. B. Sonne →
+ * `sonneOffen`, Varianten → `variantenPanelOffen`), bleibt `toolId` leer —
+ * ihre Verdrahtung lebt als benannter Fall in `DesignWorkspace.tsx`s
+ * `aktiviereIslandWerkzeug()` (Integrationspunkt, dateidisjunkt von diesem
+ * reinen Datensatz). `glyphe` ist weiterhin ein reiner Text-Platzhalter
+ * (echte Symbole folgen PD3/PD4).
+ *
+ * **`hinweis` (PD2, neu):** ehrlicher Kurztext fürs (weiterhin leere PD1-)
+ * Popup-/Fenster-Rahmen jener Werkzeuge, die PD2 NICHT verdrahtet — entweder
+ * weil es «kein heutige Entsprechung» gibt (Öffnung/Messen/Kommentare, §3
+ * Status NEU) oder weil die echte Aktion aus Datei-Kreis-Gründen (PlanView.
+ * tsx/andere Station, ausserhalb PD2s Dateikreis) bzw. mangels Toggle
+ * (Kennzahlen/Checks: «immer sichtbar», kein Flag) nicht erreichbar ist.
+ * Nur Werkzeuge MIT Popup (`hatPopup===true`) können einen Hinweis zeigen —
+ * Achsen/Manuell (die zwei `hatPopup===false`-Fälle) bleiben beim PD1-Toast.
  *
  * `hatPopup` bildet den Prototyp-Datensatz `t.pop` nach (§4.2: «Werkzeuge
  * ohne Popup quittieren die Aktivierung mit einem Toast») — `false` NUR dort,
@@ -57,8 +69,12 @@ export interface IslandWerkzeug {
   readonly status: IslandWerkzeugStatus;
   /** `false` nur bei den zwei §4.4-Ausnahmen (Achsen, Manuell) — s. Kopfkommentar. */
   readonly hatPopup: boolean;
-  /** PD2-Feld, in PD1 bei keinem Eintrag gesetzt (noch keine Command-/ToolId-Verdrahtung). */
+  /** Echte `ui-zustand.ts`-`ToolId` (PD2) — nur gesetzt, wo die Aktivierung
+   *  1:1 `setTool(toolId)` ist (die neun Zeichenwerkzeuge). */
   readonly toolId?: string;
+  /** PD2: ehrlicher Hinweistext fürs Popup, wenn KEINE Aktion verdrahtet ist
+   *  (s. Kopfkommentar) — undefined bei allen verdrahteten Werkzeugen. */
+  readonly hinweis?: string;
 }
 
 function werkzeug(
@@ -68,52 +84,77 @@ function werkzeug(
   glyphe: string,
   status: IslandWerkzeugStatus,
   hatPopup: boolean,
+  extra?: { toolId?: string; hinweis?: string },
 ): IslandWerkzeug {
-  return { id, name, island, glyphe, status, hatPopup };
+  return {
+    id,
+    name,
+    island,
+    glyphe,
+    status,
+    hatPopup,
+    ...(extra?.toolId !== undefined ? { toolId: extra.toolId } : {}),
+    ...(extra?.hinweis !== undefined ? { hinweis: extra.hinweis } : {}),
+  };
 }
+
+const NOCH_NICHT_GEBAUT = 'Noch nicht gebaut (PD3/Owner-Frage §8';
 
 /** ZEICHNEN (11) — §3.1. */
 const ZEICHNEN: readonly IslandWerkzeug[] = [
-  werkzeug('auswahl', 'Auswahl', 'zeichnen', 'AU', 'vorhanden', true),
-  werkzeug('wand', 'Wand', 'zeichnen', 'WA', 'vorhanden', true),
-  werkzeug('oeffnung', 'Öffnung', 'zeichnen', 'OE', 'teilweise', true),
-  werkzeug('volumen', 'Volumen', 'zeichnen', 'VO', 'vorhanden', true),
-  werkzeug('zone', 'Zone', 'zeichnen', 'ZO', 'vorhanden', true),
-  werkzeug('dach', 'Dach', 'zeichnen', 'DA', 'vorhanden', true),
-  werkzeug('treppe', 'Treppe', 'zeichnen', 'TR', 'vorhanden', true),
-  werkzeug('stuetze', 'Stütze', 'zeichnen', 'ST', 'vorhanden', true),
-  werkzeug('skizze', 'Skizze', 'zeichnen', 'SK', 'vorhanden', true),
-  werkzeug('mesh', 'Mesh', 'zeichnen', 'ME', 'vorhanden', true),
-  werkzeug('messen', 'Messen', 'zeichnen', 'MS', 'neu', true),
+  werkzeug('auswahl', 'Auswahl', 'zeichnen', 'AU', 'vorhanden', true, { toolId: 'auswahl' }),
+  werkzeug('wand', 'Wand', 'zeichnen', 'WA', 'vorhanden', true, { toolId: 'wand' }),
+  werkzeug('oeffnung', 'Öffnung', 'zeichnen', 'OE', 'teilweise', true, { hinweis: `${NOCH_NICHT_GEBAUT}-5)` }),
+  werkzeug('volumen', 'Volumen', 'zeichnen', 'VO', 'vorhanden', true, { toolId: 'volumen' }),
+  werkzeug('zone', 'Zone', 'zeichnen', 'ZO', 'vorhanden', true, { toolId: 'zone' }),
+  werkzeug('dach', 'Dach', 'zeichnen', 'DA', 'vorhanden', true, { toolId: 'dach' }),
+  werkzeug('treppe', 'Treppe', 'zeichnen', 'TR', 'vorhanden', true, { toolId: 'treppe' }),
+  werkzeug('stuetze', 'Stütze', 'zeichnen', 'ST', 'vorhanden', true, { toolId: 'stuetze' }),
+  werkzeug('skizze', 'Skizze', 'zeichnen', 'SK', 'vorhanden', true, { toolId: 'skizze' }),
+  werkzeug('mesh', 'Mesh', 'zeichnen', 'ME', 'vorhanden', true, { toolId: 'mesh' }),
+  werkzeug('messen', 'Messen', 'zeichnen', 'MS', 'neu', true, { hinweis: `${NOCH_NICHT_GEBAUT}-7)` }),
 ];
 
 /** ANSICHT (6) — §3.2. */
 const ANSICHT: readonly IslandWerkzeug[] = [
+  // Darstellung/Phase teilen sich die echte Aktion (Projekt-Menü öffnen,
+  // `setProjektMenuOffen(true)`) — beide Selects leben im selben,
+  // bestehenden Block (`DesignWorkspace.tsx:2764-2784`).
   werkzeug('darstellung', 'Darstellung', 'ansicht', 'DS', 'vorhanden', true),
   werkzeug('sonne', 'Sonne', 'ansicht', 'SO', 'vorhanden', true),
   werkzeug('ebenen', 'Ebenen', 'ansicht', 'EB', 'teilweise', true),
   werkzeug('achsen', 'Achsen', 'ansicht', 'AC', 'vorhanden', false),
-  werkzeug('trace', 'Trace', 'ansicht', 'TC', 'vorhanden', true),
-  werkzeug('graph', 'Graph', 'ansicht', 'GR', 'vorhanden', true),
+  werkzeug('trace', 'Trace', 'ansicht', 'TC', 'vorhanden', true, {
+    hinweis: 'Nur im Grundriss (PlanView.tsx) — dort noch nicht verdrahtet (PD3a, ausserhalb PD2-Dateikreis)',
+  }),
+  werkzeug('graph', 'Graph', 'ansicht', 'GR', 'vorhanden', true, {
+    hinweis: 'Nur im Grundriss (PlanView.tsx) — dort noch nicht verdrahtet (PD3a, ausserhalb PD2-Dateikreis)',
+  }),
 ];
 
 /** PROJEKT (6) — §3.3. */
 const PROJEKT: readonly IslandWerkzeug[] = [
-  werkzeug('kennzahlen', 'Kennzahlen', 'projekt', 'KZ', 'vorhanden', true),
-  werkzeug('checks', 'Checks', 'projekt', 'CH', 'vorhanden', true),
+  werkzeug('kennzahlen', 'Kennzahlen', 'projekt', 'KZ', 'vorhanden', true, {
+    hinweis: 'Panel ist immer aktiv (kein Schalter vorhanden)',
+  }),
+  werkzeug('checks', 'Checks', 'projekt', 'CH', 'vorhanden', true, {
+    hinweis: 'Panel ist immer aktiv (kein Schalter vorhanden)',
+  }),
   werkzeug('varianten', 'Varianten', 'projekt', 'VA', 'vorhanden', true),
   werkzeug('phase', 'Phase', 'projekt', 'PH', 'vorhanden', true),
   werkzeug('liste', 'Liste', 'projekt', 'LI', 'vorhanden', true),
-  werkzeug('kommentare', 'Kommentare', 'projekt', 'KO', 'neu', true),
+  werkzeug('kommentare', 'Kommentare', 'projekt', 'KO', 'neu', true, { hinweis: `${NOCH_NICHT_GEBAUT}-6)` }),
 ];
+
+const ANDERE_STATION_HINWEIS = 'Andere Station — Weg offen (PD3b/Owner-Frage §8-4)';
 
 /** AUSTAUSCH (6) — §3.4. */
 const AUSTAUSCH: readonly IslandWerkzeug[] = [
   werkzeug('export', 'Export', 'austausch', 'EX', 'vorhanden', true),
   werkzeug('import', 'Import', 'austausch', 'IM', 'vorhanden', true),
-  werkzeug('rendern', 'Rendern', 'austausch', 'RE', 'teilweise', true),
-  werkzeug('blaetter', 'Blätter', 'austausch', 'BL', 'teilweise', true),
-  werkzeug('sync', 'Sync', 'austausch', 'SY', 'teilweise', true),
+  werkzeug('rendern', 'Rendern', 'austausch', 'RE', 'teilweise', true, { hinweis: ANDERE_STATION_HINWEIS }),
+  werkzeug('blaetter', 'Blätter', 'austausch', 'BL', 'teilweise', true, { hinweis: ANDERE_STATION_HINWEIS }),
+  werkzeug('sync', 'Sync', 'austausch', 'SY', 'teilweise', true, { hinweis: ANDERE_STATION_HINWEIS }),
   werkzeug('manuell', 'Manuell', 'austausch', 'MN', 'neu', false),
 ];
 

@@ -95,6 +95,14 @@ import { consumeDeepLink } from '../../state/deep-link';
 import { journalStore } from '../../state/journal-store';
 import { requestKosmoFokus } from '../../state/kosmo-focus';
 import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
+// PD2 (`docs/ISLAND-UI-SPEZ.md` §7 PD2-Zeile): Island-Verdrahtung + Default-
+// Flip — `IslandBuehne`/`AnsichtsInfo`/`StationenOrb` rendern NUR im
+// Island-Modus (s. Rückgabe-JSX unten), `IslandWerkzeug` für den
+// `aktiviereIslandWerkzeug()`-Integrationspunkt.
+import { IslandBuehne } from './island/IslandShell';
+import { AnsichtsInfo } from './island/AnsichtsInfo';
+import { StationenOrb, type StationenOrbId } from './island/StationenOrb';
+import type { IslandWerkzeug } from './island/island-katalog';
 import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
 import { DockRegeln } from '../../shell/dock/DockRegeln';
 import { useDockZustand } from '../../state/dock-zustand';
@@ -333,8 +341,10 @@ export interface DesignWorkspaceProps {
    *  derselbe Weg wie eine Zentrale-Kachel (`oeffneModul`, App.tsx). Ehrlich
    *  Navigation, keine Einbettung. Optional aus demselben Grund wie
    *  `onEinstellungen`/`onKosmoOeffnen` (isoliert gemountete Tests brauchen
-   *  ihn nicht). */
-  onStationOeffnen?: (station: 'vis' | 'publish' | 'prepare') => void;
+   *  ihn nicht). PD2 (`StationenOrb.tsx`): additiv um `'data'`/`'design'`
+   *  erweitert — `App.tsx`s Handler (`modules.find` + `oeffneModul`) ist
+   *  bereits generisch, keine Änderung an `App.tsx` nötig. */
+  onStationOeffnen?: (station: 'vis' | 'publish' | 'prepare' | 'data' | 'design') => void;
 }
 
 export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, onStationOeffnen }: DesignWorkspaceProps = {}) {
@@ -455,6 +465,12 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
   const [treppenForm, setTreppenForm] = useState<'gerade' | 'podest' | 'u' | 'l'>('gerade');
   const viewMode = useUiZustand((s) => s.viewMode);
   const setViewMode = useUiZustand((s) => s.setViewMode);
+  // PD2 Default-Flip (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 1, `V082-SPEZ.md`
+  // C-35/C-41): 'island' ist der neue Default — die klassische Werkzeugleiste/
+  // Kontextzeile/Dock-Fläche/Geschossleiste rendern nur noch bei 'manuell'
+  // (s. Rückgabe-JSX unten), unverändert wie heute.
+  const designOberflaeche = useUiZustand((s) => s.designOberflaeche);
+  const setDesignOberflaeche = useUiZustand((s) => s.setDesignOberflaeche);
   // v0.7.8 Welle 2 / Paket P5: Sichtbarkeits-Guard der vier Viewport-HUD-
   // Floats — `bereit` ändert sich nur bei Mount/Unmount von `Viewport3D`
   // (nicht bei jedem 400ms-Kamera-Tick, s. `viewport-chrome-runtime.ts`
@@ -2030,6 +2046,87 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
     ],
   );
 
+  /**
+   * PD2-Integrationspunkt (`docs/ISLAND-UI-SPEZ.md` §7 PD2-Zeile, Bullet 1):
+   * ein Klick in der Island-Leiste aktiviert das ECHTE Werkzeug über die
+   * bestehenden Stores/Commands — genau EIN Aufruf pro Erst-Aktivierung
+   * (`IslandShell.tsx`s `onWerkzeugAktion`, s. dortigen Kommentar).
+   *
+   * PD2 aktiviert immer (setzt `true`/wählt), togglet nie ab — anders als
+   * die gleichnamigen Kontextzeilen-Knöpfe (`klickSonne` etc., die
+   * togglen): im Island-Modus ist die Kontextzeile unsichtbar, ein
+   * unsichtbares Ab-Togglen wäre für die Nutzerin nicht nachvollziehbar.
+   *
+   * Ehrliche Grenze (§3-Mapping-Status, Bericht dokumentiert jeden Fall):
+   * - 9 Zeichenwerkzeuge (`toolId` gesetzt, `island-katalog.ts`) → `setTool`.
+   * - Sonne/Ebenen: bestehende Kontextzeilen-Toggles, hier hart auf "an".
+   * - Darstellung/Phase: derselbe Projekt-Menü-Block (`DesignWorkspace.tsx`
+   *   Z. ~2780ff) — "aktivieren" heisst hier: das Menü öffnen (Stufe-2-
+   *   Feininhalt bleibt PD3-Scope).
+   * - Varianten/Liste: bestehende Panel-Flags — real gesetzt, aber ihr
+   *   Panel bleibt unsichtbar, solange `DockFlaeche` im Island-Modus
+   *   ausgeblendet ist (Sichtbarkeits-Politur ist PD3-Scope, s. Bericht).
+   * - Export/Import: bestehendes Exportmenü-Flag.
+   * - Manuell: der PD2-Kernschalter (`setDesignOberflaeche`).
+   * - Alle übrigen 11 Werkzeuge (Öffnung/Messen/Achsen/Trace/Graph/
+   *   Kennzahlen/Checks/Kommentare/Rendern/Blätter/Sync): keine Aktion —
+   *   entweder echtes NEU (kein Fund, §3), lokaler State ausserhalb des
+   *   PD2-Dateikreises (`PlanView.tsx`), kein Toggle vorhanden (immer
+   *   sichtbar) oder andere Station/Shell-Ebene mit offener Owner-Frage
+   *   (§8-4) — Rahmen ohne Aktion, ehrlicher `hinweis` im Popup
+   *   (`island-katalog.ts`).
+   */
+  function aktiviereIslandWerkzeug(w: IslandWerkzeug): void {
+    if (w.toolId) {
+      setTool(w.toolId as ToolId);
+      nutzungMelden(`zeichnen:${w.toolId}`);
+      return;
+    }
+    switch (w.id) {
+      case 'sonne':
+        setSonneOffen(true);
+        nutzungMelden('ebenen:sonne');
+        return;
+      case 'ebenen':
+        setTexturModus(true);
+        setTexturen(true);
+        nutzungMelden('ebenen:textur');
+        return;
+      case 'darstellung':
+      case 'phase':
+        setProjektMenuOffen(true);
+        nutzungMelden('projekt:menu');
+        return;
+      case 'varianten':
+        setVariantenPanelOffen(true);
+        nutzungMelden('ebenen:studie');
+        return;
+      case 'liste':
+        setListeOffen(true);
+        nutzungMelden('ebenen:liste');
+        return;
+      case 'export':
+      case 'import':
+        setExportMenuOffen(true);
+        return;
+      case 'manuell':
+        setDesignOberflaeche('manuell');
+        return;
+      default:
+        // Öffnung/Messen/Achsen/Trace/Graph/Kennzahlen/Checks/Kommentare/
+        // Rendern/Blätter/Sync — bewusst kein Aufruf, s. Kopfkommentar.
+        return;
+    }
+  }
+
+  /** PD2 (`StationenOrb.tsx`): Direktzugang zu den fünf Stationen — 'design'
+   *  bleibt in dieser Station (nur Popover schliessen), die übrigen vier
+   *  laufen über denselben `onStationOeffnen`-Weg wie `EntwurfsDock`. */
+  function aktiviereStation(station: StationenOrbId): void {
+    if (station === 'design') return;
+    onStationOeffnen?.(station);
+  }
+
   return (
     <div
       className="dw-arbeitsflaeche"
@@ -2050,6 +2147,14 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           UI-SELBSTKRITIK-064). Beide Reihen sind jetzt eigene Container mit
           `flexWrap:'nowrap'` (+ `overflowX:'auto'` als Sicherheitsventil bei
           sehr schmalem Viewport statt eines dritten Umbruchs). */}
+      {/* PD2 Default-Flip (`docs/ISLAND-UI-SPEZ.md` §6 Sanktion 1, §7
+          PD2-Zeile): die komplette klassische Werkzeugleiste (Haupt- +
+          Kontextzeile) rendert nur noch im Modus 'manuell' — 'island' zeigt
+          NUR Viewer + Islands + Ansichts-Info/Stationen-Orb + Kosmo-Orb-
+          Bestand (`EntwurfsDock` bleibt unangetastet/sichtbar, §8 Frage 10
+          offen). Ausgeblendet, nicht entfernt: 'manuell' zeigt exakt die
+          heutige Oberfläche, byte-gleich. */}
+      {designOberflaeche === 'manuell' && (
       <div data-testid="design-werkzeugleiste" className="dw-werkzeugleiste">
         {/* Hauptzeile */}
         <div
@@ -2195,6 +2300,22 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
               ⚙
             </KButton>
           )}
+          {/* PD2 (C-41): additiver Rückweg AUS 'manuell' — der Vorwärtsweg
+              ('manuell' → 'island') ist der 'Manuell'-Insel-Knopf in
+              AUSTAUSCH (nur im Island-Modus sichtbar); dieser Knopf ist sein
+              Gegenstück, unaufdringlich in derselben Werkzeugleisten-Region.
+              Additiv, kein Ersatz — die klassische Fläche bleibt vollständig
+              erhalten (§6 Sanktion 6). */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="island-zurueck"
+            title="Zurück zur Island-UI"
+            aria-label="Zurück zur Island-UI"
+            onClick={() => setDesignOberflaeche('island')}
+          >
+            Island-UI
+          </KButton>
         </div>
 
         {/* Kontextzeile — SK-D1 Massnahme 1/2: Export/Ebenen/Fähigkeiten/
@@ -2645,6 +2766,7 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
           </KButton>
         </div>
       </div>
+      )}
       {dockRegelnOffen && <DockRegeln station="design" onClose={() => setDockRegelnOffen(false)} />}
 
       {projektMenuOffen && (
@@ -3016,7 +3138,13 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             `<Inspector/>`-Zeilen mehr. Reihenfolge im Array ist beliebig —
             der Solver sortiert nach `wichtigkeit` aus `dock-stationen.ts`,
             nicht nach Array-Reihenfolge. */}
-        <DockFlaeche station="design" panels={designDockPanels} />
+        {/* PD2 Default-Flip: die Dock-Fläche (Panels wie Kennzahlen/Varianten/
+            Liste/Inspector/…) rendert nur im Modus 'manuell' — im
+            Island-Modus bleiben die dahinterliegenden Store-Flags real
+            (Island-Werkzeuge können sie setzen, s. `aktiviereIslandWerkzeug`),
+            nur ihre Anzeigefläche ist ausgeblendet (Sichtbarkeits-Politur
+            ist PD3-Scope). */}
+        {designOberflaeche === 'manuell' && <DockFlaeche station="design" panels={designDockPanels} />}
         {/* C4b (C-E4): Daten-Guard bleibt — die Karten-Liste im
             Unternehmerplan-Panel erscheint automatisch, sobald ein
             Unternehmerplan geladen ist (kein eigener Toggle). Der Dock oben
@@ -3167,6 +3295,10 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             angehoben (`k-karte` selbst nutzt --k-technik für Werkplan-Karten,
             hier ist es keine Werkplan-Karte). Dockt jetzt bündig an die
             Viewport-Kante (0/0 statt 12/12), testids/Texte unverändert. */}
+        {/* PD2 Default-Flip: Geschossleiste nur im Modus 'manuell' — die
+            Geschoss-Wahl selbst bleibt im Island-Modus über die
+            Ansichts-Info erreichbar (`ansichts-info-geschoss-*`). */}
+        {designOberflaeche === 'manuell' && (
         <div
           ref={geschossleisteRef}
           data-testid="geschossleiste"
@@ -3286,6 +3418,25 @@ export function DesignWorkspace({ onEinstellungen, onKosmoOeffnen, kosmoOffen, o
             Varianten
           </KButton>
         </div>
+        )}
+
+        {/* PD2 Default-Flip: Island-Bühne (vier Islands + Ansichts-Info +
+            Stationen-Orb) nur im Modus 'island' — Kosmo-Orb-Bestand
+            (KosmoPanel-Öffner) bleibt über `EntwurfsDock`s
+            `entwurf-sprechen`-Kachel erreichbar (oben, unverändert). */}
+        {designOberflaeche === 'island' && (
+          <>
+            <IslandBuehne onWerkzeugAktion={aktiviereIslandWerkzeug} />
+            <StationenOrb onStationOeffnen={aktiviereStation} />
+            <AnsichtsInfo
+              viewMode={viewMode}
+              setViewMode={setViewMode}
+              storeys={storeys}
+              activeStoreyId={activeStoreyId}
+              setActiveStorey={setActiveStorey}
+            />
+          </>
+        )}
 
         {/* Statusleiste (Serie K A5, K15 Aufgabe 3): Zero-Click-Kennzahlen an
             der Unterkante des Design-Viewports — aktives Werkzeug, Plan-LOD-
