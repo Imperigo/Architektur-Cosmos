@@ -36,6 +36,24 @@ export const STATION_FAMILIEN: StationFamilie[] = [
  * Familie, wird in der Zentrale separat und prominent gerendert. `null`
  * betrifft Ids, die nie als Zentrale-Kachel auftauchen (orbit/kosmo sind nur
  * Modul-Farbtöne/Header-Elemente, keine Stationen).
+ *
+ * v0.8.2 / P7a (B5, ROADMAP 1422/1441, `docs/V082-SPEZ.md` §6.6/C-26):
+ * `trust` (KosmoTrust, seit v0.8.1 P11) + `paket` (KosmoPackage, seit P14)
+ * nachgetragen — ROADMAP 411 hatte diese Zuordnung bewusst offen gelassen
+ * («orbit-rang/stationen-Zuordnungen für trust bewusst nicht ergänzt,
+ * defensiv behandelt, Kandidat»). Beide der `'design'`-Familie
+ * («Entwerfen & Produzieren») zugeschlagen, NICHT `'buero'`: beide sind
+ * Produktions-/Ausgabe-Stationen für dieselben Entwurfsergebnisse wie
+ * `draw`/`publish`/`asset` — `trust` exportiert/prüft das `.kxp`-
+ * Hyper-Modell (Modell + Pläne, s. `STATIONS_WERKZEUGE.trust`), `paket`
+ * bündelt genau die realen Export-Formate (PDF/SVG/DXF/IFC/Splat/Logo,
+ * `STATIONS_WERKZEUGE.paket`) derselben Entwürfe — beides ist «Produzieren»
+ * im Sinne der Familienbeschreibung, keine Büro-/Meta-Verwaltung wie `dev`
+ * (Auftragsbuch) oder `doc` (Selbstdiagnose/Hilfe). `stationFamilie()` hat
+ * heute keinen Konsumenten ausserhalb ihres eigenen Unit-Tests (geprüft:
+ * kein Import in `shell/`/`App.tsx`) — die Zuordnung schliesst trotzdem die
+ * seit P11/P14 offene 14/14-Lücke in dieser reinen Datentabelle, statt sie
+ * für zwei von vierzehn Stationen unbestimmt zu lassen.
  */
 const ZUORDNUNG: Partial<Record<ModuleId, StationFamilieId | 'kosmo'>> = {
   design: 'design',
@@ -44,6 +62,8 @@ const ZUORDNUNG: Partial<Record<ModuleId, StationFamilieId | 'kosmo'>> = {
   vis: 'design',
   publish: 'design',
   asset: 'design',
+  trust: 'design',
+  paket: 'design',
   data: 'data',
   prepare: 'data',
   train: 'data',

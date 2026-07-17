@@ -100,6 +100,60 @@ function boxenGleich(a: readonly BenannteBox[], b: readonly BenannteBox[]): bool
   });
 }
 
+/**
+ * v0.8.2 / P7a (C1, ROADMAP 1333, `docs/V082-SPEZ.md` §6.6/C-27) —
+ * dieselbe Härtungsklasse wie `dock-interaktion.spec.ts`s
+ * `warteAufSolveStabilitaet()` (dort seit v0.8.1/P2 für row-Splitter/
+ * Chevron/Tab (a) gebaut, Kopfkommentar dort mit vollem Befund): ein
+ * Panel-Öffnen-/Umschalten-Klick löst zuerst SOFORT einen Solve aus, ein
+ * zweiter, feld-getriebener Re-Solve (ResizeObserver auf Container/
+ * Geschwistern, rAF-debounced) folgt unter Last oft erst ~500ms später und
+ * ändert dieselbe Panel-Geometrie ein zweites Mal. Diese Tour-Datei nutzte
+ * bislang NUR `wartenAufStabileBoxen()` unten — ein reines, Node-seitig
+ * gepolltes BBox-Zeitfenster (Anlaufpuffer + Ruhefenster), das GENAU der
+ * ERSTE, inzwischen überholte Härtungsversuch aus P2 war (dortiger
+ * Kopfkommentar Punkt 1: «reproduzierte denselben Fehler nur eine Ebene
+ * höher»). Der «7-Schritte»-Test fiel deshalb identisch auf sauberem HEAD
+ * (ROADMAP 398/415, worktree-bewiesen vorbestehend) — Schritt 4 klappt/öffnet
+ * zehn Panels auf einmal, der late Re-Solve trifft hier besonders oft in
+ * genau die Lücke, die ein reines BBox-Fenster unter Last verpassen kann.
+ * Fix: der bewährte `MutationObserver` auf `data-solve-generation`
+ * (`DockFlaeche.tsx`) läuft VOR der eigentlichen Boxen-Messung — additiv,
+ * `wartenAufStabileBoxen()` bleibt als zusätzliches Sicherheitsnetz
+ * unverändert bestehen (keine Assertion gelockert, nur ein deterministisches
+ * Signal vorgeschaltet).
+ */
+async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 10000): Promise<void> {
+  await page.evaluate(
+    ({ ruheMs, timeoutMs }) => {
+      return new Promise<void>((resolve) => {
+        const feld = document.querySelector('[data-testid="dock-flaeche"]');
+        if (!feld) {
+          resolve();
+          return;
+        }
+        const start = performance.now();
+        let letzteAenderung = start;
+        const beobachter = new MutationObserver(() => {
+          letzteAenderung = performance.now();
+        });
+        beobachter.observe(feld, { attributes: true, attributeFilter: ['data-solve-generation'] });
+        const tick = () => {
+          const jetzt = performance.now();
+          if (jetzt - letzteAenderung >= ruheMs || jetzt - start >= timeoutMs) {
+            beobachter.disconnect();
+            resolve();
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    },
+    { ruheMs, timeoutMs },
+  );
+}
+
 /** Pollt `sichtbareDockPanelBoxen()`, bis die Messung für mindestens `ruheMs`
  *  am Stück unverändert bleibt — 1:1 dasselbe Anlaufpuffer-Muster wie
  *  `dock-layout.spec.ts`s/`dock-interaktion.spec.ts`s eigene `stabileBox()`
@@ -163,6 +217,9 @@ test('Dock-Tour: 7 Schritte, Spotlight je Schritt, keine Panel-Überlappung, let
     await expect(schrittKarte).toContainText(SCHRITT_TITEL[i]!);
     await expect(page.locator('[data-testid="dock-tour-spotlight"]')).toBeVisible();
 
+    // C1-Härtung (s. Kopfkommentar `warteAufSolveStabilitaet`): erst das
+    // deterministische Solve-Signal abwarten, DANACH das BBox-Zeitfenster.
+    await warteAufSolveStabilitaet(page);
     const boxen = await wartenAufStabileBoxen(page);
     expect(boxen.length).toBeGreaterThan(0);
     keineUeberlappung(boxen);

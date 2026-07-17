@@ -3,8 +3,11 @@ import { describe, expect, it } from 'vitest';
 describe('Stations-Familien (T7): Station-Id → Familie', () => {
   it('ordnet jede Station der richtigen Familie zu (Design/Data/Büro) und lässt Kosmo aussen vor', async () => {
     const { stationFamilie } = await import('../src/state/stationen');
-    // KosmoDesign — Entwerfen & Produzieren
-    for (const id of ['design', 'draw', 'sketch', 'vis', 'publish', 'asset'] as const) {
+    // KosmoDesign — Entwerfen & Produzieren (v0.8.2/P7a B5: trust/paket
+    // nachgetragen — beide sind Produktions-/Ausgabe-Stationen derselben
+    // Entwürfe wie draw/publish/asset, s. stationen.ts-Kopfkommentar zu
+    // ZUORDNUNG).
+    for (const id of ['design', 'draw', 'sketch', 'vis', 'publish', 'asset', 'trust', 'paket'] as const) {
       expect(stationFamilie(id)).toBe('design');
     }
     // KosmoData — Wissen & Daten
@@ -17,6 +20,14 @@ describe('Stations-Familien (T7): Station-Id → Familie', () => {
     }
     // Kosmo/Speak: bewusst KEINE Familie — die übergeordnete Intelligenz
     expect(stationFamilie('speak')).toBe('kosmo');
+  });
+
+  it('deckt alle 14 Stationen ab (14/14, v0.8.2/P7a B5) — keine Station bleibt ohne Familie/Kosmo-Markierung', async () => {
+    const { stationFamilie } = await import('../src/state/stationen');
+    const { STATIONS_MODUL_IDS } = await import('../src/shell/stations-werkzeuge');
+    for (const id of STATIONS_MODUL_IDS) {
+      expect(stationFamilie(id)).not.toBeNull();
+    }
   });
 
   it('STATION_FAMILIEN listet die drei Familien in Design → Data → Büro-Reihenfolge', async () => {

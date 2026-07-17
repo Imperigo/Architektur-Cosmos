@@ -55,6 +55,25 @@ export const ALLE_TOOL_IDS: readonly ToolId[] = [
  * keine zweite, eigene Tabelle je Aufrufer. Stationen ohne eigene BASE-
  * Matrix-Zeile (asset/draw[KosmoDraw]/sketch/train/doc) bleiben bewusst
  * aussen vor — sie sind KEINE der 8 Canvas-Tools.
+ *
+ * v0.8.2 / P7a (B5, ROADMAP 1422/1441, `docs/V082-SPEZ.md` §6.6/C-26) —
+ * geprüft, ob `trust` (KosmoTrust, seit v0.8.1 P11) und `paket` (KosmoPackage,
+ * seit P14) HIER ebenfalls eine ToolId verdienen: **ehrlich verneint, keine
+ * erfunden.** Die `BASE`-Matrix unten ist wörtlich aus der v0.7.2-Spec §4
+ * übernommen («keine Rundung/Neuordnung») — sie modelliert genau die 8
+ * Canvas-Werkzeuge, die es BEIM ENTWURF DER SPEC gab, mit eigenen, empirisch
+ * hergeleiteten Minutenwerten je SIA-112-Gruppe. `trust`/`paket` entstanden
+ * ein Release später (v0.8.1 P11/P14) und haben in dieser Matrix keine
+ * eigene Zeile — sie einer der 8 bestehenden ToolIds zuzuschlagen (z. B.
+ * `paket`→`publish`, weil beide "Export" berühren) würde deren Klicks in
+ * eine FREMDE Rang-Berechnung einmischen und den für dieses Werkzeug
+ * kalibrierten Wert verfälschen — genau die Attrappe, die `nutzungszeit.ts`s
+ * Ehrlichkeitsregel (dortiger Kopfkommentar) ausschliesst. Ohne eine neunte
+ * BASE-Matrix-Spalte (eigener Owner-Entscheid, ausserhalb dieses Auftrags-
+ * Dateikreises: `BASE` ist eine literal übernommene Spec-Tabelle, keine frei
+ * erweiterbare Datei) bleiben `trust`/`paket` darum bewusst ausserhalb von
+ * `STATION_ZU_TOOLID` — `nutzungszeit.ts`s `stationsNutzung()` zeigt sie
+ * folgerichtig als `'nicht-erfasst'`, nicht als erfundene `0`.
  */
 export const STATION_ZU_TOOLID: Partial<Record<StationModulId, ToolId>> = {
   design: 'draw',

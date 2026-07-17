@@ -70,14 +70,19 @@ for (const preset of ['fokus', 'arbeiten', 'pruefen'] as const) {
       // PUBLISH_FOKUS.offen=[] — beide Zusatz-Panels zu (hartes N=0-Kriterium).
       await expect(page.locator('[data-testid="dock-panel-dossier"]')).toHaveCount(0);
       await expect(page.locator('[data-testid="dock-panel-plankopf"]')).toHaveCount(0);
+      await expect(page.locator('[data-testid="dock-panel-autopack"]')).toHaveCount(0);
     } else if (preset === 'arbeiten') {
-      // PUBLISH_ARBEITEN.offen=['plankopf'] — nur Plankopf offen.
+      // v0.8.2 / P7a (B4, ROADMAP 1416/1441): PUBLISH_ARBEITEN.offen=
+      // ['plankopf','autopack'] — beide Zusammenstell-Werkzeuge offen,
+      // Dossier (Kontrolle) bleibt zu.
       await expect(page.locator('[data-testid="dock-panel-plankopf"]')).toBeVisible();
+      await expect(page.locator('[data-testid="dock-panel-autopack"]')).toBeVisible();
       await expect(page.locator('[data-testid="dock-panel-dossier"]')).toHaveCount(0);
     } else {
       // PUBLISH_PRUEFEN.offen=['dossier'] (+ angeheftet) — nur Dossier offen.
       await expect(page.locator('[data-testid="dock-panel-dossier"]')).toBeVisible();
       await expect(page.locator('[data-testid="dock-panel-plankopf"]')).toHaveCount(0);
+      await expect(page.locator('[data-testid="dock-panel-autopack"]')).toHaveCount(0);
     }
   });
 }

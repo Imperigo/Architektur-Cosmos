@@ -743,6 +743,17 @@ test('Tab (c): Drag in die SCHWEBEND-Zone öffnet als Float (eingeklappte Floats
   await expect(tab).toBeVisible();
 
   const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+  // v0.8.2 / P7a (C2, ROADMAP 1445, `docs/V082-SPEZ.md` §6.6/C-28) — exakt
+  // dieselbe Härtungsklasse wie Tab (a)/row-Splitter/Chevron: der
+  // Einklappen-Klick löst SOFORT einen Solve aus, ein zweiter, feld-
+  // getriebener Re-Solve (ResizeObserver, rAF-debounced) folgt unter Last oft
+  // erst ~500ms später — im 27-min-Volllast-Batch real gerissen (`stabileBox`
+  // allein rastete auf dem ersten, noch nicht endgültigen Wert ein, `tab`
+  // lag dann nicht mehr an der gemessenen Position, der Klick traf daneben),
+  // isoliert 4× grün (s. `warteAufSolveStabilitaet()`-Kopfkommentar). Additiv
+  // auf dasselbe deterministische Signal umgestiegen, bevor überhaupt
+  // gemessen wird — keine Assertion gelockert.
+  await warteAufSolveStabilitaet(page);
   // `stabileBox` — Reflow-Motion nach dem Einklappen abwarten (s. Tab (a)).
   const box = await stabileBox(tab);
   const cx = box.x + box.width / 2;

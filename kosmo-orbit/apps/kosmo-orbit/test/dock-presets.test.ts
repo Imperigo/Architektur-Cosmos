@@ -210,9 +210,12 @@ describe('dock-presets — publish-Station (v0.8.0 P11, beide Panels sind echte 
     expect(preset.overrides).toEqual({});
   });
 
-  it('publish/arbeiten: plankopf offen (häufigster Begleiter beim Blatt-Zusammenstellen), dossier zu', () => {
+  it('publish/arbeiten: plankopf + autopack offen (Zusammenstell-Werkzeuge, häufigster Begleiter beim Blatt-Zusammenstellen), dossier zu', () => {
+    // v0.8.2 / P7a (B4, ROADMAP 1416/1441): `autopack` additiv nachgezogen —
+    // beides Produktions-/Zusammenstell-Werkzeuge (s. dock-presets.ts-
+    // Kopfkommentar zu PUBLISH_ARBEITEN), `dossier` (Kontrolle) bleibt zu.
     const preset = presetFuer('publish', 'arbeiten');
-    expect(preset.offen).toEqual(['plankopf']);
+    expect(preset.offen).toEqual(['plankopf', 'autopack']);
     expect(preset.overrides).toEqual({});
   });
 

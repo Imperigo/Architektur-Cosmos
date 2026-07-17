@@ -319,13 +319,26 @@ const PUBLISH_FOKUS: DockPreset = {
  * `dossier` bleibt zu (Report-Export ist ein punktueller Abschluss-Schritt,
  * kein Dauerbegleiter, s. `DossierPanel.tsx`-Kopfkommentar «eigenständiges
  * Panel»).
+ *
+ * v0.8.2 / P7a (B4, ROADMAP 1416/1441, `docs/V082-SPEZ.md` §6.6/C-25):
+ * `autopack` (`PUBLISH_PANELS`, dock-stationen.ts, seit v0.8.1 P12
+ * offen-fähig, ROADMAP 410 «reiner Datenzeilen-Zusatz, falls gewünscht»)
+ * kommt hier dazu — NICHT nach `'pruefen'` (das ist die Kontrolle VOR dem
+ * Versand: der bereits fertige Report, s. `dossier` unten), sondern nach
+ * `'arbeiten'`: `AutoPackPanel.tsx`s eigener Kopfkommentar nennt den Editor
+ * ausdrücklich «dieselbe Ableitung, die auch ohne Editor läuft» — er STELLT
+ * Reihenfolge/Rastermasse ein und WENDET sie über `publish.blattFuellen` an,
+ * ist also ein Zusammenstell-/Produktionswerkzeug wie `plankopf`, kein
+ * Kontroll-Werkzeug wie `dossier`. Beide Panels teilen sich `dock:'right'`
+ * bzw. `'left'` (s. `PUBLISH_PANELS`) und überlappen sich nicht, weil
+ * `DockFlaeche.tsx`s Solver ihnen eigene Spalten zuweist.
  */
 const PUBLISH_ARBEITEN: DockPreset = {
   id: 'arbeiten',
   station: 'publish',
   titel: 'Arbeiten',
-  beschreibung: 'Plankopf offen zum Beschriften der Blätter, Dossier bleibt zu.',
-  offen: ['plankopf'],
+  beschreibung: 'Plankopf und Auto-Pack offen zum Beschriften/Zusammenstellen der Blätter, Dossier bleibt zu.',
+  offen: ['plankopf', 'autopack'],
   overrides: {},
 };
 

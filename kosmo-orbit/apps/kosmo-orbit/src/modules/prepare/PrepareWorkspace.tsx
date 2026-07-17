@@ -10,7 +10,9 @@ import {
   listDocs,
   removeDoc,
   searchKnowledge,
+  vektorisiereFehlende,
   type BasisSammlung,
+  type ImportiereBasisFortschritt,
   type KnowledgeDoc,
   type KnowledgeHit,
 } from './knowledge';
@@ -199,6 +201,8 @@ export function PrepareWorkspace() {
           )}
         </div>
 
+        <NachtraeglichVektorisierenSection />
+
         <BasisSection onGeladen={refresh} />
 
         {/* Dokumente (Basis-Sammlungen erscheinen kompakt oben, nicht als Einzelzeilen) */}
@@ -375,6 +379,65 @@ function OneDriveSection({ onIngested }: { onIngested: () => void }) {
 }
 
 
+/**
+ * v0.8.2 / P7a (B2, ROADMAP 1318, `docs/V082-SPEZ.md` §6.6/C-24) —
+ * `vektorisiereFehlende()` (`knowledge.ts`) bekommt hier ihren ersten
+ * echten Aufrufer: Chunks, die `importiereBasis`/`ingestFile` ohne Vektor
+ * gespeichert haben (Bridge zum Aufnahme-Zeitpunkt nicht erreichbar), sind
+ * über BM25 weiter auffindbar, aber ohne den semantischen Cosine-Pfad —
+ * dieser Knopf holt das nach, sobald die Bridge wieder da ist. EHRLICHES
+ * Ergebnis statt stiller Erfolgsmeldung: `vektorisiert < gesamt` (Bridge
+ * wieder weg mitten im Nachlauf) sagt das wörtlich, `gesamt === 0` sagt
+ * «bereits vollständig vektorisiert» statt einer bedeutungslosen «0 von 0».
+ */
+function NachtraeglichVektorisierenSection() {
+  const [laufend, setLaufend] = useState(false);
+  const [fortschritt, setFortschritt] = useState<{ erledigt: number; gesamt: number } | null>(null);
+  const [ergebnis, setErgebnis] = useState<{ gesamt: number; vektorisiert: number } | null>(null);
+  const [fehler, setFehler] = useState<string | null>(null);
+
+  function starten() {
+    setLaufend(true);
+    setErgebnis(null);
+    setFehler(null);
+    setFortschritt(null);
+    vektorisiereFehlende({ onProgress: (f) => setFortschritt(f) })
+      .then((res) => setErgebnis(res))
+      .catch((err) => setFehler(err instanceof Error ? err.message : String(err)))
+      .finally(() => setLaufend(false));
+  }
+
+  return (
+    <div className="prepare-sektion" data-testid="vektorisieren-sektion">
+      <KButton
+        size="sm"
+        tone="quiet"
+        data-testid="vektorisiere-fehlende"
+        disabled={laufend}
+        onClick={starten}
+      >
+        {laufend ? 'Vektorisiere …' : 'Nachträglich vektorisieren'}
+      </KButton>
+      {laufend && fortschritt && (
+        <span className="prepare-treffer-kopf" data-testid="vektorisieren-fortschritt">
+          {' '}
+          {fortschritt.erledigt} / {fortschritt.gesamt} Abschnitte
+        </span>
+      )}
+      {!laufend && ergebnis && (
+        <div className="prepare-doc-meta" data-testid="vektorisieren-ergebnis">
+          {ergebnis.gesamt === 0
+            ? 'Alle Abschnitte sind bereits vektorisiert.'
+            : ergebnis.vektorisiert === ergebnis.gesamt
+              ? `${ergebnis.vektorisiert} von ${ergebnis.gesamt} Abschnitten nachträglich vektorisiert.`
+              : `${ergebnis.vektorisiert} von ${ergebnis.gesamt} Abschnitten vektorisiert — Bridge nicht (mehr) erreichbar, Rest bleibt über die Stichwort-Suche auffindbar.`}
+        </div>
+      )}
+      {fehler && <div className="prepare-ingest-fehler">⚠ {fehler}</div>}
+    </div>
+  );
+}
+
 /** Phase 0: Wettbewerbsdossier — Do's, Don'ts, Fakten. Kosmo beachtet sie bindend. */
 /** Bauwissen-Basis: wissen/-Korpora aus dem Kosmos-Repo, je Sammlung ladbar. */
 function BasisSection({ onGeladen }: { onGeladen: () => void }) {
@@ -382,6 +445,12 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
   const [geladen, setGeladen] = useState<Set<string>>(new Set());
   const [laufend, setLaufend] = useState<string | null>(null);
   const [fehler, setFehler] = useState<string | null>(null);
+  // v0.8.2 / P7a (B2, ROADMAP 1318): `importiereBasis`s `onProgress`-Callback
+  // (seit v0.8.1/KI1 gebaut, s. `knowledge.ts`) bekommt hier seinen ersten
+  // Aufrufer — je Sammlung der zuletzt gemeldete Fortschritt, damit die
+  // Ladeanzeige bei grossen Korpora (~22'883 Abschnitte bei `buecher`) mehr
+  // sagt als ein unbestimmtes «Lade …».
+  const [fortschritt, setFortschritt] = useState<ImportiereBasisFortschritt | null>(null);
   useEffect(() => {
     void basisIndex().then(setSammlungen);
     void geladeneSammlungen().then(setGeladen);
@@ -397,6 +466,12 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
             <div className="prepare-doc-meta">
               {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
             </div>
+            {laufend === sa.sammlung && fortschritt && (
+              <div className="prepare-doc-meta" data-testid={`basis-fortschritt-${sa.sammlung}`}>
+                Quelle {fortschritt.quelle} / {fortschritt.quellenGesamt} ·{' '}
+                {fortschritt.chunksVektorisiert} / {fortschritt.chunksGesamt} Abschnitte vektorisiert
+              </div>
+            )}
           </div>
           {geladen.has(sa.sammlung) ? (
             <Badge hue={moduleHue.prepare}>geladen</Badge>
@@ -409,7 +484,8 @@ function BasisSection({ onGeladen }: { onGeladen: () => void }) {
               onClick={() => {
                 setLaufend(sa.sammlung);
                 setFehler(null);
-                importiereBasis(sa.sammlung)
+                setFortschritt(null);
+                importiereBasis(sa.sammlung, { onProgress: (f) => setFortschritt(f) })
                   .then(() => {
                     setGeladen((g) => new Set([...g, sa.sammlung]));
                     onGeladen();
