@@ -112,6 +112,27 @@ const PRESET_TITEL: Record<PresetId, string> = {
   pruefen: 'Prüfen',
 };
 
+/**
+ * v0.8.4 PA3 (E9 §3): reiner localStorage-Spiegel für den Schalter «Beim
+ * Start maximieren» — Default AN (ungesetzter Schlüssel zählt als AN, damit
+ * ein Architekt, der die Einstellung nie anfasst, exakt das native
+ * `tauri.conf.json`-Verhalten sieht). Bewusst KEIN eigenes State-Modul (die
+ * Einstellung hat nur diesen einen Konsumenten) — Muster wie die vier
+ * localStorage-Schalter direkt unterhalb (Sounds/Eigencursor/Abspielen/
+ * Touch-Undo), nur ohne deren eigene `state/*.ts`-Datei, weil kein zweiter
+ * Aufrufer existiert.
+ */
+const START_MAXIMIERT_KEY = 'kosmo.startMaximiert';
+
+function startMaximiertEingestellt(): boolean {
+  const wert = localStorage.getItem(START_MAXIMIERT_KEY);
+  return wert === null ? true : wert === '1';
+}
+
+function setStartMaximiertEingestellt(an: boolean): void {
+  localStorage.setItem(START_MAXIMIERT_KEY, an ? '1' : '0');
+}
+
 export function Einstellungen({
   theme,
   setTheme,
@@ -196,6 +217,33 @@ export function Einstellungen({
   const tauriDesktop = istTauriDesktop();
   const [charakterSichtbar, setCharakterSichtbar] = useState(false);
   const [charakterFehler, setCharakterFehler] = useState<string | null>(null);
+
+  // v0.8.4 PA3 (E9 §3, `docs/V084-SPEZ.md`, C-4 «Start maximiert + Schalter»):
+  // `tauri.conf.json`s statisches `"maximized": true` deckt den Standardfall
+  // (Default AN) ab, OHNE dass diese Komponente je gemountet sein muss —
+  // reiner localStorage-Spiegel wie die drei Schalter oben. NUR wenn der
+  // Architekt ausschaltet, braucht es den kleinsten Tauri-Weg (Command
+  // `fenster_startmaximierung_setzen`, `src-tauri/src/lib.rs`): live das
+  // aktuelle Fenster umschalten UND die Präferenz für den nächsten Start auf
+  // die Platte schreiben (aus dem Rust-`setup()`-Hook heraus ist
+  // `localStorage`, die Webview-Datenbank, nicht lesbar, bevor die Seite
+  // überhaupt geladen hat). Im Web/PWA bleibt es bei der reinen Präferenz —
+  // ehrlich erklärt statt eines wirkungslosen Knopfs (Owner-Mandat).
+  const [startMaximiertAn, setStartMaximiertAnState] = useState(() => startMaximiertEingestellt());
+  const [startMaximiertFehler, setStartMaximiertFehler] = useState<string | null>(null);
+
+  async function aufStartMaximiertUmschalten(an: boolean): Promise<void> {
+    setStartMaximiertEingestellt(an);
+    setStartMaximiertAnState(an);
+    setStartMaximiertFehler(null);
+    if (!tauriDesktop) return; // Web/PWA: nur die Präferenz, kein Fenster zum Steuern
+    try {
+      const { invoke } = await import('@tauri-apps/api/core');
+      await invoke('fenster_startmaximierung_setzen', { an });
+    } catch (err) {
+      setStartMaximiertFehler(err instanceof Error ? err.message : String(err));
+    }
+  }
 
   async function aufCharakterUmschalten(): Promise<void> {
     if (!tauriDesktop) return; // ausserhalb Tauri deaktiviert (s. Button-Render unten) — defensiv doppelt geprüft
@@ -685,6 +733,24 @@ export function Einstellungen({
             System-Einstellungen, nicht auf den teuersten Platz der App. */}
         <section data-testid="einstellungen-system" className="orbit065-einstellungen-sektion">
           <div className="orbit065-einstellungen-sektionstitel">System</div>
+          <label
+            className={`es-schalter-label${tauriDesktop ? '' : ' es-schalter-label--deaktiviert'}`}
+            title={
+              tauriDesktop
+                ? undefined
+                : 'Wirkt nur in der Desktop-App — im Browser bestimmt der Browser die Fenstergrösse, hier wird nur die Präferenz gemerkt.'
+            }
+          >
+            <input
+              type="checkbox"
+              data-testid="einstellung-start-maximiert"
+              checked={startMaximiertAn}
+              disabled={!tauriDesktop}
+              onChange={(e) => void aufStartMaximiertUmschalten(e.target.checked)}
+            />
+            Beim Start maximieren (Default an)
+          </label>
+          {startMaximiertFehler && <div className="es-fehler-text">{startMaximiertFehler}</div>}
           <div className="es-system-reihe">
             <KButton size="sm" tone="quiet" data-testid="einstellung-deinstallieren" onClick={aufDeinstallieren}>
               App deinstallieren…

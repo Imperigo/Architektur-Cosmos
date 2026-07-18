@@ -47,6 +47,81 @@ export function anthropicAuthHeader(cfg: Pick<AnthropicConfig, 'apiKey' | 'oauth
   return { 'x-api-key': cfg.apiKey ?? '' };
 }
 
+/**
+ * v0.8.4 PA5 (E10 §3.2, `docs/V084-SPEZ.md`, C-5 «Key-Validierungs-Ping») —
+ * die vier ehrlichen Fehlerbilder eines Anthropic-Zugangs-Checks:
+ *  - `netz`: die Anfrage kam nicht mal bis zu Anthropic (DNS/Verbindung/
+ *    Timeout — dieselbe `verbindeMitRetry`-Klassifikation wie beim Chat).
+ *  - `schluessel`: Anthropic hat geantwortet und den Schlüssel/Token
+ *    zurückgewiesen (401/403 — ungültig, falsch kopiert, widerrufen).
+ *  - `quota`: der Schlüssel ist gültig, aber das Kontingent ist erschöpft
+ *    (429 Rate-Limit ODER ein Fehlertext mit «credit balance»/«quota»/
+ *    «insufficient» — Anthropic meldet ein leeres Guthaben teils als 400).
+ *  - `unbekannt`: alles andere (z. B. ein API-seitiger 400/5xx ohne
+ *    erkennbaren Kontingent-Hinweis) — ehrlich benannt statt stillschweigend
+ *    in eine der drei anderen Schubladen gepresst.
+ */
+export type AnthropicZugangsFehler = 'netz' | 'schluessel' | 'quota' | 'unbekannt';
+
+export type AnthropicZugangsPruefung =
+  | { ok: true }
+  | { ok: false; fehler: AnthropicZugangsFehler; detail: string };
+
+/**
+ * Minimaler ECHTER Anthropic-Call zum Prüfen, ob ein Schlüssel/Token
+ * tatsächlich funktioniert («Key-Validierungs-Ping», Owner-Auftrag E10) —
+ * das billigste Modell, `max_tokens: 1`, eine einzige kurze User-Nachricht.
+ * Kein Streaming (`AnthropicProvider.chat` bleibt für echte Gespräche
+ * zuständig); dieselbe `verbindeMitRetry`-Bausteine wie dort machen den
+ * Aufruf abbruchsicher (Verbindungs-Timeout + genau ein Retry bei einem
+ * echten Netzfehler, NIE mitten in einer Antwort — hier gibt es ohnehin
+ * keinen Stream zu unterbrechen).
+ *
+ * Reine Netzfunktion, unit-testbar mit gestubbtem `fetch` (s.
+ * `test/anthropic-zugang.test.ts`) — kein DOM/Tauri nötig.
+ */
+export async function pruefeAnthropicZugang(
+  auth: Pick<AnthropicConfig, 'apiKey' | 'oauthToken' | 'baseUrl'>,
+  opts: { timeoutMs?: number } = {},
+): Promise<AnthropicZugangsPruefung> {
+  const verbindung = await verbindeMitRetry(
+    (signal) =>
+      fetch(`${(auth.baseUrl ?? 'https://api.anthropic.com').replace(/\/$/, '')}/v1/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...anthropicAuthHeader(auth),
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        signal,
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5',
+          max_tokens: 1,
+          messages: [{ role: 'user', content: 'Hallo' }],
+        }),
+      }),
+    { timeoutMs: opts.timeoutMs ?? 8000 },
+  );
+  if (verbindung.art === 'abgebrochen') {
+    return { ok: false, fehler: 'netz', detail: 'Abgebrochen.' };
+  }
+  if (verbindung.art === 'fehler') {
+    return { ok: false, fehler: 'netz', detail: verbindung.nachricht };
+  }
+  const response = verbindung.response;
+  if (response.ok) return { ok: true };
+  const detail = await response.text().catch(() => '');
+  const knapperText = detail.slice(0, 200) || `HTTP ${response.status}`;
+  if (response.status === 401 || response.status === 403) {
+    return { ok: false, fehler: 'schluessel', detail: knapperText };
+  }
+  if (response.status === 429 || /credit balance|quota|insufficient/i.test(detail)) {
+    return { ok: false, fehler: 'quota', detail: knapperText };
+  }
+  return { ok: false, fehler: 'unbekannt', detail: knapperText };
+}
+
 type InhaltsBlock =
   | { type: 'text'; text: string }
   | { type: 'tool_use'; id: string; name: string; input: unknown }

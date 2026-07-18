@@ -28,28 +28,33 @@ use tauri::{
 /// nicht ausführen — hier fehlen `ant` und die Tauri-Laufzeit. Bewusst ohne
 /// zusätzliche Crates (nur `std::process::Command`), damit der Desktop-Build
 /// dadurch nicht gefährdet wird.
+///
+/// v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`): `ant_installiert`/`lese_token`
+/// wanderten aus dem Körper von `claude_login` auf Modulebene, damit
+/// `claude_login_status` (unten) denselben Probe-Code nutzt, OHNE je
+/// `ant auth login` (den Browser-Popup) auszulösen — reine Status-Erkennung.
+fn ant_installiert() -> bool {
+    Command::new("ant").arg("--version").output().is_ok()
+}
+
+fn lese_token() -> Option<String> {
+    let out = Command::new("ant")
+        .args(["auth", "print-credentials", "--access-token"])
+        .output()
+        .ok()?;
+    if !out.status.success() {
+        return None;
+    }
+    let token = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    if token.is_empty() {
+        None
+    } else {
+        Some(token)
+    }
+}
+
 #[tauri::command]
 fn claude_login() -> Result<String, String> {
-    fn ant_installiert() -> bool {
-        Command::new("ant").arg("--version").output().is_ok()
-    }
-
-    fn lese_token() -> Option<String> {
-        let out = Command::new("ant")
-            .args(["auth", "print-credentials", "--access-token"])
-            .output()
-            .ok()?;
-        if !out.status.success() {
-            return None;
-        }
-        let token = String::from_utf8_lossy(&out.stdout).trim().to_string();
-        if token.is_empty() {
-            None
-        } else {
-            Some(token)
-        }
-    }
-
     if !ant_installiert() {
         return Err(
             "Anthropic-CLI (`ant`) nicht gefunden — installieren oder API-Schlüssel nutzen.".to_string(),
@@ -69,6 +74,33 @@ fn claude_login() -> Result<String, String> {
     }
 
     lese_token().ok_or_else(|| "Anmeldung abgeschlossen, aber kein Token lesbar.".to_string())
+}
+
+/// v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`, C-5 «Status-Erkennung
+/// dreiwertig»): reine Beobachtung, OHNE je einen Browser-Popup auszulösen —
+/// `claude_login` (oben) darf das (der Architekt hat aktiv «Mit Claude-Abo
+/// anmelden» geklickt), ein Status-Check beim Öffnen der Einstellungen oder
+/// hinter «Erneut prüfen» darf es NICHT. Drei Zustände statt nur eines
+/// Fehlertexts:
+///  - `"fehlt"`: `ant` ist lokal nicht installiert.
+///  - `"nicht-eingeloggt"`: `ant` ist da, aber `print-credentials` liefert
+///    (noch) kein Token — ein Klick auf «Mit Claude-Abo anmelden» würde jetzt
+///    den Browser-Popup öffnen.
+///  - `"eingeloggt"`: `ant` ist da UND bereits angemeldet (Abo aktiv) — ein
+///    Klick auf «Mit Claude-Abo anmelden» holt das Token nur noch in Kosmo,
+///    ohne neuen Login-Dialog.
+/// Liefert IMMER einen der drei String-Werte (kein `Result`) — die Prüfung
+/// selbst kann nicht scheitern, sie beobachtet nur.
+#[tauri::command]
+fn claude_login_status() -> String {
+    if !ant_installiert() {
+        return "fehlt".to_string();
+    }
+    if lese_token().is_some() {
+        "eingeloggt".to_string()
+    } else {
+        "nicht-eingeloggt".to_string()
+    }
 }
 
 /// Auto-Setup: einen geprüften Installations-Befehl je Werkzeug ausführen
@@ -168,6 +200,60 @@ fn positioniere_charakter_fenster_unten_rechts(app: &tauri::App<tauri::Wry>) {
     let _ = fenster.set_position(tauri::PhysicalPosition::new(x, y));
 }
 
+/// v0.8.4 PA5 (E9, `docs/V084-SPEZ.md` §3): Name der winzigen Klartext-Datei
+/// im App-Datenverzeichnis, die die Einstellung «Beim Start maximieren»
+/// über einen Neustart hinweg trägt. `tauri.conf.json`s statisches
+/// `"maximized": true` deckt den Standardfall (Default AN) OHNE jeden
+/// Rust-Code ab; diese Datei trägt NUR den Ausnahmefall (Schalter AUS) —
+/// aus dem `setup()`-Hook heraus ist `localStorage` (Webview) nicht lesbar,
+/// bevor die Seite überhaupt geladen hat, darum eine Datei statt dessen.
+/// Bewusst ohne neue Crate: nur `std::fs` + das ohnehin vorhandene
+/// `tauri::Manager::path()`.
+const STARTMAX_DATEI: &str = "startmaximierung.txt";
+
+fn startmax_pfad(app: &tauri::AppHandle<tauri::Wry>) -> Option<std::path::PathBuf> {
+    app.path().app_data_dir().ok().map(|d| d.join(STARTMAX_DATEI))
+}
+
+/// Trägt den Einstellungen-Schalter «Beim Start maximieren»
+/// (`einstellung-start-maximiert` in `Einstellungen.tsx`, Default AN):
+/// wirkt SOFORT auf das aktuell offene Hauptfenster (Live-Effekt, spürbar
+/// ohne Neustart) UND schreibt die Präferenz für den NÄCHSTEN Start weg.
+/// Schreibfehler (z. B. kein beschreibbares App-Datenverzeichnis) brechen
+/// den Live-Effekt nicht ab — sie kommen als `Err` zurück, die Einstellungen
+/// zeigen sie als ehrlichen Hinweistext statt eines stillen Fehlschlags.
+#[tauri::command]
+fn fenster_startmaximierung_setzen(an: bool, app: tauri::AppHandle<tauri::Wry>) -> Result<(), String> {
+    if let Some(fenster) = app.get_webview_window("main") {
+        if an {
+            let _ = fenster.maximize();
+        } else {
+            let _ = fenster.unmaximize();
+        }
+    }
+    let pfad = startmax_pfad(&app).ok_or_else(|| "App-Datenverzeichnis nicht auflösbar.".to_string())?;
+    if let Some(ordner) = pfad.parent() {
+        std::fs::create_dir_all(ordner).map_err(|e| e.to_string())?;
+    }
+    std::fs::write(&pfad, if an { "1" } else { "0" }).map_err(|e| e.to_string())
+}
+
+/// Läuft im `setup()`-Hook (JEDER Start): `tauri.conf.json` maximiert das
+/// Hauptfenster bereits standardmässig — hier wird NUR der Ausnahmefall
+/// nachgezogen, wenn der Architekt den Schalter zuvor ausgeschaltet hat
+/// (Präferenz-Datei enthält `"0"`). Fehlt die Datei (nie gesetzt) oder lässt
+/// sie sich nicht lesen, bleibt es beim maximierten Default — kein Absturz
+/// für eine kosmetische Präferenz.
+fn wende_startmaximierung_an(app: &tauri::App<tauri::Wry>) {
+    let Some(pfad) = startmax_pfad(&app.handle()) else { return };
+    let Ok(inhalt) = std::fs::read_to_string(&pfad) else { return };
+    if inhalt.trim() == "0" {
+        if let Some(fenster) = app.get_webview_window("main") {
+            let _ = fenster.unmaximize();
+        }
+    }
+}
+
 /// Zeigt/fokussiert das Hauptfenster — gemeinsamer Weg für Tray-Klick UND
 /// Menüpunkt «Öffnen» (Spec §9: "Klick zeigt Hauptfenster").
 fn zeige_hauptfenster(app: &tauri::AppHandle<tauri::Wry>) {
@@ -245,11 +331,14 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
             claude_login,
+            claude_login_status,
             werkzeug_holen,
-            charakter_fenster_umschalten
+            charakter_fenster_umschalten,
+            fenster_startmaximierung_setzen
         ])
         .setup(|app| {
             positioniere_charakter_fenster_unten_rechts(app);
+            wende_startmaximierung_an(app);
             baue_tray(app)?;
             Ok(())
         })

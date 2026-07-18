@@ -14,10 +14,12 @@ import {
   leseEdition,
   lizenzHinweis,
   personas,
+  pruefeAnthropicZugang,
   type Aufgabenklasse,
   type Betriebsart,
   type ChatProvider,
   type CloudAuthArt,
+  type AnthropicZugangsFehler,
   type KosmoRolle,
   type Proposal,
   type SkillMeta,
@@ -48,6 +50,8 @@ import {
   istTauriDesktop,
   mitAbmeldung,
   mitApiSchluessel,
+  pruefeAntStatus,
+  type AntStatus,
 } from './cloud-login';
 import { kurzform, useKosmoStatus } from '../state/kosmo-status';
 import { plopp, wusch } from '../state/sounds';
@@ -520,9 +524,64 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
     setSchliessend(true);
     window.setTimeout(onClose, 200); // --k-motion-base (s. .k-panel-austritt-orb, aura.css)
   };
-  // Owner-Befund F1: «ant nicht gefunden» soll eine Anleitung zeigen, keinen
-  // blossen Toast — persistiert im Panel, bis der nächste Versuch klappt.
-  const [cliFehlt, setCliFehlt] = useState(false);
+  // v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`, C-5 «Status-Erkennung
+  // dreiwertig»): ant-CLI-Status VOR jedem Anmelde-Versuch — ersetzt den
+  // reinen Ja/Nein-Fehlertext der Vorversion durch drei ehrliche Zustände
+  // (`pruefeAntStatus()`/`AntStatus` in `./cloud-login`). `'unbekannt'` ist
+  // der Zustand VOR der ersten Prüfung (Panel gerade erst geöffnet) und im
+  // Web/PWA (dort gibt es den ant-Status schlicht nicht).
+  const [antStatus, setAntStatus] = useState<AntStatus | 'unbekannt'>('unbekannt');
+  const [antStatusLaeuft, setAntStatusLaeuft] = useState(false);
+  const aktualisiereAntStatus = async () => {
+    if (!istTauriDesktop()) return;
+    setAntStatusLaeuft(true);
+    try {
+      setAntStatus(await pruefeAntStatus());
+    } catch {
+      setAntStatus('unbekannt');
+    } finally {
+      setAntStatusLaeuft(false);
+    }
+  };
+  // Einmal beim Mounten des Panels geprüft (Desktop-only, kein Login-Popup —
+  // reine Beobachtung); der «Erneut prüfen»-Knopf im Anthropic-Block ruft
+  // exakt dieselbe Funktion erneut.
+  useEffect(() => {
+    void aktualisiereAntStatus();
+  }, []);
+
+  // v0.8.4 PA5 (E10 §3.2, `docs/V084-SPEZ.md`, C-5 «Key-Validierungs-Ping»):
+  // «beim Speichern» heisst hier debounced (600ms nach der letzten Eingabe)
+  // — ein Ping pro Tastenanschlag wäre weder gemeint noch sinnvoll.
+  // `pruefeAnthropicZugang` (`@kosmo/ai`) macht den kleinsten echten
+  // Anthropic-Call; die UI zeigt das Ergebnis ehrlich statt eines blossen
+  // "gespeichert". Läuft NUR beim API-Schlüssel-Weg — ein Abo-Token gilt als
+  // geprüft durch den Login-Flow selbst.
+  const [schluesselPruefung, setSchluesselPruefung] = useState<
+    | { status: 'leer' }
+    | { status: 'pruefe' }
+    | { status: 'ok' }
+    | { status: 'fehler'; art: AnthropicZugangsFehler; detail: string }
+  >({ status: 'leer' });
+  useEffect(() => {
+    if (settings.provider !== 'anthropic' || settings.cloudAuth !== 'schluessel' || !settings.anthropicKey.trim()) {
+      setSchluesselPruefung({ status: 'leer' });
+      return;
+    }
+    setSchluesselPruefung({ status: 'pruefe' });
+    const schluessel = settings.anthropicKey;
+    const timer = window.setTimeout(() => {
+      void pruefeAnthropicZugang({ apiKey: schluessel }).then((ergebnis) => {
+        // Inzwischen weitergetippt/gewechselt → dieses (jetzt veraltete)
+        // Ergebnis nicht mehr anzeigen, der neuere Timer übernimmt.
+        if (settingsRef.current.anthropicKey !== schluessel || settingsRef.current.cloudAuth !== 'schluessel') return;
+        setSchluesselPruefung(
+          ergebnis.ok ? { status: 'ok' } : { status: 'fehler', art: ergebnis.fehler, detail: ergebnis.detail },
+        );
+      });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [settings.provider, settings.cloudAuth, settings.anthropicKey]);
   // Owner-Befund F1 «Modell auswählbar»: Freitext-Override-Modus für die
   // Anthropic-Modellwahl, unabhängig davon ob der aktuelle Wert zufällig
   // einer Preset-Option entspricht (sonst könnte man den Freitext-Modus nie
@@ -1140,22 +1199,26 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
    * das zurückgegebene OAuth-Token. Im Web/PWA wirft `claudeAboAnmeldung`
    * bereits einen ehrlichen Fehler — hier landet er in `meldeFehler`, nie in
    * `alert`.
+   *
+   * v0.8.4 PA5 (E10 §3.1): JEDER Ausgang (Erfolg wie Fehlschlag) aktualisiert
+   * `antStatus` neu (`aktualisiereAntStatus()`) — der Architekt sieht danach
+   * immer den echten, gerade beobachteten ant-Zustand statt eines Standes
+   * von vor dem Klick.
    */
   const mitClaudeAnmelden = async () => {
     try {
       const token = await claudeAboAnmeldung();
-      setCliFehlt(false);
       speichere({ ...settingsRef.current, anthropicOauthToken: token, cloudAuth: 'abo' });
       melde('Mit dem Claude-Abo angemeldet.', { ton: 'erfolg' });
     } catch (err) {
       // Owner-Befund F1: «ant nicht gefunden» bekommt eine Anleitung im Panel
       // statt nur eines Toasts — andere Fehler (Login abgebrochen, Web/PWA)
       // bleiben beim bisherigen `meldeFehler`.
-      if (istAntFehltFehler(err)) {
-        setCliFehlt(true);
-      } else {
+      if (!istAntFehltFehler(err)) {
         meldeFehler(err);
       }
+    } finally {
+      await aktualisiereAntStatus();
     }
   };
 
@@ -1782,20 +1845,50 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 </span>
               </div>
               {istTauriDesktop() ? (
-                <KButton
-                  size="sm"
-                  tone={settings.cloudAuth === 'abo' ? 'accent' : 'ghost'}
-                  data-testid="cloud-login-abo"
-                  onClick={() => void mitClaudeAnmelden()}
-                >
-                  Mit Claude-Abo anmelden
-                </KButton>
+                <>
+                  {/* v0.8.4 PA5 (E10 §3.1, C-5 «Status-Erkennung dreiwertig»):
+                      der ant-CLI-Status VOR dem Klick — sagt ehrlich voraus,
+                      was «Mit Claude-Abo anmelden» als Nächstes tut (Token
+                      direkt holen / einen Browser-Popup öffnen / erst
+                      installieren). */}
+                  <div data-testid="cloud-login-ant-status" className="kp-hinweis-soft">
+                    {antStatusLaeuft
+                      ? 'ant-CLI-Status wird geprüft …'
+                      : antStatus === 'fehlt'
+                        ? 'ant-CLI nicht gefunden.'
+                        : antStatus === 'nicht-eingeloggt'
+                          ? 'ant-CLI gefunden, noch nicht angemeldet — ein Klick öffnet den Anmelde-Dialog.'
+                          : antStatus === 'eingeloggt'
+                            ? 'ant-CLI angemeldet — ein Klick holt das Token in Kosmo.'
+                            : 'ant-CLI-Status unbekannt — «Erneut prüfen» klicken.'}
+                  </div>
+                  <div className="kp-knopf-reihe">
+                    <KButton
+                      size="sm"
+                      tone={settings.cloudAuth === 'abo' ? 'accent' : 'ghost'}
+                      data-testid="cloud-login-abo"
+                      onClick={() => void mitClaudeAnmelden()}
+                    >
+                      Mit Claude-Abo anmelden
+                    </KButton>
+                    <KButton
+                      size="sm"
+                      tone="ghost"
+                      data-testid="cloud-login-erneut-pruefen"
+                      onClick={() => void aktualisiereAntStatus()}
+                    >
+                      Erneut prüfen
+                    </KButton>
+                  </div>
+                </>
               ) : (
                 <div
                   data-testid="cloud-login-hinweis"
                   className="kp-hinweis-soft"
                 >
-                  Mit-Claude-Anmeldung nur in der Desktop-App — im Browser bitte API-Schlüssel.
+                  Das Claude-Abo läuft nur in der Desktop-App über die lokale Anthropic-CLI
+                  (<code>ant</code>) — Mit-Claude-Anmeldung gibt es hier nicht. Im Browser bitte den
+                  API-Schlüssel unten nutzen.
                 </div>
               )}
               {settings.cloudAuth === 'abo' && settings.anthropicOauthToken.trim() && (
@@ -1811,7 +1904,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                   Abmelden
                 </KButton>
               )}
-              {cliFehlt && (
+              {antStatus === 'fehlt' && (
                 <div
                   data-testid="cloud-login-anleitung"
                   className="kp-anleitung-box"
@@ -1822,7 +1915,8 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                   </div>
                   <div>
                     Installieren: <code>{ANT_INSTALL_BEFEHL}</code> (oder die Anthropic-Dokumentation
-                    unter platform.claude.com) — danach «Mit Claude-Abo anmelden» erneut versuchen.
+                    unter platform.claude.com) — danach «Erneut prüfen» oder direkt «Mit Claude-Abo
+                    anmelden» versuchen.
                   </div>
                   <div>
                     Gleichwertige Alternative ohne CLI: den API-Schlüssel direkt unten eintragen.
@@ -1835,6 +1929,29 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 typ="password"
                 onChange={(v) => speichere(mitApiSchluessel(settings, v))}
               />
+              {schluesselPruefung.status !== 'leer' && (
+                // v0.8.4 PA5 (E10 §3.2, C-5 «Key-Validierungs-Ping»): das
+                // Ergebnis des echten Anthropic-Checks — ehrlich benannt statt
+                // eines blossen «gespeichert». `schluessel-pruefung-status`
+                // trägt den Rohzustand zusätzlich als `data-status` (Tests
+                // brauchen keine Textabhängigkeit).
+                <div
+                  data-testid="schluessel-pruefung-status"
+                  data-status={schluesselPruefung.status === 'fehler' ? schluesselPruefung.art : schluesselPruefung.status}
+                  className={schluesselPruefung.status === 'fehler' ? 'kp-fehler-zeile' : 'kp-hinweis-soft'}
+                >
+                  {schluesselPruefung.status === 'pruefe' && 'Prüfe Zugang bei Anthropic …'}
+                  {schluesselPruefung.status === 'ok' && 'Zugang bestätigt — der Schlüssel funktioniert.'}
+                  {schluesselPruefung.status === 'fehler' && schluesselPruefung.art === 'netz' &&
+                    `Anthropic nicht erreichbar: ${schluesselPruefung.detail}`}
+                  {schluesselPruefung.status === 'fehler' && schluesselPruefung.art === 'schluessel' &&
+                    `Schlüssel ungültig oder abgelehnt: ${schluesselPruefung.detail}`}
+                  {schluesselPruefung.status === 'fehler' && schluesselPruefung.art === 'quota' &&
+                    `Kontingent/Guthaben erschöpft: ${schluesselPruefung.detail}`}
+                  {schluesselPruefung.status === 'fehler' && schluesselPruefung.art === 'unbekannt' &&
+                    `Unbekannter Fehler: ${schluesselPruefung.detail}`}
+                </div>
+              )}
               <label className="kp-feld-titel">
                 Modell
                 <KSelect

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Route } from '@playwright/test';
 import { waehleOption } from './helfer/waehleOption';
 
 /**
@@ -33,8 +33,18 @@ test('Web-Preview: Mit-Claude-Anmeldung zeigt den ehrlichen Desktop-Hinweis, kei
 
   await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toBeVisible();
   await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('Desktop-App');
+  // v0.8.4 PA5 (E10 §3.2, C-5 «Browser-Abo-Grenze klar erklärt»): der Text
+  // benennt jetzt explizit das «Abo» UND die lokale CLI, nicht nur den
+  // vagen Desktop-App-Verweis von vorher.
+  await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('Abo');
+  await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('ant');
   await expect(page.locator('[data-testid="cloud-login-abo"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('nicht angemeldet');
+  // Die ant-CLI-Status-Anzeige und der «Erneut prüfen»-Knopf sind reine
+  // Desktop/Tauri-Konzepte — im Web/PWA gibt es sie ehrlich gar nicht (kein
+  // deaktiviertes Attrappen-Element).
+  await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="cloud-login-erneut-pruefen"]')).toHaveCount(0);
 });
 
 test('API-Schlüssel-Weg bleibt voll funktionsfähig neben dem Abo-Login', async ({ page }) => {
@@ -109,4 +119,54 @@ test('Claude-Modell-Select: Freitext-Override für eigene Modell-IDs, persistier
   await oeffneCloudEinstellungen(page);
   await expect(page.locator('[data-testid="claude-modell-select"]')).toHaveAttribute('data-value', 'freitext');
   await expect(page.getByLabel('Modell-ID (Freitext)')).toHaveValue('claude-opus-4-9-preview');
+});
+
+/**
+ * v0.8.4 PA5 (E10 §3.2, `docs/V084-SPEZ.md`, C-5 «Key-Validierungs-Ping»):
+ * `pruefeAnthropicZugang` (`@kosmo/ai`) macht beim Speichern eines
+ * API-Schlüssels einen ECHTEN Anthropic-Call (debounced, 600ms nach der
+ * letzten Eingabe) — hier mit `page.route` gegen `api.anthropic.com`
+ * abgefangen (Muster `e2e/kosmo-blick-cloud.spec.ts`), damit der Test
+ * deterministisch und offline läuft, ohne den Netzcode selbst zu mocken.
+ */
+test.describe('API-Schlüssel-Validierungs-Ping (E10 §3.2)', () => {
+  test('ok: eine 200-Antwort zeigt "Zugang bestätigt"', async ({ page }) => {
+    await page.route('https://api.anthropic.com/v1/messages', async (route: Route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{"id":"msg_test"}' });
+    });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+
+    await page.getByLabel('API-Schlüssel (bleibt auf diesem Gerät)').fill('sk-ant-gueltig');
+    const status = page.locator('[data-testid="schluessel-pruefung-status"]');
+    await expect(status).toHaveAttribute('data-status', 'ok', { timeout: 5000 });
+    await expect(status).toContainText('bestätigt');
+  });
+
+  test('fehler:schluessel — eine 401-Antwort zeigt den Schlüssel-Fehler ehrlich', async ({ page }) => {
+    await page.route('https://api.anthropic.com/v1/messages', async (route: Route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: 'application/json',
+        body: '{"error":{"message":"invalid x-api-key"}}',
+      });
+    });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+
+    await page.getByLabel('API-Schlüssel (bleibt auf diesem Gerät)').fill('sk-ant-falsch');
+    const status = page.locator('[data-testid="schluessel-pruefung-status"]');
+    await expect(status).toHaveAttribute('data-status', 'schluessel', { timeout: 5000 });
+    await expect(status).toContainText('ungültig');
+  });
 });

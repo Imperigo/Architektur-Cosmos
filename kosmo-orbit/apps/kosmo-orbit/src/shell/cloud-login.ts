@@ -33,6 +33,28 @@ export async function claudeAboAnmeldung(): Promise<string> {
 }
 
 /**
+ * v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`, C-5 «Status-Erkennung
+ * dreiwertig»): der ant-CLI-Status VOR einem Anmelde-Versuch — drei Zustände
+ * statt nur eines Fehlertexts (siehe `claude_login_status` in
+ * `src-tauri/src/lib.rs` für die genaue Definition je Zustand).
+ */
+export type AntStatus = 'fehlt' | 'nicht-eingeloggt' | 'eingeloggt';
+
+/**
+ * Fragt den ant-CLI-Status ab, OHNE je einen Login-Versuch (Browser-Popup)
+ * auszulösen — reine Beobachtung für den ersten Blick beim Öffnen der
+ * Cloud-Einstellungen und für den «Erneut prüfen»-Knopf. Wirft im Web/PWA
+ * denselben ehrlichen Fehler wie `claudeAboAnmeldung()`.
+ */
+export async function pruefeAntStatus(): Promise<AntStatus> {
+  if (!istTauriDesktop()) {
+    throw new Error('Ant-Status nur in der Desktop-App abfragbar — im Browser bitte API-Schlüssel.');
+  }
+  const { invoke } = await import('@tauri-apps/api/core');
+  return invoke<AntStatus>('claude_login_status');
+}
+
+/**
  * Installationsbefehl für die Anthropic-CLI (`ant`, Paket `@anthropic-ai/claude-code`)
  * — Owner-Befund F1: die bisherige Fehlermeldung («ant nicht gefunden») liess
  * den Architekten ohne Anleitung stehen. Eine Konstante, damit UI-Text und

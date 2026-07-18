@@ -55,16 +55,49 @@ import { expect, test, type Page } from '@playwright/test';
  * `istTauriDesktop()` wahr und beantwortet `invoke('claude_login')` mit
  * einem Fake-Token, exakt wie die echte `@tauri-apps/api/core`
  * `invoke()`-Implementierung es an `window.__TAURI_INTERNALS__.invoke`
- * weiterreicht. */
-async function stubTauriDesktop(page: Page, fakeToken: string): Promise<void> {
-  await page.addInitScript((token: string) => {
-    (window as unknown as { __TAURI_INTERNALS__: unknown }).__TAURI_INTERNALS__ = {
-      invoke: (cmd: string) =>
-        cmd === 'claude_login'
-          ? Promise.resolve(token)
-          : Promise.reject(new Error(`Test-Stub kennt den Tauri-Command nicht: ${cmd}`)),
-    };
-  }, fakeToken);
+ * weiterreicht.
+ *
+ * v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`, C-5 «Status-Erkennung
+ * dreiwertig»): zusätzlich `invoke('claude_login_status')` — der NEUE
+ * Tauri-Command `claude_login_status` (`src-tauri/src/lib.rs`), reine
+ * Beobachtung ohne Login-Popup. Der Rückgabewert liegt in einem mutierbaren
+ * `window.__antStatusStore` ab, damit ein Test den Status NACH dem initialen
+ * Laden ändern kann (Muster für den «Erneut prüfen»-Knopf: simuliert, dass
+ * der Architekt `ant` zwischen zwei Prüfungen installiert/sich anmeldet,
+ * ohne die Seite neu zu laden).
+ */
+async function stubTauriDesktop(
+  page: Page,
+  fakeToken: string,
+  opts: { antStatusVorLogin?: 'fehlt' | 'nicht-eingeloggt' | 'eingeloggt' } = {},
+): Promise<void> {
+  const antStatus = opts.antStatusVorLogin ?? 'nicht-eingeloggt';
+  await page.addInitScript(
+    ({ token, antStatus }: { token: string; antStatus: string }) => {
+      (window as unknown as { __antStatusStore: { wert: string } }).__antStatusStore = { wert: antStatus };
+      (window as unknown as { __TAURI_INTERNALS__: unknown }).__TAURI_INTERNALS__ = {
+        invoke: (cmd: string) => {
+          if (cmd === 'claude_login') return Promise.resolve(token);
+          if (cmd === 'claude_login_status') {
+            return Promise.resolve(
+              (window as unknown as { __antStatusStore: { wert: string } }).__antStatusStore.wert,
+            );
+          }
+          return Promise.reject(new Error(`Test-Stub kennt den Tauri-Command nicht: ${cmd}`));
+        },
+      };
+    },
+    { token: fakeToken, antStatus },
+  );
+}
+
+/** Setzt den gestubbten ant-Status NACH dem initialen Laden (simuliert einen
+ * Zustandswechsel zwischen zwei «Erneut prüfen»-Klicks) — braucht
+ * `stubTauriDesktop()` vorher. */
+async function setzeAntStatus(page: Page, wert: 'fehlt' | 'nicht-eingeloggt' | 'eingeloggt'): Promise<void> {
+  await page.evaluate((w: string) => {
+    (window as unknown as { __antStatusStore: { wert: string } }).__antStatusStore.wert = w;
+  }, wert);
 }
 
 async function oeffneCloudEinstellungen(page: Page): Promise<void> {
@@ -188,4 +221,101 @@ test('Wechsel auf einen API-Schlüssel löscht ein liegengebliebenes Alt-Token m
   expect(stand.anthropicKey).toBe('sk-ant-anderer-weg');
   // Behoben (Stream 5B): das alte OAuth-Token bleibt NICHT mehr liegen.
   expect(stand.anthropicOauthToken).toBe('');
+});
+
+/**
+ * v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`, C-5 «Status-Erkennung
+ * dreiwertig») — der ant-CLI-Status VOR jedem Klick auf «Mit Claude-Abo
+ * anmelden» (neuer Tauri-Command `claude_login_status`, gestubbt über
+ * `stubTauriDesktop`s `antStatusVorLogin`). Ersetzt den reinen
+ * «CLI fehlt ja/nein»-Beweis der Vorversion durch alle drei Zustände +
+ * den «Erneut prüfen»-Knopf.
+ */
+test.describe('ant-CLI-Status (dreiwertig, E10 §3.1)', () => {
+  test('«fehlt»: Hinweistext + Installations-Anleitung erscheinen SOFORT, ohne Klick', async ({ page }) => {
+    await stubTauriDesktop(page, FAKE_TOKEN, { antStatusVorLogin: 'fehlt' });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('nicht gefunden');
+    await expect(page.locator('[data-testid="cloud-login-anleitung"]')).toBeVisible();
+    await expect(page.locator('[data-testid="cloud-login-anleitung"]')).toContainText(
+      'npm i -g @anthropic-ai/claude-code',
+    );
+  });
+
+  test('«nicht-eingeloggt»: Hinweis sagt den Browser-Popup voraus, keine Anleitung', async ({ page }) => {
+    await stubTauriDesktop(page, FAKE_TOKEN, { antStatusVorLogin: 'nicht-eingeloggt' });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('noch nicht angemeldet');
+    await expect(page.locator('[data-testid="cloud-login-anleitung"]')).toHaveCount(0);
+  });
+
+  test('«eingeloggt»: Hinweis sagt voraus, dass nur noch das Token geholt wird', async ({ page }) => {
+    await stubTauriDesktop(page, FAKE_TOKEN, { antStatusVorLogin: 'eingeloggt' });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('holt das Token');
+    await expect(page.locator('[data-testid="cloud-login-anleitung"]')).toHaveCount(0);
+  });
+
+  test('«Erneut prüfen» fragt den Status neu ab — die Anzeige wechselt ohne Reload', async ({ page }) => {
+    await stubTauriDesktop(page, FAKE_TOKEN, { antStatusVorLogin: 'fehlt' });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('nicht gefunden');
+    await expect(page.locator('[data-testid="cloud-login-anleitung"]')).toBeVisible();
+
+    // Der Architekt installiert `ant` (in diesem Test simuliert, ohne Reload)
+    // und klickt «Erneut prüfen» — die Anzeige muss den NEUEN Stand zeigen,
+    // nicht den von vor dem Klick.
+    await setzeAntStatus(page, 'nicht-eingeloggt');
+    await page.click('[data-testid="cloud-login-erneut-pruefen"]');
+
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('noch nicht angemeldet');
+    await expect(page.locator('[data-testid="cloud-login-anleitung"]')).toHaveCount(0);
+  });
+
+  test('Ein erfolgreicher Login aktualisiert den ant-Status auf «eingeloggt»', async ({ page }) => {
+    await stubTauriDesktop(page, FAKE_TOKEN, { antStatusVorLogin: 'nicht-eingeloggt' });
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.panelOffen', '1');
+    });
+    await page.reload();
+    await oeffneCloudEinstellungen(page);
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('noch nicht angemeldet');
+
+    // Der Stub-Login liefert das Fake-Token; ein echtes `ant auth login`
+    // hinterliesse `ant` danach angemeldet — das simulieren wir hier mit.
+    await setzeAntStatus(page, 'eingeloggt');
+    await page.click('[data-testid="cloud-login-abo"]');
+
+    await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+    await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('holt das Token');
+  });
 });
