@@ -12,7 +12,8 @@ import { setTouchUndoGesteEingestellt } from '../src/state/touch-undo';
 /**
  * PD1 Fundament (`docs/ISLAND-UI-SPEZ.md` §4.1/§4.2/§7-PD1-Zeile) —
  * `IslandShell`s Zustandsmaschine (pill↔leiste↔popup↔fenster), der
- * 900ms-Rückklapp-Timer, die Toast-Regel für Werkzeuge ohne Popup, der
+ * 1000ms-Rückklapp-Timer (PB2, v0.8.4, Owner: «nach 1s» — war 900ms bis
+ * v0.8.3), die Toast-Regel für Werkzeuge ohne Popup, der
  * Katalog (29/29, 11/6/6/6) und beide Farbwelten (PAPIER/`orbit`).
  *
  * Rendert über einen echten `createRoot` (Muster `schwarm-orbs.test.tsx`/
@@ -148,19 +149,19 @@ describe('IslandShell — Zustandsmaschine (§4.1: pill→leiste→popup→fenst
   });
 });
 
-describe('IslandShell — 900ms-Rückklapp-Timer (§4.2, Fake-Timer)', () => {
+describe('IslandShell — 1000ms-Rückklapp-Timer (§4.2, Fake-Timer, PB2: 900→1000ms)', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     render(<IslandShell island="projekt" />);
   });
 
-  it('klappt 900ms nach Pointer-Verlassen zur Pill zurück', () => {
+  it('klappt 1000ms nach Pointer-Verlassen zur Pill zurück', () => {
     hoverEnter(q('island-projekt-root')!);
     expect(q('island-projekt-leiste')).not.toBeNull();
 
     hoverLeave(q('island-projekt-root')!);
     act(() => {
-      vi.advanceTimersByTime(899);
+      vi.advanceTimersByTime(999);
     });
     expect(q('island-projekt-leiste')).not.toBeNull();
 
@@ -186,7 +187,7 @@ describe('IslandShell — 900ms-Rückklapp-Timer (§4.2, Fake-Timer)', () => {
     expect(q('island-projekt-leiste')).not.toBeNull();
   });
 
-  it('ein offenes Popup hält die Insel offen — kein Rückklapp trotz > 900ms', () => {
+  it('ein offenes Popup hält die Insel offen — kein Rückklapp trotz > 1000ms', () => {
     hoverEnter(q('island-projekt-root')!);
     klick(q('island-werkzeug-kennzahlen')!);
     expect(q('island-kennzahlen-popup')).not.toBeNull();

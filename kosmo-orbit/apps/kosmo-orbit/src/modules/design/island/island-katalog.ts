@@ -13,8 +13,9 @@
  * `sonneOffen`, Varianten → `variantenPanelOffen`), bleibt `toolId` leer —
  * ihre Verdrahtung lebt als benannter Fall in `DesignWorkspace.tsx`s
  * `aktiviereIslandWerkzeug()` (Integrationspunkt, dateidisjunkt von diesem
- * reinen Datensatz). `glyphe` ist weiterhin ein reiner Text-Platzhalter
- * (echte Symbole folgen PD3/PD4).
+ * reinen Datensatz). `glyphe` trägt seit PB2 (v0.8.4, s. Icon-Verdrahtungs-
+ * Kommentar weiter unten) echte Icon-Components statt Text-Kürzeln, ausser
+ * bei `skizze` (bewusster Text-Rest).
  *
  * **`hinweis` (PD2):** ehrlicher Kurztext fürs (weiterhin leere PD1-)
  * Popup-/Fenster-Rahmen jener Werkzeuge, die PD2 NICHT verdrahtet — die
@@ -38,6 +39,38 @@
  * «An/Aus») — die Spec markiert dort kein «kein Popup nötig», anders als bei
  * Achsen.
  */
+
+import type { ComponentType } from 'react';
+import {
+  IconAuswahl,
+  IconWand,
+  IconVolumen,
+  IconZone,
+  IconDach,
+  IconTreppe,
+  IconStuetze,
+  IconMesh,
+} from '../werkzeug-icons';
+import { ISLAND_GLYPHEN } from './island-glyphen';
+
+/**
+ * PB2 (`docs/V084-SPEZ.md` §3 E8 + Bauauftrag «Werkzeug-Chrome») —
+ * Icon-Verdrahtung: `glyphe` trägt ab hier ECHTE Icon-Components statt
+ * Text-Kürzeln, wo eines existiert. Acht der elf ZEICHNEN-Werkzeuge
+ * bekommen ihre bereits bestehenden `werkzeug-icons.tsx`-SVGs (Auswahl/
+ * Wand/Volumen/Zone/Dach/Treppe/Stütze/Mesh — `schnitt`, das neunte Icon
+ * dieser Datei, ist KEIN Katalog-Werkzeug, s. dortigen Kopfkommentar); die
+ * übrigen 20 Werkzeuge (inkl. Öffnung/Messen aus ZEICHNEN) bekommen ihr
+ * `ISLAND_GLYPHEN`-Icon. `skizze` bleibt bewusst Text (`island-glyphen.tsx`
+ * zählt es nicht zu den 20, D12 beziffert weiterhin «~20 fehlen» minus
+ * dieser einen Lücke) — der `string`-Zweig von `glyphe` bleibt darum ein
+ * ECHTER Fallback, kein totes Bein.
+ */
+function icon(rec: Record<string, ComponentType<{ size?: number }>>, id: string): ComponentType<{ size?: number }> {
+  const c = rec[id];
+  if (!c) throw new Error(`island-katalog: kein ISLAND_GLYPHEN-Icon für "${id}"`);
+  return c;
+}
 
 export type IslandId = 'zeichnen' | 'ansicht' | 'projekt' | 'austausch';
 
@@ -72,8 +105,9 @@ export interface IslandWerkzeug {
    *  Insel-Ids mit (`docs/V084-SPEZ.md` E1); für design bleibt es faktisch
    *  die Vierer-Union (alle Aufrufer unten übergeben `IslandId`). */
   readonly island: string;
-  /** Text-Platzhalter-Glyphe (zweistelliges Mono-Kürzel) — Icon-Politur folgt PD3/PD4. */
-  readonly glyphe: string;
+  /** PB2 E8: echtes Icon (SVG-Component) ODER Text-Kürzel-Fallback (`skizze`,
+   *  s. Datei-Kopfkommentar). String bleibt gültig — Fallback, kein totes Bein. */
+  readonly glyphe: string | ComponentType<{ size?: number }>;
   readonly status: IslandWerkzeugStatus;
   /** `false` nur bei den zwei §4.4-Ausnahmen (Achsen, Manuell) — s. Kopfkommentar. */
   readonly hatPopup: boolean;
@@ -89,7 +123,7 @@ function werkzeug(
   id: string,
   name: string,
   island: IslandId,
-  glyphe: string,
+  glyphe: string | ComponentType<{ size?: number }>,
   status: IslandWerkzeugStatus,
   hatPopup: boolean,
   extra?: { toolId?: string; hinweis?: string },
@@ -108,21 +142,22 @@ function werkzeug(
 
 /** ZEICHNEN (11) — §3.1. */
 const ZEICHNEN: readonly IslandWerkzeug[] = [
-  werkzeug('auswahl', 'Auswahl', 'zeichnen', 'AU', 'vorhanden', true, { toolId: 'auswahl' }),
-  werkzeug('wand', 'Wand', 'zeichnen', 'WA', 'vorhanden', true, { toolId: 'wand' }),
+  werkzeug('auswahl', 'Auswahl', 'zeichnen', IconAuswahl, 'vorhanden', true, { toolId: 'auswahl' }),
+  werkzeug('wand', 'Wand', 'zeichnen', IconWand, 'vorhanden', true, { toolId: 'wand' }),
   // v0.8.3 E3 (§3.3, docs/V083-SPEZ.md, §8-5 jetzt entschieden): echter
   // ToolId statt Hinweis — `aktiviereIslandWerkzeug()` (DesignWorkspace.tsx)
   // setzt `setTool('oeffnung')` automatisch (`w.toolId`-Zweig).
-  werkzeug('oeffnung', 'Öffnung', 'zeichnen', 'OE', 'vorhanden', true, { toolId: 'oeffnung' }),
-  werkzeug('volumen', 'Volumen', 'zeichnen', 'VO', 'vorhanden', true, { toolId: 'volumen' }),
-  werkzeug('zone', 'Zone', 'zeichnen', 'ZO', 'vorhanden', true, { toolId: 'zone' }),
-  werkzeug('dach', 'Dach', 'zeichnen', 'DA', 'vorhanden', true, { toolId: 'dach' }),
-  werkzeug('treppe', 'Treppe', 'zeichnen', 'TR', 'vorhanden', true, { toolId: 'treppe' }),
-  werkzeug('stuetze', 'Stütze', 'zeichnen', 'ST', 'vorhanden', true, { toolId: 'stuetze' }),
+  werkzeug('oeffnung', 'Öffnung', 'zeichnen', icon(ISLAND_GLYPHEN, 'oeffnung'), 'vorhanden', true, { toolId: 'oeffnung' }),
+  werkzeug('volumen', 'Volumen', 'zeichnen', IconVolumen, 'vorhanden', true, { toolId: 'volumen' }),
+  werkzeug('zone', 'Zone', 'zeichnen', IconZone, 'vorhanden', true, { toolId: 'zone' }),
+  werkzeug('dach', 'Dach', 'zeichnen', IconDach, 'vorhanden', true, { toolId: 'dach' }),
+  werkzeug('treppe', 'Treppe', 'zeichnen', IconTreppe, 'vorhanden', true, { toolId: 'treppe' }),
+  werkzeug('stuetze', 'Stütze', 'zeichnen', IconStuetze, 'vorhanden', true, { toolId: 'stuetze' }),
+  // `skizze` bleibt Text — nicht Teil der 20-Icon-Lieferung (s. Datei-Kopf).
   werkzeug('skizze', 'Skizze', 'zeichnen', 'SK', 'vorhanden', true, { toolId: 'skizze' }),
-  werkzeug('mesh', 'Mesh', 'zeichnen', 'ME', 'vorhanden', true, { toolId: 'mesh' }),
+  werkzeug('mesh', 'Mesh', 'zeichnen', IconMesh, 'vorhanden', true, { toolId: 'mesh' }),
   // v0.8.3 E2/E3 (§2/§3.3, §8-7 jetzt entschieden): echter ToolId.
-  werkzeug('messen', 'Messen', 'zeichnen', 'MS', 'vorhanden', true, { toolId: 'messen' }),
+  werkzeug('messen', 'Messen', 'zeichnen', icon(ISLAND_GLYPHEN, 'messen'), 'vorhanden', true, { toolId: 'messen' }),
 ];
 
 /** ANSICHT (6) — §3.2. */
@@ -130,48 +165,56 @@ const ANSICHT: readonly IslandWerkzeug[] = [
   // Darstellung/Phase teilen sich die echte Aktion (Projekt-Menü öffnen,
   // `setProjektMenuOffen(true)`) — beide Selects leben im selben,
   // bestehenden Block (`DesignWorkspace.tsx:2764-2784`).
-  werkzeug('darstellung', 'Darstellung', 'ansicht', 'DS', 'vorhanden', true),
-  werkzeug('sonne', 'Sonne', 'ansicht', 'SO', 'vorhanden', true),
-  werkzeug('ebenen', 'Ebenen', 'ansicht', 'EB', 'teilweise', true),
-  werkzeug('achsen', 'Achsen', 'ansicht', 'AC', 'vorhanden', false),
+  werkzeug('darstellung', 'Darstellung', 'ansicht', icon(ISLAND_GLYPHEN, 'darstellung'), 'vorhanden', true),
+  werkzeug('sonne', 'Sonne', 'ansicht', icon(ISLAND_GLYPHEN, 'sonne'), 'vorhanden', true),
+  werkzeug('ebenen', 'Ebenen', 'ansicht', icon(ISLAND_GLYPHEN, 'ebenen'), 'teilweise', true),
+  werkzeug('achsen', 'Achsen', 'ansicht', icon(ISLAND_GLYPHEN, 'achsen'), 'vorhanden', false),
   // P10 v0.8.3 (Matrix-Abnahme): die PD2-Zwischenstand-Hinweise «dort noch
   // nicht verdrahtet» waren seit PD3a toter Text — `inhalte/ansicht.tsx`
   // registriert Trace/Graph mit echten Stufe-2/3-Inhalten, der Fallback-
   // `hinweis` rendert dann nie (IslandShell zeigt ihn nur OHNE Registry-
   // Inhalt). Ersatzlos entfernt statt stehen gelassen: ein Hinweis, der das
   // Gegenteil der gebauten Realität behauptet, ist auch als Leiche falsch.
-  werkzeug('trace', 'Trace', 'ansicht', 'TC', 'vorhanden', true),
-  werkzeug('graph', 'Graph', 'ansicht', 'GR', 'vorhanden', true),
+  werkzeug('trace', 'Trace', 'ansicht', icon(ISLAND_GLYPHEN, 'trace'), 'vorhanden', true),
+  werkzeug('graph', 'Graph', 'ansicht', icon(ISLAND_GLYPHEN, 'graph'), 'vorhanden', true),
 ];
 
 /** PROJEKT (6) — §3.3. */
 const PROJEKT: readonly IslandWerkzeug[] = [
-  werkzeug('kennzahlen', 'Kennzahlen', 'projekt', 'KZ', 'vorhanden', true, {
+  werkzeug('kennzahlen', 'Kennzahlen', 'projekt', icon(ISLAND_GLYPHEN, 'kennzahlen'), 'vorhanden', true, {
     hinweis: 'Panel ist immer aktiv (kein Schalter vorhanden)',
   }),
-  werkzeug('checks', 'Checks', 'projekt', 'CH', 'vorhanden', true, {
+  werkzeug('checks', 'Checks', 'projekt', icon(ISLAND_GLYPHEN, 'checks'), 'vorhanden', true, {
     hinweis: 'Panel ist immer aktiv (kein Schalter vorhanden)',
   }),
-  werkzeug('varianten', 'Varianten', 'projekt', 'VA', 'vorhanden', true),
-  werkzeug('phase', 'Phase', 'projekt', 'PH', 'vorhanden', true),
-  werkzeug('liste', 'Liste', 'projekt', 'LI', 'vorhanden', true),
+  werkzeug('varianten', 'Varianten', 'projekt', icon(ISLAND_GLYPHEN, 'varianten'), 'vorhanden', true),
+  werkzeug('phase', 'Phase', 'projekt', icon(ISLAND_GLYPHEN, 'phase'), 'vorhanden', true),
+  werkzeug('liste', 'Liste', 'projekt', icon(ISLAND_GLYPHEN, 'liste'), 'vorhanden', true),
   // v0.8.3 E1/E3 (§1/§3.3, §8-6 jetzt entschieden): echter ToolId — der
   // Insel-Katalog-Id bleibt `kommentare` (Plural, Bestandstext), der ToolId
   // dahinter ist `kommentar` (Singular, `ui-zustand.ts`s `ToolId`-Union) —
   // beide Namen sind unabhängig, `werkzeug()`s `extra.toolId` verknüpft sie.
-  werkzeug('kommentare', 'Kommentare', 'projekt', 'KO', 'vorhanden', true, { toolId: 'kommentar' }),
+  werkzeug('kommentare', 'Kommentare', 'projekt', icon(ISLAND_GLYPHEN, 'kommentare'), 'vorhanden', true, {
+    toolId: 'kommentar',
+  }),
 ];
 
 const ANDERE_STATION_HINWEIS = 'Andere Station — Weg offen (PD3b/Owner-Frage §8-4)';
 
 /** AUSTAUSCH (6) — §3.4. */
 const AUSTAUSCH: readonly IslandWerkzeug[] = [
-  werkzeug('export', 'Export', 'austausch', 'EX', 'vorhanden', true),
-  werkzeug('import', 'Import', 'austausch', 'IM', 'vorhanden', true),
-  werkzeug('rendern', 'Rendern', 'austausch', 'RE', 'teilweise', true, { hinweis: ANDERE_STATION_HINWEIS }),
-  werkzeug('blaetter', 'Blätter', 'austausch', 'BL', 'teilweise', true, { hinweis: ANDERE_STATION_HINWEIS }),
-  werkzeug('sync', 'Sync', 'austausch', 'SY', 'teilweise', true, { hinweis: ANDERE_STATION_HINWEIS }),
-  werkzeug('manuell', 'Manuell', 'austausch', 'MN', 'neu', false),
+  werkzeug('export', 'Export', 'austausch', icon(ISLAND_GLYPHEN, 'export'), 'vorhanden', true),
+  werkzeug('import', 'Import', 'austausch', icon(ISLAND_GLYPHEN, 'import'), 'vorhanden', true),
+  werkzeug('rendern', 'Rendern', 'austausch', icon(ISLAND_GLYPHEN, 'rendern'), 'teilweise', true, {
+    hinweis: ANDERE_STATION_HINWEIS,
+  }),
+  werkzeug('blaetter', 'Blätter', 'austausch', icon(ISLAND_GLYPHEN, 'blaetter'), 'teilweise', true, {
+    hinweis: ANDERE_STATION_HINWEIS,
+  }),
+  werkzeug('sync', 'Sync', 'austausch', icon(ISLAND_GLYPHEN, 'sync'), 'teilweise', true, {
+    hinweis: ANDERE_STATION_HINWEIS,
+  }),
+  werkzeug('manuell', 'Manuell', 'austausch', icon(ISLAND_GLYPHEN, 'manuell'), 'neu', false),
 ];
 
 /** Gesamtkatalog, 29/29, Reihenfolge exakt §3.1→§3.4. */

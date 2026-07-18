@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react';
 import {
   DESIGN_INSELN,
   designInselKonfig,
@@ -6,6 +6,8 @@ import {
   type IslandId,
   type IslandWerkzeug,
 } from './island-katalog';
+import { ISLAND_PILL_GLYPHEN } from './island-glyphen';
+import { useOverlaySchliessen } from '@kosmo/ui';
 import { bevorzugtReduzierteBewegung } from '../../../state/cursor-zustand';
 import { useProject } from '../../../state/project-store';
 import { touchUndoGesteAktiv } from '../../../state/touch-undo';
@@ -37,10 +39,44 @@ import './island.css';
  * aber nicht ersetzen — «Stufe» ist nirgends heute im Store abgebildet.
  */
 
-/** 900ms Rückklapp-Timer nach Pointer-Verlassen (§4.2, Prototyp `islLeave`). */
-const RUECKKLAPP_MS = 900;
+/** PB2 (Owner: «nach 1s»): 1000ms Rückklapp-Timer nach Pointer-Verlassen
+ *  (§4.2, Prototyp `islLeave` — war 900ms bis v0.8.3). */
+const RUECKKLAPP_MS = 1000;
 /** Toast-Anzeigedauer für Werkzeuge ohne Popup (§4.2, Prototyp `pickTool`). */
 const TOAST_MS = 1700;
+/** PB2 (Bauauftrag Punkt 2): Verzögerung, bevor der Lang-Hover-Tooltip am
+ *  Werkzeugknopf erscheint. */
+const TOOLTIP_VERZOEGERUNG_MS = 600;
+
+/**
+ * PB2 (`docs/V084-SPEZ.md` §7 Sanktion 3, E8): rendert eine Katalog-`glyphe`
+ * — ein echtes Icon (`ComponentType`) gewinnt, ein `string` bleibt der
+ * Text-Kürzel-Fallback (aktuell nur `skizze`, s. `island-katalog.ts`-
+ * Kopfkommentar; auch künftige Stations-Konfigs ohne Icon-Zuordnung fallen
+ * hierauf zurück, statt zu crashen).
+ */
+function WerkzeugGlyphe({ glyphe, size }: { glyphe: string | ComponentType<{ size?: number }>; size: number }) {
+  if (typeof glyphe === 'string') return <>{glyphe}</>;
+  const Icon = glyphe;
+  return <Icon size={size} />;
+}
+
+/**
+ * PB2 (Bauauftrag Punkt 4, D15-Folgefund): drei Insel-Werkzeuge committen
+ * ihre eigentliche Handlung über einen Klick AUSSERHALB der Insel (Plan-/
+ * Viewport-Canvas) WÄHREND ihr Popup/Fenster offen bleibt — Öffnung (Klick
+ * auf eine Wand), Messen (Klickkette bis Doppelklick/Esc) und Kommentar
+ * (Klick setzt den Punkt, das Formular erscheint danach IM selben Popup,
+ * `e2e/masskette-kommentar.spec.ts`). Ein generisches App-weites
+ * Aussenklick-Schliessen (§1.1) würde ihr Popup schon beim ERSTEN
+ * Arbeits-Klick wegreissen, bevor der Nutzer fertig ist — bewiesen durch
+ * genau diese Spec (»Kommentar: Klick setzt NUR den Punkt … das Formular
+ * erscheint jetzt«, prüft `island-kommentar-text` NACH einem Canvas-Klick
+ * bei weiterhin offenem Popup). Diese drei bleiben darum von der neuen
+ * Aussenklick-Regel ausgenommen; Esc schliesst sie trotzdem (kollidiert mit
+ * keinem bestehenden Test, s. Bauagenten-Bericht).
+ */
+const AUSSENKLICK_AUSNAHME = new Set(['oeffnung', 'messen', 'kommentare']);
 
 export type IslandStufe = 'pill' | 'leiste' | 'popup' | 'fenster';
 
@@ -291,9 +327,13 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
   const [stufe, setStufe] = useState<IslandStufe>('pill');
   const [aktivesWerkzeugId, setAktivesWerkzeugId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  /** PB2 (Bauauftrag Punkt 2): welches Werkzeug gerade seinen Lang-Hover-
+   *  Tooltip zeigt (`null` = keiner) — unabhängig von `stufe`. */
+  const [tooltipWerkzeugId, setTooltipWerkzeugId] = useState<string | null>(null);
 
   const rueckklappTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // §10.1 Viewport-Klammer (s. `useViewportKlammer`-Kopfkommentar oben) — je
   // ein Ref für Popup/Fenster, nur AKTIV, solange die jeweilige Stufe wirklich
@@ -302,12 +342,24 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
   const fensterRef = useRef<HTMLDivElement | null>(null);
   useViewportKlammer(popupRef, stufe === 'popup');
   useViewportKlammer(fensterRef, stufe === 'fenster');
+  /** PB2 (Bauauftrag Punkt 2): derselbe Klammer-Mechanismus für den
+   *  Werkzeug-Tooltip — «nie abgeschnitten», wiederverwendet statt neu
+   *  erfunden. */
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  useViewportKlammer(tooltipRef, tooltipWerkzeugId !== null);
+
+  // PB2 (Bauauftrag Punkt 4, E3): der Insel-Wurzelknoten ist der `ref` für
+  // BEIDE `useOverlaySchliessen`-Aufrufe unten (Popup/Fenster-Schliessen +
+  // Tooltip-Esc) — dieselbe Empfehlung wie `overlay-schliessen.ts`s
+  // Rollout-Kommentar («ref = der Insel-Wurzelknoten»).
+  const wurzelRef = useRef<HTMLDivElement | null>(null);
 
   // Timer beim Unmount räumen — kein Leck über Test-/Panel-Wechsel hinweg.
   useEffect(
     () => () => {
       if (rueckklappTimer.current) clearTimeout(rueckklappTimer.current);
       if (toastTimer.current) clearTimeout(toastTimer.current);
+      if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
     },
     [],
   );
@@ -396,11 +448,55 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
     setAktivesWerkzeugId(null);
   }
 
+  // PB2 (Bauauftrag Punkt 4, E3 «Insel-Popups/Fenster adoptieren
+  // useOverlaySchliessen»): Esc + Aussenklick schliessen ein offenes
+  // Popup/Fenster zurück auf `leiste` — der `icX`-Knopf (`schliessePopup
+  // OderFenster` oben) bleibt unverändert ein zweiter, direkter Weg. Esc ist
+  // IMMER aktiv (kollidiert mit keinem bestehenden Escape-Handler, s.
+  // Bauagenten-Bericht); Aussenklick ist es NUR ausserhalb der drei
+  // Canvas-Klickketten-Werkzeuge (`AUSSENKLICK_AUSNAHME` oben).
+  const popupOderFensterOffen = stufe === 'popup' || stufe === 'fenster';
+  useOverlaySchliessen(wurzelRef, schliessePopupOderFenster, {
+    esc: popupOderFensterOffen,
+    aussenklick: popupOderFensterOffen && !(aktivesWerkzeugId !== null && AUSSENKLICK_AUSNAHME.has(aktivesWerkzeugId)),
+  });
+
+  // PB2 (Bauauftrag Punkt 2): derselbe Hook schliesst den Lang-Hover-
+  // Tooltip auf Esc — Aussenklick bleibt aus (der Tooltip klappt sowieso
+  // schon beim Weg-Hover zu, s. `aufWerkzeugTooltipLeave` unten).
+  useOverlaySchliessen(wurzelRef, () => setTooltipWerkzeugId(null), {
+    esc: tooltipWerkzeugId !== null,
+    aussenklick: false,
+  });
+
+  function raeumeTooltipTimer(): void {
+    if (tooltipTimer.current) {
+      clearTimeout(tooltipTimer.current);
+      tooltipTimer.current = null;
+    }
+  }
+
+  /** Lang-Hover startet den Tooltip-Timer (§Bauauftrag Punkt 2, ~600ms). */
+  function aufWerkzeugTooltipEnter(werkzeugId: string): void {
+    raeumeTooltipTimer();
+    tooltipTimer.current = setTimeout(() => setTooltipWerkzeugId(werkzeugId), TOOLTIP_VERZOEGERUNG_MS);
+  }
+
+  /** Weg-Hover storniert den Timer UND schliesst einen bereits gezeigten Tooltip sofort. */
+  function aufWerkzeugTooltipLeave(): void {
+    raeumeTooltipTimer();
+    setTooltipWerkzeugId(null);
+  }
+
   const aktivesWerkzeug = aktivesWerkzeugId ? werkzeuge.find((w) => w.id === aktivesWerkzeugId) : undefined;
   const label = inselKonfig.label;
+  /** PB2 (Bauauftrag Punkt 1): Icon für die Pille dieser Insel — `undefined`
+   *  bei Stationen ohne Eintrag (Text-Fallback unten, `label.slice(0,2)`). */
+  const PillIcon = ISLAND_PILL_GLYPHEN[island];
 
   return (
     <div
+      ref={wurzelRef}
       className={`isl-root isl-${orientierung} ${inselKonfig.randKlasse}`}
       data-testid={`island-${island}-root`}
       data-reduziert={reduziert ? 'true' : 'false'}
@@ -415,8 +511,12 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
           aria-label={`${label} öffnen`}
           onClick={oeffneLeiste}
         >
+          {/* PB2 (Bauauftrag Punkt 1, C-13): die Pille zeigt NUR noch das
+              Icon — der Text-Zweiletter-Fallback bleibt für Stationen ohne
+              `ISLAND_PILL_GLYPHEN`-Eintrag (E1-Generalisierung, künftige
+              PC-Konfigs). */}
           <span className="isl-pill-glyphe" aria-hidden="true">
-            {label.slice(0, 2)}
+            {PillIcon ? <PillIcon size={20} /> : label.slice(0, 2)}
           </span>
         </button>
       ) : (
@@ -431,11 +531,32 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
                 data-testid={`island-werkzeug-${w.id}`}
                 aria-pressed={aktivesWerkzeugId === w.id}
                 onClick={() => aufWerkzeugKlick(w)}
+                onPointerEnter={() => aufWerkzeugTooltipEnter(w.id)}
+                onPointerLeave={aufWerkzeugTooltipLeave}
               >
                 <span className="isl-werkzeug-glyphe" aria-hidden="true">
-                  {w.glyphe}
+                  <WerkzeugGlyphe glyphe={w.glyphe} size={20} />
                 </span>
+                {/* Der Werkzeug-NAME bleibt als Textzeile unter dem Icon in
+                    der Leiste (Bauauftrag Punkt 1) — nur die Pille oben
+                    zeigt ausschliesslich das Icon. */}
                 <span className="isl-werkzeug-titel">{w.name}</span>
+                {/* PB2 (Bauauftrag Punkt 2, D15): Lang-Hover-Tooltip ersetzt
+                    den früheren Popup-Hinweisblock — viewport-geklammert
+                    (`useViewportKlammer`, dieselbe Technik wie Popup/
+                    Fenster), schliesst über Weg-Hover ODER Esc
+                    (`useOverlaySchliessen` oben). */}
+                {tooltipWerkzeugId === w.id ? (
+                  <div
+                    ref={tooltipRef}
+                    className="isl-werkzeug-tooltip"
+                    role="tooltip"
+                    data-testid={`island-werkzeug-${w.id}-tooltip`}
+                  >
+                    {w.name}
+                    {w.hinweis ? ` — ${w.hinweis}` : ''}
+                  </div>
+                ) : null}
               </button>
             ))}
           </div>
@@ -461,18 +582,19 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
           >
             ✕
           </button>
-          {/* PD3-Registry zuerst (Stufe-2-Inhalt aus `inhalte/`); sonst der
-              PD2-Hinweis (Werkzeug ohne echte Aktion) bzw. PD1-Rahmen. */}
+          {/* PB2 (D15, Bauauftrag Punkt 2): der frühere Katalog-Hinweisblock
+              («PD2-Hinweis») + die feste «NOCHMALS KLICKEN → ALLE
+              EINSTELLUNGEN»-Zeile sind RAUS — beide sassen im geklammerten
+              Popup und konnten am unteren linken Bildschirmrand abgeschnitten
+              werden (D15-Fundstelle). Der Hinweistext lebt jetzt im
+              Lang-Hover-Tooltip am Werkzeugknopf (s. Leiste oben); der
+              «nochmals klicken»-Hinweis war ohnehin nur ein statischer
+              Bedienhinweis, kein Werkzeug-Inhalt — das Popup zeigt seither
+              NUR noch den echten Stufe-2-Inhalt aus `inhalte/`. */}
           {(() => {
             const Inhalt = inhalte.inhaltFuer(aktivesWerkzeug.id)?.Stufe2;
             return Inhalt ? <Inhalt /> : null;
           })()}
-          {!inhalte.inhaltFuer(aktivesWerkzeug.id)?.Stufe2 && aktivesWerkzeug.hinweis ? (
-            <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-popup-hinweis`}>
-              {aktivesWerkzeug.hinweis}
-            </p>
-          ) : null}
-          <p className="isl-popup-hinweis">NOCHMALS KLICKEN → ALLE EINSTELLUNGEN</p>
         </div>
       ) : null}
 

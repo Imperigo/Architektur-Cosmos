@@ -96,21 +96,30 @@
   transform: translateX(-50%);
 }
 
-/* ── Stufe 0 · Pill (§2/§4.1: 34×104 vertikal / 104×34 horizontal) ── */
+/* ── Stufe 0 · Pill (§2/§4.1) ── PB2 (Bauauftrag Punkt 3, C-13): kürzer
+   (lange Achse 104→88px, die 44px-Trefferfläche bleibt über das Pseudo-
+   Element unten gewahrt) + glasiger — Hintergrund wechselt von der
+   opaken `--f-pill` (bleibt für Toast/Stationen-Orb/Kosmo-Kreise unverändert,
+   §5 Regel 1 "dunkles Glas") auf dieselbe `--f-glass`/`--f-blur`-Familie wie
+   Leiste/Popup/Fenster — EIN bestehendes Token, keine neue Farbe. `color`
+   wechselt vom hartkodierten Weiss auf `--f-ink` (theme-bewusst, Papier
+   bekommt jetzt dunkle statt weisser Schrift auf hellem Glas). */
 .isl-pill {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--f-pill);
+  background: var(--f-glass);
   backdrop-filter: var(--f-blur);
   -webkit-backdrop-filter: var(--f-blur);
   border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
   border-radius: var(--k-radius-pill);
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
-  color: #f4f6fa;
+  color: var(--f-ink);
   cursor: pointer;
   padding: 0;
   position: relative;
+  transform: scale(1);
+  transition: box-shadow var(--k-dock-schnell, 160ms) var(--k-ease-standard, ease);
 }
 /* §4.2: alle Ziele ≥44px Trefferfläche, auch wenn die visuelle Pill schmaler
    ist — die schmale 34px-Achse wird per unsichtbarem Pseudo-Element auf 44px
@@ -123,19 +132,48 @@
 }
 .isl-vertikal .isl-pill {
   width: 34px;
-  height: 104px;
+  height: 88px;
   min-height: 44px;
 }
 .isl-horizontal .isl-pill {
-  width: 104px;
+  width: 88px;
   height: 34px;
   min-width: 44px;
 }
 .isl-pill-glyphe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Text-Fallback-Grössen (nur genutzt, solange eine Station kein
+     `ISLAND_PILL_GLYPHEN`-Icon liefert) — s. `IslandShell.tsx`. */
   font-family: var(--k-font-mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
+}
+/* PB2 (Bauauftrag Punkt 3): Dynamic-Island-artiges Aufblühen bei Hover —
+   NUR `scale`, kein `translate`/Klammer-Vektor auf diesem Element (die
+   Insel-Randposition sitzt auf dem `.isl-root`-ELTERN-Knoten, nicht hier,
+   s. `.isl-rand-*` oben) — die Lehre v0.8.3 («Keyframes müssen die volle
+   Transform-Basis mitführen») greift nur, wenn ein Element BEREITS eine
+   Basis-Transform trägt; `.isl-pill` trägt keine, ein reines `scale`-
+   Keyframe ist hier darum sicher. */
+@keyframes islPillBluehen {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+.isl-pill:hover,
+.isl-pill:focus-visible {
+  animation: islPillBluehen 220ms var(--k-ease-standard, ease) forwards;
+  box-shadow: var(--k-shadow-xl, var(--k-shadow-lg, var(--k-shadow-overlay)));
+}
+.isl-root[data-reduziert='true'] .isl-pill:hover,
+.isl-root[data-reduziert='true'] .isl-pill:focus-visible {
+  animation: none;
 }
 
 /* ── Stufe 1 · Leiste (§4.1) ── */
@@ -186,6 +224,9 @@
   border-radius: var(--f-r-sm);
   color: var(--f-ink);
   cursor: pointer;
+  /* PB2 (Bauauftrag Punkt 2): Anker für den absolut positionierten
+     Lang-Hover-Tooltip (`.isl-werkzeug-tooltip` unten). */
+  position: relative;
   /* Zustands-Wechsel (Chips/Toggles, §4.3) — 160ms/standard, direkt aus
      der bestehenden Skala referenziert, kein neuer Token. */
   transition:
@@ -196,7 +237,14 @@
 .isl-werkzeug[aria-pressed='true'] {
   background: var(--k-accent-wash);
 }
+/* PB2 (Bauauftrag Punkt 1, C-13): trägt jetzt ein SVG-Icon (28 von 29
+   Werkzeugen) statt eines Zweibuchstaben-Kürzels — die Mono-Textregeln
+   bleiben als Fallback-Stil für `skizze` (Text-Rest, s. `island-katalog.ts`)
+   erhalten, zusätzlich zentriert die Flex-Regel das Icon sauber. */
 .isl-werkzeug-glyphe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--k-font-mono);
   font-size: 10px;
   font-weight: 600;
@@ -207,6 +255,53 @@
   font-size: 8.5px;
   text-align: center;
   line-height: 1.2;
+}
+
+/* ── Lang-Hover-Tooltip (PB2, Bauauftrag Punkt 2, D15) ──────────────────
+   Ersetzt den früheren, im Popup abschneidbaren Hinweisblock. Wiederverwendet
+   dieselbe Viewport-Klammer-Technik wie Popup/Fenster (`--isl-clamp-x/-y`,
+   `useViewportKlammer` in `IslandShell.tsx`) — «nie abgeschnitten» ist damit
+   strukturell garantiert statt neu erfunden. Bewusst OHNE Keyframe-Animation
+   (nur eine `opacity`-Transition) — die Lehre v0.8.3 gilt für `transform`-
+   Keyframes, ein reiner Opacity-Fade hat dieses Risiko gar nicht erst. */
+.isl-werkzeug-tooltip {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  --isl-clamp-x: 0px;
+  --isl-clamp-y: 0px;
+  transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(var(--isl-clamp-y));
+  z-index: 5;
+  max-width: 220px;
+  padding: var(--k-s2) var(--k-s3);
+  background: var(--f-pill);
+  color: #f4f6fa;
+  font-family: var(--k-font-ui);
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: left;
+  white-space: normal;
+  border-radius: var(--f-r-sm);
+  box-shadow: var(--k-shadow-md, var(--k-shadow-overlay));
+  pointer-events: none;
+  opacity: 0;
+  animation: islTooltipEin 140ms var(--k-ease-standard, ease) forwards;
+}
+@keyframes islTooltipEin {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.isl-rand-unten .isl-werkzeug-tooltip {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+.isl-root[data-reduziert='true'] .isl-werkzeug-tooltip {
+  animation: none;
+  opacity: 1;
 }
 
 /* ── Stufe 2 · Mini-Popup (§4.1) — PD1: leerer Rahmen, Inhalte folgen PD3 ──
