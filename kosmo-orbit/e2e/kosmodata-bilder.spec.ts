@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { deflateSync } from 'node:zlib';
 
 /**
  * PC5 (v0.8.4, `docs/V084-SPEZ.md` §8 C-21) — «KosmoData: Bilder für eigene
@@ -37,21 +38,73 @@ function schreibeJson(inhalt: unknown): string {
   return pfad;
 }
 
-/** 1×1-transparentes PNG (67 Bytes) — für die Ablehnungs-Fälle (Typ/Grösse),
- *  wo der Bildinhalt selbst irrelevant ist. */
-const PNG_1X1 = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
-  'base64',
-);
+/* Test-PNGs werden zur LAUFZEIT gebaut statt als Base64-Literal eingebettet —
+ * Repo-Konvention seit PD1 (`tools/secret-scan.mjs` schlägt auf lange
+ * Base64-/Hex-Literale an; Fixtures gehören generiert, nicht eingecheckt).
+ * `bauePng` erzeugt ein ECHTES, von Chrome dekodierbares PNG (Signatur +
+ * IHDR + IDAT via zlib + IEND, RGB 8-Bit, Filter 0 je Zeile). */
 
-/** 48×34-Terrakotta-Farbverlauf (echt dekodierbares PNG, ~270 Bytes) — für
- *  den erfolgreichen Upload, damit die Screenshots ein sichtbares Bild statt
- *  eines transparenten 1×1-Pixels zeigen (Beweiswert für Menschen, die den
- *  Screenshot lesen). */
-const PNG_GRADIENT = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAADAAAAAiCAIAAACWfs1AAAAA0UlEQVR4nGM4UuF2tNL9WLX78RqP47WeJ+o8TzZ4nWr0Ot3kfabZ52yrz9k233Ptfuc7/S50+V/sDrjUE3CpL/Byf+CVCUFXJwVfmxx8fUrIjamhN6aH3pwRdmtm+O1Z4XfmRNydG3lvXuS9BVH3F0Y9WBT9cHHMo6Uxj5fFPl4e92Rl3NNV8c9WJzxfk/BiXeLL9YkvNyS92pj8enPymy0pDKMOGnXQqINGHTTqoFEHjTpo1EGjDhp10KiDRh006qBRB406aNRBow4addBgchAAWzw7xgBWHpQAAAAASUVORK5CYII=',
-  'base64',
-);
+function crc32(daten: Buffer): number {
+  let crc = 0xffffffff;
+  for (const byte of daten) {
+    crc ^= byte;
+    for (let bit = 0; bit < 8; bit++) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
+function pngChunk(typ: string, daten: Buffer): Buffer {
+  const laenge = Buffer.alloc(4);
+  laenge.writeUInt32BE(daten.length, 0);
+  const inhalt = Buffer.concat([Buffer.from(typ, 'ascii'), daten]);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(inhalt), 0);
+  return Buffer.concat([laenge, inhalt, crc]);
+}
+
+function bauePng(
+  breite: number,
+  hoehe: number,
+  farbe: (x: number, y: number) => [number, number, number],
+): Buffer {
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(breite, 0);
+  ihdr.writeUInt32BE(hoehe, 4);
+  ihdr[8] = 8; // Bittiefe
+  ihdr[9] = 2; // Farbtyp RGB
+  const zeilen: Buffer[] = [];
+  for (let y = 0; y < hoehe; y++) {
+    const zeile = Buffer.alloc(1 + breite * 3); // Filter-Byte 0 + RGB je Pixel
+    for (let x = 0; x < breite; x++) {
+      const [r, g, b] = farbe(x, y);
+      zeile[1 + x * 3] = r;
+      zeile[2 + x * 3] = g;
+      zeile[3 + x * 3] = b;
+    }
+    zeilen.push(zeile);
+  }
+  return Buffer.concat([
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+    pngChunk('IHDR', ihdr),
+    pngChunk('IDAT', deflateSync(Buffer.concat(zeilen))),
+    pngChunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+
+/** 1×1-PNG — für die Ablehnungs-Fälle (Typ/Grösse), wo der Bildinhalt
+ *  selbst irrelevant ist. */
+const PNG_1X1 = bauePng(1, 1, () => [200, 200, 200]);
+
+/** 48×34-Terrakotta-Farbverlauf — für den erfolgreichen Upload, damit die
+ *  Screenshots ein sichtbares Bild statt eines 1×1-Pixels zeigen (Beweiswert
+ *  für Menschen, die den Screenshot lesen). */
+const PNG_GRADIENT = bauePng(48, 34, (x, y) => [
+  Math.min(255, 168 + x + y),
+  Math.max(0, 96 + Math.round(x / 2) - y),
+  Math.max(0, 72 - Math.round(y / 2)),
+]);
 
 async function importiereEigeneVilla(page: Page): Promise<void> {
   const batch = schreibeJson([{ id: 'e2e-bild-villa', title: 'E2E Bild Villa', city: 'Zürich' }]);
