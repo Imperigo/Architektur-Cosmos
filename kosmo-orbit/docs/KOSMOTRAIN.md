@@ -18,6 +18,30 @@ Die letzten Einträge fliessen bereits **sofort** in jede Konversation ein
 Kosmo-Einstellungen (⚙) → **«Lernjournal exportieren (JSONL fürs LoRA-Training)»**.
 Format: eine JSON-Zeile pro Eintrag `{sentiment, context, ts}`.
 
+## 2b) Empfänger auf der HomeStation (Manifest-Prüfung, v0.8.3 / E9)
+
+KosmoTrain schnürt für die sechs registrierten Adapter (`kosmo-buero`,
+`kosmo-zeichner-grundriss`, `kosmo-zeichner-commands`, `kosmo-buero-dpo`,
+`whisper-ch`, `kosmo-werkplan`) statt des rohen Journal-Exports ein volles
+Trainingspaket nach `kosmo.lora-train/v1` (Manifest + sha256-gehashte JSONL-
+Dateien, Browser-Download, `docs/HOMESTATION-AUFTRAG.md` §2 «Trainer-
+Contract»). Auf der HomeStation zuerst das Paket entpacken und gegen das
+Manifest prüfen lassen, bevor überhaupt eine Unsloth-Zeile läuft:
+
+```bash
+python3 tools/homestation-bridge/kosmo_bridge/lora_empfaenger.py \
+    <entpackter-paket-ordner> --fake-worker
+```
+
+Das Werkzeug (`tools/homestation-bridge/kosmo_bridge/lora_empfaenger.py`,
+neu seit v0.8.3) prüft Schema-Version, Adapter-Enum, den `visibility`-Deckel
+und den sha256-Hash jeder Datei gegen das Manifest und schreibt bei Erfolg
+ein Unsloth-Laufskript-**Template** (`unsloth-lauf-<adapter>.sh`, Platzhalter
+für GPU-Host/Basismodell, ehrlich als Template gekennzeichnet). Es macht NIE
+selbst einen GPU-Lauf — `--fake-worker` ist im Container/als Demo Pflicht
+(dieselbe Konvention wie `kosmo_bridge/main.py --fake-worker`); den echten
+Unsloth-Lauf (Schritt 3 unten) fährt der Owner von Hand auf der 5090.
+
 ## 3) LoRA-Training auf der HomeStation (Unsloth-Rezept)
 
 Ziel-Modell: das lokale Arbeitsmodell (z.B. `qwen3-coder:30b` — als HF-Checkpoint
