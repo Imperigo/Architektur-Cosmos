@@ -8,6 +8,7 @@ import {
   treppenTeile,
   type Assembly,
   type MassBody,
+  type MassKette,
   type Opening,
   type Roof,
   type Stair,
@@ -333,10 +334,16 @@ function WandStufe3() {
 }
 
 // ---------------------------------------------------------------------------
-// 3 · Öffnung — Fable-Entscheid: Einstellungen als Vorgabewerte für die
-// bestehende Skizze-Geste, KEIN neuer ToolId/Platzier-Modus (§8-5 bleibt
-// Owner-Frage). Ist eine Öffnung ausgewählt, wirken die Felder ECHT über
-// `design.eigenschaftSetzen` (genau die Parameter aus `design.oeffnungSetzen`).
+// 3 · Öffnung — v0.8.3 E3 (§3.2, docs/V083-SPEZ.md, Island-§8-Freigabe §8-5):
+// eigener ToolId 'oeffnung' + Klickmodus (Wand-Treffer in
+// `DesignWorkspace.tsx`s `punktSetzen()` ruft `design.oeffnungSetzen` mit
+// den hier gepflegten Vorgabewerten auf) — LÖST den früheren PD3a-
+// Zwischenentscheid ab («KEIN neuer ToolId/Platzier-Modus, §8-5 bleibt
+// Owner-Frage»), Owner hat §8-5 inzwischen entschieden. Die Skizze-Geste
+// (`onSketchWandOeffnung`) bleibt UNVERÄNDERT als zweiter, zusätzlicher Weg
+// bestehen — diese Vorgabewerte speisen jetzt BEIDE Wege. Ist eine Öffnung
+// ausgewählt, wirken die Felder weiterhin ECHT über `design.eigenschaftSetzen`
+// (genau die Parameter aus `design.oeffnungSetzen`).
 // ---------------------------------------------------------------------------
 
 interface OeffnungVorgabe {
@@ -348,6 +355,14 @@ interface OeffnungVorgabe {
 }
 
 let oeffnungVorgabe: OeffnungVorgabe = { openingType: 'fenster', width: 1200, height: 1500, sill: 900, swing: 'rechts' };
+
+/** Lese-Zugriff für `DesignWorkspace.tsx`s Öffnung-Klickmodus (E3, §3.2) —
+ *  derselbe Modul-Singleton wie `useOeffnungVorgabe()` unten, nur ohne
+ *  React-Re-Render-Kopplung (der Klickmodus liest den aktuellen Stand EINMAL
+ *  je Klick, kein Abo nötig). */
+export function oeffnungVorgabeLesen(): OeffnungVorgabe {
+  return oeffnungVorgabe;
+}
 
 function useOeffnungVorgabe(): readonly [OeffnungVorgabe, (patch: Partial<OeffnungVorgabe>) => void] {
   const [zustand, setZustandRoh] = useState(oeffnungVorgabe);
@@ -362,9 +377,9 @@ function useOeffnungVorgabe(): readonly [OeffnungVorgabe, (patch: Partial<Oeffnu
 function VorgabeHinweis() {
   return (
     <Hinweis testid="island-oeffnung-hinweis-vorgabe">
-      Vorgabewerte für die nächste Skizze-Geste — die automatische Übernahme durch die bestehende
-      Skizze-Geste (onSketchWandOeffnung) ist noch offen (Owner-Entscheid §8-5, ein eigener
-      ToolId/Platzier-Modus ist bewusst NICHT gebaut).
+      Vorgabewerte für den Öffnung-Klick (Wand anklicken setzt Fenster/Tür direkt,
+      design.oeffnungSetzen) UND für die weiterhin bestehende Skizze-Geste (onSketchWandOeffnung)
+      — beide Wege lesen dieselben Werte (§8-5, v0.8.3 E3).
     </Hinweis>
   );
 }
@@ -1160,8 +1175,14 @@ function MeshStufe3() {
 }
 
 // ---------------------------------------------------------------------------
-// 11 · Messen — Interims-Inhalt (§4.4): Ketten-Typ über
-// `design.bemassungSetzen`, echtes Punkt-zu-Punkt-Messen bleibt NEU (§8-7).
+// 11 · Messen — v0.8.3 E2 (§2, docs/V083-SPEZ.md, Island-§8-Freigabe §8-7):
+// «Kette-Typ (aussen)» bleibt der bestehende `design.bemassungSetzen`-
+// Anzeige-Weg (steuert NUR die automatische Aussenbemassung, unverändert,
+// §2.2/E2), ZUSÄTZLICH echtes Punkt-zu-Punkt-Messen über das neue
+// `'messen'`-Werkzeug (Klick reiht Punkte, Doppelklick/Escape committet
+// `design.massKetteSetzen` — Klickmodus in `DesignWorkspace.tsx`s
+// `punktSetzen()`) — eigenständiger, additiver Command-Pfad, s. Kommentar
+// dort.
 // ---------------------------------------------------------------------------
 
 function useBemassung() {
@@ -1177,6 +1198,57 @@ function useBemassung() {
     }
   };
   return [bemassung, setzen] as const;
+}
+
+/** Massketten des AKTIVEN Geschosses — echte `design.massKetteSetzen`-
+ *  Ergebnisse (§8-7), sortiert nach Erfassungsreihenfolge (Id, zeitlich
+ *  sortierbar, `model/ids.ts`). */
+function useMassketten(): readonly MassKette[] {
+  const revision = useProject((s) => s.revision);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const doc = useProject.getState().doc;
+  return useMemo(
+    () => (activeStoreyId ? doc.byKind<MassKette>('masskette').filter((m) => m.storeyId === activeStoreyId) : []),
+    [doc, revision, activeStoreyId],
+  );
+}
+
+/** Gesamtlänge einer Kette (Summe der Segmentlängen) — dieselbe Rechnung
+ *  wie `design.massKetteSetzen`s `summarize`. */
+function kettenLaenge(m: MassKette): number {
+  let gesamt = 0;
+  for (let i = 1; i < m.punkte.length; i++) gesamt += dist(m.punkte[i - 1]!, m.punkte[i]!);
+  return gesamt;
+}
+
+function MassKettenListe() {
+  const massketten = useMassketten();
+  const runCommand = useProject((s) => s.runCommand);
+  if (massketten.length === 0) {
+    return (
+      <Hinweis testid="island-messen-ketten-leer">
+        Noch keine Masskette in diesem Geschoss — Werkzeug «Messen» wählen, mindestens zwei Punkte
+        anklicken, Doppelklick oder Esc schliesst die Kette ab.
+      </Hinweis>
+    );
+  }
+  return (
+    <div className="pd3a-stufe2" data-testid="island-messen-ketten-liste">
+      {massketten.map((m) => (
+        <div className="pd3a-zeile" key={m.id}>
+          <span>{formatLength(Math.round(kettenLaenge(m)))} ({m.punkte.length} Pkt.)</span>
+          <KButton
+            size="sm"
+            tone="quiet"
+            data-testid="island-messen-kette-loeschen"
+            onClick={() => runCommand('design.massKetteLoeschen', { massKetteId: m.id })}
+          >
+            Löschen
+          </KButton>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function MessenStufe2() {
@@ -1195,9 +1267,10 @@ function MessenStufe2() {
           <option value="keine">Keine</option>
         </KSelect>
       </Zeile>
+      <MassKettenListe />
       <Hinweis testid="island-messen-hinweis">
-        Interims-Inhalt (§4.4): steuert nur die automatische Anzeige — echtes Punkt-zu-Punkt-
-        Messen ist noch nicht gebaut (§8-7, kein Command bislang).
+        «Kette-Typ» oben steuert nur die automatische Aussenbemassung — echtes Punkt-zu-Punkt-
+        Messen (§8-7): Punkte anklicken, Doppelklick/Esc schliesst ab (design.massKetteSetzen).
       </Hinweis>
     </div>
   );
@@ -1246,10 +1319,11 @@ function MessenStufe3() {
         />
         Rohkonstruktions-Kette
       </label>
+      <MassKettenListe />
       <Hinweis testid="island-messen-fenster-hinweis">
-        Interims-Inhalt (§4.4): design.bemassungSetzen steuert nur die automatische Anzeige der
-        Massketten — ein echtes interaktives Punkt-zu-Punkt-Mess-Werkzeug bleibt PD3a-Neubau
-        (§8-7, kein Command bislang; doc.byKind('mass') sind Volumenkörper, kein Mess-Ergebnis).
+        design.bemassungSetzen steuert weiterhin nur die automatische Anzeige der Aussenbemassung
+        — das echte, interaktive Punkt-zu-Punkt-Mess-Werkzeug (§8-7) ist ein eigenständiger,
+        additiver Command-Pfad (design.massKetteSetzen), oben aufgelistet.
       </Hinweis>
     </div>
   );
