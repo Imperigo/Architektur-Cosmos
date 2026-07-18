@@ -356,24 +356,32 @@
     transform: scale(1);
   }
 }
+/* W2-Quergate-Fund (18.07.2026, ROADMAP 446): `popIn`/`winIn` müssen die
+   VOLLE Basis-Transformation (`translateX(-50%)` + `--isl-clamp-*`) mitführen
+   — eine `animation` überschreibt die `transform`-Eigenschaft der Regel für
+   ihre gesamte Laufdauer. Die alten Keyframes (nur `translateY+scale`)
+   liessen Popup/Fenster darum ~200–320ms lang UNZENTRIERT und UNGEKLAMMERT
+   aufblitzen (Messen-Fenster der hohen ZEICHNEN-Insel: Unterkante 925px im
+   768er-Viewport, live gemessen), bevor sie an die korrekte Position
+   sprangen — sichtbares Nachrücken für Nutzer, Flake für jede Box-Messung. */
 @keyframes popIn {
   from {
     opacity: 0;
-    transform: translateY(4px) scale(0.96);
+    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(calc(var(--isl-clamp-y) + 4px)) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(var(--isl-clamp-y)) scale(1);
   }
 }
 @keyframes winIn {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
+    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(calc(var(--isl-clamp-y) + 8px)) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(var(--isl-clamp-y)) scale(1);
   }
 }
 .isl-anim-islIn {

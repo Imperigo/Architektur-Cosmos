@@ -97,6 +97,8 @@ export function useReduzierteBewegung(): boolean {
  * z. B. durch den ResizeObserver unten).
  */
 const ISL_VIEWPORT_RAND_PX = 8;
+/** Abstand Popup↔Leiste nach einer Kollisions-Ausweichung (s. u.). */
+const ISL_LEISTE_ABSTAND_PX = 6;
 
 function klammereInViewport(el: HTMLElement): void {
   if (typeof window === 'undefined') return;
@@ -111,6 +113,41 @@ function klammereInViewport(el: HTMLElement): void {
   else if (r.right > vw - ISL_VIEWPORT_RAND_PX) dx = vw - ISL_VIEWPORT_RAND_PX - r.right;
   if (r.top < ISL_VIEWPORT_RAND_PX) dy = ISL_VIEWPORT_RAND_PX - r.top;
   else if (r.bottom > vh - ISL_VIEWPORT_RAND_PX) dy = vh - ISL_VIEWPORT_RAND_PX - r.bottom;
+
+  // W2-Quergate-Fund (18.07.2026): die reine Viewport-Klammer kann das Popup
+  // ÜBER die eigene Werkzeug-Leiste schieben (hohe ZEICHNEN-Insel @1024×768:
+  // Clamp-Y -81px legte das Messen-Popup auf den Messen-Knopf — der zweite
+  // Klick zur Stufe-3-Eskalation war abgefangen, elementFromPoint-bewiesen).
+  // Darum: überdeckt das geklammerte Popup die Leiste, weicht es QUER zur
+  // Insel-Orientierung aus (vertikale Leiste → seitlich, horizontale →
+  // darüber/darunter), auf die Seite mit mehr Platz. Interaktion schlägt
+  // Randabstand: die Ausweichung wird nur weich nachgeklammert, nie zurück
+  // in die Überdeckung.
+  const wurzel = el.closest('.isl-root');
+  const leiste = wurzel?.querySelector('.isl-leiste');
+  if (leiste) {
+    const l = leiste.getBoundingClientRect();
+    const g = { left: r.left + dx, right: r.right + dx, top: r.top + dy, bottom: r.bottom + dy };
+    const ueberdeckt = g.left < l.right && g.right > l.left && g.top < l.bottom && g.bottom > l.top;
+    if (ueberdeckt) {
+      if (wurzel!.classList.contains('isl-vertikal')) {
+        const platzRechts = vw - ISL_VIEWPORT_RAND_PX - l.right;
+        const platzLinks = l.left - ISL_VIEWPORT_RAND_PX;
+        dx =
+          platzRechts >= r.width || platzRechts >= platzLinks
+            ? l.right + ISL_LEISTE_ABSTAND_PX - r.left
+            : l.left - ISL_LEISTE_ABSTAND_PX - r.right;
+      } else {
+        const platzUnten = vh - ISL_VIEWPORT_RAND_PX - l.bottom;
+        const platzOben = l.top - ISL_VIEWPORT_RAND_PX;
+        dy =
+          platzUnten >= r.height || platzUnten >= platzOben
+            ? l.bottom + ISL_LEISTE_ABSTAND_PX - r.top
+            : l.top - ISL_LEISTE_ABSTAND_PX - r.bottom;
+      }
+    }
+  }
+
   el.style.setProperty('--isl-clamp-x', `${dx}px`);
   el.style.setProperty('--isl-clamp-y', `${dy}px`);
 }

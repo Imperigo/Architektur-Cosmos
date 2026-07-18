@@ -312,6 +312,24 @@ describe('IslandShell — Viewport-Klammer (§10.1 P8, docs/V083-SPEZ.md)', () =
     expect(fenster.style.getPropertyValue('--isl-clamp-x')).toBe('8px');
     expect(fenster.style.getPropertyValue('--isl-clamp-y')).toBe('8px');
   });
+
+  it('W2-Quergate-Fund: überdeckt die Klammer die eigene Leiste, weicht das Popup seitlich aus (vertikale Insel)', () => {
+    // Nachbau der Live-Geometrie der hohen ZEICHNEN-Insel @1024×768 (Messen-
+    // Popup, ROADMAP-445-Quergate): die reine Viewport-Klammer (dx=55) legte
+    // das Popup AUF die Leiste — erwartet ist die Ausweichung neben die
+    // Leiste (dx = l.right + 6 − r.left = 138+6−(−47) = 191), dy bleibt 0.
+    hoverEnter(q('island-zeichnen-root')!);
+    klick(q('island-werkzeug-wand')!);
+    const popup = q('island-wand-popup')!;
+    const leiste = q('island-zeichnen-leiste')!;
+    const rect = (o: { left: number; top: number; right: number; bottom: number }) =>
+      ({ ...o, width: o.right - o.left, height: o.bottom - o.top, x: o.left, y: o.top, toJSON: () => o }) as DOMRect;
+    leiste.getBoundingClientRect = () => rect({ left: 64, top: 114, right: 138, bottom: 653 });
+    popup.getBoundingClientRect = () => rect({ left: -47, top: 547, right: 249, bottom: 749 });
+    window.dispatchEvent(new Event('resize')); // stösst die Neu-Messung des aktiven Klammer-Hooks an
+    expect(popup.style.getPropertyValue('--isl-clamp-x')).toBe('191px');
+    expect(popup.style.getPropertyValue('--isl-clamp-y')).toBe('0px');
+  });
 });
 
 describe('IslandBuehne — Zwei-Finger-Doppeltipp-Undo (§10.2 P8, Default AUS)', () => {
