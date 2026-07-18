@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useOverlaySchliessen } from '@kosmo/ui';
 import type { ViewMode } from '../../../state/ui-zustand';
 import './island.css';
 
@@ -32,8 +33,16 @@ import './island.css';
  * echte, bestehende `ViewMode`-Werte (Sanktion: keine erfundenen Zustände).
  *
  * Auto-Schliessen 700ms nach Pointer-Verlassen (§1, `Component.setInfo`-
- * Analogon) — dasselbe Timer-Muster wie `IslandShell`s 900ms-Rückklapp,
- * andere Konstante.
+ * Analogon).
+ *
+ * **PB4 (`docs/V084-SPEZ.md` §3 E3 «Popup-Gesetz», Pflicht-Konsument):** der
+ * bisherige lokale `schliessTimer`/`AUTO_SCHLIESSEN_MS`-Handbau ist ERSETZT
+ * durch `useOverlaySchliessen(wurzelRef, …, { hoverRueckklappMs:
+ * AUTO_SCHLIESSEN_MS })` — verhaltensgleich (dieselben 700ms nach
+ * Pointer-Verlassen, Wiedereintritt storniert unverändert), zusätzlich
+ * ADDITIV Esc/Aussenklick (§7 Sanktion, app-weites Popup-Gesetz — bisher
+ * fehlte beides hier). `ref` = die Wurzel (Label + Popover als Kinder,
+ * `overlay-schliessen.ts`-Kopfkommentar «island-Popups/-Fenster»).
  */
 
 const AUTO_SCHLIESSEN_MS = 700;
@@ -55,40 +64,22 @@ export interface AnsichtsInfoProps {
 
 export function AnsichtsInfo({ viewMode, setViewMode }: AnsichtsInfoProps) {
   const [offen, setOffen] = useState(false);
-  const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wurzelRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(
-    () => () => {
-      if (schliessTimer.current) clearTimeout(schliessTimer.current);
-    },
-    [],
-  );
-
-  function raeumeTimer(): void {
-    if (schliessTimer.current) {
-      clearTimeout(schliessTimer.current);
-      schliessTimer.current = null;
-    }
-  }
-
-  function aufEnter(): void {
-    raeumeTimer();
-    setOffen(true);
-  }
-
-  function aufLeave(): void {
-    raeumeTimer();
-    schliessTimer.current = setTimeout(() => setOffen(false), AUTO_SCHLIESSEN_MS);
-  }
+  useOverlaySchliessen(wurzelRef, () => setOffen(false), {
+    esc: true,
+    aussenklick: true,
+    hoverRueckklappMs: AUTO_SCHLIESSEN_MS,
+  });
 
   const label = ANSICHT_LABEL[viewMode];
 
   return (
     <div
+      ref={wurzelRef}
       className="isl-buehnenkopf isl-buehnenkopf-ansichts-info"
       data-testid="ansichts-info-root"
-      onMouseEnter={aufEnter}
-      onMouseLeave={aufLeave}
+      onMouseEnter={() => setOffen(true)}
     >
       <button
         type="button"

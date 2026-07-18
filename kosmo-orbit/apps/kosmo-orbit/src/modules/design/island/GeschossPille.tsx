@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useOverlaySchliessen } from '@kosmo/ui';
 import type { Storey } from '@kosmo/kernel';
 import './island.css';
 
@@ -27,10 +28,14 @@ import './island.css';
  * unverändert HIERHER um (waren zuvor Teil von `ansichts-info-popover`) —
  * betroffene Specs sind einzeln in PB3s Bericht begründet.
  *
- * Auto-Schliessen 700ms nach Pointer-Verlassen — dasselbe lokale
- * Timer-Muster wie `AnsichtsInfo`/`StationenOrb` (kein `useOverlaySchliessen`
- * hier: der App-weite Hook-Rollout ist E3/PB4-Eigentum, s.
- * `docs/V084-SPEZ.md` §3 E3 + §5 W4 — ausserhalb dieses Pakets).
+ * Auto-Schliessen 700ms nach Pointer-Verlassen.
+ *
+ * **PB4 (`docs/V084-SPEZ.md` §3 E3 «Popup-Gesetz», Pflicht-Konsument):** der
+ * bisherige lokale `schliessTimer`/`AUTO_SCHLIESSEN_MS`-Handbau ist ERSETZT
+ * durch `useOverlaySchliessen(wurzelRef, …, { hoverRueckklappMs:
+ * AUTO_SCHLIESSEN_MS })` — verhaltensgleich (dieselben 700ms nach
+ * Pointer-Verlassen, Wiedereintritt storniert unverändert), zusätzlich
+ * ADDITIV Esc/Aussenklick (bisher fehlte beides hier).
  */
 
 const AUTO_SCHLIESSEN_MS = 700;
@@ -43,31 +48,13 @@ export interface GeschossPilleProps {
 
 export function GeschossPille({ storeys, activeStoreyId, setActiveStorey }: GeschossPilleProps) {
   const [offen, setOffen] = useState(false);
-  const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wurzelRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(
-    () => () => {
-      if (schliessTimer.current) clearTimeout(schliessTimer.current);
-    },
-    [],
-  );
-
-  function raeumeTimer(): void {
-    if (schliessTimer.current) {
-      clearTimeout(schliessTimer.current);
-      schliessTimer.current = null;
-    }
-  }
-
-  function aufEnter(): void {
-    raeumeTimer();
-    setOffen(true);
-  }
-
-  function aufLeave(): void {
-    raeumeTimer();
-    schliessTimer.current = setTimeout(() => setOffen(false), AUTO_SCHLIESSEN_MS);
-  }
+  useOverlaySchliessen(wurzelRef, () => setOffen(false), {
+    esc: true,
+    aussenklick: true,
+    hoverRueckklappMs: AUTO_SCHLIESSEN_MS,
+  });
 
   // Kein Geschoss (Bootstrap-Lücke) — die Pille rendert lieber gar nicht,
   // statt einen leeren/erfundenen Zustand vorzutäuschen (dasselbe
@@ -79,10 +66,10 @@ export function GeschossPille({ storeys, activeStoreyId, setActiveStorey }: Gesc
 
   return (
     <div
+      ref={wurzelRef}
       className="isl-buehnenkopf isl-geschoss-pille"
       data-testid="geschoss-pille-root"
-      onMouseEnter={aufEnter}
-      onMouseLeave={aufLeave}
+      onMouseEnter={() => setOffen(true)}
     >
       <button
         type="button"

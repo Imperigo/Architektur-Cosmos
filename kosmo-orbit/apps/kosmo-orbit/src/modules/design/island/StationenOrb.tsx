@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import type { ModuleId } from '@kosmo/ui';
+import { useRef, useState } from 'react';
+import { useOverlaySchliessen, type ModuleId } from '@kosmo/ui';
 import { ORBIT_HAUPTWERKZEUGE, type OrbitHauptwerkzeug } from '../../../shell/orbit-werkzeuge';
 import './island.css';
 
@@ -43,6 +43,13 @@ import './island.css';
  * `dock-vis`/`dock-publish`/`dock-prepare`-Knöpfe schon nutzen
  * (`onStationOeffnen`, `App.tsx` `oeffneModul`).
  *
+ * **PB4 (`docs/V084-SPEZ.md` §3 E3 «Popup-Gesetz», Pflicht-Konsument):** der
+ * bisherige lokale `schliessTimer`/`AUTO_SCHLIESSEN_MS`-Handbau ist ERSETZT
+ * durch `useOverlaySchliessen(wurzelRef, …, { hoverRueckklappMs:
+ * AUTO_SCHLIESSEN_MS })` — verhaltensgleich (dieselben 700ms nach
+ * Pointer-Verlassen, Wiedereintritt storniert unverändert), zusätzlich
+ * ADDITIV Esc/Aussenklick (bisher fehlte beides hier).
+ *
  * **PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): «Zentrale»-Eintrag**
  * bleibt UNVERÄNDERT additiv erhalten — eigener, optionaler `onZentrale`-
  * Callback, immer der ERSTE Popover-Eintrag, separat von der Hauptwerkzeug-
@@ -80,41 +87,23 @@ function findeOffenesHaupttool(aktivesModul: ModuleId): OrbitHauptwerkzeug | und
 
 export function StationenOrb({ aktivesModul, onStationOeffnen, onZentrale }: StationenOrbProps) {
   const [offen, setOffen] = useState(false);
-  const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wurzelRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(
-    () => () => {
-      if (schliessTimer.current) clearTimeout(schliessTimer.current);
-    },
-    [],
-  );
-
-  function raeumeTimer(): void {
-    if (schliessTimer.current) {
-      clearTimeout(schliessTimer.current);
-      schliessTimer.current = null;
-    }
-  }
-
-  function aufEnter(): void {
-    raeumeTimer();
-    setOffen(true);
-  }
-
-  function aufLeave(): void {
-    raeumeTimer();
-    schliessTimer.current = setTimeout(() => setOffen(false), AUTO_SCHLIESSEN_MS);
-  }
+  useOverlaySchliessen(wurzelRef, () => setOffen(false), {
+    esc: true,
+    aussenklick: true,
+    hoverRueckklappMs: AUTO_SCHLIESSEN_MS,
+  });
 
   const offenesHaupttool = findeOffenesHaupttool(aktivesModul);
   const andereHauptwerkzeuge = ORBIT_HAUPTWERKZEUGE.filter((h) => h.id !== offenesHaupttool?.id);
 
   return (
     <div
+      ref={wurzelRef}
       className="isl-buehnenkopf isl-buehnenkopf-stationen-orb"
       data-testid="stationen-orb-root"
-      onMouseEnter={aufEnter}
-      onMouseLeave={aufLeave}
+      onMouseEnter={() => setOffen(true)}
     >
       <button
         type="button"

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { greeting } from '@kosmo/ai';
+import { useOverlaySchliessen } from '@kosmo/ui';
 import { kurzform, useKosmoStatus } from '../../../state/kosmo-status';
 import { useProject } from '../../../state/project-store';
 import { loadSettings } from '../../../shell/KosmoPanel';
@@ -17,22 +18,26 @@ import { loadSettings } from '../../../shell/KosmoPanel';
 // eigenen `animation:none`-Regeln je Klasse (`kosmo-feedback.css`-Kopf-
 // kommentar) — keine zusätzliche Gate-Logik hier nötig, die bestehende
 // Animations-Disziplin der Komponente wird unverändert übernommen.
-import { KosmoOrb as KosmoSymbolOrb } from '../../../shell/KosmoOrb';
+import { KosmoOrb as KosmoSymbolOrb, useKlickVsDoppelklick } from '../../../shell/KosmoOrb';
 import { useReduzierteBewegung } from './IslandShell';
 import './island.css';
 
 /**
- * Kosmo-Orb (PD4 Abschluss, `docs/ISLAND-UI-SPEZ.md` §1-Tabelle/§4.3 Zeile 5)
- * — der goldene Orb unten rechts im Island-Modus (52px, `--f-gold`, Puls
- * `--k-insel-orb-puls` 2.4s, `reduced-motion`: kein Puls). Bleibt bewusst
+ * Kosmo-Orb (PD4 Abschluss, `docs/ISLAND-UI-SPEZ.md` §1-Tabelle/§4.3 Zeile 5;
+ * PB4 `docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz») — der Orb unten rechts im
+ * Island-Modus (52px, Hülle neutral-glasig `--f-glass`-Familie seit PB4 —
+ * Owner wörtlich «Kosmo-Orb nicht gelb hinterlegen», `island.css`, Kern +
+ * Punkte bleiben stationsfarbig), Puls `--k-insel-orb-puls` 2.4s in
+ * `--k-signal` statt Gold, `reduced-motion`: kein Puls. Bleibt bewusst
  * AUSSERHALB der vier Islands (§1: «Bleibt ausserhalb der vier Islands»).
  *
  * **Ablöst den PD3c-Notbehelf:** bis PD4 sprang hier `shell/KosmoSymbol.tsx`
  * (App.tsx, `bodenDockAusgeblendet`-Zweig) ein, das Klick DIREKT das grosse
  * Panel öffnete (`onOpen`). Diese Komponente ist der reale, spezifizierte
- * Kosmo-Orb: Klick öffnet zuerst eine 320px-Konversationskarte
- * (Vorschlagstext + 2 Aktions-Chips + Eingabezeile), nicht sofort das Panel
- * — `App.tsx` rendert `KosmoSymbol` darum nur noch auf `screen==='home'`,
+ * Kosmo-Orb: Einfachklick öffnet zuerst eine 320px-Konversationskarte
+ * (Vorschlagstext + 2 Aktions-Chips + Eingabezeile), Doppelklick überspringt
+ * sie direkt zum Panel (PB4, E2-Tabelle, `useKlickVsDoppelklick` s. unten) —
+ * `App.tsx` rendert `KosmoSymbol` darum nur noch auf `screen==='home'`,
  * diese Komponente übernimmt den Zugang im Island-Modus der design-Station
  * (`DesignWorkspace.tsx`, `designOberflaeche==='island'`-Zweig).
  *
@@ -86,6 +91,7 @@ function begruessung(): string {
 
 export function KosmoOrb({ onKosmoOeffnen }: KosmoOrbProps) {
   const [offen, setOffen] = useState(false);
+  const [zeigeMini, setZeigeMini] = useState(false);
   const [eingabe, setEingabe] = useState('');
   const reduziert = useReduzierteBewegung();
   const beschaeftigt = useKosmoStatus((s) => s.beschaeftigt);
@@ -94,6 +100,7 @@ export function KosmoOrb({ onKosmoOeffnen }: KosmoOrbProps) {
   // reicht (idle/thinking/listening/writing/dispatching/done/speaking/error/
   // takeover) — treibt jetzt auch hier die volle Zustands-Choreografie.
   const zustand = useKosmoStatus((s) => s.zustand);
+  const wurzelRef = useRef<HTMLDivElement | null>(null);
 
   const vorschlagText = letzteAktivitaet ?? kurzform(begruessung());
   const mockAktiv = loadSettings().provider === 'mock';
@@ -104,15 +111,71 @@ export function KosmoOrb({ onKosmoOeffnen }: KosmoOrbProps) {
     setEingabe('');
   }
 
+  // PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz» + E3-Rollout-Doku,
+  // `overlay-schliessen.ts`-Kopfkommentar «Orb-Karte»): Esc/Aussenklick
+  // schliessen die Karte — additiv, `ref` = die Wurzel (Knopf + Karte als
+  // Kinder, dasselbe Prinzip wie `KosmoSymbol.tsx`s `wrapperRef`), damit ein
+  // Klick auf den Knopf selbst (öffnet/schliesst über `onClick` unten) nie
+  // als Aussenklick auf die eigene Karte missverstanden wird. Kein
+  // `hoverRueckklappMs` (die Karte schliesst nur aktiv, s. Hook-Kopfkommentar).
+  useOverlaySchliessen(wurzelRef, () => setOffen(false), { esc: true, aussenklick: true });
+
+  // PB4 (E2-Tabelle «Hover/Focus → Mini-Popup mit Textverlauf», Muster
+  // `KosmoSymbol.tsx:67-78`): bisher fehlte hier jedes Hover-Feedback — der
+  // Einfachklick war der einzige Bedienweg. Zweiter, unabhängiger
+  // `useOverlaySchliessen`-Ruf (derselbe `wurzelRef`) mit `hoverRueckklappMs`
+  // (dasselbe ~1s-Mandat wie im Symbol) — Esc/Aussenklick schliessen das
+  // Mini-Popup zusätzlich sofort.
+  useOverlaySchliessen(wurzelRef, () => setZeigeMini(false), {
+    esc: true,
+    aussenklick: true,
+    hoverRueckklappMs: 1000,
+  });
+
+  // PB4: Einfachklick öffnet die Karte (E2-Tabelle), Doppelklick überspringt
+  // sie direkt zum Panel — derselbe geteilte Hook wie `KosmoSymbol.tsx`
+  // (`shell/KosmoOrb.tsx`, EIN Zeitwert app-weit statt einer Kopie je Orb-
+  // Erscheinung). Ersetzt den bisherigen reinen Klick-Toggle (`setOffen((o)
+  // => !o)`) — die E2-Tabelle kennt für den Einfachklick nur «öffnet»,
+  // Schliessen ist seither Sache von Esc/Aussenklick/«Später»/«Antworten».
+  const { onClick: karteOeffnen, onDoubleClick: panelOeffnen } = useKlickVsDoppelklick(
+    () => {
+      setZeigeMini(false);
+      setOffen(true);
+    },
+    handoff,
+  );
+
   return (
-    <div className="isl-orb-wurzel" data-testid="kosmo-orb-wurzel" data-reduziert={reduziert ? 'true' : 'false'}>
+    <div
+      className="isl-orb-wurzel"
+      data-testid="kosmo-orb-wurzel"
+      data-reduziert={reduziert ? 'true' : 'false'}
+      ref={wurzelRef}
+    >
+      {zeigeMini && !offen && (
+        <div data-testid="kosmo-orb-mini" role="status" className="k-einblenden isl-orb-mini">
+          <div className="isl-orb-mini-titel">{beschaeftigt ? 'Kosmo arbeitet …' : 'Kosmo'}</div>
+          {vorschlagText}
+        </div>
+      )}
       <button
         type="button"
         className={`isl-orb${!reduziert ? ' isl-orb-anim-puls' : ''}`}
         data-testid="kosmo-orb-knopf"
-        aria-label={offen ? 'Kosmo-Karte schliessen' : beschaeftigt ? 'Kosmo — arbeitet gerade' : 'Kosmo öffnen'}
+        aria-label={
+          beschaeftigt
+            ? 'Kosmo — arbeitet gerade'
+            : offen
+              ? 'Kosmo-Karte offen — Doppelklick öffnet das Kosmo-Panel'
+              : 'Kosmo öffnen (Doppelklick: Kosmo-Panel)'
+        }
         aria-expanded={offen}
-        onClick={() => setOffen((o) => !o)}
+        onClick={karteOeffnen}
+        onDoubleClick={panelOeffnen}
+        onMouseEnter={() => setZeigeMini(true)}
+        onFocus={() => setZeigeMini(true)}
+        onBlur={() => setZeigeMini(false)}
       >
         <KosmoSymbolOrb zustand={zustand} size={30} />
       </button>

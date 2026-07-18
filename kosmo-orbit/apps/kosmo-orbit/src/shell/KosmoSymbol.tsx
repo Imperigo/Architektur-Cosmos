@@ -3,7 +3,13 @@ import { greeting } from '@kosmo/ai';
 import { useOverlaySchliessen } from '@kosmo/ui';
 import { useKosmoStatus, kurzform } from '../state/kosmo-status';
 import { useProject } from '../state/project-store';
-import { KosmoOrb } from './KosmoOrb';
+import { KosmoOrb, useKlickVsDoppelklick } from './KosmoOrb';
+// PB4 (`docs/V084-SPEZ.md` §3 E2, reiner Lese-Import — `KosmoPanel.tsx`
+// bleibt unverändert, s. Bauauftrag «nur falls Doppelklick-Weg es braucht»):
+// derselbe benannte Export, den `island/KosmoOrb.tsx` schon für ihre
+// Konversationskarte nutzt (Mock-Provider-Hinweis, s. dortiger
+// Kopfkommentar) — kein zweiter Provider-Zustand.
+import { loadSettings } from './KosmoPanel';
 import './orbit-065.css';
 import './kosmo-symbol.css';
 
@@ -43,12 +49,25 @@ export interface KosmoSymbolProps {
  * zeigt den feingranularen `zustand` (idle/thinking/listening/…/takeover)
  * über `data-zustand`. Testids/DOM-Vertrag (`kosmo-symbol`, `kosmo-mini`,
  * Symbol↔Panel) bleiben exakt unverändert, nur das Icon-Innere wechselt.
+ *
+ * **PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz»):** Einfachklick öffnet ab
+ * jetzt NICHT mehr direkt das grosse Panel, sondern dieselbe Art
+ * Konversationskarte, die `island/KosmoOrb.tsx` bereits zeigt (Vorschlagstext
+ * + 2 Aktions-Chips + Eingabezeile, `data-testid="kosmo-karte"`) —
+ * Doppelklick öffnet das Panel direkt (`onOpen`, neu). Die Unterscheidung
+ * läuft über den geteilten `useKlickVsDoppelklick`-Hook (`./KosmoOrb`,
+ * derselbe, den `island/KosmoOrb.tsx` nutzt — EIN Zeitwert app-weit). Esc/
+ * Aussenklick schliessen die Karte (`useOverlaySchliessen`, `ref`=derselbe
+ * `wrapperRef` wie das Mini-Popup — ein Klick auf den Trigger-Knopf selbst
+ * zählt damit nie als "aussen", exakt dasselbe Prinzip wie beim Popup oben).
  */
 export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
   const beschaeftigt = useKosmoStatus((s) => s.beschaeftigt);
   const zustand = useKosmoStatus((s) => s.zustand);
   const letzteAktivitaet = useKosmoStatus((s) => s.letzteAktivitaet);
   const [zeigePopup, setZeigePopup] = useState(false);
+  const [zeigeKarte, setZeigeKarte] = useState(false);
+  const [eingabe, setEingabe] = useState('');
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   // v0.8.4 W1 / PA4 (Spez §3 E3, Pflicht-Konsument #1): Esc schliesst das
@@ -66,6 +85,31 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
     hoverRueckklappMs: 1000,
   });
 
+  // PB4 (E3-Rollout-Doku, `overlay-schliessen.ts`-Kopfkommentar «Orb-Karte»):
+  // eigener, zweiter Hook-Ruf für die Konversationskarte — esc+aussenklick,
+  // bewusst KEIN `hoverRueckklappMs` (die Karte schliesst nur aktiv, nicht
+  // durch Weg-Hover; dafür kennt die E2-Tabelle den Einfachklick). Derselbe
+  // `wrapperRef` wie oben (statt nur der Karte selbst): ein Klick auf den
+  // Trigger-Knopf, während die Karte offen ist, darf sie nicht per
+  // Aussenklick-Handler sofort wieder zuklappen, bevor der eigene
+  // Klick-Handler unten überhaupt zum Zug kommt.
+  useOverlaySchliessen(wrapperRef, () => setZeigeKarte(false), {
+    esc: true,
+    aussenklick: true,
+  });
+
+  const { onClick: karteKlick, onDoubleClick: panelDoppelklick } = useKlickVsDoppelklick(
+    () => {
+      setZeigePopup(false);
+      setZeigeKarte(true);
+    },
+    () => {
+      setZeigeKarte(false);
+      setEingabe('');
+      onOpen();
+    },
+  );
+
   // Fallback fürs Mini-Popup, solange Kosmo noch NIE geantwortet hat (Panel
   // seit Programmstart nie geöffnet): dieselbe Begrüssungszeile, die das
   // Panel selbst beim ersten Mount zeigen würde (KosmoPanel.tsx) — kein
@@ -77,14 +121,21 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
       storeys: doc.byKind('storey').length,
     });
   };
-  const popupText = letzteAktivitaet ?? kurzform(begruessung());
+  const vorschlagText = letzteAktivitaet ?? kurzform(begruessung());
+  const mockAktiv = loadSettings().provider === 'mock';
+
+  function handoff(): void {
+    setZeigeKarte(false);
+    setEingabe('');
+    onOpen();
+  }
 
   return (
     <div
       ref={wrapperRef}
       className={`ks-wrapper ${eingebettet ? 'ks-wrapper--eingebettet' : 'ks-wrapper--frei'}`}
     >
-      {zeigePopup && (
+      {zeigePopup && !zeigeKarte && (
         <div
           data-testid="kosmo-mini"
           role="status"
@@ -93,16 +144,83 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
           <div className="ks-popup-titel">
             {beschaeftigt ? 'Kosmo arbeitet …' : 'Kosmo'}
           </div>
-          {popupText}
+          {vorschlagText}
+        </div>
+      )}
+      {zeigeKarte && (
+        <div data-testid="kosmo-karte" className="k-einblenden ks-karte">
+          <button
+            type="button"
+            className="ks-karte-schliessen"
+            data-testid="kosmo-karte-schliessen"
+            aria-label="Schliessen"
+            onClick={() => setZeigeKarte(false)}
+          >
+            ✕
+          </button>
+          <div className="ks-karte-titel">{beschaeftigt ? 'Kosmo arbeitet …' : 'Kosmo'}</div>
+          <p className="ks-karte-text" data-testid="kosmo-karte-text">
+            {vorschlagText}
+          </p>
+          {mockAktiv ? (
+            <p className="ks-karte-hinweis" data-testid="kosmo-karte-mock-hinweis">
+              Mock-Provider aktiv — echte Antworten brauchen einen konfigurierten Provider (Einstellungen →
+              Werkzeuge einrichten).
+            </p>
+          ) : null}
+          <div className="ks-karte-chips">
+            <button type="button" className="ks-karte-chip" data-testid="kosmo-karte-antworten" onClick={handoff}>
+              Antworten
+            </button>
+            <button
+              type="button"
+              className="ks-karte-chip"
+              data-testid="kosmo-karte-spaeter"
+              onClick={() => setZeigeKarte(false)}
+            >
+              Später
+            </button>
+          </div>
+          <form
+            className="ks-karte-eingabe-zeile"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handoff();
+            }}
+          >
+            <input
+              type="text"
+              className="ks-karte-eingabe"
+              data-testid="kosmo-karte-eingabe"
+              placeholder="An Kosmo …"
+              value={eingabe}
+              onChange={(e) => setEingabe(e.target.value)}
+              aria-label="Nachricht an Kosmo"
+            />
+            <button
+              type="submit"
+              className="ks-karte-senden"
+              data-testid="kosmo-karte-senden"
+              aria-label="Weiter im Kosmo-Panel"
+            >
+              ➔
+            </button>
+          </form>
         </div>
       )}
       <button
         data-testid="kosmo-symbol"
-        onClick={onOpen}
+        onClick={karteKlick}
+        onDoubleClick={panelDoppelklick}
         onMouseEnter={() => setZeigePopup(true)}
         onFocus={() => setZeigePopup(true)}
         onBlur={() => setZeigePopup(false)}
-        aria-label={beschaeftigt ? 'Kosmo öffnen — arbeitet gerade' : 'Kosmo öffnen'}
+        aria-label={
+          beschaeftigt
+            ? 'Kosmo öffnen — arbeitet gerade'
+            : 'Kosmo öffnen (Klick: Karte, Doppelklick: Panel)'
+        }
+        aria-expanded={zeigeKarte}
         title="Kosmo"
         // Aufgabe 3 (0.6.6): `.k-druck` zusätzlich zu den bestehenden
         // `k-kosmo-symbol*`-Klassen (Puls-Animation bleibt unverändert).

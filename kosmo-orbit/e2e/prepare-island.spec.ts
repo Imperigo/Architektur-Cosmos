@@ -82,17 +82,16 @@ test.describe('PC4 — KosmoPrepare auf Islands (Default, kein Seed)', () => {
     await page.screenshot({ path: 'e2e-results/pc4-prepare-islands.png' });
   });
 
-  test('Kosmo-Zugang/BodenDock: BodenDock ist im Island-Modus weg (ehrliche Grenze: kein Kosmo-Orb hier, s. Abschlussbericht)', async ({
+  test('Kosmo-Zugang/BodenDock: BodenDock ist im Island-Modus weg, der Kosmo-Orb ist da (C-25, PB4-Nachzug)', async ({
     page,
   }) => {
     await oeffnePrepareIsland(page);
     await expect(page.locator('[data-testid="boden-dock"]')).toHaveCount(0);
-    // PC4-Dateikreis erlaubt an App.tsx NUR die additive Guard-Zeile — die
-    // `onKosmoOeffnen`-Prop-Verdrahtung (Muster VisWorkspace/App.tsx) bräuchte
-    // mehr als das; der volle Orb-Rollout ist C-25 (PB4/W4). Diese Zeile
-    // beweist den ehrlichen, dokumentierten Zwischenstand statt ihn zu
-    // verschweigen: kein KosmoOrb UND kein BodenDock im Prepare-Island-Modus.
-    await expect(page.locator('[data-testid="kosmo-orb-wurzel"]')).toHaveCount(0);
+    // PB4/W4 (C-25): der Orb-Rollout ist vollzogen — Prepare mountet denselben
+    // `island/KosmoOrb` wie Publish (`PrepareWorkspace.tsx`, PB4-Nachzug durch
+    // Fable, weil PC4s Dateikreis die Spec hielt und PB4s Kreis die Spec
+    // sperrte). Der Orb ist im Island-Modus der einzige Kosmo-Zugang.
+    await expect(page.locator('[data-testid="kosmo-orb-wurzel"]')).toBeVisible();
   });
 
   test('AUFNAHME-Insel: Dateien wählen zeigt Ergebnis JE Datei — echte Abschnittszahl bei Erfolg, echter Fehlertext statt stummen Scheiterns (Ausbau)', async ({

@@ -33,15 +33,27 @@ function render(el: React.ReactElement): void {
   act(() => root!.render(el));
 }
 
+/**
+ * PB4 (`docs/V084-SPEZ.md` §3 E3-Rollout): der Auto-Schliessen-Timer läuft
+ * seither über `useOverlaySchliessen` (`pointerenter`/`pointerleave` auf dem
+ * Wurzel-Element, `packages/kosmo-ui/src/overlay-schliessen.ts`) statt des
+ * vorherigen lokalen `onMouseEnter`/`onMouseLeave`-Handbaus — `hoverEnter`
+ * feuert darum ZUSÄTZLICH ein `mouseover` (öffnet weiterhin über die
+ * Komponenten-eigene `onMouseEnter`-Prop) UND ein `pointerenter` (storniert
+ * einen ggf. laufenden Rückklapp-Timer, exakt wie ein echter Maus-
+ * Wiedereintritt beides gleichzeitig auslöst); `hoverLeave` feuert
+ * `pointerleave` (startet den Hook-Timer).
+ */
 function hoverEnter(el: Element): void {
   act(() => {
     el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body }));
+    el.dispatchEvent(new Event('pointerenter', { bubbles: false }));
   });
 }
 
 function hoverLeave(el: Element): void {
   act(() => {
-    el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+    el.dispatchEvent(new Event('pointerleave', { bubbles: false }));
   });
 }
 
@@ -123,5 +135,51 @@ describe('AnsichtsInfo — Auto-Schliessen 700ms', () => {
       vi.advanceTimersByTime(1);
     });
     expect(q('ansichts-info-popover')).toBeNull();
+  });
+
+  it('ein erneuter Pointer-Eintritt VOR Ablauf storniert den Rückklapp-Timer restlos', () => {
+    render(<AnsichtsInfo viewMode="3d" setViewMode={vi.fn()} />);
+    hoverEnter(q('ansichts-info-root')!);
+    hoverLeave(q('ansichts-info-root')!);
+    act(() => {
+      vi.advanceTimersByTime(400);
+    });
+    hoverEnter(q('ansichts-info-root')!);
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+    expect(q('ansichts-info-popover')).not.toBeNull();
+  });
+});
+
+describe('AnsichtsInfo — Popup-Gesetz (PB4, §3 E3, useOverlaySchliessen-Rollout)', () => {
+  it('Escape schliesst das offene Popover', () => {
+    render(<AnsichtsInfo viewMode="3d" setViewMode={vi.fn()} />);
+    klick(q('ansichts-info-label')!);
+    expect(q('ansichts-info-popover')).not.toBeNull();
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    });
+    expect(q('ansichts-info-popover')).toBeNull();
+  });
+
+  it('ein Klick ausserhalb der Wurzel schliesst das offene Popover', () => {
+    render(<AnsichtsInfo viewMode="3d" setViewMode={vi.fn()} />);
+    klick(q('ansichts-info-label')!);
+    expect(q('ansichts-info-popover')).not.toBeNull();
+    act(() => {
+      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    });
+    expect(q('ansichts-info-popover')).toBeNull();
+  });
+
+  it('ein Klick auf einen Chip INNERHALB des Popovers schliesst es NICHT (Aussenklick-Guard)', () => {
+    const setViewMode = vi.fn();
+    render(<AnsichtsInfo viewMode="3d" setViewMode={setViewMode} />);
+    klick(q('ansichts-info-label')!);
+    act(() => {
+      q('ansichts-info-ansicht-2d')!.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    });
+    expect(q('ansichts-info-popover')).not.toBeNull();
   });
 });

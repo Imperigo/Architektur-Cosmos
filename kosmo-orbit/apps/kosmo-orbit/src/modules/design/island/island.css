@@ -42,11 +42,11 @@
   --f-r-sm: 4px;
   --f-r-md: 8px;
 
-  /* --f-gold: eigener Wert statt `--k-rolle-agent` (§5-Entscheid, Kosmo-Orb
-     ist keine Pipeline-Rolle) — in PD1 noch ohne Verbraucher (Kosmo-Orb-
-     Anbindung ist PD4-Scope), hier bereits additiv hinterlegt, damit PD4
-     nicht noch einmal durch die Token-Tabelle muss. */
-  --f-gold: #8c6f2e;
+  /* PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz», Owner wörtlich «Kosmo-Orb
+     nicht gelb hinterlegen»): `--f-gold` ist damit ERSATZLOS entfallen — die
+     Hülle nutzt jetzt dieselbe `--f-glass`-Familie wie jede andere Insel-
+     Glasfläche (kein zweiter Farbwert mehr, kein toter Token ohne
+     Nicht-Orb-Verbraucher). */
 
   position: fixed;
   z-index: 40;
@@ -59,7 +59,6 @@
   --f-blur: blur(24px) saturate(1.4);
   --f-r-sm: 8px;
   --f-r-md: 13px;
-  --f-gold: #cbb06a;
   /* --f-field/-ink/-accent/-pill bleiben unverändert — s. Kopfkommentar
      (theme-invariant bzw. bereits automatisch via `--k-field`/-ink/-accent
      durchgereicht). */
@@ -802,16 +801,27 @@
   animation: none;
 }
 
-/* ── Kosmo-Orb (PD4, §1-Tabelle/§4.3 Zeile 5 «Kosmo-Orb-Puls») ───────────
-   `right:26px; bottom:24px`, Kreis 52×52px, goldener Grund (`--f-gold`,
-   `.isl-root`-Tokenfamilie), Puls `--k-insel-orb-puls` (2.4s, `aura.css`,
-   additiv). Eigener `position:fixed`-Wurzelknoten statt `.isl-root` (der
-   Orb ist laut §1 AUSSERHALB der vier Islands, teilt sich aber dieselbe
-   `--f-gold`-Variable — die lebt in `.isl-root`, hier lokal noch einmal
-   knapp gesetzt, damit dieser Knoten ohne `.isl-root`-Elternklasse
-   auskommt). Verbraucher: `island/KosmoOrb.tsx`. */
+/* ── Kosmo-Orb (PD4, §1-Tabelle/§4.3 Zeile 5 «Kosmo-Orb-Puls»; PB4
+   `docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz» — Ruhe-Zeile, Owner wörtlich
+   «Kosmo-Orb nicht gelb hinterlegen») ───────────────────────────────────
+   `right:26px; bottom:24px`, Kreis 52×52px, HÜLLE jetzt neutral-glasig
+   (`--f-glass`-Familie, dieselbe Token-Gruppe wie jede andere Insel-
+   Glasfläche — `.isl-pill`/`.isl-buehnenkopf-popover`/`.isl-orb-karte`, KEINE
+   Gold-/Farb-Fläche mehr), Puls `--k-insel-orb-puls` (2.4s, `aura.css`,
+   additiv) läuft in `--k-signal` (Stationsfarbe des Kerns, s.
+   `kosmo-feedback.css` `.kosmo-orb-kern`) statt Gold — Kern + 4 Punkte
+   bleiben die einzigen Farbträger (E2-Tabelle: «Kern + 4 Punkte tragen die
+   Stations-/Rollenfarbe»). Eigener `position:fixed`-Wurzelknoten statt
+   `.isl-root` (der Orb ist laut §1 AUSSERHALB der vier Islands) — teilt sich
+   darum NICHT automatisch `.isl-root`s `--f-glass`/`--f-blur`/`--f-ink`,
+   dieselben drei Variablen sind hier lokal noch einmal knapp gesetzt (exakt
+   `.isl-root`s Werte, PAPIER-Default + `[data-theme='orbit']`-Override),
+   damit dieser Knoten ohne `.isl-root`-Elternklasse auskommt. Verbraucher:
+   `island/KosmoOrb.tsx`. */
 .isl-orb-wurzel {
-  --f-gold: #8c6f2e;
+  --f-glass: var(--k-insel-glas-papier);
+  --f-blur: blur(16px) saturate(1.05);
+  --f-ink: var(--k-ink);
   position: fixed;
   right: 26px;
   bottom: 24px;
@@ -819,7 +829,8 @@
   font-family: var(--k-font-ui);
 }
 [data-theme='orbit'] .isl-orb-wurzel {
-  --f-gold: #cbb06a;
+  --f-glass: var(--k-glass-fill);
+  --f-blur: blur(24px) saturate(1.4);
 }
 
 .isl-orb {
@@ -830,11 +841,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--f-gold);
-  border: none;
+  background: var(--f-glass);
+  backdrop-filter: var(--f-blur);
+  -webkit-backdrop-filter: var(--f-blur);
+  border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
   border-radius: 999px;
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
-  color: #14161d;
+  color: var(--f-ink);
   cursor: pointer;
   padding: 0;
   position: relative;
@@ -846,21 +859,22 @@
 
 /* Puls (§4.3: «weich, zyklisch», 2.4s) — ein sich ausdehnender, verblassender
    Ring statt einer Skalierung des Orbs selbst (bleibt so bei jeder Puls-
-   Phase exakt 52×52px antippbar, die Trefferfläche wandert nie). */
+   Phase exakt 52×52px antippbar, die Trefferfläche wandert nie). PB4: Ring
+   trägt `--k-signal` (Kern-Farbe) statt des entfallenen `--f-gold`. */
 @keyframes islOrbPuls {
   0% {
     box-shadow:
-      0 0 0 0 color-mix(in srgb, var(--f-gold) 55%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--k-signal) 55%, transparent),
       var(--k-shadow-lg, var(--k-shadow-overlay));
   }
   70% {
     box-shadow:
-      0 0 0 14px color-mix(in srgb, var(--f-gold) 0%, transparent),
+      0 0 0 14px color-mix(in srgb, var(--k-signal) 0%, transparent),
       var(--k-shadow-lg, var(--k-shadow-overlay));
   }
   100% {
     box-shadow:
-      0 0 0 0 color-mix(in srgb, var(--f-gold) 0%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--k-signal) 0%, transparent),
       var(--k-shadow-lg, var(--k-shadow-overlay));
   }
 }
@@ -873,6 +887,31 @@
    zusätzlich gar nicht erst. */
 .isl-orb-wurzel[data-reduziert='true'] .isl-orb-anim-puls {
   animation: none;
+}
+
+/* PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz», Hover/Focus-Zeile — Muster
+   `kosmo-symbol.css` `.ks-popup`): Mini-Popup mit Textverlauf, erscheint auf
+   Hover/Fokus des Orb-Knopfs, verschwindet bei geöffneter Karte. */
+.isl-orb-mini {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--k-s2));
+  max-width: 260px;
+  padding: 10px 12px;
+  border-radius: var(--k-radius-md);
+  background: var(--k-glass-fill, rgba(20, 23, 31, 0.62));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  box-shadow: var(--k-shadow-overlay);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--k-ink);
+}
+.isl-orb-mini-titel {
+  font-weight: 600;
+  color: var(--k-ink);
+  margin-bottom: 3px;
 }
 
 /* 320px-Konversationskarte (§1: «Vorschlagstext + 2 Aktions-Chips +

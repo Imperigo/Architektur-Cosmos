@@ -49,12 +49,32 @@ test('Hover (und Fokus) zeigt das Mini-Popup mit der letzten Aktivität', async 
   await expect(page.locator('[data-testid="kosmo-mini"]')).toBeVisible();
 });
 
-test('Klick entfaltet das Panel; Senden funktioniert (Mock-Provider); Schliessen bringt das Symbol zurück', async ({
+test('Einfachklick öffnet die Konversationskarte (E2-Tabelle) — nicht sofort das Panel', async ({ page }) => {
+  await frischOhnePanel(page);
+
+  await page.click('[data-testid="kosmo-symbol"]');
+  const karte = page.locator('[data-testid="kosmo-karte"]');
+  await expect(karte).toBeVisible();
+  await expect(page.locator('[data-testid="kosmo-panel"]')).toHaveCount(0);
+  // Echter Vorschlagstext (Begrüssung, solange Kosmo noch nie geantwortet hat).
+  expect((await page.locator('[data-testid="kosmo-karte-text"]').innerText()).trim().length).toBeGreaterThan(0);
+  await expect(page.locator('[data-testid="kosmo-karte-antworten"]')).toBeVisible();
+  await expect(page.locator('[data-testid="kosmo-karte-spaeter"]')).toBeVisible();
+
+  // «Später» schliesst nur die Karte — kein Panel-Öffnen.
+  await page.click('[data-testid="kosmo-karte-spaeter"]');
+  await expect(karte).toHaveCount(0);
+  await expect(page.locator('[data-testid="kosmo-panel"]')).toHaveCount(0);
+});
+
+test('Doppelklick öffnet das Panel; Senden funktioniert (Mock-Provider); Schliessen bringt das Symbol zurück', async ({
   page,
 }) => {
   await frischOhnePanel(page);
 
-  await page.click('[data-testid="kosmo-symbol"]');
+  // PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz»): Doppelklick überspringt die
+  // Konversationskarte direkt zum grossen Panel.
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
   await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(0);
   expect(await page.evaluate(() => localStorage.getItem('kosmo.panelOffen'))).toBe('1');
@@ -83,7 +103,7 @@ test('Klick entfaltet das Panel; Senden funktioniert (Mock-Provider); Schliessen
 test('Zustand persistiert über Reload — offen bleibt offen, zu bleibt zu', async ({ page }) => {
   await frischOhnePanel(page);
 
-  await page.click('[data-testid="kosmo-symbol"]');
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
 
   await page.reload();

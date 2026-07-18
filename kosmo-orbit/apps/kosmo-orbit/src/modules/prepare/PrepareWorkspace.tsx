@@ -21,6 +21,9 @@ import { PREPARE_INSELN, prepareInhaltsRegistry } from './island';
 // bereits stationsagnostisch gebaut (`inseln`+`registry`, Muster PC1).
 import { IslandBuehne } from '../design/island/IslandShell';
 import type { IslandWerkzeug } from '../design/island/island-katalog';
+// PB4-Nachzug (C-25, E2-Orb-Gesetz): derselbe Kosmo-Orb wie in Publish
+// (`PublishWorkspace.tsx`) — Kosmo ist überall gleich aufgebaut.
+import { KosmoOrb } from '../design/island/KosmoOrb';
 // C-14/Reserve-Vertrag (`docs/V084-SPEZ.md` §5 W3, C-20, «Nicht-Island
 // behält Reserve»): Prepare hat KEINE `DockFlaeche`, die die reale
 // Boden-Dock-Position live misst (Muster `e2e/boden-dock-reserve-c14.spec.
@@ -159,6 +162,7 @@ export function PrepareWorkspace() {
             if (w.id === 'manuell') setPrepareOberflaeche('manuell');
           }}
         />
+        <KosmoOrb />
       </div>
     );
   }

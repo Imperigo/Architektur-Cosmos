@@ -4,6 +4,61 @@ import type { KosmoZustand } from '../state/kosmo-status';
 import { klick } from '../state/sounds';
 import './kosmo-feedback.css';
 
+/**
+ * PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz», «EIN Wrapper KosmoOrbAnker»)
+ * — die Einfach-/Doppelklick-Unterscheidung, die JEDE Kosmo-Orb-Erscheinung
+ * (KosmoSymbol.tsx frei/eingebettet, island/KosmoOrb.tsx) laut Tabelle
+ * braucht (Einfachklick → Konversationskarte, Doppelklick → KosmoPanel),
+ * lebt HIER als EIN gemeinsamer Hook statt einer Kopie je Konsument — beide
+ * Konsumenten teilen exakt denselben Zeitwert/dieselbe Stornier-Logik
+ * (klassisches Muster: ein Einfachklick löst NICHT sofort aus, sondern
+ * wartet `KOSMO_ORB_KLICK_VERZOEGERUNG_MS` ab; kommt binnen dieser Zeit ein
+ * zweiter Klick, storniert `onDoppelklick` den wartenden Timer restlos und
+ * übernimmt exklusiv — kein doppelter Auslöser, kein Karten-Aufblitzen vor
+ * dem Panel-Öffnen).
+ */
+export const KOSMO_ORB_KLICK_VERZOEGERUNG_MS = 200;
+
+export function useKlickVsDoppelklick(aufKlick: () => void, aufDoppelklick: () => void): {
+  onClick: () => void;
+  onDoubleClick: () => void;
+} {
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Stabile Referenzen (Muster `useOverlaySchliessen`s `onCloseRef`) — der
+  // Aufrufer muss die Callbacks nicht selbst memoisieren.
+  const aufKlickRef = useRef(aufKlick);
+  aufKlickRef.current = aufKlick;
+  const aufDoppelklickRef = useRef(aufDoppelklick);
+  aufDoppelklickRef.current = aufDoppelklick;
+
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+
+  return {
+    onClick: () => {
+      // Ein zweiter Klick binnen der Verzögerung startet KEINEN zweiten
+      // Timer (der laufende genügt als Doppelklick-Fenster) — der
+      // `onDoubleClick`-Handler unten übernimmt und räumt ihn ab.
+      if (timer.current) return;
+      timer.current = setTimeout(() => {
+        timer.current = null;
+        aufKlickRef.current();
+      }, KOSMO_ORB_KLICK_VERZOEGERUNG_MS);
+    },
+    onDoubleClick: () => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+      aufDoppelklickRef.current();
+    },
+  };
+}
+
 export interface KosmoOrbProps {
   /** Aktueller Kosmo-Zustand (`state/kosmo-status.ts`) — treibt die Darstellung über `data-zustand`. */
   zustand: KosmoZustand;

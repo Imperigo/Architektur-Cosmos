@@ -77,8 +77,131 @@
   margin-bottom: 3px;
 }
 
+/* PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz», Muster `island.css`
+   `.isl-orb-karte*` — dieselbe Glas-Familie/dasselbe Layout, eigener
+   `ks-karte`-Namensraum statt eines Imports aus dem app-lokalen
+   `island.css` (Streams bleiben dateidisjunkt): Konversationskarte,
+   Einfachklick öffnet sie (`KosmoSymbol.tsx`), Doppelklick überspringt sie
+   direkt zum Panel. Echtes Overlay wie `.ks-popup` (dasselbe P1-Verschub-
+   Problem, s. Kopfkommentar oben) — `position:absolute`, eigene Breite,
+   verschiebt den Wrapper/Knopf nie. */
+.ks-karte {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--k-s2));
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s3);
+  padding: var(--k-s4);
+  background: var(--k-glass-fill, var(--k-raised));
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-md);
+  box-shadow: var(--k-shadow-xl, var(--k-shadow-overlay));
+  color: var(--k-ink);
+}
+.ks-karte-schliessen {
+  position: absolute;
+  top: var(--k-s2);
+  right: var(--k-s2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  background: transparent;
+  border: none;
+  color: var(--k-ink-soft, var(--k-ink));
+  cursor: pointer;
+}
+.ks-karte-titel {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--k-ink-soft, var(--k-ink));
+  padding-right: 28px;
+}
+.ks-karte-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--k-ink);
+}
+.ks-karte-hinweis {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--k-ink-faint, var(--k-ink));
+  opacity: 0.75;
+}
+.ks-karte-chips {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+.ks-karte-chip {
+  min-height: 44px;
+  padding: 0 var(--k-s3);
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: 999px;
+  color: var(--k-ink);
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.ks-karte-chip:hover {
+  background: var(--k-accent-wash);
+  border-color: var(--k-accent);
+}
+.ks-karte-eingabe-zeile {
+  display: flex;
+  gap: var(--k-s2);
+  align-items: center;
+}
+.ks-karte-eingabe {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 var(--k-s3);
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink);
+  font-family: var(--k-font-ui);
+  font-size: 13px;
+}
+.ks-karte-senden {
+  flex: 0 0 auto;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--k-glass-stroke, var(--k-line));
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink);
+  cursor: pointer;
+}
+
 /* `all:'unset'` bewusst NICHT hier (blockierte vorher `.k-druck`s
-   transform/filter) — Font/Color erben weiter global (aura.css). */
+   transform/filter) — Font/Color erben weiter global (aura.css).
+   PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz», Owner wörtlich «Kosmo
+   überall gleich»): Hülle jetzt in der `--k-glass-fill`-Familie statt
+   des opaken `--k-surface` — dasselbe additive Fallback-Muster, das
+   Viewport-HUD-Floats ausserhalb der Island-Shell bereits nutzen
+   (`aura.css`-Kopfkommentar «Glass ist die schwebende Overlay-Sprache…
+   NIE als Stationsfläche»): im `orbit`-Theme (wo `--k-glass-fill` real
+   definiert ist) wird die Hülle glasig-transluzent, im `paper`-Theme
+   (kein Token dort) bleibt der bisherige `--k-surface`-Ton exakt
+   erhalten (Fallback, 0 Optik-Änderung in Papier). NIE Gold. */
 .ks-knopf {
   margin: 0;
   cursor: pointer;
@@ -87,7 +210,9 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: var(--k-surface);
-  border: 1px solid var(--k-line-strong);
+  background: var(--k-glass-fill, var(--k-surface));
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
   box-shadow: var(--k-shadow-overlay);
 }

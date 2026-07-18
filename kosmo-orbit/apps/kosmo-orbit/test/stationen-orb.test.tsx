@@ -35,15 +35,24 @@ function render(el: React.ReactElement): void {
   act(() => root!.render(el));
 }
 
+/**
+ * PB4 (`docs/V084-SPEZ.md` §3 E3-Rollout): der Auto-Schliessen-Timer läuft
+ * seither über `useOverlaySchliessen` (`pointerenter`/`pointerleave` auf dem
+ * Wurzel-Element) statt des vorherigen lokalen `onMouseEnter`/`onMouseLeave`-
+ * Handbaus — `hoverEnter` feuert darum ZUSÄTZLICH ein `pointerenter`
+ * (storniert einen ggf. laufenden Rückklapp-Timer), `hoverLeave` feuert
+ * `pointerleave` (startet den Hook-Timer).
+ */
 function hoverEnter(el: Element): void {
   act(() => {
     el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, relatedTarget: document.body }));
+    el.dispatchEvent(new Event('pointerenter', { bubbles: false }));
   });
 }
 
 function hoverLeave(el: Element): void {
   act(() => {
-    el.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, relatedTarget: document.body }));
+    el.dispatchEvent(new Event('pointerleave', { bubbles: false }));
   });
 }
 
@@ -178,6 +187,28 @@ describe('StationenOrb — Auto-Schliessen 700ms', () => {
     expect(q('stationen-orb-popover')).not.toBeNull();
     act(() => {
       vi.advanceTimersByTime(1);
+    });
+    expect(q('stationen-orb-popover')).toBeNull();
+  });
+});
+
+describe('StationenOrb — Popup-Gesetz (PB4, §3 E3, useOverlaySchliessen-Rollout)', () => {
+  it('Escape schliesst das offene Popover', () => {
+    render(<StationenOrb aktivesModul="design" onStationOeffnen={vi.fn()} />);
+    klick(q('stationen-orb-pill')!);
+    expect(q('stationen-orb-popover')).not.toBeNull();
+    act(() => {
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    });
+    expect(q('stationen-orb-popover')).toBeNull();
+  });
+
+  it('ein Klick ausserhalb der Wurzel schliesst das offene Popover', () => {
+    render(<StationenOrb aktivesModul="design" onStationOeffnen={vi.fn()} />);
+    klick(q('stationen-orb-pill')!);
+    expect(q('stationen-orb-popover')).not.toBeNull();
+    act(() => {
+      document.body.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     });
     expect(q('stationen-orb-popover')).toBeNull();
   });

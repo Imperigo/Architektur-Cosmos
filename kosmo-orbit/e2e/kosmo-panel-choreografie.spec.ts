@@ -34,7 +34,10 @@ test('Schliessen-Choreografie: das Panel bekommt beim Schliessen die Orb-Austrit
 }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await frischOhnePanel(page);
-  await page.click('[data-testid="kosmo-symbol"]');
+  // PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz»): Einfachklick öffnet seither
+  // nur noch die Konversationskarte — Doppelklick überspringt sie direkt
+  // zum Panel (unverändertes Ziel dieser Choreografie-Suite).
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
 
   await page.click('[data-testid="kosmo-panel-schliessen"]');
@@ -52,7 +55,10 @@ test('reduced-motion (App-Default in Playwright): das Panel schliesst sofort, oh
   page,
 }) => {
   await frischOhnePanel(page);
-  await page.click('[data-testid="kosmo-symbol"]');
+  // PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz»): Einfachklick öffnet seither
+  // nur noch die Konversationskarte — Doppelklick überspringt sie direkt
+  // zum Panel (unverändertes Ziel dieser Choreografie-Suite).
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
   await page.click('[data-testid="kosmo-panel-schliessen"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toHaveCount(0);
