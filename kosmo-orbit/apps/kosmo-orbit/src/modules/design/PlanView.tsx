@@ -129,6 +129,46 @@ function pocheArtFuer(classes: readonly string[], phase: BauPhase, modus: PocheM
 const MASSKETTE_TOLERANZ = 150; // mm, analog Wand-Toleranz
 const KOMMENTAR_TOLERANZ = 300; // mm, grosszügiger Marker-Klickradius
 
+/**
+ * PB6 (v0.8.4 Token-Sweep, `docs/V084-SPEZ.md` §5/§9 C-29): benannte
+ * Ersatz-Konstanten für Hex-Werte, die KEINEM bestehenden `--k-*`-Token in
+ * `packages/kosmo-ui/src/aura.css` entsprechen (aura.css ist im W5-Token-
+ * Sweep gesperrt — kein neues Token wird dafür erfunden). Reine Umbenennung,
+ * 0 Wertänderung, 0 Optik-Änderung.
+ */
+// Entspricht 1:1 `packages/kosmo-kernel/src/derive/schraffur.ts`
+// `KATALOG.beton.tint` — bewusst Print-Konvention, NICHT theme-abhängig
+// (Kommentar dort/hier: dieselbe Betontönung wie im Schnitt). Kein
+// `--k-*`-Token bildet eine theme-invariante Print-Tönung ab; NICHT als
+// `var(--k-…)` ersetzt, um die Kopplung an den Kernel-Katalogwert nicht zu
+// verlieren. Kandidat für aura.css (W5-Bericht): eine `--k-druck-beton`-
+// artige, theme-invariante Print-Tönung.
+const PLAN_HATCH_BETON_TINT = '#dad7d1';
+// Zugehörige Diagonal-Linie desselben Beton-Schraffur-Musters — dieselbe
+// Print-Konvention-Begründung wie oben; kein `--k-technik`-Wert trifft
+// exakt zu (`#1a1815` Papier / `#444b59` Kosmos sind Theme-Werte, diese
+// Linie bleibt bewusst fix). Kandidat für aura.css (W5-Bericht).
+const PLAN_HATCH_BETON_LINIE = '#333';
+// Unternehmerplan-Referenz-Overlay (C4b/C-E5): «reiner Durchpaus-Layer in
+// einer Akzentfarbe, nie wählbar» (Kopfkommentar am Verbraucher) — bewusst
+// EIN fixer Ton unabhängig vom gewählten UI-Akzent (`--k-accent` wechselt
+// mit `data-akzent`, dieser Durchpaus-Ton NICHT). Kein `--k-*`-Token trifft
+// exakt zu. Kandidat für aura.css (W5-Bericht).
+const UNTERNEHMERPLAN_OVERLAY_FARBE = '#1a6fb5';
+// Verletzte-Zone-Warnfarbe (nicht «fehler» — der Fehlerfall nutzt bereits
+// `var(--k-danger)`, s. Verbraucher). Liegt nahe, aber NICHT exakt auf
+// `--k-warning` (`#a37b22`) — keine Ersetzung ohne Optik-Änderung möglich.
+// Kandidat für aura.css (W5-Bericht): eine zweite Warnstufe neben
+// `--k-warning`.
+const ZONE_VERLETZT_WARN_FARBE = '#c68622';
+// Raumgraph-Kanten/-Knoten (Diagnose-Overlay). `#2455a4` ist zufällig
+// identisch mit `--k-accent` unter `[data-akzent='blau']`
+// (`aura.css:150`) — NICHT als `var(--k-accent)` ersetzt, weil das den
+// Diagnose-Ton am gewählten UI-Akzent hängen liesse (Default-Akzent ist
+// Teal `#3e96a2`, das wäre eine sichtbare Änderung). Kandidat für aura.css
+// (W5-Bericht): ein theme-invarianter Diagnose-/Graph-Farbton.
+const RAUMGRAPH_FARBE = '#2455a4';
+
 export function PlanView({
   handlers,
   onLod,
@@ -1060,8 +1100,8 @@ export function PlanView({
               wie schon die Schnitt-Schraffur) + engere 40-mm-Kachel, damit auch
               dünne Wände mehrere Linien zeigen. */}
           <pattern id="hatch-beton" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="rotate(45)">
-            <rect width="40" height="40" fill="#dad7d1" />
-            <line x1="0" y1="0" x2="0" y2="40" stroke="#333" strokeWidth="5" />
+            <rect width="40" height="40" fill={PLAN_HATCH_BETON_TINT} />
+            <line x1="0" y1="0" x2="0" y2="40" stroke={PLAN_HATCH_BETON_LINIE} strokeWidth="5" />
           </pattern>
           <pattern id="hatch-daemmung" patternUnits="userSpaceOnUse" width="220" height="220" patternTransform="rotate(-45)">
             <rect width="220" height="220" fill="var(--k-plan-paper)" />
@@ -1164,14 +1204,14 @@ export function PlanView({
           {unternehmerDxf && overlaySichtbar && (
             <g data-testid="unternehmerplan-overlay" opacity={0.45} pointerEvents="none">
               {unternehmerDxf.lines.map((l, i) => (
-                <line key={`ul${i}`} x1={l.a.x} y1={-l.a.y} x2={l.b.x} y2={-l.b.y} stroke="#1a6fb5" strokeWidth={14} />
+                <line key={`ul${i}`} x1={l.a.x} y1={-l.a.y} x2={l.b.x} y2={-l.b.y} stroke={UNTERNEHMERPLAN_OVERLAY_FARBE} strokeWidth={14} />
               ))}
               {unternehmerDxf.regions.map((r, i) => (
                 <polygon
                   key={`ur${i}`}
                   points={r.ring.map((p) => `${p.x},${-p.y}`).join(' ')}
                   fill="none"
-                  stroke="#1a6fb5"
+                  stroke={UNTERNEHMERPLAN_OVERLAY_FARBE}
                   strokeWidth={14}
                 />
               ))}
@@ -1183,7 +1223,7 @@ export function PlanView({
                   textAnchor="middle"
                   fontSize={220}
                   fontFamily="ui-monospace, monospace"
-                  fill="#1a6fb5"
+                  fill={UNTERNEHMERPLAN_OVERLAY_FARBE}
                 >
                   {t.text}
                 </text>
@@ -1308,7 +1348,7 @@ export function PlanView({
                `n / view.scale`, wie schon beim mass-label) + Name+Warnhinweis
                als Etikett, damit die Fläche als das lesbar ist, was sie ist. */
             verletzteZonen.map((v) => {
-              const farbe = v.schwere === 'fehler' ? 'var(--k-danger)' : '#c68622';
+              const farbe = v.schwere === 'fehler' ? 'var(--k-danger)' : ZONE_VERLETZT_WARN_FARBE;
               const cx = v.zone.outline.reduce((s, p) => s + p.x, 0) / v.zone.outline.length;
               const cy = v.zone.outline.reduce((s, p) => s + p.y, 0) / v.zone.outline.length;
               return (
@@ -1347,14 +1387,14 @@ export function PlanView({
                   <g key={i}>
                     <path
                       d={`M ${a.x} ${-a.y} L ${k.punkt.x} ${-k.punkt.y} L ${b.x} ${-b.y}`}
-                      fill="none" stroke="#2455a4" strokeWidth={30} opacity={0.55}
+                      fill="none" stroke={RAUMGRAPH_FARBE} strokeWidth={30} opacity={0.55}
                     />
-                    <circle cx={k.punkt.x} cy={-k.punkt.y} r={90} fill="#2455a4" opacity={0.8} />
+                    <circle cx={k.punkt.x} cy={-k.punkt.y} r={90} fill={RAUMGRAPH_FARBE} opacity={0.8} />
                   </g>
                 );
               })}
               {[...graph.zentren.values()].map((z, i) => (
-                <circle key={`n${i}`} cx={z.x} cy={-z.y} r={200} fill="#2455a4" opacity={0.9} />
+                <circle key={`n${i}`} cx={z.x} cy={-z.y} r={200} fill={RAUMGRAPH_FARBE} opacity={0.9} />
               ))}
             </g>
           )}
@@ -1809,7 +1849,7 @@ export function PlanView({
             <polyline
               points={handlers.current.previewLine.map((p) => `${p.x},${-p.y}`).join(' ')}
               fill="none"
-              stroke={handlers.current.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
+              stroke={handlers.current.orthoAktiv ? 'var(--k-success)' : 'var(--k-accent)'}
               strokeWidth={20}
               strokeDasharray="80 50"
             />
@@ -1821,7 +1861,7 @@ export function PlanView({
                 y1={-cursor.y}
                 x2={cursor.x + 300}
                 y2={-cursor.y}
-                stroke={handlers.current?.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
+                stroke={handlers.current?.orthoAktiv ? 'var(--k-success)' : 'var(--k-accent)'}
                 strokeWidth={8}
               />
               <line
@@ -1829,7 +1869,7 @@ export function PlanView({
                 y1={-cursor.y - 300}
                 x2={cursor.x}
                 y2={-cursor.y + 300}
-                stroke={handlers.current?.orthoAktiv ? 'var(--k-success, #2e7d32)' : 'var(--k-accent)'}
+                stroke={handlers.current?.orthoAktiv ? 'var(--k-success)' : 'var(--k-accent)'}
                 strokeWidth={8}
               />
               {/* V-H1 «Zahlen zur Hand» (VORFORM-UI-KONZEPT §1.4): blaue Live-
@@ -1856,7 +1896,7 @@ export function PlanView({
                   x={cursor.x + 340}
                   y={-cursor.y - 340}
                   fontSize={200}
-                  fill="var(--k-success, #2e7d32)"
+                  fill="var(--k-success)"
                   fontFamily="var(--k-font-mono)"
                 >
                   ⊥ 45°

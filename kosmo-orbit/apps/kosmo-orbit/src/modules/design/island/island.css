@@ -14,6 +14,22 @@
    Z.376/`packages/kosmo-ui/src/tokens.ts:303` `ThemeName='paper'|'orbit'` —
    KEIN zweiter Farbwelt-Mechanismus, an den bestehenden gehängt). */
 
+/* PB6 (v0.8.4 Token-Sweep, `docs/V084-SPEZ.md` §5/§9 C-29) — `#f4f6fa` ist
+   exakt der `--k-ink`-Wert im orbit-Theme (aura.css `[data-theme='orbit']`),
+   wird hier aber als IMMER-heller Text auf dunklem Glas gebraucht (Pillen/
+   Toast/Logo-Kreise sind laut `--f-pill`-Kommentar oben in BEIDEN Welten
+   dunkel) — `var(--k-ink)` selbst wäre im Papier-Theme dunkel-auf-dunkel
+   (`--k-ink` dort `#1a1815`). Kein bestehendes `--k-*`-Token bildet diese
+   theme-INVARIANTE «Ink auf dunklem Glas»-Rolle ab; aura.css ist im
+   W5-Token-Sweep gesperrt — lokaler, dokumentierter `:root`-Alias statt
+   neuem globalem Token (`--isl-kopf-logo-*` liegt ausserhalb `.isl-root`,
+   ein Alias dort wäre nicht global genug — s. `App.tsx`). Kandidat für
+   aura.css (W5-Bericht): ein `--k-glass-ink`-artiges, theme-invariantes
+   Gegenstück zu `--k-glass-fill`. */
+:root {
+  --isl-pill-ink: #f4f6fa;
+}
+
 .isl-root {
   /* --f-field/-ink/-accent: `--k-field`/`--k-ink`/`--k-accent` themen bereits
      automatisch (aura.css `:root,[data-theme='paper']` vs. `[data-theme=
@@ -274,7 +290,7 @@
   max-width: 220px;
   padding: var(--k-s2) var(--k-s3);
   background: var(--f-pill);
-  color: #f4f6fa;
+  color: var(--isl-pill-ink);
   font-family: var(--k-font-ui);
   font-size: 11px;
   line-height: 1.4;
@@ -421,7 +437,7 @@
   white-space: nowrap;
   padding: var(--k-s2) var(--k-s4);
   background: var(--f-pill);
-  color: #f4f6fa;
+  color: var(--isl-pill-ink);
   font-family: var(--k-font-mono);
   font-size: 10px;
   font-weight: 600;
@@ -551,7 +567,7 @@
   border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
   border-radius: 999px;
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
-  color: #f4f6fa;
+  color: var(--isl-pill-ink);
   cursor: pointer;
   font-family: var(--k-font-mono);
   font-size: 10px;
@@ -578,8 +594,10 @@
      dunkel-auf-dunkel = kaum sichtbar. Lokaler, auf diese zwei Kreise
      begrenzter Override (CSS-Custom-Properties vererben sich normal über den
      DOM-Baum, `--k-ink` bleibt ausserhalb dieser Kreise unverändert) — exakt
-     dasselbe «dunkles Glas bleibt in beiden Welten»-Muster wie `--f-pill`. */
-  --k-ink: #f4f6fa;
+     dasselbe «dunkles Glas bleibt in beiden Welten»-Muster wie `--f-pill`.
+     PB6 (Token-Sweep): Wert kommt jetzt aus dem `:root`-Alias
+     `--isl-pill-ink` (Kopf der Datei) statt aus einem zweiten Hartwert. */
+  --k-ink: var(--isl-pill-ink);
 }
 .isl-kopf-logo-orbit {
   left: 14px;
@@ -594,7 +612,7 @@
    Kreis (nicht `.isl-kopf-logo-design`, dessen Rollenpunkt-Farbe bewusst
    Stationsfarbe bleibt) — `Logo6a` (`packages/kosmo-ui/src/logo-6a.tsx`,
    hinter `OrbitMark module="orbit"`) zeichnet Ring/Neun-Quadrat mit
-   `var(--k-ink)` (oben bereits neutral auf `#f4f6fa` überschrieben) UND
+   `var(--k-ink)` (oben bereits neutral auf `var(--isl-pill-ink)` überschrieben) UND
    Satellit/Mittelpunkt mit `var(--k-signal)` (Teal, bisher eine übrig
    gebliebene Farb-Fläche) + `var(--k-success)`/`var(--k-danger)` für die
    (hier ungenutzten) `zustand`-Ausprägungen 'fertig'/'fehler'. Dieselbe
@@ -602,7 +620,7 @@
    (CSS-Variablen vererben sich normal über den DOM-Baum, bleiben ausserhalb
    dieses einen Kreises unverändert) — diesmal auf `currentColor` statt
    einen zweiten Hartwert, damit «Symbol currentColor» (Spec-Wortlaut §8
-   C-24) buchstäblich zutrifft: `color:#f4f6fa` kommt bereits aus der
+   C-24) buchstäblich zutrifft: `color:var(--isl-pill-ink)` kommt bereits aus der
    geteilten 38px-Kreis-Regel oben, `currentColor` löst sich darauf auf —
    Ring/Quadrat/Satellit/Mittelpunkt landen damit alle auf demselben
    neutralen Grauton, keine einzige Farb-Fläche bleibt übrig. Muss NACH der
@@ -676,7 +694,7 @@
   border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
   border-radius: var(--k-radius-pill);
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
-  color: #f4f6fa;
+  color: var(--isl-pill-ink);
   cursor: pointer;
   font-family: var(--k-font-mono);
   font-size: 9px;
