@@ -196,6 +196,19 @@ test.describe('PD4 — reduced-motion', () => {
     // defensiv.
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await ueberspringeOnboarding(page);
+    // PE1 (v0.8.4 W4, Flake-Härtung) — `ueberspringeOnboarding()` navigiert
+    // ZWEIMAL (`goto` + `reload`, s. dortige Implementierung), die CDP-
+    // Emulation von `emulateMedia()` oben gilt zwar kontextweit über beide
+    // Navigationen hinweg, ABER `IslandShell.tsx`/`KosmoOrb.tsx`s
+    // `useReduzierteBewegung()` liest `matchMedia(...).matches` NUR EINMAL
+    // synchron beim Mount (Lazy-`useState`-Initializer) — auf ein REALES
+    // Signal warten (die Media-Query selbst, nicht nur "wir haben
+    // emulateMedia aufgerufen") schliesst die Lücke zwischen "CDP-Override
+    // gesetzt" und "dieser Frame hat ihn beim Mount auch tatsächlich
+    // gesehen", bevor die von ihr abgeleiteten `data-reduziert`/Klassen-
+    // Zustände geprüft werden — kein festes Timeout, ein `waitForFunction`
+    // auf die Media-Query selbst.
+    await page.waitForFunction(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     await page.click('[data-testid="module-design"]');
 
     await expect(page.locator('[data-testid="kosmo-orb-wurzel"]')).toHaveAttribute('data-reduziert', 'true');

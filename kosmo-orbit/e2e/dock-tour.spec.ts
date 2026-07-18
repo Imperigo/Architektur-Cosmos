@@ -188,12 +188,48 @@ async function wartenAufStabileBoxen(
   }
 }
 
+/** Reine Prüfung (kein Assert) — Grundlage sowohl für `keineUeberlappung()`
+ *  (harter Fehlschlag) als auch für die Retry-Schleife unten. */
+function ueberlappungsfrei(boxen: readonly BenannteBox[]): boolean {
+  for (let i = 0; i < boxen.length; i++) {
+    for (let j = i + 1; j < boxen.length; j++) {
+      if (ueberlappenSich(boxen[i]!, boxen[j]!)) return false;
+    }
+  }
+  return true;
+}
+
 function keineUeberlappung(boxen: readonly BenannteBox[]): void {
   for (let i = 0; i < boxen.length; i++) {
     for (let j = i + 1; j < boxen.length; j++) {
       expect(ueberlappenSich(boxen[i]!, boxen[j]!)).toBe(false);
     }
   }
+}
+
+/**
+ * PE1 (v0.8.4 W4, Flake-Härtung «7 Schritte») — `warteAufSolveStabilitaet()` +
+ * `wartenAufStabileBoxen()` decken den dokumentierten Zwei-Solve-Fall (P2/P7a)
+ * bereits ab; unter ZUSÄTZLICHER Fremdlast (paralleles E2E eines anderen
+ * Arbeitspakets im selben Container, real beobachtet in mehreren Vorversionen
+ * dieses Ordners) kann ein EINZELNES 8s-Messfenster dennoch auf einer noch
+ * transitionierenden Zwischengeometrie enden, wenn der Ruhefenster-Timeout
+ * (statt echter Ruhe) greift. Statt das Zeitfenster pauschal zu verlängern
+ * (würde die ganze Suite verlangsamen, ohne das Grundproblem — variable
+ * Fremdlast — zu adressieren): bis zu zwei zusätzliche Voll-Messungen gegen
+ * dasselbe reale Signal (Solve-Stabilität + BBox-Ruhefenster), bevor der
+ * Fehlschlag hart wird. Kein Assert wird gelockert — jede Wiederholung
+ * verlangt weiterhin eine ECHTE überlappungsfreie Messung, nur die Anzahl
+ * der Versuche gegen Fremdlast steigt.
+ */
+async function wartenAufUeberlappungsfreieBoxen(page: Page, versuche = 3): Promise<BenannteBox[]> {
+  let letzte: BenannteBox[] = [];
+  for (let versuch = 0; versuch < versuche; versuch++) {
+    await warteAufSolveStabilitaet(page);
+    letzte = await wartenAufStabileBoxen(page);
+    if (letzte.length > 0 && ueberlappungsfrei(letzte)) return letzte;
+  }
+  return letzte;
 }
 
 const SCHRITT_TITEL = [
@@ -219,8 +255,10 @@ test('Dock-Tour: 7 Schritte, Spotlight je Schritt, keine Panel-Überlappung, let
 
     // C1-Härtung (s. Kopfkommentar `warteAufSolveStabilitaet`): erst das
     // deterministische Solve-Signal abwarten, DANACH das BBox-Zeitfenster.
-    await warteAufSolveStabilitaet(page);
-    const boxen = await wartenAufStabileBoxen(page);
+    // PE1-Härtung (s. `wartenAufUeberlappungsfreieBoxen()`-Kopfkommentar):
+    // bis zu drei volle Messversuche gegen dasselbe reale Signal, bevor der
+    // Fehlschlag hart wird.
+    const boxen = await wartenAufUeberlappungsfreieBoxen(page);
     expect(boxen.length).toBeGreaterThan(0);
     keineUeberlappung(boxen);
 

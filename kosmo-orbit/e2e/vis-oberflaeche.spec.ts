@@ -32,6 +32,46 @@ function parseViewBox(vb: string): { x: number; y: number; w: number; h: number 
   return { x: x!, y: y!, w: w!, h: h! };
 }
 
+/**
+ * PE1 (v0.8.4 W4, Flake-Härtung «Fit nach Pan») — `viewBox` wird von
+ * `NodeCanvas.tsx`s `view`-State abgeleitet: sowohl der Pan-Handler
+ * (`onPointerMove`, `setView` je Maus-Event) als auch `zoomFit()`
+ * (`berechneFit()` gegen die aktuell gemessene `flaeche`, per
+ * ResizeObserver/ rAF nachgeführt) schreiben ihn asynchron zum
+ * React-Commit. Ein roher `getAttribute('viewBox')` direkt nach
+ * `page.mouse.up()`/`page.click()` — OHNE Playwright-Retry — kann das
+ * ALTE Attribut lesen, bevor der zugehörige Commit sichtbar ist (das
+ * betrifft insbesondere den ersten Lesepunkt: `vbSoll` würde sonst evtl.
+ * VOR einer späten ResizeObserver-Nachjustierung der Canvas-Fläche
+ * eingefroren). `stabileViewBox()` pollt bis zwei Messungen im Abstand von
+ * `ruheMs` übereinstimmen — dasselbe «warte auf ein echtes Signal, nicht
+ * auf eine feste Zeit»-Muster wie `stabileBox()` in
+ * `dock-interaktion.spec.ts`/`dock-tour.spec.ts` — statt einer geratenen
+ * `waitForTimeout`-Dauer.
+ */
+async function stabileViewBox(
+  canvas: import('@playwright/test').Locator,
+  timeoutMs = 3000,
+  intervalMs = 50,
+  ruheMs = 150,
+): Promise<string> {
+  const start = Date.now();
+  let letzte = await canvas.getAttribute('viewBox');
+  let ruhigSeit = 0;
+  while (Date.now() - start < timeoutMs) {
+    await new Promise((r) => setTimeout(r, intervalMs));
+    const jetzt = await canvas.getAttribute('viewBox');
+    if (jetzt === letzte) {
+      ruhigSeit += intervalMs;
+      if (ruhigSeit >= ruheMs) return jetzt!;
+    } else {
+      ruhigSeit = 0;
+    }
+    letzte = jetzt;
+  }
+  return letzte!;
+}
+
 async function oeffneVis(page: import('@playwright/test').Page) {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
@@ -95,7 +135,7 @@ test('Fit nach manuellem Pan zentriert die Ansicht wieder auf die Nodes', async 
   // ResizeObserver nachjustieren — ein Klick auf «Fit» liest sie IMMER frisch,
   // das ist der stabile Vergleichspunkt für «vorher/nachher»).
   await page.click('[data-testid="vis-zoom-fit"]');
-  const vbSoll = (await canvas.getAttribute('viewBox'))!;
+  const vbSoll = await stabileViewBox(canvas);
 
   // Manuell wegpannen (wie die F6-Tests in visgraph.spec.ts).
   const box = (await canvas.boundingBox())!;
@@ -103,7 +143,7 @@ test('Fit nach manuellem Pan zentriert die Ansicht wieder auf die Nodes', async 
   await page.mouse.down();
   await page.mouse.move(box.x + box.width * 0.2, box.y + box.height * 0.2, { steps: 8 });
   await page.mouse.up();
-  const vbNachPan = (await canvas.getAttribute('viewBox'))!;
+  const vbNachPan = await stabileViewBox(canvas);
   expect(vbNachPan).not.toBe(vbSoll);
 
   // «Fit» ruft dieselbe Einpass-Funktion wie der Mount-Auto-Fit — bei

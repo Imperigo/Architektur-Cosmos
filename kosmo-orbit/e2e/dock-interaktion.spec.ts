@@ -95,7 +95,21 @@ function gleich(a: Box | null, b: Box | null): boolean {
  * Aufrufer unangetastet, seine eigene BBox-Prüfung läuft nach diesem Warten
  * unverändert weiter (kein Assertion-Abbau).
  */
-async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 10000): Promise<void> {
+// PE1 (v0.8.4 W4, Flake-Härtung) — `timeoutMs` (die harte Obergrenze, NICHT
+// das Ruhefenster `ruheMs` selbst) von 10000 auf 20000 angehoben: in den
+// PE1-Beweisläufen unter dokumentiert echter Fremdlast (mehrere parallele
+// W4-Pakete im selben Container) riss der Chevron-Test reproduzierbar
+// («Received: 573» statt 34 — der Solve war zum Messzeitpunkt schlicht noch
+// nicht fertig, nicht falsch synchronisiert) — dieselbe Klasse Symptom wie
+// die bereits dokumentierten 500ms-Re-Solve-Fälle, nur mit einer unter
+// dieser Fremdlast zu knappen Obergrenze. Letztes Mittel laut Auftrag
+// (bevorzugt wäre ein weiteres echtes Signal, das existiert hier aber
+// bereits — `data-solve-generation` selbst): die WARTEBEDINGUNG bleibt
+// unverändert ein echtes Ruhefenster (`ruheMs` unverändert 700ms — kein
+// Millisekunden-Sleep wird verlängert), nur das Zeitbudget, bis zu dem
+// dieses reale Signal noch abgewartet wird, wächst. Ein tatsächlich
+// hängender/kaputter Solve fällt weiterhin nach spätestens 20s durch.
+async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 20000): Promise<void> {
   await page.evaluate(
     ({ ruheMs, timeoutMs }) => {
       return new Promise<void>((resolve) => {
@@ -135,9 +149,14 @@ async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 10
  *  bevor sich `left/top/width/height` überhaupt zu ändern beginnen) —
  *  reproduzierbar beobachtet, als ein reiner 2-Messungen-Vergleich ohne
  *  Anlaufpuffer die UNVERÄNDERTE Ausgangsgrösse zurückgab. */
+// PE1 (v0.8.4 W4, Flake-Härtung) — `timeoutMs` von 4000 auf 8000 angehoben,
+// als Begleitmassnahme zu `warteAufSolveStabilitaet()`s Anhebung oben
+// (dieselbe Fremdlast-Begründung dort). `anlaufMs`/`ruheMs` (die eigentliche
+// Ruhebedingung) bleiben unverändert — nur das Zeitbudget für dasselbe reale
+// Signal wächst.
 async function stabileBox(
   locator: Locator,
-  timeoutMs = 4000,
+  timeoutMs = 8000,
   intervalMs = 100,
   anlaufMs = 700,
   ruheMs = 300,
@@ -314,7 +333,15 @@ test('Touch-Variante: col-Splitter reagiert auf pointerType=touch', async ({ pag
   const vorher = await stabileBox(panel);
 
   const splitter = page.locator('[data-testid="dock-splitter-spL"]');
-  const box = (await splitter.boundingBox())!;
+  // PE1 (v0.8.4 W4, Flake-Härtung) — während der Beweisläufe unter echter
+  // Fremdlast real gerissen (`nachher.width` 224 statt >244): der rohe
+  // `boundingBox()` direkt nach `kv-oeffnen` mass den Splitter potenziell VOR
+  // dem feld-getriebenen Re-Solve (dieselbe Klasse wie Tab (a)/(c)/row-
+  // Splitter/Chevron oben, s. `stabileBox()`-Kopfkommentar) — der
+  // Touch-Drag griff dann auf eine bereits leicht verschobene Ziel-Koordinate.
+  // `stabileBox()` statt eines einmaligen `boundingBox()`-Aufrufs, exakt das
+  // in dieser Datei etablierte Muster.
+  const box = await stabileBox(splitter);
   const startX = box.x + box.width / 2;
   const startY = box.y + box.height / 2;
   const init = { pointerId: 7, pointerType: 'touch', bubbles: true, clientX: startX, clientY: startY };
@@ -742,7 +769,6 @@ test('Tab (c): Drag in die SCHWEBEND-Zone öffnet als Float (eingeklappte Floats
   const tab = page.locator('[data-testid="dock-panel-kvOffen-tab"]');
   await expect(tab).toBeVisible();
 
-  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
   // v0.8.2 / P7a (C2, ROADMAP 1445, `docs/V082-SPEZ.md` §6.6/C-28) — exakt
   // dieselbe Härtungsklasse wie Tab (a)/row-Splitter/Chevron: der
   // Einklappen-Klick löst SOFORT einen Solve aus, ein zweiter, feld-
@@ -754,6 +780,14 @@ test('Tab (c): Drag in die SCHWEBEND-Zone öffnet als Float (eingeklappte Floats
   // auf dasselbe deterministische Signal umgestiegen, bevor überhaupt
   // gemessen wird — keine Assertion gelockert.
   await warteAufSolveStabilitaet(page);
+  // PE1 (v0.8.4 W4, Flake-Härtung): `feldBox` wird JETZT — nach der
+  // Solve-Stabilität, nicht davor — gemessen. Ein vor `warteAufSolveStabilitaet`
+  // gelesenes `feldBox` bliebe potenziell auf dem Zwischenstand vor dem
+  // späten Re-Solve eingefroren; die SCHWEBEND-Zone (`DockSnapZonen.tsx`)
+  // ist die einzige der drei Zonen, deren Trefferfläche NICHT an einen
+  // Feldrand grenzt (LINKS/RECHTS haben grosszügige Randmargen, s. Tab (b)/
+  // (e) oben) — ein leicht verschobenes `feldBox` träfe hier am ehesten daneben.
+  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
   // `stabileBox` — Reflow-Motion nach dem Einklappen abwarten (s. Tab (a)).
   const box = await stabileBox(tab);
   const cx = box.x + box.width / 2;
