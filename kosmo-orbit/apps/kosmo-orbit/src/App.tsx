@@ -303,7 +303,21 @@ export function App() {
   // damit app-weit IMMER genau eine `data-testid="kosmo-symbol"`-Instanz,
   // nie zwei, nie keine (s. beide Render-Stellen unten).
   const designOberflaeche = useUiZustand((s) => s.designOberflaeche);
-  const bodenDockAusgeblendet = screen === 'design' && designOberflaeche === 'island';
+  // PC1 (`docs/V084-SPEZ.md` §5 W2, «App.tsx-Guard verallgemeinern
+  // <bodenDockAusgeblendet> = aktive Station läuft im Island-Modus»):
+  // additiv neben `designOberflaeche` (dessen Feld/Testids/Verhalten bleiben
+  // WÖRTLICH unverändert, s. `island-ui.spec.ts`) — `visOberflaeche` ist
+  // dasselbe Muster für KosmoVis (`state/ui-zustand.ts`, Default 'island').
+  // `designIslandAktiv` bleibt als EIGENER Name erhalten (statt den
+  // generischen Flag direkt zu nutzen), weil die drei design-spezifisch
+  // beschrifteten Kopf-Elemente unten (`island-kopf-logo-design` u.a.) NUR
+  // für design ihre Bestands-Testid/-Wortmarke tragen dürfen — jede andere
+  // Station bekommt denselben Kreis-Stil, aber ihre EIGENE Modul-Kennung
+  // (s. Kommentar an der Render-Stelle unten).
+  const visOberflaeche = useUiZustand((s) => s.visOberflaeche);
+  const designIslandAktiv = screen === 'design' && designOberflaeche === 'island';
+  const visIslandAktiv = screen === 'vis' && visOberflaeche === 'island';
+  const bodenDockAusgeblendet = designIslandAktiv || visIslandAktiv;
   const sortierteModule = (() => {
     if (!rolle) return modules;
     const prio = ROLLEN_REIHENFOLGE[rolle];
@@ -693,15 +707,29 @@ export function App() {
           <OrbitMark module="orbit" size={20} />
         </button>
       )}
-      {bodenDockAusgeblendet && (
-        <span
-          aria-hidden="true"
-          className="isl-kopf-logo-design"
-          data-testid="island-kopf-logo-design"
-        >
-          <OrbitMark module="design" size={18} title="KosmoDesign" />
-        </span>
-      )}
+      {/* PC1 (`docs/V084-SPEZ.md` §5 W2): dieses zweite Kopf-Logo trug bisher
+          FEST `module="design"`/`title="KosmoDesign"` — jetzt aus der aktiven
+          Station abgeleitet (`sortierteModule`/`modules` kennt jede Station
+          ihre `ModuleId`+Name, dasselbe Muster wie die Stations-Badge oben,
+          Z.640-641). Für `screen==='design'` ist das Ergebnis BYTE-GLEICH
+          (`aktivesModulFuerKopf.id==='design'` → derselbe testid/dieselbe
+          Wortmarke wie zuvor, `island-ui.spec.ts` bleibt unverändert grün);
+          `screen==='vis'` bekommt jetzt sein eigenes «KosmoVis»-Logo statt
+          fälschlich «KosmoDesign» zu zeigen. */}
+      {bodenDockAusgeblendet && (() => {
+        const aktivesModulFuerKopf = modules.find((m) => m.screen === screen);
+        const modulId = aktivesModulFuerKopf?.id ?? 'design';
+        const modulName = aktivesModulFuerKopf?.name ?? 'KosmoDesign';
+        return (
+          <span
+            aria-hidden="true"
+            className="isl-kopf-logo-design"
+            data-testid={`island-kopf-logo-${modulId}`}
+          >
+            <OrbitMark module={modulId} size={18} title={modulName} />
+          </span>
+        );
+      })()}
       {/* Einstellungs-Zugang als einfacher, standalone Kreis oben rechts —
           ruft denselben `oeffneEinstellungen()`-Weg wie das bisherige
           Kopfbalken-Zahnrad (ungefiltert, `station` bleibt undefined), kein
@@ -890,7 +918,18 @@ export function App() {
         ) : screen === 'vis' ? (
           <KFehlerzone bereich="KosmoVis" onDiagnose={() => gehZu('doc')}>
             <div className="k-einblenden app-station-huelle">
-              <VisWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'vis', name: 'KosmoVis' })} />
+              <VisWorkspace
+                onEinstellungen={() => oeffneEinstellungen({ id: 'vis', name: 'KosmoVis' })}
+                // PC1 (V084-SPEZ §5 W2): derselbe Kosmo-Orb-Zugangsweg wie
+                // `DesignWorkspace`s `onKosmoOeffnen` oben — im Vis-Island-
+                // Modus ist der Kosmo-Orb (`island/KosmoOrb.tsx`) der EINZIGE
+                // Kosmo-Zugang (BodenDock/KosmoSymbol bleiben dort aus, s.
+                // `bodenDockAusgeblendet`-Kommentar oben).
+                onKosmoOeffnen={() => {
+                  requestKosmoFokus();
+                  setKosmoOpen(true);
+                }}
+              />
             </div>
           </KFehlerzone>
         ) : screen === 'data' ? (

@@ -1,7 +1,8 @@
-import { exportGlb, type AutoKameraStandpunkt, type Sheet } from '@kosmo/kernel';
+import { evaluiereGraph, exportGlb, type AutoKameraStandpunkt, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { RenderJob, bridgeRoutes } from '@kosmo/contracts';
+import { melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
-import type { NodeLaufStatus } from './vis-runtime';
+import { memoKey, useVisRuntime, type NodeLaufStatus } from './vis-runtime';
 
 /**
  * Bridge-Jobs für KosmoVis (P2/HS3) — ein Weg für Graph UND Einfach-Ansicht:
@@ -116,6 +117,14 @@ export async function postRenderJob(params: {
   sun?: { azimuth: number; elevation: number };
   komposition?: { seitenverhaeltnis: number; brennweiteMm: number; horizontlinie: number };
   kameras?: AutoKameraStandpunkt[];
+  /**
+   * PC1 (`docs/V084-SPEZ.md` §5 W2, C-17) — additiv, spiegelt den seit W0
+   * erweiterten `render-scene/v1`-Vertrag (`kosmo-contracts` `render.
+   * environment`, E4). Kommt NUR mit, wenn die STIMMUNG-Insel einen Preset
+   * gewählt hat — ohne Auswahl bleibt der Job byte-identisch zum bisherigen
+   * Stand (kein `environment`-Feld, wie vor v0.8.4).
+   */
+  environment?: { preset: 'morgen' | 'abend' | 'weiss' };
 }): Promise<JobRecord> {
   const { doc } = useProject.getState();
   const glb = exportGlb(doc, doc.settings.projectName);
@@ -130,6 +139,7 @@ export async function postRenderJob(params: {
       samples: params.samples,
       faithful: params.faithful,
       ...(params.sun ? { sun: params.sun } : {}),
+      ...(params.environment ? { environment: params.environment } : {}),
     },
     style: { mode: 'none', refs: [], prompt: params.prompt },
     // HS5: «Nur Cycles» → vis.skip: true (reines Cycles, keine KI-Veredelung).
@@ -145,6 +155,67 @@ export async function postRenderJob(params: {
   const res = await bridgeFetch(bridgeRoutes.jobs, { method: 'POST', body: form });
   if (!res.ok) throw new BridgeHttpError(res.status, 'Bridge antwortet mit');
   return parseJob(await res.json());
+}
+
+/**
+ * PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — Extraktion von `NodeCanvas.tsx`s
+ * bisherigem `ausfuehren()`-Closure (unverändertes Verhalten, nur ortsneutral
+ * gemacht): der Render-Node-«Ausführen»-Weg braucht NICHTS NodeCanvas-
+ * Lokales (nur `doc`/`runCommand`-freie Werte + `evaluiereGraph`, beides pur/
+ * exportiert) — darum jetzt hier, aufrufbar SOWOHL vom Node selbst
+ * (unverändert) ALS AUCH von der neuen AUSTAUSCH-Insel («Render senden»,
+ * `island/inhalte/austausch.tsx`), ohne die Logik zweimal zu schreiben.
+ * `environment` kommt aus der STIMMUNG-Insel (`vis-runtime.ts`
+ * `renderStimmungPreset`) — der Aufrufer entscheidet, ob er ihn mitgibt.
+ */
+export function sendeGraphRenderAuftrag(
+  graphId: string,
+  nodeId: string,
+  environment?: { preset: 'morgen' | 'abend' | 'weiss' },
+): void {
+  const { doc } = useProject.getState();
+  const graph = doc.get<VisGraph>(graphId);
+  if (!graph) return;
+  const auswertung = evaluiereGraph(doc, graph);
+  const roh = auswertung.renderAuftraege.get(nodeId);
+  if (!roh) return;
+  if (!roh.hatSzene) {
+    melde('Der Render-Node braucht eine Szene — verbinde den Modell-Node.', { ton: 'fehler' });
+    return;
+  }
+  const node = graph.nodes.find((n) => n.id === nodeId);
+  const zusatz = formularZusatz(node?.params ?? {});
+  const auftrag = { ...roh, prompt: kombiniertePrompt(roh.prompt, zusatz) };
+  const key = memoKey(auftrag);
+  const { setzeLauf, patchLauf } = useVisRuntime.getState();
+  setzeLauf(nodeId, { status: 'gesendet', memoKey: key, gestartetUm: Date.now() });
+  void postRenderJob({ ...auftrag, ...(environment ? { environment } : {}) })
+    .then((j) =>
+      patchLauf(nodeId, {
+        jobId: j.job_id,
+        status: mappeJobStatus(j),
+        ...(j.approval_token !== undefined ? { approvalToken: j.approval_token } : {}),
+      }),
+    )
+    .catch((err) => {
+      // TypeError = fetch-Netzfehler → ehrliche Offline-Meldung (§2.1.5),
+      // nicht der kryptische «Failed to fetch»-Rohtext. KLEIN 9: Ist die
+      // Bridge-URL eine LAN-IP, ist der «Netzfehler» in Wahrheit oft die CSP
+      // — das wird benannt, damit niemand vergeblich die Firewall sucht.
+      const offline = err instanceof TypeError;
+      const cspGeblockt = offline && bridgeVermutlichCspGeblockt();
+      patchLauf(nodeId, {
+        status: 'fehler',
+        fehler: cspGeblockt
+          ? 'Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1) — am selben Gerät über localhost ansprechen. (Offline)'
+          : offline
+            ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
+            : err instanceof Error
+              ? err.message
+              : String(err),
+      });
+      meldeFehler(err);
+    });
 }
 
 export async function holeJob(jobId: string): Promise<JobRecord> {

@@ -28,6 +28,23 @@ import { GespeicherteAnsichten } from './GespeicherteAnsichten';
 import { GpuStatus } from './GpuStatus';
 import { sollVisOnboardingAutoZeigen, VisOnboarding } from './VisOnboarding';
 import { VisReportDossier } from './VisReportDossier';
+import { useUiZustand } from '../../state/ui-zustand';
+import { useVisRuntime } from './vis-runtime';
+import { neuerGraphErstellen, kameraVorschlagenAktion } from './vis-graph-aktionen';
+// PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — der Vis-Island-Katalog (eigener
+// Namensraum, s. `island/inhalte/registry.ts`-Kopfkommentar) + die
+// Registrierung seiner Stufe-2/3-Inhalte als Import-Seiteneffekt (Muster
+// `design/island/IslandShell.tsx`s Kopfimporte).
+import { VIS_INSELN, visInhaltsRegistry } from './island';
+// PD2/E1 (`docs/V084-SPEZ.md` §5 W2) — NUR IMPORTIEREN, design/island/**
+// bleibt fremder Dateibesitz (Sanktion 2 gilt spiegelbildlich: PC1 fasst
+// keine design-Datei an). `IslandBuehne`/`KosmoOrb` sind die generische
+// PC0-Bühne bzw. das E2-Orb-Vorbild — beide bereits stationsagnostisch
+// gebaut (`IslandBuehne` nimmt `inseln`+`registry`, `KosmoOrb` kennt gar
+// keine Station).
+import { IslandBuehne } from '../design/island/IslandShell';
+import { KosmoOrb } from '../design/island/KosmoOrb';
+import type { IslandWerkzeug } from '../design/island/island-katalog';
 import './vis-visual.css';
 
 /**
@@ -113,15 +130,24 @@ export interface VisWorkspaceProps {
   /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
    *  KosmoVis. Optional — nur `App.tsx` kennt diesen Weg. */
   onEinstellungen?: () => void;
+  /**
+   * PC1 (`docs/V084-SPEZ.md` §5 W2) — Muster `DesignWorkspace.tsx`s gleich-
+   * namiges Prop: der Kosmo-Orb-Zugang im Island-Modus (`island/KosmoOrb.tsx`,
+   * NUR importiert). Optional — nur `App.tsx` kennt den Weg zum Kosmo-Panel.
+   */
+  onKosmoOeffnen?: () => void;
 }
 
-export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
+export function VisWorkspace({ onEinstellungen, onKosmoOeffnen }: VisWorkspaceProps = {}) {
   const [tab, setTab] = useState<'graph' | 'einfach' | 'ansichten'>('graph');
   // v0.8.1 / P8 (0.7.5-Welle-2 «Vis-Onboarding-Stepper», Spec §9.17, B-102) —
   // zeigt sich einmalig (Muster `kosmo.onboarded`), danach jederzeit über den
   // «?»-Knopf in der Toolbar erreichbar (s. `VisTabs` unten).
   const [onboardingOffen, setOnboardingOffen] = useState(() => sollVisOnboardingAutoZeigen());
   // v0.8.1 / P8 (0.7.5-Welle-2 «Report-Dossier/Print», Spec §9.17, B-103/104).
+  // PC1: bleibt UNVERÄNDERT der Manuell-Modus-Schalter (Bestandsschutz) — der
+  // Island-Modus zeigt den Report über `vis-runtime.ts`s `reportOffen` (s.
+  // Island-Zweig unten), zwei unabhängige Schalter für zwei unabhängige Chromes.
   const [reportOffen, setReportOffen] = useState(false);
   const revision = useProject((s) => s.revision);
   void revision;
@@ -133,6 +159,55 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
   // v0.8.0 / Paket PD2 (Default-Oberflächen) — Preset-Schnellzugriff in der
   // Toolbar-Kontextzeile (s. dortige `KToolGruppe «Oberfläche»` unten).
   const aktivesPresetVis = useDockZustand((s) => s.aktivesPreset['vis']);
+
+  // ---------------------------------------------------------------------
+  // PC1 (V084-SPEZ §5 W2, C-15) — Island-Modus. `visOberflaeche` spiegelt
+  // `DesignWorkspace.tsx`s `designOberflaeche`-Umschalter 1:1 (additives
+  // Store-Feld, `state/ui-zustand.ts`). Der aktive Graph im Island-Modus
+  // kommt aus `vis-runtime.ts` (`aktiverGraphId`, von `NodeCanvas.tsx`
+  // gepflegt) statt aus `aktiverGraph`/`setAktiverGraph` oben — jene zwei
+  // bleiben der EXKLUSIVE Manuell-Modus-Pfad (Bestandsschutz: kein Bestands-
+  // Konsument dieser Datei ändert sich, wenn `visOberflaeche==='island'` nie
+  // erreicht wird, z.B. in den Bestands-E2E-Specs unter dem globalen
+  // `manuell-seed.ts`-Seed).
+  const visOberflaeche = useUiZustand((s) => s.visOberflaeche);
+  const setVisOberflaeche = useUiZustand((s) => s.setVisOberflaeche);
+  const aktiverGraphIdInsel = useVisRuntime((s) => s.aktiverGraphId);
+  const islandGraphId = graphen.some((g) => g.id === aktiverGraphIdInsel) ? aktiverGraphIdInsel! : (graphen[0]?.id ?? '');
+  const islandReportOffen = useVisRuntime((s) => s.reportOffen);
+  const setIslandReportOffen = useVisRuntime((s) => s.setReportOffen);
+
+  /**
+   * PD2-Muster (`DesignWorkspace.tsx`s `aktiviereIslandWerkzeug()`): Aktion
+   * für JEDE Erst-Aktivierung eines Insel-Werkzeugs. `hatPopup:true`-
+   * Werkzeuge (Palette/Ausrichten/Verbinden/Zoom/Minimap/Stimmung/Render
+   * senden/Aufs Plakat) brauchen hier nichts — ihre echte Aktion lebt in der
+   * Registry (`island/inhalte/*.tsx`, liest globale Stores direkt). Die
+   * fünf `hatPopup:false`-Sofort-Aktionen (Raster/Routing/Kamera vorschlagen/
+   * Report/Manuell) schalten hier real — IslandShell zeigt danach selbst
+   * den Toast.
+   */
+  const aktiviereVisIslandWerkzeug = (w: IslandWerkzeug): void => {
+    switch (w.id) {
+      case 'raster':
+        useVisRuntime.getState().toggleCanvasSnap();
+        return;
+      case 'routing':
+        useVisRuntime.getState().toggleCanvasRouting();
+        return;
+      case 'kamera-vorschlagen':
+        kameraVorschlagenAktion(islandGraphId || undefined);
+        return;
+      case 'report':
+        setIslandReportOffen(true);
+        return;
+      case 'manuell':
+        setVisOberflaeche('manuell');
+        return;
+      default:
+        return;
+    }
+  };
 
   const neuerGraph = () => {
     try {
@@ -301,6 +376,42 @@ export function VisWorkspace({ onEinstellungen }: VisWorkspaceProps = {}) {
       meldeFehler(err);
     }
   };
+
+  // -----------------------------------------------------------------------
+  // PC1 (`docs/V084-SPEZ.md` §5 W2, C-15/C-16/C-17) — Island-Modus, EIGENER
+  // früher Return VOR jeder der drei Tab-Verzweigungen unten: die alte
+  // VisTabs-Werkzeugzeile (Graph/Einfach/Ansichten-Tabs, KToolGruppen) und
+  // DockFlaeche/`.vis-chrome-bottomright`/`-bottomleft` (in `NodeCanvas.tsx`,
+  // Owner-Auftrag «alte Dock raus») rendern NUR noch im Modus 'manuell' —
+  // wird dieser frühe Return nie erreicht (jeder Bestands-E2E-Lauf startet
+  // über `manuell-seed.ts` mit `visOberflaeche:'manuell'`), bleibt JEDE
+  // Zeile unterhalb byte-gleich zum Vorzustand (Bestandsschutz §5 Sanktion 8).
+  // Node-Tree ist im Island-Modus die EINZIGE Ansicht (kein Einfach-/
+  // Ansichten-Tab-Ersatz — deren Funktionen leben jetzt in der AUSTAUSCH-
+  // Insel: Render senden/Aufs Plakat/Report, s. `island/inhalte/austausch.
+  // tsx`; GespeicherteAnsichten bleibt eine dokumentierte Grenze, s.
+  // Abschlussbericht).
+  if (visOberflaeche === 'island') {
+    return (
+      <div className="vis-workspace-fuellen" data-testid="vis-island-fuellen">
+        <div className="vis-workspace-buehne">
+          {islandGraphId ? (
+            <NodeCanvas key={islandGraphId} graphId={islandGraphId} islandModus />
+          ) : (
+            <div className="vis-workspace-buehne-zentriert">
+              <Messrahmen
+                height={200}
+                caption="Noch kein Render-Graph — die GRAPH-Insel (links) legt einen an"
+              />
+            </div>
+          )}
+        </div>
+        <IslandBuehne inseln={VIS_INSELN} registry={visInhaltsRegistry} onWerkzeugAktion={aktiviereVisIslandWerkzeug} />
+        <KosmoOrb {...(onKosmoOeffnen ? { onKosmoOeffnen } : {})} />
+        {islandReportOffen && <VisReportDossier onClose={() => setIslandReportOffen(false)} />}
+      </div>
+    );
+  }
 
   if (tab === 'einfach') {
     return (
@@ -508,7 +619,36 @@ function VisTabs({
           <KIcon name="zahnrad" size={14} />
         </KButton>
       )}
+      {/* PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — additiver Rückweg AUS
+          'manuell': Muster `DesignWorkspace.tsx`s `island-zurueck`-Knopf
+          (Z.2441-2456, PD2 C-41) — der Vorwärtsweg ('manuell' → 'island') ist
+          das 'Manuell'-Insel-Werkzeug in AUSTAUSCH (nur im Island-Modus
+          sichtbar); dieser Knopf ist sein Gegenstück, unaufdringlich in
+          derselben Werkzeugleisten-Region. Additiv, kein Ersatz — die
+          klassische VisTabs-Fläche bleibt vollständig erhalten. */}
+      <VisIslandZurueckKnopf />
     </KToolbar>
+  );
+}
+
+/**
+ * Eigene Komponente statt eines Props-Durchreichens (VisTabs bleibt sonst
+ * unverändert für jeden Bestands-Aufrufer/-Test) — liest `setVisOberflaeche`
+ * direkt aus dem Store, dasselbe Zugriffsmuster wie jeder Insel-Inhalt.
+ */
+function VisIslandZurueckKnopf() {
+  const setVisOberflaeche = useUiZustand((s) => s.setVisOberflaeche);
+  return (
+    <KButton
+      size="sm"
+      tone="ghost"
+      data-testid="island-zurueck"
+      title="Zurück zur Island-UI"
+      aria-label="Zurück zur Island-UI"
+      onClick={() => setVisOberflaeche('island')}
+    >
+      Island-UI
+    </KButton>
   );
 }
 
@@ -597,13 +737,27 @@ function EinfachAnsicht() {
     }
   };
 
-  const postJob = async (stylePrompt: string): Promise<JobRecord> => {
+  /**
+   * PC1 (`docs/V084-SPEZ.md` §5 W2, C-17): `render.environment` ADDITIV —
+   * `presetOverride` (submitSerie kennt sein Preset aus der Schleife unten)
+   * gewinnt vor dem global gewählten `renderStimmungPreset` (STIMMUNG-Insel,
+   * `vis-runtime.ts`); ist beides leer, bleibt der Job byte-identisch zum
+   * Vorzustand (kein `environment`-Feld — greift ausserhalb des Island-
+   * Modus IMMER, weil dort nichts `renderStimmungPreset` je setzt).
+   */
+  const postJob = async (stylePrompt: string, presetOverride?: 'morgen' | 'abend' | 'weiss'): Promise<JobRecord> => {
     const { doc } = useProject.getState();
     const glb = exportGlb(doc, doc.settings.projectName);
+    const preset = presetOverride ?? useVisRuntime.getState().renderStimmungPreset ?? undefined;
     const scene = {
       schema: 'kosmovis.render-scene/v1',
       cameras: 'auto',
-      render: { resolution: [1600, 1000], samples: 128, faithful },
+      render: {
+        resolution: [1600, 1000],
+        samples: 128,
+        faithful,
+        ...(preset ? { environment: { preset } } : {}),
+      },
       style: { mode: 'none', refs: [], prompt: promptOverride ?? finalerRenderPrompt('', stylePrompt, renderPromptBausteine(doc)) },
       vis: { skip: false, backbone: 'qwen', upscale: false },
       out: '',
@@ -636,8 +790,8 @@ function EinfachAnsicht() {
     setError(null);
     try {
       const eintraege: Record<string, string> = {};
-      for (const s of STIMMUNGEN) {
-        const job = await postJob(prompt ? `${s.prompt} — ${prompt}` : s.prompt);
+      for (const [presetId, s] of Object.entries(VIS_STIMMUNGEN) as Array<['morgen' | 'abend' | 'weiss', { label: string; prompt: string }]>) {
+        const job = await postJob(prompt ? `${s.prompt} — ${prompt}` : s.prompt, presetId);
         eintraege[job.job_id] = s.label;
       }
       const serie: Serie = {

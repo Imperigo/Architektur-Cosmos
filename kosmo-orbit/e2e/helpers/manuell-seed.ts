@@ -1,4 +1,4 @@
-import type { DesignOberflaeche } from '../../apps/kosmo-orbit/src/state/ui-zustand';
+import type { DesignOberflaeche, VisOberflaeche } from '../../apps/kosmo-orbit/src/state/ui-zustand';
 
 /**
  * E2E-Seed-Helper (PD2, `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 2, `V082-SPEZ.
@@ -44,12 +44,25 @@ import type { DesignOberflaeche } from '../../apps/kosmo-orbit/src/state/ui-zust
 export const MANUELL_DESIGN_OBERFLAECHE: DesignOberflaeche = 'manuell';
 
 /**
+ * PC1 (`docs/V084-SPEZ.md` §5 W2) — exakt dasselbe Problem wie C-35 oben, jetzt
+ * für die vis-Station: `ui-zustand.ts`s `visOberflaeche`-Default ist `'island'`
+ * (Owner-Auftrag). Ohne Gegenmassnahme sähe JEDE bestehende vis-lastige Spec
+ * (die 7 `vis-*.spec.ts`, `render-knopf.spec.ts`, `sim-ki-imaging.spec.ts`,
+ * `boden-dock.spec.ts` u.a.) plötzlich die neue Island-Oberfläche statt der
+ * heutigen Werkzeugleiste/Node-Canvas-Chrome — derselbe globale Seed-Weg löst
+ * das wieder für ALLE Specs auf einen Schlag, additiv neben
+ * `designOberflaeche` (kein Feld hier verändert das andere).
+ */
+export const MANUELL_VIS_OBERFLAECHE: VisOberflaeche = 'manuell';
+
+/**
  * Baut den `kosmo.ui.v1`-`localStorage`-Wert mit `designOberflaeche:'manuell'`
- * — additiv zum bestehenden Seed-Inhalt (`modusAutomatik`/`modusFesthalten`/
- * `phasenFokus`, s. `playwright.config.ts`s Kopfkommentar zu `kosmo.ui.v1`).
- * `basis` erlaubt Aufrufern, die übrigen Felder zu überschreiben, ohne dieses
- * Modul für jede Kombination anzupassen — `designOberflaeche` gewinnt jedoch
- * IMMER (das ist der ganze Zweck dieses Helfers).
+ * UND `visOberflaeche:'manuell'` — additiv zum bestehenden Seed-Inhalt
+ * (`modusAutomatik`/`modusFesthalten`/`phasenFokus`, s. `playwright.config.ts`s
+ * Kopfkommentar zu `kosmo.ui.v1`). `basis` erlaubt Aufrufern, die übrigen
+ * Felder zu überschreiben, ohne dieses Modul für jede Kombination anzupassen —
+ * `designOberflaeche`/`visOberflaeche` gewinnen jedoch IMMER (das ist der
+ * ganze Zweck dieses Helfers).
  */
 export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): string {
   return JSON.stringify({
@@ -59,5 +72,6 @@ export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): st
     phasenFokus: null,
     ...basis,
     designOberflaeche: MANUELL_DESIGN_OBERFLAECHE,
+    visOberflaeche: MANUELL_VIS_OBERFLAECHE,
   });
 }

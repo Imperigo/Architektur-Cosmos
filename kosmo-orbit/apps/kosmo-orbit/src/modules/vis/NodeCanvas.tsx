@@ -20,14 +20,13 @@ import {
   aufnahmeAufsBlatt,
   bildAufsBlatt,
   bridgeBase,
-  bridgeVermutlichCspGeblockt,
   formularZusatz,
   freigebenJob,
   holeJob,
   istAuthFehler,
   kombiniertePrompt,
   mappeJobStatus,
-  postRenderJob,
+  sendeGraphRenderAuftrag,
 } from './vis-jobs';
 import {
   istZeitUeberschritten,
@@ -345,12 +344,20 @@ function BildKachel({
 export function NodeCanvas({
   graphId,
   onNodeHinzu,
+  islandModus,
 }: {
   graphId: string;
   /** Node-Palette (Welle 3): reicht den Klick an `VisWorkspace.nodeHinzu`
    * weiter (Spiral-Platzsuche) — optional, weil ältere Aufrufer (Tests, die
    * NodeCanvas isoliert mounten) die Palette schlicht nicht sehen. */
   onNodeHinzu?: (typ: string) => void;
+  /** PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — im Island-Modus verschwindet die
+   *  alte fixe Chrome (Zoom-/Snap-/Routing-Leiste, Minimap-Toggle, DockFlaeche
+   *  + der jetzt überflüssige Palette-Toggle oben links — sein Werkzeug lebt
+   *  in der GRAPH-Insel); die Kuratier-Fläche bleibt (kein Insel-Ersatz dafür,
+   *  s. Abschlussbericht). Default `false` — jeder Bestands-Aufrufer (Tests,
+   *  `VisWorkspace.tsx`-Manuell-Zweig) verhält sich byte-gleich weiter. */
+  islandModus?: boolean;
 }) {
   const revision = useProject((s) => s.revision);
   void revision;
@@ -369,9 +376,21 @@ export function NodeCanvas({
   const paletteSchliessen = useVisRuntime((s) => s.paletteSchliessen);
   const [kuratierOffen, setKuratierOffen] = useState(false);
   const [vergleichAuswahl, setVergleichAuswahl] = useState<readonly string[]>([]);
-  // Minimap (Welle 3): `null` = Default folgt der Node-Schwelle
-  // (MINIMAP_KNOTEN_MIN); einmal manuell geklickt, gewinnt der Nutzerwille.
-  const [minimapManuell, setMinimapManuell] = useState<boolean | null>(null);
+  // PC1: Minimap-Übersteuerung + Snap + Routing lebten hier als lokaler
+  // `useState` — für die Insel-Fernsteuerung (ANSICHT-Insel liest/schreibt
+  // dieselben Felder, ohne einen Closure-Pfad zu brauchen) nach
+  // `vis-runtime.ts` gehoben (s. dortiger Kopfkommentar). Verhalten
+  // byte-gleich: gleiche Defaults (`null`/`true`/`'kurve'`), gleiche
+  // Toggle-Semantik, nur die Quelle wechselt von lokal auf den globalen Store.
+  const minimapManuell = useVisRuntime((s) => s.canvasMinimapManuell);
+  const setMinimapManuell = useVisRuntime((s) => s.setCanvasMinimapManuell);
+  const snapAktiv = useVisRuntime((s) => s.canvasSnapAktiv);
+  const toggleSnap = useVisRuntime((s) => s.toggleCanvasSnap);
+  const routingModus = useVisRuntime((s) => s.canvasRoutingModus);
+  const toggleRouting = useVisRuntime((s) => s.toggleCanvasRouting);
+  const setCanvasAuswahlGroesse = useVisRuntime((s) => s.setCanvasAuswahlGroesse);
+  const canvasBefehl = useVisRuntime((s) => s.canvasBefehl);
+  const setAktiverGraphId = useVisRuntime((s) => s.setAktiverGraphId);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [view, setView] = useState({ cx: 560, cy: 300, scale: 1 });
@@ -384,10 +403,6 @@ export function NodeCanvas({
   // Klick = toggeln, Shift-Marquee auf leerer Fläche = Box-Auswahl, Escape leert.
   const [auswahl, setAuswahl] = useState<ReadonlySet<string>>(new Set());
   const [marquee, setMarquee] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
-  // V1-Welle Commit 1: 24px-Grid-Snap beim Drag-Commit — Default AN.
-  const [snapAktiv, setSnapAktiv] = useState(true);
-  // V1-Welle Commit 2: Kanten-Routing — Default 'kurve' (Bestandsverträge unverändert).
-  const [routingModus, setRoutingModus] = useState<VisRoutingModus>('kurve');
   // Node-Drag (Einzel ODER Gruppe, W1 + V1-Welle Commit 1): lokale
   // Startpositionen ALLER bewegten Nodes + der laufende Pointer-Delta;
   // EIN vis.nodeSchieben je Node bei pointerup, bei Mehrfachauswahl in
@@ -414,7 +429,9 @@ export function NodeCanvas({
     });
 
   const laeufe = useVisRuntime((s) => s.laeufe);
-  const setzeLauf = useVisRuntime((s) => s.setzeLauf);
+  // PC1: `setzeLauf` wandert mit der `ausfuehren()`-Extraktion nach
+  // `vis-jobs.ts`s `sendeGraphRenderAuftrag` (dort direkt über
+  // `useVisRuntime.getState()` genutzt) — hier nicht mehr nötig.
   const patchLauf = useVisRuntime((s) => s.patchLauf);
   // V-H5: Kuration lebt in vis-runtime (Laufzeit ≠ Modell) — Stern/Ablage
   // hängen am AKTUELLEN Bild eines Nodes, nie im Doc/Undo/Yjs.
@@ -568,6 +585,22 @@ export function NodeCanvas({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graphId]);
 
+  // PC1 (`docs/V084-SPEZ.md` §5 W2, C-15): spiegelt den aktiven Graphen in
+  // `vis-runtime.ts` — die GRAPH-/STIMMUNG-/AUSTAUSCH-Insel-Inhalte
+  // (`island/inhalte/*.tsx`) lesen NUR globale Stores (dasselbe Muster wie
+  // `design/island/inhalte/*.tsx`), kein Prop-Pfad durch die Registry.
+  useEffect(() => {
+    setAktiverGraphId(graphId);
+  }, [graphId, setAktiverGraphId]);
+
+  // PC1: die ANSICHT-/GRAPH-Insel zeigt «Ausrichten» nur ab 2 ausgewählten
+  // Nodes — dieselbe Regel wie die bisherige `visAusrichten`-Dock-Panel-
+  // Sichtbarkeit (`auswahl.size >= 2`), hier nur als Zähler gespiegelt (die
+  // volle Auswahl-Menge bleibt NodeCanvas-lokal, kein Store-Feld dafür nötig).
+  useEffect(() => {
+    setCanvasAuswahlGroesse(auswahl.size);
+  }, [auswahl, setCanvasAuswahlGroesse]);
+
   /** Zoom-Steuerleiste (W1 Massnahme 4): ×1.25/÷1.25, geklemmt 0.25–2.5. */
   const zoomUm = (faktor: number) => setView((v) => ({ ...v, scale: klemme(v.scale * faktor, ZOOM_MIN, ZOOM_MAX) }));
   const zoomFit = () => {
@@ -584,48 +617,17 @@ export function NodeCanvas({
     }
   };
 
+  /**
+   * PC1 (`docs/V084-SPEZ.md` §5 W2, C-15/C-17): die eigentliche Sende-Logik
+   * lebt jetzt in `vis-jobs.ts`s `sendeGraphRenderAuftrag` (Extraktion, EXAKT
+   * dasselbe Verhalten wie bisher hier — s. dortigen Kommentar), damit die
+   * neue AUSTAUSCH-Insel («Render senden») sie ohne Duplikat mitnutzen kann.
+   * `environment` kommt aus der STIMMUNG-Insel (`renderStimmungPreset`,
+   * `null` ausserhalb des Island-Modus → kein Feld im Job, byte-gleich).
+   */
   const ausfuehren = (nodeId: string) => {
-    const roh = auswertung?.renderAuftraege.get(nodeId);
-    if (!roh) return;
-    if (!roh.hatSzene) {
-      melde('Der Render-Node braucht eine Szene — verbinde den Modell-Node.', { ton: 'fehler' });
-      return;
-    }
-    // V-H4: derselbe Zusammenführungs-Weg wie die sichtbare Anzeige
-    // (render-final-prompt) — der Job bekommt NIE einen anderen Prompt als
-    // den, den der Architekt am Node liest (Ehrlichkeit/V8).
-    const node = graph.nodes.find((n) => n.id === nodeId);
-    const zusatz = formularZusatz(node?.params ?? {});
-    const auftrag = { ...roh, prompt: kombiniertePrompt(roh.prompt, zusatz) };
-    const key = memoKey(auftrag);
-    setzeLauf(nodeId, { status: 'gesendet', memoKey: key, gestartetUm: Date.now() });
-    void postRenderJob(auftrag)
-      .then((j) =>
-        patchLauf(nodeId, {
-          jobId: j.job_id,
-          status: mappeJobStatus(j),
-          ...(j.approval_token !== undefined ? { approvalToken: j.approval_token } : {}),
-        }),
-      )
-      .catch((err) => {
-        // TypeError = fetch-Netzfehler → ehrliche Offline-Meldung (§2.1.5),
-        // nicht der kryptische «Failed to fetch»-Rohtext. KLEIN 9: Ist die
-        // Bridge-URL eine LAN-IP, ist der «Netzfehler» in Wahrheit oft die CSP
-        // — das wird benannt, damit niemand vergeblich die Firewall sucht.
-        const offline = err instanceof TypeError;
-        const cspGeblockt = offline && bridgeVermutlichCspGeblockt();
-        patchLauf(nodeId, {
-          status: 'fehler',
-          fehler: cspGeblockt
-            ? 'Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1) — am selben Gerät über localhost ansprechen. (Offline)'
-            : offline
-              ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
-              : err instanceof Error
-                ? err.message
-                : String(err),
-        });
-        meldeFehler(err);
-      });
+    const preset = useVisRuntime.getState().renderStimmungPreset;
+    sendeGraphRenderAuftrag(graphId, nodeId, preset ? { preset } : undefined);
   };
 
   /** Wartenden Job freigeben (nur bei aktiver Freigabe-Pflicht). */
@@ -698,6 +700,41 @@ export function NodeCanvas({
       }
     });
   };
+
+  // PC1 (`docs/V084-SPEZ.md` §5 W2, C-15): Fernauslöser aus der ANSICHT-/
+  // GRAPH-Insel (`island/inhalte/ansicht.tsx`/`graph.tsx`) — die eigentliche
+  // Zoom-/Ausrichten-Rechnung bleibt HIER (sie braucht `flaeche`/`graph`/
+  // `auswahl`, die nicht sinnvoll in `vis-runtime.ts` leben, s. dortiger
+  // Kopfkommentar). `nonce` erzwingt IMMER einen neuen Effekt-Lauf, auch bei
+  // zweimal demselben Typ hintereinander (sonst würde ein identisches
+  // `{typ, nonce}`-Objekt den Effekt beim zweiten Klick auf denselben Knopf
+  // gar nicht erst feuern lassen). Ausserhalb des Island-Modus bleibt
+  // `canvasBefehl` immer `null` (kein Aufrufer setzt es dort) — der Effekt
+  // ist dann ein No-Op, byte-gleiches Bestandsverhalten.
+  useEffect(() => {
+    if (!canvasBefehl) return;
+    switch (canvasBefehl.typ) {
+      case 'zoom-in':
+        zoomUm(1.25);
+        return;
+      case 'zoom-out':
+        zoomUm(1 / 1.25);
+        return;
+      case 'zoom-fit':
+        zoomFit();
+        return;
+      case 'ausrichten-x':
+        ausrichtenAn('x');
+        return;
+      case 'ausrichten-y':
+        ausrichtenAn('y');
+        return;
+      case 'vertikal-verteilen':
+        vertikalVerteilen();
+        return;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasBefehl]);
 
   /**
    * Bild-Quelle eines Eingangs-Ports — entweder der Lauf eines verbundenen
@@ -962,11 +999,12 @@ export function NodeCanvas({
     <svg
       ref={svgRef}
       data-testid="node-canvas"
-      // v0.7.2 §8/W4-H (Cursor-Zonen, Kritik-Auflage — W3-F-Grenze): NUR das
-      // Attribut, kein Verhalten — `CursorEbene.tsx` versteckt sich hier
-      // komplett (eigenes Node-Interaktions-Feedback der Kanvas bleibt
-      // unverändert bestehen).
-      data-cursor-zone="eigen"
+      // PC1 (`docs/V084-SPEZ.md` §5 W2, Punkt 5): `data-cursor-zone="eigen"`
+      // ist seit PA1 tot — `CursorEbene.tsx` versteckt sich seither NICHT
+      // mehr über Zonen-Heuristiken (die «buggende Maus», D1), sondern folgt
+      // ausschliesslich dem berechneten Cursor (`formVonComputedCursor`,
+      // `CursorEbene.tsx:76-82`). Entfernt statt als Leiche stehen gelassen
+      // (dieselbe Regel wie die tote PD2-Hinweis-Entfernung, v0.8.3 P10).
       className="vis-canvas-svg"
       viewBox={(() => {
         const w = flaeche.w / view.scale;
@@ -1456,7 +1494,15 @@ export function NodeCanvas({
         z-Ordnung»-Muster wie Boden-Dock/Kosmo-Symbol (z-108/110) über den
         Design-Panels, s. `DockFlaeche.tsx`-Kopfkommentar. Bewusst UNTER der
         Kuratier-Fläche (z-35, `KuratierFlaeche.tsx`) — während der Kuration
-        bleibt dieser Knopf wie bisher verdeckt. */}
+        bleibt dieser Knopf wie bisher verdeckt.
+        PC1 (V084-SPEZ C-15): im Island-Modus entfällt dieser Knopf — sein
+        Ziel (die `visPalette`-Dock-Panel-Fläche) rendert dort gar nicht mehr
+        (DockFlaeche unten ausgeblendet), die Node-Palette lebt jetzt als
+        eigenes Werkzeug in der GRAPH-Insel (`island/inhalte/graph.tsx`). Der
+        Kuratier-Toggle rechts (unten) bleibt in JEDEM Modus — Kuratieren hat
+        keine Insel-Entsprechung im PC1-Auftrag und darf nicht unerreichbar
+        werden (Bestandsschutz-Geist über die Islands hinaus). */}
+    {!islandModus && (
     <div className="vis-chrome-topleft">
       <KButton
         size="sm"
@@ -1470,6 +1516,7 @@ export function NodeCanvas({
         <KIcon name="ordner" size={16} title="Node-Palette" />
       </KButton>
     </div>
+    )}
 
     {/* Kuratier-Fläche (Welle 1 — Soll-Bild `Kosmo Viz Kuratierung.dc.html`
         §6.2): vom schwebenden Overlay zum Vollflächen-Raster ausgebaut
@@ -1517,7 +1564,12 @@ export function NodeCanvas({
         Hälfte des Zoom-Plus-Knopfs verdecken (unklickbar).
         zIndex 32 (P6, vorher auto): über den Dock-Panels — ein nach rechts
         gezogenes/gedocktes Panel darf die Zoom-/Snap-/Routing-Knöpfe nie
-        unklickbar machen (gleiche Begründung wie beim Palette-Toggle oben). */}
+        unklickbar machen (gleiche Begründung wie beim Palette-Toggle oben).
+        PC1 (V084-SPEZ C-15): dieser ganze Block rendert NUR noch ausserhalb
+        des Island-Modus — Zoom/Fit/Snap/Routing wandern in die ANSICHT-Insel
+        (`island/inhalte/ansicht.tsx`), die dieselben `vis-runtime.ts`-Felder
+        UND denselben Fernauslöser (`canvasBefehl`, Effekt unten) nutzt. */}
+    {!islandModus && (
     <div className="vis-chrome-bottomright">
       {/* V1-Welle Commit 1/2: Raster-Snap + Kanten-Routing — Werkzeug-
           Umschalter neben der Zoom-Leiste, fern von Testpunkt (30,30) und
@@ -1529,7 +1581,7 @@ export function NodeCanvas({
         title="Raster-Einrasten (24px)"
         aria-label="Raster-Einrasten"
         aria-pressed={snapAktiv}
-        onClick={() => setSnapAktiv((s) => !s)}
+        onClick={toggleSnap}
       >
         Raster
       </KButton>
@@ -1540,7 +1592,7 @@ export function NodeCanvas({
         title="Kanten-Routing"
         aria-label="Kanten-Routing"
         aria-pressed={routingModus === 'ortho'}
-        onClick={() => setRoutingModus((m) => (m === 'ortho' ? 'kurve' : 'ortho'))}
+        onClick={toggleRouting}
       >
         {routingModus === 'ortho' ? 'Ortho' : 'Kurve'}
       </KButton>
@@ -1554,6 +1606,7 @@ export function NodeCanvas({
         <KIcon name="zoom-plus" size={16} title="Grösser" />
       </KButton>
     </div>
+    )}
 
     {/* Minimap-Toggle (Welle 3) bleibt fixe Chrome, unten links — der
         Kartenkörper selbst ist seit v0.7.8 Welle 3 (P6) das `visMinimap`-
@@ -1563,8 +1616,10 @@ export function NodeCanvas({
         (dokumentierte Abweichung, s. `dock-stationen.ts`-Kopfkommentar);
         die Registry-Reihenfolge dort hält die Minimap trotzdem optisch über
         der Legende. zIndex 32 (P6): über den Dock-Panels, gleiche Begründung
-        wie beim Palette-Toggle oben (B-Modus-Linksspalte). */}
-    {graph.nodes.length > 0 && (
+        wie beim Palette-Toggle oben (B-Modus-Linksspalte).
+        PC1 (V084-SPEZ C-15): NUR ausserhalb des Island-Modus — die Minimap
+        selbst wandert als Insel-Werkzeug in ANSICHT. */}
+    {!islandModus && graph.nodes.length > 0 && (
       <div className="vis-chrome-bottomleft">
         <KButton
           size="sm"
@@ -1580,6 +1635,81 @@ export function NodeCanvas({
       </div>
     )}
 
+    {/* PC1 (`docs/V084-SPEZ.md` §5 W2, C-15): Minimap+Legende im Island-Modus
+        — die ANSICHT-Insel («Minimap»-Werkzeug, `island/inhalte/ansicht.tsx`)
+        trägt nur den TOGGLE (`canvasMinimapManuell`) + eine Kurzerklärung;
+        die eigentliche Karte bleibt HIER (sie braucht `graph`/`view`/
+        `flaeche`/`minimapAnsicht`, dieselbe Geometrie wie die bisherige
+        `visMinimap`-Dock-Panel-Fassung unten) — bewusste JSX-Verdopplung
+        statt eines riskanten Umbaus des bestehenden `visDockPanels`-Arrays
+        (das bleibt für den Nicht-Island-Modus unangetastet). Position unten
+        links, ausserhalb der GRAPH-Insel (links) und der AUSTAUSCH-Insel
+        (unten) — `12px`/`52px` hält denselben Randabstand wie die alte
+        `.vis-chrome-bottomleft`. */}
+    {islandModus && graph.nodes.length > 0 && minimapSichtbar && (
+      <div className="vis-island-minimap-overlay" data-testid="vis-island-minimap">
+        {/* `.vis-minimap-svg` setzt CSS `width/height:100%` (Dock-Panel-Fassung
+            gab die Pixelgrösse über den umschliessenden DockPanel-Rahmen vor)
+            — hier gibt es diesen Rahmen nicht, darum die feste Pixelgrösse
+            zusätzlich als Inline-Style (gewinnt gegen die 100%-Regel). */}
+        <svg
+          data-testid="vis-minimap"
+          width={MINIMAP_W}
+          height={MINIMAP_H}
+          viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
+          className="vis-minimap-svg"
+          style={{ width: MINIMAP_W, height: MINIMAP_H }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
+            minimapSpringeZu(e);
+          }}
+          onPointerMove={(e) => {
+            if (e.buttons !== 1) return;
+            minimapSpringeZu(e);
+          }}
+        >
+          {graph.nodes.map((n) => {
+            const kat = VIS_NODE_KATALOG[n.typ];
+            if (!kat) return null;
+            const x = (n.x - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
+            const y = (n.y - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
+            const w = Math.max(2, NODE_W * minimapAnsicht.scale);
+            const h = Math.max(2, nodeHoehe(n) * minimapAnsicht.scale);
+            return <rect key={n.id} x={x} y={y} width={w} height={h} fill={VIS_KATEGORIE_HUE[kat.kategorie]} opacity={0.8} />;
+          })}
+          {(() => {
+            const vw = flaeche.w / view.scale;
+            const vh = flaeche.h / view.scale;
+            const x = (view.cx - vw / 2 - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
+            const y = (view.cy - vh / 2 - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
+            return (
+              <rect
+                x={x}
+                y={y}
+                width={vw * minimapAnsicht.scale}
+                height={vh * minimapAnsicht.scale}
+                fill="none"
+                stroke="var(--k-ink)"
+                strokeWidth={1.5}
+                pointerEvents="none"
+              />
+            );
+          })()}
+        </svg>
+        {legendeTypen.length > 0 && (
+          <div data-testid="vis-legende" className="vis-legende-panel" style={{ width: MINIMAP_W, height: 'auto' }}>
+            {legendeTypen.map((t) => (
+              <div key={t} className="vis-legende-zeile">
+                <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[t] }} />
+                <span>{PORT_TYP_NAME[t]}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )}
+
     {/* v0.7.8 Welle 3 (P6) — die vier dockbaren Vis-Panels (Palette/
         Ausrichten/Legende/Minimap, `visDockPanels` oben) kollisionsfrei
         gedockt, analog zu `DesignWorkspace.tsx`s `<DockFlaeche station=
@@ -1590,8 +1720,12 @@ export function NodeCanvas({
         ist ohnehin identisch (dieser Wrapper füllt exakt den Node-Canvas-
         Bereich UNTER der `VisTabs`-Werkzeugleiste, dieselbe Fläche, die ein
         Sibling in `VisWorkspace.tsx` messen würde) — s. Abschlussbericht P6
-        für die volle Begründung dieser Platzierung. */}
-    <DockFlaeche station="vis" panels={visDockPanels} />
+        für die volle Begründung dieser Platzierung.
+        PC1 (`docs/V084-SPEZ.md` §5 W2, C-15): rendert NUR noch ausserhalb
+        des Island-Modus — die vier Panels (Palette/Ausrichten/Legende/
+        Minimap) wandern in die GRAPH-/ANSICHT-Inseln, die alte Dock-Fläche
+        verschwindet dort ersatzlos (Owner-Auftrag «alte Dock raus»). */}
+    {!islandModus && <DockFlaeche station="vis" panels={visDockPanels} />}
     </div>
   );
 }

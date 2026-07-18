@@ -161,6 +161,31 @@ export interface ReviewPin {
 
 let pinZaehler = 0;
 
+/** V1-Welle Commit 2 (Kanten-Routing) — Wert-Union, PC1 lebt hier weiter
+ *  (bisher nur lokal in `NodeCanvas.tsx` deklariert). */
+export type VisRoutingModus = 'ortho' | 'kurve';
+
+/**
+ * PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — der Vis-Island-Katalog braucht
+ * Zugriff auf einen Teil des bisher NodeCanvas-lokalen UI-Zustands (Zoom/
+ * Snap/Routing/Minimap/aktiver Graph/Auswahlgrösse/Report/Stimmungs-Preset),
+ * weil `island/inhalte/*.tsx` (dasselbe Muster wie `design/island/inhalte/
+ * *.tsx`) NUR globale Stores lesen dürfen, keine NodeCanvas-Closures. Additiv
+ * neben `laeufe`/`kuration`/… — NodeCanvas.tsx liest/schreibt dieselben Felder
+ * jetzt STATT lokaler `useState`s (Verhalten byte-gleich, nur die Quelle
+ * wechselt); Zoom/Ausrichten bleiben dagegen NodeCanvas-lokal berechnet (sie
+ * brauchen die gemessene Canvas-Pixelgrösse/Node-Bounds) — ein «Befehl»-Feld
+ * (`canvasBefehl`/`sendeCanvasBefehl`) trägt den AUSLÖSER von aussen (Island-
+ * Popup) rein, die eigentliche Rechnung bleibt dort, wo die Geometrie lebt.
+ */
+export type VisCanvasBefehlTyp =
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'zoom-fit'
+  | 'ausrichten-x'
+  | 'ausrichten-y'
+  | 'vertikal-verteilen';
+
 interface VisRuntime {
   laeufe: Record<string, NodeLauf>;
   kuration: Record<string, KurationEintrag>;
@@ -200,6 +225,45 @@ interface VisRuntime {
    *  zurück — der Aufrufer (UI) braucht die `id` für den Bearbeiten-Zustand. */
   fuegeReviewPinHinzu: (aufnahmeId: string, pin: { x: number; y: number; text: string; wer: string }) => ReviewPin;
   entferneReviewPin: (aufnahmeId: string, pinId: string) => void;
+
+  // ---- PC1 (Island-UI, V084-SPEZ C-15/C-17) — s. Kopfkommentar oben ----
+  /** Aktiver Render-Graph (`VisWorkspace.tsx`s bisheriges lokales `aktiverGraph`,
+   *  hier gespiegelt) — GRAPH-Island-Inhalte (Node-Palette/Stimmung/Austausch)
+   *  lesen ihn, ohne einen Prop-Pfad durch die Insel-Registry zu brauchen. */
+  aktiverGraphId: string | null;
+  setAktiverGraphId: (id: string | null) => void;
+  /** V1-Welle Commit 1 — Default AN, wie das bisherige NodeCanvas-lokale `useState`. */
+  canvasSnapAktiv: boolean;
+  toggleCanvasSnap: () => void;
+  /** V1-Welle Commit 2 — Default 'kurve', wie das bisherige NodeCanvas-lokale `useState`. */
+  canvasRoutingModus: VisRoutingModus;
+  toggleCanvasRouting: () => void;
+  /** Welle 3 — `null` = folgt der Node-Schwelle (Default-Verhalten unverändert). */
+  canvasMinimapManuell: boolean | null;
+  setCanvasMinimapManuell: (v: boolean | null) => void;
+  /** Anzahl ausgewählter Nodes (NICHT die volle Auswahl-Menge — die bleibt
+   *  NodeCanvas-lokal, hier nur der für die Ausrichten-Insel nötige Zähler). */
+  canvasAuswahlGroesse: number;
+  setCanvasAuswahlGroesse: (n: number) => void;
+  /** Fernauslöser für Zoom/Ausrichten aus einem Island-Popup — NodeCanvas.tsx
+   *  beobachtet dieses Feld (Nonce erzwingt IMMER einen neuen Effekt-Lauf,
+   *  auch bei zweimal demselben Typ hintereinander) und führt die eigentliche
+   *  Rechnung lokal aus (braucht `flaeche`/Node-Bounds). */
+  canvasBefehl: { typ: VisCanvasBefehlTyp; nonce: number } | null;
+  sendeCanvasBefehl: (typ: VisCanvasBefehlTyp) => void;
+  /** AUSTAUSCH-Insel «Report» — ersetzt `VisWorkspace.tsx`s bisheriges lokales
+   *  `reportOffen`, damit die Insel denselben Schalter lesen/setzen kann. */
+  reportOffen: boolean;
+  setReportOffen: (v: boolean) => void;
+  /**
+   * STIMMUNG-Insel (C-17): der zuletzt gewählte Stimmungs-Preset — fliesst als
+   * `render.environment.preset` in JEDEN nächsten Render-Job (Graph-Ausführen
+   * UND die Einfach-Ansicht, `vis-jobs.ts`/`VisWorkspace.tsx`). `null` = keine
+   * Auswahl getroffen → kein `environment`-Feld im Job (byte-gleich zum
+   * bisherigen Verhalten, wie bisher IMMER ausserhalb des Island-Modus).
+   */
+  renderStimmungPreset: 'morgen' | 'abend' | 'weiss' | null;
+  setRenderStimmungPreset: (p: 'morgen' | 'abend' | 'weiss' | null) => void;
 }
 
 export const useVisRuntime = create<VisRuntime>((set) => ({
@@ -260,6 +324,25 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
   paletteUmschalten: () => set((s) => ({ paletteOffen: !s.paletteOffen })),
   paletteSchliessen: () => set({ paletteOffen: false }),
   paletteOffenSetzen: (offen) => set({ paletteOffen: offen }),
+
+  // ---- PC1 (Island-UI) ----
+  aktiverGraphId: null,
+  setAktiverGraphId: (id) => set({ aktiverGraphId: id }),
+  canvasSnapAktiv: true,
+  toggleCanvasSnap: () => set((s) => ({ canvasSnapAktiv: !s.canvasSnapAktiv })),
+  canvasRoutingModus: 'kurve',
+  toggleCanvasRouting: () =>
+    set((s) => ({ canvasRoutingModus: s.canvasRoutingModus === 'ortho' ? 'kurve' : 'ortho' })),
+  canvasMinimapManuell: null,
+  setCanvasMinimapManuell: (v) => set({ canvasMinimapManuell: v }),
+  canvasAuswahlGroesse: 0,
+  setCanvasAuswahlGroesse: (n) => set({ canvasAuswahlGroesse: n }),
+  canvasBefehl: null,
+  sendeCanvasBefehl: (typ) => set((s) => ({ canvasBefehl: { typ, nonce: (s.canvasBefehl?.nonce ?? 0) + 1 } })),
+  reportOffen: false,
+  setReportOffen: (v) => set({ reportOffen: v }),
+  renderStimmungPreset: null,
+  setRenderStimmungPreset: (p) => set({ renderStimmungPreset: p }),
 }));
 
 /**
