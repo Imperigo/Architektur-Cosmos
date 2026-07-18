@@ -1,4 +1,9 @@
-import type { DesignOberflaeche, VisOberflaeche } from '../../apps/kosmo-orbit/src/state/ui-zustand';
+import type {
+  DesignOberflaeche,
+  VisOberflaeche,
+  PublishOberflaeche,
+  PrepareOberflaeche,
+} from '../../apps/kosmo-orbit/src/state/ui-zustand';
 
 /**
  * E2E-Seed-Helper (PD2, `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 2, `V082-SPEZ.
@@ -56,13 +61,42 @@ export const MANUELL_DESIGN_OBERFLAECHE: DesignOberflaeche = 'manuell';
 export const MANUELL_VIS_OBERFLAECHE: VisOberflaeche = 'manuell';
 
 /**
- * Baut den `kosmo.ui.v1`-`localStorage`-Wert mit `designOberflaeche:'manuell'`
- * UND `visOberflaeche:'manuell'` — additiv zum bestehenden Seed-Inhalt
- * (`modusAutomatik`/`modusFesthalten`/`phasenFokus`, s. `playwright.config.ts`s
- * Kopfkommentar zu `kosmo.ui.v1`). `basis` erlaubt Aufrufern, die übrigen
- * Felder zu überschreiben, ohne dieses Modul für jede Kombination anzupassen —
- * `designOberflaeche`/`visOberflaeche` gewinnen jedoch IMMER (das ist der
- * ganze Zweck dieses Helfers).
+ * PC3 (`docs/V084-SPEZ.md` §5 W3) — exakt dasselbe Problem wie C-35/PC1 oben,
+ * jetzt für die publish-Station: `ui-zustand.ts`s `publishOberflaeche`-Default
+ * ist `'island'` (Owner-Auftrag, C-19). Ohne Gegenmassnahme sähe JEDE
+ * bestehende publish-lastige Spec (`publish-presets.spec.ts`,
+ * `blatt-fuellen.spec.ts`, `auto-pack-editor.spec.ts`, `export-pdf-
+ * haertung.spec.ts`, `rolle-leporello.spec.ts`, `plankopf.spec.ts`,
+ * `dossier-panel.spec.ts`, `export-hub-kosmopackage.spec.ts` u.a.) plötzlich
+ * die neue Island-Oberfläche statt der heutigen Werkzeugleiste/Sidebar/
+ * Blatt-Canvas-Chrome — derselbe globale Seed-Weg löst das wieder für ALLE
+ * Specs auf einen Schlag, additiv neben `designOberflaeche`/`visOberflaeche`
+ * (kein Feld hier verändert ein anderes).
+ */
+export const MANUELL_PUBLISH_OBERFLAECHE: PublishOberflaeche = 'manuell';
+
+/**
+ * PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — exakt dasselbe Problem wie C-35/
+ * PC1/PC3 oben, jetzt für die prepare-Station: `ui-zustand.ts`s
+ * `prepareOberflaeche`-Default ist `'island'` (Owner-Auftrag, C-20). Ohne
+ * Gegenmassnahme sähe JEDE bestehende prepare-lastige Spec plötzlich die
+ * neue Island-Oberfläche — derselbe globale Seed-Weg löst das wieder für
+ * ALLE Specs auf einen Schlag, additiv neben `designOberflaeche`/
+ * `visOberflaeche`/`publishOberflaeche` (kein Feld hier verändert ein
+ * anderes).
+ */
+export const MANUELL_PREPARE_OBERFLAECHE: PrepareOberflaeche = 'manuell';
+
+/**
+ * Baut den `kosmo.ui.v1`-`localStorage`-Wert mit `designOberflaeche:'manuell'`,
+ * `visOberflaeche:'manuell'`, `publishOberflaeche:'manuell'` UND
+ * `prepareOberflaeche:'manuell'` — additiv zum bestehenden Seed-Inhalt
+ * (`modusAutomatik`/`modusFesthalten`/`phasenFokus`, s. `playwright.
+ * config.ts`s Kopfkommentar zu `kosmo.ui.v1`). `basis` erlaubt Aufrufern,
+ * die übrigen Felder zu überschreiben, ohne dieses Modul für jede
+ * Kombination anzupassen — `designOberflaeche`/`visOberflaeche`/
+ * `publishOberflaeche`/`prepareOberflaeche` gewinnen jedoch IMMER (das ist
+ * der ganze Zweck dieses Helfers).
  */
 export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): string {
   return JSON.stringify({
@@ -73,5 +107,7 @@ export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): st
     ...basis,
     designOberflaeche: MANUELL_DESIGN_OBERFLAECHE,
     visOberflaeche: MANUELL_VIS_OBERFLAECHE,
+    publishOberflaeche: MANUELL_PUBLISH_OBERFLAECHE,
+    prepareOberflaeche: MANUELL_PREPARE_OBERFLAECHE,
   });
 }

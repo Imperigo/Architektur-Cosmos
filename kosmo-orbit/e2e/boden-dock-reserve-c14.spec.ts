@@ -150,3 +150,52 @@ test.describe('BodenDock-Reserve — daten/wissen/chat/pipeline (C-14)', () => {
     expect(ueberDemDock(karteBox, dockBox)).toBe(true);
   });
 });
+
+/**
+ * PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — ERWEITERT diese Datei additiv um
+ * eine fünfte Station statt sie zu ersetzen (Owner-Auftrag «boden-dock-
+ * reserve-c14 erweitern statt ersetzen falls nötig, begründen»): Prepare hat
+ * — wie `daten`/`wissen`/`pipeline` oben — KEINE `DockFlaeche`; im
+ * Island-Modus (jetzt der Default, `prepareOberflaeche:'island'`) ist das
+ * BodenDock ohnehin per Guard ausgeblendet (`App.tsx`s `bodenDockAusgeblendet`,
+ * PC4-Zeile), die Kollisionsfrage stellt sich also NUR im Manuell-Modus
+ * (diese Datei läuft global mit `prepareOberflaeche:'manuell'` geseedet, s.
+ * `e2e/helpers/manuell-seed.ts`). Begründung für den additiven Zuschlag statt
+ * eines neuen Reserve-Musters: `PrepareWorkspace.tsx`s `.prepare-viewport`
+ * bekam denselben `BODEN_DOCK_RESERVE_PX`-Bottom-Padding-Zuschlag wie
+ * `DataWorkspace.tsx`/`DevWorkspace.tsx` oben (`PrepareWorkspace.tsx`s
+ * Inline-Style, Kopfkommentar dort) — dieser Test ist der Beweis dafür,
+ * genau wie die vier Tests oben ihren jeweiligen Fix beweisen. Die
+ * Dossier-Sektion (statt Dateien-Ingest) liefert deterministischen,
+ * fixture-freien Scroll-Inhalt (jeder Klick auf «+ Eintrag» legt sofort eine
+ * neue, echte Formularzeile an, kein Netzwerk/keine Datei nötig).
+ */
+test.describe('BodenDock-Reserve — prepare (C-20-Nachzug zu C-14)', () => {
+  test('prepare (Manuell, Wettbewerbsdossier): letzter Eintrag lässt sich vollständig über die Boden-Dock-Pille scrollen', async ({
+    page,
+  }) => {
+    await seed(page);
+    await page.click('[data-testid="module-prepare"]');
+    await expect(page.locator('[data-testid="boden-dock"]')).toBeVisible();
+    await expect(page.locator('[data-testid="dossier"]')).toBeVisible();
+
+    // `.prepare-dossier-fuss button` matcht ZWEI Knöpfe («+ Eintrag» UND
+    // «Übernehmen») — `.first()` trifft immer den «+ Eintrag»-Knopf (steht
+    // im JSX vor «Übernehmen», Position ändert sich nie). `button:has-text
+    // ("Eintrag")` wäre zusätzlich mit den «Eintrag entfernen»-Knöpfen jeder
+    // Zeile mehrdeutig (KIcon rendert `title` als echtes SVG-`<title>`-
+    // Textkind, das zählt für `:has-text`).
+    const eintragKnopf = page.locator('.prepare-dossier-fuss button').first();
+    for (let i = 0; i < 14; i++) {
+      await eintragKnopf.click();
+    }
+    await expect(page.locator('[data-testid^="dossier-text-"]')).toHaveCount(15);
+
+    await scrolleZumBoden(page, '.prepare-viewport');
+
+    const dockBox = (await page.locator('[data-testid="boden-dock"]').boundingBox())!;
+    const letzterEintrag = page.locator('[data-testid^="dossier-text-"]').last();
+    const eintragBox = (await letzterEintrag.boundingBox())!;
+    expect(ueberDemDock(eintragBox, dockBox)).toBe(true);
+  });
+});

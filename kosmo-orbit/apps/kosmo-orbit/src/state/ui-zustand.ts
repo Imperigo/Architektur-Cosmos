@@ -85,6 +85,30 @@ export type VisOberflaeche = 'island' | 'manuell';
 /** Für Validierung/Defensiv-Parsing — 1:1 aus `VisOberflaeche`. */
 export const VIS_OBERFLAECHEN: readonly VisOberflaeche[] = ['island', 'manuell'];
 
+/**
+ * PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — derselbe additive Island/Manuell-
+ * Umschalter, jetzt für die publish-Station. Kopiert exakt dasselbe Muster
+ * wie `visOberflaeche` oben (eigenes Feld statt generischem Record, Default
+ * `'island'`, gleiche defensive Parsing-Kette) — `designOberflaeche`/
+ * `visOberflaeche` bleiben WÖRTLICH unverändert, alle drei Felder sind
+ * unabhängig voneinander schaltbar.
+ */
+export type PublishOberflaeche = 'island' | 'manuell';
+
+/** Für Validierung/Defensiv-Parsing — 1:1 aus `PublishOberflaeche`. */
+export const PUBLISH_OBERFLAECHEN: readonly PublishOberflaeche[] = ['island', 'manuell'];
+
+/**
+ * PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — derselbe additive Island/Manuell-
+ * Umschalter, jetzt für die prepare-Station. Kopiert exakt dasselbe Muster
+ * wie `publishOberflaeche`/`visOberflaeche` oben (eigenes Feld statt
+ * generischem Record, Default `'island'`, gleiche defensive Parsing-Kette).
+ */
+export type PrepareOberflaeche = 'island' | 'manuell';
+
+/** Für Validierung/Defensiv-Parsing — 1:1 aus `PrepareOberflaeche`. */
+export const PREPARE_OBERFLAECHEN: readonly PrepareOberflaeche[] = ['island', 'manuell'];
+
 /** Panel-/Menü-Flag-Namen, über die `ui.panelSetzen` (Paket 3) generisch schreibt. */
 export const PANEL_IDS = [
   'studieOffen',
@@ -171,6 +195,10 @@ export interface UiZustand {
   designOberflaeche: DesignOberflaeche;
   /** PC1 (V084-SPEZ §5 W2) — dasselbe Muster für die vis-Station, additiv. */
   visOberflaeche: VisOberflaeche;
+  /** PC3 (V084-SPEZ §5 W3) — dasselbe Muster für die publish-Station, additiv. */
+  publishOberflaeche: PublishOberflaeche;
+  /** PC4 (V084-SPEZ §5 W3) — dasselbe Muster für die prepare-Station, additiv. */
+  prepareOberflaeche: PrepareOberflaeche;
 
   setTool: (v: ToolId) => void;
   setViewMode: (v: ViewMode) => void;
@@ -198,6 +226,8 @@ export interface UiZustand {
   setPhasenFokus: (v: ReadonlySet<FaehigkeitId> | null) => void;
   setDesignOberflaeche: (v: DesignOberflaeche) => void;
   setVisOberflaeche: (v: VisOberflaeche) => void;
+  setPublishOberflaeche: (v: PublishOberflaeche) => void;
+  setPrepareOberflaeche: (v: PrepareOberflaeche) => void;
 
   /** Generischer Panel-Setter über den Flag-Namen (`ui-befehle.ts` `ui.panelSetzen`). */
   setzePanel: (panel: PanelId, offen: boolean) => void;
@@ -221,6 +251,10 @@ interface UiSpeicher {
   designOberflaeche: DesignOberflaeche;
   /** PC1 — additiv, dasselbe Normalisierungs-Muster (Default `'island'`). */
   visOberflaeche: VisOberflaeche;
+  /** PC3 — additiv, dasselbe Normalisierungs-Muster (Default `'island'`). */
+  publishOberflaeche: PublishOberflaeche;
+  /** PC4 — additiv, dasselbe Normalisierungs-Muster (Default `'island'`). */
+  prepareOberflaeche: PrepareOberflaeche;
 }
 
 function basisSpeicher(): UiSpeicher {
@@ -231,6 +265,8 @@ function basisSpeicher(): UiSpeicher {
     phasenFokus: null,
     designOberflaeche: 'island',
     visOberflaeche: 'island',
+    publishOberflaeche: 'island',
+    prepareOberflaeche: 'island',
   };
 }
 
@@ -291,6 +327,14 @@ function istGueltigeVisOberflaeche(wert: unknown): wert is VisOberflaeche {
   return typeof wert === 'string' && (VIS_OBERFLAECHEN as readonly string[]).includes(wert);
 }
 
+function istGueltigePublishOberflaeche(wert: unknown): wert is PublishOberflaeche {
+  return typeof wert === 'string' && (PUBLISH_OBERFLAECHEN as readonly string[]).includes(wert);
+}
+
+function istGueltigePrepareOberflaeche(wert: unknown): wert is PrepareOberflaeche {
+  return typeof wert === 'string' && (PREPARE_OBERFLAECHEN as readonly string[]).includes(wert);
+}
+
 function istGueltigerSpeicher(wert: unknown): wert is UiSpeicher {
   if (typeof wert !== 'object' || wert === null) return false;
   const w = wert as Record<string, unknown>;
@@ -322,6 +366,24 @@ function istGueltigerSpeicher(wert: unknown): wert is UiSpeicher {
   if ('visOberflaeche' in w && w['visOberflaeche'] !== undefined && !istGueltigeVisOberflaeche(w['visOberflaeche'])) {
     return false;
   }
+  // PC3: additiv, dieselbe «fehlend ist gültig»-Regel wie designOberflaeche/
+  // visOberflaeche — ein Seed ohne `publishOberflaeche` (jeder Bestands-Seed,
+  // jede alte localStorage-Zeile) bleibt ein gültiger Datensatz.
+  if (
+    'publishOberflaeche' in w &&
+    w['publishOberflaeche'] !== undefined &&
+    !istGueltigePublishOberflaeche(w['publishOberflaeche'])
+  ) {
+    return false;
+  }
+  // PC4: additiv, dieselbe «fehlend ist gültig»-Regel wie publishOberflaeche.
+  if (
+    'prepareOberflaeche' in w &&
+    w['prepareOberflaeche'] !== undefined &&
+    !istGueltigePrepareOberflaeche(w['prepareOberflaeche'])
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -339,6 +401,8 @@ function normalisiere(wert: unknown): UiSpeicher {
     phasenFokus: Array.isArray(w['phasenFokus']) ? (w['phasenFokus'] as FaehigkeitId[]) : null,
     designOberflaeche: istGueltigeOberflaeche(w['designOberflaeche']) ? w['designOberflaeche'] : 'island',
     visOberflaeche: istGueltigeVisOberflaeche(w['visOberflaeche']) ? w['visOberflaeche'] : 'island',
+    publishOberflaeche: istGueltigePublishOberflaeche(w['publishOberflaeche']) ? w['publishOberflaeche'] : 'island',
+    prepareOberflaeche: istGueltigePrepareOberflaeche(w['prepareOberflaeche']) ? w['prepareOberflaeche'] : 'island',
   };
 }
 
@@ -373,11 +437,19 @@ function schreibeSpeicher(speicher: UiSpeicher): void {
 }
 
 /** Persistiert die vier Modus-Felder + `phasenFokus` + `designOberflaeche` +
- *  `visOberflaeche` (nie tool/viewMode/Panels). */
+ *  `visOberflaeche` + `publishOberflaeche` (nie tool/viewMode/Panels). */
 function persistiere(
   zustand: Pick<
     UiZustand,
-    'arbeitsmodus' | 'modusAutomatik' | 'modusFesthalten' | 'modusManuell' | 'phasenFokus' | 'designOberflaeche' | 'visOberflaeche'
+    | 'arbeitsmodus'
+    | 'modusAutomatik'
+    | 'modusFesthalten'
+    | 'modusManuell'
+    | 'phasenFokus'
+    | 'designOberflaeche'
+    | 'visOberflaeche'
+    | 'publishOberflaeche'
+    | 'prepareOberflaeche'
   >,
 ): void {
   const speicher: UiSpeicher = {
@@ -389,6 +461,8 @@ function persistiere(
     phasenFokus: zustand.phasenFokus ? [...zustand.phasenFokus] : null,
     designOberflaeche: zustand.designOberflaeche,
     visOberflaeche: zustand.visOberflaeche,
+    publishOberflaeche: zustand.publishOberflaeche,
+    prepareOberflaeche: zustand.prepareOberflaeche,
   };
   schreibeSpeicher(speicher);
 }
@@ -426,6 +500,8 @@ function anfangsZustand() {
     phasenFokus: gespeichert.phasenFokus ? new Set(gespeichert.phasenFokus) : null,
     designOberflaeche: gespeichert.designOberflaeche,
     visOberflaeche: gespeichert.visOberflaeche,
+    publishOberflaeche: gespeichert.publishOberflaeche,
+    prepareOberflaeche: gespeichert.prepareOberflaeche,
   };
 }
 
@@ -479,6 +555,14 @@ export const useUiZustand = create<UiZustand>((set, get) => ({
   },
   setVisOberflaeche: (v) => {
     set({ visOberflaeche: v });
+    persistiere(get());
+  },
+  setPublishOberflaeche: (v) => {
+    set({ publishOberflaeche: v });
+    persistiere(get());
+  },
+  setPrepareOberflaeche: (v) => {
+    set({ prepareOberflaeche: v });
     persistiere(get());
   },
 }));

@@ -1,30 +1,35 @@
 import { useProject } from '../../state/project-store';
 import { useEffect, useRef, useState } from 'react';
 import { Karteikarte, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KToolbar, Panel, moduleHue } from '@kosmo/ui';
-import {
-  basisIndex,
-  geladeneSammlungen,
-  getChunk,
-  importiereBasis,
-  ingestFile,
-  listDocs,
-  removeDoc,
-  searchKnowledge,
-  vektorisiereFehlende,
-  type BasisSammlung,
-  type ImportiereBasisFortschritt,
-  type KnowledgeDoc,
-  type KnowledgeHit,
-} from './knowledge';
+import { getChunk, ingestFile, listDocs, removeDoc, searchKnowledge, type KnowledgeDoc, type KnowledgeHit } from './knowledge';
 import { useQuellen } from '../../state/quellen';
-import {
-  downloadFile,
-  isIngestable,
-  listFolder,
-  signIn,
-  type DriveAccount,
-  type DriveItem,
-} from './onedrive';
+// PC4 (`docs/V084-SPEZ.md` §5 W3, C-20): die drei geteilten Unterflüsse
+// (OneDrive/Basis-Import/Nachträglich vektorisieren) leben jetzt in
+// `prepare-sections.tsx` (reine Ortsverlegung, s. dortiger Kopfkommentar) —
+// sowohl dieser klassische Fluss ALS AUCH die neuen Insel-Inhalte
+// importieren dieselbe Komponente, kein zirkulärer Import nötig.
+import { BasisSection, NachtraeglichVektorisierenSection, OneDriveSection } from './prepare-sections';
+import { useUiZustand } from '../../state/ui-zustand';
+// PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — der Prepare-Island-Katalog (eigener
+// Namensraum, s. `island/inhalte/registry.ts`-Kopfkommentar) + die
+// Registrierung seiner Stufe-2/3-Inhalte als Import-Seiteneffekt (Muster
+// `vis/VisWorkspace.tsx` ‖ `design/island/IslandShell.tsx`s Kopfimporte).
+import { PREPARE_INSELN, prepareInhaltsRegistry } from './island';
+// PC4/E1 (`docs/V084-SPEZ.md` §5 W3) — NUR IMPORTIEREN, design/island/**
+// bleibt fremder Dateibesitz (Sanktion 2 gilt spiegelbildlich: PC4 fasst
+// keine design-Datei an). `IslandBuehne` ist die generische PC0-Bühne,
+// bereits stationsagnostisch gebaut (`inseln`+`registry`, Muster PC1).
+import { IslandBuehne } from '../design/island/IslandShell';
+import type { IslandWerkzeug } from '../design/island/island-katalog';
+// C-14/Reserve-Vertrag (`docs/V084-SPEZ.md` §5 W3, C-20, «Nicht-Island
+// behält Reserve»): Prepare hat KEINE `DockFlaeche`, die die reale
+// Boden-Dock-Position live misst (Muster `e2e/boden-dock-reserve-c14.spec.
+// ts`s Kopfkommentar zu daten/wissen/chat/pipeline) — im Manuell-Modus
+// (BodenDock sichtbar, `bodenDockAusgeblendet===false`) bekommt der
+// scrollende Viewport darum denselben statischen Bottom-Padding-Zuschlag
+// wie `DataWorkspace.tsx`/`DevWorkspace.tsx`, NUR importiert.
+import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
+import './island/prepare-island.css';
 import './prepare.css';
 
 /**
@@ -43,6 +48,15 @@ import './prepare.css';
  */
 
 export function PrepareWorkspace() {
+  // PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — Island-Modus. `prepareOberflaeche`
+  // spiegelt `VisWorkspace.tsx`s `visOberflaeche`-Umschalter 1:1 (additives
+  // Store-Feld, `state/ui-zustand.ts`, Default 'island'). Alle Hooks unten
+  // (inkl. `docs`/`addFiles`/Quellensprung) bleiben UNVERÄNDERT und laufen bei
+  // JEDEM Render — der Island/Manuell-Zweig entscheidet sich erst am frühen
+  // Return weiter unten (Muster `VisWorkspace.tsx` Z.394, exakt dieselbe
+  // Reihenfolge: alle Hooks zuerst, Verzweigung danach).
+  const prepareOberflaeche = useUiZustand((s) => s.prepareOberflaeche);
+  const setPrepareOberflaeche = useUiZustand((s) => s.setPrepareOberflaeche);
   const [docs, setDocs] = useState<KnowledgeDoc[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -103,8 +117,58 @@ export function PrepareWorkspace() {
     input.click();
   }
 
+  // -----------------------------------------------------------------------
+  // PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — Island-Modus, EIGENER früher
+  // Return VOR der klassischen Werkzeugleiste/Dokumentliste unten (Muster
+  // `VisWorkspace.tsx` Z.380-414): wird dieser Zweig nie erreicht (jeder
+  // Bestands-E2E-Lauf startet über `manuell-seed.ts` mit
+  // `prepareOberflaeche:'manuell'`), bleibt JEDE Zeile unterhalb byte-gleich
+  // zum Vorzustand (Bestandsschutz, Sanktion 8). Die zentrale Bühne zeigt
+  // einen ehrlichen Bestands-Schnellüberblick (echte `docs`-Zahlen, kein
+  // Platzhaltertext) statt eines Canvas — Prepare hat keine Zeichenfläche wie
+  // design/vis, s. Abschlussbericht «ehrliche Grenzen».
+  if (prepareOberflaeche === 'island') {
+    const chunkGesamt = docs.reduce((s, d) => s + d.chunkCount, 0);
+    return (
+      <div className="prepare-island-viewport" data-testid="prepare-island-fuellen">
+        <div className="prepare-island-buehne">
+          <div className="prepare-island-stand" data-testid="prepare-island-stand">
+            {docs.length === 0 ? (
+              <Messrahmen
+                height={180}
+                caption="Noch keine Grundlagen — die AUFNAHME-Insel (links) nimmt die ersten Dokumente auf"
+              />
+            ) : (
+              <>
+                <span className="prepare-island-stand-zahl" data-testid="prepare-island-doc-zahl">
+                  {docs.length}
+                </span>
+                <span className="prepare-island-stand-satz">
+                  {docs.length === 1 ? 'Dokument' : 'Dokumente'} · {chunkGesamt}{' '}
+                  {chunkGesamt === 1 ? 'Abschnitt' : 'Abschnitte'} · lokal, verlässt das Gerät nie — BESTAND (rechts)
+                  zeigt die Liste, WISSEN (oben) durchsucht sie.
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+        <IslandBuehne
+          inseln={PREPARE_INSELN}
+          registry={prepareInhaltsRegistry}
+          onWerkzeugAktion={(w: IslandWerkzeug) => {
+            if (w.id === 'manuell') setPrepareOberflaeche('manuell');
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="prepare-viewport">
+    // C-14/Reserve-Vertrag (s. Kopfimport-Kommentar zu `BODEN_DOCK_RESERVE_PX`
+    // oben): additiver Inline-Style-Zuschlag auf dem bestehenden
+    // `.prepare-viewport`-Rahmen — Klasse/Kinder/Testids/Logik darunter
+    // bleiben WÖRTLICH unverändert («Manuell unverändert»).
+    <div className="prepare-viewport" style={{ paddingBottom: `calc(var(--k-s6) + ${BODEN_DOCK_RESERVE_PX}px)` }}>
       <div className="prepare-content">
         {/* Kosmos-Kopf — reine Kopf-/Rahmen-Optik (Glass + Modul-Tönung),
             Inhalt/Testids/Logik der Werkzeugleiste unverändert. */}
@@ -114,6 +178,24 @@ export function PrepareWorkspace() {
             <span className="prepare-kopf-satz">
               Lokal aufgenommen — Dokumente verlassen das Gerät nie. Kosmo zitiert daraus.
             </span>
+            {/* PC4 (`docs/V084-SPEZ.md` §5 W3, C-20): additiver Rückweg AUS
+                'manuell' — Muster `VisWorkspace.tsx`s `island-zurueck`-Knopf
+                (PC1). Der Vorwärtsweg ('manuell' → 'island') ist das
+                'Manuell'-Insel-Werkzeug in AUSTAUSCH (nur im Island-Modus
+                sichtbar); dieser Knopf ist sein Gegenstück. Additiv, kein
+                Ersatz — die klassische Werkzeugleiste/Dokumentliste bleibt
+                vollständig erhalten («Manuell unverändert», Bestandsschutz). */}
+            <div className="prepare-dossier-spacer" />
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="island-zurueck"
+              title="Zurück zur Island-UI"
+              aria-label="Zurück zur Island-UI"
+              onClick={() => setPrepareOberflaeche('island')}
+            >
+              Island-UI
+            </KButton>
           </KToolbar>
         </div>
 
@@ -246,264 +328,7 @@ export function PrepareWorkspace() {
   );
 }
 
-/** OneDrive-Browser: Anmelden (MSAL/PKCE) → Ordner durchsehen → aufnehmen. */
-function OneDriveSection({ onIngested }: { onIngested: () => void }) {
-  const [clientId, setClientId] = useState(localStorage.getItem('kosmo.graph.clientId') ?? '');
-  const [account, setAccount] = useState<DriveAccount | null>(null);
-  const [path, setPath] = useState<{ id: string | null; name: string }[]>([
-    { id: null, name: 'OneDrive' },
-  ]);
-  const [items, setItems] = useState<DriveItem[]>([]);
-  const [status, setStatus] = useState<string | null>(null);
-
-  async function browse(folder: { id: string | null; name: string }, pushPath: boolean) {
-    setStatus('Lade …');
-    try {
-      const list = await listFolder(clientId, folder.id);
-      setItems(list);
-      if (pushPath) setPath((p) => [...p, folder]);
-      setStatus(null);
-    } catch (err) {
-      setStatus(`⚠ ${err instanceof Error ? err.message : err}`);
-    }
-  }
-
-  async function connect() {
-    if (!clientId.trim()) {
-      setStatus('⚠ Zuerst die Azure-Client-ID eintragen (App-Registrierung, SPA, Files.Read).');
-      return;
-    }
-    setStatus('Anmeldung …');
-    try {
-      const acc = await signIn(clientId.trim());
-      setAccount(acc);
-      await browse({ id: null, name: 'OneDrive' }, false);
-    } catch (err) {
-      setStatus(`⚠ ${err instanceof Error ? err.message : err}`);
-    }
-  }
-
-  async function ingest(item: DriveItem) {
-    setStatus(`Nehme «${item.name}» auf …`);
-    try {
-      const file = await downloadFile(clientId, item.id, item.name);
-      await ingestFile(file, 'onedrive');
-      onIngested();
-      setStatus(`«${item.name}» aufgenommen.`);
-    } catch (err) {
-      setStatus(`⚠ ${err instanceof Error ? err.message : err}`);
-    }
-  }
-
-  return (
-    <Panel className="prepare-drive">
-      <div className="prepare-drive-kopf">
-        <div className="prepare-drive-titel">OneDrive (Hochbauzeichner-Bibliothek)</div>
-        {account && (
-          <Badge hue="var(--k-success)">{account.name}</Badge>
-        )}
-      </div>
-      {!account ? (
-        <>
-          <div className="prepare-drive-hinweis">
-            Einmalig: App-Registrierung im Azure-Portal (Typ SPA, Redirect-URI = App-Adresse,
-            Berechtigungen <code>Files.Read</code> + <code>User.Read</code>) — dann Client-ID hier
-            eintragen und anmelden. Es fliesst kein Geheimnis (PKCE).
-          </div>
-          <div className="prepare-drive-anmelden">
-            <KInput
-              value={clientId}
-              onChange={(e) => {
-                setClientId(e.target.value);
-                localStorage.setItem('kosmo.graph.clientId', e.target.value);
-              }}
-              placeholder="Azure Client-ID (GUID)"
-              data-testid="graph-client-id"
-              className="prepare-drive-anmelden-feld"
-            />
-            <KButton size="sm" tone="quiet" onClick={() => void connect()} data-testid="graph-signin">
-              Mit Microsoft anmelden
-            </KButton>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="prepare-drive-pfad">
-            {path.map((p, i) => (
-              <span key={`${p.id ?? 'root'}-${i}`}>
-                {i > 0 && <span className="prepare-drive-pfad-trenner"> / </span>}
-                <button
-                  className="prepare-drive-pfad-knopf"
-                  onClick={() => {
-                    setPath(path.slice(0, i + 1));
-                    void browse(p, false);
-                  }}
-                >
-                  {p.name}
-                </button>
-              </span>
-            ))}
-          </div>
-          <div className="prepare-drive-liste">
-            {items.map((it) => (
-              <div key={it.id} className="prepare-drive-item">
-                <KIcon name={it.isFolder ? 'ordner' : 'dokument'} size={14} />
-                {it.isFolder ? (
-                  <button
-                    className="prepare-drive-item-ordner"
-                    onClick={() => void browse({ id: it.id, name: it.name }, true)}
-                  >
-                    {it.name}
-                  </button>
-                ) : (
-                  <span className={`prepare-drive-item-datei${isIngestable(it.name) ? '' : ' prepare-drive-item-datei--gesperrt'}`}>
-                    {it.name}
-                  </span>
-                )}
-                {!it.isFolder && isIngestable(it.name) && (
-                  <KButton size="sm" tone="quiet" onClick={() => void ingest(it)}>
-                    Aufnehmen
-                  </KButton>
-                )}
-              </div>
-            ))}
-            {items.length === 0 && (
-              <div className="prepare-drive-leer">Leerer Ordner.</div>
-            )}
-          </div>
-        </>
-      )}
-      {status && <div className="prepare-drive-status">{status}</div>}
-    </Panel>
-  );
-}
-
-
-/**
- * v0.8.2 / P7a (B2, ROADMAP 1318, `docs/V082-SPEZ.md` §6.6/C-24) —
- * `vektorisiereFehlende()` (`knowledge.ts`) bekommt hier ihren ersten
- * echten Aufrufer: Chunks, die `importiereBasis`/`ingestFile` ohne Vektor
- * gespeichert haben (Bridge zum Aufnahme-Zeitpunkt nicht erreichbar), sind
- * über BM25 weiter auffindbar, aber ohne den semantischen Cosine-Pfad —
- * dieser Knopf holt das nach, sobald die Bridge wieder da ist. EHRLICHES
- * Ergebnis statt stiller Erfolgsmeldung: `vektorisiert < gesamt` (Bridge
- * wieder weg mitten im Nachlauf) sagt das wörtlich, `gesamt === 0` sagt
- * «bereits vollständig vektorisiert» statt einer bedeutungslosen «0 von 0».
- */
-function NachtraeglichVektorisierenSection() {
-  const [laufend, setLaufend] = useState(false);
-  const [fortschritt, setFortschritt] = useState<{ erledigt: number; gesamt: number } | null>(null);
-  const [ergebnis, setErgebnis] = useState<{ gesamt: number; vektorisiert: number } | null>(null);
-  const [fehler, setFehler] = useState<string | null>(null);
-
-  function starten() {
-    setLaufend(true);
-    setErgebnis(null);
-    setFehler(null);
-    setFortschritt(null);
-    vektorisiereFehlende({ onProgress: (f) => setFortschritt(f) })
-      .then((res) => setErgebnis(res))
-      .catch((err) => setFehler(err instanceof Error ? err.message : String(err)))
-      .finally(() => setLaufend(false));
-  }
-
-  return (
-    <div className="prepare-sektion" data-testid="vektorisieren-sektion">
-      <KButton
-        size="sm"
-        tone="quiet"
-        data-testid="vektorisiere-fehlende"
-        disabled={laufend}
-        onClick={starten}
-      >
-        {laufend ? 'Vektorisiere …' : 'Nachträglich vektorisieren'}
-      </KButton>
-      {laufend && fortschritt && (
-        <span className="prepare-treffer-kopf" data-testid="vektorisieren-fortschritt">
-          {' '}
-          {fortschritt.erledigt} / {fortschritt.gesamt} Abschnitte
-        </span>
-      )}
-      {!laufend && ergebnis && (
-        <div className="prepare-doc-meta" data-testid="vektorisieren-ergebnis">
-          {ergebnis.gesamt === 0
-            ? 'Alle Abschnitte sind bereits vektorisiert.'
-            : ergebnis.vektorisiert === ergebnis.gesamt
-              ? `${ergebnis.vektorisiert} von ${ergebnis.gesamt} Abschnitten nachträglich vektorisiert.`
-              : `${ergebnis.vektorisiert} von ${ergebnis.gesamt} Abschnitten vektorisiert — Bridge nicht (mehr) erreichbar, Rest bleibt über die Stichwort-Suche auffindbar.`}
-        </div>
-      )}
-      {fehler && <div className="prepare-ingest-fehler">⚠ {fehler}</div>}
-    </div>
-  );
-}
-
 /** Phase 0: Wettbewerbsdossier — Do's, Don'ts, Fakten. Kosmo beachtet sie bindend. */
-/** Bauwissen-Basis: wissen/-Korpora aus dem Kosmos-Repo, je Sammlung ladbar. */
-function BasisSection({ onGeladen }: { onGeladen: () => void }) {
-  const [sammlungen, setSammlungen] = useState<BasisSammlung[]>([]);
-  const [geladen, setGeladen] = useState<Set<string>>(new Set());
-  const [laufend, setLaufend] = useState<string | null>(null);
-  const [fehler, setFehler] = useState<string | null>(null);
-  // v0.8.2 / P7a (B2, ROADMAP 1318): `importiereBasis`s `onProgress`-Callback
-  // (seit v0.8.1/KI1 gebaut, s. `knowledge.ts`) bekommt hier seinen ersten
-  // Aufrufer — je Sammlung der zuletzt gemeldete Fortschritt, damit die
-  // Ladeanzeige bei grossen Korpora (~22'883 Abschnitte bei `buecher`) mehr
-  // sagt als ein unbestimmtes «Lade …».
-  const [fortschritt, setFortschritt] = useState<ImportiereBasisFortschritt | null>(null);
-  useEffect(() => {
-    void basisIndex().then(setSammlungen);
-    void geladeneSammlungen().then(setGeladen);
-  }, []);
-  if (sammlungen.length === 0) return null;
-  return (
-    <div className="prepare-sektion" data-testid="basis-sektion">
-      <div className="prepare-sektion-titel">Bauwissen-Basis (Kosmos-Bibliothek)</div>
-      {sammlungen.map((sa) => (
-        <Panel key={sa.sammlung} data-testid={`basis-${sa.sammlung}`} className="prepare-doc-zeile">
-          <div className="prepare-doc-info">
-            <div className="prepare-doc-name">{sa.label}</div>
-            <div className="prepare-doc-meta">
-              {sa.quellen} Quellen · {sa.chunks} Abschnitte · {(sa.kb / 1024).toFixed(1)} MB
-            </div>
-            {laufend === sa.sammlung && fortschritt && (
-              <div className="prepare-doc-meta" data-testid={`basis-fortschritt-${sa.sammlung}`}>
-                Quelle {fortschritt.quelle} / {fortschritt.quellenGesamt} ·{' '}
-                {fortschritt.chunksVektorisiert} / {fortschritt.chunksGesamt} Abschnitte vektorisiert
-              </div>
-            )}
-          </div>
-          {geladen.has(sa.sammlung) ? (
-            <Badge hue={moduleHue.prepare}>geladen</Badge>
-          ) : (
-            <KButton
-              size="sm"
-              tone="quiet"
-              data-testid={`basis-laden-${sa.sammlung}`}
-              disabled={laufend !== null}
-              onClick={() => {
-                setLaufend(sa.sammlung);
-                setFehler(null);
-                setFortschritt(null);
-                importiereBasis(sa.sammlung, { onProgress: (f) => setFortschritt(f) })
-                  .then(() => {
-                    setGeladen((g) => new Set([...g, sa.sammlung]));
-                    onGeladen();
-                  })
-                  .catch((err) => setFehler(err instanceof Error ? err.message : String(err)))
-                  .finally(() => setLaufend(null));
-              }}
-            >
-              {laufend === sa.sammlung ? 'Lade …' : 'Laden'}
-            </KButton>
-          )}
-        </Panel>
-      ))}
-      {fehler && <div className="prepare-ingest-fehler">⚠ {fehler}</div>}
-    </div>
-  );
-}
-
 function DossierSection() {
   const revision = useProject((s) => s.revision);
   const runCommand = useProject((s) => s.runCommand);

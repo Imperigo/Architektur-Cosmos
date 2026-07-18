@@ -1,0 +1,158 @@
+/* PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — Stufe-2/3-Innenraum-Styling der
+   vier Prepare-Inseln (`island/inhalte/*.tsx`) + der zentralen Insel-Bühne
+   (`PrepareIslandBuehne`, `PrepareWorkspace.tsx`). Muster 1:1 aus `vis/
+   island/vis-island.css` übernommen (eigene, additive Datei — `island.css`
+   selbst bleibt unangetastet, nur importiert): reine Innenraum-Typografie/
+   -Abstände für den `.isl-popup`/`.isl-fenster`-Rahmen (PD1), NUR
+   `var(--k-*)`-Token, kein neuer Hex-Wert — «dediziertes Design» heisst hier
+   bewusst: bestehende Glass-Tokens neu komponiert, keine neue Farbsprache. */
+
+.prisl-stufe2 {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  min-width: 220px;
+}
+
+.prisl-reihe {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
+}
+
+.prisl-hinweis {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.prisl-hinweis-klein {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.35;
+  opacity: 0.65;
+}
+
+.prisl-fehler {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--k-danger, #d0453f);
+}
+
+/* ── Drag&Drop-Zone (AUFNAHME) ───────────────────────────────────────── */
+.prisl-dropzone {
+  border: 1.5px dashed var(--k-line);
+  border-radius: var(--k-radius-sm);
+  padding: var(--k-s3);
+  text-align: center;
+  font-size: 11.5px;
+  opacity: 0.8;
+}
+.prisl-dropzone--drag {
+  border-color: var(--k-accent);
+  opacity: 1;
+  background: var(--k-hover);
+}
+
+/* ── Ergebnis-Liste je Datei (Ausbau, C-20 Owner-Punkt 2) ────────────── */
+.prisl-ergebnis-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.prisl-ergebnis-zeile {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11px;
+  padding: 3px 4px;
+  border-radius: var(--k-radius-sm);
+  background: var(--k-hover);
+}
+.prisl-ergebnis-zeile--fehler {
+  background: color-mix(in srgb, var(--k-danger, #d0453f) 12%, transparent);
+}
+.prisl-ergebnis-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+.prisl-ergebnis-status {
+  opacity: 0.8;
+}
+
+/* ── Dokument-/Trefferliste (BESTAND/WISSEN) ─────────────────────────── */
+.prisl-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.prisl-doc-zeile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-s2);
+  font-size: 11.5px;
+  padding: 4px 6px;
+  border-radius: var(--k-radius-sm);
+  background: var(--k-hover);
+}
+.prisl-doc-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.prisl-doc-meta {
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+/* ── Zentrale Insel-Bühne (Ersatz für den klassischen Dokument-Fluss) ──
+   Eigene Klasse statt Wiederverwendung von `.prepare-viewport` (`prepare.
+   css`) — jene trägt im Manuell-Modus den C-14-BodenDock-Reserve-Zuschlag
+   (`PrepareWorkspace.tsx`s Inline-Style), den der Island-Modus NICHT braucht
+   (BodenDock ist dort per Guard ausgeblendet, `bodenDockAusgeblendet`). Zwei
+   Klassen halten beide Verträge sauber getrennt, statt einen bedingten
+   Reserve-Zuschlag in eine gemeinsame Klasse zu mischen. */
+.prepare-island-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.prepare-island-buehne {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--k-s6);
+}
+.prepare-island-stand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--k-s2);
+  text-align: center;
+  max-width: 420px;
+}
+.prepare-island-stand-zahl {
+  font-size: 34px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.prepare-island-stand-satz {
+  font-size: 12.5px;
+  opacity: 0.75;
+  line-height: 1.5;
+}

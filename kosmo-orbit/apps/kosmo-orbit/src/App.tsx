@@ -331,10 +331,15 @@ export function App() {
   // `state/dock-stationen.ts` — Prepare taucht dort nicht auf) — dieser Guard
   // ist die GANZE PC4-Anfassung von App.tsx ausserhalb dieses Kommentarblocks.
   const prepareOberflaeche = useUiZustand((s) => s.prepareOberflaeche);
+  // PC3 (`docs/V084-SPEZ.md` §5 W3, C-19): additiv fortgeschrieben, exakt
+  // dasselbe Muster wie `visOberflaeche`/`prepareOberflaeche` — `publishIslandAktiv`
+  // reiht sich nur in den ODER-Ausdruck unten ein, kein Bestands-Zweig ändert sich.
+  const publishOberflaeche = useUiZustand((s) => s.publishOberflaeche);
   const designIslandAktiv = screen === 'design' && designOberflaeche === 'island';
   const visIslandAktiv = screen === 'vis' && visOberflaeche === 'island';
   const prepareIslandAktiv = screen === 'prepare' && prepareOberflaeche === 'island';
-  const bodenDockAusgeblendet = designIslandAktiv || visIslandAktiv || prepareIslandAktiv;
+  const publishIslandAktiv = screen === 'publish' && publishOberflaeche === 'island';
+  const bodenDockAusgeblendet = designIslandAktiv || visIslandAktiv || prepareIslandAktiv || publishIslandAktiv;
   // PB3 (§8 C-24): Zustand für den jetzt hier gerenderten Bühnenkopf
   // (Stationen-Orb/Ansichts-Info/Geschoss-Pille) — dieselben globalen
   // Stores, aus denen `DesignWorkspace.tsx` sie vor PB3 gelesen hat
