@@ -157,30 +157,68 @@
 .app-zentrale-scroll {
   position: absolute;
   inset: 0;
-  /* v0.8.1 / P15 (Orbit-Hub-Vollausbau, responsives Layout, docs/V081-
-     SPEZ.md §7(f)/§9.5 C-34): war `overflow: auto` (beide Achsen) — der
-     Orbit-Ring hält seine Fächer-Hüllen laut Harter-Vertrag IMMER im DOM mit
-     realer Boxgrösse, auch geschlossen (nur Opazität ~0 signalisiert zu,
-     s. `OrbitStart.tsx`-Kopfkommentar); rechts/links öffnende Fächer
-     ragen dadurch unterhalb ~860px Viewport-Breite über den rechten Rand
-     hinaus (gemessen: `document.documentElement.scrollWidth` > Viewport-
-     Breite, obwohl nichts davon sichtbar ist). Explizit `overflow-x: hidden`
-     kappt diesen unsichtbaren horizontalen Scroll, `overflow-y: auto`
-     bleibt unverändert. Ehrlicher Rest: ein tatsächlich GEÖFFNETER rechts-/
-     links-Fächer kann auf sehr schmalen Breiten (< ca. 860px) dadurch am
-     Rand beschnitten werden statt scrollbar zu sein — die volle App-Shell
-     bleibt ohnehin Desktop-CAD-Scope (`V080B-DESIGN-SPEZ.md` §9.16 B-138),
-     dieser Fix beseitigt nur den stillen Seiten-Scrollbalken, kein Vollumbau
-     der Fächer-Positionierung. */
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 48px 24px;
+  /* v0.8.4 PA2 (Owner-Auftrag wörtlich: «nicht scrollbar», V084-SPEZ §4.3):
+     war bis v0.8.3 `overflow-y: auto` — die Zentrale wuchs mit ihrem Inhalt
+     und scrollte auf kleineren Fenstern (genau der gemeldete Bug). Diese
+     Klasse ist ausschliesslich der Home-Screen-Container (kein anderer
+     Screen verwendet sie, geprüft per Grep) — sie ist jetzt selbst ein
+     `overflow:hidden`-Flex-Rahmen mit DEFINITER Höhe (100% via `inset:0`),
+     die Höhe reicht über `.app-zentrale-inhalt`/`.orbit065-home-grid`
+     (`flex:1; min-height:0`-Kette, s. `shell/orbit-065.css`) bis zur Kachel-
+     Reihe durch — kein Root-Scroll mehr möglich, unabhängig vom Inhalt.
+     Die linke Spalte (Begrüssung/Projekte/Varianten) bekommt dafür ihr
+     EIGENES `overflow-y:auto` (s. `.orbit065-home-links`) als
+     Sicherheitsnetz für viele gespeicherte Projekte — nur diese INNERE
+     Fläche kann scrollen, nie `document.scrollingElement`. */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px 24px;
 }
 .app-zentrale-inhalt {
-  max-width: 1120px;
+  /* PA2: 1280px (war 1160px) — die rechte Spalte (Wortmarke + Kachel-Reihe,
+     `.orbit065-home-rechts`) braucht bei 1280×720 (kleinster Pflicht-
+     Viewport, V084-SPEZ §4.3) genug Breite, damit die 4 Hauptkacheln NIE
+     umbrechen (`flex-wrap` in `.k-orbit-ring-feld`, aura.css, greift NUR
+     als Sicherheitsnetz bei sehr schmalen Fenstern < 860px). */
+  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  display: grid;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   gap: var(--k-s7, 28px);
+}
+/* v0.8.4 PA2 (V084-SPEZ §4.2): Ersatz für den ausgeblendeten `app-header`
+   auf der Zentrale — bewusst KEIN Balken (keine volle Breite, kein Streifen
+   über die ganze Kopfzeile), sondern ein kleiner, glasiger Werkzeug-Cluster
+   oben rechts (dieselbe Bord-Optik wie `.orbit065-dock`). Trägt NUR
+   Bestands-Funktionen (Sync/Speichern/Öffnen/Kosmo/Rundgang/Einstellungen/
+   Bauphasen), die ausserhalb des PA2-Auftrags liegen, aber real erreichbar
+   bleiben müssen (s. Kommentar in `App.tsx`). */
+.app-heim-werkzeuge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  max-width: calc(100% - 32px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  padding: 6px 10px;
+  border-radius: var(--k-radius-pill);
+  background: var(--k-surface);
+  border: 1px solid var(--k-line);
+  box-shadow: var(--k-shadow-raised);
+}
+[data-theme='orbit'] .app-heim-werkzeuge {
+  background: rgba(20, 23, 31, 0.55);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(244, 246, 250, 0.12);
 }
 .app-onboarding-spanne {
   grid-column: 1 / -1;

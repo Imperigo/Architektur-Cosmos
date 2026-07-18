@@ -916,35 +916,72 @@ progress {
   }
 }
 
-/* Serie K / F3 (Owner-Auftrag: «rund statt Blöcke») — das Orbit-Startmenü.
-   Vier Hauptwerkzeuge kreisen GANZ LANGSAM (>= 120s/Umdrehung, hier 200s) um
-   das zentrale OrbitMark. Konstruktion: ein 0×0-Ankerpunkt (`.k-orbit-knoten`)
-   bewegt sich per `rotate()+translateY()` auf der Kreisbahn — die
-   Kreis-Position der vier Werkzeuge (90°-Versatz) entsteht NICHT über einen
-   zusätzlichen statischen Rotationswert (der würde mit der Transform-Property
-   der Animation kollidieren), sondern über eine negative `animation-delay`
-   je Knoten (ein Viertel der Umlaufdauer) — dieselbe Keyframe-Animation läuft
-   nur phasenverschoben. Das Kind `.k-orbit-knoten-gegendreh` gegenrotiert mit
-   IDENTISCHER Verzögerung in Gegenrichtung, damit Titel/Fächer aufrecht
-   bleiben; seine Grösse (nicht 0) macht es zum stabilen, nicht rotierenden
-   Anker für den Fächer (Zentrierung über negative Margins, NICHT über
-   `transform: translate(-50%,-50%)` — sonst kollidiert das wieder mit der
-   Rotations-Animation auf derselben Property). */
+/* Serie K / F3 → v0.8.4 PA2 (Owner-Auftrag «Hauptmenü-Neubau», wörtlich:
+   «NICHT mehr drehend»): das Orbit-Startmenü ist KEIN Kreis mehr — die vier
+   Hauptwerkzeuge stehen STATISCH als Reihe unten mittig
+   (`apps/kosmo-orbit/src/shell/OrbitStart.tsx`, testid `zentrale-kacheln`).
+   Rotation (`k-orbit-drehen`/`k-orbit-gegendrehen`-Keyframes, die
+   `animation-delay`-Verteilung über die vier Knoten) ist HIER ERSATZLOS
+   ENTFERNT (V084-SPEZ §4, Statik-Vertrag: zwei Bounding-Box-Messungen im
+   Abstand 500ms sind identisch). `.k-orbit-mitte` bleibt als rein
+   dekorativer, `pointer-events:none` Anker-Punkt bestehen — Fundstellen
+   ausserhalb des PA2-Dateikreises (`e2e/orbit-faecher.spec.ts`) messen
+   weiterhin seine Bounding-Box; er sitzt jetzt zentriert HINTER der
+   Kachel-Reihe statt im Kreismittelpunkt. */
 :root {
-  --k-orbit-radius: clamp(132px, 24vmin, 208px);
-  --k-orbit-dauer: 200s;
   --k-orbit-knoten-groesse: 108px;
 }
 .k-orbit-start {
   display: flex;
-  justify-content: center;
-  padding: 12px 0 8px;
+  flex-direction: column;
+  height: 100%;
+  /* Unten mehr Reserve (24px statt 8px), oben weniger (4px statt 12px):
+     das Titel-/«kommend»-Label unter jeder Kachel (`.orbit065-hauptknopf-
+     unterlabel`, orbit-065.css) hängt `position:absolute` UNTER dem
+     108px-Knoten und zählt darum NICHT zur Flex-Höhe von `.k-orbit-ring-
+     feld` — ohne Reserve schnitt der `overflow:hidden`-Rahmen der
+     Zentrale (`app.css` `.app-zentrale-scroll`) das «kommend»-Label bei
+     1280×720 (kleinster Pflicht-Viewport) an; zu VIEL Reserve wiederum
+     liess bei DEMSELBEN Viewport die oberste Karte des dichtesten Fächers
+     (Kosmo, 8 Untertools) über den Viewport-RAND hinausragen (beide Fälle
+     live mit Playwright nachgemessen — s. auch `.orbit084-wortmarke-
+     buehne`-Padding in `orbit-065.css`, das aus demselben Grund schrumpfte). */
+  padding: 4px 0 24px;
 }
 .k-orbit-ring-feld {
   position: relative;
-  width: calc(var(--k-orbit-radius) * 2 + var(--k-orbit-knoten-groesse));
-  height: calc(var(--k-orbit-radius) * 2 + var(--k-orbit-knoten-groesse));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex: none;
+  /* PA2: der Abstand ist bewusst GROSS (nicht `--k-s7`) — jeder Fächer
+     öffnet `position:absolute` nach OBEN aus seiner eigenen 108px-Kachel
+     und bleibt (Harter Vertrag, s. OrbitStart.tsx-Kopfkommentar) auch
+     GESCHLOSSEN mit realer Boxgrösse UND `pointer-events:auto` im DOM —
+     ein zu enger Kachel-Abstand liesse zwei benachbarte, geschlossene
+     Fächer geometrisch überlappen und den einen Fächer-Klick vom jeweils
+     ANDEREN, unsichtbaren Fächer abfangen (live mit Playwright bewiesen:
+     `orbit-office-lead` fing Klicks auf `module-design` ab). Der Fächer
+     ist max. `min(150px, 50vw)` breit (`orbit-065.css`); 80px Lücke +
+     108px Kachel = 188px Kachel-Mitte-zu-Mitte — deutlich grösser als die
+     Fächer-Breite, keine zwei geschlossenen Fächer berühren sich mehr
+     (38px Sicherheitsabstand, live nachgemessen). Beide Zahlen (Lücke hier
+     + Breite dort) MÜSSEN zusammen geändert werden — die 4-Kacheln-Reihe
+     darf ausserdem bei keinem der beiden Pflicht-Viewports (1280×720/
+     1440×900, V084-SPEZ §4.3) umbrechen (`flex-wrap:wrap` unten ist NUR
+     das Sicherheitsnetz für sehr schmale Fenster < 860px, s. `app.css`
+     `.app-zentrale-inhalt` max-width 1280px + `orbit-065.css`
+     `.orbit065-home-grid` Spaltenbreite — alle drei Werte gehören
+     zusammen, live nachgemessen). Zusätzlich live geprüft: bleibt die Reihe
+     auch bei OFFENEM Kosmo-Panel (340px, `kosmo-panel.css`) in EINER Zeile
+     — dieser Fall verkleinert die verfügbare Breite auf ≈720px real
+     nachgemessen und war der Fund, der die Werte von 300px/170px auf
+     150px/80px zog (`oberflaeche-hierarchie.spec.ts`, ausserhalb des PA2-
+     Dateikreises, aber live rot geworden — Klick auf `module-data` wurde
+     vom umgebrochenen, geschlossenen Office-Fächer abgefangen). */
+  gap: 80px;
   max-width: 100%;
+  flex-wrap: wrap;
 }
 .k-orbit-mitte {
   position: absolute;
@@ -961,62 +998,18 @@ progress {
   border: 1px solid var(--k-line-strong);
   background: var(--k-surface);
   pointer-events: none;
+  z-index: -1;
 }
 .k-orbit-knoten {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  /* `steps(200, end)` statt `linear`: EIN Sprung/Sekunde (200 Schritte über
-     200s) statt einer PERMANENT wechselnden Transform-Fliesskommazahl. Für
-     das Auge bei dieser Radius/Geschwindigkeit praktisch ununterscheidbar
-     von echtem Fliessen («GANZ LANGSAM») — für Playwright entscheidend: der
-     Knoten steht zwischen zwei Sprüngen exakt still, die Actionability-
-     Stabilitätsprüfung (die bei einer kontinuierlichen Transform NIE zwei
-     identische Bounding-Boxen sieht und ewig retryt) findet fast immer ein
-     stabiles Fenster. */
-  animation: k-orbit-drehen var(--k-orbit-dauer) steps(200, end) infinite;
-  animation-delay: var(--k-orbit-delay, 0s);
-}
-@keyframes k-orbit-drehen {
-  from { transform: rotate(0deg) translateY(calc(-1 * var(--k-orbit-radius))); }
-  to   { transform: rotate(360deg) translateY(calc(-1 * var(--k-orbit-radius))); }
-}
-.k-orbit-knoten-gegendreh {
-  position: absolute;
+  position: relative;
   width: var(--k-orbit-knoten-groesse);
   height: var(--k-orbit-knoten-groesse);
-  margin-left: calc(-1 * var(--k-orbit-knoten-groesse) / 2);
-  margin-top: calc(-1 * var(--k-orbit-knoten-groesse) / 2);
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Gleiche Schrittzahl/Dauer wie `.k-orbit-knoten` — beide springen
-     GLEICHZEITIG, sonst geraten Fächer/Titel zwischen zwei Sprüngen sichtbar
-     schief. */
-  animation: k-orbit-gegendrehen var(--k-orbit-dauer) steps(200, end) infinite;
-  animation-delay: var(--k-orbit-delay, 0s);
-}
-@keyframes k-orbit-gegendrehen {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
-}
-/* Usability (Owner-Auftrag): Hover/Fokus über IRGENDEINEM Knoten pausiert die
-   ganze Bahn — sonst flieht das Ziel unter der Maus weg. Stromsparend
-   (Gestaltungskonzept): pausiert zusätzlich, sobald der Tab versteckt ist
-   (`.k-zentrale-pausiert`, gesetzt in App.tsx wie beim Kachel-Halo). */
-.k-orbit-ring-feld:hover .k-orbit-knoten,
-.k-orbit-ring-feld:hover .k-orbit-knoten-gegendreh,
-.k-orbit-ring-feld:focus-within .k-orbit-knoten,
-.k-orbit-ring-feld:focus-within .k-orbit-knoten-gegendreh,
-.k-zentrale-pausiert .k-orbit-knoten,
-.k-zentrale-pausiert .k-orbit-knoten-gegendreh {
-  animation-play-state: paused;
 }
 @media (prefers-reduced-motion: reduce) {
-  .k-orbit-knoten,
-  .k-orbit-knoten-gegendreh,
   .k-orbit-icon-puls {
     animation: none;
   }

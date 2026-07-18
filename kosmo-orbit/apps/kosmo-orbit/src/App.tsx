@@ -496,6 +496,91 @@ export function App() {
     };
   }, []);
 
+  /**
+   * v0.8.4 PA2 (V084-SPEZ §4.2): dieselben Alltags-Werkzeuge, die früher NUR
+   * im `app-header` sassen (Sync/Speichern/Öffnen/Kosmo/Rundgang/
+   * Einstellungen) — jetzt eine geteilte Funktion statt zweier Kopien,
+   * damit Header (andere Screens) und die neue Eck-Werkzeugleiste der
+   * Zentrale (`.app-heim-werkzeuge`, home) NIE auseinanderlaufen. Beide
+   * Renderorte schliessen sich gegenseitig aus (`screen === 'home'` schaltet
+   * zwischen ihnen um) — keine doppelten `data-testid`s im DOM gleichzeitig.
+   */
+  const kopfWerkzeuge = () => (
+    <>
+      <span className={`${fokusKlasse(fokusStufe('sync'))} app-inline-nowrap`}>
+        <button
+          onClick={() => setSyncOpen(!syncOpen)}
+          data-testid="sync-toggle"
+          className="k-druck app-druck-reset"
+        >
+          <Badge
+            hue={
+              syncStatus === 'live'
+                ? 'var(--k-success)'
+                : syncStatus === 'aus'
+                  ? 'var(--k-ink-faint)'
+                  : 'var(--k-warning)'
+            }
+          >
+            {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
+          </Badge>
+        </button>
+      </span>
+      <Hairline vertical />
+      <span className={`${fokusKlasse(fokusStufe('speichern'))} app-inline-reihe`}>
+        <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
+          Speichern
+        </KButton>
+        <KButton size="sm" tone="ghost" data-testid="open-project" onClick={oeffneProjektDatei}>
+          Öffnen
+        </KButton>
+      </span>
+      <Hairline vertical />
+      <span className={`${fokusKlasse(fokusStufe('kosmo'))} app-inline-nowrap`}>
+        <button
+          onClick={() => setKosmoOpen(!kosmoOpen)}
+          data-testid="kosmo-toggle"
+          className="k-druck app-druck-reset"
+          aria-label="Kosmo öffnen/schliessen"
+        >
+          <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
+        </button>
+      </span>
+      <Hairline vertical />
+      {/* V1.6 Block E: dezenter Rundgang-Knopf — jederzeit erreichbar, egal
+          ob der Erststart-Guide schon lief. `guideLauf`-Inkrement erzwingt
+          einen frischen Mount, damit «erneut» immer bei Schritt 0 beginnt. */}
+      <span className={`${fokusKlasse(fokusStufe('guide'))} app-inline`}>
+        <button
+          onClick={() => {
+            setGuideLauf((n) => n + 1);
+            setStarterGuideOffen(true);
+          }}
+          data-testid="starter-guide-start"
+          className="k-druck app-druck-reset"
+          title="Rundgang — Kosmo erklärt das Programm erneut"
+          aria-label="Rundgang erneut starten"
+        >
+          <span className="orbit065-kopfleiste-beschriftung">?</span>
+        </button>
+      </span>
+      <Hairline vertical />
+      {/* Serie K / A4 (Owner-Befund K14): zentrales Einstellungs-Panel —
+          dezent neben dem «?» (Rundgang), immer erreichbar. */}
+      <span className={`${fokusKlasse(fokusStufe('einstellungen'))} app-inline`}>
+        <button
+          onClick={() => oeffneEinstellungen()}
+          data-testid="einstellungen-oeffnen"
+          className="k-druck app-druck-reset"
+          title="Einstellungen"
+          aria-label="Einstellungen öffnen"
+        >
+          <span className="orbit065-kopfleiste-beschriftung">⚙</span>
+        </button>
+      </span>
+    </>
+  );
+
   return (
     <div className="app-wurzel">
       {/* PD4 (Island-UI-Strom Abschluss, Owner-Nachtrag 17.07.2026, wörtlich:
@@ -512,8 +597,24 @@ export function App() {
           «Kosmo öffnen» läuft ab jetzt in diesem Modus ausschliesslich über
           den Kosmo-Orb (`island/KosmoOrb.tsx`, `DesignWorkspace.tsx`),
           «Speichern»/«Öffnen» bleiben über die Befehlspalette (⌘K, s.
-          `oeffneProjektDatei`-Kommentar oben) erreichbar. */}
-      {!bodenDockAusgeblendet && (
+          `oeffneProjektDatei`-Kommentar oben) erreichbar.
+
+          v0.8.4 PA2 (V084-SPEZ §4.2, Owner wörtlich «kein Balken oben»):
+          derselbe Guard gilt jetzt AUCH für `screen === 'home'` — die
+          Zentrale zeigt keinen `app-header` mehr im DOM (neuer Vertrag,
+          `orbit-start.spec.ts`). Ersatz: `OrbitStart.tsx` rendert die
+          zentrierte Wortmarke (`orbit-wortmarke`) + Versionszeile
+          (`orbit-version`) selbst. Die übrigen Kopfleisten-Funktionen
+          (Sync/Speichern/Öffnen/Kosmo/Rundgang/Einstellungen) bleiben
+          erreichbar — Dutzende Bestands-Specs (`load-tkb`, `rolle-select`,
+          `einstellungen-oeffnen`, `starter-guide-start`, `kosmo-toggle` u. a.)
+          klicken sie direkt nach dem Laden der Zentrale, ausserhalb des
+          PA2-Auftrags. Sie ziehen darum NICHT mit in den ausgeblendeten
+          Balken, sondern in eine kleine, nicht-balkenförmige Eck-Werkzeug-
+          leiste oben rechts (`.app-heim-werkzeuge`, s. unten) — kein
+          Balken, aber jede bestehende Testid bleibt real klickbar. Jede
+          ANDERE Station bleibt byte-gleich (der Guard ist dort `false`). */}
+      {!bodenDockAusgeblendet && screen !== 'home' && (
       /* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest,
           `--k-sunken` (statt `--k-surface`) + subtile Trennlinie
           (`--k-line-subtil`, orbit-only — Papier fällt über den zweiten
@@ -531,14 +632,14 @@ export function App() {
           <OrbitMark module="orbit" size={24} />
           <Wordmark size={16} version={`v${__APP_VERSION__}`} />
         </button>
-        {screen !== 'home' && (
-          <>
-            <Hairline vertical />
-            <Badge hue={moduleHue[modules.find((m) => m.screen === screen)?.id ?? 'design']}>
-              {modules.find((m) => m.screen === screen)?.name ?? 'KosmoDesign'}
-            </Badge>
-          </>
-        )}
+        {/* PA2: der Header rendert jetzt NUR noch für `screen !== 'home'`
+            (Guard oben) — die Stations-Badge ist damit immer fällig, der
+            frühere `screen !== 'home'`-Zweig hier wäre eine (von TS zu
+            Recht bemängelte) unmögliche Bedingung. */}
+        <Hairline vertical />
+        <Badge hue={moduleHue[modules.find((m) => m.screen === screen)?.id ?? 'design']}>
+          {modules.find((m) => m.screen === screen)?.name ?? 'KosmoDesign'}
+        </Badge>
         <Hairline vertical />
         {/* V0.7.2 W2-C (Paket 03, Spec §4): App-weiter SIA-112-Schnellzugriff —
             ergänzt `sia-phase-select` (fein, nur in KosmoDesign), schreibt
@@ -554,91 +655,13 @@ export function App() {
             Dateibesitz, hier NICHT angefasst). `white-space` vererbt sich an
             Text-Nachfahren; `nowrap` auf diesem Wrapper genügt, ohne die
             gemeinsame `Badge`-Komponente zu verändern. */}
-        <span className={`${fokusKlasse(fokusStufe('sync'))} app-inline-nowrap`}>
-          <button
-            onClick={() => setSyncOpen(!syncOpen)}
-            data-testid="sync-toggle"
-            className="k-druck app-druck-reset"
-          >
-            <Badge
-              hue={
-                syncStatus === 'live'
-                  ? 'var(--k-success)'
-                  : syncStatus === 'aus'
-                    ? 'var(--k-ink-faint)'
-                    : 'var(--k-warning)'
-              }
-            >
-              {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
-            </Badge>
-          </button>
-        </span>
-        <Hairline vertical />
-        <span className={`${fokusKlasse(fokusStufe('speichern'))} app-inline-reihe`}>
-          <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
-            Speichern
-          </KButton>
-          <KButton size="sm" tone="ghost" data-testid="open-project" onClick={oeffneProjektDatei}>
-            Öffnen
-          </KButton>
-        </span>
-        <Hairline vertical />
-        <span className={`${fokusKlasse(fokusStufe('kosmo'))} app-inline-nowrap`}>
-          <button
-            onClick={() => setKosmoOpen(!kosmoOpen)}
-            data-testid="kosmo-toggle"
-            className="k-druck app-druck-reset"
-            aria-label="Kosmo öffnen/schliessen"
-          >
-            <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
-          </button>
-        </span>
-        <Hairline vertical />
-        {/* V1.6 Block E: dezenter Rundgang-Knopf — jederzeit erreichbar, egal
-            ob der Erststart-Guide schon lief. `guideLauf`-Inkrement erzwingt
-            einen frischen Mount, damit «erneut» immer bei Schritt 0 beginnt. */}
-        <span className={`${fokusKlasse(fokusStufe('guide'))} app-inline`}>
-          <button
-            onClick={() => {
-              setGuideLauf((n) => n + 1);
-              setStarterGuideOffen(true);
-            }}
-            data-testid="starter-guide-start"
-            className="k-druck app-druck-reset"
-            title="Rundgang — Kosmo erklärt das Programm erneut"
-            aria-label="Rundgang erneut starten"
-          >
-            {/* Aufgabe 7 (0.6.6, C-Befund 6): `Badge` (kosmo-ui) zeichnet vor
-                jedem Text IMMER einen 6px-Punkt — passend für einen echten
-                Statuswert (Sync live/aus/…), aber der Rundgang-Knopf trägt
-                keinen: der Punkt war konstant grau, ohne je Information zu
-                tragen. Ursache behoben statt kaschiert: kein `Badge` mehr
-                hier, reiner Text in derselben Typografie (uppercase, Mono-
-                Gewicht), ohne den irreführenden Punkt. */}
-            <span className="orbit065-kopfleiste-beschriftung">?</span>
-          </button>
-        </span>
-        <Hairline vertical />
-        {/* Serie K / A4 (Owner-Befund K14): zentrales Einstellungs-Panel —
-            dezent neben dem «?» (Rundgang), immer erreichbar. */}
-        <span className={`${fokusKlasse(fokusStufe('einstellungen'))} app-inline`}>
-          <button
-            onClick={() => oeffneEinstellungen()}
-            data-testid="einstellungen-oeffnen"
-            className="k-druck app-druck-reset"
-            title="Einstellungen"
-            aria-label="Einstellungen öffnen"
-          >
-            {/* Aufgabe 7: dieselbe Ehrlichkeitsregel wie beim «?» oben — das
-                Zahnrad trägt keinen echten Statuswert, also kein `Badge`-Punkt. */}
-            <span className="orbit065-kopfleiste-beschriftung">⚙</span>
-          </button>
-        </span>
         {/* F2 (v0.6.4, Entdoppelung — Owner: «entscheide dich, eine Funktion
             = ein Ort»): «Deinstallieren…» und Thema/Akzent zogen KOMPLETT in
             die Einstellungen um (dort lebten sie längst als K14-Sektionen).
             Die Kopfleiste behält nur den Alltag: Sync, Speichern/Öffnen,
-            Kosmo, «?» (Rundgang), ⚙ (Einstellungen). */}
+            Kosmo, «?» (Rundgang), ⚙ (Einstellungen) — jetzt aus der
+            geteilten `kopfWerkzeuge()`-Funktion (s. oben, PA2). */}
+        {kopfWerkzeuge()}
       </header>
       )}
       {/* PD5 (Owner-Korrektur, wörtlich «links oben kosmoorbit und
@@ -915,19 +938,37 @@ export function App() {
           </KFehlerzone>
         ) : (
           <div className="app-zentrale-scroll">
+            {/* v0.8.4 PA2 (V084-SPEZ §4.2, «kein Balken oben»): der
+                `app-header` rendert auf `screen==='home'` nicht mehr (Guard
+                oben). Diese Eck-Werkzeugleiste ist bewusst KEIN Balken (kein
+                volle-Breite-Streifen, nur ein kleiner, glasiger Cluster oben
+                rechts) — sie hält ausschliesslich Bestands-Testids am Leben,
+                die viele NICHT-PA2-Specs direkt nach dem Laden der Zentrale
+                anklicken (`sync-toggle`, `save-project`/`open-project`,
+                `kosmo-toggle`, `starter-guide-start`, `einstellungen-
+                oeffnen`, `phasen-leiste-*`) — dieselbe `kopfWerkzeuge()`-
+                Funktion wie der Header, s. Kommentar dort. */}
+            <div className="app-heim-werkzeuge" data-testid="app-heim-werkzeuge">
+              <PhasenLeiste />
+              {kopfWerkzeuge()}
+            </div>
             <div
               className={`k-einblenden${dokumentVersteckt ? ' k-zentrale-pausiert' : ''} app-zentrale-inhalt`}
             >
-              {/* R2-N3 (0.6.5, docs/UI-SELBSTKRITIK-064.md): Begrüssung/
-                  Projekte und Orbit teilten bisher zwei konkurrierende
-                  Zentren (linksbündige Mittelspalte vs. zentrierter Orbit)
-                  — jetzt EINE Layout-Achse als zweispaltiges Grid. Dieser
-                  Ausschnitt liegt in App.tsx, nicht in `shell/**` (mein
-                  Dateibesitz) — R2-N3 verlangt aber zwingend genau diese
-                  Umstrukturierung; minimal-invasiv umgesetzt (nur Grid-Hülle
-                  + Verschiebung der bestehenden Blöcke, keine Logik
-                  verändert), siehe Bericht. Klassen aus `shell/orbit-065.css`
-                  (importiert von OrbitStart.tsx, gilt global). */}
+              {/* R2-N3 (0.6.5) → PA2 (v0.8.4): Begrüssung/Projekte und der
+                  Orbit-Hub teilen weiterhin EINE zweispaltige Layout-Achse
+                  (`.orbit065-home-grid`, `shell/orbit-065.css` — bleibt
+                  responsiv: 1 Spalte < 860px, unverändert seit P15). NEU seit
+                  PA2: die rechte Spalte trägt nicht mehr die alte Kreis-
+                  Ansicht, sondern die zentrierte Wortmarke + statische
+                  Kachel-Reihe (`OrbitStart.tsx`) — «kein Balken oben,
+                  KosmoOrbit-Schriftzug zentral mittig ... unten mittig
+                  Kosmo·KosmoData·KosmoDesign·KosmoOffice» (Owner-Auftrag
+                  wörtlich). Die linke Spalte bleibt inhaltlich unverändert
+                  (Begrüssung/Rolle/Beispielprojekt/Erste-Start-Frage/
+                  Projekte/Varianten) — Dutzende Bestands-Specs
+                  (`load-tkb`/`rolle-select`/`projekt-neu-name`/…) klicken sie
+                  direkt, ausserhalb des PA2-Auftrags. */}
               <div className="orbit065-home-grid">
                 {onboarding && (
                   <div className="app-onboarding-spanne">
@@ -999,21 +1040,17 @@ export function App() {
                   <VariantenArchiv onOpen={() => gehZu('design')} />
                 </div>
                 <div className="orbit065-home-rechts">
-                  {/* Serie K / F3 (Owner-Auftrag, wörtlich: «nicht Blöcke, eher
-                      wie das Kosmos-Zeichen rund») — ersetzt die frühere
-                      Familien-Kachel-Ansicht (T7/Serie K A2) durch das Orbit-
-                      Startmenü: NUR die 4 Hauptwerkzeuge sichtbar, Untertools im
-                      Hover-/Klick-Fächer. Mapping + Ehrlichkeitsregeln (welche
-                      echte Registry-Id hinter welchem Untertool steckt) leben in
-                      `shell/orbit-werkzeuge.ts`. */}
+                  {/* Serie K / F3 → PA2 (v0.8.4): ersetzt die frühere Kreis-
+                      Ansicht durch die statische Kachel-Reihe + zentrierte
+                      Wortmarke. NUR die 4 Hauptwerkzeuge sichtbar, Untertools
+                      im Hover-/Klick-Fächer. Mapping + Ehrlichkeitsregeln
+                      (welche echte Registry-Id hinter welchem Untertool
+                      steckt) leben in `shell/orbit-werkzeuge.ts`. */}
                   <OrbitStart
                     onOeffnen={oeffneModulById}
                     {...(rolle ? { rollenPrio: ROLLEN_REIHENFOLGE[rolle] } : {})}
                   />
                 </div>
-              </div>
-              <div className="app-about-zeile" data-testid="about-zeile">
-                KosmoOrbit v{__APP_VERSION__} · lokal-first · Installation: docs/INSTALL.md · Update = neuer Installer (Signierung folgt zuhause)
               </div>
             </div>
           </div>

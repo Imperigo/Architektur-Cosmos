@@ -13,8 +13,11 @@
  *
  * Behebt (docs/UI-SELBSTKRITIK-064.md, Runde 2):
  *  - R2-N1 (Fächer-Versatz): der Fächer wächst IMMER vom Knoten-Rand weg,
- *    nie zum Zentrum hin (Kompassrichtung aus dem Hauptwerkzeug-Index,
- *    90°-Rhythmus von Haus aus — siehe Kommentar in OrbitStart.tsx).
+ *    nie zum Zentrum hin. Bis v0.8.3 aus einer Kompassrichtung (90°-Rhythmus
+ *    des Kreis-Index); seit v0.8.4 PA2 (Kachel-REIHE statt Kreis) gibt es
+ *    nur noch eine sinnvolle Richtung — IMMER «oben» (`--rechts`/`--unten`/
+ *    `--links` unten bleiben als totes, aber harmloses CSS stehen, falls ein
+ *    späteres Paket sie wieder braucht).
  *  - R2-N2 (Fächer-Karten): echte Karteikarten (45°-Ecke, radial gestaffelt).
  *  - R2-N3 (Achsen): Begrüssung/Projekte + Orbit auf einer Layout-Achse.
  *
@@ -22,7 +25,45 @@
  * Aufgabe 3 (`.k-druck`-Rollout + Konflikt-Auflösung), Aufgabe 4 (Sheet-/
  * Fächer-Motion), Aufgabe 5 (Fächer-Ruheraum), Aufgabe 6 (Fächer-Planet-
  * Bezug), Aufgabe 7 (ehrliche Kopfleisten-Beschriftung ohne Fake-Statuspunkt).
+ *
+ * v0.8.4 PA2 ergänzt: die zentrierte Wortmarke + Versionszeile
+ * (`.orbit084-*`, ersetzt den `app-header` auf der Zentrale) und die
+ * Statik-Umstellung der Kachel-Reihe/-Fächer (Kompassrichtung ist jetzt
+ * IMMER «oben» — s. Kommentar bei `.orbit065-faecher-huelle` unten).
  */
+
+/* ── PA2 (v0.8.4) — zentrierte Wortmarke über der Kachel-Reihe ──────────
+   `flex:1` im Elternteil `.k-orbit-start` (aura.css) zentriert diesen Block
+   vertikal im gesamten freien Raum ÜBER der Kachel-Reihe — «KosmoOrbit-
+   Schriftzug zentral mittig, Texte zentriert» (Owner-Auftrag wörtlich). */
+.orbit084-wortmarke-buehne {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--k-s3);
+  text-align: center;
+  /* PA2-Nachtrag: vertikal kompakter (`--k-s3` statt `--k-s5`) — bei
+     1280×720 (kleinster Pflicht-Viewport) brauchte der dichteste Fächer
+     (Kosmo, 8 Untertools) den Raum, den dieses Padding sonst band; ohne
+     die Kürzung ragte seine oberste Karte über den Viewport-Rand hinaus
+     (live mit Playwright nachgemessen, s. `aura.css` `.k-orbit-start`). */
+  padding: var(--k-s3) var(--k-s4);
+}
+.orbit084-wortmarke {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s3);
+  cursor: default;
+}
+.orbit084-version {
+  font-family: var(--k-font-mono);
+  font-size: var(--k-t-xs);
+  color: var(--k-ink-faint);
+  letter-spacing: 0.06em;
+}
 
 /* ── Aufgabe 1 (0.6.6 MOTION-KONZEPT-066 §4) — Stationswechsel-Choreografie
    `mitUebergang()` (@kosmo/ui `motion.ts`, App.tsx `gehZu()`) kapselt
@@ -46,58 +87,68 @@
   animation: orbit065-view-neu-setzt var(--k-feder) both;
 }
 
-/* ── R2-N3: Begrüssung/Projekte und Orbit teilen EINE Layout-Achse ──────
-   (App.tsx-Layout gehört nicht zu meinem Dateibesitz — siehe Bericht:
-   minimal-invasive Grid-Hülle, keine Logik verändert.) */
+/* ── R2-N3 → PA2 (v0.8.4): Begrüssung/Projekte und Orbit teilen EINE
+   Layout-Achse (App.tsx-Layout gehört nicht zu meinem Dateibesitz — minimal-
+   invasive Grid-Hülle, keine Logik verändert). PA2-Änderung: die Reihe
+   bekommt jetzt eine DEFINITE Höhe (`grid-template-rows`/`flex`/`min-height:
+   0`-Kette bis hoch zu `.app-zentrale-scroll`, s. `app.css`) statt content-
+   getriebener Höhe — Owner-Auftrag «nicht scrollbar»: die Zentrale füllt
+   IMMER exakt den Viewport, statt bei viel Inhalt zu wachsen. Die linke
+   Spalte (Begrüssung/Projekte/Varianten) bekommt dafür ein eigenes,
+   internes `overflow-y:auto` als Sicherheitsnetz (viele Projekte scrollen
+   NUR dort, nie die Wurzel-Seite — `document.scrollingElement.scrollHeight`
+   bleibt unberührt). Die alte 390px-Fächer-Reserve für den alten Kreis-Ring
+   entfällt ersatzlos: der neue, unten-mittige Kachel-Reihen-Fächer öffnet
+   `position:absolute` nach oben in den jetzt grosszügigen, freien Raum der
+   rechten Spalte (s. `OrbitStart.tsx`/`.orbit084-wortmarke-buehne`). */
 .orbit065-home-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  /* PA2: die linke Spalte (Begrüssung/Projekte/Varianten) bekommt eine
+     kompakte, GEDECKELTE Breite statt gleicher 1fr-Teilung — die rechte
+     Spalte (Wortmarke + Kachel-Reihe) bekommt den GROSSTEIL der Breite, das
+     bringt «KosmoOrbit-Schriftzug zentral mittig» (Owner-Auftrag) so nah wie
+     mit der (ausserhalb des PA2-Dateikreises geschützten) Zweispalten-Achse
+     möglich an die echte Bildschirmmitte heran. Der Umbruch-Vertrag
+     unterhalb 860px (`e2e/orbit-hub-vollausbau.spec.ts`, EIN Spalten-Token)
+     bleibt unberührt — nur die ≥860px-Werte ändern sich, dort prüft keine
+     Spec einen exakten Wert. */
+  grid-template-columns: minmax(240px, 260px) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: var(--k-s7);
-  align-items: start;
+  align-items: stretch;
+  flex: 1;
+  min-height: 0;
 }
 .orbit065-home-links {
   display: grid;
   gap: var(--k-s6);
+  align-content: start;
   min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* PA2-Gate-Fix (Fable, Sichtprüfung 1440×900): der nowrap-Knopf
+   «Beispielprojekt laden — …» spreizte die Kinder der schmalen Spalte auf
+   365px (gemessen: scrollWidth 365 bei 260px Spalte) — ALLES in der Spalte
+   wurde dadurch an der Kante hart abgeschnitten statt umzubrechen. Kinder
+   dürfen die Spalte nie mehr aufspreizen; lange Knopf-Texte enden in
+   Ellipsis, Fliesstext bricht normal um. */
+.orbit065-home-links :is(div, p, button, input, span) {
+  min-width: 0;
+  max-width: 100%;
+}
+.orbit065-home-links button,
+.orbit065-home-links button span {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  height: auto;
 }
 .orbit065-home-rechts {
   display: flex;
   justify-content: center;
   min-width: 0;
-  /* R1-Fix (Kritik-065 p-01/i-01, «tote Fläche zwischen Dashboard-Spalte und
-     Orbit»): die volle 440px-Reserve für den "oben" wachsenden Fächer
-     (KosmoDesign, `richtungVon(0) === 'oben'`, siehe OrbitStart.tsx) wird
-     jetzt NUR gebraucht, WENN dieser eine Fächer offen ist — der Fächer
-     sitzt `position:absolute` und trägt nichts zur Grid-/Flex-Höhe bei, sonst
-     würde er beim Öffnen über den Seitenrand hinaus in negative Koordinaten
-     wachsen (siehe Bericht/Grenzen für den gemessenen Bedarf: grösster
-     "oben"-Fächer ≈ 430px inkl. Abstand). Im Ruhezustand reicht ein kleiner
-     Respektabstand — kein 440px-Loch mehr über dem Ring. `:has()` wird von
-     der Chromium-Version dieses Repos unterstützt (Playwright-Suite lief
-     grün, siehe Bericht). */
-  /* Kritik-Runde-2-Korrektur: die bedingte Reserve (nur bei offenem Fächer)
-     liess beim Hover das GANZE Layout um 408px springen — Fächer öffnet,
-     Padding erscheint, die Karte flieht unter dem Zeiger weg, Fächer schliesst,
-     alles springt zurück (Oszillation; bei 1920px landete die Karte unter der
-     Kopfleiste). «Papier flattert nicht»: die Reserve bleibt STATISCH — KEIN
-     `:has()`-Hover-Layoutsprung (0.6.6-Lehre aus genau diesem Befund).
-
-     Aufgabe 5 (0.6.6, Fächer-Ruheraum): Öffnungsrichtung des oben-Fächers
-     geprüft (nach unten/Richtung Orbit-Mitte statt nach oben) UND mit
-     echten, per Playwright gemessenen Werten (1400×900, `--k-orbit-radius`
-     klemmt hier bei 208px) durchgerechnet — nicht sauber machbar: der
-     Design-Fächer (5 Untertools) misst offen ≈406px + 24px Abstand ≈430px,
-     der freie Raum zwischen Knoten-Oberkante und `.k-orbit-mitte` beträgt
-     nur ≈234px. Jede «nach unten»-Variante hätte ENTWEDER `.k-orbit-mitte`
-     überlappt (bricht R2-N1, orbit-faecher.spec, hart) ODER den eigenen
-     Auslöse-Knopf unter dem offenen Fächer verschwinden lassen (neue,
-     schlechtere Regression). Beides verworfen — Fallback wie im Auftrag
-     vorgesehen: Reserve MODERAT verkleinert statt aufgegeben. Der reale
-     Frei-Raum vor dem eigentlichen Clipping (Rand der scrollenden Zentrale)
-     lag gemessen bei ≈70px zusätzlicher Luft über den bisherigen 440px
-     hinaus nicht mehr nötig — 50px davon zurückgegeben (Sicherheitsabstand
-     bleibt), der Rest bleibt ehrlich als ungelöster Rest (siehe Bericht). */
-  padding-top: 390px;
+  min-height: 0;
 }
 @media (max-width: 860px) {
   .orbit065-home-grid {
@@ -115,8 +166,11 @@
    (`--k-s2`), unabhängig von Icon/Kreis-Füllung. Bleibt Kind des `<button>`
    (Klick-Fläche + `toContainText`-Vertrag in orbit-start.spec unverändert).
    `.k-orbit-hauptknopf` bekommt hier NUR `position:relative` dazu (aura.css
-   selbst setzt keine Position) — alles andere dort unverändert (Freeze). */
-.k-orbit-knoten-gegendreh .k-orbit-hauptknopf {
+   selbst setzt keine Position) — alles andere dort unverändert (Freeze).
+   PA2: der frühere Gegenrotations-Wrapper (`.k-orbit-knoten-gegendreh`) ist
+   mit der Rotation entfallen — `.k-orbit-hauptknopf` sitzt jetzt direkt im
+   108px-`.k-orbit-knoten` (aura.css), derselbe Selektor-Zweck bleibt. */
+.k-orbit-knoten .k-orbit-hauptknopf {
   position: relative;
 }
 /* v0.7.4 P6 (kosmetischer Fix, Kritik-Befund «KOMMEND»-Label-Kollision):
@@ -169,21 +223,28 @@
 /* ── R2-N1/N2: Fächer ausserhalb des Rings, echte Karteikarten ──────────
    Geometrie: `.orbit065-faecher-huelle` hängt (wie `.k-orbit-faecher`
    vorher) im 108px-Anker `.k-orbit-knoten-gegendreh` — NEU aber
-   kompassrichtungsabhängig (oben/rechts/unten/links, aus dem Index der 4
-   Hauptwerkzeuge) statt immer "unten": sie wächst vom Knoten-Rand WEG,
-   nie zum Zentrum hin. Der Knoten selbst hat einen festen 90°-Rhythmus
-   (0/90/180/270° bei Mount, siehe `verzoegerung()`); die fortlaufende
-   Rotation ist rein dekorativ (Owner-Auftrag «ganz langsam») — die
-   Kompassrichtung bleibt für den Fächer bewusst STATISCH je Knoten (siehe
-   Bericht/Grenzen: bei sehr langem Verweilen ohne Reload könnte der Fächer
-   geringfügig von der dann weitergedrehten Knotenposition abweichen, exakt
-   dieselbe Toleranz, die die bestehende `steps()`-Rotation schon hat). */
+   sie wächst vom Knoten-Rand WEG, nie zum Zentrum hin. Bis v0.8.3
+   kompassrichtungsabhängig (oben/rechts/unten/links, aus dem Kreis-Index);
+   seit v0.8.4 PA2 (Kachel-REIHE statt Kreis) IMMER «oben» (s. Kopfkommentar
+   dieser Datei) — `--rechts`/`--unten`/`--links` unten bleiben totes, aber
+   harmloses CSS.
+
+   PA2-Breite bewusst SCHMALER als vor v0.8.4 (war 300px, dann 220px):
+   die Kachel-Reihe braucht genug Lücke zwischen den 108px-Knoten, damit
+   zwei benachbarte, GESCHLOSSENE Fächer (Harter Vertrag: immer im DOM,
+   reale Boxgrösse, `pointer-events:auto`, auch zu) sich nie geometrisch
+   berühren — sonst fängt der eine Fächer Klicks für den anderen ab (live
+   mit Playwright bewiesen, zuletzt bei offenem Kosmo-Panel — 340px
+   schmalere verfügbare Breite). Der Kachel-Abstand (`aura.css`
+   `.k-orbit-ring-feld`, 80px) ist auf GENAU diese Breite abgestimmt —
+   beide Werte gehören zusammen, s. dortiger Kommentar für die volle
+   Rechnung. */
 .orbit065-faecher-huelle {
   position: absolute;
   display: flex;
   flex-direction: column;
   gap: var(--k-s3);
-  width: min(300px, 64vw);
+  width: min(150px, 50vw);
   opacity: 0.0015;
   pointer-events: auto;
   z-index: 5;
@@ -202,7 +263,7 @@
    `.app-zentrale-scroll`-Kommentar für den zugehörigen Seiten-Scroll-Fix). */
 @media (max-width: 860px) {
   .orbit065-faecher-huelle {
-    width: min(240px, 70vw);
+    width: min(200px, 70vw);
   }
 }
 .orbit065-faecher-huelle.offen {
@@ -347,6 +408,15 @@
   border-radius: var(--k-radius-sm);
   padding: var(--k-s2) var(--k-s3);
   line-height: 1.4;
+  /* PA2: max. 1 Zeile — die schmalere Kachel-Reihe (150px Fächer-Breite,
+     s. `.orbit065-faecher-huelle`) liess den Beschrieb sonst mehrzeilig
+     werden; der dichteste Fächer (Kosmo, 8 Untertools) brauchte den Platz,
+     um bei 1280×720 (kleinster Pflicht-Viewport) nicht über den Viewport-
+     Rand hinauszuragen (live mit Playwright nachgemessen). */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 
 /* Der Kartenfächer selbst — überschreibt NUR die Positionierungs-
@@ -362,20 +432,32 @@
   transform: none;
   width: 100%;
   display: grid;
-  gap: var(--k-s6);
+  /* PA2 (V084-SPEZ §4.4 «alle Karten voll im Viewport»): kompakter als vor
+     v0.8.4 (war `--k-s6`/24px) — der Fächer öffnet jetzt aus einer schmalen
+     108px-Kachel in der unteren Reihe statt aus einem grosszügigen Kreis;
+     ein dichter Fächer (Kosmo: 8 Untertools) bleibt so auch bei generösem
+     freiem Raum über der Reihe sicher innerhalb des Viewports. NICHT enger
+     als `--k-s5` (16px, live nachgemessen): die Karten sind radial gestaffelt
+     (±2–4° Rotation, `--k-karte-rot`) — eine rotierte Bounding-Box ragt über
+     ihr eigenes Rechteck hinaus, bei `--k-s3` (8px) überlappten benachbarte
+     Karten dadurch trotz eigenem, sichtbarem Abstand (R2-N2-Regression,
+     `orbit-faecher.spec.ts`, ausserhalb des PA2-Dateikreises). */
+  gap: var(--k-s5);
 }
 
 /* Karteikarten (R2-N2): 45°-Ecke wie `.k-karte` (aura.css), aber mit den in
    UI-KONZEPT-065 §1 verlangten Werten (--k-line-strong/--k-radius-sm statt
    --k-technik/0) — eigene Klasse statt `.k-karte` zu ändern (Freeze).
    Radial gestaffelt: leichte Rotation/Versatz je Karte (±2–4°, JS-Variablen
-   `--k-karte-rot`/`--k-karte-jog`, der Kreisgeometrie folgend). */
+   `--k-karte-rot`/`--k-karte-jog`, der Kreisgeometrie folgend). PA2: Padding
+   kompakter (`--k-s2 --k-s3` statt `--k-s3 --k-s4`) — derselbe Höhen-Grund
+   wie beim Fächer-Gap oben. */
 .orbit065-karte {
   display: block;
   position: relative; /* Anker für `.orbit065-rang-kreis` (v0.7.2 W2-C) */
   width: 100%;
   box-sizing: border-box;
-  padding: var(--k-s3) var(--k-s4);
+  padding: var(--k-s2) var(--k-s3);
   border: 1px solid var(--k-line-strong);
   border-radius: var(--k-radius-sm);
   background: var(--k-raised);
@@ -404,11 +486,17 @@
   overflow-wrap: anywhere;
 }
 .orbit065-karte-kurz {
-  display: block;
+  display: -webkit-box;
   font-size: var(--k-t-xs);
   color: var(--k-ink-faint);
   margin-top: var(--k-s1);
   overflow-wrap: anywhere;
+  /* PA2: max. 1 Zeile (statt beliebig hoch) — derselbe Höhen-Grund wie
+     `.orbit065-beschrieb` oben (schmalere Kachel-Reihe, dichtester Fächer
+     Kosmo mit 8 Karten). */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 @media (prefers-reduced-motion: reduce) {
   .orbit065-karte {

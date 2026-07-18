@@ -1,13 +1,14 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * Serie K / A2 (Owner-Befund K12) → Serie K / F3 (Owner-Auftrag «rund statt
- * Blöcke»): die alte Kachel-Ansicht (`ZentraleKachel.tsx`, Info-Icon +
- * Hover-Werkzeugzeile je Kachel) ist durch das Orbit-Startmenü ersetzt
- * (`OrbitStart.tsx`). Diese Suite beweist die neuen Fähigkeiten am lebenden
+ * Serie K / A2 (Owner-Befund K12) → Serie K / F3 → v0.8.4 PA2 (Owner-Auftrag
+ * «Hauptmenü-Neubau», docs/V084-SPEZ.md §4): die alte Kachel-Ansicht
+ * (`ZentraleKachel.tsx`, Info-Icon + Hover-Werkzeugzeile je Kachel) ist
+ * durch das Orbit-Startmenü ersetzt (`OrbitStart.tsx`) — seit PA2 eine
+ * STATISCHE Kachel-Reihe unten mittig (keine Rotation mehr, Owner wörtlich:
+ * «NICHT mehr drehend»). Diese Suite beweist die Fähigkeiten am lebenden
  * Objekt, OHNE den zentralen Bestandsvertrag zu verlassen: jede Station
- * bleibt exakt `data-testid="module-<id>"`, sofort klickbar — auch während
- * die (sehr langsame) Orbit-Rotation läuft (kein pointer-events-Trick).
+ * bleibt exakt `data-testid="module-<id>"`, sofort klickbar.
  */
 
 async function zentraleLaden(page: import('@playwright/test').Page): Promise<void> {
@@ -26,10 +27,10 @@ test('Orbit mit den 4 Hauptwerkzeugen ist da — nichts aus der Kachel-Extraktio
   await expect(page.locator('[data-testid="module-design"]')).toBeAttached();
 });
 
-test('Station öffnet DIREKT nach dem Laden — die (pausierte) Orbit-Rotation blockiert den Klick nicht', async ({ page }) => {
+test('Station öffnet DIREKT nach dem Laden — die statische Kachel-Reihe blockiert den Klick nicht', async ({ page }) => {
   await zentraleLaden(page);
-  // Kein zusätzliches Warten: click() direkt nach dem Reload, während die
-  // 200s-Rotation längst läuft (Owner: «GANZ LANGSAM» — trotzdem nie im Weg).
+  // Kein zusätzliches Warten: click() direkt nach dem Reload (seit PA2
+  // steht die Reihe ohnehin still, «NICHT mehr drehend» — Owner-Auftrag).
   await page.click('[data-testid="module-design"]');
   await expect(page.locator('[data-testid="planview"], [data-testid="inspector"], canvas').first()).toBeVisible();
   await page.click('header button[aria-label="Zur Zentrale"]');

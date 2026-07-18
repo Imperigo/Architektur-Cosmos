@@ -8,7 +8,7 @@ import {
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
 } from 'react';
-import { flipFirst, flipPlay, moduleHue, type ModuleId } from '@kosmo/ui';
+import { flipFirst, flipPlay, moduleHue, OrbitMark, Wordmark, type ModuleId } from '@kosmo/ui';
 import {
   ORBIT_HAUPTWERKZEUGE,
   type HauptwerkzeugId,
@@ -34,11 +34,23 @@ import type { FlipRechteck } from '@kosmo/ui';
 import './orbit-065.css';
 
 /**
- * Serie K / F3 — Owner-Auftrag wörtlich: «das startmenü muss neu gestaltet
- * werden ... nicht Blöcke, eher wie das Kosmos-Zeichen rund ... NUR die 4
- * Hauptwerkzeuge anzeigen ... im Kreis angeordnet, GANZ LANGSAM im Kreis
- * bewegen ... Hover auf Hauptwerkzeug zeigt Untertools mit Titel + Kurz-
- * beschrieb, Hover auf Untertool zeigt was es kann.»
+ * Serie K / F3 → v0.8.4 PA2 (Owner-Auftrag «Hauptmenü-Neubau», wörtlich:
+ * «kein Balken oben, KosmoOrbit-Schriftzug zentral mittig, Texte zentriert,
+ * NICHT scrollbar, unten mittig Kosmo·KosmoData·KosmoDesign·KosmoOffice
+ * nebeneinander, NICHT mehr drehend, Icons nach Designsprache, Hover-
+ * Untertools sauber ohne Überlappung», docs/V084-SPEZ.md §4).
+ *
+ * NEU seit PA2: die vier Hauptwerkzeuge kreisen NICHT mehr — sie stehen
+ * STATISCH als Reihe unten mittig (`zentrale-kacheln`, Owner-Reihenfolge
+ * Kosmo·KosmoData·KosmoDesign·KosmoOffice, s. `KACHEL_REIHENFOLGE` unten;
+ * die DATENTABELLE `ORBIT_HAUPTWERKZEUGE`/ihre Reihenfolge bleibt
+ * unangetastet — nur die Anzeige-Reihenfolge ist neu, kein Eingriff in
+ * `orbit-werkzeuge.ts`/dessen Unit-Test). Die zentrierte Wortmarke
+ * (`orbit-wortmarke`) + Versionszeile (`orbit-version`) leben jetzt HIER
+ * (ersetzen den `app-header`, der auf `screen==='home'` nicht mehr rendert,
+ * s. `App.tsx`). Hover/Fokus öffnet je Hauptwerkzeug einen Fächer, der IMMER
+ * nach OBEN wächst (keine Kompassrichtung mehr — die Reihe hat nur noch
+ * eine sinnvolle Öffnungsrichtung).
  *
  * Ersetzt die alte Kachel-Ansicht (`ZentraleKachel.tsx`, jetzt entfernt) für
  * die 4 Hauptwerkzeuge. Datentabelle: `orbit-werkzeuge.ts` (Mapping-
@@ -51,7 +63,8 @@ import './orbit-065.css';
  * (`.k-orbit-faecher` ↔ `.offen`) signalisiert optisch offen/zu. Damit
  * bleibt JEDER bestehende `page.click('[data-testid="module-design"]')`
  * (ohne vorheriges Hover) unverändert grün — das war günstiger als alle
- * ~40 betroffenen Specs auf `page.hover(...)` umzuschreiben.
+ * ~40 betroffenen Specs auf `page.hover(...)` umzuschreiben. PA2 hält diese
+ * Konvention bewusst durch (V084-SPEZ §4 verlangt es explizit).
  *
  * Klick-Vertrag (Maus + Touch + Tastatur EIN Weg):
  *  - Hover/Fokus auf ein Hauptwerkzeug → Fächer öffnet sich (`aktiverHaupt`).
@@ -103,31 +116,18 @@ const HAUPT_AKZENT: Record<HauptwerkzeugId, string> = {
   office: moduleHue.orbit,
 };
 
-/** Viertel der Umlaufdauer (siehe `--k-orbit-dauer` in aura.css) als negative
- *  `animation-delay` je Hauptwerkzeug — verteilt die vier Knoten gleichmässig
- *  auf der Kreisbahn, ohne einen zweiten, mit der Rotation kollidierenden
- *  statischen Transform-Wert zu brauchen (siehe CSS-Kommentar in aura.css). */
-const ORBIT_DAUER_S = 200;
-
-function verzoegerung(index: number): string {
-  return `${-((index * ORBIT_DAUER_S) / ORBIT_HAUPTWERKZEUGE.length)}s`;
-}
-
 /**
- * R2-N1 (0.6.5, docs/UI-SELBSTKRITIK-064.md): Kompassrichtung, in der der
- * Fächer eines Knotens aufgeht — abgeleitet aus demselben 90°-Rhythmus wie
- * `verzoegerung()` (4 Hauptwerkzeuge, gleichmässig verteilt: Index 0 startet
- * bei 0° = oben, danach im Uhrzeigersinn rechts/unten/links). Bewusst
- * STATISCH (nicht der laufenden Rotation nachgeführt): der Fächer wächst
- * IMMER vom Knoten-Rand WEG (nie zum Zentrum hin) — das gilt exakt, solange
- * der reale Rotationswinkel nicht mehr als 90° von dieser Start-Richtung
- * abgedriftet ist (siehe Bericht/Grenzen; dieselbe Toleranz akzeptiert der
- * Code bei der `steps()`-Rotation ohnehin schon). */
-const ORBIT_RICHTUNGEN = ['oben', 'rechts', 'unten', 'links'] as const;
-type OrbitRichtung = (typeof ORBIT_RICHTUNGEN)[number];
+ * PA2 (v0.8.4, V084-SPEZ §4): Owner-Reihenfolge der Kachel-REIHE — «unten
+ * mittig Kosmo·KosmoData·KosmoDesign·KosmoOffice nebeneinander». Bewusst NUR
+ * eine Anzeige-Reihenfolge, KEIN Eingriff in `ORBIT_HAUPTWERKZEUGE` selbst
+ * (die Datentabelle bleibt design/data/kosmo/office — ihr bestehender
+ * Unit-Test `orbit-werkzeuge.test.ts` prüft genau diese Reihenfolge und
+ * gehört nicht zum PA2-Dateikreis).
+ */
+const KACHEL_REIHENFOLGE: HauptwerkzeugId[] = ['kosmo', 'data', 'design', 'office'];
 
-function richtungVon(index: number): OrbitRichtung {
-  return ORBIT_RICHTUNGEN[index % ORBIT_RICHTUNGEN.length]!;
+function kachelReihe(): OrbitHauptwerkzeug[] {
+  return KACHEL_REIHENFOLGE.map((id) => ORBIT_HAUPTWERKZEUGE.find((h) => h.id === id)!);
 }
 
 /** R2-N2: leichte Rotation/Versatz je Karte (±2–4°, kleiner horizontaler
@@ -329,19 +329,40 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
 
   return (
     <div className="k-orbit-start" data-testid="orbit-start">
-      <div className="k-orbit-ring-feld" data-testid="orbit-ring">
-        {/* Rein dekorativer Kreismittelpunkt (Bahn-Anker) — bewusst OHNE das
-            OrbitMark-Fadenkreuz-Icon: das Icon ist bereits das Zeichen des
-            «Kosmo»-Hauptwerkzeugs (IconHauptKosmo, siehe orbit-icons.tsx);
-            hier verdoppelt es sich zu einem unbeschrifteten, knopfartig
-            wirkenden 5. Kreis mitten im Ring (Kritik-065 p-01/i-01: «Unbe-
-            schrifteter Orbit-Knoten mit dupliziertem Fadenkreuz-Icon»). Bleibt
+      {/* PA2: die Wortmarke ersetzt den `app-header`, der auf der Zentrale
+          nicht mehr rendert (App.tsx). `flex:1` zentriert sie vertikal im
+          verbleibenden Raum ÜBER der Kachel-Reihe — «KosmoOrbit-Schriftzug
+          zentral mittig» (Owner-Auftrag wörtlich). */}
+      <div className="orbit084-wortmarke-buehne">
+        <button
+          type="button"
+          className="k-druck app-druck-reset orbit084-wortmarke"
+          data-testid="orbit-wortmarke"
+          aria-label="KosmoOrbit"
+          tabIndex={-1}
+        >
+          <OrbitMark module="orbit" size={40} />
+          {/* `Wordmark` zeigt OHNE `version`-Prop den Rückwärtskompat-
+              Platzhalter «V1» (`Logo.tsx`, `version ?? 'V1'`) — das wäre
+              hier falsch (echte Version ist v0.8.3) UND doppelt zur
+              eigenen `orbit-version`-Zeile darunter. Leerstring statt
+              `undefined` unterdrückt den Platzhalter (`?? ` greift nur bei
+              null/undefined, nicht bei `''`) — der `app-version`-Testid
+              bleibt im DOM, zeigt aber nichts an. */}
+          <Wordmark size={30} version="" />
+        </button>
+        <div className="orbit084-version" data-testid="orbit-version">{`v${__APP_VERSION__}`}</div>
+      </div>
+      <div className="k-orbit-ring-feld" data-testid="zentrale-kacheln">
+        {/* Rein dekorativer Mittelpunkt — bewusst OHNE das OrbitMark-
+            Fadenkreuz-Icon: das Icon ist bereits das Zeichen des «Kosmo»-
+            Hauptwerkzeugs (IconHauptKosmo, siehe orbit-icons.tsx). Bleibt
             als Element/Klasse erhalten (orbit-faecher.spec misst seine
-            Bounding-Box), zeigt aber nur noch einen stillen Punkt. */}
+            Bounding-Box, ausserhalb des PA2-Dateikreises), sitzt jetzt
+            zentriert HINTER der Kachel-Reihe statt im Kreismittelpunkt. */}
         <div className="k-orbit-mitte orbit065-mitte" aria-hidden />
-        {ORBIT_HAUPTWERKZEUGE.map((h, index) => {
+        {kachelReihe().map((h) => {
           const Icon = ICONS[h.id];
-          const delay = verzoegerung(index);
           const offen = aktiverHaupt === h.id;
           // Hub-Rang (Spec §4): rang-fähige Slots (s. `toolIdVon`) folgen der
           // Rang-Reihenfolge dieses Fächers, alle anderen Untertools bleiben
@@ -360,151 +381,138 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
             <div
               key={h.id}
               className="k-orbit-knoten"
-              style={{ '--k-orbit-delay': delay } as CSSProperties}
+              onMouseEnter={() => setAktiverHaupt(h.id)}
+              onMouseLeave={(e) => {
+                if (verlaesstKnoten(e, e.currentTarget)) {
+                  setAktiverHaupt((vorher) => (vorher === h.id ? null : vorher));
+                }
+              }}
+              onFocus={() => setAktiverHaupt(h.id)}
+              onBlur={(e) => {
+                if (verlaesstKnoten(e, e.currentTarget)) {
+                  setAktiverHaupt((vorher) => (vorher === h.id ? null : vorher));
+                }
+              }}
             >
-              <div
-                className="k-orbit-knoten-gegendreh"
-                style={{ '--k-orbit-delay': delay } as CSSProperties}
-                onMouseEnter={() => setAktiverHaupt(h.id)}
-                onMouseLeave={(e) => {
-                  if (verlaesstKnoten(e, e.currentTarget)) {
-                    setAktiverHaupt((vorher) => (vorher === h.id ? null : vorher));
-                  }
-                }}
-                onFocus={() => setAktiverHaupt(h.id)}
-                onBlur={(e) => {
-                  if (verlaesstKnoten(e, e.currentTarget)) {
-                    setAktiverHaupt((vorher) => (vorher === h.id ? null : vorher));
-                  }
-                }}
+              <button
+                type="button"
+                // Aufgabe 3: `.k-druck` (Knopfdrucksimulation). Aufgabe 6
+                // (C-Befund 5, Fächer-Planet-Bezug): `aria-expanded`
+                // (unverändert vorhanden) steuert per CSS-Attributselektor
+                // in `orbit-065.css` einen Akzent-Rahmen, solange der
+                // Fächer dieses Planeten offen ist — kein zweiter State.
+                className="k-orbit-hauptknopf k-druck"
+                data-testid={`orbit-haupt-${h.id}`}
+                aria-label={h.kommend ? `${h.titel} — kommend, V2` : `${h.titel} — Untertools zeigen`}
+                aria-expanded={offen}
+                onClick={() => klickHauptwerkzeug(h)}
               >
-                <button
-                  type="button"
-                  // Aufgabe 3: `.k-druck` (Knopfdrucksimulation). Aufgabe 6
-                  // (C-Befund 5, Fächer-Planet-Bezug): `aria-expanded`
-                  // (unverändert vorhanden) steuert per CSS-Attributselektor
-                  // in `orbit-065.css` einen Akzent-Rahmen, solange der
-                  // Fächer dieses Planeten offen ist — kein zweiter State.
-                  className="k-orbit-hauptknopf k-druck"
-                  data-testid={`orbit-haupt-${h.id}`}
-                  aria-label={h.kommend ? `${h.titel} — kommend, V2` : `${h.titel} — Untertools zeigen`}
-                  aria-expanded={offen}
-                  onClick={() => klickHauptwerkzeug(h)}
-                >
-                  <Icon akzent={HAUPT_AKZENT[h.id]} />
-                  {/* R1-Fix (Kritik-065 p-01/i-01): Titel sass VORHER als
-                      flex-Zeile IM 108px-Kreis — bei Namen wie «KosmoDesign»
-                      reichte die Kreis-Sehne an dieser Höhe nicht für die
-                      Textbreite, die Buchstaben schnitten den Tuscherand
-                      (siehe Bericht/Messung). Jetzt `position:absolute`
-                      UNTERHALB des Kreises mit festem Abstand
-                      (`.orbit065-hauptknopf-unterlabel`, orbit-065.css) —
-                      bleibt Kind des `<button>` (Klick-/Text-Vertrag,
-                      `toContainText` in orbit-start.spec unverändert grün),
-                      unabhängig von der Kompasslage (der Knopf selbst dreht
-                      sich dank Gegenrotation nie). */}
-                  <span className="orbit065-hauptknopf-unterlabel">
-                    <span className="k-orbit-hauptknopf-titel">{h.titel}</span>
-                    {h.kommend && <span className="k-orbit-badge-kommend">kommend</span>}
-                  </span>
-                </button>
-                {/* R2-N1/R2-N2 (0.6.5): Fächer öffnet AUSSERHALB des Rings
-                    (Kompassrichtung `richtungVon`, siehe Kommentar oben),
-                    Familien-Beschrieb bekommt festen Platz ÜBER dem
-                    Kartenfächer (eigenes Element, `--k-s3`-Abstand aus dem
-                    `gap` der Hülle in orbit-065.css) statt als erste Zeile
-                    IM Fächer. */}
+                <Icon akzent={HAUPT_AKZENT[h.id]} />
+                {/* R1-Fix (Kritik-065 p-01/i-01): Titel sitzt `position:
+                    absolute` UNTERHALB des Kreises mit festem Abstand
+                    (`.orbit065-hauptknopf-unterlabel`, orbit-065.css) —
+                    bleibt Kind des `<button>` (Klick-/Text-Vertrag,
+                    `toContainText` in orbit-start.spec unverändert grün). */}
+                <span className="orbit065-hauptknopf-unterlabel">
+                  <span className="k-orbit-hauptknopf-titel">{h.titel}</span>
+                  {h.kommend && <span className="k-orbit-badge-kommend">kommend</span>}
+                </span>
+              </button>
+              {/* PA2: der Fächer öffnet IMMER nach OBEN (keine Kompass-
+                  richtung mehr — eine horizontale Kachel-Reihe hat nur noch
+                  eine sinnvolle Öffnungsrichtung: über sich selbst, nie
+                  zwischen die Nachbar-Kacheln). Familien-Beschrieb bekommt
+                  festen Platz ÜBER dem Kartenfächer (eigenes Element,
+                  `--k-s3`-Abstand aus dem `gap` der Hülle in
+                  orbit-065.css) statt als erste Zeile IM Fächer. */}
+              <div className={`orbit065-faecher-huelle orbit065-faecher-huelle--oben${offen ? ' offen' : ''}`}>
+                <div className="orbit065-beschrieb" data-testid={`orbit-beschrieb-${h.id}`}>
+                  {h.kurzbeschrieb}
+                </div>
                 <div
-                  className={`orbit065-faecher-huelle orbit065-faecher-huelle--${richtungVon(index)}${offen ? ' offen' : ''}`}
+                  className={`k-orbit-faecher${offen ? ' offen' : ''}`}
+                  data-testid={`orbit-faecher-${h.id}`}
                 >
-                  <div className="orbit065-beschrieb" data-testid={`orbit-beschrieb-${h.id}`}>
-                    {h.kurzbeschrieb}
-                  </div>
-                  <div
-                    className={`k-orbit-faecher${offen ? ' offen' : ''}`}
-                    data-testid={`orbit-faecher-${h.id}`}
-                  >
-                    {untertoolsFuerAnzeige.map((u, kartenIndex) => {
-                      const testid = u.kommend
-                        ? `orbit-office-${u.id}`
-                        : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
-                      const staffel = kartenIndex % KARTEN_ROTATION_DEG.length;
-                      // Aufgabe 4 (Konzept §4, Kinder-Staffelung 24ms/max. 8):
-                      // die Klasse (und damit die Animation) wird NUR gesetzt,
-                      // solange der Fächer offen ist — die Karten bleiben laut
-                      // E2E-Vertrag permanent im DOM (siehe Kopfkommentar),
-                      // ein CSS-`animation: ... both`, das dauerhaft anläge,
-                      // liefe nur EINMAL beim Erstmount statt bei jedem
-                      // Öffnen. Der Klassenwechsel (weg/da) lässt die
-                      // Animation bei jedem `offen`-Wechsel neu anlaufen.
-                      const staggerVerzoegerung = `${Math.min(kartenIndex, 8) * 24}ms`;
-                      // Hub-Rang (Spec §4): Kreis-Grösse/-Betonung nur für
-                      // rang-fähige Untertools (s. Kopfkommentar `toolIdVon`).
-                      const rangToolId = toolIdVon(u);
-                      const rangPosition = rangToolId ? rangReihenfolge.indexOf(rangToolId) : -1;
-                      const rangTier: RangTier | null =
-                        rangToolId && rangPosition >= 0 ? tierFuerPosition(rangPosition) : null;
-                      const rangStation = rangTier && u.moduleId ? STATION_GLYPHE[u.moduleId as StationModulId] : undefined;
-                      return (
-                        <div
-                          key={u.id}
-                          className={`k-orbit-untertool-zeile${offen ? ' orbit065-sheet-kind' : ''}`}
-                          style={offen ? ({ animationDelay: staggerVerzoegerung } as CSSProperties) : undefined}
-                          ref={(el) => {
-                            if (!rangToolId) return;
-                            let refs = kreisRefs.current.get(h.id);
-                            if (!refs) {
-                              refs = new Map();
-                              kreisRefs.current.set(h.id, refs);
-                            }
-                            if (el) refs.set(rangToolId, el);
-                            else refs.delete(rangToolId);
+                  {untertoolsFuerAnzeige.map((u, kartenIndex) => {
+                    const testid = u.kommend
+                      ? `orbit-office-${u.id}`
+                      : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
+                    const staffel = kartenIndex % KARTEN_ROTATION_DEG.length;
+                    // Aufgabe 4 (Konzept §4, Kinder-Staffelung 24ms/max. 8):
+                    // die Klasse (und damit die Animation) wird NUR gesetzt,
+                    // solange der Fächer offen ist — die Karten bleiben laut
+                    // E2E-Vertrag permanent im DOM (siehe Kopfkommentar),
+                    // ein CSS-`animation: ... both`, das dauerhaft anläge,
+                    // liefe nur EINMAL beim Erstmount statt bei jedem
+                    // Öffnen. Der Klassenwechsel (weg/da) lässt die
+                    // Animation bei jedem `offen`-Wechsel neu anlaufen.
+                    const staggerVerzoegerung = `${Math.min(kartenIndex, 8) * 24}ms`;
+                    // Hub-Rang (Spec §4): Kreis-Grösse/-Betonung nur für
+                    // rang-fähige Untertools (s. Kopfkommentar `toolIdVon`).
+                    const rangToolId = toolIdVon(u);
+                    const rangPosition = rangToolId ? rangReihenfolge.indexOf(rangToolId) : -1;
+                    const rangTier: RangTier | null =
+                      rangToolId && rangPosition >= 0 ? tierFuerPosition(rangPosition) : null;
+                    const rangStation = rangTier && u.moduleId ? STATION_GLYPHE[u.moduleId as StationModulId] : undefined;
+                    return (
+                      <div
+                        key={u.id}
+                        className={`k-orbit-untertool-zeile${offen ? ' orbit065-sheet-kind' : ''}`}
+                        style={offen ? ({ animationDelay: staggerVerzoegerung } as CSSProperties) : undefined}
+                        ref={(el) => {
+                          if (!rangToolId) return;
+                          let refs = kreisRefs.current.get(h.id);
+                          if (!refs) {
+                            refs = new Map();
+                            kreisRefs.current.set(h.id, refs);
+                          }
+                          if (el) refs.set(rangToolId, el);
+                          else refs.delete(rangToolId);
+                        }}
+                      >
+                        <button
+                          type="button"
+                          // Aufgabe 3: `.k-druck` auf jeder Fächer-Karte.
+                          className="k-orbit-untertool orbit065-karte k-druck"
+                          style={
+                            {
+                              '--k-karte-rot': `${KARTEN_ROTATION_DEG[staffel]}deg`,
+                              '--k-karte-jog': `${KARTEN_JOG_PX[staffel]}px`,
+                            } as CSSProperties
+                          }
+                          data-testid={testid}
+                          disabled={u.kommend}
+                          aria-label={u.kommend ? `${u.titel} — kommend, noch nicht verfügbar` : `${u.titel} öffnen`}
+                          onClick={() => {
+                            if (u.kommend || !u.moduleId) return;
+                            onOeffnen(u.moduleId);
                           }}
                         >
-                          <button
-                            type="button"
-                            // Aufgabe 3: `.k-druck` auf jeder Fächer-Karte.
-                            className="k-orbit-untertool orbit065-karte k-druck"
-                            style={
-                              {
-                                '--k-karte-rot': `${KARTEN_ROTATION_DEG[staffel]}deg`,
-                                '--k-karte-jog': `${KARTEN_JOG_PX[staffel]}px`,
-                              } as CSSProperties
-                            }
-                            data-testid={testid}
-                            disabled={u.kommend}
-                            aria-label={u.kommend ? `${u.titel} — kommend, noch nicht verfügbar` : `${u.titel} öffnen`}
-                            onClick={() => {
-                              if (u.kommend || !u.moduleId) return;
-                              onOeffnen(u.moduleId);
-                            }}
-                          >
-                            {rangTier && rangStation && (
-                              // Hub-Rang-Kreis (Spec §4): Top-3 innen 64px +
-                              // Rollenfarben-Border/Glow, Mitte 54, aussen 46
-                              // — Rollenfarbe AUS DERSELBEN Quelle wie das
-                              // Icon (`STATION_GLYPHE`, keine Zweitquelle).
-                              <span
-                                className={`orbit065-rang-kreis orbit065-rang-kreis--${rangTier}`}
-                                style={{ '--k-rang-rolle': `var(${rangStation.rolle})` } as CSSProperties}
-                                aria-hidden
-                              >
-                                <WerkzeugGlyphe art={rangStation.art} rolle={rangStation.rolle} size={ICON_GROESSE[rangTier]} />
-                              </span>
-                            )}
-                            <span className="orbit065-karte-titel">
-                              {u.titel}
-                              {u.kommend ? ' · kommend' : ''}
+                          {rangTier && rangStation && (
+                            // Hub-Rang-Kreis (Spec §4): Top-3 innen 64px +
+                            // Rollenfarben-Border/Glow, Mitte 54, aussen 46
+                            // — Rollenfarbe AUS DERSELBEN Quelle wie das
+                            // Icon (`STATION_GLYPHE`, keine Zweitquelle).
+                            <span
+                              className={`orbit065-rang-kreis orbit065-rang-kreis--${rangTier}`}
+                              style={{ '--k-rang-rolle': `var(${rangStation.rolle})` } as CSSProperties}
+                              aria-hidden
+                            >
+                              <WerkzeugGlyphe art={rangStation.art} rolle={rangStation.rolle} size={ICON_GROESSE[rangTier]} />
                             </span>
-                            <span className="orbit065-karte-kurz">{u.kurzbeschrieb}</span>
-                          </button>
-                          <div className="k-orbit-faehigkeit" data-testid={`orbit-faehigkeit-${u.id}`}>
-                            {u.faehigkeit}
-                          </div>
+                          )}
+                          <span className="orbit065-karte-titel">
+                            {u.titel}
+                            {u.kommend ? ' · kommend' : ''}
+                          </span>
+                          <span className="orbit065-karte-kurz">{u.kurzbeschrieb}</span>
+                        </button>
+                        <div className="k-orbit-faehigkeit" data-testid={`orbit-faehigkeit-${u.id}`}>
+                          {u.faehigkeit}
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>

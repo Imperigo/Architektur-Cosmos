@@ -98,22 +98,26 @@ test('responsives Layout: unter 860px kollabiert die Home-Achse auf eine Spalte,
   // Eine Spalte, keine "minmax(0, 1fr) minmax(0, 1fr)"-Zwei-Spalten-Vorlage mehr.
   expect(gridColumns.trim().split(/\s+/)).toHaveLength(1);
 
-  // `.app-zentrale-scroll` (der scrollende Container der Zentrale, s. dessen
-  // Kommentar in `app.css`) trägt `overflow-x: hidden` — kein Scrollbalken,
-  // kein Maus-/Trackpad-erreichbarer horizontaler Scroll für echte
-  // Nutzer:innen. Der reine `scrollWidth`-Zahlenwert bleibt bewusst
-  // ungeprüft: er liegt wegen des Harten Vertrags "Fächer immer im DOM mit
-  // realer Boxgrösse" (`OrbitStart.tsx`-Kopfkommentar) auch bei
-  // unsichtbaren, geschlossenen Fächern > Containerbreite — das ist nie
-  // sichtbar und per `overflow-x: hidden` nie per Maus/Trackpad erreichbar
-  // (nur `element.scrollLeft = …` per Skript kann das umgehen, kein
-  // realer Nutzungsweg). `document.documentElement` bleibt hier bewusst
-  // aussen vor — die volle Desktop-Kopfleiste hat ihre eigene, unveränderte
-  // Mindestbreite (~864px, ausserhalb P15-Scope, s. Kopfkommentar B-138).
-  const overflowX = await page.evaluate(
-    () => getComputedStyle(document.querySelector('.app-zentrale-scroll')!).overflowX,
-  );
+  // v0.8.4 PA2 (V084-SPEZ §4 «Scroll-Vertrag → kein Scroll auf home»,
+  // ERSETZT den alten reinen `overflow-x`-Check): `.app-zentrale-scroll`
+  // (der Home-Container, s. Kommentar in `app.css`) trägt seit PA2
+  // `overflow: hidden` auf BEIDEN Achsen und eine definite Höhe (die
+  // gesamte Flex-/Grid-Kette bis zur Kachel-Reihe ist `flex:1;min-height:0`)
+  // — die ganze Zentrale bleibt darum wörtlich «nicht scrollbar» (Owner-
+  // Auftrag), auch bei dieser schmalen 820px-Breite, wo `.orbit065-home-
+  // grid` auf eine Spalte kollabiert (s. oben) und die linke Spalte
+  // (Begrüssung/Projekte/Varianten) am längsten wird. Root-Scroll bleibt
+  // dabei strukturell unmöglich: `document.scrollingElement.scrollHeight`
+  // darf `innerHeight` nie überschreiten.
+  const { scrollHeight, innerHeight, overflowX, overflowY } = await page.evaluate(() => ({
+    scrollHeight: document.scrollingElement!.scrollHeight,
+    innerHeight: window.innerHeight,
+    overflowX: getComputedStyle(document.querySelector('.app-zentrale-scroll')!).overflowX,
+    overflowY: getComputedStyle(document.querySelector('.app-zentrale-scroll')!).overflowY,
+  }));
   expect(overflowX).toBe('hidden');
+  expect(overflowY).toBe('hidden');
+  expect(scrollHeight).toBeLessThanOrEqual(innerHeight);
 
   // Die sichtbaren, interaktiven Teile des Hubs (Ring + alle 4 Hauptwerkzeug-
   // Knöpfe) bleiben innerhalb des Viewports — das ist der eigentliche
