@@ -105,13 +105,21 @@
   fällt identisch auf sauberem HEAD, Worktree-bewiesen vorbestehend — vom
   Prüfagenten selbst als «neuer Kandidaten-Punkt» notiert.
   *(v0.8.1/P1, ROADMAP 398)*
-- [ ] **Statusleisten-2-Zeilen-Wrap × NavLeiste** (NEU, erstmals in v0.8.1
+- [x] ~~**Statusleisten-2-Zeilen-Wrap × NavLeiste** (NEU, erstmals in v0.8.1
   gefunden): bei 1400×900 mit vollem Chip-Satz kann die zweizeilig
   umbrechende Statusleiste die NavLeiste geometrisch überlappen
   (`pointer-events:none`, kein Klick-Blocker, aber optisch unsauber) — vom
   Prüfagenten selbst als «Kandidat für die Restrundenliste» notiert.
-  *(v0.8.1/P4, ROADMAP 401)*
-- [ ] **kosmo-ui-bruecke (d) × nav-pan-Überdeckung** (NEU, erstmals im
+  *(v0.8.1/P4, ROADMAP 401)*~~ — **erledigt:** `.dw-statusleiste` steht auf
+  `flex-wrap: nowrap` (`design.css:405-435`, vorher `wrap`) — die Leiste
+  wächst nie mehr auf eine zweite Zeile, unabhängig von der Chip-Zahl, bleibt
+  strukturell auf `min-height:30px` und damit ausserhalb der `NavLeiste`-Zone
+  (`bottom:50`). Mengen-Beweis: `e2e/statusleiste-nav-overlap.spec.ts`
+  misst `getBoundingClientRect().height` der Statusleiste ≤ 40px (gegen den
+  unveränderten Ist-Stand schlägt genau diese Assertion mit 55.9px fehl —
+  live gegengeprüft) *(v0.8.3/P5, s. Bauagenten-Bericht — ROADMAP-Eintrag
+  folgt im Release-Commit)*.
+- [x] ~~**kosmo-ui-bruecke (d) × nav-pan-Überdeckung** (NEU, erstmals im
   v0.8.2/P3-Gate reproduziert): im `3D | Plan`-Split
   (`dw-viewport-flex--getrennt`) fängt der schwebende `nav-pan`-HUD-Knopf
   Klicks auf den `modus-chip` ab («subtree intercepts pointer events»,
@@ -120,7 +128,20 @@
   v0.8.2-Dateikreises (Viewport-HUD-Float × Statuszeile; anders als die
   Wrap-Zeile darüber ein ECHTER Klick-Blocker). Ausdrücklich NICHT C-28
   (das ist der «Tab (c)»-Flake in dock-interaktion, von P7a gehärtet).
-  *(v0.8.2/P3-Gate, ROADMAP 424)*
+  *(v0.8.2/P3-Gate, ROADMAP 424)*~~ — **erledigt (Doppelfix, §8 E8 der
+  `V083-SPEZ.md`):** zusätzlich zu `nowrap` bekommt `.dw-modus-chip-wrap`
+  ein explizites `z-index: 6` (`design.css:438-451`) — über `NavLeiste`s
+  `zIndex:5` (`NavLeiste.tsx:48`, bereits vorhanden), Rangfolge 6>5 statt
+  zufälliger DOM-Reihenfolge. Live gegen den unveränderten Ist-Stand
+  reproduziert (wörtlich: `<button … data-testid="nav-pan" …> from <div
+  class="dw-viewport-flex dw-viewport-flex--getrennt">…</div> subtree
+  intercepts pointer events`, 90s-Timeout in Test (d)) — mit dem Fix
+  `kosmo-ui-bruecke.spec.ts` 3× hintereinander 4/4 grün auf Port 5176, dazu
+  der neue `elementFromPoint`-Regressionstest
+  `e2e/statusleiste-nav-overlap.spec.ts` (reproduziert denselben
+  eingefrorenen Split-Zustand wie Test (d), schlägt auf dem alten CSS-Stand
+  nachweislich fehl, ist mit dem Fix grün) *(v0.8.3/P5, s. Bauagenten-Bericht
+  — ROADMAP-Eintrag folgt im Release-Commit)*.
 
 ## D · Grosse vertagte Features (je eigener Plan-Kandidat)
 

@@ -409,7 +409,22 @@
   right: 88px;
   min-height: 30px;
   display: flex;
-  flex-wrap: wrap;
+  /* v0.8.3/P5 (E8, §8.1): vorher `wrap` — bei vielen Chips (Werkzeug/
+     Geschoss/LOD/Fläche/Phase/Modus-Chip + Klick-Hinweis/Preset) konnte die
+     Leiste auf eine zweite Zeile wachsen und dabei in die `NavLeiste`-Zone
+     (bottom:50, 8px darüber) hineinragen — die «Wrap-Flake»
+     (`docs/V-NAECHSTE-KANDIDATEN.md` Sektion C). `nowrap` allein hält die
+     Leiste dauerhaft auf ihrer festen `min-height:30px` (genau eine Zeile),
+     unabhängig davon, wie viele Chips künftig dazukommen; der längste
+     Einzel-Chip (`.dw-hint-chip`) trägt bereits eigene Ellipsis-Kappung
+     (`max-width`/`overflow:hidden`/`text-overflow:ellipsis`, s. dort) statt
+     freiem Umbruch. BEWUSST KEIN `overflow-x` auf diesem Container: das
+     koppelte (CSS-Overflow-Regel `visible`+non-`visible` → `auto`) das
+     unveränderte `overflow-y` auf `auto` und schnitt damit den nach OBEN
+     aufklappenden `.dw-dropdown--oben`-Modus-Menü-Popup ab (Kind von
+     `.dw-modus-chip-wrap`, das weit über die 30px-Zeile hinausragt) — echte
+     Regression, live gegen `kosmo-ui-bruecke.spec.ts` Test (d) gemessen. */
+  flex-wrap: nowrap;
   row-gap: 4px;
   gap: 10px;
   align-items: center;
@@ -429,6 +444,14 @@
   position: relative;
   display: inline-flex;
   pointer-events: auto;
+  /* v0.8.3/P5 (E8, §8.2): NavLeiste (`NavLeiste.tsx`, `position:absolute`,
+     `zIndex:5`) und dieser Chip sind absolute Geschwister im selben
+     Stacking-Context; ohne eigenen z-index folgte die Malreihenfolge nur der
+     DOM-Reihenfolge, und NavLeiste lag im `3D | Plan`-Split optisch/klickbar
+     ÜBER dem Modus-Chip, sobald sich beide Zonen überlappten (der reale
+     Klick-Blocker hinter `kosmo-ui-bruecke.spec.ts` Test (d)). Explizite
+     Rangfolge 6 > 5 statt zufälliger DOM-Reihenfolge. */
+  z-index: 6;
 }
 .dw-modus-chip-btn {
   background: var(--k-flaeche-zwischen, var(--k-surface));
