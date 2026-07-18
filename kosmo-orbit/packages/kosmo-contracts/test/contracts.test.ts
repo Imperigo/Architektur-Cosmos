@@ -31,6 +31,38 @@ describe('render-scene/v1', () => {
     expect(scene.komposition).toBeUndefined();
   });
 
+  it('v0.8.4 E-HDRI: environment ist optional — alte Payloads bleiben wortgleich gültig', () => {
+    const scene = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+      render: { sun: { azimuth: 180, elevation: 35 } },
+    });
+    expect(scene.render.environment).toBeUndefined();
+    expect(scene.render.sun).toEqual({ azimuth: 180, elevation: 35 });
+  });
+
+  it('v0.8.4 E-HDRI: environment trägt Preset + optionale HDRI-Kennung mit Defaults', () => {
+    const scene = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+      render: { environment: { preset: 'abend', hdri: 'homestation://hdri/abend-2k' } },
+    });
+    expect(scene.render.environment).toEqual({
+      preset: 'abend',
+      hdri: 'homestation://hdri/abend-2k',
+      intensitaet: 1,
+      rotationGrad: 0,
+    });
+    // Unbekannte Presets fallen hart durch — kein stilles Raten auf der Bridge.
+    expect(() =>
+      RenderScene.parse({
+        geometry: { path: 'm.glb', format: 'glb' },
+        out: 'x',
+        render: { environment: { preset: 'nacht' } },
+      }),
+    ).toThrow();
+  });
+
   it('K20/A10: komposition trägt Seitenverhältnis/Brennweite/Horizontlinie eines Cycles-Presets', () => {
     const scene = RenderScene.parse({
       geometry: { path: 'm.glb', format: 'glb' },

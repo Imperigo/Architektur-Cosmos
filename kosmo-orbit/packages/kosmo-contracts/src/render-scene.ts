@@ -37,6 +37,24 @@ export const RenderScene = z.object({
           elevation: z.number().min(-90).max(90),
         })
         .optional(),
+      /**
+       * v0.8.4 W0 (docs/V084-SPEZ.md, E-HDRI): Umgebungslicht/Stimmung als
+       * ADDITIVES Schwester-Feld von `sun` — zod ist non-strict, alte
+       * Payloads bleiben wortgleich gültig, das Schema-Literal bleibt `/v1`.
+       * `preset` spiegelt die drei bestehenden Stimmungs-Presets
+       * (kosmo-kernel derive/visgraph.ts VIS_STIMMUNGEN); `hdri` ist eine
+       * OPTIONALE URI/Kennung, die erst die HomeStation gegen ihre lokal
+       * liegenden Voll-HDRIs auflöst — die App verschifft KEINE .hdr-Assets
+       * (prozedurale Previews, ehrliche Container-Grenze).
+       */
+      environment: z
+        .object({
+          preset: z.enum(['morgen', 'abend', 'weiss']),
+          hdri: z.string().optional(),
+          intensitaet: z.number().min(0).max(10).default(1),
+          rotationGrad: z.number().min(0).max(360).default(0),
+        })
+        .optional(),
     })
     .prefault({}),
   style: z
