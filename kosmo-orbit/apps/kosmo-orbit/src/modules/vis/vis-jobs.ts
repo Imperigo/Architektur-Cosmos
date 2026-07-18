@@ -125,6 +125,21 @@ export async function postRenderJob(params: {
    * Stand (kein `environment`-Feld, wie vor v0.8.4).
    */
   environment?: { preset: 'morgen' | 'abend' | 'weiss' };
+  /**
+   * v0.8.4 PC2 (`docs/V084-SPEZ.md` E6/C-18) — additiv, spiegelt
+   * `kosmo-contracts` `RenderScene.cameras`s Literal-Modi. Kommt NUR zum
+   * Tragen, wenn KEIN `kameras`-Array vorliegt (ein Auto-Kamera-Node am
+   * Render-Node gewinnt weiterhin, wie bisher) UND explizit `'saved'`
+   * gewählt ist — ohne diesen Parameter bleibt der Job byte-identisch zum
+   * bisherigen Stand (`cameras: 'auto'`).
+   */
+  kameraWahl?: 'auto' | 'saved';
+  /**
+   * v0.8.4 PC2 — additiv, spiegelt `RenderScene.vis.backbone`. Ohne
+   * Parameter bleibt der Job byte-identisch zum bisherigen Stand
+   * (`backbone: 'qwen'`, wie vor v0.8.4).
+   */
+  backbone?: 'qwen' | 'flux2-klein' | 'flux-krea' | 'sdxl';
 }): Promise<JobRecord> {
   const { doc } = useProject.getState();
   const glb = exportGlb(doc, doc.settings.projectName);
@@ -133,7 +148,7 @@ export async function postRenderJob(params: {
     schema: 'kosmovis.render-scene/v1',
     cameras: kameras
       ? kameras.map((k) => ({ name: k.name, position: k.position, target: k.target, fov: k.fov }))
-      : 'auto',
+      : (params.kameraWahl ?? 'auto'),
     render: {
       resolution: params.resolution ?? [1600, 1000],
       samples: params.samples,
@@ -144,7 +159,7 @@ export async function postRenderJob(params: {
     style: { mode: 'none', refs: [], prompt: params.prompt },
     // HS5: «Nur Cycles» → vis.skip: true (reines Cycles, keine KI-Veredelung).
     // Die Bridge leitet das in requested_engine "cycles" ab (HS2).
-    vis: { skip: params.nurCycles === true, backbone: 'qwen', upscale: false },
+    vis: { skip: params.nurCycles === true, backbone: params.backbone ?? 'qwen', upscale: false },
     ...(params.komposition ? { komposition: params.komposition } : {}),
     out: '',
     geometry: { path: '', format: 'glb' },
@@ -167,11 +182,24 @@ export async function postRenderJob(params: {
  * `island/inhalte/austausch.tsx`), ohne die Logik zweimal zu schreiben.
  * `environment` kommt aus der STIMMUNG-Insel (`vis-runtime.ts`
  * `renderStimmungPreset`) — der Aufrufer entscheidet, ob er ihn mitgibt.
+ *
+ * `opts` (v0.8.4 PC2, `docs/V084-SPEZ.md` E6/C-18) — additiv: der
+ * `vis.render`-Kernel-Command-Executor (`VisWorkspace.tsx`) reicht
+ * `kameraWahl`/`backbone`/`aufloesung` aus dem im Doc gespeicherten
+ * Render-Wunsch (`doc.settings.visRenderAuftrag`) durch. Beide bestehenden
+ * Aufrufer (`NodeCanvas.tsx`s Ausführen-Knopf, `island/inhalte/
+ * austausch.tsx`) lassen `opts` weg — der Job bleibt für sie byte-identisch
+ * zum bisherigen Stand.
  */
 export function sendeGraphRenderAuftrag(
   graphId: string,
   nodeId: string,
   environment?: { preset: 'morgen' | 'abend' | 'weiss' },
+  opts?: {
+    kameraWahl?: 'auto' | 'saved';
+    backbone?: 'qwen' | 'flux2-klein' | 'flux-krea' | 'sdxl';
+    aufloesung?: readonly [number, number];
+  },
 ): void {
   const { doc } = useProject.getState();
   const graph = doc.get<VisGraph>(graphId);
@@ -189,7 +217,15 @@ export function sendeGraphRenderAuftrag(
   const key = memoKey(auftrag);
   const { setzeLauf, patchLauf } = useVisRuntime.getState();
   setzeLauf(nodeId, { status: 'gesendet', memoKey: key, gestartetUm: Date.now() });
-  void postRenderJob({ ...auftrag, ...(environment ? { environment } : {}) })
+  void postRenderJob({
+    ...auftrag,
+    ...(environment ? { environment } : {}),
+    ...(opts?.kameraWahl !== undefined ? { kameraWahl: opts.kameraWahl } : {}),
+    ...(opts?.backbone !== undefined ? { backbone: opts.backbone } : {}),
+    // `aufloesung` spiegelt denselben Job-Parameter wie das bestehende
+    // `resolution` (K20/A10-Presets nutzen ihn schon) — kein Zweitfeld.
+    ...(opts?.aufloesung !== undefined ? { resolution: opts.aufloesung } : {}),
+  })
     .then((j) =>
       patchLauf(nodeId, {
         jobId: j.job_id,

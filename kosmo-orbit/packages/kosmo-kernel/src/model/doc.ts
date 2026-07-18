@@ -318,6 +318,27 @@ export interface BueroInfo {
   logoAssetId?: string;
 }
 
+/**
+ * Render-AUFTRAG (v0.8.4 PC2, `docs/V084-SPEZ.md` E6/C-18) — was `vis.render`
+ * bestellt (Node, Kamera-Wahl, Stimmung, Backbone, Auflösung). BEWUSST NUR
+ * der Wunsch, nie die Ausführung: Job-Status/Bild/Fehler bleiben Laufzeit
+ * (`vis-jobs.ts`/`vis-runtime.ts`, «Laufzeit ≠ Modell» wie bei `NodeLauf`,
+ * `entities.ts` Render-Graph-Bilder-Kommentar). Ein Kernel-Command darf nie
+ * `Date.now()` in eine Doc-mutierende Nutzlast schreiben (Determinismus/
+ * Doppellauf-Test) — dieses Feld trägt darum ABSICHTLICH KEINEN Zeitstempel,
+ * die App-seitige Ausführung erkennt einen neuen Auftrag an der Objekt-
+ * Referenz (jeder `vis.render`-Lauf liefert ein frisches Literal, auch bei
+ * identischen Parametern).
+ */
+export interface VisRenderWunsch {
+  graphId: string;
+  nodeId: string;
+  kameraWahl: 'auto' | 'saved';
+  stimmungPreset?: 'morgen' | 'abend' | 'weiss';
+  backbone?: 'qwen' | 'flux2-klein' | 'flux-krea' | 'sdxl';
+  aufloesung?: readonly [number, number];
+}
+
 export interface DocSettings {
   projectName: string;
   /** Faktor Raumprogramm→anrechenbare Geschossfläche (Owner-Wissen: 1.28 bzw. 1.22 je Büro). */
@@ -417,6 +438,10 @@ export interface DocSettings {
    * kein Bürofeld im Plankopf (Golden-Guard). Nur über `publish.bueroSetzen`
    * gesetzt. */
   buero?: BueroInfo;
+  /** Letzter Render-Wunsch (v0.8.4 PC2) — s. `VisRenderWunsch`-Kommentar
+   * oben. Fehlend ODER `null` = kein offener Wunsch (Golden-Guard, Muster
+   * `schnitt?: SchnittSpec | null`). Nur über `vis.render` gesetzt. */
+  visRenderAuftrag?: VisRenderWunsch | null;
 }
 
 /** Auflösung von `darstellung3d: 'auto'` (v0.7.0 E3) — pure Funktion, testbar

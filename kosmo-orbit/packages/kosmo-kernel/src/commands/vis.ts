@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
 import type { VisEdge, VisGraph, VisNode } from '../model/entities';
-import type { KosmoDoc } from '../model/doc';
+import type { KosmoDoc, VisRenderWunsch } from '../model/doc';
 import { hatZyklus, visPort, VIS_NODE_KATALOG } from '../derive/visgraph';
 import { CommandError, registerCommand } from './core';
 
@@ -208,5 +208,80 @@ export const removeGraph = registerCommand({
   run: (doc, p) => {
     const graph = requireGraph(doc, p.graphId);
     return [{ id: graph.id, before: graph, after: null }];
+  },
+});
+
+/**
+ * v0.8.4 PC2 (`docs/V084-SPEZ.md` E6/C-18) — echter Kernel-Command für
+ * «Rendern». Der Command stellt NUR den AUFTRAG (welcher Node, welche
+ * Kamera-Wahl, welche Stimmung, welcher Backbone, welche Auflösung) als
+ * SettingsPatch — genau wie `design.schnittSetzen`/`publish.bueroSetzen`
+ * läuft das über Yjs/Undo/`.kosmo`-Export wie jede andere Mutation. Die
+ * tatsächliche AUSFÜHRUNG (Bridge-Fetch, Job-Status, Bild) ist bewusst NICHT
+ * hier: sie ist Laufzeit (`apps/kosmo-orbit/src/modules/vis/vis-jobs.ts`
+ * `sendeGraphRenderAuftrag()`, Status/Bild in `vis-runtime.ts` `laeufe`,
+ * «Laufzeit ≠ Modell») — ein Kernel-Command darf keinen Netzwerk-Seiteneffekt
+ * auslösen. `VisWorkspace.tsx` beobachtet dieses Feld (Executor) und stösst
+ * `sendeGraphRenderAuftrag()` an, sobald ein frischer Auftrag erscheint.
+ *
+ * Weil dieser Command jetzt in der Registry steht, wird er über
+ * `commandTools()` (`@kosmo/ai`) automatisch ein Kosmo-Werkzeug — Kosmo kann
+ * Rendern vorschlagen/ausführen, genau wie jeden anderen Command.
+ *
+ * `kameraWahl` spiegelt `kosmo-contracts` `RenderScene.cameras`s
+ * Literal-Modi `'auto'|'saved'` (neben dem expliziten Array, das der
+ * Auto-Kamera-Node liefert) — `'saved'` bittet die HomeStation um ihre
+ * eigenen gemerkten Kamera-Standpunkte, unabhängig vom App-seitigen
+ * `GespeicherteAnsicht`-Konzept (Bild-Snapshots, kein Kamera-Zustand).
+ * `backbone` spiegelt denselben Enum-Wortlaut wie `RenderScene.vis.backbone`
+ * (kein Duplikat-Risiko: beide Seiten sind additiv, `contracts` bleibt
+ * unangetastet — DATEIKREIS PC2).
+ *
+ * KEIN `Date.now()`/`Math.random()` in dieser Funktion (Determinismus/
+ * Doppellauf-Test): der Auftrag trägt bewusst keinen Zeitstempel, s.
+ * `VisRenderWunsch`-Kommentar in `model/doc.ts`.
+ */
+export const renderAuftrag = registerCommand({
+  id: 'vis.render',
+  title: 'Rendern',
+  description:
+    'Stellt einen Render-AUFTRAG für einen Render-Node: kameraWahl (auto = wie verbunden/Bridge-Default, saved = die von der HomeStation gemerkten Kamera-Standpunkte), optional Stimmungs-Preset (morgen/abend/weiss), KI-Backbone und Zielauflösung. Der Auftrag selbst ist Teil des Docs (undo-fähig) — die eigentliche Ausführung (Bridge-Job, Bild, Status) startet dieser Command NICHT selbst, das übernimmt die App-Laufzeit, sobald sie den Auftrag sieht.',
+  params: z.object({
+    graphId: z.string(),
+    nodeId: z.string().describe('Render-Node im Graphen (Typ «render»)'),
+    kameraWahl: z.enum(['auto', 'saved']).default('auto'),
+    stimmungPreset: z.enum(['morgen', 'abend', 'weiss']).optional(),
+    backbone: z.enum(['qwen', 'flux2-klein', 'flux-krea', 'sdxl']).optional(),
+    aufloesung: z
+      .tuple([z.number().int().positive(), z.number().int().positive()])
+      .optional()
+      .describe('[Breite, Höhe] in Pixeln'),
+  }),
+  summarize: (p) =>
+    `Render-Auftrag (${p.kameraWahl}${p.stimmungPreset ? `, ${p.stimmungPreset}` : ''}${p.backbone ? `, ${p.backbone}` : ''})`,
+  run: (doc, p) => {
+    const graph = requireGraph(doc, p.graphId);
+    const node = requireNode(graph, p.nodeId);
+    if (node.typ !== 'render') {
+      throw new CommandError(`Node «${p.nodeId}» ist kein Render-Node (Typ «${node.typ}»)`);
+    }
+    const wunsch: VisRenderWunsch = {
+      graphId: p.graphId,
+      nodeId: p.nodeId,
+      kameraWahl: p.kameraWahl,
+      ...(p.stimmungPreset !== undefined ? { stimmungPreset: p.stimmungPreset } : {}),
+      ...(p.backbone !== undefined ? { backbone: p.backbone } : {}),
+      ...(p.aufloesung !== undefined ? { aufloesung: p.aufloesung } : {}),
+    };
+    return [
+      {
+        settings: true as const,
+        // Schmales Patch (nur `visRenderAuftrag`), Muster `design.schnittSetzen`:
+        // `??  null` macht «vorher» explizit statt den Schlüssel wegzulassen —
+        // ein Objekt-Spread löscht auf Undo sonst keine fehlenden Keys.
+        before: { visRenderAuftrag: doc.settings.visRenderAuftrag ?? null },
+        after: { visRenderAuftrag: wunsch },
+      },
+    ];
   },
 });

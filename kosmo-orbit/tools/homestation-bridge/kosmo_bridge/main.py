@@ -104,7 +104,9 @@ def _cors_origins() -> list[str]:
         "KOSMO_BRIDGE_ORIGIN",
         ",".join(
             f"http://{host}:{port}"
-            for port in (5173, 5174, 5175, 5176, 5177, 5183)
+            # PC2-Fund v0.8.4 (ROADMAP 463): 5178–5182 fehlten — Paket-Ports
+            # jenseits von vier parallelen Agenten scheiterten still an CORS.
+            for port in (5173, 5174, 5175, 5176, 5177, 5178, 5179, 5180, 5181, 5182, 5183)
             for host in ("localhost", "127.0.0.1")
         ),
     )

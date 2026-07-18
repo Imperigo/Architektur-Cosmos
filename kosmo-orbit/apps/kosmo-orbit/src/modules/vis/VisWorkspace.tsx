@@ -19,7 +19,7 @@ import {
 import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, VIS_STIMMUNGEN, type Sheet, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { basisNodeHoehe, NODE_W, NodeCanvas } from './NodeCanvas';
-import { bridgeToken } from './vis-jobs';
+import { bridgeToken, sendeGraphRenderAuftrag } from './vis-jobs';
 import { BridgeBild } from './BridgeBild';
 import { presetAnwenden } from '../../state/dock-preset-anwendung';
 import { PRESET_IDS, type PresetId } from '../../state/dock-presets';
@@ -176,6 +176,49 @@ export function VisWorkspace({ onEinstellungen, onKosmoOeffnen }: VisWorkspacePr
   const islandGraphId = graphen.some((g) => g.id === aktiverGraphIdInsel) ? aktiverGraphIdInsel! : (graphen[0]?.id ?? '');
   const islandReportOffen = useVisRuntime((s) => s.reportOffen);
   const setIslandReportOffen = useVisRuntime((s) => s.setReportOffen);
+
+  /**
+   * v0.8.4 PC2 (`docs/V084-SPEZ.md` E6/C-18) — Executor für den `vis.render`-
+   * Kernel-Command: beobachtet `doc.settings.visRenderAuftrag` (SettingsPatch,
+   * `commands/vis.ts`) und stösst `sendeGraphRenderAuftrag()` an, sobald ein
+   * FRISCHER Auftrag erscheint. «frisch» heisst: eine neue Objekt-Referenz
+   * gegenüber dem zuletzt gesehenen Auftrag — jeder `vis.render`-Lauf liefert
+   * ein neues Literal, auch bei identischen Parametern (bewusst, s.
+   * `VisRenderWunsch`-Kommentar in `model/doc.ts`: ein Kernel-Command darf
+   * keinen Zeitstempel in die Nutzlast schreiben). Der Ref-Vergleich startet
+   * beim ERSTEN Mount mit dem AKTUELLEN Wert (nicht `null`) — ein aus einem
+   * gespeicherten Projekt geladener, bereits abgeschlossener Auftrag löst
+   * beim Öffnen darum KEINEN Render erneut aus (ehrliche Grenze: ein
+   * Auftrag, der zwischen zwei Sitzungen nie verarbeitet wurde — z.B.
+   * Tab-Schliessen mitten im Senden —, bleibt unverarbeitet stehen, bis der
+   * nächste `vis.render`-Lauf ihn überschreibt; reine Laufzeit-Entscheidung,
+   * kein Kernel-Bezug).
+   *
+   * Damit ist `window.__kosmo.run('vis.render', …)` — und über
+   * `commandTools()` jeder Kosmo-Tool-Call — der GENAU GLEICHE Auslöser wie
+   * der bestehende «Ausführen»-Knopf am Node (`NodeCanvas.tsx`, UNVERÄNDERT):
+   * beide Wege enden bei `sendeGraphRenderAuftrag()`, der Node zeigt Status/
+   * Bild aus `vis-runtime.ts`s `laeufe` wie bisher — kein NodeCanvas-Edit
+   * nötig (DATEIKREIS PC2).
+   */
+  const letzterRenderAuftrag = useRef(doc.settings.visRenderAuftrag ?? null);
+  useEffect(() => {
+    const auftrag = doc.settings.visRenderAuftrag ?? null;
+    if (auftrag === letzterRenderAuftrag.current) return;
+    letzterRenderAuftrag.current = auftrag;
+    if (!auftrag) return;
+    sendeGraphRenderAuftrag(
+      auftrag.graphId,
+      auftrag.nodeId,
+      auftrag.stimmungPreset ? { preset: auftrag.stimmungPreset } : undefined,
+      {
+        kameraWahl: auftrag.kameraWahl,
+        ...(auftrag.backbone !== undefined ? { backbone: auftrag.backbone } : {}),
+        ...(auftrag.aufloesung !== undefined ? { aufloesung: auftrag.aufloesung } : {}),
+      },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [revision]);
 
   /**
    * PD2-Muster (`DesignWorkspace.tsx`s `aktiviereIslandWerkzeug()`): Aktion
