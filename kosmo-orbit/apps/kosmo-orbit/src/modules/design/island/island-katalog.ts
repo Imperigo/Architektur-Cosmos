@@ -14,8 +14,9 @@
  * ihre Verdrahtung lebt als benannter Fall in `DesignWorkspace.tsx`s
  * `aktiviereIslandWerkzeug()` (Integrationspunkt, dateidisjunkt von diesem
  * reinen Datensatz). `glyphe` trägt seit PB2 (v0.8.4, s. Icon-Verdrahtungs-
- * Kommentar weiter unten) echte Icon-Components statt Text-Kürzeln, ausser
- * bei `skizze` (bewusster Text-Rest).
+ * Kommentar weiter unten) echte Icon-Components statt Text-Kürzeln — seit
+ * PE2 (Bauauftrag Punkt 2) auch `skizze` (21. Icon, `island-glyphen.tsx`),
+ * damit sind alle 29 Katalog-Werkzeuge SVG-vollständig.
  *
  * **`hinweis` (PD2):** ehrlicher Kurztext fürs (weiterhin leere PD1-)
  * Popup-/Fenster-Rahmen jener Werkzeuge, die PD2 NICHT verdrahtet — die
@@ -38,6 +39,22 @@
  * `true`, auch wenn ihr Stufe-2-Inhalt laut §4.4 schlicht ist (z. B. Graph
  * «An/Aus») — die Spec markiert dort kein «kein Popup nötig», anders als bei
  * Achsen.
+ *
+ * **PE2 (v0.8.4, C-27 — «8 Rahmen-Werkzeuge»):** die toolId-lose 8er-Gruppe
+ * aus `island-katalog-pd2.test.ts` (Achsen/Trace/Graph/Kennzahlen/Checks/
+ * Rendern/Blätter/Sync) war der Ursprung der Owner-Mängelliste «8
+ * Rahmen-Werkzeuge» (`docs/V084-SPEZ.md` §1.1). Geprüft gegen den Code:
+ * 7 der 8 (alle ausser Achsen) tragen seit P3/PD3a/PD3b (v0.8.3) längst
+ * echten Registry-Inhalt (`inhalte/{ansicht,projekt,austausch}.tsx`,
+ * `registrierteWerkzeugIds()` listet alle 27 Popup-Werkzeuge, keine Lücke).
+ * Nur die `hinweis`-Metadaten hier hinkten hinterher — Kennzahlen/Checks
+ * trugen einen inzwischen toten Text (Stufe 3 zeigt das echte, eingebettete
+ * Panel), Rendern/Blätter/Sync behaupteten «Weg offen (§8-4)», obwohl §8-4
+ * seit PD3c entschieden UND real verdrahtet ist (`docs/ISLAND-UI-SPEZ.md`
+ * §8 Punkt 4 Nachtrag) — derselbe «Leiche»-Fund wie beim Trace/Graph-Hinweis
+ * (P10 v0.8.3). PE2 entfernt alle fünf toten `hinweis`-Felder ersatzlos
+ * (dasselbe Muster). Achsen bleibt der einzige echte Rest — Owner-sauber
+ * geschlossen durch die §4.4-Ausnahme (kein Popup, kein Rahmen).
  */
 
 import type { ComponentType } from 'react';
@@ -61,10 +78,12 @@ import { ISLAND_GLYPHEN } from './island-glyphen';
  * Wand/Volumen/Zone/Dach/Treppe/Stütze/Mesh — `schnitt`, das neunte Icon
  * dieser Datei, ist KEIN Katalog-Werkzeug, s. dortigen Kopfkommentar); die
  * übrigen 20 Werkzeuge (inkl. Öffnung/Messen aus ZEICHNEN) bekommen ihr
- * `ISLAND_GLYPHEN`-Icon. `skizze` bleibt bewusst Text (`island-glyphen.tsx`
- * zählt es nicht zu den 20, D12 beziffert weiterhin «~20 fehlen» minus
- * dieser einen Lücke) — der `string`-Zweig von `glyphe` bleibt darum ein
- * ECHTER Fallback, kein totes Bein.
+ * `ISLAND_GLYPHEN`-Icon. PE2 (v0.8.4, Bauauftrag Punkt 2) schliesst die
+ * letzte Lücke: `skizze` bekommt jetzt ebenfalls ihr `ISLAND_GLYPHEN`-Icon
+ * (das 21., dort namensgleich `skizze`) statt des früheren Text-Kürzels
+ * `'SK'` — der `string`-Zweig von `glyphe` bleibt ein echter Typ-Fallback
+ * (`IslandWerkzeug.glyphe: string | ComponentType<...>`, E8), aber ab jetzt
+ * ohne aktiven Katalog-Konsumenten.
  */
 function icon(rec: Record<string, ComponentType<{ size?: number }>>, id: string): ComponentType<{ size?: number }> {
   const c = rec[id];
@@ -153,8 +172,10 @@ const ZEICHNEN: readonly IslandWerkzeug[] = [
   werkzeug('dach', 'Dach', 'zeichnen', IconDach, 'vorhanden', true, { toolId: 'dach' }),
   werkzeug('treppe', 'Treppe', 'zeichnen', IconTreppe, 'vorhanden', true, { toolId: 'treppe' }),
   werkzeug('stuetze', 'Stütze', 'zeichnen', IconStuetze, 'vorhanden', true, { toolId: 'stuetze' }),
-  // `skizze` bleibt Text — nicht Teil der 20-Icon-Lieferung (s. Datei-Kopf).
-  werkzeug('skizze', 'Skizze', 'zeichnen', 'SK', 'vorhanden', true, { toolId: 'skizze' }),
+  // PE2 (v0.8.4, Bauauftrag Punkt 2): `skizze` bekommt jetzt ihr echtes
+  // SVG (`island-glyphen.tsx`s 21. Icon) — der frühere Text-Fallback `'SK'`
+  // ist raus, alle 29 Katalog-Werkzeuge sind damit SVG-vollständig.
+  werkzeug('skizze', 'Skizze', 'zeichnen', icon(ISLAND_GLYPHEN, 'skizze'), 'vorhanden', true, { toolId: 'skizze' }),
   werkzeug('mesh', 'Mesh', 'zeichnen', IconMesh, 'vorhanden', true, { toolId: 'mesh' }),
   // v0.8.3 E2/E3 (§2/§3.3, §8-7 jetzt entschieden): echter ToolId.
   werkzeug('messen', 'Messen', 'zeichnen', icon(ISLAND_GLYPHEN, 'messen'), 'vorhanden', true, { toolId: 'messen' }),
@@ -181,12 +202,12 @@ const ANSICHT: readonly IslandWerkzeug[] = [
 
 /** PROJEKT (6) — §3.3. */
 const PROJEKT: readonly IslandWerkzeug[] = [
-  werkzeug('kennzahlen', 'Kennzahlen', 'projekt', icon(ISLAND_GLYPHEN, 'kennzahlen'), 'vorhanden', true, {
-    hinweis: 'Panel ist immer aktiv (kein Schalter vorhanden)',
-  }),
-  werkzeug('checks', 'Checks', 'projekt', icon(ISLAND_GLYPHEN, 'checks'), 'vorhanden', true, {
-    hinweis: 'Panel ist immer aktiv (kein Schalter vorhanden)',
-  }),
+  // PE2 (v0.8.4, C-27): der frühere «Panel ist immer aktiv»-Hinweis ist raus —
+  // toter Text seit `inhalte/projekt.tsx` das echte, eingebettete
+  // `KennzahlenPanel`/`SubmissionsCheckPanel` in Stufe 3 zeigt (IslandShell
+  // rendert `hinweis` nur, wenn KEIN Stufe-3-Inhalt registriert ist).
+  werkzeug('kennzahlen', 'Kennzahlen', 'projekt', icon(ISLAND_GLYPHEN, 'kennzahlen'), 'vorhanden', true),
+  werkzeug('checks', 'Checks', 'projekt', icon(ISLAND_GLYPHEN, 'checks'), 'vorhanden', true),
   werkzeug('varianten', 'Varianten', 'projekt', icon(ISLAND_GLYPHEN, 'varianten'), 'vorhanden', true),
   werkzeug('phase', 'Phase', 'projekt', icon(ISLAND_GLYPHEN, 'phase'), 'vorhanden', true),
   werkzeug('liste', 'Liste', 'projekt', icon(ISLAND_GLYPHEN, 'liste'), 'vorhanden', true),
@@ -199,21 +220,20 @@ const PROJEKT: readonly IslandWerkzeug[] = [
   }),
 ];
 
-const ANDERE_STATION_HINWEIS = 'Andere Station — Weg offen (PD3b/Owner-Frage §8-4)';
-
 /** AUSTAUSCH (6) — §3.4. */
+// PE2 (v0.8.4, C-27): der frühere `ANDERE_STATION_HINWEIS` («Weg offen,
+// §8-4») ist raus — §8-4 ist seit PD3c entschieden UND real verdrahtet
+// (`docs/ISLAND-UI-SPEZ.md` §8 Punkt 4 Nachtrag: `registriereStationsWeg`,
+// echte Navigation über `ZurStationKnopf`), der Hinweis behauptete das
+// Gegenteil der gebauten Realität UND war zusätzlich toter Text (Stufe 3
+// ist für alle drei registriert, `inhalte/austausch.tsx`) — dieselbe
+// «Leiche», die P10 (v0.8.3) schon bei Trace/Graph fand und entfernte.
 const AUSTAUSCH: readonly IslandWerkzeug[] = [
   werkzeug('export', 'Export', 'austausch', icon(ISLAND_GLYPHEN, 'export'), 'vorhanden', true),
   werkzeug('import', 'Import', 'austausch', icon(ISLAND_GLYPHEN, 'import'), 'vorhanden', true),
-  werkzeug('rendern', 'Rendern', 'austausch', icon(ISLAND_GLYPHEN, 'rendern'), 'teilweise', true, {
-    hinweis: ANDERE_STATION_HINWEIS,
-  }),
-  werkzeug('blaetter', 'Blätter', 'austausch', icon(ISLAND_GLYPHEN, 'blaetter'), 'teilweise', true, {
-    hinweis: ANDERE_STATION_HINWEIS,
-  }),
-  werkzeug('sync', 'Sync', 'austausch', icon(ISLAND_GLYPHEN, 'sync'), 'teilweise', true, {
-    hinweis: ANDERE_STATION_HINWEIS,
-  }),
+  werkzeug('rendern', 'Rendern', 'austausch', icon(ISLAND_GLYPHEN, 'rendern'), 'teilweise', true),
+  werkzeug('blaetter', 'Blätter', 'austausch', icon(ISLAND_GLYPHEN, 'blaetter'), 'teilweise', true),
+  werkzeug('sync', 'Sync', 'austausch', icon(ISLAND_GLYPHEN, 'sync'), 'teilweise', true),
   werkzeug('manuell', 'Manuell', 'austausch', icon(ISLAND_GLYPHEN, 'manuell'), 'neu', false),
 ];
 

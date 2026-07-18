@@ -126,12 +126,17 @@ describe('PB2 — Icon-Verdrahtung: Pille NUR Icon, Werkzeug Icon + Name', () =>
     expect(q(`island-werkzeug-wand`)?.textContent).toContain('Wand');
   });
 
-  it('«Skizze» bleibt der Text-Fallback (kein SVG, Kürzel + Name weiterhin sichtbar)', () => {
+  // PE2 (v0.8.4, Bauauftrag Punkt 2): löst den vorigen «Skizze bleibt Text-
+  // Fallback»-Test ab — `skizze` trägt jetzt ihr echtes `ISLAND_GLYPHEN`-
+  // Icon (21. Eintrag, `island-glyphen.tsx`), genau wie «Wand» oben. Der
+  // Name bleibt weiterhin sichtbar (Werkzeug-Knöpfe zeigen Icon UND Name,
+  // anders als die Pille, die nur das Icon zeigt).
+  it('«Skizze» zeigt jetzt ein echtes SVG-Icon UND behält den Namen als Textzeile (PE2)', () => {
     render(<IslandShell island="zeichnen" />);
     hoverEnter(q('island-zeichnen-root')!);
     const knopf = q('island-werkzeug-skizze')!;
-    expect(knopf.querySelector('svg')).toBeNull();
-    expect(knopf.textContent).toContain('SK');
+    expect(knopf.querySelector('svg')).not.toBeNull();
+    expect(knopf.textContent).not.toContain('SK');
     expect(knopf.textContent).toContain('Skizze');
   });
 });

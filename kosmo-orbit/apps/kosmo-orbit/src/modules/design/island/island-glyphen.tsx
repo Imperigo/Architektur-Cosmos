@@ -36,16 +36,31 @@ import type { ComponentType, ReactNode } from 'react';
  * §3-Aufzählung aus dem Bauauftrag): `oeffnung`, `messen`, `kommentare`,
  * `darstellung`, `sonne`, `ebenen`, `achsen`, `trace`, `graph`,
  * `kennzahlen`, `checks`, `varianten`, `phase`, `liste`, `export`,
- * `import`, `rendern`, `blaetter`, `sync`, `manuell`. (`skizze` bleibt
- * aussen vor — nicht Teil der 20-Icon-Aufzählung im Bauauftrag; die
- * bestehenden 9 `werkzeug-icons.tsx`-Icons decken `auswahl`/`wand`/
- * `volumen`/`zone`/`dach`/`treppe`/`stuetze`/`mesh` bereits ab, macht
- * 8 der 11 ZEICHNEN-Werkzeuge — `skizze` bleibt vorerst Text, wie `D12`
- * es mit "~20 fehlen" beziffert.)
+ * `import`, `rendern`, `blaetter`, `sync`, `manuell`. Die bestehenden 9
+ * `werkzeug-icons.tsx`-Icons decken `auswahl`/`wand`/`volumen`/`zone`/
+ * `dach`/`treppe`/`stuetze`/`mesh` bereits ab, macht 8 der 11
+ * ZEICHNEN-Werkzeuge.
+ *
+ * **PE2 (v0.8.4, Bauauftrag Punkt 2):** `skizze` — die letzte Katalog-Id
+ * ohne echtes SVG, bisher Text-Kürzel `'SK'` (`D12`s "~20 fehlen" zählte
+ * sie bewusst nicht mit) — bekommt hier ihr 21. Icon, nach derselben
+ * Bauvorschrift. `ISLAND_GLYPHEN` trägt jetzt 21 Einträge, alle 29
+ * Katalog-Werkzeuge sind damit SVG-vollständig (8 `werkzeug-icons.tsx` +
+ * 21 hier), der `string`-Zweig von `IslandWerkzeug.glyphe` bleibt ein
+ * echter, aber ab jetzt ungenutzter Fallback-Typ.
  *
  * 4 Pill-Icons (`ISLAND_PILL_GLYPHEN`, Katalog-`IslandId`s als Strings,
  * ebenfalls ohne Typ-Import): `zeichnen`, `ansicht`, `projekt`,
  * `austausch`.
+ *
+ * **PE2 (v0.8.4, Bauauftrag Punkt 3):** + 7 weitere Pill-Icons für die
+ * Insel-Ids der anderen drei Stationen, die NICHT schon einen der vier
+ * design-Namen teilen (`ansicht`/`projekt`/`austausch` sind bereits
+ * abgedeckt, `IslandShell.tsx` löst die Pille rein über den String-
+ * Insel-Id auf, stationsunabhängig): `graph`/`stimmung` (vis,
+ * `vis-island-katalog.ts`), `blatt`/`darstellung` (publish,
+ * `publish-island-katalog.ts`), `aufnahme`/`wissen`/`bestand` (prepare,
+ * `prepare-island-katalog.ts`) — macht 11 Pill-Icons total.
  */
 
 const WURZEL_ATTRIBUTE = {
@@ -266,7 +281,16 @@ const manuell = glyphe(
   </>,
 );
 
-/** Die 20 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
+/** Skizze — Freihandstift zieht eine Linie zu Papier, Akzent an der Stiftspitze (Bauauftrag Punkt 2). */
+const skizze = glyphe(
+  <>
+    <path d="M14.5 5.5 L18.5 9.5 L9 19 H5 V15 Z" />
+    <path d="M12.5 7.5 L16.5 11.5" />
+    {akzent(5, 19)}
+  </>,
+);
+
+/** Die 21 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
 export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   oeffnung,
   messen,
@@ -288,6 +312,7 @@ export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   blaetter,
   sync,
   manuell,
+  skizze,
 };
 
 // ── 4 Island-Pill-Icons ────────────────────────────────────────────────
@@ -326,10 +351,98 @@ const austauschPille = glyphe(
   </>,
 );
 
-/** Die 4 Pill-Icons, geschlüsselt nach `island-katalog.ts`s `IslandId`. */
+// ── PE2 (v0.8.4, Bauauftrag Punkt 3) — 7 weitere Pill-Icons für die
+// Insel-Ids der anderen drei Stationen (`vis-island-katalog.ts`,
+// `publish-island-katalog.ts`, `prepare-island-katalog.ts`), die NICHT
+// schon einen der vier design-Namen teilen. `IslandShell.tsx` löst die
+// Pille rein über den String-Insel-Id auf (`ISLAND_PILL_GLYPHEN[island]`,
+// `IslandShell.tsx:495`) — stationsunabhängig, keine weitere Verdrahtung
+// nötig, sobald der Schlüssel hier existiert. Absichtlich EIGENE Motive,
+// nicht die gleichnamigen Werkzeug-Icons oben wiederverwendet (`graph`/
+// `darstellung` existieren als Katalog-Id in BEIDEN Namensräumen —
+// Werkzeug-Icon vs. Insel-Pille sind aber unterschiedliche Zeichnungen).
+
+/** Graph-Pille (vis) — drei Knoten im Dreieck um den Ziel-Knoten oben, Akzent am Ziel-Knoten. */
+const graphPille = glyphe(
+  <>
+    <circle cx="6" cy="18" r="2.2" />
+    <circle cx="18" cy="18" r="2.2" />
+    <circle cx="12" cy="6" r="2.2" />
+    <path d="M7.7 16.5 L11 8.5 M16.3 16.5 L13 8.5 M8.2 18 H15.8" />
+    {akzent(12, 6)}
+  </>,
+);
+
+/** Stimmung-Pille (vis) — Bild-Kachel mit Sonne über Horizontlinie, Akzent am Horizont-Ansatz. */
+const stimmungPille = glyphe(
+  <>
+    <rect x="3" y="4" width="18" height="16" rx="2" />
+    <circle cx="16" cy="9" r="2.4" />
+    <path d="M3 16 L8.5 10.5 L12.5 14 L21 7" />
+    {akzent(3, 16)}
+  </>,
+);
+
+/** Blatt-Pille (publish) — Planblatt mit Plankopf-Streifen unten, Akzent am Streifen. */
+const blattPille = glyphe(
+  <>
+    <rect x="5" y="3" width="14" height="18" rx="1" />
+    <path d="M5 16 H19" />
+    {akzent(19, 16)}
+  </>,
+);
+
+/** Darstellung-Pille (publish) — Lupe über einer Blattansicht (Zoom/Massstab), Akzent im Lupenglas. */
+const darstellungPille = glyphe(
+  <>
+    <rect x="3" y="4" width="12" height="10" rx="1" />
+    <circle cx="15" cy="16" r="4" />
+    <path d="M18 19 L21 22" />
+    {akzent(15, 16)}
+  </>,
+);
+
+/** Aufnahme-Pille (prepare) — schräg einfliegendes Dokument über einer Ablage-Wanne, Akzent am Dokument. */
+const aufnahmePille = glyphe(
+  <>
+    <path d="M4 15 V19 H20 V15" />
+    <rect x="9" y="3" width="8" height="10" rx="1" transform="rotate(12 13 8)" />
+    {akzent(13, 8)}
+  </>,
+);
+
+/** Wissen-Pille (prepare) — aufgeschlagenes Buch mit Rücken, Akzent am Rücken oben. */
+const wissenPille = glyphe(
+  <>
+    <path d="M12 6 C 9 4, 5 4, 3 5.5 V18 C 5 16.5, 9 16.5, 12 18 C 15 16.5, 19 16.5, 21 18 V5.5 C 19 4, 15 4, 12 6 Z" />
+    <path d="M12 6 V18" />
+    {akzent(12, 6)}
+  </>,
+);
+
+/** Bestand-Pille (prepare) — Archivkiste mit Deckel-Kontur, Akzent an der Deckelnaht. */
+const bestandPille = glyphe(
+  <>
+    <path d="M3 9 H21 V20 H3 Z" />
+    <path d="M3 9 L6 4 H18 L21 9" />
+    {akzent(12, 9)}
+  </>,
+);
+
+/** Die 11 Pill-Icons — 4 design-Inseln + 7 weitere Insel-Ids der anderen
+ *  drei Stationen (Bauauftrag Punkt 3). Geschlüsselt nach der jeweiligen
+ *  Katalog-`IslandId` (design/vis/publish/prepare teilen den String-Raum,
+ *  s. Kommentar oben). */
 export const ISLAND_PILL_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   zeichnen: zeichnenPille,
   ansicht: ansichtPille,
   projekt: projektPille,
   austausch: austauschPille,
+  graph: graphPille,
+  stimmung: stimmungPille,
+  blatt: blattPille,
+  darstellung: darstellungPille,
+  aufnahme: aufnahmePille,
+  wissen: wissenPille,
+  bestand: bestandPille,
 };

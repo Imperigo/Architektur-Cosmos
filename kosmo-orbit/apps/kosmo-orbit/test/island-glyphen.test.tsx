@@ -3,15 +3,41 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { ISLAND_GLYPHEN, ISLAND_PILL_GLYPHEN } from '../src/modules/design/island/island-glyphen';
 import { ISLAND_REIHENFOLGE, WERKZEUG_KATALOG } from '../src/modules/design/island/island-katalog';
+import { VIS_ISLAND_REIHENFOLGE } from '../src/modules/vis/island/vis-island-katalog';
+import { PUBLISH_ISLAND_REIHENFOLGE } from '../src/modules/publish/island/publish-island-katalog';
+import { PREPARE_ISLAND_REIHENFOLGE } from '../src/modules/prepare/island/prepare-island-katalog';
 
 /**
- * `island-glyphen.tsx` (v0.8.4 W1, Spez §3 E8) — Regressionsschutz für die
- * 20 Werkzeug- + 4 Pill-Icons: rendert alle 24, prüft leeren `textContent`,
- * GENAU EINEN Akzentpunkt je Icon, `currentColor`-Striche (keine
- * hartkodierte Farbe ausser dem Akzent-Token) und die vollständige
- * Abdeckung der Katalog-Ids ohne echtes SVG (diese Datei importiert
- * `WERKZEUG_KATALOG` NUR zum Diff — sie wird von `island-katalog.ts` selbst
- * NICHT importiert, bleibt also unverdrahtet, s. Kopfkommentar dort).
+ * `island-glyphen.tsx` — Regressionsschutz für die Werkzeug- + Pill-Icons:
+ * rendert alle, prüft leeren `textContent`, GENAU EINEN Akzentpunkt je Icon,
+ * `currentColor`-Striche (keine hartkodierte Farbe ausser dem Akzent-Token)
+ * und die vollständige Abdeckung der Katalog-Ids ohne echtes SVG (diese
+ * Datei importiert `WERKZEUG_KATALOG` NUR zum Diff — sie wird von
+ * `island-katalog.ts` selbst NICHT importiert, bleibt also unverdrahtet, s.
+ * Kopfkommentar dort).
+ *
+ * **PE2 (v0.8.4, Bauauftrag Punkte 2+3):** zwei Erweiterungen gegenüber der
+ * ursprünglichen v0.8.4-W1-Fassung:
+ * 1. `skizze` bekam ihr echtes SVG (21. Werkzeug-Icon) — die frühere
+ *    `BEWUSST_AUSSEN_VOR`-Ausnahme ist damit weg, ALLE 29 Katalog-Ids ohne
+ *    ein `werkzeug-icons.tsx`-Icon haben jetzt ein `ISLAND_GLYPHEN`-Icon.
+ * 2. `ISLAND_PILL_GLYPHEN` wuchs von 4 auf 11 Einträge — die vier
+ *    design-Inseln PLUS alle Insel-Ids von vis/publish/prepare, die noch
+ *    keinen Eintrag hatten (`graph`/`stimmung`, `blatt`/`darstellung`,
+ *    `aufnahme`/`wissen`/`bestand`). `ansicht`/`projekt`/`austausch`
+ *    brauchten KEINEN neuen Eintrag — sie sind bereits über design
+ *    abgedeckt, `IslandShell.tsx` löst die Pille stationsunabhängig rein
+ *    über den String-Insel-Id auf.
+ *
+ * **Wichtig für die Distinktheits-Probe:** `ISLAND_GLYPHEN` (Werkzeug-Icons)
+ * und `ISLAND_PILL_GLYPHEN` (Insel-Pillen) teilen sich zwei Schlüssel
+ * (`graph`, `darstellung`) — das sind bewusst ZWEI VERSCHIEDENE Zeichnungen
+ * in zwei getrennten Namensräumen (Werkzeug vs. Insel), kein Duplikat. Ein
+ * naives `{ ...ISLAND_GLYPHEN, ...ISLAND_PILL_GLYPHEN }`-Merge würde den
+ * Werkzeug-Eintrag beim Spread STILLSCHWEIGEND überschreiben und ihn aus
+ * jeder Distinktheits-/Bauvorschrift-Probe herausfallen lassen — die Tests
+ * unten iterieren darum über zwei separat präfigierte Namenslisten
+ * (`werkzeug:*` / `pille:*`), nie über einen blossen Objekt-Merge.
  */
 
 /** Katalog-Ids, die BEREITS ein echtes SVG in `werkzeug-icons.tsx` haben
@@ -19,15 +45,9 @@ import { ISLAND_REIHENFOLGE, WERKZEUG_KATALOG } from '../src/modules/design/isla
  *  Mesh + Schnitt, wobei `schnitt` kein Katalog-Werkzeug ist). */
 const KATALOG_IDS_BEREITS_ECHT = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'mesh'];
 
-/** `skizze` ist die einzige verbleibende Katalog-Id ohne echtes SVG, die
- *  NICHT Teil dieser 20er-Lieferung ist (Bauauftrag zählt sie nicht zu den
- *  20 auf — s. Kopfkommentar `island-glyphen.tsx`). Explizit benannt statt
- *  stillschweigend durchzufallen. */
-const BEWUSST_AUSSEN_VOR = ['skizze'];
-
 function katalogIdsOhneSvg(): string[] {
   const alleIds = WERKZEUG_KATALOG.map((w) => w.id);
-  return alleIds.filter((id) => !KATALOG_IDS_BEREITS_ECHT.includes(id) && !BEWUSST_AUSSEN_VOR.includes(id));
+  return alleIds.filter((id) => !KATALOG_IDS_BEREITS_ECHT.includes(id));
 }
 
 function alsDom(html: string): HTMLDivElement {
@@ -40,16 +60,16 @@ function zaehleAkzentpunkte(html: string): number {
   return (html.match(/r="1\.13"/g) ?? []).length;
 }
 
-describe('island-glyphen: 20 Werkzeug-Icons decken exakt die Katalog-Lücke ab', () => {
+describe('island-glyphen: 21 Werkzeug-Icons decken exakt die Katalog-Lücke ab (inkl. skizze, PE2)', () => {
   it('WERKZEUG_KATALOG hat 29 Einträge (Fundament unverändert, D-Vertrag §3.1-§3.4)', () => {
     expect(WERKZEUG_KATALOG).toHaveLength(29);
   });
 
-  it('ISLAND_GLYPHEN deckt exakt die Katalog-Ids ohne echtes SVG ab (minus der bewusst ausgenommenen `skizze`)', () => {
+  it('ISLAND_GLYPHEN deckt exakt die Katalog-Ids ohne echtes werkzeug-icons.tsx-SVG ab — ALLE 29 Werkzeuge sind jetzt SVG-vollständig', () => {
     const erwartet = katalogIdsOhneSvg().sort();
     const tatsaechlich = Object.keys(ISLAND_GLYPHEN).sort();
     expect(tatsaechlich).toEqual(erwartet);
-    expect(tatsaechlich).toHaveLength(20);
+    expect(tatsaechlich).toHaveLength(21);
   });
 
   it('jeder ISLAND_GLYPHEN-Schlüssel ist eine echte Katalog-Id (kein Tippfehler)', () => {
@@ -59,31 +79,80 @@ describe('island-glyphen: 20 Werkzeug-Icons decken exakt die Katalog-Lücke ab',
     }
   });
 
-  it('ISLAND_GLYPHEN überschneidet sich NICHT mit den 9 bereits echten `werkzeug-icons.tsx`-Ids', () => {
+  it('ISLAND_GLYPHEN überschneidet sich NICHT mit den 8 bereits echten `werkzeug-icons.tsx`-Ids', () => {
     for (const id of KATALOG_IDS_BEREITS_ECHT) {
       expect(Object.keys(ISLAND_GLYPHEN)).not.toContain(id);
     }
   });
-});
 
-describe('island-glyphen: 4 Pill-Icons decken exakt die 4 IslandIds ab', () => {
-  it('ISLAND_PILL_GLYPHEN-Schlüssel entsprechen exakt ISLAND_REIHENFOLGE', () => {
-    expect(Object.keys(ISLAND_PILL_GLYPHEN).sort()).toEqual([...ISLAND_REIHENFOLGE].sort());
-    expect(Object.keys(ISLAND_PILL_GLYPHEN)).toHaveLength(4);
+  it('kein Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 29 sind ComponentType)', () => {
+    for (const w of WERKZEUG_KATALOG) {
+      expect(typeof w.glyphe, w.id).not.toBe('string');
+    }
   });
 });
 
-describe('island-glyphen: 24 Icons insgesamt — Bauvorschrift je Icon (werkzeug-icons.tsx:1-31)', () => {
-  const ALLE: Record<string, (typeof ISLAND_GLYPHEN)[string]> = { ...ISLAND_GLYPHEN, ...ISLAND_PILL_GLYPHEN };
-  const NAMEN = Object.keys(ALLE);
+describe('island-glyphen: 11 Pill-Icons decken alle Insel-Ids aller vier Stationen ab (PE2)', () => {
+  it('ISLAND_PILL_GLYPHEN enthält die 4 design-Inseln', () => {
+    for (const id of ISLAND_REIHENFOLGE) {
+      expect(Object.keys(ISLAND_PILL_GLYPHEN), id).toContain(id);
+    }
+  });
 
-  it('insgesamt genau 24 Icons (20 Werkzeug + 4 Pille)', () => {
-    expect(NAMEN).toHaveLength(24);
+  it('ISLAND_PILL_GLYPHEN enthält alle 4 vis-Inseln (graph/stimmung neu, ansicht/austausch bereits über design abgedeckt)', () => {
+    for (const id of VIS_ISLAND_REIHENFOLGE) {
+      expect(Object.keys(ISLAND_PILL_GLYPHEN), id).toContain(id);
+    }
+  });
+
+  it('ISLAND_PILL_GLYPHEN enthält alle 4 publish-Inseln (blatt/darstellung neu, projekt/austausch bereits über design abgedeckt)', () => {
+    for (const id of PUBLISH_ISLAND_REIHENFOLGE) {
+      expect(Object.keys(ISLAND_PILL_GLYPHEN), id).toContain(id);
+    }
+  });
+
+  it('ISLAND_PILL_GLYPHEN enthält alle 4 prepare-Inseln (aufnahme/wissen/bestand neu, austausch bereits über design abgedeckt)', () => {
+    for (const id of PREPARE_ISLAND_REIHENFOLGE) {
+      expect(Object.keys(ISLAND_PILL_GLYPHEN), id).toContain(id);
+    }
+  });
+
+  it('genau 11 Pill-Icons total (4 design + graph/stimmung + blatt/darstellung + aufnahme/wissen/bestand)', () => {
+    expect(Object.keys(ISLAND_PILL_GLYPHEN).sort()).toEqual(
+      ['ansicht', 'aufnahme', 'austausch', 'bestand', 'blatt', 'darstellung', 'graph', 'projekt', 'stimmung', 'wissen', 'zeichnen'].sort(),
+    );
+    expect(Object.keys(ISLAND_PILL_GLYPHEN)).toHaveLength(11);
+  });
+
+  it('jeder ISLAND_PILL_GLYPHEN-Schlüssel ist eine echte Insel-Id einer der vier Stationen (kein Tippfehler)', () => {
+    const gueltigeIds = new Set([
+      ...ISLAND_REIHENFOLGE,
+      ...VIS_ISLAND_REIHENFOLGE,
+      ...PUBLISH_ISLAND_REIHENFOLGE,
+      ...PREPARE_ISLAND_REIHENFOLGE,
+    ]);
+    for (const id of Object.keys(ISLAND_PILL_GLYPHEN)) {
+      expect(gueltigeIds.has(id), id).toBe(true);
+    }
+  });
+});
+
+describe('island-glyphen: alle 32 Icons (21 Werkzeug + 11 Pille) — Bauvorschrift je Icon (werkzeug-icons.tsx:1-31)', () => {
+  // s. Datei-Kopfkommentar: bewusst KEIN Objekt-Merge (würde die zwei
+  // geteilten Schlüssel `graph`/`darstellung` stillschweigend kollabieren)
+  // — stattdessen zwei präfigierte Namenslisten über eine gemeinsame Map.
+  const ALLE = new Map<string, (typeof ISLAND_GLYPHEN)[string]>();
+  for (const [id, Icon] of Object.entries(ISLAND_GLYPHEN)) ALLE.set(`werkzeug:${id}`, Icon);
+  for (const [id, Icon] of Object.entries(ISLAND_PILL_GLYPHEN)) ALLE.set(`pille:${id}`, Icon);
+  const NAMEN = [...ALLE.keys()];
+
+  it('insgesamt genau 32 Icons (21 Werkzeug + 11 Pille), keine Kollision beim Zählen', () => {
+    expect(NAMEN).toHaveLength(32);
   });
 
   it('jedes Icon rendert ein SVG mit viewBox 0 0 24 24, strokeWidth 1.75, runden Kappen/Joins, aria-hidden', () => {
     for (const name of NAMEN) {
-      const Icon = ALLE[name]!;
+      const Icon = ALLE.get(name)!;
       const html = renderToStaticMarkup(<Icon />);
       expect(html, name).toContain('<svg');
       expect(html, name).toContain('viewBox="0 0 24 24"');
@@ -96,7 +165,7 @@ describe('island-glyphen: 24 Icons insgesamt — Bauvorschrift je Icon (werkzeug
 
   it('jedes Icon trägt GENAU EINEN Akzentpunkt-Kreis (r=1.13, var(--k-accent))', () => {
     for (const name of NAMEN) {
-      const Icon = ALLE[name]!;
+      const Icon = ALLE.get(name)!;
       const html = renderToStaticMarkup(<Icon />);
       expect(zaehleAkzentpunkte(html), name).toBe(1);
       expect((html.match(/fill="var\(--k-accent\)"/g) ?? []).length, name).toBe(1);
@@ -105,7 +174,7 @@ describe('island-glyphen: 24 Icons insgesamt — Bauvorschrift je Icon (werkzeug
 
   it('jedes Icon ist ansonsten currentColor-only — keine hartkodierte Farbe ausser dem Akzent-Token', () => {
     for (const name of NAMEN) {
-      const Icon = ALLE[name]!;
+      const Icon = ALLE.get(name)!;
       const html = renderToStaticMarkup(<Icon />);
       expect(html, name).toContain('stroke="currentColor"');
       // Jede Hex-/rgb()-Farbe ist verboten — die einzige erlaubte Nicht-
@@ -118,7 +187,7 @@ describe('island-glyphen: 24 Icons insgesamt — Bauvorschrift je Icon (werkzeug
 
   it('jedes Icon hat einen leeren textContent (kein <text>-Kind, Sanktion 3)', () => {
     for (const name of NAMEN) {
-      const Icon = ALLE[name]!;
+      const Icon = ALLE.get(name)!;
       const html = renderToStaticMarkup(<Icon />);
       const dom = alsDom(html);
       expect(dom.textContent, name).toBe('');
@@ -134,8 +203,8 @@ describe('island-glyphen: 24 Icons insgesamt — Bauvorschrift je Icon (werkzeug
     expect(html).toContain('viewBox="0 0 24 24"');
   });
 
-  it('die 24 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
-    const markup = NAMEN.map((name) => renderToStaticMarkup(ALLE[name]!({})));
+  it('die 32 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat — auch nicht zwischen werkzeug:graph/pille:graph oder werkzeug:darstellung/pille:darstellung)', () => {
+    const markup = NAMEN.map((name) => renderToStaticMarkup(ALLE.get(name)!({})));
     expect(new Set(markup).size).toBe(NAMEN.length);
   });
 });

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { WERKZEUG_KATALOG, werkzeugeFuerIsland } from '../src/modules/design/island/island-katalog';
+import { registrierteWerkzeugIds } from '../src/modules/design/island/inhalte/registry';
+import '../src/modules/design/island/inhalte/zeichnen';
+import '../src/modules/design/island/inhalte/ansicht';
+import '../src/modules/design/island/inhalte/projekt';
+import '../src/modules/design/island/inhalte/austausch';
 
 /**
  * PD2 Verdrahtung (`docs/ISLAND-UI-SPEZ.md` §3/§7 PD2-Zeile) — der Katalog
@@ -57,9 +62,13 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     }
   });
 
-  it('Andere-Station-Werkzeuge (Rendern/Blätter/Sync) tragen einen "Andere Station"-Hinweis', () => {
+  // PE2 (v0.8.4, C-27): der frühere «Andere Station — Weg offen (§8-4)»-
+  // Hinweis ist raus — §8-4 ist seit PD3c entschieden und real verdrahtet
+  // (`docs/ISLAND-UI-SPEZ.md` §8 Punkt 4 Nachtrag), der Hinweis behauptete
+  // das Gegenteil der gebauten Realität (`ZurStationKnopf` navigiert echt).
+  it('Andere-Station-Werkzeuge (Rendern/Blätter/Sync) tragen KEINEN Hinweis mehr (§8-4 entschieden, PE2 räumt die «Weg offen»-Leiche auf)', () => {
     for (const id of ['rendern', 'blaetter', 'sync']) {
-      expect(werkzeug(id).hinweis).toMatch(/Andere Station/);
+      expect(werkzeug(id).hinweis).toBeUndefined();
     }
   });
 
@@ -69,9 +78,12 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     }
   });
 
-  it('Immer-sichtbare Panels (Kennzahlen/Checks) tragen einen "immer aktiv"-Hinweis', () => {
+  // PE2 (v0.8.4, C-27): der frühere «Panel ist immer aktiv»-Hinweis ist raus
+  // — toter Text seit `inhalte/projekt.tsx` das echte, eingebettete Panel in
+  // Stufe 3 zeigt (derselbe «Leiche»-Fund wie bei Trace/Graph, P10 v0.8.3).
+  it('Immer-sichtbare Panels (Kennzahlen/Checks) tragen KEINEN Hinweis mehr (Stufe 3 zeigt das echte, eingebettete Panel)', () => {
     for (const id of ['kennzahlen', 'checks']) {
-      expect(werkzeug(id).hinweis).toMatch(/immer aktiv/);
+      expect(werkzeug(id).hinweis).toBeUndefined();
     }
   });
 
@@ -81,15 +93,31 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     }
   });
 
-  // v0.8.3 E1/E2/E3: Öffnung/Messen/Kommentare tragen jetzt `toolId` (s. Test
-  // oben) — 18→21 verdrahtet, 11→8 ohne Aktion (dieselben drei wandern von
-  // der einen in die andere Gruppe, sonst nichts geändert).
-  it('genau 21 Werkzeuge sind wirklich verdrahtet (toolId ODER bekannte Sonderfälle), 8 bleiben ohne Aktion', () => {
-    const verdrahtetOhneToolId = new Set(['darstellung', 'sonne', 'ebenen', 'varianten', 'phase', 'liste', 'export', 'import', 'manuell']);
-    const verdrahtet = WERKZEUG_KATALOG.filter((w) => w.toolId !== undefined || verdrahtetOhneToolId.has(w.id));
-    const ohneAktion = WERKZEUG_KATALOG.filter((w) => w.toolId === undefined && !verdrahtetOhneToolId.has(w.id));
-    expect(verdrahtet).toHaveLength(21);
-    expect(ohneAktion).toHaveLength(8);
+  // PE2 (v0.8.4, C-27 — «8 Rahmen-Werkzeuge echt oder Owner-sauber
+  // geschlossen»): die alte toolId-Metrik («21 verdrahtet, 8 ohne Aktion»)
+  // war zu eng — sie kannte nur `toolId`/eine feste Sonderfall-Liste, nicht
+  // die Registry-Inhalte (Stufe2/Stufe3), über die Trace/Graph/Kennzahlen/
+  // Checks/Rendern/Blätter/Sync seit P3/PD3a/PD3b (v0.8.3) längst ECHT
+  // verdrahtet sind. Die 8 aus der alten Metrik sind exakt die Owner-
+  // Mängelliste-«8 Rahmen-Werkzeuge» (`docs/V084-SPEZ.md` §1.1) — geprüft
+  // gegen `registrierteWerkzeugIds()` (die echte, geladene Registry) zeigt
+  // sich: 7 der 8 sind bereits echt, nur Achsen bleibt bewusst ohne Popup
+  // (§4.4-Ausnahme, kein Rahmen — Owner-sauber geschlossen statt Attrappe).
+  it('C-27: alle 27 Popup-Werkzeuge sind in der Registry ECHT verdrahtet — nur Achsen (kein Popup, §4.4-Ausnahme) bleibt bewusst aussen vor', () => {
+    const registriert = new Set(registrierteWerkzeugIds());
+    const mitPopup = WERKZEUG_KATALOG.filter((w) => w.hatPopup);
+    const ohnePopup = WERKZEUG_KATALOG.filter((w) => !w.hatPopup);
+    expect(mitPopup).toHaveLength(27);
+    expect(ohnePopup.map((w) => w.id).sort()).toEqual(['achsen', 'manuell']);
+    for (const w of mitPopup) {
+      expect(registriert.has(w.id), `${w.id} fehlt in der Registry`).toBe(true);
+    }
+    // Die ehemals «8 ohne Aktion» (alte toolId-Metrik) — 7 davon sind jetzt
+    // nachweislich in der Registry, nur Achsen hat gar kein Popup.
+    const ehemals8 = ['achsen', 'trace', 'graph', 'kennzahlen', 'checks', 'rendern', 'blaetter', 'sync'];
+    const jetztEcht = ehemals8.filter((id) => registriert.has(id));
+    expect(jetztEcht.sort()).toEqual(['blaetter', 'checks', 'graph', 'kennzahlen', 'rendern', 'sync', 'trace']);
+    expect(registriert.has('achsen')).toBe(false);
   });
 
   it('werkzeugeFuerIsland liefert weiterhin 11/6/6/6 (Zuordnung durch PD2 unangetastet)', () => {

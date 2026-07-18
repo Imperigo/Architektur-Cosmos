@@ -136,3 +136,61 @@ test('Ansichts-Wechsel über die Ansichts-Info wirkt auf den echten viewMode', a
   await page.click('[data-testid="island-werkzeug-manuell"]');
   await expect(page.locator('[data-testid="view-2d"]')).toHaveAttribute('aria-pressed', 'true');
 });
+
+// ---------------------------------------------------------------------------
+// PE2 (v0.8.4, Bauauftrag Punkte 2+3) — additive Tests: `skizze` bekam ihr
+// echtes SVG (kein `SK`-Text mehr), `ISLAND_PILL_GLYPHEN` wuchs von 4 auf 11
+// Einträge (design + vis/publish/prepare). Diese Datei gehörte laut Auftrag
+// vorher keinem Paket exklusiv (frei für additive Ergänzung) — die
+// bestehenden vier Tests oben bleiben UNVERÄNDERT.
+// ---------------------------------------------------------------------------
+
+test('PE2: Skizze zeigt jetzt ein echtes SVG-Icon in der ZEICHNEN-Leiste, kein Text-Kürzel "SK" mehr', async ({ page }) => {
+  await ueberspringeOnboarding(page);
+  await page.click('[data-testid="module-design"]');
+
+  await oeffneInsel(page, 'zeichnen');
+  const glyphe = page.locator('[data-testid="island-werkzeug-skizze"] .isl-werkzeug-glyphe');
+  await expect(glyphe.locator('svg')).toHaveCount(1);
+  await expect(glyphe).not.toHaveText('SK');
+});
+
+test('PE2: alle vier design-Insel-Pillen zeigen ein echtes SVG-Icon (kein 2-Buchstaben-Text-Fallback)', async ({ page }) => {
+  await ueberspringeOnboarding(page);
+  await page.click('[data-testid="module-design"]');
+
+  for (const island of ['zeichnen', 'ansicht', 'projekt', 'austausch']) {
+    const pillGlyphe = page.locator(`[data-testid="island-${island}-pill"] .isl-pill-glyphe`);
+    await expect(pillGlyphe.locator('svg'), island).toHaveCount(1);
+  }
+});
+
+test('PE2: die Insel-Pillen von vis/publish/prepare zeigen jetzt ebenfalls echte SVG-Icons (ISLAND_PILL_GLYPHEN auf 11 Einträge erweitert)', async ({
+  page,
+}) => {
+  const STATIONEN: { modul: string; inseln: string[] }[] = [
+    { modul: 'module-vis', inseln: ['graph', 'ansicht', 'stimmung', 'austausch'] },
+    { modul: 'module-publish', inseln: ['blatt', 'darstellung', 'projekt', 'austausch'] },
+    { modul: 'module-prepare', inseln: ['aufnahme', 'wissen', 'bestand', 'austausch'] },
+  ];
+
+  for (const { modul, inseln } of STATIONEN) {
+    // Frisch von der Zentrale aus starten (`module-<x>`-Kacheln sind nur dort
+    // im DOM, ein Klick verlässt die Zentrale endgültig) — `ueberspringeOnboarding`
+    // navigiert per `page.goto('/')` + Reload dorthin zurück, dieselbe Funktion
+    // wie ganz oben in dieser Datei, hier je Station neu aufgerufen statt
+    // versucht zwischen Stationen ohne Rücksprung zu wechseln.
+    await ueberspringeOnboarding(page);
+    await page.click(`[data-testid="${modul}"]`);
+    for (const island of inseln) {
+      // Die anderen Stationen hovern über die ganze Insel-Wurzel (nicht nur
+      // die Pille, s. `vis-island.spec.ts`s `oeffneInsel`) — die Pille selbst
+      // ist ein Kind-Element der Wurzel, solange die Insel noch geschlossen
+      // ist (Stufe 'pill').
+      const wurzel = page.locator(`[data-testid="island-${island}-root"]`);
+      await expect(wurzel, `${modul}/${island}`).toBeVisible();
+      const pillGlyphe = wurzel.locator('.isl-pill-glyphe');
+      await expect(pillGlyphe.locator('svg'), `${modul}/${island}`).toHaveCount(1);
+    }
+  }
+});
