@@ -24,10 +24,13 @@ import { DataLeerbild } from './DataLeerbild';
 import { RefHeroBild } from './RefHeroBild';
 import {
   entferneEigeneReferenz,
+  entferneEigenesBild,
   gedaechtnisQuerverweise,
   importiereEigeneReferenzen,
   istEigeneReferenz,
   listeEigeneReferenzen,
+  speichereEigenesBild,
+  useDataRuntime,
   type GedaechtnisTreffer,
 } from './data-runtime';
 import { epocheVonEntry } from './epochen';
@@ -844,6 +847,40 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
     melde(`«${entry.title}» entfernt.`, { ton: 'info' });
   }
 
+  // PC5 (v0.8.4 §8 C-21): Bild-Upload/-Entfernen für eigene Referenzen — der
+  // Dossier-HeroBild-Slot existiert bereits (`RefHeroBild`), hier nur die
+  // Bedienung drumherum. `bildUploadRefId` hält fest, FÜR welche Referenz der
+  // laufende Upload gilt (der Datei-Dialog ist async — der Nutzer kann in der
+  // Zwischenzeit die Auswahl wechseln, das Ergebnis darf dann nicht an der
+  // falschen Referenz landen).
+  const bildUploadInputRef = useRef<HTMLInputElement>(null);
+  const [bildUploadRefId, setBildUploadRefId] = useState<string | null>(null);
+  const eigenesBildZustand = useDataRuntime((s) => (selected ? s.bilder[selected.id] : undefined));
+
+  async function eigenesBildHochladen(entry: RefEntry, datei: File) {
+    setBildUploadRefId(entry.id);
+    try {
+      await speichereEigenesBild(entry.id, datei);
+      melde(`Bild für «${entry.title}» gespeichert.`, { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    } finally {
+      setBildUploadRefId((laufend) => (laufend === entry.id ? null : laufend));
+    }
+  }
+
+  async function eigenesBildEntfernen(entry: RefEntry) {
+    const ok = await bestaetigen({
+      titel: `Bild von «${entry.title}» entfernen?`,
+      text: 'Nur das hochgeladene Bild verschwindet — die Referenz selbst bleibt erhalten.',
+      bestaetigen: 'Entfernen',
+      gefaehrlich: true,
+    });
+    if (!ok) return;
+    await entferneEigenesBild(entry.id);
+    melde(`Bild entfernt.`, { ton: 'info' });
+  }
+
   // Serie J2 / Batch B1 (SERIE-J2-IMMERSIVE-OBERFLAECHE.md Abschnitt 4):
   // KosmoData schliesst als zweite Station ans Adaptions-Regelwerk an — der
   // Kern (state/oberflaeche-adaption-kern.ts) ist derselbe, der KosmoDesign
@@ -1240,6 +1277,51 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           <div data-testid="ref-dossier-bild" className="kd-dossier-hero">
             <RefHeroBild entry={selected} signetGroesse={72} />
           </div>
+          {/* PC5 (v0.8.4 §8 C-21): Bild-Upload nur für eigene Referenzen — der
+              Seed (112) bleibt unangetastet, `RefHeroBild` zeigt den Slot für
+              alle Referenzen bereits, hier kommt nur die Bedienung dazu. */}
+          {istEigeneReferenz(selected) && (
+            <div data-testid="ref-bild-upload-zone" className="kd-flex kd-g2 kd-items-center kd-wrap">
+              <input
+                ref={bildUploadInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="kd-hidden"
+                data-testid="ref-bild-upload-input"
+                onChange={(e) => {
+                  const datei = e.currentTarget.files?.[0];
+                  e.currentTarget.value = '';
+                  if (datei) void eigenesBildHochladen(selected, datei);
+                }}
+              />
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="ref-bild-upload-button"
+                disabled={bildUploadRefId === selected.id}
+                title="Bild hochladen — JPG, PNG oder WebP, maximal 2 MB"
+                onClick={() => bildUploadInputRef.current?.click()}
+                className="kd-border-line"
+              >
+                {bildUploadRefId === selected.id
+                  ? 'Lade hoch …'
+                  : eigenesBildZustand?.status === 'lokal'
+                    ? 'Bild ersetzen'
+                    : 'Bild hochladen'}
+              </KButton>
+              {eigenesBildZustand?.status === 'lokal' && (
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="ref-bild-entfernen"
+                  onClick={() => void eigenesBildEntfernen(selected)}
+                  className="kd-border-line"
+                >
+                  Bild entfernen
+                </KButton>
+              )}
+            </div>
+          )}
           <div className="kd-fs-lg kd-w-600">{selected.title}</div>
           <Measure>
             {[formatJahrSpanne(selected), selected.city, selected.country].filter(Boolean).join(' · ')}

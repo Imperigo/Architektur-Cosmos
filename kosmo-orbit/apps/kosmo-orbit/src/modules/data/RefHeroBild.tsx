@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import type { RefEntry } from '@kosmo/data';
 import './data.css';
-import { ladeHeroBild, tuschePfade, useDataRuntime } from './data-runtime';
+import { ladeEigenesBildInRuntime, ladeHeroBild, tuschePfade, useDataRuntime } from './data-runtime';
 
 /**
  * K1 (v0.6.8, «KosmoData sichtbar») — das Hero-Bild einer Referenz,
@@ -16,13 +16,24 @@ import { ladeHeroBild, tuschePfade, useDataRuntime } from './data-runtime';
  *  - Ehrlichkeit statt kaputtem `<img>`: ohne `hero` steht «kein Bild
  *    hinterlegt» (W4-Wortlaut), mit nicht ladbarem/nicht erlaubtem `hero`
  *    steht «Bild nicht lokal — Quelle: <domain>».
+ *
+ * PC5 (v0.8.4, `docs/V084-SPEZ.md` §8 C-21): `quelle:'eigen'`-Referenzen
+ * (`data-runtime.ts` `istEigeneReferenz`) haben nie ein `hero`-Feld aus dem
+ * Import — ihr Bild kommt stattdessen ausschliesslich aus dem eigenen
+ * Upload-Store (`ladeEigenesBildInRuntime`/`speichereEigenesBild`). Beide
+ * Wege schreiben denselben Laufzeit-Zustand (`status:'lokal'`), darum
+ * braucht die Anzeige unten (das `<img>`) keine Fallunterscheidung — nur
+ * WELCHER Ladeweg beim Sichtbarwerden angestossen wird, unterscheidet sich.
+ * Dieselbe Komponente bedient darum sowohl den Dossier-Slot als auch den
+ * Tabellen-Mini-Thumb (`ReferenzTabelle.tsx` ruft sie bereits auf) — kein
+ * zusätzlicher Verdrahtungsort nötig.
  */
 export function RefHeroBild({
   entry,
   signetGroesse = 34,
   zeigeQuelle = true,
 }: {
-  entry: Pick<RefEntry, 'id' | 'title' | 'hero' | 'entry_type'>;
+  entry: Pick<RefEntry, 'id' | 'title' | 'hero' | 'entry_type'> & { quelle?: string };
   /** Breite des Piktogramms in px (Karte klein, Dossier grösser). */
   signetGroesse?: number;
   /** Ehrliche Quellen-/Leer-Zeile unter dem Signet (Karte + Dossier). */
@@ -30,28 +41,36 @@ export function RefHeroBild({
 }) {
   const zustand = useDataRuntime((s) => s.bilder[entry.id]);
   const hero = entry.hero ?? null;
+  const eigen = entry.quelle === 'eigen';
   const halter = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = halter.current;
-    if (!hero || !el) return;
+    if (!el || (!hero && !eigen)) return;
     // On-demand: der Abruf startet erst, wenn die Kachel sichtbar wird.
+    // Eigene Referenzen bevorzugen IMMER den eigenen Upload-Store — ein
+    // `hero`-Feld (falls ein Import es doch mitbrächte) wird für sie nicht
+    // versucht, damit für eigene Einträge nie ein externes Netz angefragt wird.
+    const laden = () => {
+      if (eigen) void ladeEigenesBildInRuntime(entry.id);
+      else if (hero) void ladeHeroBild(entry.id, hero);
+    };
     if (typeof IntersectionObserver === 'undefined') {
-      void ladeHeroBild(entry.id, hero);
+      laden();
       return;
     }
     const io = new IntersectionObserver((beobachtet) => {
       if (beobachtet.some((b) => b.isIntersecting)) {
         io.disconnect();
-        void ladeHeroBild(entry.id, hero);
+        laden();
       }
     });
     io.observe(el);
     return () => io.disconnect();
-  }, [entry.id, hero]);
+  }, [entry.id, hero, eigen]);
 
-  if (hero && zustand?.status === 'lokal') {
-    return <img src={zustand.objectUrl} alt="" className="kd-hero-bild" />;
+  if ((hero || eigen) && zustand?.status === 'lokal') {
+    return <img src={zustand.objectUrl} alt="" className="kd-hero-bild" data-testid="ref-hero-bild-img" />;
   }
 
   const zeile = !hero

@@ -126,3 +126,54 @@ test('P9: eigene Referenzen importieren — Merge (112+N), ehrliche Zeilenfehler
 
   await page.screenshot({ path: 'e2e-results/p9-083-kosmodata-import.png' });
 });
+
+/**
+ * PC5 (v0.8.4, `docs/V084-SPEZ.md` §8 C-21 Punkt 2, additiv zu diesem Spec):
+ * das «Gedächtnis & Wissen»-Dossier (`data-testid="ref-querverweise"`,
+ * K8/v0.6.8) ist source-agnostisch — `gedaechtnisQuerverweise()` filtert
+ * NIE nach `quelle`, sie matcht rein über `refId`/Titel-Text. Dieser Test
+ * beweist das end-to-end für eine EIGENE, per JSON importierte Referenz —
+ * kein Sonderpfad, keine neue Suchmaschine, nur der bestehende Weg
+ * (`feedbackZurReferenz` → `journal.add({refId})`), der für Seed-Referenzen
+ * bereits in `e2e/kosmodata-sichtbar.spec.ts` K8 gilt.
+ */
+test('PC5: Gedächtnis-Querverweis funktioniert auch für eine eigene Referenz — dieselbe Verknüpfung wie beim Seed', async ({
+  page,
+}) => {
+  await oeffneReferenzenTab(page);
+
+  const batch = schreibeJson([{ id: 'e2e-gedaechtnis-villa', title: 'E2E Gedächtnis Villa', city: 'Luzern' }]);
+  await page.setInputFiles('[data-testid="ref-import-input"]', batch);
+  // Ein sauberer Ein-Zeilen-Import ohne Fehler löst den «erfolg»-Ton aus
+  // (anders als der gemischte Batch weiter oben, der «info» meldet).
+  await expect(page.locator('[data-testid="meldung-erfolg"]')).toBeVisible();
+
+  await page.fill('[data-testid="data-search"]', 'E2E Gedächtnis Villa');
+  await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(1);
+  await page.click('[data-testid="ref-card"]');
+  await expect(page.locator('[data-testid="ref-eigen-badge"]')).toBeVisible();
+
+  // Vor jedem Feedback: ehrliche Leerzeile, exakt wie beim Seed (K8-Vertrag).
+  await expect(page.locator('[data-testid="ref-gedaechtnis-leer"]')).toBeVisible();
+  await expect(page.locator('[data-testid="ref-gedaechtnis-link"]')).toHaveCount(0);
+
+  // Dieselbe 👍-Feedbackstelle wie bei Seed-Referenzen — schreibt refId in
+  // dasselbe Lernjournal (`journal.add({refId: selected.id, ...})`).
+  await page.click('[data-testid="ref-feedback-gut"]');
+
+  const link = page.locator('[data-testid="ref-gedaechtnis-link"]');
+  await expect(link).toHaveCount(1);
+  await expect(link).toContainText('E2E Gedächtnis Villa');
+  // matchArt "verknüpft" (refId-Kante), nicht der Text-Match-Fallback —
+  // derselbe Vertrag wie bei einer Seed-Referenz.
+  await expect(page.locator('[data-testid="ref-gedaechtnis-matchart"]')).toContainText('verknüpft');
+
+  // Klick wechselt in den Gedächtnis-Tab und fokussiert exakt diesen Eintrag
+  // — derselbe Mechanismus wie K8 für Seed-Referenzen.
+  await link.click();
+  await expect(page.locator('[data-testid="kosmodata-gedaechtnis"]')).toBeVisible();
+  const eintrag = page.locator('[data-testid="gedaechtnis-eintrag"]').filter({ hasText: 'E2E Gedächtnis Villa' });
+  await expect(eintrag.locator('[data-testid="gedaechtnis-fokus"]')).toBeVisible();
+
+  await page.screenshot({ path: 'e2e-results/pc5-gedaechtnis-verknuepfung-eigen.png' });
+});

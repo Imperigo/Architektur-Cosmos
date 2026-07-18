@@ -27,11 +27,19 @@ export type HeroBildZustand =
 interface DataRuntime {
   bilder: Record<string, HeroBildZustand>;
   setzeBild: (refId: string, zustand: HeroBildZustand) => void;
+  entferneBildAusRuntime: (refId: string) => void;
 }
 
 export const useDataRuntime = create<DataRuntime>((set) => ({
   bilder: {},
   setzeBild: (refId, zustand) => set((s) => ({ bilder: { ...s.bilder, [refId]: zustand } })),
+  entferneBildAusRuntime: (refId) =>
+    set((s) => {
+      if (!(refId in s.bilder)) return s;
+      const rest = { ...s.bilder };
+      delete rest[refId];
+      return { bilder: rest };
+    }),
 }));
 
 /** true, wenn die URL einen fremden Host anspricht (http/https absolut). */
@@ -393,8 +401,15 @@ export function istEigeneReferenz(entry: RefEntry): entry is EigeneReferenz {
 }
 
 const EIGENE_DB_NAME = 'kosmo-eigene-referenzen';
-const EIGENE_DB_VERSION = 1;
+// PC5 (v0.8.4, docs/V084-SPEZ.md §8 C-21): Version 1 → 2 fügt den additiven
+// `bilder`-Objektspeicher hinzu (Bild-Blob je eigener Referenz-id). Bestehende
+// Installationen (Version 1, nur `referenzen`-Store) durchlaufen beim ersten
+// Öffnen `onupgradeneeded` mit oldVersion=1 → der `referenzen`-Store bleibt
+// unangetastet (die `contains`-Wächter greifen), nur `bilder` entsteht neu —
+// kein Datenverlust, keine Migration nötig.
+const EIGENE_DB_VERSION = 2;
 const EIGENE_STORE = 'referenzen';
+const EIGENE_BILD_STORE = 'bilder';
 
 function eigeneIndexedDbVerfuegbar(): boolean {
   return typeof indexedDB !== 'undefined';
@@ -406,6 +421,7 @@ function openEigeneDb(): Promise<IDBDatabase> {
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains(EIGENE_STORE)) db.createObjectStore(EIGENE_STORE, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(EIGENE_BILD_STORE)) db.createObjectStore(EIGENE_BILD_STORE, { keyPath: 'id' });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -497,4 +513,147 @@ export async function entferneEigeneReferenz(id: string): Promise<void> {
 /** NUR für Tests: setzt den In-Memory-Cache zurück (nach direkten IndexedDB-Manipulationen im Test). */
 export function resetEigeneReferenzenCacheFuerTests(): void {
   eigeneCache = null;
+}
+
+/* ------------------------------------------------------------------ */
+/* PC5 (v0.8.4, docs/V084-SPEZ.md §8 C-21) — Bilder für eigene           */
+/* Referenzen (Laufzeit ≠ Modell, additiv zum EIGENE_BILD_STORE oben)   */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Eigene, per Upload hinzugefügte Referenz-Bilder — derselbe Laufzeit-Store
+ * wie die Hero-Bild-Blobs (`kosmo-eigene-referenzen`, jetzt Store `bilder`),
+ * NIE das Yjs-Doc. Nur `quelle:'eigen'`-Referenzen bekommen hier je einen
+ * Eintrag (`speichereEigenesBild`) — der 112er-Seed ist nie Ziel dieses
+ * Wegs, `kosmodata-seed.json` bleibt dadurch byte-gleich (Sync-Gate,
+ * `docs/WEBSITE-SYNC.md`).
+ */
+
+/** Grössenlimit — ~2 MB, ehrliche Fehlermeldung statt eines stillen Abschneidens. */
+export const EIGENES_BILD_MAX_BYTES = 2 * 1024 * 1024;
+
+const EIGENES_BILD_ERLAUBTE_TYPEN = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
+export type EigenesBildPruefung = { ok: true } | { ok: false; fehler: string };
+
+/** Reine Prüf-Funktion (Typ + Grösse) — dieselbe Regel, die `speichereEigenesBild`
+ *  vor dem Schreiben anwendet; separat exportiert, damit das UI VOR dem
+ *  Upload-Versuch schon ehrlich ablehnen kann (kein Netz-/DB-Zugriff nötig). */
+export function pruefeEigenesBild(datei: File): EigenesBildPruefung {
+  if (!EIGENES_BILD_ERLAUBTE_TYPEN.has(datei.type)) {
+    return {
+      ok: false,
+      fehler: `Dateityp «${datei.type || 'unbekannt'}» wird nicht unterstützt — erlaubt sind JPG, PNG oder WebP.`,
+    };
+  }
+  if (datei.size > EIGENES_BILD_MAX_BYTES) {
+    return {
+      ok: false,
+      fehler: `Datei zu gross (${(datei.size / (1024 * 1024)).toFixed(1)} MB) — erlaubt sind maximal 2 MB.`,
+    };
+  }
+  return { ok: true };
+}
+
+/** Löst die zuvor gesetzte Objekt-URL eines lokalen Laufzeit-Bildes ab (falls
+ *  vorhanden) — vermeidet einen Speicher-Leak beim Ersetzen/Entfernen eines
+ *  eigenen Bildes (anders als die Hero-Bild-Blobs oben lebt ein eigenes Bild
+ *  nicht zwangsläufig die ganze Sitzung — der Nutzer kann es aktiv ersetzen). */
+function loeseAlteObjektUrlAb(refId: string): void {
+  const alt = useDataRuntime.getState().bilder[refId];
+  if (alt?.status === 'lokal') {
+    try {
+      URL.revokeObjectURL(alt.objectUrl);
+    } catch {
+      /* bereits ungültig — kein Problem */
+    }
+  }
+}
+
+/**
+ * Speichert ein hochgeladenes Bild für eine eigene Referenz — validiert
+ * zuerst (`pruefeEigenesBild`, wirft mit der ehrlichen Fehlermeldung), dann
+ * IndexedDB-Schreibvorgang, dann sofortiger Laufzeit-Store-Eintrag (`status:
+ * 'lokal'`) — der Dossier-Slot UND der Tabellen-Mini-Thumb (beide über
+ * `RefHeroBild`) zeigen das Bild ohne Reload. Wirft ehrlich, wenn `indexedDB`
+ * fehlt oder die Prüfung scheitert — kein stilles Verwerfen des Uploads.
+ */
+export async function speichereEigenesBild(refId: string, datei: File): Promise<void> {
+  const pruefung = pruefeEigenesBild(datei);
+  if (!pruefung.ok) throw new Error(pruefung.fehler);
+  if (!eigeneIndexedDbVerfuegbar()) {
+    throw new Error('IndexedDB nicht verfügbar — das Bild kann in dieser Umgebung nicht gespeichert werden.');
+  }
+  const db = await openEigeneDb();
+  const tx = db.transaction(EIGENE_BILD_STORE, 'readwrite');
+  tx.objectStore(EIGENE_BILD_STORE).put({ id: refId, blob: datei, typ: datei.type });
+  await eigeneTxDone(tx);
+  db.close();
+  loeseAlteObjektUrlAb(refId);
+  const objectUrl = URL.createObjectURL(datei);
+  useDataRuntime.getState().setzeBild(refId, { status: 'lokal', objectUrl });
+}
+
+/**
+ * Lädt ein zuvor hochgeladenes Bild einer eigenen Referenz in den Laufzeit-
+ * Store — on-demand, idempotent (Muster `ladeHeroBild` oben), aufgerufen von
+ * `RefHeroBild` bei sichtbarer Karte/Dossier. Kein Treffer im Store bleibt
+ * ehrlich ohne Laufzeit-Eintrag (die Anzeige fällt auf «kein Bild hinterlegt»
+ * zurück) — kein Fehler, kein Absturz.
+ */
+export async function ladeEigenesBildInRuntime(refId: string): Promise<void> {
+  const store = useDataRuntime.getState();
+  if (store.bilder[refId]) return;
+  if (!eigeneIndexedDbVerfuegbar()) return;
+  try {
+    const db = await openEigeneDb();
+    const tx = db.transaction(EIGENE_BILD_STORE, 'readonly');
+    const eintrag = await eigeneReqResult(
+      tx.objectStore(EIGENE_BILD_STORE).get(refId) as IDBRequest<{ id: string; blob: Blob; typ: string } | undefined>,
+    );
+    db.close();
+    if (!eintrag) return;
+    const objectUrl = URL.createObjectURL(eintrag.blob);
+    useDataRuntime.getState().setzeBild(refId, { status: 'lokal', objectUrl });
+  } catch {
+    // Ehrlich ohne Bild statt Absturz — derselbe Fehlertoleranz-Vertrag wie `listeEigeneReferenzen()`.
+  }
+}
+
+/** true, wenn für `refId` aktuell ein eigenes Bild im IndexedDB-Store liegt
+ *  (unabhängig vom Laufzeit-Cache-Zustand) — für einen Persistenz-Beweis über
+ *  einen Reload hinweg, ohne den Laufzeit-Store selbst zu berühren. */
+export async function hatEigenesBild(refId: string): Promise<boolean> {
+  if (!eigeneIndexedDbVerfuegbar()) return false;
+  try {
+    const db = await openEigeneDb();
+    const tx = db.transaction(EIGENE_BILD_STORE, 'readonly');
+    const eintrag = await eigeneReqResult(tx.objectStore(EIGENE_BILD_STORE).get(refId) as IDBRequest<unknown | undefined>);
+    db.close();
+    return eintrag !== undefined;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Entfernt ein eigenes Referenz-Bild — IndexedDB-Löschung PLUS Laufzeit-
+ * Store-Bereinigung (die Objekt-URL wird abgelöst, der Slot fällt sofort auf
+ * den Tusche-Platzhalter zurück, ohne Reload). Kein Fehler, wenn gar kein
+ * Bild vorlag (No-Op-Charakter wie `entferneEigeneReferenz`).
+ */
+export async function entferneEigenesBild(refId: string): Promise<void> {
+  if (eigeneIndexedDbVerfuegbar()) {
+    try {
+      const db = await openEigeneDb();
+      const tx = db.transaction(EIGENE_BILD_STORE, 'readwrite');
+      tx.objectStore(EIGENE_BILD_STORE).delete(refId);
+      await eigeneTxDone(tx);
+      db.close();
+    } catch {
+      /* Best effort — der Laufzeit-Store wird trotzdem bereinigt, s. unten. */
+    }
+  }
+  loeseAlteObjektUrlAb(refId);
+  useDataRuntime.getState().entferneBildAusRuntime(refId);
 }
