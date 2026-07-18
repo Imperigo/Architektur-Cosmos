@@ -1,16 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
-  ISLAND_LABEL,
-  ISLAND_ORIENTIERUNG,
-  ISLAND_REIHENFOLGE,
-  werkzeugeFuerIsland,
+  DESIGN_INSELN,
+  designInselKonfig,
+  type InselKonfig,
   type IslandId,
   type IslandWerkzeug,
 } from './island-katalog';
 import { bevorzugtReduzierteBewegung } from '../../../state/cursor-zustand';
 import { useProject } from '../../../state/project-store';
 import { touchUndoGesteAktiv } from '../../../state/touch-undo';
-import { inhaltFuer } from './inhalte/registry';
+import { designInhaltsRegistry, type InhaltsRegistry } from './inhalte/registry';
 // Registrierung der Stufe-2/3-Inhalte als Import-Seiteneffekt (Fable-Naht
 // für PD3a ‖ PD3b — s. `inhalte/registry.ts`-Kopfkommentar).
 import './inhalte/zeichnen';
@@ -45,13 +44,9 @@ const TOAST_MS = 1700;
 
 export type IslandStufe = 'pill' | 'leiste' | 'popup' | 'fenster';
 
-/** Rand-Position + Zentrierung je Island (§1/§2: links/oben/rechts/unten, 14px, mittig). */
-const ISLAND_RAND_KLASSE: Readonly<Record<IslandId, string>> = {
-  zeichnen: 'isl-rand-links',
-  ansicht: 'isl-rand-oben',
-  projekt: 'isl-rand-rechts',
-  austausch: 'isl-rand-unten',
-};
+// PC0 v0.8.4: die Rand-Klassen leben jetzt in der `InselKonfig`
+// (`island-katalog.ts`s `DESIGN_INSELN` für design) — die Shell liest nur
+// noch `konfig.randKlasse` und ist damit stationsagnostisch (V084-SPEZ E1).
 
 /**
  * Liest `prefers-reduced-motion: reduce` initial UND hält es über die
@@ -261,7 +256,17 @@ function useZweiFingerUndoGeste(): void {
 }
 
 export interface IslandShellProps {
-  island: IslandId;
+  /**
+   * PC0 v0.8.4: `string` statt der design-`IslandId`-Union. OHNE `konfig`
+   * wird die Id gegen die design-Defaults (`DESIGN_INSELN`) aufgelöst —
+   * jeder Bestands-Aufrufer (`<IslandShell island="zeichnen"/>`, Unit-Tests,
+   * IslandBuehne) verhält sich byte-gleich weiter.
+   */
+  island: string;
+  /** Stations-Konfig (V084-SPEZ E1) — andere Stationen übergeben sie explizit. */
+  konfig?: InselKonfig;
+  /** Inhalts-Registry der Station — Default: die design-Registry. */
+  registry?: InhaltsRegistry;
   /**
    * PD2 (`docs/ISLAND-UI-SPEZ.md` §7 PD2-Zeile, Bullet 1 «Klick... aktiviert
    * das ECHTE Werkzeug»): optionaler Aufruf bei JEDER Erst-Aktivierung eines
@@ -276,9 +281,11 @@ export interface IslandShellProps {
 }
 
 /** Eine einzelne Island — Zustandsmaschine + Rendering für Pill/Leiste/Popup/Fenster. */
-export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
-  const werkzeuge = werkzeugeFuerIsland(island);
-  const orientierung = ISLAND_ORIENTIERUNG[island];
+export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: IslandShellProps) {
+  const inselKonfig = konfig ?? designInselKonfig(island as IslandId);
+  const inhalte = registry ?? designInhaltsRegistry;
+  const werkzeuge = inselKonfig.werkzeuge;
+  const orientierung = inselKonfig.orientierung;
   const reduziert = useReduzierteBewegung();
 
   const [stufe, setStufe] = useState<IslandStufe>('pill');
@@ -390,11 +397,11 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
   }
 
   const aktivesWerkzeug = aktivesWerkzeugId ? werkzeuge.find((w) => w.id === aktivesWerkzeugId) : undefined;
-  const label = ISLAND_LABEL[island];
+  const label = inselKonfig.label;
 
   return (
     <div
-      className={`isl-root isl-${orientierung} ${ISLAND_RAND_KLASSE[island]}`}
+      className={`isl-root isl-${orientierung} ${inselKonfig.randKlasse}`}
       data-testid={`island-${island}-root`}
       data-reduziert={reduziert ? 'true' : 'false'}
       onMouseEnter={aufPointerEnter}
@@ -457,10 +464,10 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
           {/* PD3-Registry zuerst (Stufe-2-Inhalt aus `inhalte/`); sonst der
               PD2-Hinweis (Werkzeug ohne echte Aktion) bzw. PD1-Rahmen. */}
           {(() => {
-            const Inhalt = inhaltFuer(aktivesWerkzeug.id)?.Stufe2;
+            const Inhalt = inhalte.inhaltFuer(aktivesWerkzeug.id)?.Stufe2;
             return Inhalt ? <Inhalt /> : null;
           })()}
-          {!inhaltFuer(aktivesWerkzeug.id)?.Stufe2 && aktivesWerkzeug.hinweis ? (
+          {!inhalte.inhaltFuer(aktivesWerkzeug.id)?.Stufe2 && aktivesWerkzeug.hinweis ? (
             <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-popup-hinweis`}>
               {aktivesWerkzeug.hinweis}
             </p>
@@ -487,10 +494,10 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
           {/* PD3-Registry zuerst (Stufe-3-Inhalt aus `inhalte/`); sonst der
               PD2-Hinweis bzw. PD1-Rahmen. */}
           {(() => {
-            const Inhalt = inhaltFuer(aktivesWerkzeug.id)?.Stufe3;
+            const Inhalt = inhalte.inhaltFuer(aktivesWerkzeug.id)?.Stufe3;
             return Inhalt ? <Inhalt /> : null;
           })()}
-          {!inhaltFuer(aktivesWerkzeug.id)?.Stufe3 && aktivesWerkzeug.hinweis ? (
+          {!inhalte.inhaltFuer(aktivesWerkzeug.id)?.Stufe3 && aktivesWerkzeug.hinweis ? (
             <p className="isl-popup-hinweis" data-testid={`island-${aktivesWerkzeug.id}-fenster-hinweis`}>
               {aktivesWerkzeug.hinweis}
             </p>
@@ -510,6 +517,14 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
 export interface IslandBuehneProps {
   /** PD2: durchgereicht an jede der vier `IslandShell`-Instanzen, s. dortigen Kommentar. */
   onWerkzeugAktion?: (werkzeug: IslandWerkzeug) => void;
+  /**
+   * PC0 v0.8.4 (V084-SPEZ E1): Insel-Konfigs der Station — Default sind die
+   * vier design-Inseln (`DESIGN_INSELN`), byte-gleiches Bestandsverhalten.
+   * Andere Stationen (PC1/PC3/PC4/PC5) übergeben hier ihren eigenen Satz.
+   */
+  inseln?: readonly InselKonfig[];
+  /** Inhalts-Registry der Station — Default: die design-Registry. */
+  registry?: InhaltsRegistry;
 }
 
 /**
@@ -521,12 +536,18 @@ export interface IslandBuehneProps {
  * genau einmal gemountet/entfernt mit der Bühne selbst, kein Vervierfachen
  * über die vier Insel-Instanzen.
  */
-export function IslandBuehne({ onWerkzeugAktion }: IslandBuehneProps = {}) {
+export function IslandBuehne({ onWerkzeugAktion, inseln = DESIGN_INSELN, registry }: IslandBuehneProps = {}) {
   useZweiFingerUndoGeste();
   return (
     <>
-      {ISLAND_REIHENFOLGE.map((island) => (
-        <IslandShell key={island} island={island} {...(onWerkzeugAktion ? { onWerkzeugAktion } : {})} />
+      {inseln.map((konfig) => (
+        <IslandShell
+          key={konfig.id}
+          island={konfig.id}
+          konfig={konfig}
+          {...(registry ? { registry } : {})}
+          {...(onWerkzeugAktion ? { onWerkzeugAktion } : {})}
+        />
       ))}
     </>
   );

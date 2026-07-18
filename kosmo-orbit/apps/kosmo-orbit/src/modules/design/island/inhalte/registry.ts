@@ -25,21 +25,55 @@ export interface WerkzeugInhalt {
   Stufe3?: ComponentType;
 }
 
-const REGISTRY = new Map<string, WerkzeugInhalt>();
+/**
+ * PC0 v0.8.4 (`docs/V084-SPEZ.md` E1): Registry als INSTANZ statt
+ * Modul-Singleton — der Island-Rollout auf alle Stationen braucht je Station
+ * einen eigenen Namensraum, sonst kollidieren gleichnamige Werkzeug-Ids
+ * («export» gibt es in AUSTAUSCH und künftig in publish) am harten
+ * Doppelregistrierungs-Wurf. Die design-Station behält ihre Instanz als
+ * Default; die bestehenden Modul-Funktionen delegieren UNVERÄNDERT dorthin —
+ * kein Bestands-Importeur (inhalte/*.tsx, IslandShell, Tests) ändert sich.
+ */
+export class InhaltsRegistry {
+  private readonly eintraege = new Map<string, WerkzeugInhalt>();
 
-/** Doppelregistrierung ist ein Programmierfehler (zwei Pakete, ein Werkzeug) — hart werfen. */
-export function registriereInhalt(werkzeugId: string, inhalt: WerkzeugInhalt): void {
-  if (REGISTRY.has(werkzeugId)) {
-    throw new Error(`Island-Inhalt für «${werkzeugId}» ist bereits registriert (Dateikreis-Kollision PD3a/PD3b?).`);
+  constructor(
+    /** Nur für Fehlermeldungen — benennt die Station im Kollisions-Wurf. */
+    private readonly namensraum: string = 'design',
+  ) {}
+
+  /** Doppelregistrierung ist ein Programmierfehler (zwei Pakete, ein Werkzeug) — hart werfen. */
+  registriere(werkzeugId: string, inhalt: WerkzeugInhalt): void {
+    if (this.eintraege.has(werkzeugId)) {
+      throw new Error(
+        `Island-Inhalt für «${werkzeugId}» ist im Namensraum «${this.namensraum}» bereits registriert (Dateikreis-Kollision?).`,
+      );
+    }
+    this.eintraege.set(werkzeugId, inhalt);
   }
-  REGISTRY.set(werkzeugId, inhalt);
+
+  inhaltFuer(werkzeugId: string): WerkzeugInhalt | undefined {
+    return this.eintraege.get(werkzeugId);
+  }
+
+  /** Für das harte Gate C-38 («kein Werkzeug endet bei Stufe 1») — testbar. */
+  registrierteIds(): readonly string[] {
+    return [...this.eintraege.keys()];
+  }
+}
+
+/** Die design-Station — Default-Registry aller bestehenden `inhalte/*.tsx`. */
+export const designInhaltsRegistry = new InhaltsRegistry('design');
+
+export function registriereInhalt(werkzeugId: string, inhalt: WerkzeugInhalt): void {
+  designInhaltsRegistry.registriere(werkzeugId, inhalt);
 }
 
 export function inhaltFuer(werkzeugId: string): WerkzeugInhalt | undefined {
-  return REGISTRY.get(werkzeugId);
+  return designInhaltsRegistry.inhaltFuer(werkzeugId);
 }
 
 /** Für das harte Gate C-38 («kein Werkzeug endet bei Stufe 1») — testbar. */
 export function registrierteWerkzeugIds(): readonly string[] {
-  return [...REGISTRY.keys()];
+  return designInhaltsRegistry.registrierteIds();
 }

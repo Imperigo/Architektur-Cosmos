@@ -68,7 +68,10 @@ export interface IslandWerkzeug {
   readonly id: string;
   /** Deutscher Anzeigename (Leiste/Popup/Fenster-Titel, Toast-Text). */
   readonly name: string;
-  readonly island: IslandId;
+  /** PC0 v0.8.4: `string` statt `IslandId` — andere Stationen bringen eigene
+   *  Insel-Ids mit (`docs/V084-SPEZ.md` E1); für design bleibt es faktisch
+   *  die Vierer-Union (alle Aufrufer unten übergeben `IslandId`). */
+  readonly island: string;
   /** Text-Platzhalter-Glyphe (zweistelliges Mono-Kürzel) — Icon-Politur folgt PD3/PD4. */
   readonly glyphe: string;
   readonly status: IslandWerkzeugStatus;
@@ -176,4 +179,45 @@ export const WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [...ZEICHNEN, ...ANSI
 
 export function werkzeugeFuerIsland(island: IslandId): readonly IslandWerkzeug[] {
   return WERKZEUG_KATALOG.filter((w) => w.island === island);
+}
+
+/**
+ * PC0 v0.8.4 (`docs/V084-SPEZ.md` E1): Konfig-Objekt je Insel — die
+ * generische Schnittstelle, über die JEDE Station die IslandShell bespielt.
+ * Die fünf bisher hartkodierten design-Records (IslandId-Union,
+ * ISLAND_REIHENFOLGE/-LABEL/-ORIENTIERUNG + ISLAND_RAND_KLASSE in
+ * IslandShell.tsx) bleiben als design-Wahrheit bestehen und werden hier nur
+ * EINMAL in die Konfig-Form gegossen — Verhalten byte-gleich, kein
+ * testid/keine Klasse ändert sich (Sanktion 1 der V084-SPEZ).
+ */
+export interface InselKonfig {
+  readonly id: string;
+  readonly label: string;
+  readonly orientierung: IslandOrientierung;
+  /** CSS-Randklasse (`isl-rand-links|-oben|-rechts|-unten`) — Position an der Bühne. */
+  readonly randKlasse: string;
+  readonly werkzeuge: readonly IslandWerkzeug[];
+}
+
+/** Rand-Position je design-Island (§1/§2) — bis PC0 in `IslandShell.tsx:49-54`. */
+const DESIGN_RAND_KLASSE: Readonly<Record<IslandId, string>> = {
+  zeichnen: 'isl-rand-links',
+  ansicht: 'isl-rand-oben',
+  projekt: 'isl-rand-rechts',
+  austausch: 'isl-rand-unten',
+};
+
+/** Die vier design-Inseln in Bühnenordnung — Default der `IslandBuehne`. */
+export const DESIGN_INSELN: readonly InselKonfig[] = ISLAND_REIHENFOLGE.map((id) => ({
+  id,
+  label: ISLAND_LABEL[id],
+  orientierung: ISLAND_ORIENTIERUNG[id],
+  randKlasse: DESIGN_RAND_KLASSE[id],
+  werkzeuge: werkzeugeFuerIsland(id),
+}));
+
+export function designInselKonfig(id: IslandId): InselKonfig {
+  const konfig = DESIGN_INSELN.find((k) => k.id === id);
+  if (!konfig) throw new Error(`Unbekannte design-Insel: ${id}`);
+  return konfig;
 }
