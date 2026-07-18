@@ -1222,6 +1222,7 @@ export function App() {
           Kopfkommentar. */}
       <DockTour />
       <Kurzbefehle stationen={stationen} zurZentrale={() => gehZu('home')} />
+      <VerlaufKurztasten />
       <KMeldungen />
       <KBestaetigung />
       {deinstallierenOffen && <AppDeinstallieren onClose={() => setDeinstallierenOffen(false)} />}
@@ -1511,5 +1512,31 @@ function Absturztest() {
     return () => window.removeEventListener('kosmo:absturztest', h);
   }, []);
   if (kaputt) throw new Error('Absturztest — absichtlich ausgelöst');
+  return null;
+}
+
+/**
+ * C-9-Fix (PE3-Matrix v0.8.4): das «?»-Overlay verspricht Ctrl+Z/Ctrl+⇧+Z
+ * («gilt für jede Änderung») — gebunden war aber NUR der Verlauf-Button in
+ * der manuell-Werkzeugleiste; im Island-Default gab es damit gar keinen
+ * erreichbaren Undo-Weg (PE3-Fund C-9/C-11). Ein app-weiter Listener über
+ * denselben `useProject`-Weg wie die Buttons; Eingabefelder bleiben
+ * unangetastet (dort gilt das native Text-Undo des Browsers).
+ */
+function VerlaufKurztasten() {
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      const taste = e.key.toLowerCase();
+      if (taste !== 'z' && taste !== 'y') return;
+      const ziel = e.target as HTMLElement | null;
+      if (ziel && (ziel.tagName === 'INPUT' || ziel.tagName === 'TEXTAREA' || ziel.isContentEditable)) return;
+      e.preventDefault();
+      if (taste === 'y' || e.shiftKey) useProject.getState().redo();
+      else useProject.getState().undo();
+    };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, []);
   return null;
 }

@@ -179,6 +179,10 @@ export interface ViewportHandlers {
   /** Auswahl-Werkzeug: Klick pickt Element statt zu zeichnen. */
   pickMode?: boolean;
   onPick?: (entityId: string | null) => void;
+  /** C-11 (PE3-Matrix v0.8.4): Kontextmenü «Eigenschaften» — wählt aus UND
+   *  öffnet im Island-Modus den schwebenden Inspector (im manuell-Modus
+   *  zeigt der gedockte Inspector die Auswahl ohnehin). */
+  onEigenschaften?: (entityId: string) => void;
   /** 2D-Verschieben: Geste beginnt auf einem getroffenen Element (liefert false = kein Ziehen). */
   onMoveStart?: (entityId: string, p: Pt) => boolean;
   onMoveDrag?: (p: Pt) => void;

@@ -1273,7 +1273,7 @@ export function NodeCanvas({
                 laufendem Status, `vis-visual.css`). */}
             <path
               d={`M 0 0 H ${NODE_W - 12} L ${NODE_W} 12 V ${h} H 0 Z`}
-              fill="var(--k-raised)"
+              fill="var(--vis-node-flaeche)"
               className={`vis-node-karte${nodeLaeuft ? ' vis-node-karte--laeuft' : ''}`}
               style={{ ['--_rolle' as string]: kategorieFarbe }}
             />
@@ -1328,7 +1328,7 @@ export function NodeCanvas({
             >
               <rect width={NODE_W} height={KOPF_H} fill="transparent" />
               <KIcon name={kategorieIcon} size={14} x={8} y={6} className="vis-node-icon-soft" />
-              <text x={28} y={17} fontSize={11.5} fontWeight={650} fill="var(--k-ink)" className="vis-node-kopf-label">
+              <text x={28} y={17} fontSize={11.5} fontWeight={650} fill="var(--vis-node-tinte)" className="vis-node-kopf-label">
                 {kat.label}
               </text>
               {/* V1-Welle Commit 2: Node-Kollaps — nur Kopf+Ports sichtbar
@@ -1381,7 +1381,7 @@ export function NodeCanvas({
                     cx={-PORT_ABSATZ}
                     cy={y}
                     r={5}
-                    fill={graph.edges.some((e) => e.to === n.id && e.toPort === p.name) ? PORT_FARBE[p.typ] : 'var(--k-raised)'}
+                    fill={graph.edges.some((e) => e.to === n.id && e.toPort === p.name) ? PORT_FARBE[p.typ] : 'var(--vis-node-flaeche)'}
                     stroke={PORT_FARBE[p.typ]}
                     strokeWidth={1.5}
                     data-testid={`port-in-${p.name}`}
@@ -1408,7 +1408,7 @@ export function NodeCanvas({
                       setPending(null);
                     }}
                   />
-                  <text x={10} y={y + 3.5} fontSize={10} fill="var(--k-ink)">{p.label}</text>
+                  <text x={10} y={y + 3.5} fontSize={10} fill="var(--vis-node-tinte)">{p.label}</text>
                 </g>
               );
             })}
@@ -1432,7 +1432,7 @@ export function NodeCanvas({
                       setPending({ from: n.id, fromPort: p.name, typ: p.typ, x: pos.x, y: pos.y });
                     }}
                   />
-                  <text x={NODE_W - 10} y={y + 3.5} fontSize={10} textAnchor="end" fill="var(--k-ink)">{p.label}</text>
+                  <text x={NODE_W - 10} y={y + 3.5} fontSize={10} textAnchor="end" fill="var(--vis-node-tinte)">{p.label}</text>
                 </g>
               );
             })}

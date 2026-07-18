@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Hairline, KButton, KIcon, type KIconName, KSelect, Measure, melde, meldeFehler, moduleHue } from '@kosmo/ui';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Badge, Hairline, KButton, KIcon, type KIconName, KSelect, Measure, melde, meldeFehler, moduleHue, useOverlaySchliessen } from '@kosmo/ui';
 import { LearningJournal } from '@kosmo/ai';
 import {
   areaReport,
@@ -570,6 +570,10 @@ export function DesignWorkspace({
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
   const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
   const [dragCursor, setDragCursor] = useState<Pt | null>(null);
+  // C-11 (PE3-Fix v0.8.4): schwebender Inspector im Island-Modus — geöffnet
+  // NUR über das Kontextmenü «Eigenschaften» (kein automatisches Aufpoppen
+  // bei blosser Auswahl, Island bleibt radikal leer, PD3c).
+  const [eigenschaftenFloatOffen, setEigenschaftenFloatOffen] = useState(false);
   // Block 3 / E4: meshEdit-Modus — angeklickte Fläche (Kernel-Dreiecks-Index)
   // + der Distanzwert des Extrudieren-Felds (Default 500 mm, Buildplan FM3).
   const [meshFace, setMeshFace] = useState<number | null>(null);
@@ -1006,6 +1010,13 @@ export function DesignWorkspace({
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
     onPick: (id) => select(id ? [id] : []),
+    // C-11 (PE3-Fix v0.8.4): «Eigenschaften» im Kontextmenü — im
+    // Island-Default (kein Dock) öffnet der schwebende Inspector; im
+    // manuell-Modus genügt die Auswahl (gedockter Inspector zeigt sie).
+    onEigenschaften: (id) => {
+      select([id]);
+      if (designOberflaeche === 'island') setEigenschaftenFloatOffen(true);
+    },
     // Block 3 / E4: FreeMesh-Editiermodus — Vertex-Handles + Flächen-Pick.
     // KEIN allgemeines Gizmo-Framework (Buildplan §5), nur dieser eine Modus.
     meshEditId,
@@ -1383,13 +1394,15 @@ export function DesignWorkspace({
   function mehrpunktAbschliessen(p: Pt) {
     if (!activeStoreyId) return;
     if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
-      let outline = points;
-      const letzter = outline[outline.length - 1];
-      if (letzter && letzter.x === p.x && letzter.y === p.y) {
-        outline = outline.slice(0, -1);
-      } else {
-        outline = [...outline, p];
-      }
+      // C-11-Fix (PE3-Matrix v0.8.4, 2. Fassung): `p` nur anhängen, wenn es
+      // nicht schon der letzte Punkt ist, und danach KONSEKUTIVE Duplikate
+      // filtern — der Doppelklick-Weg liefert denselben Punkt doppelt über
+      // die zwei Click-Events (darum existierte das alte `slice(0,-1)`),
+      // der Rechtsklick-Weg dagegen gar nicht (dort warf das Slice einen
+      // ECHTEN Punkt weg und eine 3-Punkte-Kette schloss nie, PE3-Fund).
+      const letzter = points[points.length - 1];
+      const roh = letzter && letzter.x === p.x && letzter.y === p.y ? points : [...points, p];
+      const outline = roh.filter((q, i) => i === 0 || q.x !== roh[i - 1]!.x || q.y !== roh[i - 1]!.y);
       if (outline.length >= 3) {
         if (tool === 'dach') {
           try {
@@ -3735,6 +3748,14 @@ export function DesignWorkspace({
             <IslandBuehne onWerkzeugAktion={aktiviereIslandWerkzeug} />
             {/* PD4: der echte Kosmo-Orb-Zugang, s. Import-Kommentar oben. */}
             <KosmoOrb {...(onKosmoOeffnen ? { onKosmoOeffnen } : {})} />
+            {/* C-11 (PE3-Fix v0.8.4): «Eigenschaften» aus dem Kontextmenü —
+                derselbe `<Inspector/>` wie im manuell-Dock, als schwebende
+                Glas-Karte; Esc/Aussenklick schliesst (E2-Gesetz-Muster). */}
+            {eigenschaftenFloatOffen && (
+              <EigenschaftenFloat onClose={() => setEigenschaftenFloatOffen(false)}>
+                <Inspector />
+              </EigenschaftenFloat>
+            )}
           </>
         )}
 
@@ -4681,5 +4702,22 @@ function StandortSuche() {
         </span>
       )}
     </span>
+  );
+}
+
+/**
+ * C-11 (PE3-Fix v0.8.4): schwebende Inspector-Karte für den Island-Modus —
+ * das Kontextmenü «Eigenschaften» war dort wirkungslos, weil der gedockte
+ * Inspector nur im manuell-Modus rendert (DockFlaeche-Gate oben). Dieselbe
+ * `<Inspector/>`-Instanz, als Glas-Karte oben rechts; Esc/Aussenklick
+ * schliesst (E2-Gesetz-Muster, `useOverlaySchliessen`).
+ */
+function EigenschaftenFloat({ onClose, children }: { onClose: () => void; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useOverlaySchliessen(ref, onClose, { esc: true, aussenklick: true });
+  return (
+    <div ref={ref} className="dw-eigenschaften-float" data-testid="dw-eigenschaften-float">
+      {children}
+    </div>
   );
 }

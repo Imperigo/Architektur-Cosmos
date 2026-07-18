@@ -190,6 +190,19 @@
      Logik, die `--k-hover`/`--k-raised` überall sonst im Repo trägt, kein
      neuer Mechanismus. */
   background: var(--k-field);
+  /* C-16 (PE3-Fix v0.8.4): «Node-Tree dunkel, NODES HELL» — der frühere
+     `--k-raised`-Elevations-Schritt (#1a1e27 auf #0b0d12, Kontrast 1.17:1)
+     war eine Umdeutung der Owner-Vorgabe, keine Erfüllung. Die Karten
+     kreuzen jetzt die Theme-Tokens: im orbit-Theme Fläche=`--k-ink` (hell)
+     und Tinte=`--k-field` (dunkel) — echte helle Karten auf dunklem Canvas,
+     ohne neuen Hex (PB6-Konvention). Das Papier-Theme behält seine
+     bisherige Elevations-Logik (weisse Karten, dunkle Tinte). */
+  --vis-node-flaeche: var(--k-raised);
+  --vis-node-tinte: var(--k-ink);
+}
+[data-theme='orbit'] .vis-canvas-svg {
+  --vis-node-flaeche: var(--k-ink);
+  --vis-node-tinte: var(--k-field);
 }
 
 /* ── Kanten-Interaktionsflächen (Cursor/Farb-Utilities, keine Geometrie) */

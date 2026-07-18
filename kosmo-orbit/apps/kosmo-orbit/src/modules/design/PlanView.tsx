@@ -1944,13 +1944,16 @@ export function PlanView({
                   {
                     label: 'Eigenschaften',
                     testid: 'kontext2d-eigenschaften',
-                    // C-11: dieselbe Auswahl wie oben — der Rechts-Dock zeigt
-                    // den Inspector automatisch, sobald die Auswahl auf ein
-                    // reales Element zeigt (`inspectorSichtbar`-Guard,
-                    // DesignWorkspace.tsx, Gewicht 82 — bleibt gedockt). Kein
-                    // separates Popup nötig, «öffnet Inspector-Stufe» ist
-                    // damit bereits erfüllt.
-                    onClick: () => handlers.current?.onPick?.(kontext2d.entityId),
+                    // C-11 (PE3-Fix v0.8.4): Auswahl + expliziter
+                    // Eigenschaften-Weg. Im manuell-Modus zeigt der gedockte
+                    // Inspector die Auswahl; im Island-Default (wo es keinen
+                    // Dock gibt) öffnet `onEigenschaften` den schwebenden
+                    // Inspector (`DesignWorkspace`, `dw-eigenschaften-float`)
+                    // — vorher war dieser Eintrag dort wirkungslos.
+                    onClick: () => {
+                      handlers.current?.onPick?.(kontext2d.entityId);
+                      handlers.current?.onEigenschaften?.(kontext2d.entityId);
+                    },
                   },
                   {
                     label: 'Löschen',

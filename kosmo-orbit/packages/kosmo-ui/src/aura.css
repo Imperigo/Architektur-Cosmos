@@ -983,6 +983,18 @@ progress {
   max-width: 100%;
   flex-wrap: wrap;
 }
+/* C-3 (PE3-Fix v0.8.4): Zwischenband 861–1150px — s. Vertrag oben («beide
+   Zahlen MÜSSEN zusammen geändert werden») und das Gegenstück in
+   `orbit-065.css` (`.orbit065-faecher-huelle` 118px in demselben Band):
+   Lücke 44px ⇒ Mitte-zu-Mitte 152px > 118px Fächer ⇒ kein Abfangen, und
+   die Reihe (4×108 + 3×44 = 564px) bricht beim Tauri-Minimum 980px nicht
+   mehr um — der Umbruch war der C-3-Fund (Office-Fächer über der
+   KosmoData-Kachel). Ab 1151px gilt unverändert 80px/150px. */
+@media (min-width: 861px) and (max-width: 1150px) {
+  .k-orbit-ring-feld {
+    gap: 44px;
+  }
+}
 .k-orbit-mitte {
   position: absolute;
   top: 50%;

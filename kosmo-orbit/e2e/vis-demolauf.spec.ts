@@ -25,17 +25,10 @@ import { expect, test } from '@playwright/test';
  * Blatt — derselbe Kernel-Command-Weg wie überall sonst in der App.
  *
  * Bridge: seit dem PC2-CORS-Fix (main.py kennt 5174–5183) läuft diese Spec
- * gegen die GETEILTE :8600-Fake-Bridge wie alle anderen — die frühere
- * 8601-Sonder-Bridge (Fundbeleg PC2) ist obsolet:
- * Bridge-CORS-Allowlist (`tools/homestation-bridge/kosmo_bridge/main.py`
- * `_cors_origins()`) kennt fest nur 5173–5177/5183 — PC2s zugewiesener
- * `KOSMO_E2E_PORT` 5178 fehlt dort (Lücke zwischen 5177 und 5183, ausserhalb
- * DATEIKREIS PC2, `tools/homestation-bridge/**` bleibt unangetastet). Diese
- * Spec startet darum eine EIGENE `--fake-worker`-Bridge mit
- * `KOSMO_BRIDGE_ORIGIN=http://localhost:5178,http://127.0.0.1:5178` auf Port
- * 8600 (isoliert vom geteilten :8600 anderer paralleler Pakete, Muster
- * `parallel-pakete`-Skill: eigener Port statt geteilten Zustand riskieren).
- * `kosmo.bridge` wird explizit auf `:8600` gesetzt.
+ * gegen die GETEILTE :8600-Fake-Bridge wie alle anderen — sie startet KEINE
+ * eigene Bridge (der frühere Kopfkommentar behauptete das fälschlich,
+ * PE3-Fund C-18: es gab nie einen spawn-Aufruf, nur den /health-Check
+ * unten). `kosmo.bridge` wird explizit auf `:8600` gesetzt.
  */
 const BRIDGE = 'http://localhost:8600';
 
@@ -76,7 +69,7 @@ declare global {
   }
 }
 
-test('Kosmo-Demolauf: Graph → Kamera-Node → Stimmung (abend) → vis.render → Fake-Bridge-Job → Bild → aufs Blatt — ALLES über Commands', async ({
+test('Kosmo-Demolauf: Graph → Kamera → Material/Kombinierer → Stimmung (abend) → vis.render (backbone flux2-klein) → Fake-Bridge-Job → Bild → aufs Blatt — ALLES über Commands', async ({
   page,
 }) => {
   test.setTimeout(150_000);
@@ -105,16 +98,26 @@ test('Kosmo-Demolauf: Graph → Kamera-Node → Stimmung (abend) → vis.render 
     k.run('vis.nodeSetzen', { graphId: graph, typ: 'modell', x: 0, y: 0 });
     k.run('vis.nodeSetzen', { graphId: graph, typ: 'kamera', x: 0, y: 220 });
     k.run('vis.nodeSetzen', { graphId: graph, typ: 'stimmung', x: 260, y: 0, params: { preset: 'morgen' } });
+    // PE3-Fix C-18: der Auftrag verlangt Kamera→MATERIAL→Cycles — Material
+    // läuft im Graphen über den Kombinierer (Muster `vis-graph-aktionen.ts`:
+    // material→kombinierer.material, stimmung→kombinierer.stimmung,
+    // kombinierer.prompt→render.prompt).
+    k.run('vis.nodeSetzen', { graphId: graph, typ: 'material', x: 260, y: 220 });
+    k.run('vis.nodeSetzen', { graphId: graph, typ: 'kombinierer', x: 390, y: 100 });
     k.run('vis.nodeSetzen', { graphId: graph, typ: 'render', x: 520, y: 100 });
     const nodes = k.state().doc.byKind('visgraph')[0]!.nodes!;
     const modell = nodes.find((n) => n.typ === 'modell')!.id;
     const kamera = nodes.find((n) => n.typ === 'kamera')!.id;
     const stimmung = nodes.find((n) => n.typ === 'stimmung')!.id;
+    const material = nodes.find((n) => n.typ === 'material')!.id;
+    const komb = nodes.find((n) => n.typ === 'kombinierer')!.id;
     const render = nodes.find((n) => n.typ === 'render')!.id;
-    // Schritt 3 — Kamera-Node verdrahten (neben Szene/Prompt).
+    // Schritt 3 — Kamera + Material verdrahten (neben Szene/Prompt).
     k.run('vis.verbinden', { graphId: graph, from: modell, fromPort: 'szene', to: render, toPort: 'szene' });
     k.run('vis.verbinden', { graphId: graph, from: kamera, fromPort: 'kameras', to: render, toPort: 'kameras' });
-    k.run('vis.verbinden', { graphId: graph, from: stimmung, fromPort: 'prompt', to: render, toPort: 'prompt' });
+    k.run('vis.verbinden', { graphId: graph, from: material, fromPort: 'material', to: komb, toPort: 'material' });
+    k.run('vis.verbinden', { graphId: graph, from: stimmung, fromPort: 'prompt', to: komb, toPort: 'stimmung' });
+    k.run('vis.verbinden', { graphId: graph, from: komb, fromPort: 'prompt', to: render, toPort: 'prompt' });
     // Schritt 4 — Stimmung parametrieren (preset: abend), EXPLIZIT als
     // eigener `vis.nodeParametrieren`-Aufruf (Auftragstext).
     k.run('vis.nodeParametrieren', { graphId: graph, nodeId: stimmung, params: { preset: 'abend' } });
@@ -138,6 +141,10 @@ test('Kosmo-Demolauf: Graph → Kamera-Node → Stimmung (abend) → vis.render 
       nodeId: render,
       kameraWahl: 'auto',
       stimmungPreset: 'abend',
+      // PE3-Fix C-18: der AI-Slot wird EXPLIZIT ausgeübt statt still auf
+      // dem 'qwen'-Default zu liegen — der Auftragstext nennt den AI-Slot
+      // als eigenen Demolauf-Schritt.
+      backbone: 'flux2-klein',
     });
   }, aufbau);
 
@@ -148,6 +155,7 @@ test('Kosmo-Demolauf: Graph → Kamera-Node → Stimmung (abend) → vis.render 
   expect(wunsch).not.toBeNull();
   expect(wunsch?.kameraWahl).toBe('auto');
   expect(wunsch?.stimmungPreset).toBe('abend');
+  expect(wunsch?.backbone).toBe('flux2-klein');
 
   // Der Executor-Watcher in `VisWorkspace.tsx` beobachtet genau dieses Feld
   // und stösst `sendeGraphRenderAuftrag()` an — DIESELBE Kette wie ein Klick

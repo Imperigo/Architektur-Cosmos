@@ -266,6 +266,20 @@
     width: min(200px, 70vw);
   }
 }
+/* C-3 (PE3-Fix v0.8.4): Zwischenband 861–1150px — beim Tauri-Minimum
+   980px (`tauri.conf.json` minWidth) brach die 4-Kacheln-Reihe um, und der
+   geschlossene KosmoOffice-Fächer (reale Box + pointer-events, Vertrag
+   `.k-orbit-ring-feld`-Kommentar in aura.css) fing Klicks auf die
+   KosmoData-Kachel ab (11664px² Überlappung, live gemessen). Lücke und
+   Fächer-Breite wandern laut Vertrag NUR ZUSAMMEN: aura.css senkt die
+   Reihen-Lücke in diesem Band auf 44px (Mitte-zu-Mitte 152px), hier
+   schrumpft der Fächer auf 118px — 34px Sicherheitsabstand, Reihe bleibt
+   einzeilig (564px Bedarf bei 980px Fenster, live nachgemessen). */
+@media (min-width: 861px) and (max-width: 1150px) {
+  .orbit065-faecher-huelle {
+    width: min(118px, 40vw);
+  }
+}
 .orbit065-faecher-huelle.offen {
   opacity: 1;
   z-index: 20;
