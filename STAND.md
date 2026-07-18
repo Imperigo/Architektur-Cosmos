@@ -1,16 +1,16 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.2 «Selbstverbesserung»** (Stand 17.07.2026, ROADMAP 434).
-**Alle Versionen davor (≤ v0.8.1) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.8.3 «Wissensfundament»** (Stand 18.07.2026, ROADMAP 448).
+**Alle Versionen davor (≤ v0.8.2) sind ARCHIV.** Nie mehr darauf aufbauen.
 
-> **Versions-Hinweis:** die v0.8.0B-Sonderregelung (Owner-Anzeigeversion mit
-> Buchstaben-Suffix entkoppelt von einem strikten SemVer in `package.json`)
-> ist mit diesem Release nicht mehr nötig — «0.8.1» ist selbst gültiges
-> SemVer. Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
-> `tauri.conf.json`/`package-lock.json` führen wieder **deckungsgleich
-> 0.8.1**. Der `__APP_VERSION__`-Entkopplungs-Mechanismus (`vite.config.ts`)
-> bleibt trotzdem bestehen — er trägt bei Bedarf die nächste Teil-Release-
-> Buchstaben-Ausnahme, ohne neu gebaut werden zu müssen.
+> **Versions-Hinweis:** Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
+> `tauri.conf.json`/`package-lock.json` führen deckungsgleich **0.8.3** — und
+> seit diesem Release auch das `APP_VERSION`-Literal in
+> `apps/kosmo-orbit/vite.config.ts` (speist den App-Kopf): es war beim
+> v0.8.2-Bump vergessen worden und zeigte eine Version lang «v0.8.1»
+> (P10-Fund, ROADMAP 447). Der Bump hat damit FÜNF Träger; der
+> `__APP_VERSION__`-Entkopplungs-Mechanismus bleibt für künftige
+> Teil-Release-Buchstaben-Ausnahmen bestehen.
 
 - **Entwicklungs-Branch:** `claude/kosmo-orbit-v1-build-pzxkbj`
 - **Wahrheit ist `origin/<branch>`, nicht der lokale Container.**

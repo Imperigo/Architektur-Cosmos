@@ -35,6 +35,24 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.3',
+    datum: '2026-07-18',
+    punkte: [
+      {
+        text: 'KosmoData ist jetzt Kosmos echtes Wissensfundament: die Referenz-Suche läuft über denselben BM25-Index wie die Wissens-Suche (ein geteilter Index statt zweier Wahrheiten), Referenz-Treffer im Chat tragen [Qn]-Belege und rendern als richtige Referenz-Karten mit Bild, und Kosmo bekommt pro Zug einen kompakten Daten-Kontext-Block in den Systemprompt (Token-Budget-bewiesen, nie über 1500 gesamt). Neu lassen sich eigene Referenzen als JSON importieren — mit zeilengenauer Ablehnliste statt Alles-oder-Nichts, «Eigene Referenz»-Kennzeichnung, Entfernen-Knopf und sofortiger Durchsuchbarkeit; der eingebaute 112er-Seed bleibt dabei byte-unverändert.',
+      },
+      {
+        text: 'Drei Island-Werkzeuge, die in v0.8.2 noch ehrliche Rahmen waren, sind jetzt echt (Owner-Freigabe §8): Öffnungen platzieren per Klick auf eine Wand (die Skizze-Geste bleibt als zweiter Weg), ein Punkt-zu-Punkt-Mess-Werkzeug mit eigener MassKette-Entität im Kern (Undo/Sync inklusive, die 35 bestehenden Plan-Goldens blieben byte-identisch, ein 36. kam dazu) und Kommentare als vollwertige Kernel-Entität mit Setzen/Erledigen/Löschen, Plan-Overlay und Insel-Verwaltung. Der Deep-Link von Rendern/Blättern zur jeweiligen Station ist als entschieden dokumentiert.',
+      },
+      {
+        text: 'iPad-Feinschliff: Island-Popups und Einstellungsfenster klammern sich jetzt beweisbar in den Viewport (Bounding-Box-Sweep über alle 29 Werkzeuge bei 1024×768) — und weichen dabei der eigenen Werkzeugleiste aus, statt sie zu überdecken; die Aufklapp-Animationen springen nicht mehr. Dazu ein Vorschlag hinter einer Einstellung (Standard AUS): Zwei-Finger-Doppeltipp macht rückgängig — die Konvention selbst bleibt bewusst eine offene Owner-Frage. Zwei alte Test-Flakes (Statusleiste wächst in die Navigation, verdeckter Modus-Chip im 3D|Plan-Split) sind an der Wurzel gefixt.',
+      },
+      {
+        text: 'Fundament-Arbeit, ehrlich benannt: sechs kuratierte Arbeits-Skills (adaptiert aus dem Owner-markierten `claude-code-best-practice`-Repo, MIT-Attribution) liegen jetzt versioniert im Repo und fliessen als eigener Block in Kosmos Systemprompt; ein reproduzierbarer Commands-Trainingsdatensatz (372 seeded Beispiele über ALLE Kosmo-Befehle, inkl. 13% Ablehn-Fällen) füllt die bisher leere Registry-Zeile; die HomeStation-Bridge hat einen LoRA-Trainingspaket-Empfänger mit Manifest-/Hash-Prüfung — der echte GPU-/Unsloth-Lauf bleibt offen HomeStation-Sache, im Container läuft nur der gekennzeichnete Probemodus. Bridge-Embeddings, Vision-OCR und Mehrschicht-Ebenen sind bewusst NICHT Teil dieser Version.',
+      },
+    ],
+  },
+  {
     version: '0.8.2',
     datum: '2026-07-17',
     punkte: [
