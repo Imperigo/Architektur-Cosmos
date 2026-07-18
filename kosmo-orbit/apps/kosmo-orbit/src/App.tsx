@@ -1001,11 +1001,25 @@ export function App() {
           </KFehlerzone>
         ) : screen === 'publish' ? (
           <KFehlerzone bereich="KosmoPublish" onDiagnose={() => gehZu('doc')}>
-            <PublishWorkspace onEinstellungen={() => oeffneEinstellungen({ id: 'publish', name: 'KosmoPublish' })} />
+            <PublishWorkspace
+              onEinstellungen={() => oeffneEinstellungen({ id: 'publish', name: 'KosmoPublish' })}
+              // PB4-Nachzug (E2-Orb-Gesetz): derselbe Weg wie DesignWorkspace/
+              // VisWorkspace oben — Doppelklick auf den Island-Orb öffnet Kosmo.
+              onKosmoOeffnen={() => {
+                requestKosmoFokus();
+                setKosmoOpen(true);
+              }}
+            />
           </KFehlerzone>
         ) : screen === 'prepare' ? (
           <KFehlerzone bereich="KosmoPrepare" onDiagnose={() => gehZu('doc')}>
-            <PrepareWorkspace />
+            <PrepareWorkspace
+              // PB4-Nachzug (E2-Orb-Gesetz): s. PublishWorkspace direkt oben.
+              onKosmoOeffnen={() => {
+                requestKosmoFokus();
+                setKosmoOpen(true);
+              }}
+            />
           </KFehlerzone>
         ) : screen === 'doc' ? (
           <KFehlerzone bereich="KosmoDoc">

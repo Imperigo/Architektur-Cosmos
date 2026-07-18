@@ -64,9 +64,13 @@ export interface PublishWorkspaceProps {
   /** Serie K / A4: öffnet das zentrale Einstellungs-Panel, vorgefiltert auf
    *  KosmoPublish. Optional — nur `App.tsx` kennt diesen Weg. */
   onEinstellungen?: () => void;
+  /** PB4-Nachzug (E2-Orb-Gesetz): derselbe Kosmo-Öffnen-Weg wie
+   *  `VisWorkspace`/`DesignWorkspace` — Doppelklick auf den Island-Orb
+   *  öffnet das KosmoPanel. Nur `App.tsx` kennt diesen Weg. */
+  onKosmoOeffnen?: () => void;
 }
 
-export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}) {
+export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWorkspaceProps = {}) {
   const revision = useProject((s) => s.revision);
   const runCommand = useProject((s) => s.runCommand);
   const undo = useProject((s) => s.undo);
@@ -629,7 +633,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           )}
         </div>
         <IslandBuehne inseln={PUBLISH_INSELN} registry={publishInhaltsRegistry} onWerkzeugAktion={aktivierePublishIslandWerkzeug} />
-        <KosmoOrb />
+        <KosmoOrb {...(onKosmoOeffnen ? { onKosmoOeffnen } : {})} />
       </div>
     );
   }

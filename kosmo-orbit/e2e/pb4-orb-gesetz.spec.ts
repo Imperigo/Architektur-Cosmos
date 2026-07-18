@@ -203,6 +203,11 @@ test.describe('Screenshots (Gate-Beleg, PB4-Bericht)', () => {
       await page.click('[data-testid="module-publish"]');
       await expect(page.locator('[data-testid="kosmo-orb-wurzel"]')).toBeVisible();
       await page.screenshot({ path: 'e2e-results/pb4-orb-publish.png' });
+      // PB4-Nachzug II: Doppelklick öffnet auch hier das KosmoPanel —
+      // `onKosmoOeffnen` ist jetzt verdrahtet (war das dokumentierte Alt-Loch
+      // «KosmoOrb ohne onKosmoOeffnen-Prop, No-op» aus dem PB4-Bericht).
+      await page.dblclick('[data-testid="kosmo-orb-knopf"]');
+      await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
     });
   });
 
@@ -227,6 +232,9 @@ test.describe('Screenshots (Gate-Beleg, PB4-Bericht)', () => {
       await expect(page.locator('[data-testid="prepare-island-fuellen"]')).toBeVisible();
       await expect(page.locator('[data-testid="kosmo-orb-wurzel"]')).toBeVisible();
       await page.screenshot({ path: 'e2e-results/pb4-orb-prepare.png' });
+      // PB4-Nachzug II: Doppelklick→KosmoPanel auch in Prepare (E2 überall).
+      await page.dblclick('[data-testid="kosmo-orb-knopf"]');
+      await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
     });
   });
 });

@@ -50,7 +50,13 @@ import './prepare.css';
  * Abschluss-Aktionen ihrer eigenen (optionalen) Unterflüsse → `tone="quiet"`.
  */
 
-export function PrepareWorkspace() {
+/** PB4-Nachzug (E2-Orb-Gesetz): derselbe Kosmo-Öffnen-Weg wie
+ *  `VisWorkspace`/`PublishWorkspace` — nur `App.tsx` kennt ihn. */
+export interface PrepareWorkspaceProps {
+  onKosmoOeffnen?: () => void;
+}
+
+export function PrepareWorkspace({ onKosmoOeffnen }: PrepareWorkspaceProps = {}) {
   // PC4 (`docs/V084-SPEZ.md` §5 W3, C-20) — Island-Modus. `prepareOberflaeche`
   // spiegelt `VisWorkspace.tsx`s `visOberflaeche`-Umschalter 1:1 (additives
   // Store-Feld, `state/ui-zustand.ts`, Default 'island'). Alle Hooks unten
@@ -162,7 +168,7 @@ export function PrepareWorkspace() {
             if (w.id === 'manuell') setPrepareOberflaeche('manuell');
           }}
         />
-        <KosmoOrb />
+        <KosmoOrb {...(onKosmoOeffnen ? { onKosmoOeffnen } : {})} />
       </div>
     );
   }
