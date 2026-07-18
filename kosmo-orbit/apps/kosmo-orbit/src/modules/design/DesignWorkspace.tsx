@@ -814,6 +814,43 @@ export function DesignWorkspace({
         setPoints([]);
         return;
       }
+      // C-9 (PB1, docs/V084-SPEZ.md §7 D8): Delete/Backspace löscht die
+      // aktuelle Auswahl — ArchiCAD-Gefühl. Kein Kürzel (kurztasten.ts bleibt
+      // PB5-Eigentum, s. `kurztasteFuer` unten, unverändert) — reiner
+      // Werkzeug-keydown mit demselben Eingabefeld-/Dialog-Guard wie der
+      // Esc-Zweig oben. `masseingabeTaste`s Capture-Handler (:1298ff)
+      // konsumiert Backspace bereits VOR dieser Bubble-Phase (stopPropagation),
+      // solange ein Zahlenpuffer offen ist — dieser Zweig sieht Backspace also
+      // nur, wenn gerade NICHT getippt wird. Mehrfachauswahl läuft als EINE
+      // Undo-Gruppe (`history.beginGroup`/`endGroup`, Muster T5 oben), jeder
+      // einzelne `design.loeschen`-Fehlschlag (z.B. bereits gelöschtes
+      // Element) bricht die übrigen nicht ab.
+      if (
+        !e.repeat &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !e.altKey &&
+        !fokusImEingabefeld &&
+        (e.key === 'Delete' || e.key === 'Backspace')
+      ) {
+        const { selection, history } = useProject.getState();
+        if (selection.length === 0) return;
+        e.preventDefault();
+        history.beginGroup();
+        try {
+          for (const id of selection) {
+            try {
+              runCommand('design.loeschen', { entityId: id });
+            } catch (err) {
+              meldeFehler(err);
+            }
+          }
+        } finally {
+          history.endGroup();
+        }
+        useProject.getState().select([]);
+        return;
+      }
       const werkzeug = kurztasteFuer(e, fokusImEingabefeld);
       if (werkzeug) {
         e.preventDefault();
@@ -995,48 +1032,9 @@ export function DesignWorkspace({
         : null,
     onGroundDoubleClick: (e) => {
       // ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab
-      if (!activeStoreyId) return;
-      const p = zielPunkt(e.p, e.shiftKey);
-      if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
-        // Der zweite Klick der Doppelklick-Geste liegt am selben Ort wie der
-        // erste — der ist evtl. schon als (Duplikat-)Punkt angehängt worden.
-        let outline = points;
-        const letzter = outline[outline.length - 1];
-        if (letzter && letzter.x === p.x && letzter.y === p.y) outline = outline.slice(0, -1);
-        if (outline.length >= 3) {
-          if (tool === 'dach') {
-            try {
-              runCommand('design.dachErstellen', {
-                storeyId: activeStoreyId,
-                outline,
-                pitch: 35,
-                overhang: 500,
-              });
-            } catch (err) {
-              meldeFehler(err);
-            }
-          } else if (tool === 'volumen') {
-            runCommand('design.volumenErstellen', { storeyId: activeStoreyId, outline, height: 9000 });
-          } else {
-            const n = useProject.getState().doc.byKind('zone').length + 1;
-            runCommand('design.zoneErstellen', {
-              storeyId: activeStoreyId,
-              outline,
-              name: `Raum ${n}`,
-              sia: 'HNF',
-              ...(wohnungstyp ? { program: wohnungstyp } : {}),
-            });
-          }
-        }
-      } else if (tool === 'messen') {
-        // E2 (§2.4): Doppelklick committet die gesammelte Punktkette in EINEM
-        // `design.massKetteSetzen`-Aufruf (ein Undo-Schritt) — kein
-        // `history.beginGroup()` nötig (Muster-Abweichung von der Sketch-
-        // Wand-Sequenz oben, s. Spez §2.4 letzter Satz).
-        massKetteAbschliessen();
-      }
-      // Wand/Treppe/Schnitt: Kette bzw. Antritt/Austritt-Eingabe abschliessen
-      setPoints([]);
+      // — C-10 (Abschluss-Gesetz, PB1): dieselbe Funktion, die auch Enter mit
+      // leerem Zahlenpuffer aufruft (s. `mehrpunktAbschliessen` unten, :1298ff).
+      mehrpunktAbschliessen(zielPunkt(e.p, e.shiftKey));
     },
     onSketchAccept: (segments, meta) => {
       if (!activeStoreyId || !effectiveAssembly) return;
@@ -1290,6 +1288,58 @@ export function DesignWorkspace({
     setPoints([]);
   }
 
+  /** C-10 (PB1, docs/V084-SPEZ.md §7 D8 — Abschluss-Gesetz): schliesst JEDES
+   *  Mehrpunkt-Werkzeug ab, aufgerufen von ZWEI Auslösern mit demselben
+   *  Ergebnis — `onGroundDoubleClick` (oben, `p` = Doppelklick-Weltpunkt) und
+   *  Enter bei leerem Zahlenpuffer (unten, `p` = letzter Cursor-Weltpunkt).
+   *  Volumen/Zone/Dach: `p` ergänzt den Umriss um den fehlenden Eckpunkt —
+   *  ist `p` bereits der letzte Punkt (Doppelklicks zweiter Klick lief schon
+   *  durch `onGroundClick`), wird das Duplikat entfernt statt doppelt
+   *  gezählt; ist `p` neu (Enter ohne vorherigen Klick dort), wird er
+   *  angehängt — ab 3 Punkten entsteht das Element. Messen: committet die
+   *  gesammelte Kette (`massKetteAbschliessen`, ignoriert `p`). Wand/Treppe/
+   *  Schnitt haben jeden Punkt schon je Klick committet (`punktSetzen`
+   *  :1131ff) — hier endet nur die laufende Kette. */
+  function mehrpunktAbschliessen(p: Pt) {
+    if (!activeStoreyId) return;
+    if (tool === 'volumen' || tool === 'zone' || tool === 'dach') {
+      let outline = points;
+      const letzter = outline[outline.length - 1];
+      if (letzter && letzter.x === p.x && letzter.y === p.y) {
+        outline = outline.slice(0, -1);
+      } else {
+        outline = [...outline, p];
+      }
+      if (outline.length >= 3) {
+        if (tool === 'dach') {
+          try {
+            runCommand('design.dachErstellen', { storeyId: activeStoreyId, outline, pitch: 35, overhang: 500 });
+          } catch (err) {
+            meldeFehler(err);
+          }
+        } else if (tool === 'volumen') {
+          runCommand('design.volumenErstellen', { storeyId: activeStoreyId, outline, height: 9000 });
+        } else {
+          const n = useProject.getState().doc.byKind('zone').length + 1;
+          runCommand('design.zoneErstellen', {
+            storeyId: activeStoreyId,
+            outline,
+            name: `Raum ${n}`,
+            sia: 'HNF',
+            ...(wohnungstyp ? { program: wohnungstyp } : {}),
+          });
+        }
+      }
+    } else if (tool === 'messen') {
+      // E2 (§2.4): EIN `design.massKetteSetzen`-Aufruf, kein eigenes
+      // `history.beginGroup()` nötig (Spez §2.4 letzter Satz).
+      massKetteAbschliessen();
+      return; // massKetteAbschliessen() leert `points` bereits selbst
+    }
+    // Wand/Treppe/Schnitt: Kette bzw. Antritt/Austritt-Eingabe abschliessen
+    setPoints([]);
+  }
+
   useEffect(() => {
     setPoints([]);
     setMasseingabe('');
@@ -1302,12 +1352,30 @@ export function DesignWorkspace({
   // die Station!) dürfen einer aktiven Zeichenkette die Zahlen nicht klauen.
   // Eigener Listener mit echten Deps (der Kurztasten-Handler oben ist bewusst
   // zustandslos registriert).
+  //
+  // C-10 (Abschluss-Gesetz, PB1, docs/V084-SPEZ.md §7 D8): derselbe Listener
+  // trägt jetzt auch den Enter-Zahlenpuffer-Sonderfall — Enter mit
+  // NICHT-leerem Puffer bleibt unverändert «Zahl bestätigen»
+  // (`masseingabeTaste` unten), Enter mit LEEREM Puffer heisst «Werkzeug
+  // abschliessen» (`mehrpunktAbschliessen`, geteilt mit dem Doppelklick oben).
+  // Der Abschluss-Zweig läuft darum VOR dem `ZEICHEN_WERKZEUGE`-Gate — Messen
+  // gehört selbst NICHT zu `ZEICHEN_WERKZEUGE` (kein Ortho/Fluchtlinien-Snap,
+  // unverändert), braucht das Abschluss-Gesetz aber genauso; `masseingabe`
+  // ist für Messen ohnehin immer leer (die Ziffern-Zweige unten sind hinter
+  // demselben Gate versperrt), der Zweig greift also nur bei Enter durch.
   useEffect(() => {
     const onKey = (ev: KeyboardEvent) => {
-      if (!ZEICHEN_WERKZEUGE.has(tool) || points.length === 0) return;
+      if (points.length === 0) return;
       if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
       if (istEingabefeld(document.activeElement)) return;
       if (document.querySelector('[role="dialog"]')) return;
+      if (!ev.repeat && ev.key === 'Enter' && masseingabe === '') {
+        ev.preventDefault();
+        ev.stopPropagation();
+        mehrpunktAbschliessen(cursor ?? points[points.length - 1]!);
+        return;
+      }
+      if (!ZEICHEN_WERKZEUGE.has(tool)) return;
       // Esc mit gefülltem Puffer: NUR den Tippfehler verwerfen — die Kette
       // (und das Werkzeug) bleiben; der globale Esc-Handler kommt nicht dran.
       if (ev.key === 'Escape' && masseingabe !== '') {

@@ -219,6 +219,11 @@ test('v0.6.6 Welle 2 Stream C: Touch-Longpress auf ein Element öffnet das Konte
   await page.mouse.click(mitte.x, mitte.y, { button: 'right' });
   await expect(page.locator('[data-testid="viewport-kontextmenue"]')).toBeVisible();
   await expect(page.locator('[data-testid="kontext2d-auswaehlen"]')).toBeVisible();
+  // PB1 C-11 (docs/V084-SPEZ.md §7 D8): Ausbau auf Element-Treffer trägt jetzt
+  // auch «Eigenschaften» und «Löschen» (eigene Testfälle in
+  // `pb1-bearbeiten.spec.ts`, hier nur die Existenz neben dem Bestandsweg).
+  await expect(page.locator('[data-testid="kontext2d-eigenschaften"]')).toBeVisible();
+  await expect(page.locator('[data-testid="kontext2d-loeschen"]')).toBeVisible();
   // Ein Klick auf den Deckel (deutlich AUSSERHALB des Menü-Panels, das bei
   // `mitte` selbst beginnt und nach unten-rechts wächst) schliesst das Menü —
   // `ViewportKontextmenue.tsx` legt einen vollflächigen Deckel über die Ansicht.
@@ -249,6 +254,11 @@ test('v0.6.6 Welle 2 Stream C: Touch-Longpress auf ein Element öffnet das Konte
   await expect.poll(() => page.evaluate(() => window.__kosmo.state().doc.byKind('wall').length)).toBe(1);
   const selHighlight = page.locator('[data-testid="auswahl-highlight"]');
   await expect(selHighlight).toBeAttached();
+  // PB1 C-12: Highlight ist jetzt zwei Schichten (Kernstrich 28px statt 22px
+  // + eine neue Glow-Schicht in `--k-accent-wash`) — Vorher/Nachher-Beleg im
+  // Bericht, hier der Live-DOM-Beweis für den Endwert.
+  await expect(selHighlight).toHaveAttribute('stroke-width', '28');
+  await expect(page.locator('[data-testid="auswahl-glow"]')).toBeAttached();
   void wallId;
 
   // Aufräumen: den hängenden Touch-Pointer beenden (kein Effekt auf die Assertions oben).

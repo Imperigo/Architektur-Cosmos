@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { KSelect } from '@kosmo/ui';
+import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
 import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
@@ -349,7 +349,22 @@ export function PlanView({
   // der 3D-Viewport (`ViewportKontextmenue.tsx`, unverändert wiederverwendet,
   // «kein neues Menü bauen»). Rechtsklick öffnet dasselbe Menü (vorher: reines
   // `preventDefault()`, kein Menü — additiv, kein bestehender Vertrag).
-  const [kontext2d, setKontext2d] = useState<{ x: number; y: number; entityId: string } | null>(null);
+  //
+  // C-11 (PB1, docs/V084-SPEZ.md §7 D8): der Ausbau trägt jetzt ZWEI Modi
+  // statt nur des Element-Treffers — `modus: 'element'` (Auswählen/
+  // Eigenschaften/Löschen) UND `modus: 'kette'` (Abschliessen/Abbrechen,
+  // solange ein Mehrpunkt-Werkzeug läuft — erkannt an `handlers.current
+  // .previewLine`, dem bestehenden Signal aus DesignWorkspace, kein neues
+  // Feld in `ViewportHandlers`/Viewport3D.tsx nötig). Die Kette hat Vorrang
+  // vor einem Element-Treffer darunter: ein Rechtsklick beim Zeichnen bedient
+  // das laufende Werkzeug, nicht ein zufällig getroffenes Nachbarelement.
+  // «Werkzeug-Schnelleinstellungen auf leerer Fläche» (Spez-Punkt 4, dritter
+  // Fall) bleibt bewusst AUSSEN vor — es gibt ausserhalb von `island/**`
+  // keine Brücke, die ein Insel-Popup programmatisch öffnet, und `island/**`
+  // liegt ausserhalb des PB1-Dateikreises (s. Bericht).
+  const [kontext2d, setKontext2d] = useState<
+    { modus: 'element'; x: number; y: number; entityId: string } | { modus: 'kette'; x: number; y: number; p: Pt } | null
+  >(null);
   const stoppeLongPressPoll = () => {
     if (longPressPollRef.current !== null) {
       cancelAnimationFrame(longPressPollRef.current);
@@ -363,15 +378,19 @@ export function PlanView({
       if (ev.longPress) {
         longPressPollRef.current = null;
         if (activeStoreyId) {
-          const hit = pickEntityAt(doc, activeStoreyId, toWorld(ev.longPress.x, ev.longPress.y));
-          if (hit) {
-            haptikTick(); // §6: Longpress-Auslösung
-            const rect = svgRef.current?.getBoundingClientRect();
-            setKontext2d({
-              x: ev.longPress.x - (rect?.left ?? 0),
-              y: ev.longPress.y - (rect?.top ?? 0),
-              entityId: hit,
-            });
+          const p = toWorld(ev.longPress.x, ev.longPress.y);
+          const rect = svgRef.current?.getBoundingClientRect();
+          const x = ev.longPress.x - (rect?.left ?? 0);
+          const y = ev.longPress.y - (rect?.top ?? 0);
+          if (handlers.current?.previewLine) {
+            haptikTick();
+            setKontext2d({ modus: 'kette', x, y, p });
+          } else {
+            const hit = pickEntityAt(doc, activeStoreyId, p);
+            if (hit) {
+              haptikTick(); // §6: Longpress-Auslösung
+              setKontext2d({ modus: 'element', x, y, entityId: hit });
+            }
           }
         }
         return;
@@ -943,11 +962,20 @@ export function PlanView({
           // öffnet dasselbe Kontextmenü-Bauteil wie Touch-Longpress (vorher:
           // reines `preventDefault()`, kein Menü — additiv, kein bestehender
           // Vertrag betroffen, kein Spec deckt bisher `contextmenu` hier ab).
+          // C-11 (PB1): läuft eine Mehrpunkt-Kette, hat Abschliessen/Abbrechen
+          // Vorrang vor einem Element-Treffer darunter.
           if (!activeStoreyId) return;
-          const hit = pickEntityAt(doc, activeStoreyId, toWorld(e.clientX, e.clientY));
-          if (!hit) return;
+          const p = toWorld(e.clientX, e.clientY);
           const rect = svgRef.current?.getBoundingClientRect();
-          setKontext2d({ x: e.clientX - (rect?.left ?? 0), y: e.clientY - (rect?.top ?? 0), entityId: hit });
+          const x = e.clientX - (rect?.left ?? 0);
+          const y = e.clientY - (rect?.top ?? 0);
+          if (handlers.current?.previewLine) {
+            setKontext2d({ modus: 'kette', x, y, p });
+            return;
+          }
+          const hit = pickEntityAt(doc, activeStoreyId, p);
+          if (!hit) return;
+          setKontext2d({ modus: 'element', x, y, entityId: hit });
         }}
       >
         <defs>
@@ -1480,25 +1508,47 @@ export function PlanView({
 
           {/* Auswahl-Highlight (Anwählen) + Zieh-Vorschau (Verschieben) — reine
               Bildschirmdarstellung aus der Entity-Geometrie, unabhängig von
-              derivePlan/den Poché-Regionen. */}
+              derivePlan/den Poché-Regionen.
+              C-12 (PB1, docs/V084-SPEZ.md §7 D8, Owner-Befund «Auswahl-
+              Umrandung kräftiger»): ZWEI Schichten statt einer — ein breiter
+              Glow-Strich in `--k-accent-wash` (dieselbe Token-Familie, die
+              das Kontextmenü unten schon für seinen Hover nutzt) LIEGT UNTER
+              dem Kernstrich, der selbst ebenfalls dicker geworden ist (22→28,
+              beim Ziehen 30→38). Reiner Token-Sweep, kein neuer Hex-Wert —
+              `--k-accent`/`--k-accent-wash` existieren beide schon in
+              `aura.css`. `data-testid="auswahl-highlight"` bleibt auf dem
+              Kernstrich (bestehender Vertrag, `plan-interaktion.spec.ts`),
+              die Glow-Schicht ist rein dekorativ (`aria-hidden` via fehlenden
+              Text/keine eigene Testid-Erwartung). */}
           {selection.map((id) => {
             const outline = outlineOf(doc, id);
             if (!outline || outline.length < 2) return null;
             const off = handlers.current?.moveOffset;
             const ziehend = off && off.id === id;
             const pts = ziehend ? outline.map((q) => ({ x: q.x + off.dx, y: q.y + off.dy })) : outline;
+            const d = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`;
             return (
-              <path
-                key={`sel-${id}`}
-                data-testid="auswahl-highlight"
-                d={`M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`}
-                fill="none"
-                stroke="var(--k-accent)"
-                strokeWidth={ziehend ? 30 : 22}
-                strokeDasharray={ziehend ? '90 50' : undefined}
-                opacity={ziehend ? 0.85 : 1}
-                pointerEvents="none"
-              />
+              <g key={`sel-${id}`} pointerEvents="none">
+                <path
+                  data-testid="auswahl-glow"
+                  d={d}
+                  fill="none"
+                  stroke="var(--k-accent-wash)"
+                  strokeWidth={ziehend ? 60 : 48}
+                  strokeLinejoin="round"
+                  opacity={ziehend ? 0.85 : 1}
+                />
+                <path
+                  data-testid="auswahl-highlight"
+                  d={d}
+                  fill="none"
+                  stroke="var(--k-accent)"
+                  strokeWidth={ziehend ? 38 : 28}
+                  strokeDasharray={ziehend ? '90 50' : undefined}
+                  strokeLinejoin="round"
+                  opacity={ziehend ? 0.85 : 1}
+                />
+              </g>
             );
           })}
 
@@ -1652,13 +1702,53 @@ export function PlanView({
           x={kontext2d.x}
           y={kontext2d.y}
           aktionen={
-            [
-              {
-                label: 'Auswählen',
-                testid: 'kontext2d-auswaehlen',
-                onClick: () => handlers.current?.onPick?.(kontext2d.entityId),
-              },
-            ] satisfies KontextAktion[]
+            kontext2d.modus === 'element'
+              ? ([
+                  {
+                    label: 'Auswählen',
+                    testid: 'kontext2d-auswaehlen',
+                    onClick: () => handlers.current?.onPick?.(kontext2d.entityId),
+                  },
+                  {
+                    label: 'Eigenschaften',
+                    testid: 'kontext2d-eigenschaften',
+                    // C-11: dieselbe Auswahl wie oben — der Rechts-Dock zeigt
+                    // den Inspector automatisch, sobald die Auswahl auf ein
+                    // reales Element zeigt (`inspectorSichtbar`-Guard,
+                    // DesignWorkspace.tsx, Gewicht 82 — bleibt gedockt). Kein
+                    // separates Popup nötig, «öffnet Inspector-Stufe» ist
+                    // damit bereits erfüllt.
+                    onClick: () => handlers.current?.onPick?.(kontext2d.entityId),
+                  },
+                  {
+                    label: 'Löschen',
+                    testid: 'kontext2d-loeschen',
+                    onClick: () => {
+                      const id = kontext2d.entityId;
+                      try {
+                        useProject.getState().runCommand('design.loeschen', { entityId: id });
+                      } catch (err) {
+                        meldeFehler(err);
+                      }
+                      const { selection: sel, select } = useProject.getState();
+                      if (sel.includes(id)) select(sel.filter((sid) => sid !== id));
+                    },
+                  },
+                ] satisfies KontextAktion[])
+              : ([
+                  {
+                    label: 'Abschliessen',
+                    testid: 'kontext2d-abschliessen',
+                    // C-10/C-11: derselbe Weg wie Doppelklick — der
+                    // Rechtsklick-Weltpunkt steht an `kontext2d.p`.
+                    onClick: () => handlers.current?.onGroundDoubleClick?.({ p: kontext2d.p, shiftKey: false }),
+                  },
+                  {
+                    label: 'Abbrechen',
+                    testid: 'kontext2d-abbrechen',
+                    onClick: () => handlers.current?.onEscape?.(),
+                  },
+                ] satisfies KontextAktion[])
           }
           onClose={() => setKontext2d(null)}
         />
