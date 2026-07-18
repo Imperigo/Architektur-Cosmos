@@ -12,7 +12,16 @@ import { create } from 'zustand';
  * hier nur als loser String gehalten; `CursorEbene.tsx` validiert ihn gegen
  * `WerkzeugGlyphenArt`, bevor sie ihn rendert.
  */
-export type CursorZustand = 'default' | 'loading' | 'kosmo' | 'tool' | 'precision';
+/** v0.8.4 PA1 (D1-Fix) — Zonen-FORMEN: `CursorEbene.tsx` liest den COMPUTED
+ *  cursor der Elementkette unter dem Zeiger und MAPPT ihn auf eine dieser
+ *  Formen, statt die Ebene (wie die alte `hatEigenenComputedCursor()`-
+ *  Heuristik) zu verstecken. Rein zonen-abgeleitet — nie über `setzeZustand`
+ *  gesetzt, genau wie `precision` schon vorher (s. `CursorStore.zustand`
+ *  unten). Siehe `CSS_CURSOR_ZU_FORM`/`formVonComputedCursor` für die
+ *  eigentliche (reine, unit-getestete) Abbildung. */
+export type ZonenForm = 'greifen' | 'greift' | 'fadenkreuz' | 'spalte' | 'zeile' | 'gesperrt';
+
+export type CursorZustand = 'default' | 'loading' | 'kosmo' | 'tool' | 'precision' | ZonenForm;
 
 export interface ToolCursorInfo {
   /** Werkzeug-Glyphen-Art (`shell/werkzeug-glyphen.tsx`, z.B. "draw"). */
@@ -22,12 +31,13 @@ export interface ToolCursorInfo {
 }
 
 interface CursorStore {
-  /** Programmatisch gesetzter Grundzustand — `precision` wird NIE direkt
-   *  hierüber gesetzt (das ist reine Zonen-Erkennung in `CursorEbene.tsx`,
-   *  siehe dortiger Kopfkommentar), nur `default/loading/kosmo/tool`. */
-  zustand: Exclude<CursorZustand, 'precision'>;
+  /** Programmatisch gesetzter Grundzustand — `precision`/die `ZonenForm`-
+   *  Werte werden NIE direkt hierüber gesetzt (das ist reine Zonen-Erkennung
+   *  in `CursorEbene.tsx`, siehe dortiger Kopfkommentar), nur
+   *  `default/loading/kosmo/tool`. */
+  zustand: Exclude<CursorZustand, 'precision' | ZonenForm>;
   tool: ToolCursorInfo | null;
-  setzeZustand: (z: Exclude<CursorZustand, 'precision'>) => void;
+  setzeZustand: (z: Exclude<CursorZustand, 'precision' | ZonenForm>) => void;
   setzeToolCursor: (info: ToolCursorInfo) => void;
   zurueckAufDefault: () => void;
 }
@@ -96,6 +106,49 @@ export function setEigencursorEingestellt(an: boolean): void {
   } catch {
     /* kein window (SSR/Test) — nichts zu benachrichtigen */
   }
+}
+
+/**
+ * v0.8.4 PA1 (D1-Fix, docs/V084-SPEZ.md §2 D1) — die Zonen-Tabelle: welcher
+ * COMPUTED `cursor`-Wert einer Elementkette auf welche `ZonenForm` mappt.
+ * Bewusst NUR die sechs vertraglich verlangten Werte (crosshair/grab/
+ * grabbing/col-resize/row-resize/not-allowed) — alles andere (inkl. `auto`/
+ * `default`/`pointer`/leer) bleibt neutral (Morph-Default, kein Zonen-Layer).
+ *
+ * **Wichtig — die eigentliche Fund-Ursache von D1:** `:root[data-eigencursor
+ * ='an'] { cursor: none }` (`cursor-ebene.css`) steht auf `<html>`. `cursor`
+ * ist eine VERERBTE CSS-Eigenschaft — jedes Element OHNE eigene `cursor`-
+ * Deklaration erbt darum, sobald der Eigencursor an ist, den COMPUTED Wert
+ * `"none"` (live mit Playwright/Chromium nachgemessen: ein `<div>` ohne
+ * eigene Cursor-Regel unter `html{cursor:none}` liefert `getComputedStyle
+ * (div).cursor === "none"`, NICHT `"auto"`). Die alte Heuristik
+ * (`hatEigenenComputedCursor`, jetzt entfernt) schloss nur `''`/`auto`/
+ * `default`/`pointer` aus — `"none"` fiel NICHT unter den Ausschluss und
+ * wurde fälschlich als "Element hat einen eigenen Cursor-Wunsch" gewertet:
+ * die Ebene versteckte sich darum nicht nur über den paar explizit
+ * gestylten Zonen (crosshair/grab/…), sondern über praktisch JEDEM
+ * unbestylten Element der App — UND weil `cursor:none` gleichzeitig den
+ * echten System-Zeiger unsichtbar machte, verschwand der Zeiger dort
+ * komplett (die vom Owner beschriebene "buggt weg"). `"none"` taucht darum
+ * bewusst NICHT in dieser Tabelle auf — es ist kein Zonen-Signal, sondern
+ * ein reines Vererbungs-Artefakt des eigenen `cursor:none`-Riegels.
+ */
+const CSS_CURSOR_ZU_FORM: Readonly<Record<string, ZonenForm>> = {
+  crosshair: 'fadenkreuz',
+  grab: 'greifen',
+  grabbing: 'greift',
+  'col-resize': 'spalte',
+  'row-resize': 'zeile',
+  'not-allowed': 'gesperrt',
+};
+
+/** Reine Funktion (unit-getestet in `test/cursor-zustand.test.ts`): bildet
+ *  einen COMPUTED-`cursor`-String auf eine `ZonenForm` ab, oder `null` für
+ *  alles, was neutral bleiben soll (`CursorEbene.tsx` fällt dann auf den
+ *  Store-/Morph-Zustand zurück). Kennt keine DOM-APIs — `CursorEbene.tsx`
+ *  liest `getComputedStyle(el).cursor` und reicht nur den String rein. */
+export function formVonComputedCursor(cursorWert: string): ZonenForm | null {
+  return CSS_CURSOR_ZU_FORM[cursorWert] ?? null;
 }
 
 /** `prefers-reduced-motion: reduce`? — reiner Lese-Helfer, siehe `CursorEbene.tsx`

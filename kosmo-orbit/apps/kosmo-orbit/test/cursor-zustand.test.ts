@@ -94,6 +94,38 @@ describe('bevorzugtReduzierteBewegung', () => {
   });
 });
 
+describe('formVonComputedCursor — reine Zonen-Form-Abbildung (v0.8.4 PA1, D1-Fix)', () => {
+  it('mappt die sechs vertraglichen Werte auf ihre Form', async () => {
+    const { formVonComputedCursor } = await import('../src/state/cursor-zustand');
+    expect(formVonComputedCursor('crosshair')).toBe('fadenkreuz');
+    expect(formVonComputedCursor('grab')).toBe('greifen');
+    expect(formVonComputedCursor('grabbing')).toBe('greift');
+    expect(formVonComputedCursor('col-resize')).toBe('spalte');
+    expect(formVonComputedCursor('row-resize')).toBe('zeile');
+    expect(formVonComputedCursor('not-allowed')).toBe('gesperrt');
+  });
+
+  it('bleibt neutral (null) für auto/default/pointer/leer', async () => {
+    const { formVonComputedCursor } = await import('../src/state/cursor-zustand');
+    expect(formVonComputedCursor('auto')).toBeNull();
+    expect(formVonComputedCursor('default')).toBeNull();
+    expect(formVonComputedCursor('pointer')).toBeNull();
+    expect(formVonComputedCursor('')).toBeNull();
+  });
+
+  it('bleibt neutral (null) für "none" — das reine Vererbungs-Artefakt von :root{cursor:none}, KEIN Zonen-Signal (D1-Fundursache)', async () => {
+    const { formVonComputedCursor } = await import('../src/state/cursor-zustand');
+    expect(formVonComputedCursor('none')).toBeNull();
+  });
+
+  it('bleibt neutral (null) für unbekannte/exotische Cursor-Keywords (z.B. text/help/zoom-in)', async () => {
+    const { formVonComputedCursor } = await import('../src/state/cursor-zustand');
+    expect(formVonComputedCursor('text')).toBeNull();
+    expect(formVonComputedCursor('help')).toBeNull();
+    expect(formVonComputedCursor('zoom-in')).toBeNull();
+  });
+});
+
 describe('useCursorZustand — Store (default/loading/kosmo/tool)', () => {
   it('startet im Zustand "default", ohne Tool-Info', async () => {
     const { useCursorZustand } = await import('../src/state/cursor-zustand');

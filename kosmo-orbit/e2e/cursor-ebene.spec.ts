@@ -111,14 +111,19 @@ test.describe('reduced-motion: Morph/Rotor strukturell statisch (Spec §0/§8)',
 });
 
 /**
- * v0.7.2 §8/W4-H (Cursor-Zonen-Verdrahtung, Kritik-Auflage — W3-F-Grenze):
- * `data-cursor-zone="praezision"|"eigen"` wurden erst mit W4-H tatsächlich
- * auf PlanView/SketchOverlay/NodeCanvas gesetzt (vorher griff nur die
- * defensive `getComputedStyle`-Heuristik, s. `CursorEbene.tsx` Kopf-
- * kommentar). Diese Suite prüft die ECHTEN Zonen-Attribute + ihre Wirkung.
+ * v0.8.4 PA1 (D1-Fix, docs/V084-SPEZ.md §2 D1): `data-cursor-zone="praezision"`
+ * bleibt die einzige explizite Zonen-Attribut-Zusage (PlanView/SketchOverlay,
+ * W4-H). Der frühere zweite Wert `"eigen"` (NodeCanvas) hatte VOR diesem
+ * Fix die Sonderbedeutung "Layer komplett aus" — genau die D1-Heuristik, die
+ * dieses Paket ersetzt (s. `CursorEbene.tsx` Kopfkommentar). `eigen` wird
+ * seither NICHT mehr ausgelesen; der frühere Test dazu ("versteckt
+ * komplett") ist ERSETZT durch die Zustands-Matrix-Suite direkt darunter
+ * ("Zone → Form sichtbar", nicht mehr "Zone → Layer aus").
  */
-test.describe('Cursor-Zonen (Spec §8, W4-H: data-cursor-zone auf PlanView/NodeCanvas)', () => {
-  test('praezision-Zone (PlanView) trägt das Attribut und morpht auf das Fadenkreuz', async ({ page }) => {
+test.describe('Cursor-Zonen (Spec §8, W4-H: data-cursor-zone="praezision")', () => {
+  test('praezision-Zone (PlanView) trägt das Attribut, morpht auf das Fadenkreuz, Ebene bleibt sichtbar', async ({
+    page,
+  }) => {
     await geladen(page);
     await page.evaluate(() => (window as unknown as { __kosmoCursor: { aktivieren: () => void } }).__kosmoCursor.aktivieren());
     await page.click('[data-testid="module-design"]');
@@ -132,23 +137,116 @@ test.describe('Cursor-Zonen (Spec §8, W4-H: data-cursor-zone auf PlanView/NodeC
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
     // Fadenkreuz-Morph (Spec §8: "precision Fadenkreuz") — eigener SVG-Klassenname.
     await expect(page.locator('.cursor-ebene-precision')).toBeAttached();
+    // v0.8.4 PA1 (D1-Fix): die Ebene darf HIER — wie überall ausserhalb von
+    // Eingabefeldern — nie verschwinden.
+    const wrapper = page.locator('[data-testid="cursor-ebene"]');
+    await expect(wrapper).not.toHaveClass(/cursor-ebene--versteckt/);
   });
+});
 
-  test('eigen-Zone (NodeCanvas, KosmoVis) versteckt die Cursor-Ebene komplett (Layer aus)', async ({ page }) => {
-    await geladen(page);
+/**
+ * v0.8.4 PA1 (D1-Fix, docs/V084-SPEZ.md §2 D1 + §3, §7 Sanktion #7 "keine
+ * Zone versteckt die Ebene mehr"): die Zustands-Matrix Zone → Form.
+ * `CursorEbene.tsx` liest den COMPUTED `cursor` der Elementkette unter dem
+ * Zeiger (`formVonComputedCursor`, `state/cursor-zustand.ts`) und zeigt
+ * statt des Systemzeigers immer eine EIGENE Form — ERSETZT die alte "Layer
+ * aus"-Heuristik (D1: `CursorEbene.tsx:80-88`), nicht nur überlagert. Drei
+ * repräsentative, real im Produktcode gestylte Zonen:
+ *  - vis-canvas (Node-Port-Hitkreis, `.vis-node-port-hit { cursor:
+ *    crosshair }`, `vis-visual.css:213`) → Form `fadenkreuz`
+ *  - dock-splitter (`.k-dock-splitter[data-art="col-left"] { cursor:
+ *    col-resize }`, `dock-flaeche.css:349`) → Form `spalte`
+ *  - dock-drag (Panel-Kopf-Ziehgriff, `.k-dock-panel-kopf { cursor: grab }`,
+ *    `dock-flaeche.css:143`) → Form `greifen`
+ * Die übrigen drei Formen (`greift`/`zeile`/`gesperrt`, aus grabbing/
+ * row-resize/not-allowed) sind PUR — ohne Browser/DOM — in
+ * `test/cursor-zustand.test.ts` bewiesen (`formVonComputedCursor`); diese
+ * Suite hier deckt die drei Zonen ab, in denen ein echter Browser
+ * tatsächlich über ein echtes, im Produktcode gestyltes Element fährt.
+ */
+test.describe('Zustands-Matrix: Zonen-Formen aus computed-cursor (v0.8.4 PA1, D1-Fix)', () => {
+  async function aktiviert(page: Page): Promise<void> {
     await page.evaluate(() => (window as unknown as { __kosmoCursor: { aktivieren: () => void } }).__kosmoCursor.aktivieren());
+  }
+
+  test('vis-canvas: Node-Port-Hitkreis (crosshair) zeigt die Fadenkreuz-Form, Ebene bleibt sichtbar', async ({
+    page,
+  }) => {
+    await geladen(page);
+    await aktiviert(page);
     await page.click('[data-testid="module-vis"]');
     await page.click('[data-testid="graph-neu"]');
+    // Direkter Kernel-Weg (Muster `e2e/vis-editor.spec.ts` `knotenSetzen`) —
+    // ein Node mit Ports ist die kürzeste, deterministische Route zu einer
+    // ECHTEN `cursor: crosshair`-Zone (`.vis-node-port-hit`).
+    await page.evaluate(() => {
+      const k = (
+        window as unknown as {
+          __kosmo: {
+            run: (id: string, p: unknown) => unknown;
+            state: () => { doc: { byKind: (k: string) => Array<{ id: string }> } };
+          };
+        }
+      ).__kosmo;
+      const graph = k.state().doc.byKind('visgraph')[0]!;
+      k.run('vis.nodeSetzen', { graphId: graph.id, typ: 'prompt', x: 100, y: 100 });
+    });
 
-    const canvas = page.locator('[data-testid="node-canvas"]');
-    await expect(canvas).toBeVisible();
-    await expect(canvas).toHaveAttribute('data-cursor-zone', 'eigen');
-
-    const box = await canvas.boundingBox();
-    if (!box) throw new Error('NodeCanvas hat keine BoundingBox');
+    const port = page.locator('[data-testid="port-out-prompt"]');
+    await expect(port).toBeVisible();
+    const box = await port.boundingBox();
+    if (!box) throw new Error('Node-Port hat keine BoundingBox');
+    // Der sichtbare Port-Punkt (`data-testid`) und sein grösserer transparenter
+    // Hitkreis (`.vis-node-port-hit`, `cursor: crosshair`) teilen dasselbe
+    // Zentrum (`NodeCanvas.tsx`) — der Hitkreis liegt im DOM DANACH, also
+    // oben; die Bildmitte trifft ihn.
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+
+    await expect(page.locator('.cursor-ebene-fadenkreuz')).toBeAttached();
     const wrapper = page.locator('[data-testid="cursor-ebene"]');
-    await expect(wrapper).toHaveClass(/cursor-ebene--versteckt/);
+    await expect(wrapper).not.toHaveClass(/cursor-ebene--versteckt/);
+    await page.screenshot({ path: 'e2e-results/pa1-084-fadenkreuz.png' });
+  });
+
+  test('dock-splitter: Spalten-Splitter (col-resize) zeigt die Spalte-Form, Ebene bleibt sichtbar', async ({
+    page,
+  }) => {
+    await geladen(page);
+    await aktiviert(page);
+    await page.click('[data-testid="load-tkb"]');
+    await expect(page.locator('[data-testid="dock-panel-kennzahlen"]')).toBeVisible();
+    await page.click('[data-testid="kv-oeffnen"]');
+
+    const splitter = page.locator('[data-testid="dock-splitter-spL"]');
+    await expect(splitter).toBeVisible();
+    const box = await splitter.boundingBox();
+    if (!box) throw new Error('Dock-Splitter hat keine BoundingBox');
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+
+    await expect(page.locator('.cursor-ebene-spalte')).toBeAttached();
+    const wrapper = page.locator('[data-testid="cursor-ebene"]');
+    await expect(wrapper).not.toHaveClass(/cursor-ebene--versteckt/);
+    await page.screenshot({ path: 'e2e-results/pa1-084-spalte.png' });
+  });
+
+  test('dock-drag: Panel-Kopf-Ziehgriff (grab) zeigt die Greifen-Form, Ebene bleibt sichtbar', async ({ page }) => {
+    await geladen(page);
+    await aktiviert(page);
+    await page.click('[data-testid="load-tkb"]');
+    const panel = page.locator('[data-testid="dock-panel-kennzahlen"]');
+    await expect(panel).toBeVisible();
+
+    // 20px vom linken Rand — garantiert kein Knopf (die sitzen rechts, Muster
+    // `kopfGriff()` in `e2e/dock-interaktion.spec.ts`).
+    const kopf = panel.locator('.k-dock-panel-kopf');
+    const box = await kopf.boundingBox();
+    if (!box) throw new Error('Dock-Panel-Kopf hat keine BoundingBox');
+    await page.mouse.move(box.x + 20, box.y + box.height / 2);
+
+    await expect(page.locator('.cursor-ebene-greifen')).toBeAttached();
+    const wrapper = page.locator('[data-testid="cursor-ebene"]');
+    await expect(wrapper).not.toHaveClass(/cursor-ebene--versteckt/);
+    await page.screenshot({ path: 'e2e-results/pa1-084-greifen.png' });
   });
 });
 

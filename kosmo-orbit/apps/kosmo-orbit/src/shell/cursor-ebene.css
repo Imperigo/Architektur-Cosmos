@@ -214,3 +214,18 @@
 .cursor-ebene-precision {
   transform-origin: 16px 4px;
 }
+
+/* v0.8.4 PA1 (D1-Fix, docs/V084-SPEZ.md §2 D1) — die sechs Zonen-Formen aus
+   dem computed-cursor-Mapping (`formVonComputedCursor`, `state/cursor-
+   zustand.ts`, gezeichnet in `CursorEbene.tsx`s `ZeichneForm`). Rein
+   deklarativ: jede Form ist ein statisches SVG (keine eigene Animation
+   nötig, anders als loading/kosmo) — `transform-origin` bleibt konsistent
+   auf dem Hotspot (16,4), auch wenn der Rotor die Drehung selbst trägt. */
+.cursor-ebene-fadenkreuz,
+.cursor-ebene-greifen,
+.cursor-ebene-greift,
+.cursor-ebene-spalte,
+.cursor-ebene-zeile,
+.cursor-ebene-gesperrt {
+  transform-origin: 16px 4px;
+}
