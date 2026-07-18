@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { greeting } from '@kosmo/ai';
+import { useOverlaySchliessen } from '@kosmo/ui';
 import { useKosmoStatus, kurzform } from '../state/kosmo-status';
 import { useProject } from '../state/project-store';
 import { KosmoOrb } from './KosmoOrb';
@@ -48,6 +49,22 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
   const zustand = useKosmoStatus((s) => s.zustand);
   const letzteAktivitaet = useKosmoStatus((s) => s.letzteAktivitaet);
   const [zeigePopup, setZeigePopup] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  // v0.8.4 W1 / PA4 (Spez §3 E3, Pflicht-Konsument #1): Esc schliesst das
+  // Mini-Popup app-weit; der Hover-Rückklapp ersetzt das bisherige SOFORTIGE
+  // `onMouseLeave→setZeigePopup(false)` durch einen ~1s-Timer (Owner-Befund
+  // §1.1: «Pille verschwindet ~1s nach Weg-Hover»), der beim erneuten
+  // Betreten storniert wird. `ref` = der WRAPPER (Trigger + Popup als
+  // Kinder), nicht nur der Knopf — sonst würde ein Hover auf den Popup-Text
+  // selbst (die Popup sitzt absolut ÜBER dem Knopf, `kosmo-symbol.css`) als
+  // "verlassen" missverstanden. `onClose` ist idempotent (State-Setter),
+  // ein zusätzlicher Ruf auf ein bereits geschlossenes Popup ist harmlos.
+  useOverlaySchliessen(wrapperRef, () => setZeigePopup(false), {
+    esc: true,
+    aussenklick: true,
+    hoverRueckklappMs: 1000,
+  });
 
   // Fallback fürs Mini-Popup, solange Kosmo noch NIE geantwortet hat (Panel
   // seit Programmstart nie geöffnet): dieselbe Begrüssungszeile, die das
@@ -63,7 +80,10 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
   const popupText = letzteAktivitaet ?? kurzform(begruessung());
 
   return (
-    <div className={`ks-wrapper ${eingebettet ? 'ks-wrapper--eingebettet' : 'ks-wrapper--frei'}`}>
+    <div
+      ref={wrapperRef}
+      className={`ks-wrapper ${eingebettet ? 'ks-wrapper--eingebettet' : 'ks-wrapper--frei'}`}
+    >
       {zeigePopup && (
         <div
           data-testid="kosmo-mini"
@@ -80,7 +100,6 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
         data-testid="kosmo-symbol"
         onClick={onOpen}
         onMouseEnter={() => setZeigePopup(true)}
-        onMouseLeave={() => setZeigePopup(false)}
         onFocus={() => setZeigePopup(true)}
         onBlur={() => setZeigePopup(false)}
         aria-label={beschaeftigt ? 'Kosmo öffnen — arbeitet gerade' : 'Kosmo öffnen'}

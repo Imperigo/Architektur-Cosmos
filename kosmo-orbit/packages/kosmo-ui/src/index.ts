@@ -8,6 +8,9 @@ export * from './icons';
 export * from './select';
 export * from './tabs';
 export * from './overlay';
+// v0.8.4 W1 / PA4 (Spez §3 E3) — Popup-Gesetz-Hook (Esc/Aussenklick/Hover-
+// Rückklapp), Verallgemeinerung der KMenu-Logik oben.
+export * from './overlay-schliessen';
 export * from './field';
 export * from './motion';
 export * from './flip';
