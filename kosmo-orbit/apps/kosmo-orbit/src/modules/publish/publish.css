@@ -536,3 +536,27 @@
   font-size: var(--k-t-xs);
   color: var(--k-ink);
 }
+
+/* PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — Island-Modus-Bühne, Muster 1:1
+   `modules/vis/vis-visual.css`s `.vis-workspace-fuellen`/`-buehne`/
+   `-buehne-zentriert` (PC1). Additiv — kein bestehender `.k-publish-*`-
+   Selektor wird verändert (der Manuell-Modus bleibt bei `.k-publish`). */
+.publish-workspace-fuellen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.publish-workspace-buehne {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.publish-workspace-buehne-zentriert {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--k-s4);
+}

@@ -1,8 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KSwitch, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
-  imagePaperBounds,
-  placementPaperBounds,
   plankopfReserveMm,
   planToDxf,
   sheetPaperSize,
@@ -17,12 +15,29 @@ import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
 import { DockFlaeche, type DockPanelEintrag } from '../../shell/dock/DockFlaeche';
 import { useDockZustand } from '../../state/dock-zustand';
 import { PRESET_IDS, presetOffenMap, type PresetId } from '../../state/dock-presets';
+import { useUiZustand } from '../../state/ui-zustand';
 import { exportSetSvgs, exportSheetPdf, exportSheetSetPdf } from './export-sheets';
 import { AutoPackPanel, LAYOUT_VORSCHLAG_DEFAULT } from './AutoPackPanel';
 import { proposalLog } from '../../state/proposal-log';
 import { DossierPanel } from './DossierPanel';
 import { PlankopfPanel } from './PlankopfPanel';
-import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
+import { BlattCanvas } from './BlattCanvas';
+import { schnittLinie as schnittLinieAktion } from './publish-aktionen';
+// PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — der Publish-Island-Katalog (eigener
+// Namensraum, s. `island/inhalte/registry.ts`-Kopfkommentar) + die
+// Registrierung seiner Stufe-2/3-Inhalte als Import-Seiteneffekt (Muster
+// `vis/island/index.ts`, das seinerseits `design/island/IslandShell.tsx`s
+// Kopfimporte spiegelt).
+import { PUBLISH_INSELN, publishInhaltsRegistry } from './island';
+import { BlattZoomBuehne } from './island/BlattZoomBuehne';
+import { usePublishRuntime } from './publish-runtime';
+// PD2/E1 (`docs/V084-SPEZ.md` §5 W3) — NUR IMPORTIEREN, design/island/**
+// bleibt fremder Dateibesitz (Sanktion 2 gilt spiegelbildlich). `IslandBuehne`/
+// `KosmoOrb` sind die generische PC0-Bühne bzw. das E2-Orb-Vorbild — beide
+// bereits stationsagnostisch gebaut (Muster PC1, `VisWorkspace.tsx`).
+import { IslandBuehne } from '../design/island/IslandShell';
+import { KosmoOrb } from '../design/island/KosmoOrb';
+import type { IslandWerkzeug } from '../design/island/island-katalog';
 import './publish.css';
 
 /** v0.8.1 P7 (`docs/V081-SPEZ.md` §6.1/§7(e), C-13) — kurze Beschriftung des
@@ -69,6 +84,33 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     [revision],
   );
 
+  // ---------------------------------------------------------------------
+  // PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — Island-Modus. `publishOberflaeche`
+  // spiegelt `VisWorkspace.tsx`s `visOberflaeche`-Umschalter 1:1 (additives
+  // Store-Feld, `state/ui-zustand.ts`). Das aktive Blatt im Island-Modus
+  // kommt aus `publish-runtime.ts` (`aktiverSheetId`) statt aus
+  // `activeSheetId`/`setActiveSheetId` oben — jene zwei bleiben der
+  // EXKLUSIVE Manuell-Modus-Pfad (Bestandsschutz: kein Bestands-Konsument
+  // dieser Datei ändert sich, wenn `publishOberflaeche==='island'` nie
+  // erreicht wird, z.B. in den Bestands-E2E-Specs unter dem globalen
+  // `manuell-seed.ts`-Seed).
+  const publishOberflaeche = useUiZustand((s) => s.publishOberflaeche);
+  const setPublishOberflaeche = useUiZustand((s) => s.setPublishOberflaeche);
+  const aktiverSheetIdInsel = usePublishRuntime((s) => s.aktiverSheetId);
+  const setAktiverSheetIdInsel = usePublishRuntime((s) => s.setAktiverSheetId);
+
+  /**
+   * PC1-Muster (`VisWorkspace.tsx`s `aktiviereVisIslandWerkzeug()`): Aktion
+   * für JEDE Erst-Aktivierung eines Insel-Werkzeugs. `hatPopup:true`-
+   * Werkzeuge brauchen hier nichts — ihre echte Aktion lebt in der Registry
+   * (`island/inhalte/*.tsx`, liest globale Stores direkt). Das einzige
+   * `hatPopup:false`-Werkzeug (Manuell) schaltet hier real — IslandShell
+   * zeigt danach selbst den Toast.
+   */
+  const aktivierePublishIslandWerkzeug = (w: IslandWerkzeug): void => {
+    if (w.id === 'manuell') setPublishOberflaeche('manuell');
+  };
+
   const [activeSheetId, setActiveSheetId] = useState<string | null>(null);
   const [newFormat, setNewFormat] = useState<SheetFormat>('A1');
   const [neuesSetName, setNeuesSetName] = useState('');
@@ -97,7 +139,6 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   const [autopackOffen, setAutopackOffen] = useState(false);
   const [zonenVorschau, setZonenVorschau] = useState(false);
   const [aussenbemassungVorschau, setAussenbemassungVorschau] = useState(false);
-  const svgHostRef = useRef<HTMLDivElement>(null);
   const bildDateiRef = useRef<HTMLInputElement>(null);
 
   // v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-13 «Publish-Preset-Wähler +
@@ -199,6 +240,25 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   const sheet = sheets.find((s) => s.id === activeSheetId) ?? sheets[0] ?? null;
   const paper = sheet ? sheetPaperSize(sheet) : null;
 
+  // PC3 (C-19): Island-Modus-eigene Ableitung — UNABHÄNGIG von `activeSheetId`
+  // (das bleibt der exklusive Manuell-Modus-Pfad, s. Kopfkommentar oben).
+  const islandSheet = sheets.find((s) => s.id === aktiverSheetIdInsel) ?? sheets[0] ?? null;
+  const islandPaper = islandSheet ? sheetPaperSize(islandSheet) : null;
+  const islandSvgMarkup = useMemo(
+    () => (islandSheet ? sheetToSvg(doc, islandSheet.id, { projectName: doc.settings.projectName }) : ''),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision, islandSheet?.id],
+  );
+  // Spiegelt den ermittelten Fallback (erstes Blatt) in `publish-runtime.ts`
+  // — Muster `NodeCanvas.tsx`s `useEffect(() => setAktiverGraphId(graphId),
+  // [graphId])`: die DARSTELLUNG-/PROJEKT-Insel-Inhalte (`island/inhalte/
+  // *.tsx`) lesen NUR globale Stores (kein Prop-Pfad), sehen ohne diesen
+  // Sync-Effekt vor dem ersten BLATT-Insel-Klick einen leeren `null`-Wert.
+  useEffect(() => {
+    if (islandSheet) setAktiverSheetIdInsel(islandSheet.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [islandSheet?.id, setAktiverSheetIdInsel]);
+
   // v0.8.0 P11 (Owner-Pflichtauftrag 15.07., «Publish in die Dock-Registry»)
   // — Dossier/Plankopf als `DockPanelEintrag[]` für `DockFlaeche`, analog
   // `DesignWorkspace.tsx`s `designDockPanels`. Beide bleiben Daten-/UI-
@@ -276,17 +336,6 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
     [revision, sheet?.id],
   );
 
-  /** Bildschirm-px → Papier-mm im Vorschau-SVG. */
-  function toPaper(e: React.PointerEvent): { x: number; y: number } | null {
-    const host = svgHostRef.current?.querySelector('svg');
-    if (!host || !paper) return null;
-    const r = host.getBoundingClientRect();
-    return {
-      x: ((e.clientX - r.left) / r.width) * paper.width,
-      y: ((e.clientY - r.top) / r.height) * paper.height,
-    };
-  }
-
   function addSheet() {
     const res = runCommand('publish.blattErstellen', {
       name: `Blatt ${sheets.length + 1}`,
@@ -355,33 +404,10 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   }
 
   /** Schnitt-/Ansichtslinie aus der Modell-Bbox (Blick = linke Normale a→b). */
-  function schnittLinie(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    for (const e of doc.entities.values()) {
-      if (e.kind === 'wall' || e.kind === 'mass') {
-        const pts = e.kind === 'wall' ? [e.a, e.b] : e.outline;
-        for (const p of pts) {
-          minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
-          minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
-        }
-      }
-    }
-    if (minX === Infinity) return null;
-    const midY = Math.round((minY + maxY) / 2);
-    const linien = {
-      schnitt: { a: { x: minX - 1000, y: midY }, b: { x: maxX + 1000, y: midY }, titel: 'Schnitt' },
-      sued: { a: { x: minX - 1000, y: minY - 2000 }, b: { x: maxX + 1000, y: minY - 2000 }, titel: 'Ansicht Süd' },
-      nord: { a: { x: maxX + 1000, y: maxY + 2000 }, b: { x: minX - 1000, y: maxY + 2000 }, titel: 'Ansicht Nord' },
-      ost: { a: { x: maxX + 2000, y: minY - 1000 }, b: { x: maxX + 2000, y: maxY + 1000 }, titel: 'Ansicht Ost' },
-      west: { a: { x: minX - 2000, y: maxY + 1000 }, b: { x: minX - 2000, y: minY - 1000 }, titel: 'Ansicht West' },
-    } as const;
-    return linien[richtung];
-  }
-
   /** Schnitt durch die Mitte oder Ansicht von aussen (N/O/S/W). */
   function placeSchnitt(richtung: 'schnitt' | 'nord' | 'ost' | 'sued' | 'west') {
     if (!sheet || !paper) return;
-    const l = schnittLinie(richtung);
+    const l = schnittLinieAktion(doc, richtung);
     if (!l) return;
     runCommand('publish.ansichtPlatzieren', {
       sheetId: sheet.id,
@@ -525,11 +551,11 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
       if (storeyId) {
         runCommand('publish.ansichtPlatzieren', { sheetId, view: 'grundriss', storeyId, scale: 200, x: slots.plan.x, y: slots.plan.y });
       }
-      const sued = schnittLinie('sued');
+      const sued = schnittLinieAktion(doc, 'sued');
       if (sued) {
         runCommand('publish.ansichtPlatzieren', { sheetId, view: 'schnitt', a: sued.a, b: sued.b, scale: 200, x: slots.ansicht.x, y: slots.ansicht.y, title: sued.titel });
       }
-      const schnitt = schnittLinie('schnitt');
+      const schnitt = schnittLinieAktion(doc, 'schnitt');
       if (schnitt) {
         runCommand('publish.ansichtPlatzieren', { sheetId, view: 'schnitt', a: schnitt.a, b: schnitt.b, scale: 200, x: slots.schnitt.x, y: slots.schnitt.y, title: schnitt.titel });
       }
@@ -571,6 +597,41 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
   a.click();
   a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  }
+
+  // -----------------------------------------------------------------------
+  // PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — Island-Modus, EIGENER früher
+  // Return VOR der Manuell-Rückgabe unten: die alte Sidebar/Werkzeugleiste/
+  // `DockFlaeche` (Owner-Auftrag «weiterentwickeln; Islands») rendert NUR
+  // noch im Modus 'manuell' — wird dieser frühe Return nie erreicht (jeder
+  // Bestands-E2E-Lauf startet über `manuell-seed.ts` mit
+  // `publishOberflaeche:'manuell'`), bleibt JEDE Zeile unterhalb byte-gleich
+  // zum Vorzustand (Bestandsschutz, Auftrag Punkt 4). Die Blattfläche selbst
+  // (`BlattCanvas`, via `BlattZoomBuehne`) ist dieselbe Komponente wie im
+  // Manuell-Modus — «Islands sind Zugänge, keine Nachbauten».
+  if (publishOberflaeche === 'island') {
+    return (
+      <div className="publish-workspace-fuellen" data-testid="publish-island-fuellen">
+        <div className="publish-workspace-buehne">
+          {islandSheet && islandPaper ? (
+            <BlattZoomBuehne key={islandSheet.id} sheet={islandSheet} paper={islandPaper} svgMarkup={islandSvgMarkup} />
+          ) : (
+            <div className="publish-workspace-buehne-zentriert">
+              <Messrahmen
+                height={200}
+                caption=""
+                style={{ width: '100%' }}
+              />
+              <div className="k-publish-leerzustand-text">
+                Noch kein Blatt im Plansatz — die BLATT-Insel (links) legt eines an
+              </div>
+            </div>
+          )}
+        </div>
+        <IslandBuehne inseln={PUBLISH_INSELN} registry={publishInhaltsRegistry} onWerkzeugAktion={aktivierePublishIslandWerkzeug} />
+        <KosmoOrb />
+      </div>
+    );
   }
 
   return (
@@ -660,6 +721,24 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
               <KIcon name="zahnrad" size={14} title="Einstellungen — KosmoPublish" />
             </KButton>
           )}
+          {/* PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — additiver Rückweg AUS
+              'manuell': Muster `VisWorkspace.tsx`s `island-zurueck`-Knopf
+              (PC1, das seinerseits `DesignWorkspace.tsx` Z.2441-2456
+              spiegelt) — der Vorwärtsweg ('manuell' → 'island') ist das
+              'Manuell'-Insel-Werkzeug in AUSTAUSCH (nur im Island-Modus
+              sichtbar); dieser Knopf ist sein Gegenstück, unaufdringlich in
+              derselben Werkzeugleisten-Region. Additiv, kein Ersatz — die
+              klassische Sidebar/Werkzeugleiste bleibt vollständig erhalten. */}
+          <KButton
+            size="sm"
+            tone="ghost"
+            data-testid="island-zurueck"
+            title="Zurück zur Island-UI"
+            aria-label="Zurück zur Island-UI"
+            onClick={() => setPublishOberflaeche('island')}
+          >
+            Island-UI
+          </KButton>
         </div>
         {sheets.map((s) => (
           <Panel
@@ -1248,10 +1327,24 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
           className="k-publish-scroll"
         >
           {sheet && paper ? (
-            <div
-              ref={svgHostRef}
-              data-testid="sheet-canvas"
-              className="k-publish-blatt"
+            <BlattCanvas
+              sheet={sheet}
+              paper={paper}
+              svgMarkup={svgMarkup}
+              selectedPlacement={selectedPlacement}
+              setSelectedPlacement={setSelectedPlacement}
+              selectedBild={selectedBild}
+              setSelectedBild={setSelectedBild}
+              drag={drag}
+              setDrag={setDrag}
+              textDrag={textDrag}
+              setTextDrag={setTextDrag}
+              bildDrag={bildDrag}
+              setBildDrag={setBildDrag}
+              zonenVorschau={zonenVorschau}
+              aussenbemassungVorschau={aussenbemassungVorschau}
+              plankopfAktiv={plankopfOffen}
+              onPlankopfKlick={() => setPlankopfOffen(true)}
               style={{
                 // v0.8.0 P11 / v0.8.0B W4 (ROADMAP 381, 1400px-Fix): die
                 // Breite bleibt die DEFINITE Achse (die Blatt-Overlays —
@@ -1275,255 +1368,7 @@ export function PublishWorkspace({ onEinstellungen }: PublishWorkspaceProps = {}
                 width: `min(100%, 1100px, calc((100dvh - ${BODEN_DOCK_RESERVE_PX}px - var(--k-publish-chrome-h)) * ${paper.width} / ${paper.height}))`,
                 aspectRatio: `${paper.width} / ${paper.height}`,
               }}
-              onPointerMove={(e) => {
-                if (textDrag) {
-                  const p = toPaper(e);
-                  if (p) setTextDrag({ ...textDrag, dx: p.x, dy: p.y });
-                  return;
-                }
-                if (bildDrag) {
-                  const p = toPaper(e);
-                  if (p) setBildDrag({ ...bildDrag, dx: p.x, dy: p.y });
-                  return;
-                }
-                if (!drag) return;
-                const p = toPaper(e);
-                if (!p) return;
-                setDrag({ ...drag, dx: p.x, dy: p.y });
-              }}
-              onPointerUp={() => {
-                if (bildDrag && sheet) {
-                  const b = (sheet.bilder ?? []).find((x) => x.id === bildDrag.id);
-                  if (b) {
-                    const r = imagePaperBounds(doc, b);
-                    runCommand('publish.bildVerschieben', {
-                      sheetId: sheet.id,
-                      bildId: b.id,
-                      x: Math.round(bildDrag.dx - r.width / 2),
-                      y: Math.round(bildDrag.dy - r.height / 2),
-                    });
-                  }
-                  setBildDrag(null);
-                }
-                if (textDrag && sheet) {
-                  const t = sheet.texte?.find((x) => x.id === textDrag.id);
-                  if (t) {
-                    runCommand('publish.textSetzen', {
-                      sheetId: sheet.id,
-                      textId: t.id,
-                      text: t.text,
-                      x: Math.round(textDrag.dx),
-                      y: Math.round(textDrag.dy),
-                    });
-                  }
-                  setTextDrag(null);
-                }
-                if (drag && sheet) {
-                  runCommand('publish.ansichtVerschieben', {
-                    sheetId: sheet.id,
-                    placementId: drag.id,
-                    x: Math.round(drag.dx),
-                    y: Math.round(drag.dy),
-                  });
-                }
-                setDrag(null);
-              }}
-            >
-              <div
-                className="k-publish-blatt-svg"
-                // Vorschau = echtes Druck-SVG aus dem Kern
-                dangerouslySetInnerHTML={{ __html: svgMarkup.replace('<svg ', '<svg style="width:100%;height:100%" ') }}
-              />
-              {/* Platzierungs-/Bild-/Text-Overlays: Auswahl + Drag. Hover-
-                  Rand war bisher eine direkte DOM-Style-Mutation
-                  (`onMouseEnter`/`onMouseLeave`) — v0.8.0B / W4 (reiner
-                  Visual-Umbau): jetzt CSS `:hover` auf `.k-publish-overlay`
-                  (`publish.css`), `is-sel` steuert denselben Zustand wie
-                  vorher der `sel`/`textDrag.id===t.id`-Vergleich. Verhalten
-                  (Klick/Drag/Selektion/testids) unverändert — nur die
-                  Hover-Optik wandert von JS-Style-Mutation in CSS. */}
-              {/* Platzierungs-Overlays: Auswahl + Drag */}
-              {sheet.placements.map((pl) => {
-                const b = placementPaperBounds(doc, pl);
-                const x = drag?.id === pl.id ? drag.dx - b.width / 2 : b.x;
-                const y = drag?.id === pl.id ? drag.dy - b.height / 2 : b.y;
-                const sel = selectedPlacement === pl.id;
-                return (
-                  <div
-                    key={pl.id}
-                    data-testid={`placement-${pl.id}`}
-                    onPointerDown={(e) => {
-                      e.preventDefault();
-                      setSelectedPlacement(pl.id);
-                      const p = toPaper(e);
-                      if (p) setDrag({ id: pl.id, dx: pl.x, dy: pl.y });
-                    }}
-                    className={`k-publish-overlay${sel ? ' k-publish-overlay--sel' : ''}`}
-                    style={{
-                      left: `${(x / paper.width) * 100}%`,
-                      top: `${(y / paper.height) * 100}%`,
-                      width: `${(b.width / paper.width) * 100}%`,
-                      height: `${(b.height / paper.height) * 100}%`,
-                    }}
-                  />
-                );
-              })}
-              {/* Bild-Overlays: Slots auswählen + verschieben */}
-              {(sheet.bilder ?? []).map((b) => {
-                const r = imagePaperBounds(doc, b);
-                const x = bildDrag?.id === b.id ? bildDrag.dx - r.width / 2 : r.x;
-                const y = bildDrag?.id === b.id ? bildDrag.dy - r.height / 2 : r.y;
-                const sel = selectedBild === b.id;
-                return (
-                  <div
-                    key={b.id}
-                    data-testid={`blatt-bild-${b.id}`}
-                    onPointerDown={(e) => {
-                      e.preventDefault();
-                      setSelectedPlacement(null);
-                      setSelectedBild(b.id);
-                      setBildDrag({ id: b.id, dx: r.x + r.width / 2, dy: r.y + r.height / 2 });
-                    }}
-                    className={`k-publish-overlay${sel ? ' k-publish-overlay--sel' : ''}`}
-                    style={{
-                      left: `${(x / paper.width) * 100}%`,
-                      top: `${(y / paper.height) * 100}%`,
-                      width: `${(r.width / paper.width) * 100}%`,
-                      height: `${(r.height / paper.height) * 100}%`,
-                    }}
-                  />
-                );
-              })}
-              {/* Text-Overlays: Titel/Konzepttexte direkt auf dem Blatt verschieben */}
-              {(sheet.texte ?? []).map((t) => {
-                const zeilen = t.text.split('\n');
-                const wMm = Math.max(...zeilen.map((z) => z.length)) * t.size * 0.55;
-                const hMm = zeilen.length * t.size * 1.35;
-                const tx = textDrag?.id === t.id ? textDrag.dx : t.x;
-                const ty = (textDrag?.id === t.id ? textDrag.dy : t.y) - t.size;
-                const selText = textDrag?.id === t.id;
-                return (
-                  <div
-                    key={t.id}
-                    data-testid={`blatt-text-${t.id}`}
-                    title="Text verschieben — Inhalt links bearbeiten"
-                    onPointerDown={(e) => {
-                      e.preventDefault();
-                      setSelectedPlacement(null);
-                      setTextDrag({ id: t.id, dx: t.x, dy: t.y });
-                    }}
-                    className={`k-publish-overlay${selText ? ' k-publish-overlay--sel' : ''}`}
-                    style={{
-                      left: `${(tx / paper.width) * 100}%`,
-                      top: `${(ty / paper.height) * 100}%`,
-                      width: `${(Math.max(wMm, 20) / paper.width) * 100}%`,
-                      height: `${(Math.max(hMm, 8) / paper.height) * 100}%`,
-                    }}
-                  />
-                );
-              })}
-              {/* Plankopf-Overlay (v0.8.0 P6, Spez §8 V-K9/P-K7): selektierbar
-                  (Klick öffnet/fokussiert das PlankopfPanel), aber NICHT
-                  verschiebbar — korrigiert bewusst den im Prototyp offen
-                  eingeräumten Bug («keine Sperre implementiert»). Die Hitbox
-                  kommt aus dem TATSÄCHLICH gerenderten SVG
-                  (`findePlankopfHitbox`, `plankopf-overlay.ts`) — deckt so
-                  automatisch beide Geometrien ab (Alt-Fusskopf ohne
-                  Plankopf-/Layout-Daten, Framework-Plankopf mit Daten), ohne
-                  dass P7 (Default-Flip der `SheetLayout`-Booleans) hier
-                  etwas nachziehen müsste. */}
-              {(() => {
-                const hit = findePlankopfHitbox(svgMarkup);
-                if (!hit) return null;
-                return (
-                  <div
-                    data-testid="plankopf-overlay"
-                    title="Plankopf — Klick öffnet den Editor (fester Sitz unten rechts, nicht verschiebbar)"
-                    onPointerDown={(e) => {
-                      e.preventDefault();
-                      setSelectedPlacement(null);
-                      setSelectedBild(null);
-                      setPlankopfOffen(true);
-                    }}
-                    className={`k-publish-overlay-plankopf${plankopfOffen ? ' k-publish-overlay-plankopf--sel' : ''}`}
-                    style={{
-                      left: `${(hit.x / paper.width) * 100}%`,
-                      top: `${(hit.y / paper.height) * 100}%`,
-                      width: `${(hit.width / paper.width) * 100}%`,
-                      height: `${(hit.height / paper.height) * 100}%`,
-                    }}
-                  />
-                );
-              })()}
-              {/* Vorschau-Overlay «Zonen» (Spez §8 V-K8): tönt die Ränder
-                  zwischen Papierkante und Zeichenfläche — rein dekorativ,
-                  `pointerEvents: 'none'`, NIE im Export. */}
-              {zonenVorschau && (() => {
-                const rahmen = findeRahmenRect(svgMarkup);
-                if (!rahmen) return null;
-                const baender = [
-                  { left: 0, top: 0, width: paper.width, height: rahmen.y }, // oben
-                  { left: 0, top: rahmen.y + rahmen.height, width: paper.width, height: paper.height - (rahmen.y + rahmen.height) }, // unten
-                  { left: 0, top: rahmen.y, width: rahmen.x, height: rahmen.height }, // links
-                  { left: rahmen.x + rahmen.width, top: rahmen.y, width: paper.width - (rahmen.x + rahmen.width), height: rahmen.height }, // rechts
-                ];
-                return (
-                  <div data-testid="plankopf-preview-zonen-overlay" className="k-publish-zonen-overlay">
-                    {baender.map(
-                      (b, i) =>
-                        b.width > 0.01 &&
-                        b.height > 0.01 && (
-                          <div
-                            key={i}
-                            className="k-publish-zonen-band"
-                            style={{
-                              left: `${(b.left / paper.width) * 100}%`,
-                              top: `${(b.top / paper.height) * 100}%`,
-                              width: `${(b.width / paper.width) * 100}%`,
-                              height: `${(b.height / paper.height) * 100}%`,
-                            }}
-                          />
-                        ),
-                    )}
-                  </div>
-                );
-              })()}
-              {/* Vorschau-Overlay «Aussenbemassung» (Spez §8 V-K8): B/H-
-                  Masslinien um die Zeichenfläche — reine Anzeige, NIE im
-                  Export/Doc (Owner-Auflösung ungeklärter Prototyp-Toggle). */}
-              {aussenbemassungVorschau && (() => {
-                const rahmen = findeRahmenRect(svgMarkup);
-                if (!rahmen) return null;
-                const { x: fx, y: fy, width: fw, height: fh } = rahmen;
-                return (
-                  <svg
-                    data-testid="plankopf-preview-aussenbemassung-overlay"
-                    viewBox={`0 0 ${paper.width} ${paper.height}`}
-                    className="k-publish-aussenbemassung-svg"
-                  >
-                    <line x1={fx} y1={fy - 3} x2={fx + fw} y2={fy - 3} stroke="currentColor" strokeWidth={0.4} />
-                    <line x1={fx} y1={fy - 5} x2={fx} y2={fy - 1} stroke="currentColor" strokeWidth={0.4} />
-                    <line x1={fx + fw} y1={fy - 5} x2={fx + fw} y2={fy - 1} stroke="currentColor" strokeWidth={0.4} />
-                    <text x={fx + fw / 2} y={fy - 4} textAnchor="middle" fontSize={4} fill="currentColor">
-                      {Math.round(fw)} mm
-                    </text>
-                    <line x1={fx - 3} y1={fy} x2={fx - 3} y2={fy + fh} stroke="currentColor" strokeWidth={0.4} />
-                    <line x1={fx - 5} y1={fy} x2={fx - 1} y2={fy} stroke="currentColor" strokeWidth={0.4} />
-                    <line x1={fx - 5} y1={fy + fh} x2={fx - 1} y2={fy + fh} stroke="currentColor" strokeWidth={0.4} />
-                    <text
-                      x={fx - 4}
-                      y={fy + fh / 2}
-                      textAnchor="middle"
-                      fontSize={4}
-                      fill="currentColor"
-                      transform={`rotate(-90 ${fx - 4} ${fy + fh / 2})`}
-                    >
-                      {Math.round(fh)} mm
-                    </text>
-                  </svg>
-                );
-              })()}
-            </div>
+            />
           ) : (
             /* R1-Fix (Kritik-065 p-09/i-09, «Blattbereich-Leersatz von
                Mono-Versal auf Lauftext-Stimme umstellen»): `Messrahmen`
