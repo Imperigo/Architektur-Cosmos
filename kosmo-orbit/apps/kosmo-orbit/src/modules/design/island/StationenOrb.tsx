@@ -1,83 +1,84 @@
 import { useEffect, useRef, useState } from 'react';
+import type { ModuleId } from '@kosmo/ui';
+import { ORBIT_HAUPTWERKZEUGE, type OrbitHauptwerkzeug } from '../../../shell/orbit-werkzeuge';
 import './island.css';
 
 /**
  * Stationen-Orb (PD2, `docs/ISLAND-UI-SPEZ.md` §1-Tabelle) — 38×38px-Kreis
- * neben der Ansichts-Info, Popover mit Direktzugang zu den fünf Stationen
- * KosmoDesign/KosmoData/KosmoVis/KosmoPrepare/KosmoPublish, je mit
- * 7px-Rollenpunkt (Farben 1:1 aus dem Prototyp, §1). Navigation, **keine
- * Island** (kein Werkzeug) — Auto-Schliessen 700ms wie `AnsichtsInfo`.
+ * neben der Ansichts-Info, Popover mit Direktzugang zu den ANDEREN
+ * Stationen. Navigation, **keine Island** (kein Werkzeug) — Auto-Schliessen
+ * 700ms wie `AnsichtsInfo`.
  *
- * **Repo-Bezug (§1 «PD2»):** ein konsolidiertes Hover-Popover mit allen 5
- * Stationen existiert heute nicht — die nächsten Verwandten sind
- * `EntwurfsDock.tsx:131-140` (vier einzelne Sprung-Knöpfe ohne gemeinsames
- * Popover) und die App-Home-Modulliste (`App.tsx`, `sortierteModule`/
- * `oeffneModul`). Dieser Orb ist additiv NEU (§8 Frage 10 bleibt offen: ob
- * die bestehenden `dock-*`-Sprünge entfallen oder parallel bestehen bleiben
- * — PD2 entscheidet das NICHT, `EntwurfsDock` bleibt unverändert gerendert).
+ * **PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «AK-Zentralsymbol
+ * zeigt NIE das offene Haupttool, sondern ist Shortcut für die ANDEREN mit
+ * deren UNTERTOOLS (z. B. KosmoReference/KosmoAsset statt "KosmoData")»):
+ * das Popover listet NICHT mehr die fünf Pipeline-Stationen flach
+ * (design/data/vis/prepare/publish, PD2-Fassung) — es listet die
+ * `ORBIT_HAUPTWERKZEUGE` (dieselbe Quelle wie `OrbitStart.tsx`s Home-Fächer,
+ * `shell/orbit-werkzeuge.ts`) MIT AUSNAHME des Hauptwerkzeugs, das die
+ * gerade offene Station (`aktivesModul`) selbst enthält — pro sichtbarem
+ * Hauptwerkzeug eine Gruppen-Überschrift + seine echten Untertools (z. B.
+ * unter «KosmoData»: Reference→`data`, Asset→`asset`). Ist `aktivesModul`
+ * `'design'` ODER `'vis'`, fällt das GANZE `design`-Hauptwerkzeug weg (Draw/
+ * Prepare/Vis/Publish/Modellbaum sind laut `orbit-werkzeuge.ts` alle
+ * Untertools DIESES EINEN Hauptwerkzeugs «KosmoDesign» — beide Design-
+ * Islands (design- UND vis-Station) sind Teil desselben Haupttools, s.
+ * `docs/V084-SPEZ.md` §8 C-24 + §5 W3). `KosmoOffice` bleibt sichtbar,
+ * seine Untertools bleiben `kommend`/nicht klickbar (App-weite Ehrlichkeits-
+ * Konvention, `docs/V084-SPEZ.md` §7 Sanktion 9).
+ *
+ * Frühere `StationenOrbId`-Union (fünf Pipeline-Stationen) + die
+ * `STATION_FARBE`-Rollenpunkte sind mit dieser Umstellung entfallen —
+ * `onStationOeffnen` navigiert jetzt über eine echte `ModuleId` (jeder
+ * `orbit-werkzeuge.ts`-Untertool mit `moduleId` ist ein reales, existierendes
+ * Modul), derselbe `App.tsx`-`oeffneModul`-Weg wie die Zentrale-Kacheln.
+ *
+ * **Repo-Bezug (§1 «PD2»):** ein konsolidiertes Hover-Popover mit direktem
+ * Stationszugang existiert seit PD2 additiv neben `EntwurfsDock.tsx:131-140`
+ * (vier einzelne Sprung-Knöpfe ohne gemeinsames Popover, nur im Modus
+ * 'manuell' gerendert) und der App-Home-Modulliste (`App.tsx`,
+ * `sortierteModule`/`oeffneModul`).
  *
  * Navigation läuft über denselben Weg, den `EntwurfsDock.tsx`s
  * `dock-vis`/`dock-publish`/`dock-prepare`-Knöpfe schon nutzen
- * (`onStationOeffnen`, App.tsx `oeffneModul`) — additiv erweitert um `data`
- * (Direktzugang zu KosmoData) und `design` (bleibt in der Design-Station,
- * schliesst nur das Popover).
+ * (`onStationOeffnen`, `App.tsx` `oeffneModul`).
  *
- * **PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): «Zentrale»-Eintrag.**
- * PD4 hatte oben links zusätzlich zwei schwebende Logos ergänzt
- * (KosmoOrbit-Symbol + KosmoDesign-Logo, `App.tsx` `island-kopf-logo-*`) —
- * das KosmoOrbit-Symbol war «Zur Zentrale» (`gehZu('home')`, derselbe Weg
- * wie die Kopfbalken-Wortmarke). Owner-Befund (Screenshot-Review): überlagert
- * sich mit diesem Orb, uneinheitliches Symbol-Sammelsurium — ein erster PD5-
- * Entwurf entfernte beide Logos ersatzlos; Owner-Korrektur (unmittelbar
- * danach, wörtlich «kosmoorbit und kosmodesign … bleiben, gleiche grösse wie
- * einstellungsknopf»): BEIDE Logos bleiben, nur im selben Glas-Kreis-Stil wie
- * dieser Orb/der Einstellungs-Kreis (`App.tsx`, `island/island.css`
- * `.isl-kopf-logo-*`). Der «Zentrale»-Eintrag HIER bleibt zusätzlich additiv
- * bestehen (Owner: «kann bleiben, schadet nicht») — ein oberster Eintrag im
- * Popover, separat von der farbigen Stationsliste (kein Rollenpunkt —
- * «Zentrale» ist keine Pipeline-Station), eigener optionaler `onZentrale`-
- * Callback (nicht Teil der `StationenOrbId`-Union, weil `App.tsx`s
- * bestehender `onStationOeffnen`-Handler generisch über `modules.find` läuft
- * und `'home'` dort kein `ModuleId` ist — ein zweckgleicher, aber eigener
- * Draht, additiv über `DesignWorkspace.tsx` (`onZurZentrale`-Prop) zu
- * `App.tsx`s `gehZu('home')` durchgereicht, WÖRTLICH derselbe Navigations-Weg
- * wie der klickbare `island-kopf-logo-orbit`).
+ * **PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): «Zentrale»-Eintrag**
+ * bleibt UNVERÄNDERT additiv erhalten — eigener, optionaler `onZentrale`-
+ * Callback, immer der ERSTE Popover-Eintrag, separat von der Hauptwerkzeug-
+ * Gruppenliste (kein Rollenpunkt/keine Gruppe — «Zentrale» ist kein
+ * Hauptwerkzeug). Details/Herleitung unverändert im Kommentar der
+ * PD5-Fassung dieser Datei (git-history).
  */
-
-export type StationenOrbId = 'design' | 'data' | 'vis' | 'prepare' | 'publish';
 
 const AUTO_SCHLIESSEN_MS = 700;
 
-/** Deutsche Anzeigenamen — 1:1 aus `App.tsx`s `modules`-Liste (`KosmoDesign` etc.). */
-const STATION_LABEL: Readonly<Record<StationenOrbId, string>> = {
-  design: 'KosmoDesign',
-  data: 'KosmoData',
-  vis: 'KosmoVis',
-  prepare: 'KosmoPrepare',
-  publish: 'KosmoPublish',
-};
-
-/** Rollenpunkt-Farben 1:1 aus dem Prototyp (§1, wörtlich übernommene Hex-Werte). */
-const STATION_FARBE: Readonly<Record<StationenOrbId, string>> = {
-  design: '#74C2A0',
-  data: '#B08A6E',
-  vis: '#CD7670',
-  prepare: '#CF9466',
-  publish: '#6F9BCF',
-};
-
-/** Reihenfolge exakt wie §1: «KosmoDesign/KosmoData/KosmoVis/KosmoPrepare/KosmoPublish». */
-const STATION_REIHENFOLGE: readonly StationenOrbId[] = ['design', 'data', 'vis', 'prepare', 'publish'];
-
 export interface StationenOrbProps {
-  onStationOeffnen: (station: StationenOrbId) => void;
+  /** Die gerade offene Station (`App.tsx`s `screen`, z. B. `'design'` oder
+   *  `'vis'`) — bestimmt, welches `ORBIT_HAUPTWERKZEUGE`-Hauptwerkzeug im
+   *  Popover NICHT erscheint (Owner: «zeigt NIE das offene Haupttool»). */
+  aktivesModul: ModuleId;
+  onStationOeffnen: (station: ModuleId) => void;
   /** PD5 (s. Kopfkommentar) — additiv, optional (isoliert gemountete Tests
    *  brauchen ihn nicht, gleiches Muster wie `onStationOeffnen` in
    *  `DesignWorkspace.tsx`s eigenen optionalen Props). */
   onZentrale?: () => void;
 }
 
-export function StationenOrb({ onStationOeffnen, onZentrale }: StationenOrbProps) {
+/** Das Hauptwerkzeug, dessen Untertools die gerade offene Station enthalten
+ *  — «das offene Haupttool», das komplett aus dem Popover fällt (Owner-
+ *  Wortlaut, s. Kopfkommentar). Bewusst der ERSTE Treffer in
+ *  `ORBIT_HAUPTWERKZEUGE`-Reihenfolge (nicht «irgendein Treffer»): das
+ *  «Modell»-Untertool unter «Kosmo» verweist absichtlich ZUSÄTZLICH auf
+ *  `moduleId:'design'` (`orbit-werkzeuge.ts`s eigene Kopfkommentar-
+ *  Dokumentation dieses Sonderfalls) — ohne die Beschränkung auf den ersten
+ *  Treffer würde `aktivesModul:'design'` fälschlich AUCH die komplette
+ *  «Kosmo»-Gruppe ausblenden. */
+function findeOffenesHaupttool(aktivesModul: ModuleId): OrbitHauptwerkzeug | undefined {
+  return ORBIT_HAUPTWERKZEUGE.find((h) => h.untertools.some((u) => u.moduleId === aktivesModul));
+}
+
+export function StationenOrb({ aktivesModul, onStationOeffnen, onZentrale }: StationenOrbProps) {
   const [offen, setOffen] = useState(false);
   const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -105,6 +106,9 @@ export function StationenOrb({ onStationOeffnen, onZentrale }: StationenOrbProps
     schliessTimer.current = setTimeout(() => setOffen(false), AUTO_SCHLIESSEN_MS);
   }
 
+  const offenesHaupttool = findeOffenesHaupttool(aktivesModul);
+  const andereHauptwerkzeuge = ORBIT_HAUPTWERKZEUGE.filter((h) => h.id !== offenesHaupttool?.id);
+
   return (
     <div
       className="isl-buehnenkopf isl-buehnenkopf-stationen-orb"
@@ -127,7 +131,7 @@ export function StationenOrb({ onStationOeffnen, onZentrale }: StationenOrbProps
         AK
       </button>
       {offen ? (
-        <div className="isl-buehnenkopf-popover" data-testid="stationen-orb-popover">
+        <div className="isl-buehnenkopf-popover isl-stationen-orb-popover-liste" data-testid="stationen-orb-popover">
           {onZentrale ? (
             <button
               type="button"
@@ -138,29 +142,36 @@ export function StationenOrb({ onStationOeffnen, onZentrale }: StationenOrbProps
                 onZentrale();
               }}
             >
-              {/* Kein Rollenpunkt — «Zentrale» ist keine der fünf farbigen
-                  Pipeline-Stationen (s. Kopfkommentar). */}
+              {/* Kein Rollenpunkt/keine Gruppe — «Zentrale» ist kein
+                  Hauptwerkzeug (s. Kopfkommentar). */}
               Zentrale
             </button>
           ) : null}
-          {STATION_REIHENFOLGE.map((id) => (
-            <button
-              key={id}
-              type="button"
-              className="isl-stationen-orb-eintrag"
-              data-testid={`stationen-orb-eintrag-${id}`}
-              onClick={() => {
-                setOffen(false);
-                onStationOeffnen(id);
-              }}
-            >
-              <span
-                className="isl-rollenpunkt"
-                aria-hidden="true"
-                style={{ background: STATION_FARBE[id] }}
-              />
-              {STATION_LABEL[id]}
-            </button>
+          {andereHauptwerkzeuge.map((h) => (
+            <div key={h.id} className="isl-stationen-orb-gruppe" data-testid={`stationen-orb-gruppe-${h.id}`}>
+              <div className="isl-leiste-kopf">{h.titel}</div>
+              {h.untertools.map((u) => (
+                <button
+                  key={u.id}
+                  type="button"
+                  className="isl-stationen-orb-eintrag"
+                  data-testid={`stationen-orb-eintrag-${u.testidOverride ?? u.id}`}
+                  disabled={u.kommend}
+                  aria-disabled={u.kommend ? true : undefined}
+                  onClick={
+                    u.kommend || !u.moduleId
+                      ? undefined
+                      : () => {
+                          setOffen(false);
+                          onStationOeffnen(u.moduleId!);
+                        }
+                  }
+                >
+                  {u.titel}
+                  {u.kommend ? <span className="k-orbit-badge-kommend">kommend</span> : null}
+                </button>
+              ))}
+            </div>
           ))}
         </div>
       ) : null}

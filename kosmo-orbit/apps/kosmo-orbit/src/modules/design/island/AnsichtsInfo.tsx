@@ -1,19 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Storey } from '@kosmo/kernel';
 import type { ViewMode } from '../../../state/ui-zustand';
 import './island.css';
 
 /**
  * Ansichts-Info (PD2, `docs/ISLAND-UI-SPEZ.md` §1-Tabelle) — Mono-Label
- * («GRUNDRISS · EG»-Muster) + Popover mit Ansichts-Chips (bestehende
- * `ViewMode`-Werte) und Geschoss-Chips (bestehende `Storey`-Liste). Nur im
- * Island-Modus gerendert (`DesignWorkspace.tsx`, Default-Flip).
+ * («GRUNDRISS»-Muster) + Popover mit Ansichts-Chips (bestehende `ViewMode`-
+ * Werte). Nur im Island-Modus gerendert (`App.tsx`, `bodenDockAusgeblendet`).
+ *
+ * **PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «Geschosseinstellung
+ * raus aus der Tab-Leiste, als kleine vertikale Pille unter dem KosmoOrbit-
+ * Logo»): der Geschoss-Teil ist HERAUSGELÖST in eine eigene Komponente
+ * `GeschossPille.tsx` — diese Datei behält NUR noch Ansicht/Modus (das
+ * Label zeigt seither ausschliesslich `ANSICHT_LABEL[viewMode]`, ohne den
+ * früheren «· GESCHOSS»-Suffix). Die `storeys`/`activeStoreyId`/
+ * `setActiveStorey`-Props sind ersatzlos entfallen (lebten davor NUR für den
+ * jetzt ausgelagerten Geschoss-Chip-Block); die `ansichts-info-geschoss-*`-
+ * testids WANDERN unverändert mit nach `GeschossPille.tsx` (Vertrags-
+ * Kontinuität — dieselbe Chip-Logik, neuer Wohnort, s. dortiger
+ * Kopfkommentar).
  *
  * **Repo-Bezug (§1 «PD2»):** entspricht heute den `view-*`-Knöpfen
- * (`DesignWorkspace.tsx:2130-2159`, `viewMode` aus `ui-zustand.ts:46-49`) +
- * der Geschossleiste (`DesignWorkspace.tsx:3172-3199`, `storey-${s.name}`) —
+ * (`DesignWorkspace.tsx:2130-2159`, `viewMode` aus `ui-zustand.ts:46-49`) —
  * dieselben State-Werte, ein neuer, zusätzlicher Bedienweg (additiv, keine
- * Umbenennung der bestehenden `view-*`/`storey-*`-testids).
+ * Umbenennung der bestehenden `view-*`-testids).
  *
  * **Nur vier reale Ansichten** (`3d`/`split`/`quad`/`2d`, `ViewMode` in
  * `ui-zustand.ts`): das Gestaltungskonzept nennt fünf Chips («3D · Grundriss
@@ -42,12 +51,9 @@ const ANSICHT_REIHENFOLGE: readonly ViewMode[] = ['3d', 'split', 'quad', '2d'];
 export interface AnsichtsInfoProps {
   viewMode: ViewMode;
   setViewMode: (v: ViewMode) => void;
-  storeys: readonly Storey[];
-  activeStoreyId: string | null | undefined;
-  setActiveStorey: (id: string) => void;
 }
 
-export function AnsichtsInfo({ viewMode, setViewMode, storeys, activeStoreyId, setActiveStorey }: AnsichtsInfoProps) {
+export function AnsichtsInfo({ viewMode, setViewMode }: AnsichtsInfoProps) {
   const [offen, setOffen] = useState(false);
   const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -75,8 +81,7 @@ export function AnsichtsInfo({ viewMode, setViewMode, storeys, activeStoreyId, s
     schliessTimer.current = setTimeout(() => setOffen(false), AUTO_SCHLIESSEN_MS);
   }
 
-  const aktiveStorey = storeys.find((s) => s.id === activeStoreyId) ?? storeys[0];
-  const label = `${ANSICHT_LABEL[viewMode]}${aktiveStorey ? ` · ${aktiveStorey.name.toUpperCase()}` : ''}`;
+  const label = ANSICHT_LABEL[viewMode];
 
   return (
     <div
@@ -89,7 +94,7 @@ export function AnsichtsInfo({ viewMode, setViewMode, storeys, activeStoreyId, s
         type="button"
         className="isl-ansichts-info-label"
         data-testid="ansichts-info-label"
-        aria-label="Ansicht und Geschoss wählen"
+        aria-label="Ansicht wählen"
         aria-expanded={offen}
         // Bewusst NUR öffnen (kein Toggle, §1: «Klick/Hover öffnet…») — ein
         // Klick wird physisch IMMER von einem Hover eingeleitet (die Maus muss
@@ -121,25 +126,6 @@ export function AnsichtsInfo({ viewMode, setViewMode, storeys, activeStoreyId, s
               </button>
             ))}
           </div>
-          {storeys.length > 0 ? (
-            <>
-              <div className="isl-leiste-kopf">Geschoss</div>
-              <div className="isl-buehnenkopf-chips">
-                {storeys.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    className="isl-buehnenkopf-chip"
-                    data-testid={`ansichts-info-geschoss-${s.name}`}
-                    aria-pressed={s.id === activeStoreyId}
-                    onClick={() => setActiveStorey(s.id)}
-                  >
-                    {s.name}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : null}
         </div>
       ) : null}
     </div>

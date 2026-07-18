@@ -506,7 +506,15 @@
    Ansichts-Info `left:170` (war 126) — der bestehende +52-Abstand zwischen
    Stationen-Orb und Ansichts-Info bleibt dabei UNVERÄNDERT, nur beide rücken
    gemeinsam um weitere 44px nach rechts, um den zwei Logo-Kreisen Platz zu
-   machen. */
+   machen.
+   PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «Geschosseinstellung raus
+   aus der Tab-Leiste, als kleine vertikale Pille unter dem KosmoOrbit-Logo»):
+   `.isl-geschoss-pille` setzt DASSELBE 52px-Raster senkrecht fort —
+   `top:66px` (= 14 + 38px sichtbarer Kreis + 14px Lücke) unter dem
+   KosmoOrbit-Logo (`App.tsx` `.isl-kopf-logo-orbit`, `left:14/top:14`),
+   selbst `left:14px` (deckungsgleich mit dem Logo-Kreis darüber, eine
+   senkrechte Spalte). Eigene Regel weiter unten (`.isl-geschoss-pille-label`
+   analog `.isl-ansichts-info-label`). */
 .isl-buehnenkopf {
   position: fixed;
   top: 14px;
@@ -518,6 +526,10 @@
 }
 .isl-buehnenkopf-ansichts-info {
   left: 170px;
+}
+.isl-geschoss-pille {
+  top: 66px;
+  left: 14px;
 }
 
 /* PD5: EIN gemeinsamer 38px-Glas-Kreis-Stil für alle vier Kopf-Elemente
@@ -578,6 +590,32 @@
   cursor: default;
 }
 
+/* PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «Logo grau … der
+   KosmoOrbit-Kopf-Kreis … verliert jede Farb-Fläche»): NUR der KosmoOrbit-
+   Kreis (nicht `.isl-kopf-logo-design`, dessen Rollenpunkt-Farbe bewusst
+   Stationsfarbe bleibt) — `Logo6a` (`packages/kosmo-ui/src/logo-6a.tsx`,
+   hinter `OrbitMark module="orbit"`) zeichnet Ring/Neun-Quadrat mit
+   `var(--k-ink)` (oben bereits neutral auf `#f4f6fa` überschrieben) UND
+   Satellit/Mittelpunkt mit `var(--k-signal)` (Teal, bisher eine übrig
+   gebliebene Farb-Fläche) + `var(--k-success)`/`var(--k-danger)` für die
+   (hier ungenutzten) `zustand`-Ausprägungen 'fertig'/'fehler'. Dieselbe
+   lokale Custom-Property-Override-Technik wie die `--k-ink`-Zeile oben
+   (CSS-Variablen vererben sich normal über den DOM-Baum, bleiben ausserhalb
+   dieses einen Kreises unverändert) — diesmal auf `currentColor` statt
+   einen zweiten Hartwert, damit «Symbol currentColor» (Spec-Wortlaut §8
+   C-24) buchstäblich zutrifft: `color:#f4f6fa` kommt bereits aus der
+   geteilten 38px-Kreis-Regel oben, `currentColor` löst sich darauf auf —
+   Ring/Quadrat/Satellit/Mittelpunkt landen damit alle auf demselben
+   neutralen Grauton, keine einzige Farb-Fläche bleibt übrig. Muss NACH der
+   kombinierten `.isl-kopf-logo-orbit, .isl-kopf-logo-design`-Regel oben
+   stehen (Kaskade: gleiche Spezifität, spätere Quellreihenfolge gewinnt). */
+.isl-kopf-logo-orbit {
+  --k-ink: currentColor;
+  --k-signal: currentColor;
+  --k-success: currentColor;
+  --k-danger: currentColor;
+}
+
 /* PD5 (Owner-Befund «einheitliche Symbole»): der Einstellungs-Kreis oben
    rechts (`App.tsx`, `island-einstellungen-kreis`) war 44px voll sichtbar +
    `--k-glass-fill` — eigenes, drittes Glas neben Stationen-Orb (`--f-pill`)
@@ -618,6 +656,37 @@
   white-space: nowrap;
 }
 
+/* PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «gleiche Radien, gleiches
+   Grau» wie die übrigen Insel-Pillen): teilt sich `--f-pill` (dasselbe Grau
+   wie `.isl-stationen-orb-pill`/`.isl-einstellungen-kreis`) und
+   `--k-radius-pill` (volle Kapsel-Rundung, dieselbe Token-Familie wie
+   `.isl-toast`). «Vertikale Pille»: `width:38px` deckt sich mit dem
+   38px-Kreis darüber (KosmoOrbit-Logo, eine gemeinsame Spalte), die Höhe ist
+   bewusst GRÖSSER als die Breite (Hochformat-Kapsel) — im Gegensatz zur
+   breiten, horizontalen `.isl-ansichts-info-label` daneben. Kurzes
+   Geschoss-Kürzel (z. B. «EG», «1.OG») bleibt bei 9px Mono-Schrift lesbar,
+   ohne die Glyphen zu drehen. */
+.isl-geschoss-pille-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  min-height: 54px;
+  padding: var(--k-s2) var(--k-s1);
+  background: var(--f-pill, rgba(16, 19, 25, 0.92));
+  border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
+  border-radius: var(--k-radius-pill);
+  box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+  color: #f4f6fa;
+  cursor: pointer;
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  white-space: nowrap;
+}
+
 .isl-buehnenkopf-popover {
   position: absolute;
   top: calc(100% + var(--k-s3));
@@ -633,6 +702,23 @@
   border: 1px solid var(--k-glass-stroke, var(--k-line));
   border-radius: var(--k-radius-sm);
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
+}
+
+/* PB3: das Geschoss-Popover öffnet sich seitlich (nicht darunter, wie bei
+   Stationen-Orb/Ansichts-Info) — die Pille sitzt an der linken Viewport-
+   Kante (`left:14px`), ein `top:100%`-Popover in derselben Breite (38px)
+   wäre für die Chip-Reihe zu schmal UND liefe potentiell mit der darunter
+   liegenden ZEICHNEN-Insel-Randzone zusammen. Rechts daneben bleibt bei
+   Standard-Viewports (§4.2-Referenzbreiten) reichlich Luft (Viewport-Klammer
+   erfüllt: keine der bestehenden `--isl-clamp-*`-Fälle betrifft feste
+   Bühnenkopf-Elemente, s. deren Kommentar oben — nur Insel-Popups/Fenster,
+   die relativ zu einem beliebig positionierten Werkzeugknopf öffnen). Muss
+   NACH `.isl-buehnenkopf-popover` stehen (Kaskade: gleiche Spezifität,
+   spätere Quellreihenfolge gewinnt), s. identisches Muster bei
+   `.isl-kopf-logo-orbit` oben. */
+.isl-geschoss-pille-popover {
+  top: 0;
+  left: calc(100% + var(--k-s3));
 }
 
 .isl-buehnenkopf-chips {
@@ -677,13 +763,30 @@
 .isl-stationen-orb-eintrag:hover {
   background: var(--k-accent-wash);
 }
+/* PB3: `kommend`-Untertools (KosmoOffice, s. `orbit-werkzeuge.ts`) sind
+   `disabled` statt klickbar — dieselbe app-weite Ehrlichkeits-Konvention wie
+   `OrbitStart.tsx`s Home-Fächer (`docs/V084-SPEZ.md` §7 Sanktion 9). Kein
+   Hover-Wash auf einem toten Ziel. */
+.isl-stationen-orb-eintrag:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.isl-stationen-orb-eintrag:disabled:hover {
+  background: transparent;
+}
 
-.isl-rollenpunkt {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  flex-shrink: 0;
+/* PB3 (§8 C-24): eine Gruppe je sichtbarem `ORBIT_HAUPTWERKZEUGE`-Eintrag —
+   Abstand zur vorigen Gruppe/zum «Zentrale»-Eintrag kommt bereits aus
+   `.isl-buehnenkopf-popover`s `gap` (Flex-Column); diese Regel hält nur die
+   Einträge EINER Gruppe eng zusammen (kein zusätzlicher Row-Gap zwischen
+   Gruppenkopf und den eigenen Einträgen). Frühere per-Eintrag-Rollenpunkte
+   (`STATION_FARBE`, PD2-Fassung) sind mit der Umstellung auf gruppierte
+   Untertool-Listen entfallen — jede Gruppe trägt jetzt EINE Überschrift
+   (`.isl-leiste-kopf`) statt fünf einzelner Farbpunkte. */
+.isl-stationen-orb-gruppe {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 /* `prefers-reduced-motion`: der globale Riegel in `aura.css` (`*,*::before,

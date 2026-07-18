@@ -19,6 +19,14 @@ import {
   type ThemeName,
 } from '@kosmo/ui';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
+// PB3 (`docs/V084-SPEZ.md` §8 C-24, §5 W3): Stationen-Orb/Ansichts-Info/
+// Geschoss-Pille rendern jetzt HIER statt in `DesignWorkspace.tsx` — der
+// Bühnenkopf ist seit PC1 (`bodenDockAusgeblendet`, s. unten) bereits
+// stationsagnostisch; ein einziger Render-Ort deckt damit BEIDE Islands
+// (design- UND vis-Station) ab, ohne `VisWorkspace.tsx` anzufassen.
+import { AnsichtsInfo } from './modules/design/island/AnsichtsInfo';
+import { StationenOrb } from './modules/design/island/StationenOrb';
+import { GeschossPille } from './modules/design/island/GeschossPille';
 import { KosmoPanel } from './shell/KosmoPanel';
 import { KosmoSymbol } from './shell/KosmoSymbol';
 import { KosmoTakeoverWaechter } from './shell/KosmoTakeoverWaechter';
@@ -65,7 +73,7 @@ import {
   type VariantenEintrag,
 } from './state/variant-archive';
 import { useProject } from './state/project-store';
-import { katalogExport, pruefeSubmissionsreife } from '@kosmo/kernel';
+import { katalogExport, pruefeSubmissionsreife, type Storey } from '@kosmo/kernel';
 import { downloadProject, openProjectFile } from './state/project-io';
 import { loadTkbDemo } from './state/demo-tkb';
 import { connectSync, disconnectSync, onSyncStatus, type SyncStatus } from './state/project-sync';
@@ -315,9 +323,34 @@ export function App() {
   // Station bekommt denselben Kreis-Stil, aber ihre EIGENE Modul-Kennung
   // (s. Kommentar an der Render-Stelle unten).
   const visOberflaeche = useUiZustand((s) => s.visOberflaeche);
+  // PC4 (`docs/V084-SPEZ.md` §5 W3, C-20, «App.tsx-Guard additiv um
+  // prepareIslandAktiv — PC1-Zeile fortschreiben»): dieselbe Fortschreibung
+  // wie designIslandAktiv → visIslandAktiv, jetzt für die prepare-Station
+  // (`state/ui-zustand.ts`s `prepareOberflaeche`, additiv, Default 'island').
+  // Prepare hat KEINE `DockFlaeche` (kein eigenes Dock-Panel-System, s.
+  // `state/dock-stationen.ts` — Prepare taucht dort nicht auf) — dieser Guard
+  // ist die GANZE PC4-Anfassung von App.tsx ausserhalb dieses Kommentarblocks.
+  const prepareOberflaeche = useUiZustand((s) => s.prepareOberflaeche);
   const designIslandAktiv = screen === 'design' && designOberflaeche === 'island';
   const visIslandAktiv = screen === 'vis' && visOberflaeche === 'island';
-  const bodenDockAusgeblendet = designIslandAktiv || visIslandAktiv;
+  const prepareIslandAktiv = screen === 'prepare' && prepareOberflaeche === 'island';
+  const bodenDockAusgeblendet = designIslandAktiv || visIslandAktiv || prepareIslandAktiv;
+  // PB3 (§8 C-24): Zustand für den jetzt hier gerenderten Bühnenkopf
+  // (Stationen-Orb/Ansichts-Info/Geschoss-Pille) — dieselben globalen
+  // Stores, aus denen `DesignWorkspace.tsx` sie vor PB3 gelesen hat
+  // (`useProject`/`useUiZustand`), nur ein neuer Leseort. `storeys` ist
+  // dasselbe Muster wie `DesignWorkspace.tsx`s eigener `storeys`-`useMemo`
+  // (`doc.storeysOrdered()`), an `revision` gekoppelt (oben bereits
+  // abonniert). `aktivesModulImIsland` bestimmt für `StationenOrb`, welches
+  // `ORBIT_HAUPTWERKZEUGE`-Hauptwerkzeug «das offene Haupttool» ist (nie im
+  // Popover) — nur innerhalb des `bodenDockAusgeblendet`-Zweigs gültig,
+  // deshalb ohne `'home'`/Rest der `Screen`-Union.
+  const viewMode = useUiZustand((s) => s.viewMode);
+  const setViewMode = useUiZustand((s) => s.setViewMode);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const setActiveStorey = useProject((s) => s.setActiveStorey);
+  const storeys = useMemo(() => useProject.getState().doc.storeysOrdered(), [revision]) as readonly Storey[];
+  const aktivesModulImIsland: ModuleId = designIslandAktiv ? 'design' : 'vis';
   const sortierteModule = (() => {
     if (!rolle) return modules;
     const prio = ROLLEN_REIHENFOLGE[rolle];
@@ -332,6 +365,14 @@ export function App() {
     }
     if (m.deepLink === 'draw' || m.deepLink === 'sketch') setDeepLink(m.deepLink);
     if (m.screen) gehZu(m.screen);
+  };
+  // A7 (EntwurfsDock, Grundicons anderer Stationen) + PB3 (der neue
+  // app-weite Stationen-Orb, s. `bodenDockAusgeblendet`-Block unten):
+  // exakt derselbe Weg wie eine Zentrale-Kachel (`oeffneModul`) — EIN
+  // benannter Weg statt einer zweiten, duplizierten Inline-Closure.
+  const stationOeffnen = (id: ModuleId) => {
+    const m = modules.find((mm) => mm.id === id);
+    if (m) oeffneModul(m);
   };
   // Serie K / F3: das Orbit-Startmenü kennt nur echte Registry-Ids (siehe
   // `shell/orbit-werkzeuge.ts`) — ein schlanker Adapter auf denselben Weg.
@@ -748,6 +789,25 @@ export function App() {
           <span aria-hidden="true" style={{ fontSize: 15 }}>⚙</span>
         </button>
       )}
+      {/* PB3 (`docs/V084-SPEZ.md` §8 C-24, §5 W3): Stationen-Orb + Ansichts-
+          Info + Geschoss-Pille — bis PB3 lebten die ersten beiden NUR in
+          `DesignWorkspace.tsx` (design-Station), die vis-Station hatte gar
+          keinen Bühnenkopf-Zugang zu Stationen/Ansicht/Geschoss. Ein
+          einziger Render-Ort HIER (derselbe `bodenDockAusgeblendet`-Guard
+          wie die Logo-/Einstellungs-Kreise oben) deckt jetzt BEIDE Islands
+          ab, ohne `VisWorkspace.tsx` anzufassen (Owner: «beide Stationen mit
+          Islands bekommen die Pille/das Verhalten»). */}
+      {bodenDockAusgeblendet && (
+        <StationenOrb
+          aktivesModul={aktivesModulImIsland}
+          onStationOeffnen={stationOeffnen}
+          onZentrale={() => gehZu('home')}
+        />
+      )}
+      {bodenDockAusgeblendet && <AnsichtsInfo viewMode={viewMode} setViewMode={setViewMode} />}
+      {bodenDockAusgeblendet && (
+        <GeschossPille storeys={storeys} activeStoreyId={activeStoreyId} setActiveStorey={setActiveStorey} />
+      )}
 
       {syncOpen && (
         <div
@@ -901,11 +961,9 @@ export function App() {
                 }}
                 // A7 (EntwurfsDock, Grundicons anderer Stationen): exakt derselbe
                 // Weg wie eine Zentrale-Kachel (`oeffneModul`) — kein zweiter
-                // Navigations-Pfad, nur ein zweiter Aufrufort.
-                onStationOeffnen={(id) => {
-                  const m = modules.find((mm) => mm.id === id);
-                  if (m) oeffneModul(m);
-                }}
+                // Navigations-Pfad, nur ein zweiter Aufrufort (PB3: jetzt der
+                // gemeinsame `stationOeffnen`-Helfer, s. oben).
+                onStationOeffnen={stationOeffnen}
                 // PD5: «Zentrale» zusätzlich ADDITIV im `StationenOrb`-
                 // Popover erreichbar (Owner: «kann bleiben, schadet nicht»)
                 // — WÖRTLICH derselbe `gehZu('home')`-Aufruf wie der

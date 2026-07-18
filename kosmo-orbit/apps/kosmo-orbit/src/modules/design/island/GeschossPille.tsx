@@ -1,0 +1,120 @@
+import { useEffect, useRef, useState } from 'react';
+import type { Storey } from '@kosmo/kernel';
+import './island.css';
+
+/**
+ * Geschoss-Pille (PB3, `docs/V084-SPEZ.md` §8 C-24, Owner wörtlich
+ * «Geschosseinstellung raus aus der Tab-Leiste, als kleine vertikale Pille
+ * unter dem KosmoOrbit-Logo, gleiche Radien, gleiches Grau») — herausgelöst
+ * aus `AnsichtsInfo.tsx`, die bis PB3 Ansicht UND Geschoss in einem
+ * gemeinsamen Popover zeigte (`docs/ISLAND-UI-SPEZ.md` §1). Die
+ * Chip-Logik/das Popover-Markup sind WÖRTLICH dieselben wie zuvor in
+ * `AnsichtsInfo.tsx` — nur der Anker ist jetzt diese eigene, fix
+ * positionierte Bühnenkopf-Pille statt eines zweiten Abschnitts im
+ * Ansichts-Popover.
+ *
+ * **Position (`island.css`):** direkt unter dem KosmoOrbit-Logo-Kreis
+ * (`App.tsx` `.isl-kopf-logo-orbit`, `left:14/top:14`) — `left:14px`,
+ * `top:66px` (= 14 + 38px sichtbarer Kreis + 14px Lücke, dasselbe
+ * 52px-Raster wie die horizontale Kopf-Reihe, nur senkrecht fortgesetzt).
+ * Teilt sich die `--f-pill`-Token-Familie mit den übrigen Insel-Pillen
+ * (gleiches Grau) und `--k-radius-pill` (gleiche Radien) — «vertikale
+ * Pille»: schmal (38px, deckungsgleich mit dem Kreis darüber), aber höher
+ * als breit (Hochformat), im Gegensatz zur horizontalen Ansichts-Info-Pille
+ * daneben.
+ *
+ * **Vertrags-Wanderung:** die `ansichts-info-geschoss-*`-testids ziehen
+ * unverändert HIERHER um (waren zuvor Teil von `ansichts-info-popover`) —
+ * betroffene Specs sind einzeln in PB3s Bericht begründet.
+ *
+ * Auto-Schliessen 700ms nach Pointer-Verlassen — dasselbe lokale
+ * Timer-Muster wie `AnsichtsInfo`/`StationenOrb` (kein `useOverlaySchliessen`
+ * hier: der App-weite Hook-Rollout ist E3/PB4-Eigentum, s.
+ * `docs/V084-SPEZ.md` §3 E3 + §5 W4 — ausserhalb dieses Pakets).
+ */
+
+const AUTO_SCHLIESSEN_MS = 700;
+
+export interface GeschossPilleProps {
+  storeys: readonly Storey[];
+  activeStoreyId: string | null | undefined;
+  setActiveStorey: (id: string) => void;
+}
+
+export function GeschossPille({ storeys, activeStoreyId, setActiveStorey }: GeschossPilleProps) {
+  const [offen, setOffen] = useState(false);
+  const schliessTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (schliessTimer.current) clearTimeout(schliessTimer.current);
+    },
+    [],
+  );
+
+  function raeumeTimer(): void {
+    if (schliessTimer.current) {
+      clearTimeout(schliessTimer.current);
+      schliessTimer.current = null;
+    }
+  }
+
+  function aufEnter(): void {
+    raeumeTimer();
+    setOffen(true);
+  }
+
+  function aufLeave(): void {
+    raeumeTimer();
+    schliessTimer.current = setTimeout(() => setOffen(false), AUTO_SCHLIESSEN_MS);
+  }
+
+  // Kein Geschoss (Bootstrap-Lücke) — die Pille rendert lieber gar nicht,
+  // statt einen leeren/erfundenen Zustand vorzutäuschen (dasselbe
+  // Ehrlichkeits-Muster, das `AnsichtsInfo.tsx` vor PB3 für ihren
+  // Geschoss-Block nutzte: `storeys.length > 0`-Klammer).
+  if (storeys.length === 0) return null;
+
+  const aktiveStorey = storeys.find((s) => s.id === activeStoreyId) ?? storeys[0]!;
+
+  return (
+    <div
+      className="isl-buehnenkopf isl-geschoss-pille"
+      data-testid="geschoss-pille-root"
+      onMouseEnter={aufEnter}
+      onMouseLeave={aufLeave}
+    >
+      <button
+        type="button"
+        className="isl-geschoss-pille-label"
+        data-testid="geschoss-pille-label"
+        aria-label="Geschoss wählen"
+        aria-expanded={offen}
+        // Bewusst NUR öffnen (kein Toggle) — s. identischer Kommentar in
+        // AnsichtsInfo.tsx/StationenOrb.tsx.
+        onClick={() => setOffen(true)}
+      >
+        {aktiveStorey.name.toUpperCase()}
+      </button>
+      {offen ? (
+        <div className="isl-buehnenkopf-popover isl-geschoss-pille-popover" data-testid="geschoss-pille-popover">
+          <div className="isl-leiste-kopf">Geschoss</div>
+          <div className="isl-buehnenkopf-chips">
+            {storeys.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                className="isl-buehnenkopf-chip"
+                data-testid={`ansichts-info-geschoss-${s.name}`}
+                aria-pressed={s.id === activeStoreyId}
+                onClick={() => setActiveStorey(s.id)}
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}

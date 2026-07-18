@@ -97,12 +97,12 @@ import { journalStore } from '../../state/journal-store';
 import { requestKosmoFokus } from '../../state/kosmo-focus';
 import { EntwurfsDock, type EntwurfsModus } from './EntwurfsDock';
 // PD2 (`docs/ISLAND-UI-SPEZ.md` §7 PD2-Zeile): Island-Verdrahtung + Default-
-// Flip — `IslandBuehne`/`AnsichtsInfo`/`StationenOrb` rendern NUR im
-// Island-Modus (s. Rückgabe-JSX unten), `IslandWerkzeug` für den
-// `aktiviereIslandWerkzeug()`-Integrationspunkt.
+// Flip — `IslandBuehne` rendert NUR im Island-Modus (s. Rückgabe-JSX
+// unten), `IslandWerkzeug` für den `aktiviereIslandWerkzeug()`-
+// Integrationspunkt. PB3 (`docs/V084-SPEZ.md` §8 C-24): `AnsichtsInfo`/
+// `StationenOrb` rendern seither in `App.tsx` (s. dortiger Kommentar) —
+// diese Datei importiert sie nicht mehr.
 import { IslandBuehne } from './island/IslandShell';
-import { AnsichtsInfo } from './island/AnsichtsInfo';
-import { StationenOrb, type StationenOrbId } from './island/StationenOrb';
 // PD4 (`docs/ISLAND-UI-SPEZ.md` §7 PD4-Zeile): löst den PD3c-Notbehelf
 // (`shell/KosmoSymbol.tsx` freistehend über `App.tsx`) ab — der echte,
 // spezifizierte Kosmo-Orb (52px, `--f-gold`, Puls, 320px-Konversationskarte)
@@ -2323,14 +2323,6 @@ export function DesignWorkspace({
     }
   }
 
-  /** PD2 (`StationenOrb.tsx`): Direktzugang zu den fünf Stationen — 'design'
-   *  bleibt in dieser Station (nur Popover schliessen), die übrigen vier
-   *  laufen über denselben `onStationOeffnen`-Weg wie `EntwurfsDock`. */
-  function aktiviereStation(station: StationenOrbId): void {
-    if (station === 'design') return;
-    onStationOeffnen?.(station);
-  }
-
   return (
     <div
       className="dw-arbeitsflaeche"
@@ -3640,28 +3632,27 @@ export function DesignWorkspace({
         </div>
         )}
 
-        {/* PD2 Default-Flip: Island-Bühne (vier Islands + Ansichts-Info +
-            Stationen-Orb) nur im Modus 'island'. PD3c (Owner-Befehl 17.07.):
-            das `EntwurfsDock` — bislang der Kosmo-Orb-Zugang («entwurf-
-            sprechen»-Kachel) — entfällt jetzt selbst im Island-Modus (s.
-            seinen Render-Ort oben); `App.tsx` rendert dafür das freistehende
-            `<KosmoSymbol>` (sonst nur auf der Zentrale/Home) zusätzlich auch
-            hier, damit der Kosmo-Orb-Zugang erhalten bleibt (App.tsx-
-            Kopfkommentar bei `bodenDockAusgeblendet`). */}
+        {/* PD2 Default-Flip: Island-Bühne nur im Modus 'island'. PD3c
+            (Owner-Befehl 17.07.): das `EntwurfsDock` — bislang der
+            Kosmo-Orb-Zugang («entwurf-sprechen»-Kachel) — entfällt jetzt
+            selbst im Island-Modus (s. seinen Render-Ort oben); `App.tsx`
+            rendert dafür das freistehende `<KosmoSymbol>` (sonst nur auf der
+            Zentrale/Home) zusätzlich auch hier, damit der Kosmo-Orb-Zugang
+            erhalten bleibt (App.tsx-Kopfkommentar bei
+            `bodenDockAusgeblendet`).
+            PB3 (`docs/V084-SPEZ.md` §8 C-24, §5 W3): `StationenOrb`/
+            `AnsichtsInfo` sind HIER ausgezogen — sie rendern seither
+            zentral in `App.tsx` (derselbe `bodenDockAusgeblendet`-Guard,
+            der schon die Logo-/Einstellungs-Kreise trägt), damit die
+            vis-Station denselben Bühnenkopf bekommt, ohne
+            `VisWorkspace.tsx` anzufassen. `onStationOeffnen`/`onZurZentrale`
+            bleiben als Props bestehen (weiterhin von
+            `registriereStationsWeg` unten UND dem `EntwurfsDock` im Modus
+            'manuell' gebraucht) — nur ihr dritter frühere Verbraucher
+            (`StationenOrb` hier) ist entfallen. */}
         {designOberflaeche === 'island' && (
           <>
             <IslandBuehne onWerkzeugAktion={aktiviereIslandWerkzeug} />
-            <StationenOrb
-              onStationOeffnen={aktiviereStation}
-              {...(onZurZentrale !== undefined ? { onZentrale: onZurZentrale } : {})}
-            />
-            <AnsichtsInfo
-              viewMode={viewMode}
-              setViewMode={setViewMode}
-              storeys={storeys}
-              activeStoreyId={activeStoreyId}
-              setActiveStorey={setActiveStorey}
-            />
             {/* PD4: der echte Kosmo-Orb-Zugang, s. Import-Kommentar oben. */}
             <KosmoOrb {...(onKosmoOeffnen ? { onKosmoOeffnen } : {})} />
           </>
