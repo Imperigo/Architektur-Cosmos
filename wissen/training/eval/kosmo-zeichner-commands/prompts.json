@@ -1,0 +1,355 @@
+{
+  "adapter": "kosmo-zeichner-commands",
+  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23). 25 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge. Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md.",
+  "kriterien_legende": {
+    "command": "erwartete commandId ist ein reales, aktuelles Kosmo-Werkzeug (commandTools()) UND die erwarteten Parameter bestehen validateToolCall() gegen das ECHTE zod-Schema UND ChatSession meldet genau EINEN onProposal mit exakt dieser commandId/diesen Parametern",
+    "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug"
+  },
+  "prompts": [
+    {
+      "id": "cmd-01-geschoss-erstellen-eg",
+      "kategorie": "geschoss",
+      "nutzerwunsch": "Erstelle das Erdgeschoss auf Kote null, Geschosshöhe 3.0 m.",
+      "kosmoText": "Ich erstelle das EG auf OK Boden 0 mm mit 3000 mm Geschosshöhe.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.geschossErstellen",
+        "params": { "name": "EG", "index": 0, "elevation": 0, "height": 3000 }
+      }
+    },
+    {
+      "id": "cmd-02-geschoss-erstellen-1og",
+      "kategorie": "geschoss",
+      "nutzerwunsch": "Leg das 1. Obergeschoss drauf, Höhe 2.8 m, direkt auf dem EG (3.0 m).",
+      "kosmoText": "Ich erstelle das 1.OG auf 3000 mm mit 2800 mm Geschosshöhe.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.geschossErstellen",
+        "params": { "name": "1.OG", "index": 1, "elevation": 3000, "height": 2800 }
+      }
+    },
+    {
+      "id": "cmd-03-geschoss-kopieren",
+      "kategorie": "geschoss",
+      "nutzerwunsch": "Stapel das Erdgeschoss zweimal als Regelgeschosse nach oben.",
+      "kosmoText": "Ich stapel Geschoss geschoss-eg01 zweimal als Regelgeschosse.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.geschossKopieren",
+        "params": { "storeyId": "geschoss-eg01", "anzahl": 2 }
+      }
+    },
+    {
+      "id": "cmd-04-wand-zeichnen-strasse",
+      "kategorie": "wand",
+      "nutzerwunsch": "Zeichne im EG eine 8 m lange Aussenwand entlang der Strassenseite, Aufbau AW Beton 36.",
+      "kosmoText": "Ich zeichne eine 8000 mm Wand mit dem Aufbau AW Beton 36.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.wandZeichnen",
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "a": { "x": 0, "y": 0 },
+          "b": { "x": 8000, "y": 0 },
+          "assemblyId": "aufbau-awbeton01",
+          "alignment": "zentrum"
+        }
+      }
+    },
+    {
+      "id": "cmd-05-wand-zeichnen-giebel",
+      "kategorie": "wand",
+      "nutzerwunsch": "Und rechtwinklig dazu eine 6 m Giebelwand ab dem Endpunkt, gleicher Aufbau.",
+      "kosmoText": "Ich zeichne die 6000 mm Giebelwand ab (8000/0).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.wandZeichnen",
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "a": { "x": 8000, "y": 0 },
+          "b": { "x": 8000, "y": 6000 },
+          "assemblyId": "aufbau-awbeton01"
+        }
+      }
+    },
+    {
+      "id": "cmd-06-wand-zeichnen-innenwand",
+      "kategorie": "wand",
+      "nutzerwunsch": "Im 1.OG eine Innenwand von (0/0) nach (0/5000), Kern-innen ausgerichtet, Aufbau Innenwand KS 10.",
+      "kosmoText": "Ich zeichne die Innenwand im 1.OG, kern-innen ausgerichtet.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.wandZeichnen",
+        "params": {
+          "storeyId": "geschoss-1og",
+          "a": { "x": 0, "y": 0 },
+          "b": { "x": 0, "y": 5000 },
+          "assemblyId": "aufbau-iwks01",
+          "alignment": "kern-innen"
+        }
+      }
+    },
+    {
+      "id": "cmd-07-zone-erstellen-wohnen",
+      "kategorie": "zone",
+      "nutzerwunsch": "Erstelle im EG die Zone «Wohnen» als HNF, Umriss 4×5 m in der Ecke.",
+      "kosmoText": "Ich erstelle die Zone «Wohnen» (HNF), 4000×5000 mm.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.zoneErstellen",
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "outline": [
+            { "x": 0, "y": 0 },
+            { "x": 4000, "y": 0 },
+            { "x": 4000, "y": 5000 },
+            { "x": 0, "y": 5000 }
+          ],
+          "name": "Wohnen",
+          "sia": "HNF"
+        }
+      }
+    },
+    {
+      "id": "cmd-08-zone-erstellen-kueche",
+      "kategorie": "zone",
+      "nutzerwunsch": "Daneben die Küche, 3×3.5 m, HNF, Raumtyp Küche.",
+      "kosmoText": "Ich erstelle die Zone «Küche» (HNF, Raumtyp kueche), 3000×3500 mm.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.zoneErstellen",
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "outline": [
+            { "x": 4000, "y": 0 },
+            { "x": 7000, "y": 0 },
+            { "x": 7000, "y": 3500 },
+            { "x": 4000, "y": 3500 }
+          ],
+          "name": "Küche",
+          "sia": "HNF",
+          "raumTyp": "kueche"
+        }
+      }
+    },
+    {
+      "id": "cmd-09-raumtyp-setzen",
+      "kategorie": "zone",
+      "nutzerwunsch": "Setze den Raumtyp der Zone «Wohnen» auf wohnen (für den Raumgraph).",
+      "kosmoText": "Ich setze den Raumtyp von zone-wohnen01 auf «wohnen».",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.raumTypSetzen",
+        "params": { "zoneId": "zone-wohnen01", "raumTyp": "wohnen" }
+      }
+    },
+    {
+      "id": "cmd-10-oeffnung-fenster",
+      "kategorie": "oeffnung",
+      "nutzerwunsch": "Setz ein Fenster 1.2×1.5 m in die Strassenwand, Mitte bei 2 m, Brüstung 90 cm.",
+      "kosmoText": "Ich setze ein Fenster 1200×1500 mm bei 2000 mm ab Wandanfang, Brüstung 900 mm.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.oeffnungSetzen",
+        "params": {
+          "wallId": "wand-strasse01",
+          "openingType": "fenster",
+          "center": 2000,
+          "width": 1200,
+          "height": 1500,
+          "sill": 900
+        }
+      }
+    },
+    {
+      "id": "cmd-11-oeffnung-tuer",
+      "kategorie": "oeffnung",
+      "nutzerwunsch": "Und eine Eingangstür 90×210 in dieselbe Wand, Mitte bei 6 m, ohne Brüstung.",
+      "kosmoText": "Ich setze eine Tür 900×2100 mm bei 6000 mm ab Wandanfang, Brüstung 0.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.oeffnungSetzen",
+        "params": {
+          "wallId": "wand-strasse01",
+          "openingType": "tuer",
+          "center": 6000,
+          "width": 900,
+          "height": 2100,
+          "sill": 0
+        }
+      }
+    },
+    {
+      "id": "cmd-12-zonentuer-setzen",
+      "kategorie": "oeffnung",
+      "nutzerwunsch": "Setze eine Zonentür zwischen Wohnen und Küche bei (4000/2000), 90 cm breit.",
+      "kosmoText": "Ich setze die Zonentür bei (4000/2000), Breite 900 mm.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.tuerSetzen",
+        "params": { "storeyId": "geschoss-eg01", "at": { "x": 4000, "y": 2000 }, "breite": 900 }
+      }
+    },
+    {
+      "id": "cmd-13-masskette-fassade",
+      "kategorie": "masskette",
+      "nutzerwunsch": "Miss die Strassenfassade durch — Masskette von (0/0) bis (8000/0).",
+      "kosmoText": "Ich setze die Masskette entlang der Strassenfassade, 8000 mm.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.massKetteSetzen",
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "punkte": [
+            { "x": 0, "y": 0 },
+            { "x": 8000, "y": 0 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cmd-14-masskette-raumfolge",
+      "kategorie": "masskette",
+      "nutzerwunsch": "Setz eine Masskette über die ganze Raumfolge Wohnen–Küche, drei Punkte.",
+      "kosmoText": "Ich setze die Masskette über die Raumfolge, drei Punkte.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.massKetteSetzen",
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "punkte": [
+            { "x": 0, "y": 0 },
+            { "x": 4000, "y": 0 },
+            { "x": 7000, "y": 0 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cmd-15-kommentar-fenster",
+      "kategorie": "kommentar",
+      "nutzerwunsch": "Trag einen Kommentar ein: Fenster Küche zu tief, bitte prüfen — von mir, heute.",
+      "kosmoText": "Ich setze deinen Kommentar «Fenster Küche zu tief – bitte prüfen».",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.kommentarSetzen",
+        "params": {
+          "text": "Fenster Küche zu tief - bitte prüfen",
+          "autor": "A. Baumann",
+          "at": { "x": 2000, "y": 2000 },
+          "storeyId": "geschoss-eg01",
+          "erstelltAm": "18.07.2026"
+        }
+      }
+    },
+    {
+      "id": "cmd-16-kommentar-treppe",
+      "kategorie": "kommentar",
+      "nutzerwunsch": "Weiterer Kommentar, projektweit ohne Geschossbezug: Treppenlauf-Breite Fluchtweg prüfen.",
+      "kosmoText": "Ich setze den projektweiten Kommentar «Treppenlauf Breite prüfen (Fluchtweg)».",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.kommentarSetzen",
+        "params": {
+          "text": "Treppenlauf Breite prüfen (Fluchtweg)",
+          "autor": "M. Keller",
+          "at": { "x": 6000, "y": 1000 },
+          "erstelltAm": "18.07.2026"
+        }
+      }
+    },
+    {
+      "id": "cmd-17-vis-graph-erstellen",
+      "kategorie": "vis",
+      "nutzerwunsch": "Leg einen neuen Render-Graphen «Wettbewerbsbilder» in KosmoVis an.",
+      "kosmoText": "Ich erstelle den Render-Graphen «Wettbewerbsbilder».",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.graphErstellen",
+        "params": { "name": "Wettbewerbsbilder" }
+      }
+    },
+    {
+      "id": "cmd-18-vis-node-setzen",
+      "kategorie": "vis",
+      "nutzerwunsch": "Setz einen Prompt-Node in den Graphen mit dem Text «Wohnen am Wasser, Abendlicht».",
+      "kosmoText": "Ich setze den Prompt-Node «Wohnen am Wasser, Abendlicht» auf den Canvas.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": {
+          "graphId": "graph-wettbewerb01",
+          "typ": "prompt",
+          "x": 100,
+          "y": 100,
+          "params": { "prompt": "Wohnen am Wasser, Abendlicht" }
+        }
+      }
+    },
+    {
+      "id": "cmd-19-vis-node-parametrieren",
+      "kategorie": "vis",
+      "nutzerwunsch": "Stell den Stimmungs-Node auf das Preset «abend».",
+      "kosmoText": "Ich setze das Preset des Stimmungs-Nodes auf «abend».",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeParametrieren",
+        "params": {
+          "graphId": "graph-wettbewerb01",
+          "nodeId": "node-stimmung01",
+          "params": { "preset": "abend" }
+        }
+      }
+    },
+    {
+      "id": "cmd-20-publish-set-speichern",
+      "kategorie": "publish",
+      "nutzerwunsch": "Speicher ein Publikations-Set «Baugesuch 1:100» mit den beiden Grundriss-Blättern.",
+      "kosmoText": "Ich speichere das Set «Baugesuch 1:100» mit 2 Blättern.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "publish.setSpeichern",
+        "params": { "name": "Baugesuch 1:100", "sheetIds": ["blatt-eg01", "blatt-1og01"] }
+      }
+    },
+    {
+      "id": "cmd-21-publish-blatt-erstellen",
+      "kategorie": "publish",
+      "nutzerwunsch": "Leg ein neues Planblatt an: «Grundrisse 1:100», Format A1 quer.",
+      "kosmoText": "Ich erstelle das Blatt «Grundrisse 1:100» (A1 quer).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "publish.blattErstellen",
+        "params": { "name": "Grundrisse 1:100", "format": "A1", "orientation": "quer" }
+      }
+    },
+    {
+      "id": "cmd-22-ablehn-fehlende-koordinaten",
+      "kategorie": "ablehnung",
+      "nutzerwunsch": "Zeichne irgendwo im Erdgeschoss eine Wand.",
+      "kosmoText": "Dafür brauche ich Start- und Endpunkt der Wand (und den Aufbau) — ohne Koordinaten würde ich raten, das mache ich nicht. Wo genau soll sie verlaufen?",
+      "erwartung": { "typ": "ablehnung" }
+    },
+    {
+      "id": "cmd-23-ablehn-fehlendes-pflichtfeld",
+      "kategorie": "ablehnung",
+      "nutzerwunsch": "Setz noch ein Fenster in die Wand.",
+      "kosmoText": "In welche Wand und an welcher Stelle (Abstand vom Wandanfang)? Ohne Position würde ich die Lage erfinden — sag mir Wand-ID und Mass, dann setze ich das Fenster.",
+      "erwartung": { "typ": "ablehnung" }
+    },
+    {
+      "id": "cmd-24-ablehn-ausserhalb-befehlsumfang",
+      "kategorie": "ablehnung",
+      "nutzerwunsch": "Bestell bitte Baumaterial beim Lieferanten und aktualisiere gleich die Buchhaltung.",
+      "kosmoText": "Bestellungen und Buchhaltung gehören nicht zu meinen Werkzeugen — ich kann Geometrie, Pläne und Dossiers bearbeiten, aber keine Lieferanten-Bestellung auslösen oder Buchhaltungsdaten pflegen.",
+      "erwartung": { "typ": "ablehnung" }
+    },
+    {
+      "id": "cmd-25-ablehn-echtzeit-render",
+      "kategorie": "ablehnung",
+      "nutzerwunsch": "Rendere mir jetzt sofort ein fertiges fotorealistisches Bild vom Gebäude, ohne HomeStation.",
+      "kosmoText": "Ein echtes GPU-Rendering läuft nur über die HomeStation (Cycles-Job) — ohne sie kann ich kein echtes fotorealistisches Bild liefern, ich würde sonst nur ein Ergebnis vortäuschen. Sobald die HomeStation erreichbar ist, stosse ich den Render-Job gern an.",
+      "erwartung": { "typ": "ablehnung" }
+    }
+  ]
+}

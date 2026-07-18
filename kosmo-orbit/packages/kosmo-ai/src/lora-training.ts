@@ -276,6 +276,32 @@ export interface LoraAdapterStatus {
   readonly status: 'leer' | 'wächst' | 'reproduzierbar' | 'vollständig' | 'wartet';
   /** Ehrliche, deutsche Statuszeile — nie ein Trainingslauf-Versprechen ohne Datenlage. */
   readonly hinweis: string;
+  /**
+   * v0.8.4 / PD2 (additiv, `docs/V084-SPEZ.md` D14/C-23) — OPTIONALER
+   * Eval-Stand für Adapter mit einer versionierten Eval-Suite unter
+   * `wissen/training/eval/<adapter>/`. Fehlt das Feld (alle bisherigen
+   * Zeilen), zeigt `TrainWorkspace` weiterhin nur `hinweis` — kein
+   * Verhaltensunterschied für Adapter ohne Eval-Suite.
+   *
+   * **Entscheid Livewert-vs-statisch (dokumentiert, nicht Buildzeit-Import):**
+   * `wissen/training/eval/<adapter>/eval-ergebnis.json` liegt unter `wissen/`
+   * (Geschwisterverzeichnis von `kosmo-orbit/`, s. Kopfkommentar der
+   * `pruefe-eval.mts`-Dateien dort) — AUSSERHALB dieses npm-Workspaces und
+   * damit ausserhalb von `rootDir`/dem Vite-App-Bundle. Ein `import … from
+   * '../../../wissen/…/eval-ergebnis.json'` würde die Paketgrenze nach
+   * `kosmo-orbit/` durchbrechen (fragil für den App-Build/`tsc -b`, und ein
+   * neuer, nirgends sonst gebrauchter Repo-Grenzüberschreiter). Statt eines
+   * Buildzeit-Imports gilt darum **derselbe manuell gepflegte Spiegel-
+   * Konvention wie der `hinweis`-Text zwei Zeilen unterhalb** (dort steht die
+   * Zeilenzahl von `commands-v1.jsonl` bereits heute als Literal, kein
+   * Datei-Import) — nach jedem `pruefe-eval.mts`-Lauf werden `quote`/`stand`
+   * hier von Hand nachgezogen (P10-v0.8.3-Präzedenzfall: ein nicht
+   * nachgezogener Spiegel log in der App, s. Kommentar bei der
+   * `kosmo-zeichner-commands`-Zeile — dieselbe Wachsamkeit gilt jetzt auch
+   * für `eval`). KEIN Fake-Livewert: die Zahlen hier sind exakt die des
+   * eingecheckten `eval-ergebnis.json`, nicht neu berechnet.
+   */
+  readonly eval?: { readonly quote: string; readonly stand: string };
 }
 
 /** Die 6 Adapter-Zeilen (Zielkompetenz-Karte §5.1, Registry-Zeilen 1-6 §5.2). */
@@ -301,6 +327,14 @@ export const LORA_ADAPTER_REGISTRY: readonly LoraAdapterStatus[] = [
     ziel: 'Software-Bedienung/Tool-Calling',
     status: 'reproduzierbar',
     hinweis: 'Datensatz liegt im Repo (commands-v1.jsonl, 372 seeded Zeilen über alle Commands, P4 v0.8.3) — reproduzierbarer Generator, noch nicht trainiert.',
+    // v0.8.4 / PD2: manuell nachgezogener Spiegel des eingecheckten
+    // `wissen/training/eval/kosmo-zeichner-commands/eval-ergebnis.json`
+    // (Stand des PD2-Laufs) — Begründung fürs manuelle statt Buildzeit-
+    // Nachziehen am `eval`-Feld oben.
+    eval: {
+      quote: '25/25 (100 %)',
+      stand: 'PD2 v0.8.4 — ScriptedProvider/ChatSession-Integrationsbeweis (Plumbing/Schema-Drift, kein Modell-Eval)',
+    },
   },
   {
     id: 'kosmo-buero-dpo',

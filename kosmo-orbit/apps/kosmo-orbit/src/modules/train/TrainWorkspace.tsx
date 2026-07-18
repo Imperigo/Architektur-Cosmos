@@ -281,6 +281,16 @@ export function TrainWorkspace() {
                   {STATUS_ETIKETT[r.status]}
                 </span>
                 <span className="train-paket-adapter-hinweis">{r.hinweis}</span>
+                {/* v0.8.4 / PD2 (docs/V084-SPEZ.md D14/C-23, additiv): nur
+                    Adapter mit einer versionierten Eval-Suite unter
+                    wissen/training/eval/<adapter>/ zeigen diese Zeile — ein
+                    manuell nachgezogener Spiegel des eingecheckten
+                    eval-ergebnis.json (lora-training.ts, kein Livewert). */}
+                {r.eval !== undefined && (
+                  <span className="train-paket-adapter-eval" data-testid={`train-adapter-eval-${r.id}`}>
+                    Eval {r.eval.quote} — {r.eval.stand}
+                  </span>
+                )}
               </div>
             ))}
           </div>

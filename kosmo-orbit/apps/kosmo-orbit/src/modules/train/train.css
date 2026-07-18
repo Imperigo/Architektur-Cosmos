@@ -137,6 +137,15 @@
   color: var(--k-ink-faint);
   font-size: var(--k-t-xs);
 }
+/* v0.8.4 / PD2 (docs/V084-SPEZ.md D14/C-23, additiv) — Eval-Zeile, nur bei
+ * Adaptern mit `eval`-Feld gerendert (TrainWorkspace.tsx). Eigene Zeile über
+ * die volle Breite (5. Grid-Kind fiele sonst unter die erste Spalte). */
+.train-paket-adapter-eval {
+  grid-column: 1 / -1;
+  color: color-mix(in srgb, var(--_hue) 55%, var(--k-ink-faint));
+  font-size: var(--k-t-xs);
+  font-family: var(--k-font-mono);
+}
 /* v0.8.2 / P6 «Kuratier-Flow» (docs/V082-SPEZ.md §6.7) — Journal → Kuration:
  * dieselbe Glass/Hairline-Optik wie die umgebenden Blöcke, aber innerhalb der
  * Trainingspaket-Fläche (kein eigenes k-glass-Panel — additiver Unterblock). */

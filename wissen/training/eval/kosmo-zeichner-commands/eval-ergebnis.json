@@ -1,0 +1,208 @@
+{
+  "adapter": "kosmo-zeichner-commands",
+  "modus": "Selbstcheck (ScriptedProvider durch die echte ChatSession)",
+  "erzeugt_um": "2026-07-18T06:18:01.325Z",
+  "gesamt": {
+    "bestanden": 25,
+    "von": 25
+  },
+  "klassen": [
+    {
+      "kategorie": "geschoss",
+      "bestanden": 3,
+      "von": 3
+    },
+    {
+      "kategorie": "wand",
+      "bestanden": 3,
+      "von": 3
+    },
+    {
+      "kategorie": "zone",
+      "bestanden": 3,
+      "von": 3
+    },
+    {
+      "kategorie": "oeffnung",
+      "bestanden": 3,
+      "von": 3
+    },
+    {
+      "kategorie": "masskette",
+      "bestanden": 2,
+      "von": 2
+    },
+    {
+      "kategorie": "kommentar",
+      "bestanden": 2,
+      "von": 2
+    },
+    {
+      "kategorie": "vis",
+      "bestanden": 3,
+      "von": 3
+    },
+    {
+      "kategorie": "publish",
+      "bestanden": 2,
+      "von": 2
+    },
+    {
+      "kategorie": "ablehnung",
+      "bestanden": 4,
+      "von": 4
+    }
+  ],
+  "befunde": [
+    {
+      "id": "cmd-01-geschoss-erstellen-eg",
+      "kategorie": "geschoss",
+      "ok": true,
+      "begruendung": "Treffer: design.geschossErstellen — 1 Vorschlag, zod-valide Parameter (Geschoss EG auf 0.0 m)"
+    },
+    {
+      "id": "cmd-02-geschoss-erstellen-1og",
+      "kategorie": "geschoss",
+      "ok": true,
+      "begruendung": "Treffer: design.geschossErstellen — 1 Vorschlag, zod-valide Parameter (Geschoss 1.OG auf 3.0 m)"
+    },
+    {
+      "id": "cmd-03-geschoss-kopieren",
+      "kategorie": "geschoss",
+      "ok": true,
+      "begruendung": "Treffer: design.geschossKopieren — 1 Vorschlag, zod-valide Parameter (Geschoss ×2 stapeln)"
+    },
+    {
+      "id": "cmd-04-wand-zeichnen-strasse",
+      "kategorie": "wand",
+      "ok": true,
+      "begruendung": "Treffer: design.wandZeichnen — 1 Vorschlag, zod-valide Parameter (Wand 8.0 m)"
+    },
+    {
+      "id": "cmd-05-wand-zeichnen-giebel",
+      "kategorie": "wand",
+      "ok": true,
+      "begruendung": "Treffer: design.wandZeichnen — 1 Vorschlag, zod-valide Parameter (Wand 6.0 m)"
+    },
+    {
+      "id": "cmd-06-wand-zeichnen-innenwand",
+      "kategorie": "wand",
+      "ok": true,
+      "begruendung": "Treffer: design.wandZeichnen — 1 Vorschlag, zod-valide Parameter (Wand 5.0 m)"
+    },
+    {
+      "id": "cmd-07-zone-erstellen-wohnen",
+      "kategorie": "zone",
+      "ok": true,
+      "begruendung": "Treffer: design.zoneErstellen — 1 Vorschlag, zod-valide Parameter (Zone «Wohnen» (HNF))"
+    },
+    {
+      "id": "cmd-08-zone-erstellen-kueche",
+      "kategorie": "zone",
+      "ok": true,
+      "begruendung": "Treffer: design.zoneErstellen — 1 Vorschlag, zod-valide Parameter (Zone «Küche» (HNF))"
+    },
+    {
+      "id": "cmd-09-raumtyp-setzen",
+      "kategorie": "zone",
+      "ok": true,
+      "begruendung": "Treffer: design.raumTypSetzen — 1 Vorschlag, zod-valide Parameter (Raumtyp «wohnen»)"
+    },
+    {
+      "id": "cmd-10-oeffnung-fenster",
+      "kategorie": "oeffnung",
+      "ok": true,
+      "begruendung": "Treffer: design.oeffnungSetzen — 1 Vorschlag, zod-valide Parameter (Fenster 1200×1500 bei 2.0 m)"
+    },
+    {
+      "id": "cmd-11-oeffnung-tuer",
+      "kategorie": "oeffnung",
+      "ok": true,
+      "begruendung": "Treffer: design.oeffnungSetzen — 1 Vorschlag, zod-valide Parameter (Tür 900×2100 bei 6.0 m)"
+    },
+    {
+      "id": "cmd-12-zonentuer-setzen",
+      "kategorie": "oeffnung",
+      "ok": true,
+      "begruendung": "Treffer: design.tuerSetzen — 1 Vorschlag, zod-valide Parameter (Zonentür)"
+    },
+    {
+      "id": "cmd-13-masskette-fassade",
+      "kategorie": "masskette",
+      "ok": true,
+      "begruendung": "Treffer: design.massKetteSetzen — 1 Vorschlag, zod-valide Parameter (Masskette 8.0 m)"
+    },
+    {
+      "id": "cmd-14-masskette-raumfolge",
+      "kategorie": "masskette",
+      "ok": true,
+      "begruendung": "Treffer: design.massKetteSetzen — 1 Vorschlag, zod-valide Parameter (Masskette 7.0 m)"
+    },
+    {
+      "id": "cmd-15-kommentar-fenster",
+      "kategorie": "kommentar",
+      "ok": true,
+      "begruendung": "Treffer: design.kommentarSetzen — 1 Vorschlag, zod-valide Parameter (Kommentar: Fenster Küche zu tief - bitte prüfen)"
+    },
+    {
+      "id": "cmd-16-kommentar-treppe",
+      "kategorie": "kommentar",
+      "ok": true,
+      "begruendung": "Treffer: design.kommentarSetzen — 1 Vorschlag, zod-valide Parameter (Kommentar: Treppenlauf Breite prüfen (Fluchtweg))"
+    },
+    {
+      "id": "cmd-17-vis-graph-erstellen",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.graphErstellen — 1 Vorschlag, zod-valide Parameter (Render-Graph «Wettbewerbsbilder»)"
+    },
+    {
+      "id": "cmd-18-vis-node-setzen",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node prompt)"
+    },
+    {
+      "id": "cmd-19-vis-node-parametrieren",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeParametrieren — 1 Vorschlag, zod-valide Parameter (Node-Parameter (preset))"
+    },
+    {
+      "id": "cmd-20-publish-set-speichern",
+      "kategorie": "publish",
+      "ok": true,
+      "begruendung": "Treffer: publish.setSpeichern — 1 Vorschlag, zod-valide Parameter (Set «Baugesuch 1:100» (2 Blätter))"
+    },
+    {
+      "id": "cmd-21-publish-blatt-erstellen",
+      "kategorie": "publish",
+      "ok": true,
+      "begruendung": "Treffer: publish.blattErstellen — 1 Vorschlag, zod-valide Parameter (Blatt «Grundrisse 1:100» (A1 quer))"
+    },
+    {
+      "id": "cmd-22-ablehn-fehlende-koordinaten",
+      "kategorie": "ablehnung",
+      "ok": true,
+      "begruendung": "Treffer: kein Tool-Aufruf, wie bei einer ehrlichen Rückfrage/Absage erwartet"
+    },
+    {
+      "id": "cmd-23-ablehn-fehlendes-pflichtfeld",
+      "kategorie": "ablehnung",
+      "ok": true,
+      "begruendung": "Treffer: kein Tool-Aufruf, wie bei einer ehrlichen Rückfrage/Absage erwartet"
+    },
+    {
+      "id": "cmd-24-ablehn-ausserhalb-befehlsumfang",
+      "kategorie": "ablehnung",
+      "ok": true,
+      "begruendung": "Treffer: kein Tool-Aufruf, wie bei einer ehrlichen Rückfrage/Absage erwartet"
+    },
+    {
+      "id": "cmd-25-ablehn-echtzeit-render",
+      "kategorie": "ablehnung",
+      "ok": true,
+      "begruendung": "Treffer: kein Tool-Aufruf, wie bei einer ehrlichen Rückfrage/Absage erwartet"
+    }
+  ]
+}
