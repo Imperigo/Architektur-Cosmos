@@ -60,5 +60,8 @@ if [ -f kosmo-orbit/package.json ]; then
     || echo "[session-start] WARNUNG: npm install nicht sauber durchgelaufen — bitte manuell prüfen."
 fi
 
+# ── Skills-Hinweis (v0.8.3/P1, additiv, NIE abbrechend) ───────────────────
+echo "[session-start] Skills verfügbar (.claude/skills/): $(ls -1 .claude/skills 2>/dev/null | grep -v '\.md$' | tr '\n' ' ' 2>/dev/null || echo '(keine ermittelbar)')" || true
+
 echo "[session-start] fertig."
 exit 0

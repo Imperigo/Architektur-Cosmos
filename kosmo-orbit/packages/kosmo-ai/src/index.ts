@@ -11,3 +11,4 @@ export * from './chat';
 export * from './memory';
 export * from './lora-training';
 export * from './systemprompt';
+export * from './skills';

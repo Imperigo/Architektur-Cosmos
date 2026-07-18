@@ -29,6 +29,12 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 5. `wissen/training/claude/lehren/` — die letzten 2–3 Versionsdateien lesen,
    bevor du mit einem neuen Paket beginnst (Betriebskonzept:
    `docs/CLAUDE-LERNSCHLEIFE.md`).
+6. `.claude/skills/` — sechs kuratierte Skills für den Claude-Code-Betrieb an
+   diesem Repo (`orchestrierung`, `tiefplanung`, `gegenpruefung`,
+   `parallel-pakete`, `lehren-gedaechtnis`, `claude-md-disziplin`; Attribution
+   in `.claude/skills/QUELLEN.md`). Greifen situativ — vor Paket-Vergabe,
+   grosser Planung, Abschluss-Gates, parallelen Paketen und
+   `CLAUDE.md`-Änderungen.
 
 ## Setup
 
