@@ -293,10 +293,14 @@ export const LORA_ADAPTER_REGISTRY: readonly LoraAdapterStatus[] = [
     hinweis: 'Datensatz liegt im Repo (wissen/training/sft/kosmo-zeichner-grundriss/) — reproduzierbarer Generator.',
   },
   {
+    // P10 v0.8.3 (Rundgang-Fund): P4 hat den Datensatz real gefüllt
+    // (wissen/training/sft/kosmo-zeichner-commands/commands-v1.jsonl, 372
+    // seeded Zeilen, REGISTRY.md «reproduzierbar») — die alte 'leer'-Zeile
+    // hier war ein nicht nachgezogener Spiegel und log damit in der App.
     id: 'kosmo-zeichner-commands',
     ziel: 'Software-Bedienung/Tool-Calling',
-    status: 'leer',
-    hinweis: 'Wartet auf den zod-zu-commands-Playbook-Lauf (Claude-Strang, P4).',
+    status: 'reproduzierbar',
+    hinweis: 'Datensatz liegt im Repo (commands-v1.jsonl, 372 seeded Zeilen über alle Commands, P4 v0.8.3) — reproduzierbarer Generator, noch nicht trainiert.',
   },
   {
     id: 'kosmo-buero-dpo',
