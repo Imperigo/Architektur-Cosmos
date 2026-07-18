@@ -1,9 +1,10 @@
 import { create } from 'zustand';
-import type { Learning } from '@kosmo/ai';
+import type { Learning, SystemPromptBlock } from '@kosmo/ai';
+import { schaetzeTokens } from '@kosmo/ai';
 import type { DossierEintrag } from '@kosmo/kernel';
-import { bm25Scores, searchKnowledge } from '../modules/prepare/knowledge';
-import { loadReferences } from '../modules/data/DataWorkspace';
+import { bm25Scores, searchKnowledge, type KnowledgeHit } from '../modules/prepare/knowledge';
 import { listeGlb } from './asset-bibliothek';
+import { sucheReferenzen, type ReferenzTreffer } from './referenz-index';
 
 /**
  * Abruf-Index (V2-B1, D1 KosmoData-Dach) — EINE Quellensuche über alles,
@@ -115,37 +116,22 @@ export async function sucheQuellen(
     }
   });
 
-  // D1 (KosmoData-Dach): Referenzen — dieselbe Bibliothek wie das
-  // `referenzen_suchen`-Tool, aber jetzt auch mit [Qn]-Beleg zitierbar.
+  // D1 (KosmoData-Dach) + v0.8.3/P2 (§6.1/E6a): Referenzen — jetzt über den
+  // GETEILTEN Index `state/referenz-index.ts#sucheReferenzen()`, denselben,
+  // den auch das `referenzen_suchen`-Werkzeug nutzt (`KosmoPanel.tsx`) —
+  // EINE Rangfolge für dieselbe Anfrage, kein zweiter, abweichender
+  // Heuhaufen-Aufbau mehr an dieser Stelle.
   try {
-    const referenzen = await loadReferences();
-    const hays = referenzen.map((r) =>
-      [
-        r.title,
-        r.city,
-        r.country,
-        ...(r.authors ?? []),
-        ...(r.themes ?? []),
-        ...(r.materials ?? []),
-        r.one_sentence,
-        r.short_description,
-      ]
-        .filter(Boolean)
-        .join(' '),
-    );
-    const scores = bm25Scores(hays, query);
-    referenzen.forEach((r, i) => {
-      const score = scores[i]!;
-      if (score > 0) {
-        treffer.push({
-          typ: 'referenz',
-          titel: `Referenz · ${r.title}`,
-          text: r.one_sentence ?? r.short_description ?? hays[i]!.slice(0, 300),
-          score,
-          docId: r.id,
-        });
-      }
-    });
+    const refTreffer = await sucheReferenzen(query);
+    for (const { entry: r, score } of refTreffer) {
+      treffer.push({
+        typ: 'referenz',
+        titel: `Referenz · ${r.title}`,
+        text: r.one_sentence ?? r.short_description ?? r.title,
+        score,
+        docId: r.id,
+      });
+    }
   } catch {
     /* Referenz-Seed nicht erreichbar — Sammlung übersprungen */
   }
@@ -172,4 +158,79 @@ export async function sucheQuellen(
   }
 
   return treffer.sort((a, b) => b.score - a.score).slice(0, limit);
+}
+
+/** Token-Budget des Daten-Kontext-Blocks (§6.4/E6d, «≤300 Token» wörtlich). */
+const DATEN_KONTEXT_TOKEN_BUDGET = 300;
+
+let datenKontextCache: { schluessel: string; block: SystemPromptBlock } | null = null;
+
+/**
+ * v0.8.3/P2 (§6.4/E6d) — der App-seitige Konsument der additiven
+ * `extraBloecke?`-Schnittstelle in `packages/kosmo-ai/src/chat.ts`: ein
+ * knapper (≤300 Token, Budget-Beweis per `schaetzeTokens`) Daten-Kontext-
+ * Block, gespeist aus KosmoData — Referenz-Index (`sucheReferenzen`, §6.1)
+ * UND Wissensbasis (`searchKnowledge`) zusammen, als EINE Anfrage aus
+ * Projektname + Dossier-Text (dasselbe Kontext-Paar wie `sucheQuellen`s
+ * `dossier`-Argument, keine neue `KosmoDoc`-Abhängigkeit in diesem
+ * App-State-Modul). Reine Block-Bau-Funktion — die Verdrahtung an
+ * `ChatSession`s `extraBloecke`-Konstruktor-Parameter selbst ist laut Spez
+ * (`docs/V083-SPEZ.md` §6.4/§12.1 C-4) **P7/W2**, NICHT Teil dieses Pakets.
+ *
+ * Gecacht «je Doc-Stand»: der Schlüssel ist Projektname + Dossier-Inhalt
+ * (Typ+Text jeder Zeile) — ändert sich keins von beidem zwischen zwei
+ * Zügen (der Normalfall bei aufeinanderfolgenden Chat-Zügen im selben
+ * Projekt), liefert ein zweiter Aufruf den bereits gebauten Block ohne
+ * erneuten Referenzindex-/Wissensbasis-Durchlauf.
+ */
+export async function baueDatenKontextBlock(
+  projektName: string,
+  dossier: readonly DossierEintrag[],
+): Promise<SystemPromptBlock> {
+  const schluessel = `${projektName} ${dossier.map((d) => `${d.typ}:${d.text}`).join(' ')}`;
+  if (datenKontextCache?.schluessel === schluessel) return datenKontextCache.block;
+
+  const leer: SystemPromptBlock = { label: 'datenKontext', text: '' };
+  const anfrage = [projektName, ...dossier.map((d) => d.text)].filter(Boolean).join(' ').trim();
+  if (!anfrage) {
+    datenKontextCache = { schluessel, block: leer };
+    return leer;
+  }
+
+  let referenzen: ReferenzTreffer[] = [];
+  let wissen: KnowledgeHit[] = [];
+  try {
+    [referenzen, wissen] = await Promise.all([sucheReferenzen(anfrage, 4), searchKnowledge(anfrage, 4)]);
+  } catch {
+    /* KosmoData/Wissensbasis nicht erreichbar — Block bleibt ggf. leer, kein Absturz */
+  }
+
+  const kopf = 'KosmoData-Kontext zum Projekt (unaufgefordert, zur Einordnung):';
+  let rest = DATEN_KONTEXT_TOKEN_BUDGET - schaetzeTokens(kopf);
+  const zeilen: string[] = [];
+  const nimm = (zeile: string): boolean => {
+    const kosten = schaetzeTokens(zeile);
+    if (kosten > rest) return false;
+    zeilen.push(zeile);
+    rest -= kosten;
+    return true;
+  };
+  for (const { entry } of referenzen) {
+    if (!nimm(`- Referenz: ${entry.title}${entry.one_sentence ? ` — ${entry.one_sentence}` : ''}`)) break;
+  }
+  for (const treffer of wissen) {
+    if (!nimm(`- Wissen (${treffer.docName}): ${treffer.text.slice(0, 160)}`)) break;
+  }
+
+  const block: SystemPromptBlock = {
+    label: 'datenKontext',
+    text: zeilen.length > 0 ? `${kopf}\n${zeilen.join('\n')}` : '',
+  };
+  datenKontextCache = { schluessel, block };
+  return block;
+}
+
+/** NUR für Tests: erzwingt einen Neu-Aufbau des Daten-Kontext-Blocks beim nächsten Aufruf. */
+export function resetDatenKontextCacheFuerTests(): void {
+  datenKontextCache = null;
 }

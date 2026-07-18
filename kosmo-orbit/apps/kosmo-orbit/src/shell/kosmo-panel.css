@@ -241,6 +241,55 @@
   background: var(--k-surface);
   color: var(--k-ink-soft);
 }
+/* v0.8.3/P2 (additiv, `docs/V083-SPEZ.md` §6.3/E6c) — RefKarte: die reiche
+ * Referenz-Karte im Chat-Quellenbereich, gerendert nach einem [Qn]-Klick auf
+ * eine KosmoData-Referenz. `Karteikarte` (`@kosmo/ui`, `.k-karte`) liefert
+ * bereits Rahmen/Ecke/Laufnummer — hier nur das interne Zeilen-/Spalten-Layout. */
+.kp-refkarte {
+  max-width: 88%;
+  margin-top: var(--k-s3);
+}
+.kp-refkarte-kopf {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--k-s3);
+}
+.kp-refkarte-bild {
+  flex-shrink: 0;
+}
+.kp-refkarte-text {
+  flex: 1;
+  min-width: 0;
+}
+.kp-refkarte-titel {
+  font-weight: 600;
+  font-size: var(--k-t-sm, 13px);
+}
+.kp-refkarte-autoren {
+  font-size: var(--k-t-xs, 11px);
+  color: var(--k-ink-soft);
+}
+.kp-refkarte-schliessen {
+  all: unset;
+  cursor: pointer;
+  color: var(--k-ink-faint);
+  font-size: 16px;
+  line-height: 1;
+  padding: 2px 4px;
+}
+.kp-refkarte-kurztext {
+  margin-top: var(--k-s2);
+  font-size: var(--k-t-xs, 11px);
+  font-style: italic;
+  color: var(--k-ink-soft);
+}
+.kp-refkarte-themen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--k-s2);
+  margin-top: var(--k-s2);
+}
+
 .kp-feedback-reihe {
   display: flex;
   gap: var(--k-s2);

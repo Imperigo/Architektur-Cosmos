@@ -2,7 +2,7 @@ import { allCommands, type KosmoDoc } from '@kosmo/kernel';
 import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './provider';
 import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type CommandToolsOptionen, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
-import { baueSystemprompt, dossierBlock, rolleBlock, projektKontextBlock } from './systemprompt';
+import { baueSystemprompt, dossierBlock, rolleBlock, projektKontextBlock, type SystemPromptBlock } from './systemprompt';
 import {
   klassifiziereZug,
   rolleFuerAufgabe,
@@ -144,6 +144,24 @@ export class ChatSession {
      * Karte auch keine echte Differenzierung existiert.
      */
     private staffelungKonfig?: StaffelungKonfig,
+    /**
+     * v0.8.3/P2 (additiv, `docs/V083-SPEZ.md` §6.4/E6d — «diese Spez
+     * sanktioniert die Änderung ausdrücklich») — OPTIONALE zusätzliche
+     * Prompt-Bausteine, dasselbe Funktions-Muster wie `systemSuffix` oben:
+     * JEDEN Zug frisch aufgerufen (kein einmalig eingefrorener Block), geht
+     * in `baueSystemprompt()` NACH dem `kontext`-Block ein (Priorität:
+     * kritik-journal > dossier-nogo > rolle > kontext > `extraBloecke`,
+     * z.B. der App-seitige `datenKontext`-Block aus
+     * `apps/kosmo-orbit/src/state/quellen.ts#baueDatenKontextBlock`).
+     * `STANDARD_TOKEN_BUDGET` bleibt unverändert — ein Block, der nicht mehr
+     * passt, fällt ERSATZLOS weg (bestehende `baueSystemprompt()`-Regel,
+     * kein neues Budget-Sonderfeld). Optional, No-Op ohne Aufrufer — die
+     * eigentliche Verdrahtung (ein konkretes `extraBloecke` an eine
+     * `ChatSession` übergeben) ist Sache des App-seitigen Aufrufers
+     * (`KosmoPanel.tsx`), laut Spez erst P7/W2: bestehende 239 KI-Tests ohne
+     * `extraBloecke` bleiben unverändert grün.
+     */
+    private extraBloecke?: () => readonly SystemPromptBlock[],
   ) {
     this.queryTool = modelQueryTool(doc, contextDefaults);
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
@@ -180,6 +198,9 @@ export class ChatSession {
       { label: 'dossier-nogo', text: dossierBlock(this.doc) },
       { label: 'rolle', text: rolleBlock(this.doc) },
       { label: 'kontext', text: projektKontextBlock(this.doc) },
+      // v0.8.3/P2 (additiv, §6.4/E6d): App-seitige Extra-Bausteine NACH
+      // `kontext` — tiefste Priorität, fallen als Erstes bei Platzmangel.
+      ...(this.extraBloecke?.() ?? []),
     ]);
     if (this.messages[0]?.role === 'system') {
       this.messages[0] = { role: 'system', content: system };

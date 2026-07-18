@@ -25,8 +25,10 @@ import {
 import { verifiziereLizenz } from '@kosmo/lizenz';
 import type { Assembly, JournalEntry } from '@kosmo/kernel';
 import { formatiereEreignisse, useProject } from '../state/project-store';
-import { loadReferences } from '../modules/data/DataWorkspace';
+import { loadReferences, type RefEntry } from '../modules/data/DataWorkspace';
 import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
+import { sucheReferenzen } from '../state/referenz-index';
+import { RefKarte } from './RefKarte';
 import { vorschauFuerProposal, type ProposalVorschau } from '../state/proposal-vorschau';
 import { abspielVorspiel } from '../state/abspiel-anschluss';
 import { DiagnosePanel } from './Diagnose';
@@ -135,6 +137,29 @@ export function rollenBadgeTitel(einModellBetrieb: boolean, klasse: Aufgabenklas
   return einModellBetrieb
     ? `Aufgabenklasse: ${klasse} — Ein-Modell-Betrieb (kein Modellwechsel, nur Etikett)`
     : `Aufgabenklasse: ${klasse}`;
+}
+
+/**
+ * v0.8.3/P2 (§6.2/E6b, `docs/V083-SPEZ.md`) — vergibt `[Qn]`-Marken für
+ * Referenztreffer über DIESELBEN `quellenMap`/`quellenZaehler`-Refs, die
+ * `quellen_suchen`s `execute` (unten, unverändert — s. §11 Sanktionsliste,
+ * `quellen_suchen` bleibt byte-gleich) bereits nutzt: EIN gemeinsamer
+ * Zähler für beide Werkzeuge, keine Parallel-Nummerierung — ein Treffer aus
+ * `referenzen_suchen` bekommt nie dieselbe `[Qn]`-Nummer wie ein Treffer aus
+ * `quellen_suchen` in derselben Sitzung. Als eigene, pure Funktion
+ * exportiert (Muster `rollenBadgeLabel` oben): testbar mit einem frischen
+ * Map/Zähler-Paar, ohne vollen Panel-Render.
+ */
+export function markiereReferenzTreffer(
+  treffer: readonly { titel: string; text: string; score: number; docId: string }[],
+  quellenMap: Map<number, QuellenRef>,
+  quellenZaehler: { current: number },
+): { nr: number; titel: string; text: string }[] {
+  return treffer.map((t) => {
+    const nr = ++quellenZaehler.current;
+    quellenMap.set(nr, { nr, typ: 'referenz', titel: t.titel, text: t.text, score: t.score, docId: t.docId });
+    return { nr, titel: t.titel, text: t.text };
+  });
 }
 
 // v0.8.2/P3 (additiv, §4.3 `docs/V082-SPEZ.md`): zweiter Konstruktor-Parameter
@@ -596,6 +621,15 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   // Belege des Gesprächs: [Qn] im Antworttext → Quelle (Chip mit Quellensprung)
   const quellenMap = useRef(new Map<number, QuellenRef>());
   const quellenZaehler = useRef(0);
+  /**
+   * v0.8.3/P2 (§6.3/E6c, `docs/V083-SPEZ.md`) — die gerade offene `RefKarte`
+   * im Chatverlauf: `bubbleId` verankert sie an der Bubble, deren `[Qn]`-Chip
+   * geklickt wurde (additiv zur bestehenden Sprung-Mechanik, ersetzt sie
+   * nicht — der Sprung zu KosmoData bleibt zusätzlich verfügbar).
+   */
+  const [offeneRefKarte, setOffeneRefKarte] = useState<{ bubbleId: number; nr: number; entry: RefEntry } | null>(
+    null,
+  );
 
   // Bleibende Chat-Bubble hinzufügen — herausgehoben aus dem `session`-Aufbau
   // (H-28, `docs/SIM-BEFUNDE.md`): `applyCard`/`applyPaket` liegen ausserhalb
@@ -804,7 +838,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         {
           name: 'referenzen_suchen',
           description:
-            'Durchsucht KosmoData (Architektur-Referenzbibliothek, 112 kuratierte Bauwerke der Architekturgeschichte) nach Stichwort. Liefert Titel, Jahr, Ort, Architekten, Themen, Material. Nutze es, wenn der Architekt nach Referenzen, Vorbildern oder Vergleichen fragt.',
+            'Durchsucht KosmoData (Architektur-Referenzbibliothek, 112 kuratierte Bauwerke der Architekturgeschichte) nach Stichwort. Liefert Titel, Jahr, Ort, Architekten, Themen, Material — mit [Qn]-Belegen, die im Antworttext zitiert werden können (Klick auf den Chip zeigt die Referenzkarte). Nutze es, wenn der Architekt nach Referenzen, Vorbildern oder Vergleichen fragt.',
           parameters: {
             type: 'object',
             properties: {
@@ -813,25 +847,25 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
             required: ['suchbegriff'],
             additionalProperties: false,
           },
+          // v0.8.3/P2 (§6.1/§6.2/E6a/E6b, `docs/V083-SPEZ.md`): BM25 über den
+          // geteilten Index (`state/referenz-index.ts#sucheReferenzen`) statt
+          // des vormals naiven `hay.includes(q)`-Treffers — UND dieselbe
+          // [Qn]-Marken-Mechanik wie `quellen_suchen` (EIN gemeinsamer
+          // `quellenZaehler`, `markiereReferenzTreffer` oben).
           execute: async (args) => {
-            const q = String((args as { suchbegriff?: string })?.suchbegriff ?? '').toLowerCase();
-            const refs = await loadReferences();
-            const hits = refs
-              .filter((e) => {
-                const hay = [e.title, e.city, e.country, e.style_sector, e.program, ...(e.authors ?? []), ...(e.themes ?? []), ...(e.materials ?? [])]
-                  .filter(Boolean)
-                  .join(' ')
-                  .toLowerCase();
-                return hay.includes(q);
-              })
-              .slice(0, 8);
-            if (hits.length === 0) return `Keine Referenz zu «${q}» in KosmoData.`;
-            return hits
-              .map(
-                (e) =>
-                  `- ${e.title} (${e.year_start ?? '?'}, ${[e.city, e.country].filter(Boolean).join(', ')}) — ${(e.authors ?? []).join(', ') || 'unbekannt'}; Themen: ${(e.themes ?? []).join(', ')}${e.one_sentence ? ` — ${e.one_sentence}` : ''}`,
-              )
-              .join('\n');
+            const q = String((args as { suchbegriff?: string })?.suchbegriff ?? '');
+            const treffer = await sucheReferenzen(q, 8);
+            if (treffer.length === 0) return `Keine Referenz zu «${q}» in KosmoData.`;
+            const eintraege = treffer.map(({ entry: e, score }) => ({
+              titel: `Referenz · ${e.title}`,
+              text: `${e.year_start ?? '?'}, ${[e.city, e.country].filter(Boolean).join(', ')} — ${(e.authors ?? []).join(', ') || 'unbekannt'}${(e.themes ?? []).length ? `; Themen: ${(e.themes ?? []).join(', ')}` : ''}${e.one_sentence ? ` — ${e.one_sentence}` : ''}`,
+              score,
+              docId: e.id,
+            }));
+            const marken = markiereReferenzTreffer(eintraege, quellenMap.current, quellenZaehler);
+            const zeilen = marken.map((m) => `[Q${m.nr}] (${m.titel}) ${m.text}`);
+            const erste = marken[0]!.nr;
+            return `${zeilen.join('\n---\n')}\n\nAntworte gestützt auf diese Belege und zitiere sie im Text mit ihrer Marke, z.B. [Q${erste}]. Erfinde keine Marken.`;
           },
         },
         {
@@ -1968,6 +2002,13 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                           } catch {
                             /* privates Fenster — kein Sprung, kein Absturz */
                           }
+                          // v0.8.3/P2 (§6.3/E6c): zusätzlich, ADDITIV zum
+                          // Stations-Sprung — die reiche RefKarte direkt hier
+                          // im Chatverlauf, an dieser Bubble verankert.
+                          void loadReferences().then((refs) => {
+                            const entry = refs.find((r) => r.id === ref.docId);
+                            if (entry) setOffeneRefKarte({ bubbleId: b.id, nr: n, entry });
+                          });
                         } else if (ref.typ === 'asset' && ref.docId) {
                           try {
                             sessionStorage.setItem('kosmo.asset.openId', ref.docId);
@@ -1985,6 +2026,16 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                   );
                 })}
               </div>
+            )}
+            {/* v0.8.3/P2 (§6.3/E6c): die RefKarte erscheint an GENAU der
+                Bubble, deren Referenz-Chip geklickt wurde — additiv zur
+                bestehenden Chip-/Sprung-Mechanik oben. */}
+            {offeneRefKarte && offeneRefKarte.bubbleId === b.id && (
+              <RefKarte
+                entry={offeneRefKarte.entry}
+                nr={offeneRefKarte.nr}
+                onClose={() => setOffeneRefKarte(null)}
+              />
             )}
             {b.who === 'kosmo' && !b.text.startsWith('⚠') && (
               <div className={`kp-feedback-reihe${b.feedback ? ' kp-feedback-reihe--gegeben' : ''}`}>
