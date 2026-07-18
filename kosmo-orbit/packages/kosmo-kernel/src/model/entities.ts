@@ -615,6 +615,45 @@ export interface Mangel extends Base {
   frist?: string;
 }
 
+/**
+ * Kommentar (v0.8.3 E1, `docs/V083-SPEZ.md` §1, Island-§8-Freigabe §8-6) —
+ * freie Notiz/Anmerkung am Projekt, unabhängig von Mängel-/Abnahme-Workflow
+ * (`Mangel`). **Kein Bauteil-Host** (analog `Mangel`-Kommentar oben): ein
+ * Kommentar kann sich auf kein, ein oder mehrere Bauteile beziehen — `at`
+ * (Welt-mm-Punkt) plus optionale `storeyId` reichen für die Verortung, kein
+ * starrer `entityId`-Bezug. `erstelltAm`/`erledigtAm` sind vorformatierte
+ * Datumsstrings (de-CH) — wie überall im Kernel NIE `Date.now()` im
+ * Command-/Derive-Pfad, das Datum kommt als Parameter von der App.
+ */
+export interface Kommentar extends Base {
+  kind: 'kommentar';
+  text: string;
+  autor: string;
+  at: Pt;
+  storeyId?: string;
+  status: 'offen' | 'erledigt';
+  /** Vorformatiertes Erstelldatum (de-CH) — Parameter des Commands, NIE
+   * `Date.now()` im Command-/Derive-Pfad (dieselbe Regel wie `Mangel.erfasstAm`). */
+  erstelltAm: string;
+  /** Vorformatiertes Erledigungsdatum (de-CH); nur gesetzt, wenn status 'erledigt'. */
+  erledigtAm?: string;
+}
+
+/**
+ * MassKette (v0.8.3 E2, `docs/V083-SPEZ.md` §2, Island-§8-Freigabe §8-7) —
+ * ein echtes, vom Benutzer gesetztes Punkt-zu-Punkt-Mess-Ergebnis (mindestens
+ * zwei Punkte, eine offene Kette). Unabhängig vom automatischen
+ * `design.bemassungSetzen`-Anzeigepfad (`derive/dimensions.ts`), der nur die
+ * Darstellung der assoziativen Aussenbemassung steuert — eine MassKette ist
+ * eine eigenständige, im Doc gespeicherte Messung, kein Anzeige-Toggle.
+ */
+export interface MassKette extends Base {
+  kind: 'masskette';
+  storeyId: string;
+  /** Mindestens zwei Punkte (Kettenanfang…-ende), Welt-mm. */
+  punkte: Pt[];
+}
+
 /** Port-Typen im Render-Graphen (V1-P2): nur gleiche Typen verbinden sich.
  * `kameras` (Owner-Befund K20/A10): Auto-Kamera-Standpunkte, s. derive/kamera.ts. */
 export type VisPortTyp = 'szene' | 'bild' | 'prompt' | 'zahl' | 'material' | 'kameras';
@@ -653,7 +692,7 @@ export interface VisGraph extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

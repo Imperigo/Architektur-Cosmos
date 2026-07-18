@@ -10,6 +10,7 @@ import {
   pickEntityAt,
   pointInPolygon,
   VERSCHIEBBAR,
+  wandTreffer,
 } from '../src/modules/design/plan-hit-test';
 
 /**
@@ -388,5 +389,57 @@ describe('VERSCHIEBBAR — Deckung mit design.verschieben (Kernel)', () => {
     const stair = doc.get(stairId) as { a: { x: number; y: number }; b: { x: number; y: number } };
     expect(stair.a).toEqual({ x: 100, y: 4950 });
     expect(stair.b).toEqual({ x: 100, y: 7950 });
+  });
+});
+
+describe('wandTreffer — Öffnung-Klickmodus (v0.8.3 E3, §3.2 docs/V083-SPEZ.md)', () => {
+  it('trifft die Wand und projiziert `center` (mm ab Wandanfang a) entlang der Achse', () => {
+    const { doc, storeyId, wallId } = setupDoc(); // Wand a=(0,0) b=(6000,0), Dicke 200
+    expect(wandTreffer(doc, storeyId, { x: 3000, y: 0 })).toEqual({ wallId, center: 3000 });
+    expect(wandTreffer(doc, storeyId, { x: 0, y: 0 })).toEqual({ wallId, center: 0 });
+    expect(wandTreffer(doc, storeyId, { x: 6000, y: 0 })).toEqual({ wallId, center: 6000 });
+  });
+
+  it('trifft innerhalb der halben Wanddicke + Toleranz auch quer zur Achse', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    const treffer = wandTreffer(doc, storeyId, { x: 3000, y: 90 }); // halbe Dicke 100 + Toleranz
+    expect(treffer?.wallId).toBe(wallId);
+    expect(treffer?.center).toBe(3000);
+  });
+
+  it('liefert null, weit ausserhalb jeder Wand', () => {
+    const { doc, storeyId } = setupDoc();
+    expect(wandTreffer(doc, storeyId, { x: 3000, y: 5000 })).toBeNull();
+  });
+
+  it('liefert null für ein Geschoss ohne Wände', () => {
+    const doc = new KosmoDoc();
+    const storeyId = (execute(doc, 'design.geschossErstellen', { name: 'OG', index: 1, elevation: 3000 })
+      .patches[0] as { id: string }).id;
+    expect(wandTreffer(doc, storeyId, { x: 0, y: 0 })).toBeNull();
+  });
+
+  it('liefert die NÄCHSTE Wand, wenn mehrere in Reichweite liegen', () => {
+    const { doc, storeyId, wallId: wandA } = setupDoc();
+    const assemblyId = doc.byKind('assembly')[0]!.id;
+    // Zweite, parallele Wand 150mm entfernt (näher als wandA bei y=150 zum Klickpunkt y=140)
+    const wandB = (execute(doc, 'design.wandZeichnen', {
+      storeyId,
+      a: { x: 0, y: 260 },
+      b: { x: 6000, y: 260 },
+      assemblyId,
+    }).patches[0] as { id: string }).id;
+    const naeherAnB = wandTreffer(doc, storeyId, { x: 3000, y: 220 });
+    expect(naeherAnB?.wallId).toBe(wandB);
+    const naeherAnA = wandTreffer(doc, storeyId, { x: 3000, y: 20 });
+    expect(naeherAnA?.wallId).toBe(wandA);
+  });
+
+  it('ignoriert Wände in einem anderen Geschoss', () => {
+    const { doc, wallId } = setupDoc();
+    const og = (execute(doc, 'design.geschossErstellen', { name: 'OG', index: 1, elevation: 3000 })
+      .patches[0] as { id: string }).id;
+    expect(wandTreffer(doc, og, { x: 3000, y: 0 })).toBeNull();
+    void wallId;
   });
 });

@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Mangel, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
+import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
 import { empfohlenePlanPhase, phaseLabel, siaPhaseLabel } from '../model/doc';
-import { formatLength, type Pt } from '../model/units';
+import { dist, formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
 import { isConvex } from '../geometry/skeleton';
 import { stairSpec, treppenTeile } from '../derive/treppe';
@@ -631,6 +631,10 @@ const editableFields = [
   'openingType',
   'anschlag',
   'fluegelTyp',
+  // v0.8.3 E1 (§1.3, docs/V083-SPEZ.md): additive Werte für `kommentar`.
+  'text',
+  'status',
+  'erledigtAm',
 ] as const;
 
 const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
@@ -659,6 +663,9 @@ export const setProperty = registerCommand({
       storey: ['name', 'height'],
       assembly: ['name'],
       freemesh: ['name'],
+      // v0.8.3 E1 (§1.3, docs/V083-SPEZ.md): additive Zeile, kein bestehender
+      // Eintrag verändert.
+      kommentar: ['text', 'status', 'erledigtAm'],
     };
     const fields = allowed[e.kind] ?? [];
     if (!fields.includes(p.feld)) {
@@ -678,6 +685,9 @@ export const setProperty = registerCommand({
     }
     if (p.feld === 'fluegelTyp' && !FLUEGELTYP_WERTE.includes(String(wert) as (typeof FLUEGELTYP_WERTE)[number])) {
       throw new CommandError(`fluegelTyp muss eines von ${FLUEGELTYP_WERTE.join(', ')} sein`);
+    }
+    if (p.feld === 'status' && e.kind === 'kommentar' && !['offen', 'erledigt'].includes(String(wert))) {
+      throw new CommandError('status muss offen oder erledigt sein');
     }
     if (p.feld === 'assemblyId') require<Assembly>(doc, String(wert), 'assembly');
     const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' ? 'meta' : p.feld]:
@@ -3092,6 +3102,127 @@ export const mangelLoeschen = registerCommand({
   run: (doc, p) => {
     const mangel = require<Mangel>(doc, p.mangelId, 'mangel');
     return [{ id: mangel.id, before: mangel, after: null }];
+  },
+});
+
+/**
+ * Kommentar-Commands (v0.8.3 E1, `docs/V083-SPEZ.md` §1, Island-§8-Freigabe
+ * §8-6) — freie Projekt-Notizen, unabhängig vom Mängel-/Abnahme-Workflow
+ * oben. Kein Bauteilbezug (s. `Kommentar`-Kommentar in `model/entities.ts`);
+ * `erstelltAm`/`erledigtAm` sind Parameter (App liefert
+ * `toLocaleDateString('de-CH')`), NIE `Date.now()` im Command selbst.
+ */
+export const kommentarSetzen = registerCommand({
+  id: 'design.kommentarSetzen',
+  title: 'Kommentar setzen',
+  description:
+    'Setzt einen freien Projekt-Kommentar. at ist ein Welt-mm-Punkt, storeyId optional für den Geschossbezug. erstelltAm ist ein vorformatiertes Datum (de-CH) — die App liefert das Tagesdatum, der Kernel rechnet nie selbst mit der Uhrzeit. Status startet immer bei «offen».',
+  params: z.object({
+    text: z.string().min(1),
+    autor: z.string().min(1),
+    at: PtSchema,
+    storeyId: z.string().optional(),
+    erstelltAm: z.string().min(1).describe('Vorformatiertes Datum, z.B. 17.07.2026'),
+  }),
+  summarize: (p) => `Kommentar: ${p.text.slice(0, 40)}`,
+  run: (doc, p) => {
+    if (p.storeyId) require<Storey>(doc, p.storeyId, 'storey');
+    const kommentar: Kommentar = {
+      id: newId('kommentar'),
+      kind: 'kommentar',
+      text: p.text,
+      autor: p.autor,
+      at: p.at as Pt,
+      status: 'offen',
+      erstelltAm: p.erstelltAm,
+      ...(p.storeyId !== undefined ? { storeyId: p.storeyId } : {}),
+    };
+    return [added(kommentar)];
+  },
+});
+
+export const kommentarStatusSetzen = registerCommand({
+  id: 'design.kommentarStatusSetzen',
+  title: 'Kommentar-Status setzen',
+  description:
+    'Setzt den Status eines Kommentars: «erledigt» braucht erledigtAm (vorformatiertes Datum, de-CH — die App liefert das Tagesdatum). Zurückstufen auf «offen» löscht erledigtAm wieder.',
+  params: z.object({
+    kommentarId: z.string(),
+    status: z.enum(['offen', 'erledigt']),
+    erledigtAm: z.string().optional().describe('Pflicht bei status «erledigt»'),
+  }),
+  summarize: (p) => (p.status === 'erledigt' ? `Kommentar erledigt (${p.erledigtAm ?? '?'})` : 'Kommentar wieder offen'),
+  run: (doc, p) => {
+    const kommentar = require<Kommentar>(doc, p.kommentarId, 'kommentar');
+    if (p.status === 'erledigt' && !p.erledigtAm) {
+      throw new CommandError('Status «erledigt» braucht ein Datum (erledigtAm)');
+    }
+    const { erledigtAm: _weg, ...ohne } = kommentar;
+    void _weg;
+    const after: Kommentar = {
+      ...ohne,
+      status: p.status,
+      ...(p.status === 'erledigt' ? { erledigtAm: p.erledigtAm as string } : {}),
+    };
+    return [{ id: kommentar.id, before: kommentar, after }];
+  },
+});
+
+export const kommentarLoeschen = registerCommand({
+  id: 'design.kommentarLoeschen',
+  title: 'Kommentar löschen',
+  description: 'Löscht einen Kommentar wieder (z.B. Fehleintrag).',
+  params: z.object({ kommentarId: z.string() }),
+  summarize: () => 'Kommentar gelöscht',
+  run: (doc, p) => {
+    const kommentar = require<Kommentar>(doc, p.kommentarId, 'kommentar');
+    return [{ id: kommentar.id, before: kommentar, after: null }];
+  },
+});
+
+/**
+ * MassKette-Command (v0.8.3 E2, `docs/V083-SPEZ.md` §2, Island-§8-Freigabe
+ * §8-7) — ein echtes, benutzergesetztes Punkt-zu-Punkt-Mess-Ergebnis.
+ * Eigenständiger, additiver Command-Pfad — `design.bemassungSetzen` (steuert
+ * nur die automatische Anzeige der assoziativen Aussenbemassung) bleibt
+ * byte-gleich, keine Erweiterung des bestehenden Commands.
+ */
+export const massKetteSetzen = registerCommand({
+  id: 'design.massKetteSetzen',
+  title: 'Masskette setzen',
+  description:
+    'Setzt eine Punkt-zu-Punkt-Messkette (mindestens zwei Punkte, Welt-mm) im aktiven Geschoss — ein echtes interaktives Mess-Werkzeug, unabhängig von der automatischen Bemassungsanzeige (design.bemassungSetzen).',
+  params: z.object({
+    storeyId: z.string(),
+    punkte: z.array(PtSchema).min(2),
+  }),
+  summarize: (p) => {
+    const pts = p.punkte as Pt[];
+    let gesamt = 0;
+    for (let i = 1; i < pts.length; i++) gesamt += dist(pts[i - 1]!, pts[i]!);
+    return `Masskette ${formatLength(Math.round(gesamt))}`;
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const masskette: MassKette = {
+      id: newId('masskette'),
+      kind: 'masskette',
+      storeyId: p.storeyId,
+      punkte: p.punkte as Pt[],
+    };
+    return [added(masskette)];
+  },
+});
+
+export const massKetteLoeschen = registerCommand({
+  id: 'design.massKetteLoeschen',
+  title: 'Masskette löschen',
+  description: 'Löscht eine gesetzte Messkette wieder.',
+  params: z.object({ massKetteId: z.string() }),
+  summarize: () => 'Masskette gelöscht',
+  run: (doc, p) => {
+    const masskette = require<MassKette>(doc, p.massKetteId, 'masskette');
+    return [{ id: masskette.id, before: masskette, after: null }];
   },
 });
 

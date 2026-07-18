@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { Pt } from '@kosmo/kernel';
 import { ALLE_FAEHIGKEITEN, type FaehigkeitId } from '../modules/design/phasen-presets';
 import { ARBEITSMODI, type Arbeitsmodus } from './arbeitsmodi-kern';
 
@@ -28,6 +29,10 @@ import { ARBEITSMODI, type Arbeitsmodus } from './arbeitsmodi-kern';
  * unverändert, nichts überlebt einen Neuladen, was es heute auch nicht tut.
  */
 
+/** v0.8.3 E3 (§3.1, `docs/V083-SPEZ.md`, Island-§8-Freigabe §8-5/§8-7/§8-6):
+ *  `'oeffnung'`/`'messen'`/`'kommentar'` additiv ergänzt (10 → 13) — eigene
+ *  Klickmodi in `DesignWorkspace.tsx`s `punktSetzen()`, s. dortigen
+ *  Kommentar. Kein bestehender Wert verändert. */
 export type ToolId =
   | 'auswahl'
   | 'wand'
@@ -38,10 +43,13 @@ export type ToolId =
   | 'stuetze'
   | 'schnitt'
   | 'skizze'
-  | 'mesh';
+  | 'mesh'
+  | 'oeffnung'
+  | 'messen'
+  | 'kommentar';
 
 /** Für Validierung (`ui-befehle.ts` `ui.werkzeugSetzen`) — 1:1 aus `ToolId`. */
-export const TOOL_IDS: readonly ToolId[] = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'schnitt', 'skizze', 'mesh'];
+export const TOOL_IDS: readonly ToolId[] = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'schnitt', 'skizze', 'mesh', 'oeffnung', 'messen', 'kommentar'];
 
 export type ViewMode = '3d' | '2d' | 'split' | 'quad';
 
@@ -121,6 +129,15 @@ export interface UiZustand {
   /** v0.7.0 (Stream 5A): «Varianten»-Panel (Anytime-Variantensuche +
    *  Kennzahl-Matrix, VariantenPanel.tsx). */
   variantenPanelOffen: boolean;
+  /** v0.8.3 E1 (§1.4, `docs/V083-SPEZ.md`): der zuletzt mit dem
+   *  `'kommentar'`-Werkzeug gesetzte Welt-mm-Punkt — Brücke zwischen dem
+   *  Klickmodus (`DesignWorkspace.tsx`s `punktSetzen()`) und dem
+   *  Erfassen-Formular der PROJEKT-Insel (`island/inhalte/projekt.tsx`,
+   *  Stufe 2/3), die keinen direkten Zugriff auf DesignWorkspaces lokalen
+   *  `points`-State hat. Reine UI-Brücke, geht NIE durchs Doc/Undo/Yjs
+   *  (Laufzeit ≠ Modell) — `null` nach erfolgreichem `design.kommentarSetzen`
+   *  oder Werkzeugwechsel. */
+  kommentarPunkt: Pt | null;
 
   // ---- persistiert (kosmo.ui.v1) ----
   /** Neutral-Zustand `undefined` = Voll-UI, vor erster sicherer Erkennung (arbeitsmodi-kern.ts). */
@@ -153,6 +170,7 @@ export interface UiZustand {
   setProjektMenuOffen: (v: boolean) => void;
   setCwSetzenOffen: (v: boolean) => void;
   setVariantenPanelOffen: (v: boolean) => void;
+  setKommentarPunkt: (v: Pt | null) => void;
 
   setArbeitsmodus: (v: Arbeitsmodus | undefined) => void;
   setModusAutomatik: (v: boolean) => void;
@@ -356,6 +374,7 @@ function anfangsZustand() {
     projektMenuOffen: false,
     cwSetzenOffen: false,
     variantenPanelOffen: false,
+    kommentarPunkt: null as Pt | null,
     arbeitsmodus: gespeichert.arbeitsmodus,
     modusAutomatik: gespeichert.modusAutomatik,
     modusFesthalten: gespeichert.modusFesthalten,
@@ -385,6 +404,7 @@ export const useUiZustand = create<UiZustand>((set, get) => ({
   setProjektMenuOffen: (v) => set({ projektMenuOffen: v }),
   setCwSetzenOffen: (v) => set({ cwSetzenOffen: v }),
   setVariantenPanelOffen: (v) => set({ variantenPanelOffen: v }),
+  setKommentarPunkt: (v) => set({ kommentarPunkt: v }),
 
   setzePanel: (panel, offen) => set({ [panel]: offen } as Partial<UiZustand>),
 

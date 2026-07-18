@@ -39,9 +39,21 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     expect(werkzeug('manuell').hinweis).toBeUndefined();
   });
 
-  it('NEU-Werkzeuge ohne heutige Entsprechung (Öffnung/Messen/Kommentare) tragen "Noch nicht gebaut"-Hinweis', () => {
+  // v0.8.3 E1/E2/E3 (§8-5/§8-6/§8-7 jetzt Owner-entschieden): die drei
+  // einstigen «kein heutige Entsprechung»-Fälle tragen jetzt echte `toolId`s
+  // (kein `hinweis` mehr) — löst den vorigen «Noch nicht gebaut»-Test ab.
+  it('Öffnung/Messen/Kommentare tragen jetzt echte toolId (kein Hinweis mehr, §8-5/§8-6/§8-7 entschieden)', () => {
+    expect(werkzeug('oeffnung').toolId).toBe('oeffnung');
+    expect(werkzeug('oeffnung').hinweis).toBeUndefined();
+    expect(werkzeug('messen').toolId).toBe('messen');
+    expect(werkzeug('messen').hinweis).toBeUndefined();
+    // Insel-Katalog-Id bleibt Plural («kommentare»), der ToolId dahinter ist
+    // Singular («kommentar», `ui-zustand.ts`-Union) — beide Namen sind
+    // bewusst unabhängig, s. `island-katalog.ts`-Kommentar.
+    expect(werkzeug('kommentare').toolId).toBe('kommentar');
+    expect(werkzeug('kommentare').hinweis).toBeUndefined();
     for (const id of ['oeffnung', 'messen', 'kommentare']) {
-      expect(werkzeug(id).hinweis).toMatch(/Noch nicht gebaut/);
+      expect(werkzeug(id).status).toBe('vorhanden');
     }
   });
 
@@ -69,12 +81,15 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     }
   });
 
-  it('genau 18 Werkzeuge sind wirklich verdrahtet (toolId ODER bekannte Sonderfälle), 11 bleiben ohne Aktion', () => {
+  // v0.8.3 E1/E2/E3: Öffnung/Messen/Kommentare tragen jetzt `toolId` (s. Test
+  // oben) — 18→21 verdrahtet, 11→8 ohne Aktion (dieselben drei wandern von
+  // der einen in die andere Gruppe, sonst nichts geändert).
+  it('genau 21 Werkzeuge sind wirklich verdrahtet (toolId ODER bekannte Sonderfälle), 8 bleiben ohne Aktion', () => {
     const verdrahtetOhneToolId = new Set(['darstellung', 'sonne', 'ebenen', 'varianten', 'phase', 'liste', 'export', 'import', 'manuell']);
     const verdrahtet = WERKZEUG_KATALOG.filter((w) => w.toolId !== undefined || verdrahtetOhneToolId.has(w.id));
     const ohneAktion = WERKZEUG_KATALOG.filter((w) => w.toolId === undefined && !verdrahtetOhneToolId.has(w.id));
-    expect(verdrahtet).toHaveLength(18);
-    expect(ohneAktion).toHaveLength(11);
+    expect(verdrahtet).toHaveLength(21);
+    expect(ohneAktion).toHaveLength(8);
   });
 
   it('werkzeugeFuerIsland liefert weiterhin 11/6/6/6 (Zuordnung durch PD2 unangetastet)', () => {

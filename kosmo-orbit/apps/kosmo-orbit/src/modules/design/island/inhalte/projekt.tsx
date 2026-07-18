@@ -6,10 +6,11 @@ import {
   pruefeGrundriss,
   siaPhaseLabel,
   type BauPhase,
+  type Kommentar,
   type SiaPhase,
   type Zone,
 } from '@kosmo/kernel';
-import { KSelect } from '@kosmo/ui';
+import { KButton, KInput, KSelect, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../../../state/project-store';
 import { useUiZustand } from '../../../../state/ui-zustand';
 import { empfohlenePlanPhaseFuer } from '../../phasen-presets';
@@ -297,32 +298,139 @@ function ListeStufe3() {
 // ────────────────────────────── Kommentare ─────────────────────────────────
 
 /**
- * Ehrliche Leerfähigkeit (Bauauftrag, wörtlich): kein `comment`/
- * `annotation`-Entity im Kernel, kein Command — KEINE Attrappe mit
- * deaktivierten Feldern. Owner-Frage §8-6 (`docs/ISLAND-UI-SPEZ.md`) bleibt
- * offen.
+ * v0.8.3 E1 (§1, docs/V083-SPEZ.md, Island-§8-Freigabe §8-6) — die Owner-
+ * Frage §8-6 ist beantwortet (`Kommentar`-Entity + `design.kommentarSetzen`/
+ * `-StatusSetzen`/`-Loeschen`, `packages/kosmo-kernel/src/model/entities.ts`/
+ * `commands/design.ts`). Diese Insel bekommt echten Inhalt: Liste,
+ * Erfassen-Formular, Status-Umschalter.
+ *
+ * Zusammenspiel mit dem Klickmodus (E3, `DesignWorkspace.tsx`s
+ * `punktSetzen()`, `tool === 'kommentar'`): ein Klick im Plan/Viewport setzt
+ * NUR den Welt-mm-Punkt (`useUiZustand().kommentarPunkt` — reine UI-Brücke,
+ * geht nie durchs Doc) — Text/Autor sind Pflichtfelder des Commands, die ein
+ * blosser Klick nicht liefern kann. `KommentarErfassen` zeigt das
+ * Formular erst, sobald ein Punkt gesetzt ist, und committet
+ * `design.kommentarSetzen` erst beim Absenden.
  */
-function KommentareStufe2() {
+function KommentarErfassen() {
+  const runCommand = useProject((s) => s.runCommand);
+  const activeStoreyId = useProject((s) => s.activeStoreyId);
+  const kommentarPunkt = useUiZustand((s) => s.kommentarPunkt);
+  const setKommentarPunkt = useUiZustand((s) => s.setKommentarPunkt);
+  const [text, setText] = useState('');
+  const [autor, setAutor] = useState('');
+
+  if (!kommentarPunkt) {
+    return (
+      <p className="pd3b-hinweis" data-testid="island-kommentar-hinweis-punkt">
+        Werkzeug «Kommentar» wählen und einen Punkt im Plan/Viewport anklicken, um einen neuen
+        Kommentar zu erfassen.
+      </p>
+    );
+  }
+
+  const gueltig = text.trim().length > 0 && autor.trim().length > 0;
+  const absenden = () => {
+    if (!gueltig) return;
+    try {
+      runCommand('design.kommentarSetzen', {
+        text: text.trim(),
+        autor: autor.trim(),
+        at: kommentarPunkt,
+        ...(activeStoreyId ? { storeyId: activeStoreyId } : {}),
+        erstelltAm: new Date().toLocaleDateString('de-CH'),
+      });
+      setText('');
+      setKommentarPunkt(null);
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
   return (
-    <p className="pd3b-hinweis" data-testid="island-kommentare-stufe2">
-      0 Kommentare — Fähigkeit existiert noch nicht im Kern
-    </p>
+    <div className="pd3b-block" data-testid="island-kommentar-erfassen" onClick={(e) => e.stopPropagation()}>
+      <label className="pd3b-feld">
+        <span>Text</span>
+        <KInput size="sm" data-testid="island-kommentar-text" value={text} onChange={(e) => setText(e.target.value)} />
+      </label>
+      <label className="pd3b-feld">
+        <span>Autor</span>
+        <KInput size="sm" data-testid="island-kommentar-autor" value={autor} onChange={(e) => setAutor(e.target.value)} />
+      </label>
+      <KButton size="sm" data-testid="island-kommentar-setzen" disabled={!gueltig} onClick={absenden}>
+        Kommentar setzen
+      </KButton>
+    </div>
+  );
+}
+
+/** Erledigungsdatum kommt von der App (`toLocaleDateString('de-CH')`), NIE
+ *  aus dem Kernel — dieselbe Regel wie überall (`Mangel`/`Kommentar`-
+ *  Kommentar in `model/entities.ts`). */
+function KommentareListe({ begrenzen }: { begrenzen?: number }) {
+  const revision = useProject((s) => s.revision);
+  const doc = useProject.getState().doc;
+  const runCommand = useProject((s) => s.runCommand);
+  const alle = useMemo(() => doc.byKind<Kommentar>('kommentar'), [doc, revision]);
+  if (alle.length === 0) {
+    return (
+      <p className="pd3b-hinweis" data-testid="island-kommentare-leer">
+        Noch keine Kommentare.
+      </p>
+    );
+  }
+  const sichtbar = begrenzen ? alle.slice(0, begrenzen) : alle;
+  return (
+    <div className="pd3b-liste" data-testid="island-kommentare-liste">
+      {sichtbar.map((k) => (
+        <div className="pd3b-zeile" key={k.id} onClick={(e) => e.stopPropagation()}>
+          <span>
+            {k.status === 'erledigt' ? '✓ ' : ''}
+            {k.text}
+          </span>
+          <KButton
+            size="sm"
+            tone="quiet"
+            data-testid="island-kommentar-status-umschalten"
+            onClick={() =>
+              runCommand('design.kommentarStatusSetzen', {
+                kommentarId: k.id,
+                status: k.status === 'offen' ? 'erledigt' : 'offen',
+                ...(k.status === 'offen' ? { erledigtAm: new Date().toLocaleDateString('de-CH') } : {}),
+              })
+            }
+          >
+            {k.status === 'offen' ? 'Erledigt' : 'Wieder öffnen'}
+          </KButton>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function KommentareStufe2() {
+  const revision = useProject((s) => s.revision);
+  const doc = useProject.getState().doc;
+  const offenAnzahl = useMemo(
+    () => doc.byKind<Kommentar>('kommentar').filter((k) => k.status === 'offen').length,
+    [doc, revision],
+  );
+  return (
+    <div className="pd3b-liste" data-testid="island-kommentare-stufe2" onClick={(e) => e.stopPropagation()}>
+      <div className="pd3b-zeile">
+        <span>Offen</span>
+        <strong data-testid="island-kommentare-anzahl">{offenAnzahl}</strong>
+      </div>
+      <KommentarErfassen />
+    </div>
   );
 }
 
 function KommentareStufe3() {
   return (
     <div className="pd3b-liste" data-testid="island-kommentare-stufe3">
-      <p className="pd3b-hinweis">
-        Kommentare/Annotationen auf Modell-Elementen gibt es im Kernel noch nicht — kein
-        `comment`/`annotation`-Entity, kein Command, kein Undo-Weg. Diese Insel zeigt bewusst
-        keine Attrappe mit deaktivierten Feldern.
-      </p>
-      <p className="pd3b-hinweis">
-        Owner-Frage §8-6 (`docs/ISLAND-UI-SPEZ.md`) bleibt offen: eine eigene Kernel-Entität +
-        Command sind nötig, bevor hier mehr als diese ehrliche Leerfähigkeit entstehen kann —
-        laut Spec «grösster Einzelaufwand der ganzen Mapping-Tabelle».
-      </p>
+      <KommentarErfassen />
+      <KommentareListe />
     </div>
   );
 }

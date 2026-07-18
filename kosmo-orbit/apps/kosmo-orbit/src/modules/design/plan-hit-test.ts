@@ -276,3 +276,31 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
 /** Kinds, die `design.verschieben` unterstützt (siehe packages/kosmo-kernel/src/commands/design.ts).
  * `freemesh` seit Block 3 / E3 (design.ts hat einen eigenen freemesh-Zweig). */
 export const VERSCHIEBBAR = new Set(['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'freemesh']);
+
+/**
+ * Wand-Treffer für den Öffnung-Klickmodus (v0.8.3 E3, §3.2 `docs/V083-
+ * SPEZ.md`) — «Treffertest analog zum bestehenden Wand-Hit-Test»: dieselbe
+ * Achse-±-halbe-Dicke-+-Toleranz-Geometrie wie `pickEntityAt`s Wand-Schleife
+ * oben, zusätzlich mit der longitudinalen Projektion (`center`, mm ab
+ * Wandanfang `a`) für `design.oeffnungSetzen`. Liefert die NÄCHSTE Wand
+ * (kleinste Distanz) im Geschoss, oder `null` ohne Treffer.
+ */
+export function wandTreffer(doc: KosmoDoc, storeyId: string, p: Pt): { wallId: string; center: number } | null {
+  let beste: { wallId: string; center: number; dist: number } | null = null;
+  for (const w of doc.byKind<Wall>('wall')) {
+    if (w.storeyId !== storeyId) continue;
+    const asm = doc.get<Assembly>(w.assemblyId);
+    const half = asm && asm.kind === 'assembly' ? assemblyThickness(asm) / 2 : 150;
+    const d = distToSegment(p, w.a, w.b);
+    if (d > half + TOLERANZ) continue;
+    if (beste && d >= beste.dist) continue;
+    const dx = w.b.x - w.a.x;
+    const dy = w.b.y - w.a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len;
+    const uy = dy / len;
+    const center = Math.round((p.x - w.a.x) * ux + (p.y - w.a.y) * uy);
+    beste = { wallId: w.id, center, dist: d };
+  }
+  return beste ? { wallId: beste.wallId, center: beste.center } : null;
+}

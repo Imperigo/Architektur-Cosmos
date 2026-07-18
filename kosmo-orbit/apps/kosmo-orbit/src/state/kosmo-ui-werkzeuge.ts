@@ -100,6 +100,10 @@ const TOOL_LABEL: Record<ToolId, string> = {
   schnitt: 'Schnitt',
   skizze: 'Skizze',
   mesh: 'Mesh',
+  // v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): additive Zeilen, TOOL_IDS 10→13.
+  oeffnung: 'Öffnung',
+  messen: 'Messen',
+  kommentar: 'Kommentar',
 };
 
 const VIEW_LABEL: Record<ViewMode, string> = {

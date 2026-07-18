@@ -41,6 +41,22 @@ function klick(el: Element): void {
   });
 }
 
+/** Tippt in ein React-KONTROLLIERTES `<input>` (`value`+`onChange`) — eine
+ *  simple `el.value = …`-Zuweisung geht am React-internen Value-Tracker
+ *  vorbei (React patcht den `value`-Setter auf `HTMLInputElement.prototype`,
+ *  um «echte» Tippereignisse von programmatischen Zuweisungen zu
+ *  unterscheiden); der native Prototyp-Setter umgeht das zuverlässig.
+ *  `stammdaten-projektname` u.ä. brauchen das NICHT (dort `defaultValue`
+ *  + `onBlur`, unkontrolliert) — `KommentarErfassen` (v0.8.3 E1) ist hier
+ *  der erste kontrollierte Input-Fall in diesem Testfile. */
+function tippe(el: HTMLInputElement, wert: string): void {
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')!.set!;
+  act(() => {
+    setter.call(el, wert);
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+}
+
 function q(testid: string): HTMLElement | null {
   return container!.querySelector(`[data-testid="${testid}"]`);
 }
@@ -147,22 +163,76 @@ describe('PD3b — Phase (design.phaseSetzen/siaPhaseSetzen)', () => {
   });
 });
 
-describe('PD3b — Kommentare (ehrliche Leerfähigkeit)', () => {
-  it('Stufe 2 zeigt den exakten Ehrlichkeits-Text', () => {
-    render(<IslandShell island="projekt" />);
-    oeffnePopup('projekt', 'kommentare');
-    expect(q('island-kommentare-stufe2')!.textContent).toBe(
-      '0 Kommentare — Fähigkeit existiert noch nicht im Kern',
-    );
+describe('PD3b — Kommentare (v0.8.3 E1: echte Kommentar-Entität + Command, §8-6 entschieden)', () => {
+  afterEach(() => {
+    // Reine UI-Brücke (Laufzeit ≠ Modell) — nie durchs Doc, muss aber
+    // zwischen Tests zurückgesetzt werden (Modul-Singleton-Store).
+    useUiZustand.getState().setKommentarPunkt(null);
   });
 
-  it('Stufe 3 verweist auf Owner-Frage §8-6, ohne eine Attrappe zu zeigen', () => {
+  it('Stufe 2 zeigt 0 offene Kommentare + einen Hinweis, solange kein Punkt gesetzt ist (kein Formular ohne Punkt)', () => {
+    render(<IslandShell island="projekt" />);
+    oeffnePopup('projekt', 'kommentare');
+    expect(q('island-kommentare-anzahl')!.textContent).toBe('0');
+    expect(q('island-kommentar-hinweis-punkt')).not.toBeNull();
+    expect(q('island-kommentar-text')).toBeNull();
+  });
+
+  it('mit gesetztem kommentarPunkt (Klickmodus-Brücke) zeigt Stufe 2 das Erfassen-Formular — Absenden ruft design.kommentarSetzen ECHT auf', () => {
+    useUiZustand.getState().setKommentarPunkt({ x: 1000, y: 2000 });
+    render(<IslandShell island="projekt" />);
+    oeffnePopup('projekt', 'kommentare');
+    const textFeld = q('island-kommentar-text') as HTMLInputElement;
+    const autorFeld = q('island-kommentar-autor') as HTMLInputElement;
+    expect(textFeld).not.toBeNull();
+    expect(autorFeld).not.toBeNull();
+    tippe(textFeld, 'Fassade Nord nochmals prüfen');
+    tippe(autorFeld, 'Andrin');
+    expect((q('island-kommentar-setzen') as HTMLButtonElement).disabled).toBe(false);
+    klick(q('island-kommentar-setzen')!);
+
+    const kommentare = useProject.getState().doc.byKind('kommentar') as { text: string; autor: string; at: { x: number; y: number } }[];
+    expect(kommentare).toHaveLength(1);
+    expect(kommentare[0]!.text).toBe('Fassade Nord nochmals prüfen');
+    expect(kommentare[0]!.autor).toBe('Andrin');
+    expect(kommentare[0]!.at).toEqual({ x: 1000, y: 2000 });
+    // Nach erfolgreichem Absenden ist die UI-Brücke wieder leer.
+    expect(useUiZustand.getState().kommentarPunkt).toBeNull();
+  });
+
+  it('«Kommentar setzen» bleibt deaktiviert, solange Text oder Autor leer sind', () => {
+    const vorher = useProject.getState().doc.byKind('kommentar').length;
+    useUiZustand.getState().setKommentarPunkt({ x: 0, y: 0 });
+    render(<IslandShell island="projekt" />);
+    oeffnePopup('projekt', 'kommentare');
+    const knopf = q('island-kommentar-setzen') as HTMLButtonElement;
+    expect(knopf.disabled).toBe(true);
+    const textFeld = q('island-kommentar-text') as HTMLInputElement;
+    tippe(textFeld, 'Nur Text, kein Autor');
+    expect((q('island-kommentar-setzen') as HTMLButtonElement).disabled).toBe(true);
+    // Deaktivierter Knopf UND kein neuer Kommentar — der Klick fände so oder
+    // so nicht statt (native `disabled`-Buttons feuern kein `click`), aber
+    // das beweist zusätzlich, dass keine andere Stelle den Command auslöst.
+    expect(useProject.getState().doc.byKind('kommentar')).toHaveLength(vorher);
+  });
+
+  it('Stufe 3 listet vorhandene Kommentare und schaltet den Status über design.kommentarStatusSetzen um (echter Undo-Weg)', () => {
+    const { runCommand } = useProject.getState();
+    runCommand('design.kommentarSetzen', {
+      text: 'Bestehender Kommentar',
+      autor: 'Andrin',
+      at: { x: 0, y: 0 },
+      erstelltAm: '18.07.2026',
+    });
     render(<IslandShell island="projekt" />);
     oeffnePopup('projekt', 'kommentare');
     eskaliereZuFenster('kommentare');
-    const text = q('island-kommentare-stufe3')!.textContent!;
-    expect(text).toMatch(/§8-6/);
-    expect(container!.querySelector('input, textarea')).toBeNull();
+    expect(q('island-kommentare-liste')!.textContent).toContain('Bestehender Kommentar');
+
+    klick(q('island-kommentar-status-umschalten')!);
+    const kommentar = useProject.getState().doc.byKind('kommentar')[0] as { status: string; erledigtAm?: string };
+    expect(kommentar.status).toBe('erledigt');
+    expect(kommentar.erledigtAm).toBeDefined();
   });
 });
 

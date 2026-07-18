@@ -112,20 +112,27 @@ test('Ein Deep-Link-Fall (Rendern → KosmoVis): die PD3c-verdrahtete Brücke we
   await page.screenshot({ path: 'test-results/pd3b-082-rendern-stufe3-deep-link.png' });
 });
 
-test('Kommentare-Ehrlichkeit: exakter Leerfähigkeits-Text, keine Attrappe', async ({ page }) => {
+test('Kommentare (v0.8.3 E1, §8-6 entschieden): echte Entität statt der früheren Leerfähigkeit', async ({ page }) => {
+  // Löst den v0.8.2-Ehrlichkeits-Test ab («0 Kommentare — Fähigkeit existiert
+  // noch nicht im Kern») — §8-6 ist seit v0.8.3 E1 entschieden (Kommentar-
+  // Entity + design.kommentarSetzen/-StatusSetzen/-Loeschen). Der VOLLE
+  // Klick→Formular→Command-Weg (inkl. Undo) hat eine eigene, dedizierte Spec:
+  // `e2e/masskette-kommentar.spec.ts`. Diese Spec bleibt bei der reinen
+  // Popup-Inhalts-Form (PD3b-Revier, ohne den Klickmodus zu bedienen).
   await ueberspringeOnboarding(page);
   await page.click('[data-testid="module-design"]');
 
   await oeffnePopup(page, 'projekt', 'kommentare');
-  await expect(page.locator('[data-testid="island-kommentare-stufe2"]')).toHaveText(
-    '0 Kommentare — Fähigkeit existiert noch nicht im Kern',
-  );
+  await expect(page.locator('[data-testid="island-kommentare-anzahl"]')).toHaveText('0');
+  // Kein Formular ohne gesetzten Punkt (kommentarPunkt-UI-Brücke leer) —
+  // ehrlicher Hinweis statt einer Attrappe mit deaktivierten Feldern.
+  await expect(page.locator('[data-testid="island-kommentar-hinweis-punkt"]')).toBeVisible();
+  await expect(page.locator('[data-testid="island-kommentar-text"]')).toHaveCount(0);
 
   await eskaliereZuFenster(page, 'kommentare');
-  await expect(page.locator('[data-testid="island-kommentare-stufe3"]')).toContainText('§8-6');
-  await expect(page.locator('[data-testid="island-kommentare-stufe3"] input')).toHaveCount(0);
-  await expect(page.locator('[data-testid="island-kommentare-stufe3"] textarea')).toHaveCount(0);
-  await page.screenshot({ path: 'test-results/pd3b-082-kommentare-ehrlichkeit.png' });
+  await expect(page.locator('[data-testid="island-kommentare-stufe3"]')).not.toContainText('§8-6');
+  await expect(page.locator('[data-testid="island-kommentare-leer"]')).toBeVisible();
+  await page.screenshot({ path: 'test-results/pd3b-083-kommentare-echt.png' });
 });
 
 test('Checks: Filter Alle/Fehler wirkt auf die Insel-Popup-Zahl', async ({ page }) => {

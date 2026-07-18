@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { neuLadenAusSpeicher, useUiZustand } from '../src/state/ui-zustand';
+import { neuLadenAusSpeicher, TOOL_IDS, useUiZustand } from '../src/state/ui-zustand';
 
 const STORAGE_KEY = 'kosmo.ui.v1';
 
@@ -186,5 +186,52 @@ describe('ui-zustand — Härte gegen kaputten Speicher', () => {
     const s = useUiZustand.getState();
     expect(s.modusAutomatik).toBe(true);
     expect(s.modusFesthalten).toBe(false);
+  });
+});
+
+describe('TOOL_IDS — v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): 10 → 13', () => {
+  it('umfasst genau 13 Werkzeuge, additiv um oeffnung/messen/kommentar erweitert', () => {
+    expect(TOOL_IDS).toHaveLength(13);
+    expect(TOOL_IDS).toEqual([
+      'auswahl',
+      'wand',
+      'volumen',
+      'zone',
+      'dach',
+      'treppe',
+      'stuetze',
+      'schnitt',
+      'skizze',
+      'mesh',
+      'oeffnung',
+      'messen',
+      'kommentar',
+    ]);
+  });
+
+  it('die zehn Bestands-Werkzeuge behalten ihre bisherige Reihenfolge (rein additiv am Ende)', () => {
+    expect(TOOL_IDS.slice(0, 10)).toEqual([
+      'auswahl',
+      'wand',
+      'volumen',
+      'zone',
+      'dach',
+      'treppe',
+      'stuetze',
+      'schnitt',
+      'skizze',
+      'mesh',
+    ]);
+  });
+});
+
+describe('kommentarPunkt — v0.8.3 E1 (§1.4): UI-Brücke Klickmodus ↔ PROJEKT-Insel', () => {
+  it('startet null, ist über setKommentarPunkt setz- und rücksetzbar, überlebt keinen neuLadenAusSpeicher-Reset (Sitzung, nicht persistiert)', () => {
+    expect(useUiZustand.getState().kommentarPunkt).toBeNull();
+    useUiZustand.getState().setKommentarPunkt({ x: 1000, y: 2000 });
+    expect(useUiZustand.getState().kommentarPunkt).toEqual({ x: 1000, y: 2000 });
+    neuLadenAusSpeicher();
+    expect(useUiZustand.getState().kommentarPunkt).toBeNull();
+    useUiZustand.getState().setKommentarPunkt(null);
   });
 });

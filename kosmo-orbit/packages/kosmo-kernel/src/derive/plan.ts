@@ -1,4 +1,4 @@
-import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type Opening, type Roof, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
+import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type MassKette, type Opening, type Roof, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, intersect, union, type Poly } from '../geometry/clip';
 import { materialPrioritaet } from '../model/prioritaet';
@@ -8,7 +8,7 @@ import {
   wallFrame,
   pointOnAxis,
 } from '../geometry/wall';
-import { dist, normal, polygonArea, pt, type Pt } from '../model/units';
+import { dist, formatLength, normal, polygonArea, pt, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
 import { meshSchnittRinge } from './mesh-topo';
 import { dachGeometrie } from './dach';
@@ -1015,6 +1015,25 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   for (const g of doc.byKind<GridAxis>('grid')) {
     if (g.storeyId !== storeyId) continue;
     axes.push({ a: g.a, b: g.b, label: g.label, typ: g.typ ?? 'haupt' });
+  }
+
+  // v0.8.3 E2 (§2.3, docs/V083-SPEZ.md, Golden-Politik §0.5): MassKette-
+  // Linien NUR, wenn mindestens eine MassKette-Entität im Geschoss existiert
+  // (Daten-Guard) — keines der 35 Bestands-Fixtures hat eine `masskette`-
+  // Entität, der Grundriss bleibt dort byte-identisch, unabhängig vom
+  // Code-Zustand dieses Zweigs (Guard-Prinzip, CLAUDE.md «Eigenheiten»).
+  const massketten = doc.byKind<MassKette>('masskette').filter((m) => m.storeyId === storeyId);
+  for (const mk of massketten) {
+    for (let i = 1; i < mk.punkte.length; i++) {
+      const a = mk.punkte[i - 1]!;
+      const b = mk.punkte[i]!;
+      lines.push({ a, b, classes: ['symbol', 'masskette'] });
+      texte.push({
+        at: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+        text: formatLength(Math.round(dist(a, b))),
+        classes: ['symbol', 'masskette-label'],
+      });
+    }
   }
 
   const bounds = computeBounds(regions, lines);

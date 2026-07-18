@@ -39,7 +39,8 @@ import {
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { verarbeiteUnternehmerplanDatei, useUnternehmerplan } from './unternehmerplan';
-import { VERSCHIEBBAR } from './plan-hit-test';
+import { VERSCHIEBBAR, wandTreffer } from './plan-hit-test';
+import { oeffnungVorgabeLesen } from './island/inhalte/zeichnen';
 import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
@@ -174,7 +175,11 @@ import {
  * Undo/Redo. Splitscreen mit 2D-Plänen folgt in M2.
  */
 
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh';
+// v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): additiv um 'oeffnung'/'messen'/
+// 'kommentar' ergänzt — 1:1 dieselbe Erweiterung wie `state/ui-zustand.ts`s
+// `ToolId` (TOOL_IDS 10→13), hier lokal dupliziert (Bestand vor diesem
+// Paket, keine Import-Umstellung in diesem additiven Auftrag).
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh' | 'oeffnung' | 'messen' | 'kommentar';
 
 // K16 A6: dasselbe Lernjournal wie `KosmoPanel.tsx` (👍/👎) — EIN Store
 // (`journalStore()`), eine Modul-Instanz. Loggt hier ausschliesslich, welche
@@ -303,6 +308,10 @@ const WERKZEUG_KURZLABEL: Record<ToolId, string> = {
   schnitt: 'Schnitt',
   skizze: 'Skizze',
   mesh: 'Mesh',
+  // v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): additive Zeilen, TOOL_IDS 10→13.
+  oeffnung: 'Öffnung',
+  messen: 'Messen',
+  kommentar: 'Kommentar',
 };
 
 /** Statusleiste: kurzes deutsches Label je Plan-LOD-Stufe (`planLod.ts`, B2). */
@@ -1019,6 +1028,12 @@ export function DesignWorkspace({
             });
           }
         }
+      } else if (tool === 'messen') {
+        // E2 (§2.4): Doppelklick committet die gesammelte Punktkette in EINEM
+        // `design.massKetteSetzen`-Aufruf (ein Undo-Schritt) — kein
+        // `history.beginGroup()` nötig (Muster-Abweichung von der Sketch-
+        // Wand-Sequenz oben, s. Spez §2.4 letzter Satz).
+        massKetteAbschliessen();
       }
       // Wand/Treppe/Schnitt: Kette bzw. Antritt/Austritt-Eingabe abschliessen
       setPoints([]);
@@ -1091,6 +1106,14 @@ export function DesignWorkspace({
       }
       if (masseingabe !== '') {
         setMasseingabe('');
+        return;
+      }
+      // E2 (§2.4, docs/V083-SPEZ.md): Esc schliesst eine laufende Masskette
+      // MIT mindestens zwei Punkten ab (wie Doppelklick, s. onGroundDoubleClick)
+      // statt sie nur zu verwerfen — analog zum bestehenden Muster hier, nur
+      // dass «die Kette behalten» für «messen» heisst: sie committen.
+      if (tool === 'messen' && points.length >= 2) {
+        massKetteAbschliessen();
         return;
       }
       setPoints([]);
@@ -1214,7 +1237,57 @@ export function DesignWorkspace({
         } else {
           setPoints([...points, p]);
         }
+      } else if (tool === 'oeffnung') {
+        // E3 (§3.2, docs/V083-SPEZ.md): ein Klick auf eine Wand ruft
+        // `design.oeffnungSetzen` mit `wallId` der getroffenen Wand + den
+        // aktuellen `oeffnungVorgabe`-Werten (ZEICHNEN-Insel, «Öffnung»)
+        // auf — die Skizze-Geste (`onSketchWandOeffnung`) bleibt UNVERÄNDERT
+        // als zweiter, zusätzlicher Weg bestehen.
+        const treffer = wandTreffer(useProject.getState().doc, activeStoreyId, p);
+        if (treffer) {
+          const vorgabe = oeffnungVorgabeLesen();
+          try {
+            runCommand('design.oeffnungSetzen', {
+              wallId: treffer.wallId,
+              openingType: vorgabe.openingType,
+              center: treffer.center,
+              width: vorgabe.width,
+              height: vorgabe.height,
+              sill: vorgabe.sill,
+              swing: vorgabe.swing,
+            });
+          } catch (err) {
+            meldeFehler(err);
+          }
+        }
+      } else if (tool === 'messen') {
+        // E2 (§2.4): jeder Klick hängt einen Punkt an `points` an (Muster
+        // Wand-Klickmodus oben) — der Abschluss (Doppelklick/Escape) läuft
+        // über `massKetteAbschliessen()`, s. `onGroundDoubleClick`/`onEscape`.
+        setPoints([...points, p]);
+      } else if (tool === 'kommentar') {
+        // E1 (§1.4): ein Klick setzt NUR den Punkt — die PROJEKT-Insel
+        // (Kommentare-Stufe2/3, `island/inhalte/projekt.tsx`) liest ihn aus
+        // dem UI-Store (`kommentarPunkt`) und committet `design.kommentarSetzen`
+        // erst mit dem ausgefüllten Erfassen-Formular (Text/Autor sind
+        // Pflichtfelder, ein blosser Klick liefert sie nicht).
+        useUiZustand.getState().setKommentarPunkt(p);
       }
+  }
+
+  /** E2 (§2.4): schliesst die laufende Masskette ab — `design.massKetteSetzen`
+   *  mit der gesammelten `points`-Liste, EIN Command-Aufruf (ein Undo-Schritt),
+   *  danach `points` geleert. Weniger als zwei Punkte: nur leeren (nichts zu
+   *  committen, dieselbe Ehrlichkeit wie die übrigen Zeichenwerkzeuge). */
+  function massKetteAbschliessen() {
+    if (activeStoreyId && points.length >= 2) {
+      try {
+        runCommand('design.massKetteSetzen', { storeyId: activeStoreyId, punkte: points });
+      } catch (err) {
+        meldeFehler(err);
+      }
+    }
+    setPoints([]);
   }
 
   useEffect(() => {
@@ -2106,7 +2179,10 @@ export function DesignWorkspace({
    * unsichtbares Ab-Togglen wäre für die Nutzerin nicht nachvollziehbar.
    *
    * Ehrliche Grenze (§3-Mapping-Status, Bericht dokumentiert jeden Fall):
-   * - 9 Zeichenwerkzeuge (`toolId` gesetzt, `island-katalog.ts`) → `setTool`.
+   * - 12 Zeichenwerkzeuge (`toolId` gesetzt, `island-katalog.ts`) → `setTool`
+   *   — die neun Bestandswerkzeuge PLUS Öffnung/Messen/Kommentar (v0.8.3 E3,
+   *   §8-5/§8-6/§8-7 jetzt Owner-entschieden, eigener Klickmodus in
+   *   `punktSetzen()`).
    * - Sonne/Ebenen: bestehende Kontextzeilen-Toggles, hier hart auf "an".
    * - Darstellung/Phase: derselbe Projekt-Menü-Block (`DesignWorkspace.tsx`
    *   Z. ~2780ff) — "aktivieren" heisst hier: das Menü öffnen (Stufe-2-
@@ -2121,15 +2197,13 @@ export function DesignWorkspace({
    *   Toggle in der Leiste, kein Popup, s. `island-katalog.ts`-Kommentar) —
    *   dieselbe Stelle, an der `manuell` (ebenfalls `hatPopup:false`) schon
    *   real schaltet.
-   * - Alle übrigen 10 Werkzeuge (Öffnung/Messen/Trace/Graph/Kennzahlen/
-   *   Checks/Kommentare/Rendern/Blätter/Sync): keine Aktion hier — Trace/
-   *   Graph wirken jetzt über ihre eigenen Stufe-2/3-Schalter in
-   *   `island/inhalte/ansicht.tsx` (PD3c, derselbe Store), Rendern/Blätter
-   *   über die Deep-Link-Brücke (`island/inhalte/austausch.tsx`); die
-   *   restlichen bleiben echtes NEU (kein Fund, §3), kein Toggle vorhanden
-   *   (immer sichtbar) oder andere Station/Shell-Ebene mit offener Owner-
-   *   Frage (§8-4) — Rahmen ohne Aktion, ehrlicher `hinweis` im Popup
-   *   (`island-katalog.ts`).
+   * - Alle übrigen 7 Werkzeuge (Trace/Graph/Kennzahlen/Checks/Rendern/
+   *   Blätter/Sync): keine Aktion hier — Trace/Graph wirken über ihre
+   *   eigenen Stufe-2/3-Schalter in `island/inhalte/ansicht.tsx` (PD3c,
+   *   derselbe Store), Rendern/Blätter über die Deep-Link-Brücke
+   *   (`island/inhalte/austausch.tsx`); die restlichen bleiben kein Toggle
+   *   vorhanden (immer sichtbar) oder andere Station/Shell-Ebene — Rahmen
+   *   ohne Aktion, ehrlicher `hinweis` im Popup (`island-katalog.ts`).
    */
   function aktiviereIslandWerkzeug(w: IslandWerkzeug): void {
     if (w.toolId) {

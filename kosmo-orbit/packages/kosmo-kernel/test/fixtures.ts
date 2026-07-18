@@ -540,3 +540,43 @@ export function testhausStammdaten(): { doc: KosmoDoc; storeyId: string } {
 
   return { doc, storeyId };
 }
+
+/**
+ * Testhaus 8×6 m mit EINER gesetzten Masskette (drei Punkte, zwei Segmente,
+ * diagonal quer durchs Gebäude) — eigenes Fixture-Doc für den EINEN neuen
+ * Golden dieses Pakets (v0.8.3 E2, `docs/V083-SPEZ.md` §0.5/§2,
+ * `docs/GOLDEN-WECHSEL-083.md`). Bewusst NICHT eines der 35 Bestands-
+ * Fixtures wiederverwendet — die Golden-Politik verlangt, dass KEIN
+ * Bestands-Fixture je eine `MassKette`-Entität zeigt.
+ */
+export function testhausMasskette(): { doc: KosmoDoc; storeyId: string } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+
+  execute(doc, 'design.massKetteSetzen', {
+    storeyId,
+    punkte: [
+      { x: 500, y: 500 },
+      { x: 4000, y: 3000 },
+      { x: 7500, y: 5500 },
+    ],
+  });
+
+  return { doc, storeyId };
+}

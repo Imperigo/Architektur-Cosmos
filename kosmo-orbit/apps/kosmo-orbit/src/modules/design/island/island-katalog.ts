@@ -16,14 +16,19 @@
  * reinen Datensatz). `glyphe` ist weiterhin ein reiner Text-Platzhalter
  * (echte Symbole folgen PD3/PD4).
  *
- * **`hinweis` (PD2, neu):** ehrlicher Kurztext fürs (weiterhin leere PD1-)
- * Popup-/Fenster-Rahmen jener Werkzeuge, die PD2 NICHT verdrahtet — entweder
- * weil es «kein heutige Entsprechung» gibt (Öffnung/Messen/Kommentare, §3
- * Status NEU) oder weil die echte Aktion aus Datei-Kreis-Gründen (PlanView.
- * tsx/andere Station, ausserhalb PD2s Dateikreis) bzw. mangels Toggle
- * (Kennzahlen/Checks: «immer sichtbar», kein Flag) nicht erreichbar ist.
- * Nur Werkzeuge MIT Popup (`hatPopup===true`) können einen Hinweis zeigen —
- * Achsen/Manuell (die zwei `hatPopup===false`-Fälle) bleiben beim PD1-Toast.
+ * **`hinweis` (PD2):** ehrlicher Kurztext fürs (weiterhin leere PD1-)
+ * Popup-/Fenster-Rahmen jener Werkzeuge, die PD2 NICHT verdrahtet — die
+ * echte Aktion liegt aus Datei-Kreis-Gründen anderswo (PlanView.tsx/andere
+ * Station, ausserhalb PD2s Dateikreis) bzw. ist mangels Toggle (Kennzahlen/
+ * Checks: «immer sichtbar», kein Flag) nicht erreichbar. Nur Werkzeuge MIT
+ * Popup (`hatPopup===true`) können einen Hinweis zeigen — Achsen/Manuell
+ * (die zwei `hatPopup===false`-Fälle) bleiben beim PD1-Toast.
+ *
+ * **v0.8.3 E1/E2/E3 (`docs/V083-SPEZ.md` §1/§2/§3.3):** die drei einstigen
+ * «kein heutige Entsprechung»-Fälle (Öffnung/Messen/Kommentare, §3 Status
+ * NEU/teilweise) haben jetzt echte Kernel-Entitäten+Commands UND einen
+ * eigenen `ToolId` (§8-5/§8-6/§8-7 Owner-entschieden) — alle drei Zeilen
+ * unten tragen seither `toolId`+`status:'vorhanden'` statt `hinweis`.
  *
  * `hatPopup` bildet den Prototyp-Datensatz `t.pop` nach (§4.2: «Werkzeuge
  * ohne Popup quittieren die Aktivierung mit einem Toast») — `false` NUR dort,
@@ -98,13 +103,14 @@ function werkzeug(
   };
 }
 
-const NOCH_NICHT_GEBAUT = 'Noch nicht gebaut (PD3/Owner-Frage §8';
-
 /** ZEICHNEN (11) — §3.1. */
 const ZEICHNEN: readonly IslandWerkzeug[] = [
   werkzeug('auswahl', 'Auswahl', 'zeichnen', 'AU', 'vorhanden', true, { toolId: 'auswahl' }),
   werkzeug('wand', 'Wand', 'zeichnen', 'WA', 'vorhanden', true, { toolId: 'wand' }),
-  werkzeug('oeffnung', 'Öffnung', 'zeichnen', 'OE', 'teilweise', true, { hinweis: `${NOCH_NICHT_GEBAUT}-5)` }),
+  // v0.8.3 E3 (§3.3, docs/V083-SPEZ.md, §8-5 jetzt entschieden): echter
+  // ToolId statt Hinweis — `aktiviereIslandWerkzeug()` (DesignWorkspace.tsx)
+  // setzt `setTool('oeffnung')` automatisch (`w.toolId`-Zweig).
+  werkzeug('oeffnung', 'Öffnung', 'zeichnen', 'OE', 'vorhanden', true, { toolId: 'oeffnung' }),
   werkzeug('volumen', 'Volumen', 'zeichnen', 'VO', 'vorhanden', true, { toolId: 'volumen' }),
   werkzeug('zone', 'Zone', 'zeichnen', 'ZO', 'vorhanden', true, { toolId: 'zone' }),
   werkzeug('dach', 'Dach', 'zeichnen', 'DA', 'vorhanden', true, { toolId: 'dach' }),
@@ -112,7 +118,8 @@ const ZEICHNEN: readonly IslandWerkzeug[] = [
   werkzeug('stuetze', 'Stütze', 'zeichnen', 'ST', 'vorhanden', true, { toolId: 'stuetze' }),
   werkzeug('skizze', 'Skizze', 'zeichnen', 'SK', 'vorhanden', true, { toolId: 'skizze' }),
   werkzeug('mesh', 'Mesh', 'zeichnen', 'ME', 'vorhanden', true, { toolId: 'mesh' }),
-  werkzeug('messen', 'Messen', 'zeichnen', 'MS', 'neu', true, { hinweis: `${NOCH_NICHT_GEBAUT}-7)` }),
+  // v0.8.3 E2/E3 (§2/§3.3, §8-7 jetzt entschieden): echter ToolId.
+  werkzeug('messen', 'Messen', 'zeichnen', 'MS', 'vorhanden', true, { toolId: 'messen' }),
 ];
 
 /** ANSICHT (6) — §3.2. */
@@ -143,7 +150,11 @@ const PROJEKT: readonly IslandWerkzeug[] = [
   werkzeug('varianten', 'Varianten', 'projekt', 'VA', 'vorhanden', true),
   werkzeug('phase', 'Phase', 'projekt', 'PH', 'vorhanden', true),
   werkzeug('liste', 'Liste', 'projekt', 'LI', 'vorhanden', true),
-  werkzeug('kommentare', 'Kommentare', 'projekt', 'KO', 'neu', true, { hinweis: `${NOCH_NICHT_GEBAUT}-6)` }),
+  // v0.8.3 E1/E3 (§1/§3.3, §8-6 jetzt entschieden): echter ToolId — der
+  // Insel-Katalog-Id bleibt `kommentare` (Plural, Bestandstext), der ToolId
+  // dahinter ist `kommentar` (Singular, `ui-zustand.ts`s `ToolId`-Union) —
+  // beide Namen sind unabhängig, `werkzeug()`s `extra.toolId` verknüpft sie.
+  werkzeug('kommentare', 'Kommentare', 'projekt', 'KO', 'vorhanden', true, { toolId: 'kommentar' }),
 ];
 
 const ANDERE_STATION_HINWEIS = 'Andere Station — Weg offen (PD3b/Owner-Frage §8-4)';

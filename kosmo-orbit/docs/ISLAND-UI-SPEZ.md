@@ -396,6 +396,17 @@ gefundene Lücken:
    `dock-vis`/`dock-publish` heute schon tun), oder (b) eine eigene, kleine In-Design-Kopie der
    wichtigsten Funktion bauen (z. B. „PDF exportieren aus KosmoDesign heraus rendern lassen").
    Diese Spez trifft **keine** Vorentscheidung — PD3b muss das mit dem Owner klären.
+
+   > **Bereits entschieden und real verdrahtet (v0.8.3, `docs/V083-SPEZ.md` §4, E4):** Option (a)
+   > — Deep-Link zur jeweiligen Station, keine native Mini-Kopie. PD3c hat die von PD3b
+   > vorbereitete Brücke (`registriereStationsWeg(onStationOeffnen)`) mit dem bestehenden
+   > `onStationOeffnen`-Weg verdrahtet (`DesignWorkspace.tsx:740-752`, Kopfkommentar dort zitiert
+   > diese Entscheidung bereits wörtlich) — die AUSTAUSCH-Insel-Fenster (Rendern/Blätter,
+   > `ZurStationKnopf`) navigieren damit ECHT zur Vis-/Publish-Station statt nur einen
+   > „noch nicht verdrahtet"-Hinweis zu zeigen. `Sync` bleibt bewusst ohne Deep-Link (kein
+   > eigenes Stations-Ziel, reine Shell-Funktion) und benennt stattdessen ehrlich die
+   > Peer-Lücke (`island/inhalte/austausch.tsx`). Dieser Punkt ist damit geschlossen, keine
+   > weitere Bauarbeit offen.
 5. **Öffnung als eigenständiges ZEICHNEN-Werkzeug**: heute nur über die Skizze-Geste erreichbar.
    Braucht es einen eigenen `ToolId 'oeffnung'` mit eigenem Click-Platzier-Modus (wie Wand), oder
    bleibt die Skizze-Geste der einzige Weg und die Island zeigt nur die Einstellungen? Owner-

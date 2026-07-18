@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -1258,6 +1258,41 @@ export function PlanView({
               ))}
             </g>
           )}
+          {/* v0.8.3 E1 (§1.4, docs/V083-SPEZ.md, Island-§8-Freigabe §8-6):
+              Kommentar-Marker im Plan — reines App-Overlay, geht NICHT
+              durch `derivePlan()` (kein Kernel-Renderpfad berührt, keine der
+              35 bestehenden Goldens betroffen — dieselbe Grenze wie beim
+              Raumgraph-Overlay/den verletzten Zonen oben). Zeigt Kommentare
+              OHNE Geschossbezug (`storeyId` fehlt) auf JEDEM Geschoss,
+              geschossgebundene nur auf ihrem eigenen. */}
+          <g data-testid="plan-kommentare">
+            {doc
+              .byKind<Kommentar>('kommentar')
+              .filter((k) => !k.storeyId || k.storeyId === activeStoreyId)
+              .map((k) => (
+                <g key={k.id} data-testid="plan-kommentar" data-status={k.status} opacity={k.status === 'erledigt' ? 0.5 : 1}>
+                  <circle
+                    cx={k.at.x}
+                    cy={-k.at.y}
+                    r={6 / view.scale}
+                    fill={k.status === 'erledigt' ? 'var(--k-ink-faint)' : 'var(--k-accent)'}
+                    stroke="var(--k-surface)"
+                    strokeWidth={1.5 / view.scale}
+                  />
+                  <text
+                    x={k.at.x}
+                    y={-k.at.y - 12 / view.scale}
+                    textAnchor="middle"
+                    fontSize={11 / view.scale}
+                    fontFamily="var(--k-font-mono)"
+                    fill="var(--k-ink)"
+                    pointerEvents="none"
+                  >
+                    {k.text.length > 24 ? `${k.text.slice(0, 24)}…` : k.text}
+                  </text>
+                </g>
+              ))}
+          </g>
           {plan &&
             plan.lines
               // LOD-Feindetail-Filter: Öffnungen (Leibung/Fenster/Tür/Anschlag/

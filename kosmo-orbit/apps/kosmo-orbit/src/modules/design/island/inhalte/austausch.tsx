@@ -30,19 +30,22 @@ import './pd3b-inhalte.css';
 // Kopfkommentar: ein einfacher Callback, den `DesignWorkspace.tsx`
 // (`aktiviereStation`) an die Komponente durchreicht).
 //
-// **Owner-Frage §8-4 bleibt offen** (wörtlich verlangt): dieser Callback
-// lebt als Closure in `DesignWorkspace.tsx` und wird dort heute NUR an
-// `StationenOrb`/`EntwurfsDock` durchgereicht — nicht an `IslandBuehne`
-// oder diese Inhalte-Registry. `IslandShell.tsx`/`island-katalog.ts`/
-// `DesignWorkspace.tsx` sind ausserhalb des PD3b-Dateikreises (Bauauftrag:
-// «NICHTS anderes — keine Bestandsdateien») — die letzte Meile (EIN
-// zusätzlicher `registriereStationsWeg(onStationOeffnen)`-Aufruf beim Mount
-// von `DesignWorkspace.tsx`) kann PD3b darum nicht selbst schliessen.
+// **Owner-Frage §8-4 ist entschieden und real verdrahtet** (PD3c, seit
+// v0.8.2; formell nachdokumentiert v0.8.3 E4, `docs/V083-SPEZ.md` §4,
+// `docs/ISLAND-UI-SPEZ.md` §8 Punkt 4 Nachtrag): `DesignWorkspace.tsx`
+// ruft `registriereStationsWeg(onStationOeffnen)` in einem `useEffect`
+// (Mount) und `registriereStationsWeg(undefined)` (Unmount) — die AUSTAUSCH-
+// Insel-Fenster navigieren damit ECHT zur Vis-/Publish-Station, Option (a)
+// aus §8-4 («Deep-Link», keine native Mini-Kopie).
 //
-// Diese Brücke bereitet den ECHTEN Weg vor (kein «native Mini-Kopie» einer
-// Vis/Publish-Funktion): sobald die eine Zeile in `DesignWorkspace.tsx`
-// nachgezogen ist, wirkt der Knopf unten sofort echt. Bis dahin zeigt das
-// Fenster ehrlich, dass die Verdrahtung fehlt.
+// Diese Datei bleibt trotzdem dateikreis-sauber additiv (PD3b-Revier): sie
+// bereitet NUR die Brücke (`registriereStationsWeg`/`versucheStationZuOeffnen`)
+// vor und ruft sie nie selbst auf — der tatsächliche `registriereStationsWeg`-
+// Aufruf lebt bewusst in `DesignWorkspace.tsx` (Integrationspunkt). Der
+// `ungewirkt`-Fallback unten (`ZurStationKnopf`) bleibt als Sicherheitsnetz
+// bestehen — er greift nur, wenn `stationsWeg` NICHT registriert ist (z. B.
+// ein isolierter Test, der `IslandShell` ohne `DesignWorkspace.tsx` mountet),
+// in der echten App ist die Brücke immer aktiv.
 export type StationsZiel = 'vis' | 'publish' | 'prepare' | 'data' | 'design';
 type StationsWeg = (ziel: StationsZiel) => void;
 
@@ -75,9 +78,10 @@ function ZurStationKnopf({ werkzeugId, ziel, label }: { werkzeugId: string; ziel
       </button>
       {ungewirkt && (
         <p className="pd3b-hinweis" data-testid={`island-${werkzeugId}-zur-station-hinweis`}>
-          Navigation ist vorbereitet, aber `DesignWorkspace.tsx` reicht den Weg (`onStationOeffnen`)
-          noch nicht an diese Insel durch (ausserhalb des PD3b-Dateikreises) — Owner-Frage §8-4
-          bleibt offen.
+          Diese Insel läuft hier ohne `DesignWorkspace.tsx` (z. B. ein isolierter Test) — dort
+          reicht der Mount-Effekt `registriereStationsWeg(onStationOeffnen)` den echten
+          Navigations-Weg durch (§8-4, seit PD3c real verdrahtet). In der App navigiert der Knopf
+          oben direkt zur Station.
         </p>
       )}
     </div>
@@ -397,9 +401,10 @@ function SyncStufe3() {
         stillschweigend ersetzen (Bestandsänderung), darum unterlässt diese Insel das.
       </p>
       <p className="pd3b-hinweis">
-        Sync ist Shell-Ebene, keine eigene Station (§3.4) — der reale Weg bleibt der
-        Kopfzeilen-Knopf (`sync-toggle`), von dieser Insel aus (ausserhalb des PD3b-Dateikreises)
-        nicht auslösbar. Owner-Frage §8-4 gilt auch hier.
+        Sync ist Shell-Ebene, keine eigene Station (§3.4) — anders als Rendern/Blätter hat Sync
+        darum bewusst KEINEN Deep-Link-Ziel (§8-4 ist entschieden: Deep-Link zu Stationen, Sync
+        bleibt aussen vor). Der reale Weg bleibt der Kopfzeilen-Knopf (`sync-toggle`), von dieser
+        Insel aus (ausserhalb des PD3b-Dateikreises) nicht auslösbar.
       </p>
     </div>
   );
