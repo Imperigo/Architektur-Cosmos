@@ -22,7 +22,14 @@ import './data.css';
 import { BODEN_DOCK_RESERVE_PX } from '../../shell/BodenDock';
 import { DataLeerbild } from './DataLeerbild';
 import { RefHeroBild } from './RefHeroBild';
-import { gedaechtnisQuerverweise, type GedaechtnisTreffer } from './data-runtime';
+import {
+  entferneEigeneReferenz,
+  gedaechtnisQuerverweise,
+  importiereEigeneReferenzen,
+  istEigeneReferenz,
+  listeEigeneReferenzen,
+  type GedaechtnisTreffer,
+} from './data-runtime';
 import { epocheVonEntry } from './epochen';
 import { QuellenListe } from './QuellenListe';
 import { ReferenzTabelle } from './ReferenzTabelle';
@@ -33,6 +40,7 @@ import {
   materialkatalog,
   modellUrlAusR2Key,
   uWert,
+  validiereRefImportBatch,
   type KatalogEintrag,
   type MaterialArt,
   type MaterialEintrag,
@@ -42,6 +50,7 @@ import {
   type RefEntryMedia,
   type RefEntryMediaType,
   type RefEntryModelAsset,
+  type RefImportFehler,
   type RefReviewStatus,
 } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
@@ -113,13 +122,45 @@ export type { RefEntry };
 
 let cache: RefEntry[] | null = null;
 
-export async function loadReferences(): Promise<RefEntry[]> {
+async function loadSeed(): Promise<RefEntry[]> {
   if (cache) return cache;
   const res = await fetch('./kosmodata-seed.json');
   if (!res.ok) throw new Error(`kosmodata-seed.json: HTTP ${res.status}`);
   const data = (await res.json()) as { entries: RefEntry[] };
   cache = data.entries;
   return cache;
+}
+
+/** Merge-Cache: hält die zuletzt gebaute `seed + eigene`-Liste, solange sich
+ * WEDER der Seed NOCH die eigene Bibliothek geändert haben (Objekt-
+ * Identität auf beiden Seiten) — s. Kopfkommentar `loadReferences()`. */
+let mergeCache: { seed: RefEntry[]; eigene: readonly RefEntry[]; merged: RefEntry[] } | null = null;
+
+/**
+ * P9 (v0.8.3, `docs/V083-SPEZ.md` §6.5/E6e): der eingebaute 112er-Seed PLUS
+ * eigene, per JSON-Import hinzugefügte Referenzen (`data-runtime.ts`,
+ * `listeEigeneReferenzen()`, `quelle:'eigen'`). Die Seed-Datei selbst bleibt
+ * unangetastet (nur gelesen, `cache` oben cacht ausschliesslich sie).
+ *
+ * Referenz-Stabilität ist Absicht, nicht Zufall: `state/referenz-index.ts`
+ * baut seinen BM25-Heuhaufen nur neu, wenn `loadReferences()` eine ANDERE
+ * Array-Referenz liefert als beim letzten Aufruf («der Index wird einmal
+ * pro `loadReferences()`-Ergebnis gebaut»). Ändert sich weder der Seed noch
+ * die eigene Bibliothek, liefert diese Funktion exakt dieselbe Array-
+ * Referenz zurück wie beim letzten Aufruf — ein Import/Entfernen (die
+ * `eigene`-Referenz ändert sich) löst die Neuberechnung UND damit die
+ * BM25-Cache-Invalidierung automatisch aus, ohne dass `referenz-index.ts`
+ * selbst etwas von eigenen Referenzen wissen muss.
+ */
+export async function loadReferences(): Promise<RefEntry[]> {
+  const seed = await loadSeed();
+  const eigene = await listeEigeneReferenzen();
+  if (mergeCache && mergeCache.seed === seed && mergeCache.eigene === eigene) {
+    return mergeCache.merged;
+  }
+  const merged = eigene.length > 0 ? [...seed, ...eigene] : seed;
+  mergeCache = { seed, eigene, merged };
+  return merged;
 }
 
 function formatYear(e: RefEntry): string {
@@ -731,10 +772,77 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
       setSyncState('fehler');
       return;
     }
-    setEntries(ergebnis.eintraege as RefEntry[]);
+    // P9 (v0.8.3 §6.5/E6e): Live-Sync ersetzt nur den Seed-Teil — eigene
+    // Referenzen (`data-runtime.ts`) bleiben auch nach einem Sync sichtbar
+    // UND schützen ihre ids weiterhin vor einem stillen Import-Duplikat.
+    const eigene = await listeEigeneReferenzen();
+    const live = ergebnis.eintraege as RefEntry[];
+    setEntries(eigene.length > 0 ? [...live, ...eigene] : live);
     setQuelle(ergebnis.quelle);
     setSyncState('synced');
   };
+
+  // P9 (v0.8.3 §6.5/E6e): eigene Referenzen als JSON importieren — Merge mit
+  // dem 112er-Seed über `loadReferences()` (`data-runtime.ts`), sichtbare
+  // «eigene»-Kennzeichnung + Entfernen-Weg im Dossier (`istEigeneReferenz`,
+  // unten). Die Seed-Datei selbst bleibt unangetastet — der Import landet
+  // ausschliesslich im Laufzeit-Store (IndexedDB, Laufzeit ≠ Modell,
+  // `CLAUDE.md` Abschnitt «Eigenheiten»).
+  const importInputRef = useRef<HTMLInputElement>(null);
+  const [importFehler, setImportFehler] = useState<RefImportFehler[]>([]);
+  const [importLaeuft, setImportLaeuft] = useState(false);
+
+  async function eigeneReferenzenImportieren(datei: File) {
+    setImportLaeuft(true);
+    setImportFehler([]);
+    try {
+      const text = await datei.text();
+      let daten: unknown;
+      try {
+        daten = JSON.parse(text);
+      } catch (err) {
+        meldeFehler(`«${datei.name}» ist kein gültiges JSON (${err instanceof Error ? err.message : String(err)}).`);
+        return;
+      }
+      const vorhandeneIds = new Set(entries.map((e) => e.id));
+      const ergebnis = validiereRefImportBatch(daten, vorhandeneIds);
+      if (ergebnis.eintraege.length > 0) {
+        await importiereEigeneReferenzen(ergebnis.eintraege);
+        setEntries(await loadReferences());
+      }
+      setImportFehler(ergebnis.fehler);
+      if (ergebnis.eintraege.length > 0 && ergebnis.fehler.length === 0) {
+        melde(
+          `${ergebnis.eintraege.length} ${ergebnis.eintraege.length === 1 ? 'eigene Referenz' : 'eigene Referenzen'} importiert.`,
+          { ton: 'erfolg' },
+        );
+      } else if (ergebnis.eintraege.length > 0) {
+        melde(`${ergebnis.eintraege.length} importiert, ${ergebnis.fehler.length} abgelehnt — Details unten.`, { ton: 'info' });
+      } else {
+        meldeFehler(
+          `Kein Eintrag übernommen — ${ergebnis.fehler.length} ${ergebnis.fehler.length === 1 ? 'Zeile' : 'Zeilen'} abgelehnt (Details unten).`,
+        );
+      }
+    } catch (err) {
+      meldeFehler(err);
+    } finally {
+      setImportLaeuft(false);
+    }
+  }
+
+  async function eigeneReferenzEntfernen(entry: RefEntry) {
+    const ok = await bestaetigen({
+      titel: `«${entry.title}» aus der eigenen Bibliothek entfernen?`,
+      text: 'Der Seed-Bestand bleibt unberührt — nur der eigene Import verschwindet.',
+      bestaetigen: 'Entfernen',
+      gefaehrlich: true,
+    });
+    if (!ok) return;
+    await entferneEigeneReferenz(entry.id);
+    setEntries(await loadReferences());
+    if (selected?.id === entry.id) setSelected(null);
+    melde(`«${entry.title}» entfernt.`, { ton: 'info' });
+  }
 
   // Serie J2 / Batch B1 (SERIE-J2-IMMERSIVE-OBERFLAECHE.md Abschnitt 4):
   // KosmoData schliesst als zweite Station ans Adaptions-Regelwerk an — der
@@ -828,7 +936,7 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 ]}
               />
             </span>
-            <span className="kd-c-soft kd-fs-md">
+            <span className="kd-c-soft kd-fs-md" data-testid="referenzen-zaehler">
               {tab === 'uebersicht'
                 ? 'Sechs Sammlungen unter einem Dach'
                 : tab === 'referenzen'
@@ -896,6 +1004,34 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 Sync
               </KButton>
             </span>
+            {tab === 'referenzen' && (
+              <>
+                <Hairline vertical />
+                <input
+                  ref={importInputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  className="kd-hidden"
+                  data-testid="ref-import-input"
+                  onChange={(e) => {
+                    const datei = e.currentTarget.files?.[0];
+                    e.currentTarget.value = '';
+                    if (datei) void eigeneReferenzenImportieren(datei);
+                  }}
+                />
+                <KButton
+                  size="sm"
+                  tone="ghost"
+                  data-testid="ref-import-button"
+                  disabled={importLaeuft}
+                  title="Eigene Referenzen als JSON importieren — Merge mit dem eingebauten Seed, sichtbar als «Eigene Referenz» markiert"
+                  onClick={() => importInputRef.current?.click()}
+                  className="kd-border-line"
+                >
+                  {importLaeuft ? 'Importiere …' : 'Eigene importieren'}
+                </KButton>
+              </>
+            )}
             <Hairline vertical />
             {/* Serie J2 / Batch B1 (Regel 2.3.5 Transparenz, geteilter
                 Adaptions-Kern): KosmoData hat kein «Projekt ▾»-Menü wie
@@ -1014,6 +1150,30 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
           {tab === 'archiv' && <KosmoArchivView />}
 
           {tab === 'referenzen' && (<>
+          {/* P9 (v0.8.3 §6.5/E6e): ehrliche Fehlermeldung je Zeile für einen
+              JSON-Import — jede zurückgewiesene Zeile bleibt einzeln
+              nachvollziehbar (Zeilennummer + Grund aus `validiereRefImportBatch`,
+              `@kosmo/data`), statt nur einer pauschalen Fehlermeldung. */}
+          {importFehler.length > 0 && (
+            <div data-testid="ref-import-fehler" className="kd-panel kd-grid kd-g2 kd-p-s3-s4">
+              <div className="kd-flex kd-items-center kd-g3">
+                <span className="kd-fs-sm kd-w-600">
+                  {importFehler.length} {importFehler.length === 1 ? 'Zeile' : 'Zeilen'} abgelehnt
+                </span>
+                <div className="kd-fill" />
+                <KButton size="sm" tone="ghost" data-testid="ref-import-fehler-schliessen" onClick={() => setImportFehler([])}>
+                  Schliessen
+                </KButton>
+              </div>
+              <ul className="kd-grid kd-g1 kd-fs-sm kd-c-soft">
+                {importFehler.map((f) => (
+                  <li key={f.zeile} data-testid="ref-import-fehler-zeile">
+                    Zeile {f.zeile}: {f.grund}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           {/* D3: Leerzustand als Bauzeichnung (Gestaltungskonzept). F8: bei
               einem gescheiterten Seed-Ladevorgang ist die Liste ehrlich als
               «nicht geladen», nicht als «kein Treffer» ausgewiesen — sonst
@@ -1100,7 +1260,29 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
                 {(selected.visibility ?? 'public') === 'public' ? 'Öffentlich' : 'Privat'}
               </Badge>
             </span>
+            {/* P9 (v0.8.3 §6.5/E6e): sichtbare «eigene»-Kennzeichnung + Entfernen-
+                Weg — nur eigene, per JSON-Import hinzugefügte Referenzen tragen
+                `quelle:'eigen'` (`data-runtime.ts`, `istEigeneReferenz`); der
+                112er-Seed selbst zeigt diesen Chip nie. */}
+            {istEigeneReferenz(selected) && (
+              <span data-testid="ref-eigen-badge">
+                <Badge hue="var(--k-rolle-agent)">Eigene Referenz</Badge>
+              </span>
+            )}
           </div>
+
+          {istEigeneReferenz(selected) && (
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="ref-eigen-entfernen"
+              title="Nur der eigene Import verschwindet — der Seed-Bestand bleibt unberührt"
+              onClick={() => void eigeneReferenzEntfernen(selected)}
+              className="kd-border-line"
+            >
+              Aus eigener Bibliothek entfernen
+            </KButton>
+          )}
 
           <Hairline />
           {selected.one_sentence && <div className="kd-fs-md kd-italic">{selected.one_sentence}</div>}

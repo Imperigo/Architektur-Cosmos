@@ -64,6 +64,18 @@ function hayFuerReferenz(r: RefEntry): string {
     .join(' ');
 }
 
+/**
+ * P9 (v0.8.3, `docs/V083-SPEZ.md` §6.5/E6e, §12.1 C-5): `loadReferences()`
+ * liefert seit P9 den 112er-Seed PLUS eigene, per JSON-Import hinzugefügte
+ * Referenzen (`modules/data/data-runtime.ts`, `quelle:'eigen'`) — additiv
+ * zusammengeführt. Dieser Index braucht dafür KEINE eigene Änderung: die
+ * Identitäts-Prüfung unten (`indexCache.quelle === entries`) invalidiert
+ * bereits korrekt, weil `loadReferences()` nach einem Import/Entfernen
+ * bewusst eine NEUE Array-Referenz liefert (unverändert bleibt sie nur,
+ * wenn sich weder Seed noch eigene Bibliothek geändert haben) — der
+ * BM25-Heuhaufen (`hayFuerReferenz`) wird dadurch automatisch auch über
+ * eigene Referenzen gebaut, ohne dass P9 dieses Modul anfassen musste.
+ */
 async function ladeIndex(): Promise<ReferenzIndex> {
   const entries = await loadReferences();
   if (indexCache && indexCache.quelle === entries) return indexCache;

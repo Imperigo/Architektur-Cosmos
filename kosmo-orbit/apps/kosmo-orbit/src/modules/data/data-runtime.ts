@@ -350,3 +350,151 @@ export function gedaechtnisQuerverweise(
 
   return [...verknuepft, ...textTreffer].slice(0, max);
 }
+
+/* ------------------------------------------------------------------ */
+/* P9 (v0.8.3, docs/V083-SPEZ.md §6.5/E6e) — eigene, importierte        */
+/* Referenzen                                                          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Eigene, per JSON-Import hinzugefügte Referenzen — ein Laufzeit-Store,
+ * NICHT das Yjs-Doc (dieselbe «Laufzeit ≠ Modell»-Regel wie die Hero-Bild-
+ * Blobs oben, `CLAUDE.md` Abschnitt «Eigenheiten»). Eigene IndexedDB
+ * (`kosmo-eigene-referenzen`, Store `referenzen`), dasselbe
+ * `openDb`/`reqResult`/`txDone`-Muster wie `state/archiv.ts`
+ * (`kosmo-archiv`) und `modules/prepare/knowledge.ts` (`kosmo-wissen`).
+ *
+ * Jede eigene Referenz trägt `quelle: 'eigen'` — die sichtbare Kennzeichnung
+ * im Dossier (`DataWorkspace.tsx`) UND die Unterscheidung vom kuratierten
+ * Seed beim Merge in `loadReferences()` (`DataWorkspace.tsx`).
+ *
+ * In-Memory-Cache (`eigeneCache`): `loadReferences()` ruft
+ * `listeEigeneReferenzen()` bei JEDEM Aufruf, bekommt aber dieselbe
+ * Array-Referenz zurück, solange sich nichts geändert hat — das ist die
+ * Grundlage für `state/referenz-index.ts`s Identitäts-Cache («der Index
+ * wird einmal pro `loadReferences()`-Ergebnis gebaut, nicht bei jeder Suche
+ * neu»): ein Import/Entfernen ändert die Referenz (→ Cache-Invalidierung),
+ * ein reiner Re-Read nicht.
+ *
+ * Fehlt `indexedDB` (z.B. eine Node-Testumgebung ohne `fake-indexeddb/auto`)
+ * oder schlägt der Zugriff fehl, bleibt die eigene Bibliothek ehrlich leer
+ * statt den gesamten Referenz-Weg (inkl. Seed) mitzureissen — derselbe
+ * Fehlertoleranz-Vertrag wie `onlineBilderErlaubt()` oben.
+ */
+export interface EigeneReferenz extends RefEntry {
+  quelle: 'eigen';
+  /** ISO-Zeitstempel des Imports — für eine stabile, chronologische Anzeige. */
+  importiertAm: string;
+}
+
+/** true, wenn `entry` aus dem eigenen Import-Store stammt (statt aus dem kuratierten Seed). */
+export function istEigeneReferenz(entry: RefEntry): entry is EigeneReferenz {
+  return (entry as Partial<EigeneReferenz>).quelle === 'eigen';
+}
+
+const EIGENE_DB_NAME = 'kosmo-eigene-referenzen';
+const EIGENE_DB_VERSION = 1;
+const EIGENE_STORE = 'referenzen';
+
+function eigeneIndexedDbVerfuegbar(): boolean {
+  return typeof indexedDB !== 'undefined';
+}
+
+function openEigeneDb(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(EIGENE_DB_NAME, EIGENE_DB_VERSION);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(EIGENE_STORE)) db.createObjectStore(EIGENE_STORE, { keyPath: 'id' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function eigeneTxDone(tx: IDBTransaction): Promise<void> {
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
+function eigeneReqResult<T>(req: IDBRequest<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+const EIGENE_LEER: readonly EigeneReferenz[] = [];
+let eigeneCache: readonly EigeneReferenz[] | null = null;
+
+/**
+ * Alle eigenen Referenzen, neueste zuerst. In-Memory-gecacht — die
+ * zurückgegebene Array-Referenz bleibt über mehrere Aufrufe stabil, solange
+ * `importiereEigeneReferenzen`/`entferneEigeneReferenz` nicht dazwischen
+ * liefen (Grundlage für `DataWorkspace.tsx`s `loadReferences()`-Merge-Cache
+ * und darüber für `state/referenz-index.ts`s Identitäts-Cache).
+ */
+export async function listeEigeneReferenzen(): Promise<readonly EigeneReferenz[]> {
+  if (eigeneCache) return eigeneCache;
+  if (!eigeneIndexedDbVerfuegbar()) {
+    eigeneCache = EIGENE_LEER;
+    return eigeneCache;
+  }
+  try {
+    const db = await openEigeneDb();
+    const tx = db.transaction(EIGENE_STORE, 'readonly');
+    const alle = await eigeneReqResult(tx.objectStore(EIGENE_STORE).getAll() as IDBRequest<EigeneReferenz[]>);
+    db.close();
+    eigeneCache = [...alle].sort((a, b) => b.importiertAm.localeCompare(a.importiertAm));
+  } catch {
+    // Ehrlich leer statt Absturz — der Seed bleibt trotzdem voll nutzbar.
+    eigeneCache = EIGENE_LEER;
+  }
+  return eigeneCache;
+}
+
+/**
+ * Importiert einen bereits validierten Batch (s. `validiereRefImportBatch`,
+ * `@kosmo/data`) in den eigenen Store — jede Referenz bekommt `quelle:
+ * 'eigen'` + einen Import-Zeitstempel. Ein leerer Batch ist kein Fehler, nur
+ * ein No-Op (0 zurück). Wirft ehrlich, wenn `indexedDB` in dieser Umgebung
+ * fehlt — anders als beim Lesen ist ein stiller Fehlschlag beim SCHREIBEN
+ * nicht akzeptabel (der Nutzer erwartet, dass sein Import ankommt).
+ */
+export async function importiereEigeneReferenzen(eintraege: readonly RefEntry[]): Promise<number> {
+  if (eintraege.length === 0) return 0;
+  if (!eigeneIndexedDbVerfuegbar()) {
+    throw new Error('IndexedDB nicht verfügbar — der Import kann in dieser Umgebung nicht gespeichert werden.');
+  }
+  const jetzt = new Date().toISOString();
+  const db = await openEigeneDb();
+  const tx = db.transaction(EIGENE_STORE, 'readwrite');
+  const store = tx.objectStore(EIGENE_STORE);
+  for (const roh of eintraege) {
+    const eintrag: EigeneReferenz = { ...roh, quelle: 'eigen', importiertAm: jetzt };
+    store.put(eintrag);
+  }
+  await eigeneTxDone(tx);
+  db.close();
+  eigeneCache = null; // erzwingt einen frischen Read beim nächsten `listeEigeneReferenzen()`
+  return eintraege.length;
+}
+
+/** Entfernt eine eigene Referenz aus dem Import-Store (der Seed selbst ist nie Ziel dieser Funktion). */
+export async function entferneEigeneReferenz(id: string): Promise<void> {
+  if (!eigeneIndexedDbVerfuegbar()) return;
+  const db = await openEigeneDb();
+  const tx = db.transaction(EIGENE_STORE, 'readwrite');
+  tx.objectStore(EIGENE_STORE).delete(id);
+  await eigeneTxDone(tx);
+  db.close();
+  eigeneCache = null;
+}
+
+/** NUR für Tests: setzt den In-Memory-Cache zurück (nach direkten IndexedDB-Manipulationen im Test). */
+export function resetEigeneReferenzenCacheFuerTests(): void {
+  eigeneCache = null;
+}
