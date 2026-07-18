@@ -203,36 +203,44 @@ automatisch ein MUSS-Abbruch des verursachenden Pakets.
 
 ## 8 · Vollständigkeits-Matrix (Abnahme W5/PE3)
 
-- [ ] **C-1** Cursor-Kontinuität: keine Zone versteckt die Ebene mehr; Formen-Matrix-Spec grün → PA1
-- [ ] **C-2** Hauptmenü statisch/zentriert/scrollfrei + Kachel-Reihe + Office «kommend» (Verträge §4) → PA2
-- [ ] **C-3** Untertool-Fächer ohne Überlappung (Bounding-Box-Beweis) → PA2
-- [ ] **C-4** Start maximiert + Schalter → PA3
-- [ ] **C-5** ant-CLI-Login geführt + Key-Validierungs-Ping + ehrliche Abo-Erklärung → PA5
-- [ ] **C-6** useOverlaySchliessen existiert + 5 Pflicht-Konsumenten → PA4
-- [ ] **C-7** 20 Icons nach Bauvorschrift, unverdrahtet, Unit-Test → ICON (W1)
-- [ ] **C-8** PC0 verhaltensneutral: 9 island-Specs ungeändert grün → PC0
-- [ ] **C-9** Delete/Backspace löscht Auswahl (design.loeschen) → PB1
-- [ ] **C-10** Enter+Doppelklick schliessen ALLE Mehrpunkt-Werkzeuge ab → PB1
-- [ ] **C-11** Rechtsklick-Kontextmenü: Löschen/Eigenschaften/Schnelleinstellungen → PB1
-- [ ] **C-12** Auswahl-Highlight sichtbar kräftiger (Vorher/Nachher-Beleg) → PB1
-- [ ] **C-13** Pillen+Werkzeuge zeigen SVGs statt Buchstaben (design) → PB2
-- [ ] **C-14** Hinweis raus aus Popup → Lang-Hover-Tooltip, nichts abgeschnitten → PB2
-- [ ] **C-15** Vis komplett auf Islands, DockFlaeche/BodenDock weg im Island-Modus, Zoom-Leiste integriert → PC1
-- [ ] **C-16** Node-Canvas dunkel/Nodes hell (Token, kein Hartwert) → PC1
-- [ ] **C-17** Stimmungen als BILD-Kacheln (prozedural) + environment im Job → PC1
-- [ ] **C-18** vis.render-Command + Demolauf-Drehbuch Kamera→Material→Cycles(--fake)→AI-Slot per Commands → PC2
-- [ ] **C-19** Publish: Islands + Blatt-Zoom (wheel+fit) → PC3
-- [ ] **C-20** Prepare: Islands + Dock weg + Ausbau → PC4
-- [ ] **C-21** Data: Bilder für eigene Referenzen + Dossier-Verknüpfung → PC5
-- [ ] **C-22** Website-Sync-Gate in release-gate (Seed-Byte-Diff + Hash-Protokoll) → PD1
-- [ ] **C-23** eval/kosmo-zeichner-commands + TrainWorkspace-Anzeige + REGISTRY-Spalte → PD2
-- [ ] **C-24** Geschoss-Pille vertikal unter grauem Logo; Zentralsymbol zeigt Untertools, nie offene Station → PB3
-- [ ] **C-25** Orb-Gesetz-Tabelle E2 überall bewiesen (alle Orb-Instanzen) → PB4
-- [ ] **C-26** Massketten/Kommentare wählen/verschieben/löschen + Filter + Kürzel/Overlay → PB5
-- [ ] **C-27** 8 Rahmen-Werkzeuge echt oder Owner-sauber geschlossen; §8-3-Regeln → PE2
-- [ ] **C-28** dock-tour + Tab(c) je 5× grün → PE1
-- [ ] **C-29** Token-Sweep ohne Golden-Drift (36er-sha256-Beweis) → PB6
-- [ ] **C-30** Release: Matrix adversarial, Lehren v0.8.4, FÜNF-Träger-Bump, Neuigkeiten, Rundgang-PDF, release-gate 0, Push, **Installer-Zustellung**, Owner-Smoke-Punkt → PE3
+- [x] **C-1** Cursor-Kontinuität: keine Zone versteckt die Ebene mehr; Formen-Matrix-Spec grün → PA1
+- [x] **C-2** Hauptmenü statisch/zentriert/scrollfrei + Kachel-Reihe + Office «kommend» (Verträge §4) → PA2
+- [x] **C-3** Untertool-Fächer ohne Überlappung (Bounding-Box-Beweis) → PA2
+- [x] **C-4** Start maximiert + Schalter → PA3
+- [x] **C-5** ant-CLI-Login geführt + Key-Validierungs-Ping + ehrliche Abo-Erklärung → PA5
+- [x] **C-6** useOverlaySchliessen existiert + 5 Pflicht-Konsumenten → PA4
+- [x] **C-7** 20 Icons nach Bauvorschrift, unverdrahtet, Unit-Test → ICON (W1)
+- [x] **C-8** PC0 verhaltensneutral: 9 island-Specs ungeändert grün → PC0
+- [x] **C-9** Delete/Backspace löscht Auswahl (design.loeschen) → PB1
+- [x] **C-10** Enter+Doppelklick schliessen ALLE Mehrpunkt-Werkzeuge ab → PB1
+- [x] **C-11** Rechtsklick-Kontextmenü: Löschen/Eigenschaften/Schnelleinstellungen → PB1
+- [x] **C-12** Auswahl-Highlight sichtbar kräftiger (Vorher/Nachher-Beleg) → PB1
+- [x] **C-13** Pillen+Werkzeuge zeigen SVGs statt Buchstaben (design) → PB2
+- [x] **C-14** Hinweis raus aus Popup → Lang-Hover-Tooltip, nichts abgeschnitten → PB2
+- [x] **C-15** Vis komplett auf Islands, DockFlaeche/BodenDock weg im Island-Modus, Zoom-Leiste integriert → PC1
+- [x] **C-16** Node-Canvas dunkel/Nodes hell (Token, kein Hartwert) → PC1
+- [x] **C-17** Stimmungen als BILD-Kacheln (prozedural) + environment im Job → PC1
+- [x] **C-18** vis.render-Command + Demolauf-Drehbuch Kamera→Material→Cycles(--fake)→AI-Slot per Commands → PC2
+- [x] **C-19** Publish: Islands + Blatt-Zoom (wheel+fit) → PC3
+- [x] **C-20** Prepare: Islands + Dock weg + Ausbau → PC4
+- [x] **C-21** Data: Bilder für eigene Referenzen + Dossier-Verknüpfung → PC5
+- [x] **C-22** Website-Sync-Gate in release-gate (Seed-Byte-Diff + Hash-Protokoll) → PD1
+- [x] **C-23** eval/kosmo-zeichner-commands + TrainWorkspace-Anzeige + REGISTRY-Spalte → PD2
+- [x] **C-24** Geschoss-Pille vertikal unter grauem Logo; Zentralsymbol zeigt Untertools, nie offene Station → PB3
+- [x] **C-25** Orb-Gesetz-Tabelle E2 überall bewiesen (alle Orb-Instanzen) → PB4
+- [x] **C-26** Massketten/Kommentare wählen/verschieben/löschen + Filter + Kürzel/Overlay → PB5
+- [x] **C-27** 8 Rahmen-Werkzeuge echt oder Owner-sauber geschlossen; §8-3-Regeln → PE2
+- [x] **C-28** dock-tour + Tab(c) je 5× grün → PE1
+- [x] **C-29** Token-Sweep ohne Golden-Drift (36er-sha256-Beweis) → PB6
+- [x] **C-30** Release: Matrix adversarial, Lehren v0.8.4, FÜNF-Träger-Bump, Neuigkeiten, Rundgang-PDF, release-gate 0, Push, **Installer-Zustellung**, Owner-Smoke-Punkt → PE3
+
+**PE3-Ergebnis (18.07.2026):** 30/30 abgenommen — 24 auf Anhieb bestanden
+(adversariale Prüfer, Live-DOM :5183), C-24 nach Prüfer-Ausfall von Fable
+selbst geometrisch bewiesen, 5 Lücken VOR dem Release gefixt (C-3 980px-
+Fächer-Overlap, C-9 Ctrl+Z nie gebunden, C-11 Eigenschaften-Float +
+Abschliessen-Punktverlust, C-16 Nodes wirklich hell, C-18 Demolauf
+Material/Backbone) — Belege: ROADMAP 473, `e2e/pe3-matrix-fixes.spec.ts`.
+C-30 schliesst mit dem Release-Commit selbst.
 
 ## 9 · Ehrliche Nicht-Ziele
 Griffe/Gizmos; Website-Redesign; echte GPU-Renders; Voll-HDRIs im Installer;

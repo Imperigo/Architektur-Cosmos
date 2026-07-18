@@ -35,6 +35,29 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.4',
+    datum: '2026-07-18',
+    punkte: [
+      {
+        text: 'KosmoOrbit ist jetzt aus einem Guss: das Island-UI läuft in allen vier Werkstationen (Design, Vis, Publish, Prepare — je eigene Inseln mit echten Werkzeugen), und der Kosmo-Orb verhält sich überall gleich — Hover zeigt ein Mini-Popup, Einfachklick öffnet die Konversationskarte, Doppelklick das volle Kosmo-Panel, Esc oder ein Klick daneben schliesst. Die Orb-Hülle ist neutral-glasig statt gold, Insel-Pillen und Werkzeuge zeigen durchgehend gezeichnete Symbole statt Buchstaben.',
+      },
+      {
+        text: 'Die Maus stimmt jetzt: die eigene Kosmo-Cursor-Ebene versteckt sich nicht mehr über Werkzeug-Zonen, sondern wechselt die Form (Greifen, Fadenkreuz, Spalten-/Zeilen-Resize, Gesperrt) — die Windows-Maus bleibt in der ganzen App unsichtbar. Dazu startet die Desktop-App maximiert (abschaltbar in den Einstellungen), das Hauptmenü ist statisch, zentriert und scrollfrei mit der Kachel-Reihe unten, und die Claude-Anmeldung führt ehrlich durch beide Wege: Abo-Login über die ant-CLI-Brücke oder API-Schlüssel mit echtem Validierungs-Ping.',
+      },
+      {
+        text: 'Zeichnen wie in ArchiCAD, eine Stufe tiefer: Delete/Backspace löscht die Auswahl, Enter und Doppelklick schliessen jedes Mehrpunkt-Werkzeug ab, Rechtsklick bringt Auswählen/Eigenschaften/Löschen bzw. Abschliessen/Abbrechen, die Auswahl leuchtet deutlich. Massketten sind erstmals im Plan sichtbar und wie Kommentare wähl-, verschieb- und löschbar; ein Filter blendet Kommentare aus, und O/M/K/N rufen Öffnung, Messen, Kommentar und Mesh direkt auf (im ?-Overlay dokumentiert).',
+        station: 'design',
+      },
+      {
+        text: 'KosmoVis spricht die dunkle Designsprache (Canvas dunkel, Nodes hell), die Zoom-Leiste wohnt in der ANSICHT-Insel, Stimmungen sind echte Bild-Kacheln (prozedural erzeugt, ehrlich ohne HDRI-Downloads), und der komplette Demolauf Kamera→Material→Render(--fake)→KI-Slot fährt über Kernel-Commands — Kosmo kann ihn damit selbst auslösen.',
+        station: 'vis',
+      },
+      {
+        text: 'KosmoPublish zoomt (Mausrad, Fit, Pan auf dem Blatt), KosmoPrepare hat sein eigenes Island-Design ohne Fremd-Dock, und eigene KosmoData-Referenzen tragen jetzt Bilder: Upload mit ehrlicher Typ-/Grössen-Ablehnung, Anzeige im Dossier und als Tabellen-Thumb, Persistenz über Reload — der 112er-Seed bleibt unberührt. Ein Website-Sync-Wächter im Release-Gate hält architekturkosmos.ch und die eingebauten Referenzdaten beweisbar synchron.',
+      },
+    ],
+  },
+  {
     version: '0.8.3',
     datum: '2026-07-18',
     punkte: [
