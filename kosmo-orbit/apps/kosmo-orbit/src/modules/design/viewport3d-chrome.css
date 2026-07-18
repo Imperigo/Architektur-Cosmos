@@ -23,6 +23,18 @@
   align-items: flex-end;
   gap: var(--k-s2);
 }
+/* W2-Quergate-Nachtrag v0.8.4 (latenter ALT-Fehler, Bisect bis v0.8.3
+   ff3c7a6 rot): im 3D|Plan-Split ist das 3D-Pane nur halb so breit — die
+   rechts verankerte Render-Ecke rückt damit in die BILDSCHIRM-Mitte und
+   landet horizontal exakt unter dem zentrierten BodenDock, dessen Knöpfe
+   jeden Klick auf «Rendern»/«Für Vis aufnehmen» abfangen
+   (elementFromPoint-/Screenshot-bewiesen, e2e/render-knopf.spec.ts war
+   deshalb @1280×720 unklickbar). Nur im Split-Fall hebt sich die Ecke über
+   die Dock-Zone (Dock ≈ bottom 8 + 70px Höhe + Luft); der Vollbreiten-Fall
+   bleibt unverändert bei 92px, dort liegt die Ecke rechts NEBEN dem Dock. */
+.dw-viewport-flex--split-3d .v3d-render-ecke {
+  bottom: 172px;
+}
 .v3d-render-panel {
   background: var(--k-surface);
   border: 1px solid var(--k-line);

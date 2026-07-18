@@ -3379,7 +3379,11 @@ export function DesignWorkspace({
         ) : (
           <>
             {viewMode !== '2d' && (
-              <div className="dw-viewport-flex">
+              /* W2-Quergate-Nachtrag v0.8.4: eigener Split-Marker fürs
+                 3D-Pane (dw-viewport-flex--getrennt ist die Borte des
+                 RECHTEN Plan-Panes und passt hier nicht) — Ziel ist die
+                 Render-Ecken-Anhebung in viewport3d-chrome.css, s. dort. */
+              <div className={`dw-viewport-flex${viewMode === 'split' ? ' dw-viewport-flex--split-3d' : ''}`}>
                 <Viewport3D handlers={handlersRef} />
               </div>
             )}
