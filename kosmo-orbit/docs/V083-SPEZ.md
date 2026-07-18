@@ -660,108 +660,118 @@ bestehenden `testid`s/aria-labels, `systemSuffix`/`dossierBlock`/`rolleBlock`/
 
 ## 12 · Vollständigkeits-Matrix (Abnahme-Grundlage W3/P10)
 
+> **P10-Abnahme 18.07.2026 (adversarial, Fable):** alle 25 Zeilen live nachgemessen —
+> Belege in ROADMAP 436–447 (je Paket-Gate) und im P10-Protokoll: u. a. TOOL_IDS==13
+> (`ui-zustand.ts:52`), 35 Alt-Goldens byte-gleich seit `602e25a` (git diff: nur
+> `masskette-plan.svg` neu), Quergate 59 passed auf :5183, `release-gate` Exit 0,
+> `lora_empfaenger`-Selbsttest «Alle Prüfungen grün» (inkl. sha-Bruch), Hook-Exit 0.
+> Drei P10-Funde als Mini-Nachträge behoben: §8-5/6/7-Nachträge in `ISLAND-UI-SPEZ.md`
+> fehlten (E1–E3 waren gebaut, aber dort nicht dokumentiert), zwei tote «noch nicht
+> verdrahtet»-Hinweise in `island-katalog.ts`, `vite.config.ts`-`APP_VERSION` stand seit
+> dem v0.8.2-Release auf '0.8.1' (Kopf zeigte falsche Version — im 0.8.3-Bump behoben).
+
 Jeder der sieben Owner-Punkte, jeder der zehn Entscheide E1-E10 und die Golden-Politik sind
 unten einzeln erfasst, mit Ziel-Paket und der messbaren Abnahme aus den W1/W2-Gate-
 Kriterien des Ultraplans.
 
 ### 12.1 · Owner-Punkt (1) KosmoData
 
-- [ ] **C-1** BM25-Index geteilt für `quellen.ts` UND `referenzen_suchen` → **P2** ·
+- [x] **C-1** BM25-Index geteilt für `quellen.ts` UND `referenzen_suchen` → **P2** ·
   Abnahme: `state/referenz-index.ts` existiert, `referenzen_suchen` nutzt `bm25Scores`
   statt `.includes()` (§6.1); Gate: BM25-Parität-Test (beide Konsumenten liefern
   konsistente Rangfolge für dieselbe Query).
-- [ ] **C-2** `[Qn]`-Belege für Referenzen → **P2** · Abnahme: `[Qn]`-Anzahl im
+- [x] **C-2** `[Qn]`-Belege für Referenzen → **P2** · Abnahme: `[Qn]`-Anzahl im
   Chatverlauf == Anzahl gerenderter `[Qn]`-Chips (Mengen-Beweis «[Qn]==Chip-Anzahl»,
   Ultraplan-Gate).
-- [ ] **C-3** `RefKarte.tsx` im Chat → **P2** · Abnahme: Klick auf eine Referenz-`[Qn]`-
+- [x] **C-3** `RefKarte.tsx` im Chat → **P2** · Abnahme: Klick auf eine Referenz-`[Qn]`-
   Marke rendert `RefKarte` mit `RefHeroBild`, E2E-Beweis auf Port 5174.
-- [ ] **C-4** proaktiver Daten-Kontext-Block ≤300 Token via `extraBloecke?` → **P2** ·
+- [x] **C-4** proaktiver Daten-Kontext-Block ≤300 Token via `extraBloecke?` → **P2** ·
   Abnahme: Budget-Beweis (Block + alle anderen Blöcke bleiben ≤1500 Token gesamt),
   Prompt-Snapshot-Test; Verdrahtung selbst erst P7/W2 (§6.4).
-- [ ] **C-5** Import eigener Referenzen als JSON → **P9 (W2)** · Abnahme: Merge mit dem
+- [x] **C-5** Import eigener Referenzen als JSON → **P9 (W2)** · Abnahme: Merge mit dem
   112er-Seed nachweisbar (112+N-Mengen-Beweis), Seed-Datei selbst unverändert, neue
   `kosmodata-import.spec`.
 
 ### 12.2 · Owner-Punkt (2) Skills
 
-- [ ] **C-6** `.claude/skills/**` mit sechs kuratierten, deutsch adaptierten Skills +
+- [x] **C-6** `.claude/skills/**` mit sechs kuratierten, deutsch adaptierten Skills +
   Attribution + `QUELLEN.md` → **P1** · Abnahme: sechs `SKILL.md`-Dateien existieren,
   jede trägt die Attributionszeile, `QUELLEN.md` vorhanden.
-- [ ] **C-7** CLAUDE.md-Leseliste Punkt 6 + nie abbrechende Hook-Hinweiszeile → **P1** ·
+- [x] **C-7** CLAUDE.md-Leseliste Punkt 6 + nie abbrechende Hook-Hinweiszeile → **P1** ·
   Abnahme: `CLAUDE.md` hat sechs nummerierte Punkte, Hook-Exit-Code bleibt bei jedem
   Testlauf 0 unabhängig vom Skills-Zustand.
-- [ ] **C-8** `kosmo-ai/src/skills.ts` mit eingefrorener `skillBlock()`-Signatur → **P1** ·
+- [x] **C-8** `kosmo-ai/src/skills.ts` mit eingefrorener `skillBlock()`-Signatur → **P1** ·
   Abnahme: Datei + Node-Test existieren, Signatur entspricht §5.4 exakt, **kein**
   Aufrufer in `chat.ts` (Trennschärfe-Beweis: `grep skillBlock chat.ts` liefert nichts in
   W1).
-- [ ] **C-9** `skillBlock`-Verdrahtung in `chat.ts` (Reihenfolge dossier > rolle > skills >
+- [x] **C-9** `skillBlock`-Verdrahtung in `chat.ts` (Reihenfolge dossier > rolle > skills >
   kontext > datenKontext) → **P7 (W2)** · Abnahme: eine Block-Zeile in `chat.ts`, Budget-
   Beweis 1500, Prompt-Snapshot-Test.
 
 ### 12.3 · Owner-Punkt (3) Island §8-Freigaben
 
-- [ ] **C-10** §8-6 Kommentar-Entität + Command + UI → **P3** · Abnahme: `Kommentar`-
+- [x] **C-10** §8-6 Kommentar-Entität + Command + UI → **P3** · Abnahme: `Kommentar`-
   Entity + `design.kommentarSetzen`/`-StatusSetzen` + `eigenschaftSetzen`-Zeile +
   `island-katalog.ts`-Eintrag `toolId:'kommentar'` + `KommentareStufe2/3` mit echtem
   Inhalt, Undo-Roundtrip bewiesen.
-- [ ] **C-11** §8-7 Mess-Werkzeug + Daten-Guard + Golden → **P3** · Abnahme: `MassKette`-
+- [x] **C-11** §8-7 Mess-Werkzeug + Daten-Guard + Golden → **P3** · Abnahme: `MassKette`-
   Entity + `design.massKetteSetzen` + Klickmodus (§2.4) + `masskette-plan.svg` (36.
   Golden) + Byte-Beweis der 35 alten + `bemassungSetzen` unverändert.
-- [ ] **C-12** §8-5 Öffnung-ToolId + Klickmodus, Skizze-Geste bleibt → **P3** · Abnahme:
+- [x] **C-12** §8-5 Öffnung-ToolId + Klickmodus, Skizze-Geste bleibt → **P3** · Abnahme:
   `TOOL_IDS.length === 13`, Wand-Treffer → `design.oeffnungSetzen` über den neuen
   Klickmodus, `onSketchWandOeffnung` unverändert lauffähig.
-- [ ] **C-13** §8-4 Deep-Link als entschieden dokumentiert → **P0 (diese Spez, §4) / P3
+- [x] **C-13** §8-4 Deep-Link als entschieden dokumentiert → **P0 (diese Spez, §4) / P3
   (Doku-Nachführung)** · Abnahme: `ISLAND-UI-SPEZ.md` §8 Punkt 4 trägt den Nachtrag,
   keine verbliebene «noch nicht verdrahtet»-Formulierung im Code-Kommentar-Sweep.
-- [ ] **C-14** Hartes Gate 29-Werkzeuge-DOM-Probe (kein Werkzeug ohne Stufe 2+3) →
+- [x] **C-14** Hartes Gate 29-Werkzeuge-DOM-Probe (kein Werkzeug ohne Stufe 2+3) →
   **P3** · Abnahme: Bounding-Box-/DOM-Probe über alle 29 `island-katalog.ts`-Einträge,
   0 Ausnahmen.
 
 ### 12.4 · Owner-Punkt (4) Commands-SFT
 
-- [ ] **C-15** `generiere-commands-sft.mts` seeded, Doppellauf byte-gleich → **P4** ·
+- [x] **C-15** `generiere-commands-sft.mts` seeded, Doppellauf byte-gleich → **P4** ·
   Abnahme: sha256-Doppellauf-Beweis, 100% zod-valide Ausgabe, `validiere-sft.mjs` grün.
-- [ ] **C-16** `commands-v1.jsonl` + REGISTRY-Zeile → **P4** · Abnahme:
+- [x] **C-16** `commands-v1.jsonl` + REGISTRY-Zeile → **P4** · Abnahme:
   `wissen/training/sft/kosmo-zeichner-commands/commands-v1.jsonl` existiert und ist
   nicht leer, `REGISTRY.md`-Zeile `kosmo-zeichner-commands`-Status ≠ `leer`,
   `release-gate` grün.
 
 ### 12.5 · Owner-Punkt (5) Alt-Flakes
 
-- [ ] **C-17** Statusleiste wächst nie in die NavLeiste-Zone → **P5** · Abnahme:
+- [x] **C-17** Statusleiste wächst nie in die NavLeiste-Zone → **P5** · Abnahme:
   `.dw-statusleiste` `nowrap`+Kappung, `elementFromPoint`-Probe an der
   Überlappungszone liefert nach dem Fix konsistent den Modus-Chip statt der NavLeiste.
-- [ ] **C-18** `.dw-modus-chip-wrap` z-index über NavLeiste (6>5) → **P5** · Abnahme:
+- [x] **C-18** `.dw-modus-chip-wrap` z-index über NavLeiste (6>5) → **P5** · Abnahme:
   CSS-Wert-Beweis (`z-index:6` gesetzt, gemessen `>` NavLeiste-Stapelwert) + ALLE
   Design-Chrome-Specs grün (nicht nur `arbeitsmodi.spec`).
-- [ ] **C-19** Wrap-Flake miterledigt → **P5** · Abnahme: N Wiederholungen des
+- [x] **C-19** Wrap-Flake miterledigt → **P5** · Abnahme: N Wiederholungen des
   betroffenen Specs bei variabler Viewport-Breite grün.
 
 ### 12.6 · Owner-Punkt (6) iPad/Touch-Polish
 
-- [ ] **C-20** Island-Popups viewport-clampen → **P8 (W2)** · Abnahme: Bounding-Box-
+- [x] **C-20** Island-Popups viewport-clampen → **P8 (W2)** · Abnahme: Bounding-Box-
   Sweep über 29 Popups @1024×768, 0 Popup verlässt den Viewport.
-- [ ] **C-21** Zwei-Finger-Doppeltipp-Undo hinter Einstellung, Default AUS → **P8 (W2)** ·
+- [x] **C-21** Zwei-Finger-Doppeltipp-Undo hinter Einstellung, Default AUS → **P8 (W2)** ·
   Abnahme: Default-Zustand deaktiviert (Regressionstest), Geste funktioniert NUR bei
   aktivierter Einstellung, §8-1 bleibt im Text als offen markiert.
 
 ### 12.7 · Owner-Punkt (7) HomeStation
 
-- [ ] **C-22** `lora_empfaenger.py` Manifest-Validierung (gültig/sha-Bruch) → **P6** ·
+- [x] **C-22** `lora_empfaenger.py` Manifest-Validierung (gültig/sha-Bruch) → **P6** ·
   Abnahme: Selbsttest deckt beide Fälle, kein GPU-Vortäuschen (`--fake-worker`-Modus
   bleibt ehrlich gekennzeichnet).
-- [ ] **C-23** `HOMESTATION-AUFTRAG.md` §2 nachgeführt → **P6** · Abnahme: die
+- [x] **C-23** `HOMESTATION-AUFTRAG.md` §2 nachgeführt → **P6** · Abnahme: die
   Tabellenzeile «Trainer-Contract» trägt den ergänzten Satz.
 
 ### 12.8 · Golden-Politik
 
-- [ ] **C-24** 35 Alt-Goldens byte-gleich, +1 neues Golden (35→36) → **P3 (Bau) / P10
+- [x] **C-24** 35 Alt-Goldens byte-gleich, +1 neues Golden (35→36) → **P3 (Bau) / P10
   (Abnahme)** · Abnahme: `npm run svg-qa` 36/0 harte Fehler, Byte-Diff der 35 alten
   Dateien leer, `docs/GOLDEN-WECHSEL-083.md` dokumentiert den Wechsel.
 
 ### 12.9 · Abschluss
 
-- [ ] **C-25** W3/P10 Matrix-Abnahme (adversarial gegen diese Matrix) → Muss-Fixes →
+- [x] **C-25** W3/P10 Matrix-Abnahme (adversarial gegen diese Matrix) → Muss-Fixes →
   Release v0.8.3 → **P10** · Abnahme: jede Zeile C-1…C-24 mit Beleg abgehakt; volle
   Suiten grün (Basis 2736 + alle in W1-W2 neu hinzugekommenen); `svg-qa` 36/0; Typecheck
   8 Workspaces; `release-gate` Exit 0; `wissen/training/claude/lehren/v0.8.3.md`

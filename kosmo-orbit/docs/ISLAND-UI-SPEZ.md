@@ -383,6 +383,13 @@ gefundene Lücken:
 
 1. **Undo/Redo aufs iPad** (Konzept §07): braucht es eine Zwei-Finger-Tap-Konvention, wenn
    Undo/Redo unsichtbar bleibt (nur Tastatur/Geste)? Ungeklärt.
+
+   > **Weiter Owner-offen — aber ein konkreter Vorschlag ist gebaut (v0.8.3 / P8, `docs/
+   > V083-SPEZ.md` §10.2):** Zwei-Finger-Doppeltipp auf dem Viewport löst `history.undo()` aus,
+   > NUR hinter der Einstellung «Bewegung & Klang → Touch-Undo-Geste» (`state/touch-undo.ts`,
+   > **Default AUS**). Kein Owner-Entscheid wurde vorweggenommen: ohne aktives Einschalten
+   > verhält sich die App exakt wie zuvor. Dieser Punkt bleibt offen, bis der Owner die
+   > Konvention bestätigt oder verwirft.
 2. **Tastaturkürzel-Overlay** (Konzept §07): Kürzel-Übersicht bei gedrückter Cmd-Taste — noch
    nicht spezifiziert, welche Kürzel für die neuen Werkzeuge (Öffnung/Messen/Kommentare) gelten
    sollen.
@@ -411,12 +418,30 @@ gefundene Lücken:
    Braucht es einen eigenen `ToolId 'oeffnung'` mit eigenem Click-Platzier-Modus (wie Wand), oder
    bleibt die Skizze-Geste der einzige Weg und die Island zeigt nur die Einstellungen? Owner-
    Entscheid nötig, bevor PD3a das baut.
+
+   > **Owner-entschieden und gebaut (v0.8.3 / P3, `docs/V083-SPEZ.md` §4 E3):** eigener
+   > `ToolId 'oeffnung'` MIT Klick-Platzier-Modus (Wand-Treffer → `design.oeffnungSetzen` über
+   > `wandTreffer()`, `plan-hit-test.ts`) — die Skizze-Geste (`onSketchWandOeffnung`) bleibt
+   > unverändert als zweiter Weg bestehen. `TOOL_IDS` seither 13 (`ui-zustand.ts:52`).
 6. **Kommentare**: komplett neue Fähigkeit (keinerlei Datenmodell im Kernel). Braucht eine
    eigene Kernel-Entität (`comment`/`annotation`) + Command, bevor PD3a hier mehr als eine leere
    Hülle bauen kann — grösster Einzelaufwand der ganzen Mapping-Tabelle.
+
+   > **Owner-entschieden und gebaut (v0.8.3 / P3, `docs/V083-SPEZ.md` §4 E1):** Kernel-Entität
+   > `Kommentar` (`entities.ts`, nach Mangel-Vorbild, kein Bauteil-Host) + Commands
+   > `design.kommentarSetzen`/`-StatusSetzen`/`-Loeschen` + `eigenschaftSetzen`-Registry-Zeile;
+   > eigener Klick-Modus (`ToolId 'kommentar'`), Plan-Overlay in `PlanView.tsx`, Island-Inhalte
+   > `KommentareStufe2/3` mit echten Daten. Undo-Roundtrip im Kernel-Test bewiesen
+   > (`test/kommentar.test.ts`).
 7. **«Messen»**: analog zu Kommentare — ein echtes interaktives Punkt-zu-Punkt-Mess-Werkzeug
    braucht vermutlich einen neuen Command (`design.massKetteSetzen` o. ä.), der heutige
    `design.bemassungSetzen`-Command steuert nur die automatische Anzeige, keine Nutzer-Messung.
+
+   > **Owner-entschieden und gebaut (v0.8.3 / P3, `docs/V083-SPEZ.md` §4 E2):** Entität
+   > `MassKette` (`storeyId`, `punkte ≥ 2`) + Command `design.massKetteSetzen` + Klick-Modus
+   > nach Wand-Vorbild (`ToolId 'messen'`); Plan-Ableitung NUR hinter Daten-Guard — die 35
+   > Alt-Goldens blieben byte-gleich, das 36. Golden `masskette-plan.svg` kam dazu
+   > (`docs/GOLDEN-WECHSEL-083.md`). `design.bemassungSetzen` unverändert.
 8. **Papier-Glas-Ausnahme** (§5): das Konzept will echtes Glas für Papier-Islands, das bisherige
    Gesetz «Papier kennt kein Glas» gilt aber für Stationsflächen. Diese Spez schlägt eine eng
    begrenzte, additive Ausnahme NUR für die Island-Shell vor (§5/§6) — Owner-Bestätigung dieser

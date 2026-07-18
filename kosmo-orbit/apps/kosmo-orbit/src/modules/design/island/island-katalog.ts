@@ -131,12 +131,14 @@ const ANSICHT: readonly IslandWerkzeug[] = [
   werkzeug('sonne', 'Sonne', 'ansicht', 'SO', 'vorhanden', true),
   werkzeug('ebenen', 'Ebenen', 'ansicht', 'EB', 'teilweise', true),
   werkzeug('achsen', 'Achsen', 'ansicht', 'AC', 'vorhanden', false),
-  werkzeug('trace', 'Trace', 'ansicht', 'TC', 'vorhanden', true, {
-    hinweis: 'Nur im Grundriss (PlanView.tsx) — dort noch nicht verdrahtet (PD3a, ausserhalb PD2-Dateikreis)',
-  }),
-  werkzeug('graph', 'Graph', 'ansicht', 'GR', 'vorhanden', true, {
-    hinweis: 'Nur im Grundriss (PlanView.tsx) — dort noch nicht verdrahtet (PD3a, ausserhalb PD2-Dateikreis)',
-  }),
+  // P10 v0.8.3 (Matrix-Abnahme): die PD2-Zwischenstand-Hinweise «dort noch
+  // nicht verdrahtet» waren seit PD3a toter Text — `inhalte/ansicht.tsx`
+  // registriert Trace/Graph mit echten Stufe-2/3-Inhalten, der Fallback-
+  // `hinweis` rendert dann nie (IslandShell zeigt ihn nur OHNE Registry-
+  // Inhalt). Ersatzlos entfernt statt stehen gelassen: ein Hinweis, der das
+  // Gegenteil der gebauten Realität behauptet, ist auch als Leiche falsch.
+  werkzeug('trace', 'Trace', 'ansicht', 'TC', 'vorhanden', true),
+  werkzeug('graph', 'Graph', 'ansicht', 'GR', 'vorhanden', true),
 ];
 
 /** PROJEKT (6) — §3.3. */

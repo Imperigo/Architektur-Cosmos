@@ -63,9 +63,9 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     }
   });
 
-  it('PlanView-lokale Werkzeuge (Trace/Graph) tragen einen Grundriss-Hinweis (ausserhalb PD2-Dateikreis)', () => {
+  it('PlanView-lokale Werkzeuge (Trace/Graph) tragen KEINEN Hinweis mehr (P10 v0.8.3: seit PD3a echte Registry-Inhalte, der PD2-Fallback war toter Text)', () => {
     for (const id of ['trace', 'graph']) {
-      expect(werkzeug(id).hinweis).toMatch(/Grundriss/);
+      expect(werkzeug(id).hinweis).toBeUndefined();
     }
   });
 
