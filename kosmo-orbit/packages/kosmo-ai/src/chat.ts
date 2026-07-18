@@ -3,6 +3,7 @@ import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './prov
 import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type CommandToolsOptionen, type ValidatedCall } from './tools';
 import { routePersona } from './personas';
 import { baueSystemprompt, dossierBlock, rolleBlock, projektKontextBlock, type SystemPromptBlock } from './systemprompt';
+import { skillBlock, type SkillMeta } from './skills';
 import {
   klassifiziereZug,
   rolleFuerAufgabe,
@@ -150,8 +151,8 @@ export class ChatSession {
      * Prompt-Bausteine, dasselbe Funktions-Muster wie `systemSuffix` oben:
      * JEDEN Zug frisch aufgerufen (kein einmalig eingefrorener Block), geht
      * in `baueSystemprompt()` NACH dem `kontext`-Block ein (Priorität:
-     * kritik-journal > dossier-nogo > rolle > kontext > `extraBloecke`,
-     * z.B. der App-seitige `datenKontext`-Block aus
+     * kritik-journal > dossier-nogo > rolle > skills > kontext >
+     * `extraBloecke`, z.B. der App-seitige `datenKontext`-Block aus
      * `apps/kosmo-orbit/src/state/quellen.ts#baueDatenKontextBlock`).
      * `STANDARD_TOKEN_BUDGET` bleibt unverändert — ein Block, der nicht mehr
      * passt, fällt ERSATZLOS weg (bestehende `baueSystemprompt()`-Regel,
@@ -162,6 +163,23 @@ export class ChatSession {
      * `extraBloecke` bleiben unverändert grün.
      */
     private extraBloecke?: () => readonly SystemPromptBlock[],
+    /**
+     * v0.8.3/P7 (additiv, `docs/V083-SPEZ.md` §5.4/§6.4/§12.2 C-9) — Kosmos
+     * eigene, kuratierte Betriebsmuster-Liste (`SkillMeta[]`, Typ + Bauer
+     * `skillBlock()` aus `./skills`, P1 eingefroren). Anders als
+     * `extraBloecke` oben (App-seitige, PRO ZUG neu berechnete KosmoData-
+     * Blöcke, NACH `kontext` einsortiert) ist diese Liste statisch kuratiert
+     * — kein Funktions-Wrapper nötig, direkt ein `readonly SkillMeta[]`.
+     * `send()` baut daraus über `skillBlock()` GENAU EINEN
+     * `SystemPromptBlock` (Label `'skills'`), eingereiht NACH `rolle` und
+     * VOR `kontext` — die in der Vollständigkeits-Matrix (§12.2 C-9)
+     * verbindliche Reihenfolge dossier > rolle > skills > kontext >
+     * datenKontext. Optional, Default `[]`: `skillBlock([])` liefert einen
+     * leeren Text, der in `baueSystemprompt()` automatisch wegfällt (kein
+     * Verhaltensunterschied für bestehende Aufrufer ohne dieses Argument,
+     * bestehende 239+ KI-Tests bleiben unverändert grün).
+     */
+    private skills: readonly SkillMeta[] = [],
   ) {
     this.queryTool = modelQueryTool(doc, contextDefaults);
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
@@ -197,6 +215,10 @@ export class ChatSession {
       { label: 'kritik-journal', text: suffixText },
       { label: 'dossier-nogo', text: dossierBlock(this.doc) },
       { label: 'rolle', text: rolleBlock(this.doc) },
+      // v0.8.3/P7 (additiv, §5.4/§12.2 C-9): Kosmos kuratierte Skill-Liste —
+      // NACH `rolle`, VOR `kontext` (Matrix-Reihenfolge dossier > rolle >
+      // skills > kontext > datenKontext).
+      skillBlock(this.skills),
       { label: 'kontext', text: projektKontextBlock(this.doc) },
       // v0.8.3/P2 (additiv, §6.4/E6d): App-seitige Extra-Bausteine NACH
       // `kontext` — tiefste Priorität, fallen als Erstes bei Platzmangel.

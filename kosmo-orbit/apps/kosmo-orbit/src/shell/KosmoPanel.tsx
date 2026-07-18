@@ -20,13 +20,15 @@ import {
   type CloudAuthArt,
   type KosmoRolle,
   type Proposal,
+  type SkillMeta,
   type StaffelungKonfig,
+  type SystemPromptBlock,
 } from '@kosmo/ai';
 import { verifiziereLizenz } from '@kosmo/lizenz';
 import type { Assembly, JournalEntry } from '@kosmo/kernel';
 import { formatiereEreignisse, useProject } from '../state/project-store';
 import { loadReferences, type RefEntry } from '../modules/data/DataWorkspace';
-import { sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
+import { baueDatenKontextBlock, sucheQuellen, useQuellen, type QuellenRef } from '../state/quellen';
 import { sucheReferenzen } from '../state/referenz-index';
 import { RefKarte } from './RefKarte';
 import { vorschauFuerProposal, type ProposalVorschau } from '../state/proposal-vorschau';
@@ -78,6 +80,32 @@ import './kosmo-panel.css';
  * mit `paket-card`/Zusammenfassungszeile) bleiben unverändert unauffällig.
  */
 const SCHWELLE_GROSSES_PAKET = 8;
+
+/**
+ * v0.8.3/P7 (§5.4/§12.2 C-9, `docs/V083-SPEZ.md`) — Kosmos eigene, kuratierte
+ * Betriebsmuster-Liste für den `skills`-Systemprompt-Block
+ * (`packages/kosmo-ai/src/chat.ts`/`skills.ts`). `skills.ts` (P1) fror nur
+ * Typ (`SkillMeta`) + Bauer (`skillBlock()`) ein und nannte drei Beispiele
+ * (§5.4-Kopfkommentar) — dies ist die tatsächliche Erst-Kuratierung, wörtlich
+ * dieselben drei Beispiele, additiv erweiterbar ohne Signaturwechsel.
+ */
+const KOSMO_SKILLS: readonly SkillMeta[] = [
+  {
+    id: 'dossier-zuerst',
+    titel: 'Dossier-NO-GOs zuerst prüfen',
+    kurzbeschreibung: 'Vor jedem Vorschlag das Wettbewerbsdossier gegenlesen — ein NO-GO sticht jede Idee.',
+  },
+  {
+    id: 'command-statt-freitext',
+    titel: 'Commands statt Freitext vorschlagen',
+    kurzbeschreibung: 'Änderungen als Diff-Karte über einen echten Command anbieten, nie als reine Prosa-Beschreibung.',
+  },
+  {
+    id: 'ablehnung-protokollieren',
+    titel: 'Ablehnung protokollieren statt stumm verwerfen',
+    kurzbeschreibung: 'Eine abgelehnte Karte im Journal festhalten statt sie kommentarlos verschwinden zu lassen.',
+  },
+];
 
 interface Bubble {
   id: number;
@@ -622,6 +650,17 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   const quellenMap = useRef(new Map<number, QuellenRef>());
   const quellenZaehler = useRef(0);
   /**
+   * v0.8.3/P7 (additiv, §6.4/§12.1 C-4, `docs/V083-SPEZ.md`) — der zuletzt
+   * gebaute App-seitige `datenKontext`-Block (`state/quellen.ts#
+   * baueDatenKontextBlock`, P2). Der Bauer selbst ist async (KosmoData-
+   * Suche); `ChatSession`s `extraBloecke?`-Kanal (`chat.ts`) ruft seinen
+   * Aufrufer dagegen SYNCHRON innerhalb des `send()`-Blockaufbaus auf — die
+   * Ref überbrückt das: `aktualisiereDatenKontext()` (unten) füllt sie
+   * VOR jedem `session.send()` frisch, `extraBloecke` liest nur noch den
+   * zuletzt bekannten Stand, ohne eigenen Async-Schritt.
+   */
+  const datenKontextRef = useRef<SystemPromptBlock>({ label: 'datenKontext', text: '' });
+  /**
    * v0.8.3/P2 (§6.3/E6c, `docs/V083-SPEZ.md`) — die gerade offene `RefKarte`
    * im Chatverlauf: `bubbleId` verankert sie an der Bubble, deren `[Qn]`-Chip
    * geklickt wurde (additiv zur bestehenden Sprung-Mechanik, ersetzt sie
@@ -942,6 +981,13 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       { ohne: KOSMO_AUSGESCHLOSSENE_COMMANDS },
       // v0.8.2/P6 (additiv, §6.7): staffelungKonfig für den `onRolle`-Beobachter oben.
       staffelungKonfig,
+      // v0.8.3/P7 (additiv, §6.4/§12.1 C-4): der App-seitige datenKontext-
+      // Block, synchron aus `datenKontextRef` gelesen (Begründung s.
+      // `aktualisiereDatenKontext` oben) — leer fällt in `baueSystemprompt()`
+      // automatisch weg, kein eigener Sonderfall hier nötig.
+      () => (datenKontextRef.current.text ? [datenKontextRef.current] : []),
+      // v0.8.3/P7 (additiv, §5.4/§12.2 C-9): Kosmos kuratierte Skill-Liste.
+      KOSMO_SKILLS,
     );
     return s;
     // Session bewusst pro Provider-Konfiguration neu
@@ -1114,6 +1160,27 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   };
 
   /**
+   * v0.8.3/P7 (additiv, §6.4/§12.1 C-4, `docs/V083-SPEZ.md`) — berechnet den
+   * `datenKontext`-Block frisch (`baueDatenKontextBlock`, `state/quellen.ts`,
+   * P2) und legt ihn in `datenKontextRef` ab, BEVOR `session.send()` läuft —
+   * Begründung der Ref-Brücke s. Kopfkommentar bei `datenKontextRef` oben.
+   * KosmoData/Wissensbasis unerreichbar → Ref bleibt beim zuletzt bekannten
+   * Stand (kein Absturz, `baueDatenKontextBlock` fängt selbst schon ab; der
+   * `try/catch` hier deckt nur einen eigenen, unerwarteten Fehler ab).
+   */
+  const aktualisiereDatenKontext = async (): Promise<void> => {
+    const st = useProject.getState();
+    try {
+      datenKontextRef.current = await baueDatenKontextBlock(
+        st.doc.settings.projectName || 'Unbenannt',
+        st.doc.settings.dossier,
+      );
+    } catch {
+      /* KosmoData/Wissensbasis nicht erreichbar — Ref bleibt beim letzten Stand. */
+    }
+  };
+
+  /**
    * v0.6.8 («Kosmo sieht mit», Owner-Nachtrag) — Auto-Blick: bei JEDER
    * gesendeten Nutzer-Nachricht (Tippen, Mikrofon, Cloud-Nachsenden) wird der
    * aktuelle Stations-Blick erfasst und — nur bei einem vision-fähigen
@@ -1126,8 +1193,14 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
    *    genau das, was der Mensch geschrieben/gesagt hat).
    *  - Toggle aus (`blickAn`-Effektivwert false) → unverändertes Verhalten,
    *    keine Blick-Zeile, kein zusätzliches Bild/Text.
+   *
+   * v0.8.3/P7 (additiv, §6.4/§12.1 C-4): JEDER Aufruf aktualisiert zuerst den
+   * `datenKontext`-Block (`aktualisiereDatenKontext()` oben) — alle Zweige
+   * unten enden mit `session.send()`, das den frischen Ref-Stand über
+   * `extraBloecke` synchron abholt.
    */
   const sendeMitBlick = async (text: string) => {
+    await aktualisiereDatenKontext();
     const s = settingsRef.current;
     const blickEffektivAn = s.blickAn ?? istVisionFaehig(s.provider);
     if (!blickEffektivAn) {
