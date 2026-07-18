@@ -29,6 +29,7 @@ import { istTauriDesktop } from './cloud-login';
 import { sindSoundsAn, setSoundsAn } from '../state/sounds';
 import { eigencursorAktiv, setEigencursorEingestellt } from '../state/cursor-zustand';
 import { abspielenEingestellt, setAbspielenEingestellt } from '../state/abspiel-ebene';
+import { touchUndoGesteAktiv, setTouchUndoGesteEingestellt } from '../state/touch-undo';
 import { useDockZustand } from '../state/dock-zustand';
 import type { DockModus } from '../state/dock-kern';
 import { useAktiveDockStation } from '../state/dock-aktive-station';
@@ -188,6 +189,10 @@ export function Einstellungen({
   const [soundsAn, setSoundsAnState] = useState(() => sindSoundsAn());
   const [eigencursorAn, setEigencursorAnState] = useState(() => eigencursorAktiv());
   const [abspielenAn, setAbspielenAnState] = useState(() => abspielenEingestellt());
+  // v0.8.3 / P8 (E10 §10.2, `docs/V083-SPEZ.md`): Zwei-Finger-Doppeltipp-
+  // Undo — reiner localStorage-Spiegel wie die drei Schalter oben, Default
+  // AUS (§8-1 bleibt Owner-offen, s. `state/touch-undo.ts`-Kopfkommentar).
+  const [touchUndoGesteAn, setTouchUndoGesteAnState] = useState(() => touchUndoGesteAktiv());
   const tauriDesktop = istTauriDesktop();
   const [charakterSichtbar, setCharakterSichtbar] = useState(false);
   const [charakterFehler, setCharakterFehler] = useState<string | null>(null);
@@ -433,6 +438,19 @@ export function Einstellungen({
               }}
             />
             Kosmo zeichnet sichtbar, bevor eine Änderung übernommen wird (Default an)
+          </label>
+
+          <label className="es-schalter-label">
+            <input
+              type="checkbox"
+              data-testid="einstellung-touch-undo-geste"
+              checked={touchUndoGesteAn}
+              onChange={(e) => {
+                setTouchUndoGesteEingestellt(e.target.checked);
+                setTouchUndoGesteAnState(e.target.checked);
+              }}
+            />
+            Zwei-Finger-Doppeltipp auf dem Viewport löst Rückgängig aus (iPad, Default aus)
           </label>
 
           <label

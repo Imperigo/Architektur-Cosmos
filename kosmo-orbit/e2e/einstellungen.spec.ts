@@ -165,6 +165,24 @@ test.describe('Einstellungen: «Bewegung & Klang» — vier neue Schalter (W4-H)
     expect(await page.evaluate(() => localStorage.getItem('kosmo.abspielen'))).toBe('1');
   });
 
+  test('Zwei-Finger-Doppeltipp-Undo (P8/E10 §10.2): Default AUS, Schalter schreibt kosmo.touch-undo-geste', async ({
+    page,
+  }) => {
+    await bootstrap(page);
+    await page.click('[data-testid="einstellungen-oeffnen"]');
+    const schalter = page.locator('[data-testid="einstellung-touch-undo-geste"]');
+    await expect(schalter).not.toBeChecked(); // §10.2: Default AUS, §8-1 bleibt Owner-offen
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.touch-undo-geste'))).toBeNull();
+
+    await schalter.click();
+    await expect(schalter).toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.touch-undo-geste'))).toBe('1');
+
+    await schalter.click();
+    await expect(schalter).not.toBeChecked();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.touch-undo-geste'))).toBe('0');
+  });
+
   test('Kosmo-Charakter-Fenster: ehrlich «nur Desktop-App» — ausserhalb Tauri deaktiviert/ausgegraut', async ({
     page,
   }) => {

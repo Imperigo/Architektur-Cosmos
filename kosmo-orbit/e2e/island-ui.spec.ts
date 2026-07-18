@@ -207,6 +207,98 @@ test.describe('PD4 — reduced-motion', () => {
   });
 });
 
+/**
+ * P8 (`docs/V083-SPEZ.md` §10.2, §12.6 C-21) — Zwei-Finger-Doppeltipp-Undo
+ * am lebenden Objekt: HINTER `kosmo.touch-undo-geste` (Default AUS), löst
+ * bei aktiver Einstellung `history.undo()` aus (bewiesen über das echte Doc,
+ * `window.__kosmo`-Test-Hook — kein Mock). §8-1 (`docs/ISLAND-UI-SPEZ.md`
+ * §8 Punkt 1) bleibt Owner-offen — dieser Test beweist nur die Geste HINTER
+ * der Einstellung, keine Owner-Entscheidung.
+ *
+ * Zwei synthetische Finger via `window.dispatchEvent(new Event(...))` +
+ * angehängten `touches`/`changedTouches`-Arrays (Chromium akzeptiert
+ * beliebige Eigenschaften auf einem `Event`-Objekt) — dasselbe Muster wie
+ * der App-Unit-Test (`test/island-shell.test.tsx`), hier gegen die echte
+ * `IslandBuehne`-Instanz statt gegen eine isolierte Komponente.
+ */
+test.describe('P8 — Zwei-Finger-Doppeltipp-Undo (§10.2, Default AUS)', () => {
+  interface KosmoTestHook {
+    run: (commandId: string, params: unknown) => unknown;
+    state: () => { doc: { byKind: (kind: string) => { id: string; name?: string }[] } };
+  }
+
+  /** Zwei Finger, ein sauberer Tap (kein Pinch — keine Bewegung, kurze Haltedauer). */
+  async function zweiFingerTap(page: Page): Promise<void> {
+    await page.evaluate(() => {
+      const touches = [
+        { identifier: 1, clientX: 400, clientY: 400 },
+        { identifier: 2, clientX: 500, clientY: 400 },
+      ];
+      const start = new Event('touchstart', { bubbles: true });
+      Object.assign(start, { touches, changedTouches: touches });
+      window.dispatchEvent(start);
+      const end = new Event('touchend', { bubbles: true });
+      Object.assign(end, { touches: [], changedTouches: touches });
+      window.dispatchEvent(end);
+    });
+  }
+
+  /** Legt ein eindeutig benanntes Geschoss an (Muster `e2e/popup-kollision.
+   *  spec.ts`s K3-Test) — reine Fixture, kein Bestandteil der eigentlichen
+   *  Prüfung. */
+  async function legeTestgeschossAn(page: Page): Promise<void> {
+    await page.evaluate(() => {
+      const k = (window as unknown as { __kosmo: KosmoTestHook }).__kosmo;
+      k.run('design.geschossErstellen', { name: 'P8-TESTGESCHOSS', index: 2, elevation: 6000, height: 3000 });
+    });
+  }
+
+  async function hatTestgeschoss(page: Page): Promise<boolean> {
+    return page.evaluate(() => {
+      const k = (window as unknown as { __kosmo: KosmoTestHook }).__kosmo;
+      return k.state().doc.byKind('storey').some((s) => s.name === 'P8-TESTGESCHOSS');
+    });
+  }
+
+  test('Default AUS: ein Zwei-Finger-Doppeltipp löst KEIN Undo aus', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+    await legeTestgeschossAn(page);
+    expect(await hatTestgeschoss(page)).toBe(true);
+
+    await zweiFingerTap(page);
+    await zweiFingerTap(page);
+    expect(await hatTestgeschoss(page)).toBe(true); // unverändert — Einstellung ist AUS
+  });
+
+  test('Einstellung AN: ein Zwei-Finger-Doppeltipp löst echtes history.undo() aus', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.evaluate(() => localStorage.setItem('kosmo.touch-undo-geste', '1'));
+    await page.click('[data-testid="module-design"]');
+    await legeTestgeschossAn(page);
+    expect(await hatTestgeschoss(page)).toBe(true);
+
+    await zweiFingerTap(page); // erster Tap allein — noch kein Doppeltipp
+    expect(await hatTestgeschoss(page)).toBe(true);
+
+    await zweiFingerTap(page); // zweiter Tap innerhalb des Doppeltipp-Fensters
+    await expect.poll(() => hatTestgeschoss(page)).toBe(false);
+  });
+
+  test('Einstellungen-Panel: Schalter «Zwei-Finger-Doppeltipp» steuert dieselbe Einstellung wie die Geste', async ({
+    page,
+  }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+    await page.click('[data-testid="island-einstellungen-kreis"]');
+    const schalter = page.locator('[data-testid="einstellung-touch-undo-geste"]');
+    await expect(schalter).toBeVisible();
+    await expect(schalter).not.toBeChecked(); // Default AUS
+    await schalter.click();
+    expect(await page.evaluate(() => localStorage.getItem('kosmo.touch-undo-geste'))).toBe('1');
+  });
+});
+
 test.describe('PD5 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl + Owner-Korrektur, 17.07.2026)', () => {
   test('Island-Modus: Kopfbalken NICHT im DOM, KosmoOrbit + KosmoDesign + Stationen-Orb + Einstellungs-Kreis EINHEITLICH, ohne Überlagerung', async ({
     page,

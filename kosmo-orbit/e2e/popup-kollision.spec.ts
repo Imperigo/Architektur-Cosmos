@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 /**
  * K3 (Owner-Rundgang 0.6.2, S. 8): «Popup-Texte dürfen niemals den Block
@@ -95,4 +95,220 @@ test('P5c Kompakt-Stufe: Kv-Panel überlappt EntwurfsDock/Geschossleiste auch in
       box!.y + box!.height > kvBox.y;
     expect(schneidet, `${testid} darf das kompakte KV-Panel nicht schneiden`).toBe(false);
   }
+});
+
+// ─────────────────────────────────────────────────────────────────────────
+// P8 (`docs/V083-SPEZ.md` §10.1, §12.6 C-20) — Island-Popup-Bounding-Box-
+// Sweep über ALLE 29 Insel-Werkzeuge im iPad-Viewport. Additiver Zusatz zu
+// den beiden BESTEHENDEN K3-/P5c-Tests oben (byte-gleich, nur die eigene
+// `test.describe`-Gruppe unten trägt den eigenen `storageState`/`viewport`-
+// Override — die bestehenden Tests behalten den globalen Manuell-Seed +
+// 1400×900 unverändert, s. `playwright.config.ts`).
+//
+// **Datei-Namens-Kollision, offen dokumentiert statt still umgangen:** der
+// Bauauftrag benannte `e2e/popup-kollision.spec.ts` als «neu», das Repo
+// hatte diesen Dateinamen aber bereits (K3/P5c-Kollisionstests oben, v0.6.2/
+// v0.8.1) — kein Widerspruch zum Auftragsinhalt selbst, thematisch sogar
+// näher («Popup-Kollision» ⊇ «Popup verlässt den Viewport»). Aufgelöst
+// zugunsten des additiven, sichereren Wegs (Lehre `wissen/training/claude/
+// lehren/v0.8.2.md` «Konvention»: Spez-interne Widersprüche werden offen
+// aufgelöst, nie still überschrieben) statt die bestehenden K3-/P5c-Tests zu
+// überschreiben.
+// ─────────────────────────────────────────────────────────────────────────
+
+test.describe('P8 — Island-Popup-Bounding-Box-Sweep (§10.1, docs/V083-SPEZ.md)', () => {
+  test.use({
+    storageState: { cookies: [], origins: [] },
+    viewport: { width: 1024, height: 768 },
+  });
+
+  const VIEWPORT_BREITE = 1024;
+  const VIEWPORT_HOEHE = 768;
+  /** Kleine Toleranz für Subpixel-Rundung (Chromium liefert gelegentlich
+   *  Werte wie 1023.99609375). */
+  const EPSILON = 0.5;
+
+  async function ueberspringeOnboarding(page: Page): Promise<void> {
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.starterGuide.done', '1');
+    });
+    await page.reload();
+  }
+
+  /** Hover statt Klick — `.click()` bewegt die Maus zuerst auf die Pill, was
+   *  `onMouseEnter` (`IslandShell.tsx`) SCHON auslöst (s. `island-verdrahtung.
+   *  spec.ts`-Kopfkommentar). */
+  async function oeffneInsel(page: Page, island: string): Promise<void> {
+    await page.hover(`[data-testid="island-${island}-pill"]`);
+    await expect(page.locator(`[data-testid="island-${island}-leiste"]`)).toBeVisible();
+  }
+
+  interface Box {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
+  function pruefeInnerhalbViewport(box: Box | null, ort: string): void {
+    expect(box, `${ort}: boundingBox() lieferte null (nicht sichtbar?)`).not.toBeNull();
+    const b = box!;
+    expect(b.x, `${ort}: linker Rand (${b.x}) verlässt den Viewport links`).toBeGreaterThanOrEqual(-EPSILON);
+    expect(b.y, `${ort}: oberer Rand (${b.y}) verlässt den Viewport oben`).toBeGreaterThanOrEqual(-EPSILON);
+    expect(
+      b.x + b.width,
+      `${ort}: rechter Rand (${b.x + b.width}) verlässt den Viewport rechts (Breite ${VIEWPORT_BREITE})`,
+    ).toBeLessThanOrEqual(VIEWPORT_BREITE + EPSILON);
+    expect(
+      b.y + b.height,
+      `${ort}: unterer Rand (${b.y + b.height}) verlässt den Viewport unten (Höhe ${VIEWPORT_HOEHE})`,
+    ).toBeLessThanOrEqual(VIEWPORT_HOEHE + EPSILON);
+  }
+
+  /** 1:1 `island-katalog.ts` (§3.1–§3.4) — Id + `hatPopup`, in Katalog-
+   *  Reihenfolge. Die zwei `hatPopup:false`-Fälle (Achsen/Manuell, §4.4) sind
+   *  hier explizit markiert; Manuell bleibt bewusst das LETZTE Element der
+   *  Gesamtliste — ein Klick darauf schaltet sofort auf `designOberflaeche:
+   *  'manuell'` um und lässt die ganze Insel-Bühne verschwinden. */
+  interface KatalogEintrag {
+    island: 'zeichnen' | 'ansicht' | 'projekt' | 'austausch';
+    id: string;
+    hatPopup: boolean;
+  }
+
+  const ZEICHNEN: readonly KatalogEintrag[] = [
+    'auswahl',
+    'wand',
+    'oeffnung',
+    'volumen',
+    'zone',
+    'dach',
+    'treppe',
+    'stuetze',
+    'skizze',
+    'mesh',
+    'messen',
+  ].map((id) => ({ island: 'zeichnen' as const, id, hatPopup: true }));
+
+  const ANSICHT: readonly KatalogEintrag[] = [
+    { island: 'ansicht', id: 'darstellung', hatPopup: true },
+    { island: 'ansicht', id: 'sonne', hatPopup: true },
+    { island: 'ansicht', id: 'ebenen', hatPopup: true },
+    { island: 'ansicht', id: 'achsen', hatPopup: false },
+    { island: 'ansicht', id: 'trace', hatPopup: true },
+    { island: 'ansicht', id: 'graph', hatPopup: true },
+  ];
+
+  const PROJEKT: readonly KatalogEintrag[] = ['kennzahlen', 'checks', 'varianten', 'phase', 'liste', 'kommentare'].map(
+    (id) => ({ island: 'projekt' as const, id, hatPopup: true }),
+  );
+
+  const AUSTAUSCH: readonly KatalogEintrag[] = [
+    { island: 'austausch', id: 'export', hatPopup: true },
+    { island: 'austausch', id: 'import', hatPopup: true },
+    { island: 'austausch', id: 'rendern', hatPopup: true },
+    { island: 'austausch', id: 'blaetter', hatPopup: true },
+    { island: 'austausch', id: 'sync', hatPopup: true },
+    { island: 'austausch', id: 'manuell', hatPopup: false }, // MUSS zuletzt bleiben
+  ];
+
+  const GESAMTKATALOG: readonly KatalogEintrag[] = [...ZEICHNEN, ...ANSICHT, ...PROJEKT, ...AUSTAUSCH];
+
+  test('Bounding-Box-Sweep — 29/29 Werkzeuge, kein Popup/Fenster verlässt den 1024×768-Viewport', async ({
+    page,
+  }) => {
+    expect(GESAMTKATALOG, 'Katalog muss exakt 29 Einträge haben (§14 Beleg 13)').toHaveLength(29);
+    expect(GESAMTKATALOG[GESAMTKATALOG.length - 1]!.id).toBe('manuell');
+
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+
+    let aktuelleInsel: string | null = null;
+    const geprueft: string[] = [];
+
+    for (const { island, id, hatPopup } of GESAMTKATALOG) {
+      if (aktuelleInsel !== island) {
+        await oeffneInsel(page, island);
+        aktuelleInsel = island;
+      }
+
+      const werkzeugKnopf = page.locator(`[data-testid="island-werkzeug-${id}"]`);
+      await expect(werkzeugKnopf, `Werkzeug-Knopf fehlt: ${island}/${id}`).toBeVisible();
+
+      if (!hatPopup) {
+        // §4.4-Ausnahme (Achsen/Manuell): Toast statt Popup/Fenster — kein
+        // Rahmen, der den Viewport verlassen könnte.
+        await werkzeugKnopf.click();
+        await expect(page.locator(`[data-testid="island-${id}-popup"]`)).toHaveCount(0);
+        await expect(page.locator(`[data-testid="island-${id}-fenster"]`)).toHaveCount(0);
+        geprueft.push(`${island}/${id} (kein Popup, §4.4-Ausnahme, geprüft: kein Rahmen im DOM)`);
+        continue; // 'manuell' beendet die Insel-Bühne — danach folgt kein weiterer Sweep-Schritt
+      }
+
+      // Stufe 2 (Mini-Popup) — erster Klick.
+      await werkzeugKnopf.click();
+      const popup = page.locator(`[data-testid="island-${id}-popup"]`);
+      await expect(popup, `Popup fehlt: ${island}/${id}`).toBeVisible();
+      pruefeInnerhalbViewport(await popup.boundingBox(), `${island}/${id} Popup (Stufe 2)`);
+
+      // Stufe 3 (Einstellungsfenster) — zweiter Klick auf dasselbe Symbol.
+      await werkzeugKnopf.click();
+      const fenster = page.locator(`[data-testid="island-${id}-fenster"]`);
+      await expect(fenster, `Fenster fehlt: ${island}/${id}`).toBeVisible();
+      pruefeInnerhalbViewport(await fenster.boundingBox(), `${island}/${id} Fenster (Stufe 3)`);
+
+      geprueft.push(`${island}/${id} (Popup+Fenster innerhalb 1024×768)`);
+    }
+
+    expect(geprueft).toHaveLength(29);
+  });
+
+  test('Bounding-Box-Einzelbeweis — hohe ZEICHNEN-Insel (11 Werkzeuge, §10.1-Fund ROADMAP 427)', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+    await oeffneInsel(page, 'zeichnen');
+
+    // «Messen» ist das LETZTE der 11 ZEICHNEN-Werkzeuge (island-katalog.ts) —
+    // die Leiste ist an diesem Punkt komplett aufgefächert (voller Katalog),
+    // exakt der Fall aus ROADMAP 427 («Popup-Position der hohen ZEICHNEN-
+    // Insel nahe der Statusleiste»).
+    const knopf = page.locator('[data-testid="island-werkzeug-messen"]');
+    await knopf.click();
+    const fenster = page.locator('[data-testid="island-messen-fenster"]');
+    await knopf.click();
+    await expect(fenster).toBeVisible();
+    pruefeInnerhalbViewport(
+      await fenster.boundingBox(),
+      'zeichnen/messen Fenster (elftes Werkzeug, volle Leistenhöhe)',
+    );
+    await page.screenshot({ path: 'test-results/p8-083-zeichnen-hoch-geklammert.png' });
+  });
+
+  test('Trace-Select-Überdeckung (ROADMAP 427) — strukturell aufgelöst seit PD3c: nie beide gleichzeitig im DOM', async ({
+    page,
+  }) => {
+    // PD3c (ROADMAP 431, `docs/ISLAND-UI-SPEZ.md` §6 Sanktion 7) hat
+    // PlanView.tsx's eigene HUD-Zeile (inkl. `trace-select`) auf
+    // `designOberflaeche === 'manuell'` beschränkt (PlanView.tsx:655) — im
+    // Island-Modus (`AnsichtsInfo` sichtbar) rendert `trace-select` seither
+    // GAR NICHT mehr im DOM. Der ROADMAP-427-Befund («leichte Trace-Select-
+    // Überdeckung durch die Ansichts-Info») war ein PD2-Zwischenstand VOR
+    // diesem Umbau — dieser Test beweist am lebenden Objekt, dass die beiden
+    // Elemente heute strukturell nie gleichzeitig existieren, in BEIDEN
+    // Richtungen.
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+
+    // Island-Modus (Default ohne Seed): Ansichts-Info da, Trace-Select nicht.
+    await expect(page.locator('[data-testid="ansichts-info-root"]')).toBeVisible();
+    await expect(page.locator('[data-testid="trace-select"]')).toHaveCount(0);
+
+    // Umschalten zu Manuell: Trace-Select da, Ansichts-Info nicht.
+    await oeffneInsel(page, 'austausch');
+    await page.click('[data-testid="island-werkzeug-manuell"]');
+    await expect(page.locator('[data-testid="trace-select"]')).toBeVisible();
+    await expect(page.locator('[data-testid="ansichts-info-root"]')).toHaveCount(0);
+  });
 });

@@ -209,14 +209,29 @@
   line-height: 1.2;
 }
 
-/* ── Stufe 2 · Mini-Popup (§4.1) — PD1: leerer Rahmen, Inhalte folgen PD3 ── */
+/* ── Stufe 2 · Mini-Popup (§4.1) — PD1: leerer Rahmen, Inhalte folgen PD3 ──
+   P8 §10.1 (`docs/V083-SPEZ.md`, Bounding-Box-Clamping analog `design.css:
+   186-198`s `.dw-dropdown`-Präzedenzfall): `--isl-clamp-x`/`-y` sind additive
+   Korrekturvektoren, die `IslandShell.tsx`s `klammereInViewport()` NUR setzt,
+   wenn das Popup den Viewport verlassen würde (Default `0px`, unverändertes
+   Verhalten) — die bestehende `translateX(-50%)`-Zentrierung bleibt exakt
+   erhalten, der Klammer-Offset wirkt additiv daneben. `max-width`/
+   `max-height`+`overflow-y` sind derselbe Scroll-statt-Überlapp-Sicherheits-
+   netz wie bei `.dw-dropdown` — greift nur, wenn ein Stufe-2-Inhalt (z. B.
+   ein breiter Aufbau-Katalog-Auszug) grösser als der Viewport selbst wäre,
+   ein Fall, den reine Positions-Korrektur nicht lösen kann. */
 .isl-popup {
   position: absolute;
   top: calc(100% + var(--k-s3));
   left: 50%;
-  transform: translateX(-50%);
+  --isl-clamp-x: 0px;
+  --isl-clamp-y: 0px;
+  transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(var(--isl-clamp-y));
   min-width: 180px;
   min-height: 44px;
+  max-width: calc(100vw - 2 * 8px);
+  max-height: calc(100dvh - 2 * 8px);
+  overflow-y: auto;
   padding: var(--k-s4);
   background: var(--f-glass);
   backdrop-filter: var(--f-blur);
@@ -235,14 +250,24 @@
   opacity: 0.6;
 }
 
-/* ── Stufe 3 · Einstellungsfenster (§4.1) — PD1: leerer Rahmen ── */
+/* ── Stufe 3 · Einstellungsfenster (§4.1) — PD1: leerer Rahmen ──
+   P8 §10.1: dieselben `--isl-clamp-x`/`-y`-Korrekturvektoren + dasselbe
+   Scroll-statt-Überlapp-Sicherheitsnetz wie `.isl-popup` oben (s. dortigen
+   Kommentar) — Einstellungsfenster sind grösser (min. 320×120) und darum der
+   häufigere Klammer-Fall (z. B. die hohe ZEICHNEN-Insel nahe der unteren
+   Viewport-Kante, PROJEKT/ZEICHNEN horizontal an den Seiten-Rändern). */
 .isl-fenster {
   position: absolute;
   top: calc(100% + var(--k-s3));
   left: 50%;
-  transform: translateX(-50%);
+  --isl-clamp-x: 0px;
+  --isl-clamp-y: 0px;
+  transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(var(--isl-clamp-y));
   min-width: 320px;
   min-height: 120px;
+  max-width: calc(100vw - 2 * 8px);
+  max-height: calc(100dvh - 2 * 8px);
+  overflow-y: auto;
   padding: var(--k-s5);
   background: var(--f-glass);
   backdrop-filter: var(--f-blur);
@@ -250,6 +275,23 @@
   border: 1px solid var(--k-glass-stroke, var(--k-line));
   border-radius: var(--f-r-md);
   box-shadow: var(--k-shadow-xl, var(--k-shadow-overlay));
+}
+
+/* P8 §10.1 (Agent-Fund, `docs/V083-SPEZ.md` §10.1): AUSTAUSCH sitzt am
+   UNTEREN Rand (`.isl-rand-unten`, `bottom:14px`) — ein Popup/Fenster, das
+   wie die drei übrigen Islands NACH UNTEN aufklappt (`top:100%`), hätte fast
+   keinen Raum zum Viewport-Rand und würde strukturell überstehen. Die beiden
+   Stufen klappen für dieses EINE Rand-Paar nach OBEN auf (`bottom:100%`
+   statt `top:100%`) — derselbe Kontext-abhängige Öffnungsrichtungs-Gedanke
+   wie `.dw-dropdown--oben`/`--unten` (design.css), hier an die feste
+   Insel-Randposition gebunden statt an Laufzeit-Platzmessung. Die generische
+   `--isl-clamp-*`-Korrektur oben bleibt zusätzlich als Sicherheitsnetz aktiv
+   (z. B. falls ein sehr hohes AUSTAUSCH-Fenster trotzdem an die obere Kante
+   stösst). */
+.isl-rand-unten .isl-popup,
+.isl-rand-unten .isl-fenster {
+  top: auto;
+  bottom: calc(100% + var(--k-s3));
 }
 
 .isl-schliessen {
@@ -292,6 +334,13 @@
   letter-spacing: 0.1em;
   border-radius: var(--k-radius-pill);
   box-shadow: var(--k-shadow-md, var(--k-shadow-overlay));
+}
+/* P8 §10.1: derselbe Öffnungsrichtungs-Tausch wie beim Popup/Fenster oben —
+   der Toast der AUSTAUSCH-Insel («MANUELL AKTIV») klappt sonst ebenfalls
+   nach unten aus knapp über der unteren Viewport-Kante auf. */
+.isl-rand-unten .isl-toast {
+  top: auto;
+  bottom: calc(100% + var(--k-s3));
 }
 
 /* ── Motion (§4.3-Tabelle) ──────────────────────────────────────────────

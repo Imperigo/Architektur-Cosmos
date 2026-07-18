@@ -2,8 +2,10 @@
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { IslandShell } from '../src/modules/design/island/IslandShell';
+import { IslandBuehne, IslandShell } from '../src/modules/design/island/IslandShell';
 import { WERKZEUG_KATALOG, werkzeugeFuerIsland } from '../src/modules/design/island/island-katalog';
+import { useProject } from '../src/state/project-store';
+import { setTouchUndoGesteEingestellt } from '../src/state/touch-undo';
 
 (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -280,5 +282,114 @@ describe('IslandShell — prefers-reduced-motion (§4.2: Endzustände ohne Feder
     hoverEnter(q('island-zeichnen-root')!);
     expect(q('island-zeichnen-leiste')).not.toBeNull();
     expect(q('island-zeichnen-leiste')?.className).not.toContain('isl-anim-islIn');
+  });
+});
+
+describe('IslandShell — Viewport-Klammer (§10.1 P8, docs/V083-SPEZ.md)', () => {
+  beforeEach(() => {
+    render(<IslandShell island="zeichnen" />);
+  });
+
+  it('Popup (Stufe 2) bekommt einen Klammer-Offset über --isl-clamp-x/-y statt 0px', () => {
+    hoverEnter(q('island-zeichnen-root')!);
+    klick(q('island-werkzeug-wand')!);
+    const popup = q('island-wand-popup')!;
+    expect(popup).not.toBeNull();
+    // jsdom liefert für getBoundingClientRect() immer {0,0,0,0} (kein echtes
+    // Layout) bei window.innerWidth/-Height 1024×768 (jsdom-Default) — die
+    // Klammer-Logik sieht das Popup damit deterministisch "an der oberen
+    // linken Kante" und stösst es exakt um den 8px-Rand zurück.
+    expect(popup.style.getPropertyValue('--isl-clamp-x')).toBe('8px');
+    expect(popup.style.getPropertyValue('--isl-clamp-y')).toBe('8px');
+  });
+
+  it('Einstellungsfenster (Stufe 3) bekommt denselben Klammer-Offset', () => {
+    hoverEnter(q('island-zeichnen-root')!);
+    klick(q('island-werkzeug-wand')!);
+    klick(q('island-werkzeug-wand')!);
+    const fenster = q('island-wand-fenster')!;
+    expect(fenster).not.toBeNull();
+    expect(fenster.style.getPropertyValue('--isl-clamp-x')).toBe('8px');
+    expect(fenster.style.getPropertyValue('--isl-clamp-y')).toBe('8px');
+  });
+});
+
+describe('IslandBuehne — Zwei-Finger-Doppeltipp-Undo (§10.2 P8, Default AUS)', () => {
+  let undoSpy: ReturnType<typeof vi.fn>;
+  let echterUndo: () => void;
+
+  beforeEach(() => {
+    localStorage.removeItem('kosmo.touch-undo-geste');
+    echterUndo = useProject.getState().undo;
+    undoSpy = vi.fn();
+    useProject.setState({ undo: undoSpy });
+    render(<IslandBuehne />);
+  });
+
+  afterEach(() => {
+    useProject.setState({ undo: echterUndo });
+    localStorage.removeItem('kosmo.touch-undo-geste');
+  });
+
+  /** Zwei synthetische Finger — ein `Event`, dem `touches`/`changedTouches`
+   *  als schlichte Arrays angehängt werden (jsdom kennt `TouchEvent`/`Touch`
+   *  nicht als Konstruktor; `IslandShell.tsx`s Handler liest nur `.length`/
+   *  `Array.from(...)`, beides funktioniert mit einem Plain-Array genauso
+   *  wie mit einer echten `TouchList`). */
+  function zweiFingerTap(dx2 = 0): void {
+    const touches = [
+      { identifier: 1, clientX: 100, clientY: 100 },
+      { identifier: 2, clientX: 200, clientY: 100 },
+    ];
+    const start = new Event('touchstart', { bubbles: true });
+    Object.assign(start, { touches, changedTouches: touches });
+    act(() => window.dispatchEvent(start));
+
+    const endTouches = [
+      { identifier: 1, clientX: 100, clientY: 100 },
+      { identifier: 2, clientX: 200 + dx2, clientY: 100 },
+    ];
+    const end = new Event('touchend', { bubbles: true });
+    Object.assign(end, { touches: [], changedTouches: endTouches });
+    act(() => window.dispatchEvent(end));
+  }
+
+  it('Default AUS: ein Zwei-Finger-Doppeltipp löst KEIN Undo aus', () => {
+    zweiFingerTap();
+    zweiFingerTap();
+    expect(undoSpy).not.toHaveBeenCalled();
+  });
+
+  it('Einstellung AN: ein Zwei-Finger-Doppeltipp löst genau EIN Undo aus', () => {
+    setTouchUndoGesteEingestellt(true);
+    zweiFingerTap();
+    expect(undoSpy).not.toHaveBeenCalled(); // erster Tap allein reicht nicht
+    zweiFingerTap();
+    expect(undoSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('Einstellung AN: EIN einzelner Tap (kein zweiter innerhalb des Fensters) löst nichts aus', () => {
+    setTouchUndoGesteEingestellt(true);
+    zweiFingerTap();
+    expect(undoSpy).not.toHaveBeenCalled();
+  });
+
+  it('Einstellung AN: ein Zwei-Finger-PINCH (grosse Bewegung) zählt NICHT als Tap', () => {
+    setTouchUndoGesteEingestellt(true);
+    zweiFingerTap(80); // zweiter Finger bewegt sich 80px — über der 24px-Schwelle
+    zweiFingerTap(80);
+    expect(undoSpy).not.toHaveBeenCalled();
+  });
+
+  it('kein bestehender Touch-Handler wird berührt — der Listener ist { passive: true }, kein preventDefault', () => {
+    setTouchUndoGesteEingestellt(true);
+    const touches = [
+      { identifier: 1, clientX: 100, clientY: 100 },
+      { identifier: 2, clientX: 200, clientY: 100 },
+    ];
+    const start = new Event('touchstart', { bubbles: true, cancelable: true });
+    Object.assign(start, { touches, changedTouches: touches });
+    act(() => window.dispatchEvent(start));
+    expect(start.defaultPrevented).toBe(false);
   });
 });

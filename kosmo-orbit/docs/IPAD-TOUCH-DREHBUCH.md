@@ -220,6 +220,71 @@ kollidieren — im Container nie geprüft (kein echtes Safari).
 
 ---
 
+## Nachtrag P8 (v0.8.3, `docs/V083-SPEZ.md` §10) — Island-Popups + Zwei-Finger-
+## Doppeltipp-Undo
+
+> Additiver Nachtrag zu den zehn Blöcken oben — die ursprünglichen zehn
+> Blöcke prüften die v0.7.8-Dock-/HUD-Schicht (Manuell-Modus); dieser
+> Nachtrag prüft die NEUE Island-UI (Default-Modus seit v0.8.2) auf demselben
+> echten iPad, dieselbe Vorbereitung (Punkte 1–6 oben) gilt unverändert.
+> Betrifft nur `apps/kosmo-orbit/src/modules/design/island/{IslandShell.tsx,
+> island.css}` — kein bestehender Dock-/HUD-Handler wird berührt.
+
+### 11 · Island-Popup/Fenster nahe am Bildschirmrand (Bounding-Box-Klammer)
+
+*Kontext:* jedes der 29 Insel-Werkzeuge öffnet ein Mini-Popup (Stufe 2) bzw.
+ein Einstellungsfenster (Stufe 3), das sich standardmässig unter/über der
+jeweiligen Insel zentriert. `IslandShell.tsx`s `klammereInViewport()` stösst
+das Popup/Fenster additiv zurück in den sichtbaren Bereich, sobald es den
+Viewport verlassen würde (Bounding-Box-Beweis bereits automatisiert:
+`e2e/popup-kollision.spec.ts`, alle 29 Werkzeuge @1024×768) — dieser Block
+prüft dasselbe Verhalten mit dem echten Finger auf echtem Glas, bei echter
+iPad-Rotation.
+
+- **Schritte:** Design-Station öffnen (Island-Modus ist Default) → die linke
+  ZEICHNEN-Insel (11 Werkzeuge, die höchste) auffächern und das LETZTE
+  Werkzeug («Messen») bis zum Einstellungsfenster durchklicken (2×) →
+  dieselbe Probe an der rechten PROJEKT-Insel und der unteren AUSTAUSCH-Insel
+  (dort «Export» bis Stufe 3) → das iPad einmal quer/hochkant drehen, während
+  ein Fenster offen ist.
+- **Erwartung:** kein Popup/Fenster ragt über den Bildschirmrand hinaus oder
+  wird vom System-Rand abgeschnitten — bei Bedarf rückt es sichtbar (aber
+  ohne Sprung/Flackern) in die sichtbare Fläche; nach einer Drehung bleibt es
+  vollständig sichtbar (Neuvermessung läuft automatisch mit, kein manuelles
+  Nachjustieren nötig).
+- **notiere:** Irgendein Popup/Fenster, das trotzdem über den Rand reicht
+  (Gerät/iOS-Version notieren)? Spürbarer Sprung beim Nachrücken? Verhalten
+  nach Drehung wie erwartet?
+
+### 12 · Zwei-Finger-Doppeltipp-Undo (hinter Einstellung, Default AUS)
+
+*Kontext:* `state/touch-undo.ts` (`kosmo.touch-undo-geste`, Default `false`),
+Schalter in Einstellungen → **Bewegung & Klang** →
+«Zwei-Finger-Doppeltipp auf dem Viewport löst Rückgängig aus». **§8-1**
+(`docs/ISLAND-UI-SPEZ.md` §8 Punkt 1, Undo/Redo aufs iPad) bleibt formal
+Owner-offen — diese Geste ist ein AUS-per-Default-Vorschlag, keine
+Owner-Entscheidung. Rein additiv (`{ passive: true }`, kein bestehender
+Touch-Handler verändert) — Pinch-Zoom/Pan mit zwei Fingern bleibt unverändert
+bedienbar.
+
+- **Schritte:** OHNE die Einstellung zu ändern: irgendeine Änderung am Entwurf
+  vornehmen (z. B. ein Werkzeug aktivieren), dann mit zwei Fingern zweimal
+  kurz hintereinander auf den leeren Viewport tippen → prüfen, dass NICHTS
+  passiert. Dann Einstellungen → Bewegung & Klang → Schalter aktivieren →
+  dieselbe Zwei-Finger-Doppeltipp-Geste wiederholen → prüfen, dass die letzte
+  Änderung zurückgenommen wird. Zusätzlich: mit denselben zwei Fingern
+  PINCH-ZOOMEN (auseinanderziehen, keinen Tap) → prüfen, dass das Zoomen
+  normal funktioniert und NICHT versehentlich als Doppeltipp gewertet wird.
+- **Erwartung:** Default AUS bestätigt (keine Wirkung ohne die Einstellung);
+  AN löst Undo zuverlässig bei einem sauberen Zwei-Finger-Doppeltipp aus;
+  Pinch-Zoom/Pan werden NIE fälschlich als Doppeltipp erkannt (Bewegungs-
+  Schwellwert).
+- **notiere:** Geste zuverlässig erkannt? Versehentliche Auslösung beim
+  normalen Zeichnen/Zoomen? Trefferfläche/Timing auf dem echten Gerät
+  gefühlt richtig?
+
+---
+
 ## Ergebnis zurückmelden
 
 Jeder Block bekommt einen kurzen Ist-Zustand (grün/gelb/rot) plus die freie
@@ -242,18 +307,24 @@ Die Befunde fliessen so in die nächste Runde:
   stille Korrektur einer alten.
 - **Block 8/9** referenzieren ROADMAP 358 (B-Modus) bzw. 359 («Kosmo
   ordnet») direkt.
+- **Block 11/12 (Nachtrag P8)** referenzieren `docs/V083-SPEZ.md` §10 (E10)
+  — ein Befund aus Block 11 ist ein Fall für `IslandShell.tsx`s
+  `klammereInViewport()`-Ränder/Schwellwerte, ein Befund aus Block 12 für die
+  Bewegungs-/Zeit-Schwellwerte in `useZweiFingerUndoGeste()`; §8-1 selbst
+  bleibt davon unberührt Owner-offen.
 - **Kein Befund wird aus diesem Drehbuch heraus selbst gefixt** — das
   Drehbuch liefert nur die Beobachtung; Fix-Entscheidungen laufen über die
-  normale v0.7.9-Priorisierung (`docs/V079-VORSCHLAG.md`).
+  normale v0.7.9-Priorisierung (`docs/V079-VORSCHLAG.md`) bzw. für den P8-
+  Nachtrag über die reguläre v0.8.3-Priorisierung.
 
 ## Was ohne HomeStation nicht testbar ist
 
 Ehrlich benannt, damit kein Testergebnis als „vollständig“ missverstanden
 wird, das es nicht ist:
 
-- **Alle zehn Blöcke oben** brauchen **keine** HomeStation — reines
-  Touch-/UI-Verhalten, läuft vollständig mit dem Mock-Kosmo-Provider und
-  ohne Bridge.
+- **Alle zwölf Blöcke oben** (die ursprünglichen zehn plus der additive P8-
+  Nachtrag Block 11/12) brauchen **keine** HomeStation — reines Touch-/UI-
+  Verhalten, läuft vollständig mit dem Mock-Kosmo-Provider und ohne Bridge.
 - **Einzige Ausnahme in Block 9:** wer zusätzlich zur Dock-Steuerung selbst
   auch die **Sprachqualität/Antwortgüte** eines echten LLM (statt des
   deterministischen Mocks) mitbeurteilen will, braucht Ollama an der

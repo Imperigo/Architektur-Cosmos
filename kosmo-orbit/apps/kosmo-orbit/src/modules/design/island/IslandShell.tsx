@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ISLAND_LABEL,
   ISLAND_ORIENTIERUNG,
@@ -8,6 +8,8 @@ import {
   type IslandWerkzeug,
 } from './island-katalog';
 import { bevorzugtReduzierteBewegung } from '../../../state/cursor-zustand';
+import { useProject } from '../../../state/project-store';
+import { touchUndoGesteAktiv } from '../../../state/touch-undo';
 import { inhaltFuer } from './inhalte/registry';
 // Registrierung der Stufe-2/3-Inhalte als Import-Seiteneffekt (Fable-Naht
 // für PD3a ‖ PD3b — s. `inhalte/registry.ts`-Kopfkommentar).
@@ -80,6 +82,147 @@ export function useReduzierteBewegung(): boolean {
   return reduziert;
 }
 
+/**
+ * §10.1 (`docs/V083-SPEZ.md`, Bounding-Box-Clamping analog `design.css:186-
+ * 198`s `.dw-dropdown`-Präzedenzfall «Scroll statt Überlapp»): stösst ein
+ * Popup/Fenster, dessen `getBoundingClientRect()` den Viewport verlässt,
+ * über zwei additive CSS-Custom-Properties (`--isl-clamp-x`/`-y`, `island.
+ * css`) wieder zurück in die sichtbare Fläche. Die Properties wirken additiv
+ * ZUR bestehenden `translateX(-50%)`-Zentrierung jeder Insel-Rand-Position
+ * (`island.css`s vier `.isl-rand-*`-Anker bleiben unverändert) — kein
+ * Eingriff in die Anker-Logik selbst, nur ein nachträglicher Korrekturvektor
+ * je gerendertem Popup/Fenster. IMMER zuerst auf `0px` zurückgesetzt, bevor
+ * neu gemessen wird — sonst würde ein bereits angewandter alter Offset die
+ * neue Messung verfälschen (kumulative Fehlrechnung bei mehrfachem Aufruf,
+ * z. B. durch den ResizeObserver unten).
+ */
+const ISL_VIEWPORT_RAND_PX = 8;
+
+function klammereInViewport(el: HTMLElement): void {
+  if (typeof window === 'undefined') return;
+  el.style.setProperty('--isl-clamp-x', '0px');
+  el.style.setProperty('--isl-clamp-y', '0px');
+  const r = el.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let dx = 0;
+  let dy = 0;
+  if (r.left < ISL_VIEWPORT_RAND_PX) dx = ISL_VIEWPORT_RAND_PX - r.left;
+  else if (r.right > vw - ISL_VIEWPORT_RAND_PX) dx = vw - ISL_VIEWPORT_RAND_PX - r.right;
+  if (r.top < ISL_VIEWPORT_RAND_PX) dy = ISL_VIEWPORT_RAND_PX - r.top;
+  else if (r.bottom > vh - ISL_VIEWPORT_RAND_PX) dy = vh - ISL_VIEWPORT_RAND_PX - r.bottom;
+  el.style.setProperty('--isl-clamp-x', `${dx}px`);
+  el.style.setProperty('--isl-clamp-y', `${dy}px`);
+}
+
+/**
+ * Misst+klammert das übergebene Element sofort nach dem Mount/Stufenwechsel
+ * (`useLayoutEffect` — läuft VOR dem ersten Paint, kein sichtbares
+ * Nachrücken) und erneut bei jeder Grössenänderung des Elements selbst
+ * (`ResizeObserver`, z. B. wenn ein Stufe-3-Inhalt seinen Aufbau-Katalog
+ * aufklappt) sowie bei jeder Viewport-Grössenänderung (iPad-Drehung).
+ * `ResizeObserver` existiert in jsdom nicht — defensiv übersprungen, die
+ * Erstmessung greift trotzdem (Unit-Tests bleiben unberührt).
+ */
+function useViewportKlammer(ref: { current: HTMLElement | null }, aktiv: boolean): void {
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!aktiv || !el) return;
+    klammereInViewport(el);
+    const aufResize = () => klammereInViewport(el);
+    window.addEventListener('resize', aufResize);
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(aufResize);
+      ro.observe(el);
+    }
+    return () => {
+      window.removeEventListener('resize', aufResize);
+      ro?.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aktiv]);
+}
+
+/**
+ * §10.2 (`docs/V083-SPEZ.md`, `docs/ISLAND-UI-SPEZ.md` §8 Punkt 1 bleibt
+ * OWNER-OFFEN): Zwei-Finger-Doppeltipp auf dem Viewport löst `history.undo()`
+ * aus — NUR wenn `kosmo.touch-undo-geste` aktiv ist (Default aus,
+ * `state/touch-undo.ts`, Schalter in `Einstellungen.tsx` Sektion «Bewegung &
+ * Klang»). Rein additiv: `{ passive: true }`, nie `preventDefault`/
+ * `stopPropagation` — kein bestehender Touch-Handler (Pinch/Pan/Zeichnen in
+ * `Viewport3D.tsx`/`PlanView.tsx`) wird berührt oder unterdrückt, dieser
+ * Listener liest nur zusätzlich mit. Ein Bewegungs- und Zeit-Schwellwert
+ * unterscheidet den Tap von einem Pinch/Pan-Zoom mit zwei Fingern (dieselben
+ * zwei Finger, die sonst die Kamera steuern).
+ */
+const ZWEI_FINGER_TAP_MAX_MS = 300;
+const ZWEI_FINGER_DOPPELTIPP_MS = 400;
+const ZWEI_FINGER_BEWEGUNG_PX = 24;
+
+interface ZweiFingerPunkt {
+  x: number;
+  y: number;
+  zeit: number;
+}
+
+function useZweiFingerUndoGeste(): void {
+  const start = useRef<Map<number, ZweiFingerPunkt> | null>(null);
+  const letzterTap = useRef(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    function aufTouchStart(e: TouchEvent): void {
+      if (e.touches.length !== 2) {
+        start.current = null;
+        return;
+      }
+      const punkte = new Map<number, ZweiFingerPunkt>();
+      const zeit = performance.now();
+      for (const t of Array.from(e.touches)) punkte.set(t.identifier, { x: t.clientX, y: t.clientY, zeit });
+      start.current = punkte;
+    }
+
+    function aufTouchEnd(e: TouchEvent): void {
+      const startPunkte = start.current;
+      // Beide Finger müssen zusammen losgelassen werden (letzter Finger oben)
+      // — ein noch aufliegender Finger ist kein sauberer Zwei-Finger-Tap.
+      if (!startPunkte || startPunkte.size !== 2 || e.touches.length !== 0) {
+        start.current = null;
+        return;
+      }
+      start.current = null;
+
+      let treffer = 0;
+      let ungueltig = false;
+      for (const t of Array.from(e.changedTouches)) {
+        const s = startPunkte.get(t.identifier);
+        if (!s) continue;
+        treffer += 1;
+        if (Math.hypot(t.clientX - s.x, t.clientY - s.y) > ZWEI_FINGER_BEWEGUNG_PX) ungueltig = true;
+        if (performance.now() - s.zeit > ZWEI_FINGER_TAP_MAX_MS) ungueltig = true;
+      }
+      if (treffer < 2 || ungueltig) return;
+
+      const jetzt = performance.now();
+      if (jetzt - letzterTap.current < ZWEI_FINGER_DOPPELTIPP_MS) {
+        letzterTap.current = 0;
+        if (touchUndoGesteAktiv()) useProject.getState().undo();
+      } else {
+        letzterTap.current = jetzt;
+      }
+    }
+
+    window.addEventListener('touchstart', aufTouchStart, { passive: true });
+    window.addEventListener('touchend', aufTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', aufTouchStart);
+      window.removeEventListener('touchend', aufTouchEnd);
+    };
+  }, []);
+}
+
 export interface IslandShellProps {
   island: IslandId;
   /**
@@ -107,6 +250,14 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
 
   const rueckklappTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // §10.1 Viewport-Klammer (s. `useViewportKlammer`-Kopfkommentar oben) — je
+  // ein Ref für Popup/Fenster, nur AKTIV, solange die jeweilige Stufe wirklich
+  // gerendert ist (sonst zeigt der Ref ins Leere).
+  const popupRef = useRef<HTMLDivElement | null>(null);
+  const fensterRef = useRef<HTMLDivElement | null>(null);
+  useViewportKlammer(popupRef, stufe === 'popup');
+  useViewportKlammer(fensterRef, stufe === 'fenster');
 
   // Timer beim Unmount räumen — kein Leck über Test-/Panel-Wechsel hinweg.
   useEffect(
@@ -249,6 +400,7 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
 
       {stufe === 'popup' && aktivesWerkzeug ? (
         <div
+          ref={popupRef}
           className={`isl-popup${reduziert ? '' : ' isl-anim-popIn'}`}
           data-testid={`island-${aktivesWerkzeug.id}-popup`}
           onClick={aufPopupKlick}
@@ -282,6 +434,7 @@ export function IslandShell({ island, onWerkzeugAktion }: IslandShellProps) {
 
       {stufe === 'fenster' && aktivesWerkzeug ? (
         <div
+          ref={fensterRef}
           className={`isl-fenster${reduziert ? '' : ' isl-anim-winIn'}`}
           data-testid={`island-${aktivesWerkzeug.id}-fenster`}
         >
@@ -325,8 +478,14 @@ export interface IslandBuehneProps {
 /**
  * Alle vier Islands an ihren Rändern (§1/§2) — der PD2-Einbindungspunkt in
  * `DesignWorkspace.tsx` (Default-Flip, nur im Island-Modus gerendert).
+ *
+ * §10.2 (P8): `useZweiFingerUndoGeste()` hängt hier (nicht in jeder einzelnen
+ * `IslandShell`) — EIN Listener-Paar auf `window` für den ganzen Viewport,
+ * genau einmal gemountet/entfernt mit der Bühne selbst, kein Vervierfachen
+ * über die vier Insel-Instanzen.
  */
 export function IslandBuehne({ onWerkzeugAktion }: IslandBuehneProps = {}) {
+  useZweiFingerUndoGeste();
   return (
     <>
       {ISLAND_REIHENFOLGE.map((island) => (
