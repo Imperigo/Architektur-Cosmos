@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type MassKette, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
 import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
-import { outlineOf, pickEntityAt } from './plan-hit-test';
+import { distToSegment, outlineOf, pickEntityAt } from './plan-hit-test';
 import { NavLeiste } from './NavLeiste';
 import { planLod, type PlanLod } from './planLod';
 import { cursor2dFuer, istEingabefeld } from './kurztasten';
@@ -118,6 +118,16 @@ function pocheEntscheidFuer(
 function pocheArtFuer(classes: readonly string[], phase: BauPhase, modus: PocheModus) {
   return pocheEntscheidFuer(classes, phase, modus).art;
 }
+
+/**
+ * C-26 (PB5, `docs/V084-SPEZ.md` §7 D8/D13): Klick-Toleranzen für Masskette
+ * (offene Punktkette) und Kommentar (ein Welt-Punkt) — dieselbe Grössen-
+ * ordnung wie `plan-hit-test.ts`s `TOLERANZ`/`AUSSPARUNG_TOLERANZ` (dort
+ * bewusst NICHT angefasst, s. `pickAt` unten), hier lokal, weil beide
+ * Entitäten dort keine `outline`/Wand-Achse im Sinn der Datei haben.
+ */
+const MASSKETTE_TOLERANZ = 150; // mm, analog Wand-Toleranz
+const KOMMENTAR_TOLERANZ = 300; // mm, grosszügiger Marker-Klickradius
 
 export function PlanView({
   handlers,
@@ -235,6 +245,13 @@ export function PlanView({
   // Feedback (`cursor2dFuer`), unabhängig vom Klick-Hit-Test in `onPointerUp`.
   const [hoverId, setHoverId] = useState<string | null>(null);
   const hoverThrottle = useRef(false);
+  // C-26 (PB5, docs/V084-SPEZ.md §7 D8/§8 C-26, Owner-Auftrag «Kommentar-
+  // Filter»): reiner Sichtbarkeits-Schalter für Plan-Kommentare — lokal HIER
+  // gehalten (`ui-zustand.ts` ist für PB5 gesperrt und trägt kein passendes
+  // Feld), flüchtig wie `navModus2d`/`achsenAn` vor der PD3c-Store-Migration.
+  // Ausgeblendete Kommentare sind auch nicht mehr wähl-/klickbar (`pickAt`
+  // unten) — «ausblenden» heisst hier wirklich weg, nicht nur unsichtbar.
+  const [kommentareSichtbar, setKommentareSichtbar] = useState(true);
   // Touch (iPad): zwei Finger = Pinch-Zoom + Pan; ein Finger zeichnet wie die Maus
   const touches = useRef(new Map<number, { x: number; y: number }>());
   const pinch = useRef<{ d0: number; mid0: { x: number; y: number }; v0: { cx: number; cy: number; scale: number } } | null>(null);
@@ -330,8 +347,13 @@ export function PlanView({
    *  Werkzeug den Doppelklick/-tap, siehe `plan-interaktion.spec.ts` (T1
    *  Doppelklick-Absetzen bleibt unverändert ausserhalb des Auswahl-Werkzeugs). */
   const versucheDoppeltapZoom = (clientX: number, clientY: number) => {
+    // C-26 (PB5): `pickAt` statt rohem `pickEntityAt` — ein Treffer auf
+    // Masskette/Kommentar darf das Doppeltap-Zoom genauso blockieren wie
+    // jedes andere Bauteil (`pickAt` ist unten deklariert, hier als Closure-
+    // Referenz gültig — ausgewertet erst bei echtem Doppeltap, nie beim
+    // Render selbst).
     if (activeStoreyId) {
-      const hit = pickEntityAt(doc, activeStoreyId, toWorld(clientX, clientY));
+      const hit = pickAt(toWorld(clientX, clientY));
       if (hit) return;
     }
     starteZoomAnimation(clientX, clientY);
@@ -386,7 +408,7 @@ export function PlanView({
             haptikTick();
             setKontext2d({ modus: 'kette', x, y, p });
           } else {
-            const hit = pickEntityAt(doc, activeStoreyId, p);
+            const hit = pickAt(p); // C-26 (PB5): inkl. Masskette/Kommentar
             if (hit) {
               haptikTick(); // §6: Longpress-Auslösung
               setKontext2d({ modus: 'element', x, y, entityId: hit });
@@ -486,10 +508,45 @@ export function PlanView({
 
   // Trefferzone + Umriss leben in plan-hit-test.ts (eigener Unit-Test, unabhängig
   // von derivePlan/den Poché-Regionen — die Goldens bleiben unberührt).
-  const pickAt = (p: Pt): string | null => (activeStoreyId ? pickEntityAt(doc, activeStoreyId, p) : null);
+  //
+  // C-26 (PB5, §7 D8/§8 C-26): Massketten/Kommentare haben dort KEINEN
+  // Eintrag (offene Punktkette bzw. ein einzelner Welt-Punkt — beide ohne
+  // `outline`/Wand-Achse im Sinn dieser Datei) — `pickAt` ist der EINE
+  // Trefferzonen-Weg im ganzen Component (ersetzt alle bisherigen direkten
+  // `pickEntityAt(...)`-Aufrufe unten, s. Diff), damit jeder Klick-/Hover-/
+  // Kontextmenü-/Doppeltap-Pfad dieselbe erweiterte Reihenfolge sieht:
+  // Kommentar (nur wenn `kommentareSichtbar`) → Masskette → der Rest
+  // (`pickEntityAt`, unverändert). Ausgeblendete Kommentare sind so wirklich
+  // nicht mehr wählbar, nicht nur unsichtbar.
+  const pickAt = (p: Pt): string | null => {
+    if (!activeStoreyId) return null;
+    if (kommentareSichtbar) {
+      for (const k of doc.byKind<Kommentar>('kommentar')) {
+        if (k.storeyId && k.storeyId !== activeStoreyId) continue;
+        if (Math.hypot(p.x - k.at.x, p.y - k.at.y) <= KOMMENTAR_TOLERANZ) return k.id;
+      }
+    }
+    for (const mk of doc.byKind<MassKette>('masskette')) {
+      if (mk.storeyId !== activeStoreyId) continue;
+      for (let i = 1; i < mk.punkte.length; i++) {
+        if (distToSegment(p, mk.punkte[i - 1]!, mk.punkte[i]!) <= MASSKETTE_TOLERANZ) return mk.id;
+      }
+    }
+    return pickEntityAt(doc, activeStoreyId, p);
+  };
   // Ziehen im Plan: EIN design.verschieben bei pointerup, kein Patch pro Move
   const moveActive = useRef(false);
   const selection = useProject((s) => s.selection);
+  const select = useProject((s) => s.select);
+  // Filter aus → eine evtl. gewählte, jetzt verborgene Kommentar-Auswahl
+  // fällt weg (kein «Geister»-Highlight/Löschen-Ziel auf Unsichtbarem).
+  useEffect(() => {
+    if (kommentareSichtbar) return;
+    const kommentarIds = new Set(doc.byKind<Kommentar>('kommentar').map((k) => k.id));
+    const gefiltert = selection.filter((id) => !kommentarIds.has(id));
+    if (gefiltert.length !== selection.length) select(gefiltert);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kommentareSichtbar]);
 
   const toWorld = (clientX: number, clientY: number): Pt => {
     const rect = svgRef.current!.getBoundingClientRect();
@@ -716,6 +773,21 @@ export function PlanView({
       >
         Achsen
       </button>
+      {/* C-26 (PB5, docs/V084-SPEZ.md §7 D8/§8 C-26, Owner-Auftrag «Kommentar-
+          Filter»): derselbe Toggle-Knopf-Baustein wie Achsen/Graph/U-Plan
+          oben — «im bestehenden Werkzeug-/Ansichts-Chrome des Plans, wo es
+          heute Sichtbarkeits-Toggles gibt». Nur im Modus 'manuell' (wie die
+          ganze Zeile hier): im Island-Modus liegt dieser Chrome-Bereich
+          ausserhalb des PB5-Dateikreises (`island/**` ist gesperrt) — s.
+          Bericht, eine ehrlich benannte Lücke. */}
+      <button
+        data-testid="kommentar-filter-toggle"
+        className={`k-druck pv-toggle-btn pv-toggle-btn--kommentare${kommentareSichtbar ? ' pv-toggle-btn--aktiv' : ''}`}
+        onClick={() => setKommentareSichtbar((v) => !v)}
+        title="Plan-Kommentare ein-/ausblenden"
+      >
+        Kommentare
+      </button>
       </>
       )}
       <svg
@@ -795,7 +867,7 @@ export function PlanView({
             // Auswahl-Werkzeug: Treffer auf einem Bauteil startet gleich die
             // Zieh-Geste (Klick ohne Bewegung = reine Auswahl, dx/dy bleiben 0).
             const p = toWorld(e.clientX, e.clientY);
-            const hit = pickEntityAt(doc, activeStoreyId, p);
+            const hit = pickAt(p); // C-26 (PB5): inkl. Masskette/Kommentar
             if (hit && handlers.current.onMoveStart?.(hit, p)) {
               moveActive.current = true;
               (e.target as Element).setPointerCapture(e.pointerId);
@@ -856,7 +928,7 @@ export function PlanView({
                 hoverThrottle.current = true;
                 requestAnimationFrame(() => {
                   hoverThrottle.current = false;
-                  setHoverId(pickEntityAt(doc, activeStoreyId, p));
+                  setHoverId(pickAt(p)); // C-26 (PB5): inkl. Masskette/Kommentar
                 });
               }
             } else if (hoverId !== null) {
@@ -973,7 +1045,7 @@ export function PlanView({
             setKontext2d({ modus: 'kette', x, y, p });
             return;
           }
-          const hit = pickEntityAt(doc, activeStoreyId, p);
+          const hit = pickAt(p); // C-26 (PB5): inkl. Masskette/Kommentar
           if (!hit) return;
           setKontext2d({ modus: 'element', x, y, entityId: hit });
         }}
@@ -1292,7 +1364,12 @@ export function PlanView({
               35 bestehenden Goldens betroffen — dieselbe Grenze wie beim
               Raumgraph-Overlay/den verletzten Zonen oben). Zeigt Kommentare
               OHNE Geschossbezug (`storeyId` fehlt) auf JEDEM Geschoss,
-              geschossgebundene nur auf ihrem eigenen. */}
+              geschossgebundene nur auf ihrem eigenen.
+              C-26 (PB5, §7 D8/§8 C-26): `kommentareSichtbar` blendet die
+              GANZE Gruppe aus dem DOM aus (kein blosses `display:none` —
+              `plan-kommentar` hat dann Count 0, deckungsgleich mit `pickAt`
+              oben, das ausgeblendete Kommentare auch nicht mehr trifft). */}
+          {kommentareSichtbar && (
           <g data-testid="plan-kommentare">
             {doc
               .byKind<Kommentar>('kommentar')
@@ -1320,6 +1397,53 @@ export function PlanView({
                   </text>
                 </g>
               ))}
+          </g>
+          )}
+          {/* C-26 (PB5, §7 D8/§8 C-26): MassKette-Entitäten (E2, `docs/
+              V083-SPEZ.md` §2) waren bislang NIRGENDS im Plan sichtbar — nur
+              im Doc gespeichert (Klickkette → `design.massKetteSetzen`, s.
+              `masskette-kommentar.spec.ts`); die einzige bestehende
+              Ketten-Darstellung (`dim-kette-*` unten) ist die AUTOMATISCHE
+              Aussenbemassung, eine andere Entität. Reines App-Overlay wie
+              der Kommentar-Marker oben — geht NICHT durch `derivePlan()`,
+              keine Golden betroffen. Kein Sichtbarkeits-Filter (nur für
+              Kommentare beauftragt, §8 C-26). */}
+          <g data-testid="plan-massketten">
+            {doc
+              .byKind<MassKette>('masskette')
+              .filter((mk) => mk.storeyId === activeStoreyId)
+              .map((mk) => {
+                let gesamt = 0;
+                for (let i = 1; i < mk.punkte.length; i++) {
+                  gesamt += Math.hypot(mk.punkte[i]!.x - mk.punkte[i - 1]!.x, mk.punkte[i]!.y - mk.punkte[i - 1]!.y);
+                }
+                const mitte = mk.punkte[Math.floor((mk.punkte.length - 1) / 2)]!;
+                return (
+                  <g key={mk.id} data-testid="plan-masskette">
+                    <path
+                      d={`M ${mk.punkte.map((p) => `${p.x} ${-p.y}`).join(' L ')}`}
+                      fill="none"
+                      stroke="var(--k-ink-soft)"
+                      strokeWidth={14}
+                      strokeDasharray={dashWelt(DASH.achseWohn, 100)}
+                    />
+                    {mk.punkte.map((p, i) => (
+                      <circle key={i} cx={p.x} cy={-p.y} r={36} fill="var(--k-ink-soft)" />
+                    ))}
+                    <text
+                      x={mitte.x}
+                      y={-mitte.y - 90 / view.scale}
+                      textAnchor="middle"
+                      fontSize={11 / view.scale}
+                      fontFamily="var(--k-font-mono)"
+                      fill="var(--k-ink-soft)"
+                      pointerEvents="none"
+                    >
+                      {formatLength(Math.round(gesamt))}
+                    </text>
+                  </g>
+                );
+              })}
           </g>
           {plan &&
             plan.lines
@@ -1521,10 +1645,78 @@ export function PlanView({
               die Glow-Schicht ist rein dekorativ (`aria-hidden` via fehlenden
               Text/keine eigene Testid-Erwartung). */}
           {selection.map((id) => {
-            const outline = outlineOf(doc, id);
-            if (!outline || outline.length < 2) return null;
+            // C-26 (PB5, §7 D8/§8 C-26): Masskette (offene Punktkette) und
+            // Kommentar (ein Welt-Punkt) haben KEINE geschlossene `outline`
+            // im Sinn von `outlineOf` (plan-hit-test.ts, PB1-Dateikreis, hier
+            // bewusst NICHT erweitert) — eigener Zweig VOR dem bestehenden,
+            // gleiches Kern+Glow-Muster (28/48, Ziehen 38/60) wie unten.
+            const e = doc.get(id);
             const off = handlers.current?.moveOffset;
             const ziehend = off && off.id === id;
+            if (e && e.kind === 'masskette') {
+              const mk = e as MassKette;
+              const pts = ziehend ? mk.punkte.map((q) => ({ x: q.x + off.dx, y: q.y + off.dy })) : mk.punkte;
+              const d = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')}`;
+              return (
+                <g key={`sel-${id}`} pointerEvents="none">
+                  <path
+                    data-testid="auswahl-glow"
+                    d={d}
+                    fill="none"
+                    stroke="var(--k-accent-wash)"
+                    strokeWidth={ziehend ? 60 : 48}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity={ziehend ? 0.85 : 1}
+                  />
+                  <path
+                    data-testid="auswahl-highlight"
+                    d={d}
+                    fill="none"
+                    stroke="var(--k-accent)"
+                    strokeWidth={ziehend ? 38 : 28}
+                    strokeDasharray={ziehend ? '90 50' : undefined}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity={ziehend ? 0.85 : 1}
+                  />
+                </g>
+              );
+            }
+            if (e && e.kind === 'kommentar') {
+              // Kommentar-Marker selbst ist screen-konstant (`r={6/view.scale}`,
+              // s. `plan-kommentare` oben) — der Halo folgt derselben
+              // Konvention (`/view.scale`), sonst würde er bei kleinem Zoom
+              // unter den Marker schrumpfen statt ihn sichtbar zu umschliessen.
+              const km = e as Kommentar;
+              const at = ziehend ? { x: km.at.x + off.dx, y: km.at.y + off.dy } : km.at;
+              return (
+                <g key={`sel-${id}`} pointerEvents="none">
+                  <circle
+                    data-testid="auswahl-glow"
+                    cx={at.x}
+                    cy={-at.y}
+                    r={(ziehend ? 18 : 14) / view.scale}
+                    fill="none"
+                    stroke="var(--k-accent-wash)"
+                    strokeWidth={(ziehend ? 16 : 12) / view.scale}
+                    opacity={ziehend ? 0.85 : 1}
+                  />
+                  <circle
+                    data-testid="auswahl-highlight"
+                    cx={at.x}
+                    cy={-at.y}
+                    r={(ziehend ? 18 : 14) / view.scale}
+                    fill="none"
+                    stroke="var(--k-accent)"
+                    strokeWidth={(ziehend ? 10 : 7) / view.scale}
+                    opacity={ziehend ? 0.85 : 1}
+                  />
+                </g>
+              );
+            }
+            const outline = outlineOf(doc, id);
+            if (!outline || outline.length < 2) return null;
             const pts = ziehend ? outline.map((q) => ({ x: q.x + off.dx, y: q.y + off.dy })) : outline;
             const d = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`;
             return (

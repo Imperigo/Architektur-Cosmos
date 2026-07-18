@@ -28,10 +28,24 @@ describe('werkzeugFuerTaste', () => {
     expect(werkzeugFuerTaste('f')).toBe('skizze');
   });
 
+  // v0.8.4 PB5 (§7 D13, docs/V084-SPEZ.md): die vier neuen Kürzel — Öffnung/
+  // Messen/Kommentar (bisher NUR über die Island-Werkzeugleiste erreichbar)
+  // + Mesh (bisher ganz ohne Kürzel, s. Kopfkommentar).
+  it('löst die vier PB5-Kürzel auf (Öffnung/Messen/Kommentar/Mesh)', () => {
+    expect(werkzeugFuerTaste('o')).toBe('oeffnung');
+    expect(werkzeugFuerTaste('m')).toBe('messen');
+    expect(werkzeugFuerTaste('k')).toBe('kommentar');
+    expect(werkzeugFuerTaste('n')).toBe('mesh');
+  });
+
   it('ist case-insensitiv (Grossbuchstaben bei aktivem Caps Lock/Shift)', () => {
     expect(werkzeugFuerTaste('A')).toBe('auswahl');
     expect(werkzeugFuerTaste('W')).toBe('wand');
     expect(werkzeugFuerTaste('Z')).toBe('zone');
+    expect(werkzeugFuerTaste('O')).toBe('oeffnung');
+    expect(werkzeugFuerTaste('M')).toBe('messen');
+    expect(werkzeugFuerTaste('K')).toBe('kommentar');
+    expect(werkzeugFuerTaste('N')).toBe('mesh');
   });
 
   it('liefert null für unbekannte Tasten', () => {
@@ -43,6 +57,10 @@ describe('werkzeugFuerTaste', () => {
   it('jede Taste kommt genau einmal vor (keine Doppelbelegung)', () => {
     const tasten = KURZTASTEN.map((k) => k.taste);
     expect(new Set(tasten).size).toBe(tasten.length);
+  });
+
+  it('umfasst jetzt 13 Kürzel — 1:1 dieselbe Anzahl wie `ui-zustand.ts`s TOOL_IDS', () => {
+    expect(KURZTASTEN).toHaveLength(13);
   });
 
   it('jedes Werkzeug der Toolbar hat eine Taste UND einen Anzeigetext', () => {
@@ -84,6 +102,15 @@ describe('kurztasteFuer', () => {
   it('löst eine bekannte Taste auf, wenn der Fokus nicht in einem Eingabefeld liegt', () => {
     expect(kurztasteFuer(taste('w'), false)).toBe('wand');
     expect(kurztasteFuer(taste('a'), false)).toBe('auswahl');
+  });
+
+  // v0.8.4 PB5 (§7 D13): dieselbe Auflösung gilt für die vier neuen Kürzel —
+  // kein Sonderpfad, dieselbe generische Registry/Guard-Kette.
+  it('löst die vier PB5-Kürzel über denselben Weg auf', () => {
+    expect(kurztasteFuer(taste('o'), false)).toBe('oeffnung');
+    expect(kurztasteFuer(taste('m'), false)).toBe('messen');
+    expect(kurztasteFuer(taste('k'), false)).toBe('kommentar');
+    expect(kurztasteFuer(taste('n'), false)).toBe('mesh');
   });
 
   it('feuert NIE, wenn der Fokus in einem Eingabefeld liegt (Kosmo-Chat!)', () => {

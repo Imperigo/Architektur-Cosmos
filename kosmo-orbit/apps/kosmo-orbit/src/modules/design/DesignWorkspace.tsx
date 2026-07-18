@@ -29,6 +29,17 @@ import {
   type ErkannteDecke,
   type ErkannteWand,
   type FangKandidaten,
+  // v0.8.4 PB5 (§7 D8/C-26): Masskette/Kommentar-Verschieben (s.
+  // `onMoveEnd` unten) braucht die vollen Entity-Typen — der Kernel kennt
+  // `design.verschieben` für diese zwei Kinds NICHT (`moveEntity`s Switch in
+  // `packages/kosmo-kernel/src/commands/design.ts` hat keinen `masskette`-/
+  // `kommentar`-Zweig — ein Spez-Widerspruch zu §7 D8, s. Bericht), darum
+  // löst PB5 «Verschieben» hier bewusst über die bestehenden generischen
+  // Loeschen+Setzen-Commands als EINE `history`-Gruppe, statt den
+  // gesperrten Kernel zu erweitern.
+  type AnyPatch,
+  type Kommentar,
+  type MassKette,
   type Pt,
   type SectionSpec,
   type SiaPhase,
@@ -188,6 +199,18 @@ type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stu
 const entwurfsJournal = new LearningJournal(journalStore());
 
 const SNAP = 250; // mm Rasterfang, wenn keine Achse in Reichweite
+
+/**
+ * C-26 (PB5, §7 D8/C-26): erste Entity-Id aus einem Patch-Ergebnis — `AnyPatch`
+ * ist `Patch | SettingsPatch` (`packages/kosmo-kernel/src/model/doc.ts`), nur
+ * `Patch` trägt `id`. `design.massKetteSetzen`/`design.kommentarSetzen`
+ * liefern immer genau EINEN `Patch` (kein Settings-Command), diese Funktion
+ * bleibt trotzdem defensiv statt anzunehmen.
+ */
+function neuePatchId(patches: readonly AnyPatch[]): string | null {
+  const p0 = patches[0];
+  return p0 && 'id' in p0 ? p0.id : null;
+}
 
 /** Magnet aufs Stützenraster (Kreuzung > Achslinie), sonst 250er-Raster. */
 function snap(p: Pt, magnet?: FangKandidaten): Pt {
@@ -999,7 +1022,11 @@ export function DesignWorkspace({
     // (bleibt der Cursor am Startpunkt, ist dx/dy = 0 → reine Auswahl, kein Command).
     onMoveStart: (id, p) => {
       const e = doc.get(id);
-      if (!e || !VERSCHIEBBAR.has(e.kind)) {
+      // C-26 (PB5, §7 D8/D13, docs/V084-SPEZ.md): Massketten/Kommentare sind
+      // im Kernel NICHT über `design.verschieben` beweglich (`VERSCHIEBBAR`,
+      // `plan-hit-test.ts`, PB1-Dateikreis — hier bewusst NICHT erweitert),
+      // bekommen aber additiv dieselbe Zieh-Geste — s. `onMoveEnd` unten.
+      if (!e || !(VERSCHIEBBAR.has(e.kind) || e.kind === 'masskette' || e.kind === 'kommentar')) {
         select([id]);
         return false;
       }
@@ -1017,8 +1044,61 @@ export function DesignWorkspace({
       setDragEntity(null);
       setDragCursor(null);
       if (dx === 0 && dy === 0) return;
+      const e = doc.get(dragEntity.id);
+      const { history } = useProject.getState();
       try {
-        runCommand('design.verschieben', { entityId: dragEntity.id, dx, dy });
+        if (e && e.kind === 'masskette') {
+          // C-26: kein `design.verschieben`-Zweig für `masskette` im Kernel
+          // — Löschen+Neusetzen mit verschobenen Punkten als EINE
+          // Undo-Gruppe (Muster T5/`onSketchAccept` oben), die ID ändert
+          // sich dabei (neuer `newId('masskette')`), darum wird die
+          // Auswahl auf die NEUE ID nachgezogen.
+          const mk = e as MassKette;
+          history.beginGroup();
+          try {
+            runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
+            const r = runCommand('design.massKetteSetzen', {
+              storeyId: mk.storeyId,
+              punkte: mk.punkte.map((q) => ({ x: q.x + dx, y: q.y + dy })),
+            });
+            const neueId = neuePatchId(r.patches);
+            if (neueId) select([neueId]);
+          } finally {
+            history.endGroup();
+          }
+        } else if (e && e.kind === 'kommentar') {
+          // C-26: derselbe Löschen+Neusetzen-Weg wie Masskette oben — UND
+          // (wichtig) der Status wird explizit nachgezogen, weil
+          // `design.kommentarSetzen` jeden neuen Kommentar zwingend mit
+          // status «offen» anlegt (kein Parameter dafür) — ein «erledigter»
+          // Kommentar dürfte durch ein blosses Verschieben seinen Status
+          // NICHT verlieren.
+          const km = e as Kommentar;
+          history.beginGroup();
+          try {
+            runCommand('design.kommentarLoeschen', { kommentarId: km.id });
+            const r = runCommand('design.kommentarSetzen', {
+              text: km.text,
+              autor: km.autor,
+              at: { x: km.at.x + dx, y: km.at.y + dy },
+              ...(km.storeyId !== undefined ? { storeyId: km.storeyId } : {}),
+              erstelltAm: km.erstelltAm,
+            });
+            const neueId = neuePatchId(r.patches);
+            if (neueId && km.status === 'erledigt' && km.erledigtAm) {
+              runCommand('design.kommentarStatusSetzen', {
+                kommentarId: neueId,
+                status: 'erledigt',
+                erledigtAm: km.erledigtAm,
+              });
+            }
+            if (neueId) select([neueId]);
+          } finally {
+            history.endGroup();
+          }
+        } else {
+          runCommand('design.verschieben', { entityId: dragEntity.id, dx, dy });
+        }
       } catch (err) {
         meldeFehler(err);
       }

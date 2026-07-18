@@ -56,6 +56,12 @@
 .pv-toggle-btn--achsen {
   right: 140px;
 }
+/* C-26 (PB5, docs/V084-SPEZ.md §7 D8/§8 C-26): Kommentar-Filter-Knopf —
+   weiter links als U-Plan (215px), damit «Kommentare» (längstes Label
+   dieser Zeile) nicht mit den drei bestehenden Knöpfen überlappt. */
+.pv-toggle-btn--kommentare {
+  right: 330px;
+}
 
 .pv-svg {
   width: 100%;

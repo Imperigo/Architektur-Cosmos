@@ -6,19 +6,37 @@
  * Auswahl-Werkzeug (A) — bisher war Esc der einzige Weg zurück zum Pfeil.
  * Reine Registry + reine Guard-Funktion (testbar ohne DOM):
  * `DesignWorkspace.tsx` bindet sie an ihren bestehenden `keydown`-Handler,
- * `shell/Kurzbefehle.tsx` zeigt sie im `?`-Overlay.
+ * `shell/Kurzbefehle.tsx` zeigt sie im `?`-Overlay (generisch aus
+ * `KURZTASTEN` abgeleitet — jeder neue Eintrag hier erscheint dort ohne
+ * weitere Verdrahtung).
  *
  * Inventar der Werkzeugleiste (`ZEICHEN_WERKZEUGE_LEISTE`, DesignWorkspace.tsx):
- * Auswahl, Wand, Volumen, Zone, Dach, Treppe, Stütze, Schnitt, Skizze — plus
- * das separate Mesh-Werkzeug (Block 3 / E4), das bewusst KEINEN eigenen
- * Buchstaben bekommt (selten genutzt, keine ArchiCAD-Konvention dafür). Ein
- * eigenes «Fenster/Öffnung»-Werkzeug existiert NICHT — Öffnungen entstehen
- * über die Wand-Skizze (`onSketchWandOeffnung`, ein auf eine Wandfläche
- * gezeichneter Strich) — «F» bleibt darum wie bisher Freihand-Skizze.
+ * Auswahl, Wand, Volumen, Zone, Dach, Treppe, Stütze — plus die drei
+ * Klickmodus-Werkzeuge Öffnung/Messen/Kommentar (v0.8.3 E1-E3, bisher NUR
+ * über die Island-Werkzeugleiste erreichbar, `island-katalog.ts`) und Mesh
+ * (Block 3 / E4). Schnitt/Skizze sitzen seit v0.8.1/P4 in eigenen
+ * Kontextzeilen, tragen aber weiterhin Kürzel.
+ *
+ * v0.8.4 PB5 (§7 D13, `docs/V084-SPEZ.md`): Öffnung/Messen/Kommentar bekommen
+ * hier ihre ERSTEN Tastenkürzel — vorher nur per Klick auf die
+ * `island-werkzeug-*`-Knöpfe erreichbar, in der `manuell`-Oberfläche (kein
+ * Island-Rollout) bislang GAR NICHT auslösbar. Der bestehende
+ * `kurztasteFuer`-Aufrufer in `DesignWorkspace.tsx` ist bereits generisch
+ * (`setTool(werkzeug as ToolId)` für JEDE aufgelöste `WerkzeugId`) — reine
+ * additive Registry-Erweiterung, keine App-Änderung nötig. Öffnung/Messen
+ * funktionieren dadurch jetzt auch STANDALONE in `manuell` (Wandtreffer bzw.
+ * Klickkette + Escape/Doppelklick/Enter committen ohne Insel-Popup); der
+ * Kommentar-Klick setzt weiterhin nur den Punkt — das Erfassen-Formular
+ * (Text/Autor) lebt bewusst in der PROJEKT-Insel (`island/inhalte/
+ * projekt.tsx`, ausserhalb dieses Dateikreises) und bleibt unverändert die
+ * einzige Stelle, die `design.kommentarSetzen` committet. Zusätzlich ein
+ * Kürzel für das bisher absichtlich unbelegte Mesh-Werkzeug (N — «Netz»),
+ * da eine freie, kollisionsfreie Taste zur Verfügung steht.
  *
  * Belegung (dokumentiert im `?`-Overlay UND in den Werkzeug-Tooltips):
  *   A Auswahl · W Wand · Z Zone · V Volumen · D Dach · T Treppe ·
  *   C Stütze (Column) · S Schnitt · F Freihand-Skizze ·
+ *   O Öffnung · M Messen (Masskette) · K Kommentar · N Mesh (Netz) ·
  *   Esc zurück zur Auswahl (+ Kette abbrechen) · Leertaste halten = Pan (2D)
  *
  * v0.6.6 / Welle 2 Stream C (MOTION-KONZEPT-066 §6): `kurztasteFuer` löst bei
@@ -42,7 +60,13 @@ export type WerkzeugId =
   | 'treppe'
   | 'stuetze'
   | 'schnitt'
-  | 'skizze';
+  | 'skizze'
+  // v0.8.4 PB5 (§7 D13): additiv, 1:1 dieselben Werte wie `state/ui-zustand.ts`s
+  // `ToolId` (dort schon vorhanden, hier bisher ohne Kürzel).
+  | 'oeffnung'
+  | 'messen'
+  | 'kommentar'
+  | 'mesh';
 
 export interface KurztastenEintrag {
   /** Einzelner Buchstabe, klein geschrieben (Vergleich ist case-insensitiv). */
@@ -61,6 +85,14 @@ export const KURZTASTEN: readonly KurztastenEintrag[] = [
   { taste: 'c', werkzeug: 'stuetze', beschrieb: 'Stütze (Column)' },
   { taste: 's', werkzeug: 'schnitt', beschrieb: 'Schnitt' },
   { taste: 'f', werkzeug: 'skizze', beschrieb: 'Freihand-Skizze' },
+  // v0.8.4 PB5 (§7 D13): vier neue, kollisionsfreie Kürzel — geprüft gegen
+  // die neun bestehenden UND gegen die globalen Kürzel in `shell/Kurzbefehle.tsx`
+  // (?, 0-9, Ctrl+K, Ctrl+Z — alle modifiziert oder Ziffern, keine Kollision
+  // mit einem einzelnen Buchstaben).
+  { taste: 'o', werkzeug: 'oeffnung', beschrieb: 'Öffnung' },
+  { taste: 'm', werkzeug: 'messen', beschrieb: 'Messen (Masskette)' },
+  { taste: 'k', werkzeug: 'kommentar', beschrieb: 'Kommentar' },
+  { taste: 'n', werkzeug: 'mesh', beschrieb: 'Mesh (Netz)' },
 ];
 
 /** Werkzeug-Id für eine gedrückte Taste, oder null (unbekannte Taste). */
