@@ -1,0 +1,37 @@
+{
+  "beschreibung": "Kosmo-Lauf «publish-blatt» (v0.8.5/PB2, docs/V085-SPEZ.md §3 E4, C-12): Blatt anlegen + zwei Ansichten platzieren, AUSSCHLIESSLICH publish.*-Commands mit REAL existierenden Command-IDs (grep-verifiziert gegen packages/kosmo-kernel/src/commands/publish.ts, s. README.md — keine erfundene ID, Sanktion 3 der PB2-Auftragsliste). Bewusst OHNE Grundriss-Ansicht (die bräuchte ein Geschoss, entweder aus dem App-Bootstrap oder einem eigenen design.geschossErstellen-Schritt): eine axo- und eine schnitt-Ansicht brauchen nur den in Schritt 1 selbst erzeugten sheetId — self-contained, lauffähig gegen einen LEEREN KosmoDoc. sheetId entsteht erst zur Laufzeit (newId()), Schritt 2/3 referenzieren ihn über den @ref-Platzhalter (README.md «Platzhalter-Konvention»).",
+  "titel": "Publish-Blatt: Kontrollblatt anlegen + Axo + Schnitt platzieren",
+  "schritte": [
+    {
+      "commandId": "publish.blattErstellen",
+      "params": { "name": "Rohbau-Kontrollblatt", "format": "A3", "orientation": "quer" },
+      "begruendung": "Ein leeres Planblatt ist die Voraussetzung für jede Ansicht — erster Schritt jedes Publish-Laufs."
+    },
+    {
+      "commandId": "publish.ansichtPlatzieren",
+      "params": {
+        "sheetId": "@ref:sheet:Rohbau-Kontrollblatt",
+        "view": "axo",
+        "scale": 100,
+        "x": 100,
+        "y": 80,
+        "title": "Übersicht Axo"
+      },
+      "begruendung": "Axonometrie-Übersicht des ganzen Modells — braucht ausser dem Blatt keine weitere Referenz (keine Geschoss-/Zonen-Abhängigkeit)."
+    },
+    {
+      "commandId": "publish.ansichtPlatzieren",
+      "params": {
+        "sheetId": "@ref:sheet:Rohbau-Kontrollblatt",
+        "view": "schnitt",
+        "a": { "x": 0, "y": 0 },
+        "b": { "x": 8000, "y": 0 },
+        "scale": 50,
+        "x": 100,
+        "y": 220,
+        "title": "Kontrollschnitt"
+      },
+      "begruendung": "Zweite Ansicht auf demselben Blatt — ein Schnitt entlang derselben Achse wie die Südwand im Drehbuch grundriss-rohbau (0/0)→(8000/0), demonstriert publish.ansichtPlatzieren mit einem zweiten view-Typ."
+    }
+  ]
+}

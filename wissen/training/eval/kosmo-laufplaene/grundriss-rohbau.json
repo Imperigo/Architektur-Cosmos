@@ -1,0 +1,84 @@
+{
+  "beschreibung": "Kosmo-Lauf «grundriss-rohbau» (v0.8.5/PB2, docs/V085-SPEZ.md §3 E4, C-11/C-12): ein Geschoss + vier Wände (geschlossenes 8×6 m Rechteck) + eine Zone — AUSSCHLIESSLICH design.*-Commands, derselbe runCommand-Weg wie ein Handgriff des Architekten (Sanktion 3, V085-SPEZ §6). Selbstständig lauffähig gegen einen LEEREN KosmoDoc (keine Abhängigkeit von bootstrapProject()) — die Wand-/Zone-Schritte referenzieren das in Schritt 1/2 selbst erzeugte Geschoss/den Aufbau über den @ref-Platzhalter (s. README.md «Platzhalter-Konvention»), weil deren IDs erst zur Laufzeit (newId()) entstehen und LaufPlan-Parameter (lauf-plan.ts, PA3-Bestand) statisch sind — es gibt dort bewusst keine Interpolation.",
+  "titel": "Rohbau-Grundriss: Geschoss + 4 Wände + Zone",
+  "schritte": [
+    {
+      "commandId": "design.geschossErstellen",
+      "params": { "name": "Rohbau EG", "index": 0, "elevation": 0, "height": 3000 },
+      "begruendung": "Ohne ein Geschoss kann keine Wand/Zone gezeichnet werden — erster Schritt jedes Grundriss-Laufs."
+    },
+    {
+      "commandId": "design.aufbauErstellen",
+      "params": {
+        "name": "AW Rohbau 36",
+        "target": "wall",
+        "layers": [
+          { "material": "putz", "thickness": 20, "function": "bekleidung" },
+          { "material": "daemmung-mw", "thickness": 160, "function": "daemmung" },
+          { "material": "beton", "thickness": 180, "function": "tragend" }
+        ]
+      },
+      "begruendung": "design.wandZeichnen braucht einen Aufbau aus dem Typenkatalog — hier ein 360mm-Aussenwandaufbau (Putz/Dämmung/Tragschicht), gleiche Schichtung wie der App-Bootstrap «AW Beton 36»."
+    },
+    {
+      "commandId": "design.wandZeichnen",
+      "params": {
+        "storeyId": "@ref:storey:Rohbau EG",
+        "a": { "x": 0, "y": 0 },
+        "b": { "x": 8000, "y": 0 },
+        "assemblyId": "@ref:aufbau:AW Rohbau 36",
+        "alignment": "zentrum"
+      },
+      "begruendung": "Südwand (Strassenseite), 8 m — erste Seite des Rechtecks."
+    },
+    {
+      "commandId": "design.wandZeichnen",
+      "params": {
+        "storeyId": "@ref:storey:Rohbau EG",
+        "a": { "x": 8000, "y": 0 },
+        "b": { "x": 8000, "y": 6000 },
+        "assemblyId": "@ref:aufbau:AW Rohbau 36",
+        "alignment": "zentrum"
+      },
+      "begruendung": "Ostwand, 6 m — schliesst rechtwinklig an die Südwand-Endecke (8000/0) an."
+    },
+    {
+      "commandId": "design.wandZeichnen",
+      "params": {
+        "storeyId": "@ref:storey:Rohbau EG",
+        "a": { "x": 8000, "y": 6000 },
+        "b": { "x": 0, "y": 6000 },
+        "assemblyId": "@ref:aufbau:AW Rohbau 36",
+        "alignment": "zentrum"
+      },
+      "begruendung": "Nordwand, 8 m — dritte Seite, schliesst an die Ostwand-Endecke (8000/6000) an."
+    },
+    {
+      "commandId": "design.wandZeichnen",
+      "params": {
+        "storeyId": "@ref:storey:Rohbau EG",
+        "a": { "x": 0, "y": 6000 },
+        "b": { "x": 0, "y": 0 },
+        "assemblyId": "@ref:aufbau:AW Rohbau 36",
+        "alignment": "zentrum"
+      },
+      "begruendung": "Westwand, 6 m — schliesst das Rechteck zur Ausgangsecke (0/0), der Umriss ist jetzt geschlossen."
+    },
+    {
+      "commandId": "design.zoneErstellen",
+      "params": {
+        "storeyId": "@ref:storey:Rohbau EG",
+        "outline": [
+          { "x": 0, "y": 0 },
+          { "x": 8000, "y": 0 },
+          { "x": 8000, "y": 6000 },
+          { "x": 0, "y": 6000 }
+        ],
+        "name": "Wohnen Rohbau",
+        "sia": "HNF",
+        "raumTyp": "wohnen"
+      },
+      "begruendung": "Zone über den vollen 8×6 m-Umriss der vier Wände — HNF/wohnen, damit die Fläche in die Kennzahlen fliesst."
+    }
+  ]
+}

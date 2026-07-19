@@ -1,6 +1,6 @@
 {
   "adapter": "kosmo-zeichner-commands",
-  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23). 25 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge. Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md.",
+  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12). 35 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge. Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) nur diesen Weg kennt; Details s. README.md-Nachtrag.",
   "kriterien_legende": {
     "command": "erwartete commandId ist ein reales, aktuelles Kosmo-Werkzeug (commandTools()) UND die erwarteten Parameter bestehen validateToolCall() gegen das ECHTE zod-Schema UND ChatSession meldet genau EINEN onProposal mit exakt dieser commandId/diesen Parametern",
     "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug"
@@ -350,6 +350,136 @@
       "nutzerwunsch": "Rendere mir jetzt sofort ein fertiges fotorealistisches Bild vom Gebäude, ohne HomeStation.",
       "kosmoText": "Ein echtes GPU-Rendering läuft nur über die HomeStation (Cycles-Job) — ohne sie kann ich kein echtes fotorealistisches Bild liefern, ich würde sonst nur ein Ergebnis vortäuschen. Sobald die HomeStation erreichbar ist, stosse ich den Render-Job gern an.",
       "erwartung": { "typ": "ablehnung" }
+    },
+    {
+      "id": "cmd-26-aufbau-erstellen-aw-rohbau",
+      "kategorie": "aufbau",
+      "nutzerwunsch": "Leg einen Aussenwand-Aufbau «AW Rohbau 36» an: 20 mm Putz aussen, 160 mm Mineralwolldämmung, 180 mm Beton tragend.",
+      "kosmoText": "Ich erstelle den Wandaufbau «AW Rohbau 36» (Putz/Dämmung/Beton, 360 mm gesamt).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.aufbauErstellen",
+        "params": {
+          "name": "AW Rohbau 36",
+          "target": "wall",
+          "layers": [
+            { "material": "putz", "thickness": 20, "function": "bekleidung" },
+            { "material": "daemmung-mw", "thickness": 160, "function": "daemmung" },
+            { "material": "beton", "thickness": 180, "function": "tragend" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "cmd-27-vis-node-setzen-modell",
+      "kategorie": "vis",
+      "nutzerwunsch": "Setz einen Modell-Node in den Render-Graphen graph-demolauf01, ganz links oben.",
+      "kosmoText": "Ich setze den Modell-Node auf (0/0).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": { "graphId": "graph-demolauf01", "typ": "modell", "x": 0, "y": 0 }
+      }
+    },
+    {
+      "id": "cmd-28-vis-node-setzen-kamera",
+      "kategorie": "vis",
+      "nutzerwunsch": "Und darunter einen Kamera-Node, bei (0/220).",
+      "kosmoText": "Ich setze den Kamera-Node auf (0/220).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": { "graphId": "graph-demolauf01", "typ": "kamera", "x": 0, "y": 220 }
+      }
+    },
+    {
+      "id": "cmd-29-vis-node-setzen-stimmung",
+      "kategorie": "vis",
+      "nutzerwunsch": "Setz einen Stimmungs-Node bei (260/0), Preset morgen.",
+      "kosmoText": "Ich setze den Stimmungs-Node (Preset morgen) auf (260/0).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": { "graphId": "graph-demolauf01", "typ": "stimmung", "x": 260, "y": 0, "params": { "preset": "morgen" } }
+      }
+    },
+    {
+      "id": "cmd-30-vis-node-setzen-material",
+      "kategorie": "vis",
+      "nutzerwunsch": "Daneben einen Material-Node bei (260/220).",
+      "kosmoText": "Ich setze den Material-Node auf (260/220).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": { "graphId": "graph-demolauf01", "typ": "material", "x": 260, "y": 220 }
+      }
+    },
+    {
+      "id": "cmd-31-vis-node-setzen-kombinierer",
+      "kategorie": "vis",
+      "nutzerwunsch": "Setz den Kombinierer-Node bei (390/100), der mischt Material und Stimmung zum finalen Prompt.",
+      "kosmoText": "Ich setze den Kombinierer-Node auf (390/100).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": { "graphId": "graph-demolauf01", "typ": "kombinierer", "x": 390, "y": 100 }
+      }
+    },
+    {
+      "id": "cmd-32-vis-node-setzen-render",
+      "kategorie": "vis",
+      "nutzerwunsch": "Und den Render-Node bei (520/100), Ziel aller Verbindungen.",
+      "kosmoText": "Ich setze den Render-Node auf (520/100).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeSetzen",
+        "params": { "graphId": "graph-demolauf01", "typ": "render", "x": 520, "y": 100 }
+      }
+    },
+    {
+      "id": "cmd-33-vis-verbinden-szene",
+      "kategorie": "vis",
+      "nutzerwunsch": "Verbinde die Szene vom Modell-Node mit dem Szene-Eingang des Render-Nodes.",
+      "kosmoText": "Ich verbinde Modell→Render (szene→szene).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.verbinden",
+        "params": {
+          "graphId": "graph-demolauf01",
+          "from": "node-modell01",
+          "fromPort": "szene",
+          "to": "node-render01",
+          "toPort": "szene"
+        }
+      }
+    },
+    {
+      "id": "cmd-34-vis-render-auftrag",
+      "kategorie": "vis",
+      "nutzerwunsch": "Stell jetzt den Render-Auftrag: Kamera automatisch, Stimmung abend, Backbone flux2-klein.",
+      "kosmoText": "Ich stelle den Render-Auftrag (auto, abend, flux2-klein).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.render",
+        "params": {
+          "graphId": "graph-demolauf01",
+          "nodeId": "node-render01",
+          "kameraWahl": "auto",
+          "stimmungPreset": "abend",
+          "backbone": "flux2-klein"
+        }
+      }
+    },
+    {
+      "id": "cmd-35-publish-ansicht-platzieren-axo",
+      "kategorie": "publish",
+      "nutzerwunsch": "Platzier auf dem Blatt blatt-kontroll01 eine Axonometrie bei (100/80), Massstab 1:100, Titel «Übersicht Axo».",
+      "kosmoText": "Ich platziere die Axonometrie «Übersicht Axo» bei (100/80), 1:100.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "publish.ansichtPlatzieren",
+        "params": { "sheetId": "blatt-kontroll01", "view": "axo", "scale": 100, "x": 100, "y": 80, "title": "Übersicht Axo" }
+      }
     }
   ]
 }

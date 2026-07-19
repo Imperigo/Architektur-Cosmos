@@ -1,0 +1,122 @@
+{
+  "beschreibung": "Kosmo-Lauf «vis-demolauf» (v0.8.5/PB2, docs/V085-SPEZ.md §3 E4, C-11): DERSELBE Weg wie e2e/vis-demolauf.spec.ts (v0.8.4 PC2, per Hand über window.__kosmo.run gefahren) — hier als EIN LaufPlan: vis.graphErstellen → vis.nodeSetzen ×6 (modell/kamera/stimmung/material/kombinierer/render) → vis.verbinden ×5 → vis.nodeParametrieren (Stimmung morgen→abend) → vis.render (kameraWahl auto, stimmungPreset abend, backbone flux2-klein). Endet BEWUSST beim Render-AUFTRAG (wie im Spec-Kopfkommentar beschrieben trägt vis.render selbst keine Ausführung — die App-Laufzeit/Executor-Watcher in VisWorkspace.tsx übernimmt ab hier, das prüft e2e/autopilot-drehbuecher.spec.ts zusätzlich per Fake-Bridge-Poll). Node-IDs entstehen erst zur Laufzeit (newId()) — Verbinden/Parametrieren/Render referenzieren sie über den @ref-Platzhalter (README.md «Platzhalter-Konvention»), aus demselben Grund wie beim Drehbuch grundriss-rohbau.",
+  "titel": "Vis-Demolauf: Graph → Kamera/Material/Stimmung → Render-Auftrag (abend, flux2-klein)",
+  "schritte": [
+    {
+      "commandId": "vis.graphErstellen",
+      "params": { "name": "Vis-Demolauf" },
+      "begruendung": "Ein Render-Graph ist die Voraussetzung für jeden Node — erster Schritt, Muster e2e/vis-demolauf.spec.ts Schritt 1."
+    },
+    {
+      "commandId": "vis.nodeSetzen",
+      "params": { "graphId": "@ref:graph:Vis-Demolauf", "typ": "modell", "x": 0, "y": 0 },
+      "begruendung": "Modell-Node liefert die Szene für den Render-Node (Port «szene»)."
+    },
+    {
+      "commandId": "vis.nodeSetzen",
+      "params": { "graphId": "@ref:graph:Vis-Demolauf", "typ": "kamera", "x": 0, "y": 220 },
+      "begruendung": "Kamera-Node liefert die Standpunkte (Port «kameras»), kameraWahl: auto greift später darauf zu."
+    },
+    {
+      "commandId": "vis.nodeSetzen",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "typ": "stimmung",
+        "x": 260,
+        "y": 0,
+        "params": { "preset": "morgen" }
+      },
+      "begruendung": "Stimmungs-Node startet auf «morgen» — Schritt «nodeParametrieren» stellt ihn später explizit auf «abend» um (Auftragstext-Vorgabe)."
+    },
+    {
+      "commandId": "vis.nodeSetzen",
+      "params": { "graphId": "@ref:graph:Vis-Demolauf", "typ": "material", "x": 260, "y": 220 },
+      "begruendung": "Material-Node läuft über den Kombinierer in den finalen Prompt (Muster vis-graph-aktionen.ts, PE3-Fix C-18)."
+    },
+    {
+      "commandId": "vis.nodeSetzen",
+      "params": { "graphId": "@ref:graph:Vis-Demolauf", "typ": "kombinierer", "x": 390, "y": 100 },
+      "begruendung": "Kombinierer mischt Material- und Stimmungs-Prompt zum finalen Prompt für den Render-Node."
+    },
+    {
+      "commandId": "vis.nodeSetzen",
+      "params": { "graphId": "@ref:graph:Vis-Demolauf", "typ": "render", "x": 520, "y": 100 },
+      "begruendung": "Render-Node — Ziel aller Verbindungen, trägt am Ende den vis.render-Auftrag."
+    },
+    {
+      "commandId": "vis.verbinden",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "from": "@ref:node:Vis-Demolauf:modell",
+        "fromPort": "szene",
+        "to": "@ref:node:Vis-Demolauf:render",
+        "toPort": "szene"
+      },
+      "begruendung": "Szene ans Rendering anschliessen — ohne diese Kante hätte der Render-Node kein Modell."
+    },
+    {
+      "commandId": "vis.verbinden",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "from": "@ref:node:Vis-Demolauf:kamera",
+        "fromPort": "kameras",
+        "to": "@ref:node:Vis-Demolauf:render",
+        "toPort": "kameras"
+      },
+      "begruendung": "Kamera-Standpunkte anschliessen — Voraussetzung für kameraWahl: auto im Render-Auftrag."
+    },
+    {
+      "commandId": "vis.verbinden",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "from": "@ref:node:Vis-Demolauf:material",
+        "fromPort": "material",
+        "to": "@ref:node:Vis-Demolauf:kombinierer",
+        "toPort": "material"
+      },
+      "begruendung": "Material fliesst in den Kombinierer (PE3-Fix C-18: Kamera→MATERIAL→Cycles läuft über den Kombinierer)."
+    },
+    {
+      "commandId": "vis.verbinden",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "from": "@ref:node:Vis-Demolauf:stimmung",
+        "fromPort": "prompt",
+        "to": "@ref:node:Vis-Demolauf:kombinierer",
+        "toPort": "stimmung"
+      },
+      "begruendung": "Stimmungs-Prompt fliesst in den Kombinierer."
+    },
+    {
+      "commandId": "vis.verbinden",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "from": "@ref:node:Vis-Demolauf:kombinierer",
+        "fromPort": "prompt",
+        "to": "@ref:node:Vis-Demolauf:render",
+        "toPort": "prompt"
+      },
+      "begruendung": "Der finale Prompt aus dem Kombinierer geht an den Render-Node — letzte Verbindung."
+    },
+    {
+      "commandId": "vis.nodeParametrieren",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "nodeId": "@ref:node:Vis-Demolauf:stimmung",
+        "params": { "preset": "abend" }
+      },
+      "begruendung": "Auftragstext verlangt Stimmung «abend» — expliziter eigener Schritt (nicht schon beim Setzen), Muster e2e/vis-demolauf.spec.ts Schritt 4."
+    },
+    {
+      "commandId": "vis.render",
+      "params": {
+        "graphId": "@ref:graph:Vis-Demolauf",
+        "nodeId": "@ref:node:Vis-Demolauf:render",
+        "kameraWahl": "auto",
+        "stimmungPreset": "abend",
+        "backbone": "flux2-klein"
+      },
+      "begruendung": "DER Render-Auftrag — schreibt visRenderAuftrag ins Doc; die App-Laufzeit (Executor-Watcher) übernimmt ab hier den Fake-Bridge-Job (Sanktion 3: kein Vorgriff auf die Ausführung selbst)."
+    }
+  ]
+}

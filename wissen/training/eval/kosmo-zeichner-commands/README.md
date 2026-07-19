@@ -1,25 +1,53 @@
-# Eval-Suite `kosmo-zeichner-commands` (v0.8.4/PD2)
+# Eval-Suite `kosmo-zeichner-commands` (v0.8.4/PD2, erweitert v0.8.5/PB2)
 
 Feste, versionierte Eval-Suite für den Adapter `kosmo-zeichner-commands`
 (`../../REGISTRY.md`), gebaut in PD2 (`docs/V084-SPEZ.md` D14/C-23). Vorbild:
 `../kosmo-zeichner-grundriss/` (README/prompts.json/pruefe-eval.mts) — dieselbe
 Struktur, aber ein anderer Referenz-Weg (s. Ehrlichkeit unten).
 
+## PB2-Nachtrag (v0.8.5, `docs/V085-SPEZ.md` §3 E4/C-12): 25→35 Prompts
+
+10 neue Prompts (`cmd-26`..`cmd-35`) — je EIN Einzelschritt aus den drei
+neuen Kosmo-Lauf-Drehbüchern unter `../kosmo-laufplaene/`
+(`grundriss-rohbau`/`vis-demolauf`/`publish-blatt`): `design.aufbauErstellen`
+(1×), `vis.nodeSetzen` mit den bisher NICHT abgedeckten Node-Typen
+modell/kamera/stimmung/material/kombinierer/render (6×), `vis.verbinden`
+(1×, bisher gar nicht in der Suite), `vis.render` (1×, bisher gar nicht in
+der Suite) und `publish.ansichtPlatzieren` (1×, bisher gar nicht in der
+Suite). Neue Kategorie `aufbau` (1 Prompt); die übrigen neun laufen in den
+bestehenden Kategorien `vis`/`publish` mit.
+
+**Bewusst weiterhin im `erwartung.typ: "command"`-Ein-Zug-Format der ersten
+25**, nicht als "ganzer LaufPlan als Erwartung": `pruefe-eval.mts` (liegt
+ausserhalb des PB2-Dateikreises — PB2 durfte nur `prompts.json`/
+`eval-ergebnis.json` anfassen, s. `docs/V085-SPEZ.md`-Auftragsliste) prüft
+einzig den Ein-Zug-`ScriptedProvider`/`ChatSession`-Weg; ein eigener
+"kompletter LaufPlan als Erwartung"-Vergleichsmodus hätte diesen gesperrten
+Prüfer selbst ändern müssen. Die ECHTE Mehrschritt-Prüfung (ganze Drehbücher,
+inklusive Platzhalter-Auflösung und Ausführung gegen einen frischen
+`KosmoDoc`) lebt eigenständig in `../kosmo-laufplaene/pruefe-laufplaene.mts`.
+Stand nach der Erweiterung: **35/35 bestanden** (`eval-ergebnis.json`, per
+`npx tsx pruefe-eval.mts` nachgeführt — derselbe Selbstcheck-Modus wie bei
+den ersten 25, keine neue Prüf-Logik).
+
 ## Dateien
 
-- **`prompts.json`** — 25 feste deutsche Zeichner-Aufträge quer über die
+- **`prompts.json`** — 35 feste deutsche Zeichner-Aufträge quer über die
   Command-Klassen Geschoss (`design.geschossErstellen`/`design.
-  geschossKopieren`), Wand (`design.wandZeichnen`), Zone (`design.
-  zoneErstellen`/`design.raumTypSetzen`), Öffnung (`design.oeffnungSetzen`/
-  `design.tuerSetzen`), Masskette (`design.massKetteSetzen`), Kommentar
-  (`design.kommentarSetzen`), `vis.*` (`vis.graphErstellen`/`vis.nodeSetzen`/
-  `vis.nodeParametrieren`) und `publish.*` (`publish.setSpeichern`/`publish.
-  blattErstellen`) — plus **vier Ablehn-Fälle** (fehlende Koordinaten,
-  fehlendes Pflichtfeld, ausserhalb des Befehlsumfangs, Echtzeit-Render ohne
-  HomeStation). Jeder Prompt trägt ein maschinenlesbares `erwartung`-Feld
-  (`typ: "command"` mit `commandId`+`params`, oder `typ: "ablehnung"`) plus
-  den deutschen `nutzerwunsch` und den Text, den das ScriptedProvider-Skript
-  als Kosmo-Antwort abspielt (`kosmoText`).
+  geschossKopieren`), Aufbau (`design.aufbauErstellen`, PB2-Nachtrag), Wand
+  (`design.wandZeichnen`), Zone (`design.zoneErstellen`/`design.
+  raumTypSetzen`), Öffnung (`design.oeffnungSetzen`/`design.tuerSetzen`),
+  Masskette (`design.massKetteSetzen`), Kommentar (`design.kommentarSetzen`),
+  `vis.*` (`vis.graphErstellen`/`vis.nodeSetzen`/`vis.nodeParametrieren`/
+  `vis.verbinden`/`vis.render`, die letzten beiden PB2-Nachtrag) und
+  `publish.*` (`publish.setSpeichern`/`publish.blattErstellen`/`publish.
+  ansichtPlatzieren`, letzterer PB2-Nachtrag) — plus **vier Ablehn-Fälle**
+  (fehlende Koordinaten, fehlendes Pflichtfeld, ausserhalb des
+  Befehlsumfangs, Echtzeit-Render ohne HomeStation). Jeder Prompt trägt ein
+  maschinenlesbares `erwartung`-Feld (`typ: "command"` mit `commandId`+
+  `params`, oder `typ: "ablehnung"`) plus den deutschen `nutzerwunsch` und
+  den Text, den das ScriptedProvider-Skript als Kosmo-Antwort abspielt
+  (`kosmoText`).
 - **`pruefe-eval.mts`** — ausführbarer Prüfer, EIN Modus (Selbstcheck, kein
   Kandidaten-Modus — Begründung unten): fährt jeden Prompt als Ein-Zug-Skript
   über den ECHTEN `ScriptedProvider` durch die ECHTE `ChatSession`
@@ -41,7 +69,7 @@ cd kosmo-orbit
 npx tsx ../wissen/training/eval/kosmo-zeichner-commands/pruefe-eval.mts
 ```
 
-Exit-Code 0 nur wenn alle 25 Prompts bestehen, sonst 1. Deterministisch:
+Exit-Code 0 nur wenn alle 35 Prompts bestehen, sonst 1. Deterministisch:
 zwei Läufe hintereinander liefern byte-gleiche `eval-ergebnis.json` bis auf
 das reine Zeitstempel-Feld `erzeugt_um` (geprüft per Doppellauf-Diff im
 PD2-Abschlussbericht).

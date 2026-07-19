@@ -146,6 +146,15 @@
   font-size: var(--k-t-xs);
   font-family: var(--k-font-mono);
 }
+/* v0.8.5 / PB2 (docs/V085-SPEZ.md §3 E4, C-11/C-12, additiv) — dieselbe
+ * kleine Mono-Zeile wie `.train-paket-adapter-eval`, aber ausserhalb der
+ * Registry-Schleife (Kosmo-Läufe sind keine Adapter). */
+.train-laufplaene-zeile {
+  color: var(--k-ink-faint);
+  font-size: var(--k-t-xs);
+  font-family: var(--k-font-mono);
+  padding-top: var(--k-s1, 4px);
+}
 /* v0.8.2 / P6 «Kuratier-Flow» (docs/V082-SPEZ.md §6.7) — Journal → Kuration:
  * dieselbe Glass/Hairline-Optik wie die umgebenden Blöcke, aber innerhalb der
  * Trainingspaket-Fläche (kein eigenes k-glass-Panel — additiver Unterblock). */

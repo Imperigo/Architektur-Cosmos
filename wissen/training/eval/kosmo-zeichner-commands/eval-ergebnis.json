@@ -1,10 +1,10 @@
 {
   "adapter": "kosmo-zeichner-commands",
   "modus": "Selbstcheck (ScriptedProvider durch die echte ChatSession)",
-  "erzeugt_um": "2026-07-18T06:18:01.325Z",
+  "erzeugt_um": "2026-07-19T01:12:25.493Z",
   "gesamt": {
-    "bestanden": 25,
-    "von": 25
+    "bestanden": 35,
+    "von": 35
   },
   "klassen": [
     {
@@ -39,18 +39,23 @@
     },
     {
       "kategorie": "vis",
-      "bestanden": 3,
-      "von": 3
+      "bestanden": 11,
+      "von": 11
     },
     {
       "kategorie": "publish",
-      "bestanden": 2,
-      "von": 2
+      "bestanden": 3,
+      "von": 3
     },
     {
       "kategorie": "ablehnung",
       "bestanden": 4,
       "von": 4
+    },
+    {
+      "kategorie": "aufbau",
+      "bestanden": 1,
+      "von": 1
     }
   ],
   "befunde": [
@@ -203,6 +208,66 @@
       "kategorie": "ablehnung",
       "ok": true,
       "begruendung": "Treffer: kein Tool-Aufruf, wie bei einer ehrlichen Rückfrage/Absage erwartet"
+    },
+    {
+      "id": "cmd-26-aufbau-erstellen-aw-rohbau",
+      "kategorie": "aufbau",
+      "ok": true,
+      "begruendung": "Treffer: design.aufbauErstellen — 1 Vorschlag, zod-valide Parameter (Aufbau «AW Rohbau 36» (360 mm, 3 Schichten))"
+    },
+    {
+      "id": "cmd-27-vis-node-setzen-modell",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node modell)"
+    },
+    {
+      "id": "cmd-28-vis-node-setzen-kamera",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node kamera)"
+    },
+    {
+      "id": "cmd-29-vis-node-setzen-stimmung",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node stimmung)"
+    },
+    {
+      "id": "cmd-30-vis-node-setzen-material",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node material)"
+    },
+    {
+      "id": "cmd-31-vis-node-setzen-kombinierer",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node kombinierer)"
+    },
+    {
+      "id": "cmd-32-vis-node-setzen-render",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeSetzen — 1 Vorschlag, zod-valide Parameter (Node render)"
+    },
+    {
+      "id": "cmd-33-vis-verbinden-szene",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.verbinden — 1 Vorschlag, zod-valide Parameter (Verbinden szene → szene)"
+    },
+    {
+      "id": "cmd-34-vis-render-auftrag",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.render — 1 Vorschlag, zod-valide Parameter (Render-Auftrag (auto, abend, flux2-klein))"
+    },
+    {
+      "id": "cmd-35-publish-ansicht-platzieren-axo",
+      "kategorie": "publish",
+      "ok": true,
+      "begruendung": "Treffer: publish.ansichtPlatzieren — 1 Vorschlag, zod-valide Parameter (Axonometrie 1:100 platzieren)"
     }
   ]
 }

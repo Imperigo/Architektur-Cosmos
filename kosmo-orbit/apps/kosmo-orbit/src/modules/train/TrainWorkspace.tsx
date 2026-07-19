@@ -37,6 +37,21 @@ const STATUS_ETIKETT: Record<(typeof LORA_ADAPTER_REGISTRY)[number]['status'], s
   wartet: 'wartet auf Owner/HomeStation',
 };
 
+/**
+ * v0.8.5 / PB2 «Autopilot-Drehbücher + Eval» (`docs/V085-SPEZ.md` §3 E4,
+ * C-11/C-12, additiv) — manuell nachgezogener Spiegel derselben Art wie die
+ * `train-paket-adapter-eval`-Zeile oben (kein Livewert): die drei geprüften
+ * Kosmo-Lauf-Drehbücher unter `wissen/training/eval/kosmo-laufplaene/`
+ * (`grundriss-rohbau`/`vis-demolauf`/`publish-blatt`), Stand des PB2-Laufs
+ * von `pruefe-laufplaene.mts` (parst jede Datei mit `pruefeLaufPlan`, prüft
+ * jede commandId gegen die reale Kernel-Registry UND führt den Plan gegen
+ * einen frischen `KosmoDoc` aus).
+ */
+const LAUFPLAENE_STAND = {
+  anzahl: 3,
+  pruefstatus: '3/3 grün — pruefe-laufplaene.mts, PB2 v0.8.5',
+};
+
 function ladeDatei(name: string, inhalt: string, typ: string) {
   const url = URL.createObjectURL(new Blob([inhalt], { type: typ }));
   const a = document.createElement('a');
@@ -293,6 +308,14 @@ export function TrainWorkspace() {
                 )}
               </div>
             ))}
+          </div>
+
+          {/* v0.8.5 / PB2 (docs/V085-SPEZ.md §3 E4, C-11/C-12, additiv) —
+              eigene Zeile für die Kosmo-Lauf-Drehbücher (kein Adapter, darum
+              ausserhalb der Registry-Schleife oben): Anzahl + Prüfstatus,
+              manuell nachgezogener Spiegel wie die Eval-Zeile je Adapter. */}
+          <div className="train-laufplaene-zeile" data-testid="train-laufplaene-zeile">
+            {LAUFPLAENE_STAND.anzahl} Kosmo-Läufe geprüft — {LAUFPLAENE_STAND.pruefstatus}
           </div>
 
           {/* v0.8.2 / P6 «Kuratier-Flow» (docs/V082-SPEZ.md §6.7) — Journal →
