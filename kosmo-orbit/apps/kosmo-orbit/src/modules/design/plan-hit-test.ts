@@ -278,6 +278,35 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
 export const VERSCHIEBBAR = new Set(['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'freemesh']);
 
 /**
+ * v0.8.9 E2 (PA2, `docs/V089-SPEZ.md` §3 E2, §7 C-3) — ist ein Element
+ * gesperrt (`meta.locked`)? Reine Prüf-Funktion, NICHT Teil der
+ * Trefferzonen-Logik oben: ein gesperrtes Element bleibt über
+ * `pickEntityAt` unverändert FINDBAR (Sanktion 3 — die Sperre entfernt
+ * nichts aus der Trefferliste, sie blockt nur den Interaktions-Pfad, der
+ * es tatsächlich bewegt/löscht).
+ *
+ * **Cluster-B-Übergabepunkt an Fable** (PA2-Dateikreis erlaubt keinen
+ * Eingriff in `DesignWorkspace.tsx`/`PlanView.tsx`, Betriebsregel 3/
+ * Sanktion 6 — recherchiert, nicht angefasst): die drei Stellen, die
+ * `istGesperrt(doc, id)` tatsächlich als Guard bräuchten, damit Sperren
+ * auch am Canvas wirkt, sind
+ * - `DesignWorkspace.tsx` `onMoveStart` (:1103–1113): vor
+ *   `setDragEntity(...)`/`return true` early-return `false` (wie beim
+ *   `beweglich`-Guard direkt daneben), wenn `istGesperrt(doc, id)`.
+ * - `DesignWorkspace.tsx` `onGriffStart` (:1192–1213): analog, vor
+ *   `setGriffDrag(...)`/`return true` early-return `false`.
+ * - `DesignWorkspace.tsx`s Delete/Backspace-Keydown-Handler (:908–933):
+ *   die Auswahl vor der `for (const id of selection)`-Schleife um
+ *   gesperrte Ids filtern (`selection.filter((id) => !istGesperrt(doc,
+ *   id))`), statt jede Id blind an `design.loeschen` zu reichen.
+ * Diese drei Guards sind im PA2-Abschlussbericht (Punkt 3) noch einmal
+ * wörtlich benannt.
+ */
+export function istGesperrt(doc: KosmoDoc, id: string): boolean {
+  return doc.get(id)?.meta?.locked === true;
+}
+
+/**
  * Wand-Treffer für den Öffnung-Klickmodus (v0.8.3 E3, §3.2 `docs/V083-
  * SPEZ.md`) — «Treffertest analog zum bestehenden Wand-Hit-Test»: dieselbe
  * Achse-±-halbe-Dicke-+-Toleranz-Geometrie wie `pickEntityAt`s Wand-Schleife

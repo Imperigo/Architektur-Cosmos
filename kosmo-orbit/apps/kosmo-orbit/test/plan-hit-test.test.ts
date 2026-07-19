@@ -4,6 +4,7 @@ import {
   aussparungTreffer,
   aussparungWeltpos,
   distToSegment,
+  istGesperrt,
   oeffnungTreffer,
   oeffnungWeltpos,
   outlineOf,
@@ -441,5 +442,25 @@ describe('wandTreffer — Öffnung-Klickmodus (v0.8.3 E3, §3.2 docs/V083-SPEZ.m
       .patches[0] as { id: string }).id;
     expect(wandTreffer(doc, og, { x: 3000, y: 0 })).toBeNull();
     void wallId;
+  });
+});
+
+describe('istGesperrt (v0.8.9 E2, PA2 — docs/V089-SPEZ.md §3 E2)', () => {
+  it('liest meta.locked === true; unlocked/fehlend/unbekannte Id liefern false', () => {
+    const { doc, wallId } = setupDoc();
+    expect(istGesperrt(doc, wallId)).toBe(false);
+    execute(doc, 'design.sperren', { entityId: wallId, locked: true });
+    expect(istGesperrt(doc, wallId)).toBe(true);
+    execute(doc, 'design.sperren', { entityId: wallId, locked: false });
+    expect(istGesperrt(doc, wallId)).toBe(false);
+    expect(istGesperrt(doc, 'nichtig')).toBe(false);
+  });
+
+  it('Sanktion 3: ein gesperrtes Element bleibt über pickEntityAt unverändert findbar', () => {
+    const { doc, storeyId, wallId } = setupDoc();
+    const vorher = pickEntityAt(doc, storeyId, { x: 3000, y: 0 });
+    execute(doc, 'design.sperren', { entityId: wallId, locked: true });
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: 0 })).toBe(vorher);
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: 0 })).toBe(wallId);
   });
 });

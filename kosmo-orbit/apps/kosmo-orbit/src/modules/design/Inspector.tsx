@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Hairline, KButton, KIcon, KInput, KPanelZweiStufen, KSelect, Measure, melde, meldeFehler } from '@kosmo/ui';
+import { Hairline, KButton, KIcon, KInput, KPanelZweiStufen, KSelect, KSwitch, Measure, melde, meldeFehler } from '@kosmo/ui';
 import './design-panels.css';
 import {
   areaOf,
@@ -80,11 +80,21 @@ export function Inspector() {
   // der Einzelelement-Felder («N Elemente» + gemeinsames Löschen als EINE
   // Undo-Gruppe, derselbe Weg wie Delete/Backspace im DesignWorkspace).
   if (selection.length > 1) {
+    // v0.8.9 E2 (PA2, docs/V089-SPEZ.md §3 E2/§7 C-3): gesperrte Elemente
+    // dürfen auch über die Sammel-Löschung nicht verschwinden — dieselbe
+    // Regel wie beim Einzel-Löschen unten, hier vor dem Absenden gefiltert
+    // statt den Command je Id werfen zu lassen (kein Fehlerhagel für eine
+    // erwartbare Sperre).
+    const loeschbar = selection.filter((id) => doc.get(id)?.meta?.locked !== true);
     const loescheAlle = () => {
+      if (loeschbar.length === 0) {
+        meldeFehler(new Error('Alle ausgewählten Elemente sind gesperrt — erst entsperren.'));
+        return;
+      }
       const { history } = useProject.getState();
       history.beginGroup();
       try {
-        for (const id of selection) {
+        for (const id of loeschbar) {
           try {
             runCommand('design.loeschen', { entityId: id });
           } catch (err) {
@@ -111,6 +121,16 @@ export function Inspector() {
 
   if (!entity) return null;
 
+  // v0.8.9 E2 (PA2, docs/V089-SPEZ.md §3 E2/§7 C-3): gesperrt deaktiviert im
+  // Inspector alles, was das Element verändern/verschieben/löschen würde
+  // (Löschen-Knopf + die kind-spezifischen Eigenschaftsfelder unten) — der
+  // Sperr-Toggle selbst bleibt IMMER bedienbar (sonst gäbe es keinen Weg
+  // zurück). Canvas-Drag/Griff-Ziehen/Tastatur-Löschen laufen ausserhalb
+  // dieser Datei (`DesignWorkspace.tsx`/`PlanView.tsx`, PA2-tabu) — s.
+  // `istGesperrt()`-Kommentar in `plan-hit-test.ts` für die dortigen
+  // Übergabepunkte an Fable.
+  const gesperrt = entity.meta?.locked === true;
+
   const set = (feld: string, wert: string | number) => {
     try {
       runCommand('design.eigenschaftSetzen', { entityId: entity.id, feld, wert });
@@ -136,6 +156,7 @@ export function Inspector() {
               value={entity.assemblyId}
               onChange={(e) => set('assemblyId', e.target.value)}
               className="dp-feld-voll"
+              disabled={gesperrt}
             >
               {assemblies
                 .filter((a) => a.target === 'wall')
@@ -152,6 +173,7 @@ export function Inspector() {
               value={entity.alignment}
               onChange={(e) => set('alignment', e.target.value)}
               className="dp-feld-voll"
+              disabled={gesperrt}
             >
               <option value="zentrum">Zentrum</option>
               <option value="kern-aussen">Kern aussen</option>
@@ -185,6 +207,7 @@ export function Inspector() {
               size="sm"
               tone="ghost"
               data-testid="inspector-aussparung"
+              disabled={gesperrt}
               onClick={() => {
                 try {
                   // Default 300×300 in Wandmitte, UK 1100 — via Kosmo präzise setzbar
@@ -209,6 +232,7 @@ export function Inspector() {
               size="sm"
               tone="ghost"
               data-testid="inspector-etikett"
+              disabled={gesperrt}
               onClick={() => {
                 try {
                   // Aufbau-Etikett neben der Wandmitte — assoziativ, liest live
@@ -238,10 +262,17 @@ export function Inspector() {
               onBlur={(e) => e.target.value !== entity.name && set('name', e.target.value)}
               className="dp-feld-voll"
               data-testid="inspector-name"
+              disabled={gesperrt}
             />
           </Row>
           <Row label="SIA 416">
-            <KSelect size="sm" value={entity.sia} onChange={(e) => set('sia', e.target.value)} className="dp-feld-voll">
+            <KSelect
+              size="sm"
+              value={entity.sia}
+              onChange={(e) => set('sia', e.target.value)}
+              className="dp-feld-voll"
+              disabled={gesperrt}
+            >
               {['HNF', 'NNF', 'VF', 'FF', 'KF'].map((s) => (
                 <option key={s}>{s}</option>
               ))}
@@ -256,10 +287,10 @@ export function Inspector() {
       {entity.kind === 'roof' && (
         <>
           <Row label="Neigung">
-            <NumberField value={entity.pitch} suffix="°" onCommit={(v) => set('pitch', v)} />
+            <NumberField value={entity.pitch} suffix="°" onCommit={(v) => set('pitch', v)} disabled={gesperrt} />
           </Row>
           <Row label="Überstand">
-            <NumberField value={entity.overhang} suffix="mm" onCommit={(v) => set('overhang', v)} />
+            <NumberField value={entity.overhang} suffix="mm" onCommit={(v) => set('overhang', v)} disabled={gesperrt} />
           </Row>
         </>
       )}
@@ -267,7 +298,7 @@ export function Inspector() {
       {entity.kind === 'mass' && (
         <>
           <Row label="Höhe">
-            <NumberField value={entity.height} suffix="mm" onCommit={(v) => set('height', v)} />
+            <NumberField value={entity.height} suffix="mm" onCommit={(v) => set('height', v)} disabled={gesperrt} />
           </Row>
           <Row label="GF">
             <Measure>{formatArea(areaOf(entity.outline) * 1_000_000)}</Measure>
@@ -278,6 +309,7 @@ export function Inspector() {
             size="sm"
             tone="ghost"
             data-testid="mesh-umwandeln"
+            disabled={gesperrt}
             onClick={() => {
               try {
                 const result = runCommand('design.meshErstellen', { form: 'ausVolumen', massId: entity.id });
@@ -306,7 +338,13 @@ export function Inspector() {
           </Row>
           {/* Block 3 / E4: eigener meshEdit-Modus im Viewport (Vertex-Handles +
               Flächen-Extrude) — KEIN allgemeines Gizmo-Framework, siehe Buildplan §5. */}
-          <KButton size="sm" tone="accent" data-testid="mesh-bearbeiten" onClick={() => setMeshEditId(entity.id)}>
+          <KButton
+            size="sm"
+            tone="accent"
+            data-testid="mesh-bearbeiten"
+            disabled={gesperrt}
+            onClick={() => setMeshEditId(entity.id)}
+          >
             Mesh bearbeiten
           </KButton>
         </>
@@ -314,7 +352,7 @@ export function Inspector() {
 
       {entity.kind === 'slab' && (
         <Row label="Dicke">
-          <NumberField value={entity.thickness} suffix="mm" onCommit={(v) => set('thickness', v)} />
+          <NumberField value={entity.thickness} suffix="mm" onCommit={(v) => set('thickness', v)} disabled={gesperrt} />
         </Row>
       )}
 
@@ -338,35 +376,85 @@ export function Inspector() {
               {formatLength(entity.width)} × {formatLength(entity.height)}
             </Measure>
           </Row>
-          {entity.openingType === 'fenster' && <FensterAbschnitt opening={entity} runCommand={runCommand} />}
-          {entity.openingType !== 'leibung' && <BeschlagAbschnitt opening={entity} runCommand={runCommand} />}
+          {entity.openingType === 'fenster' && (
+            <FensterAbschnitt opening={entity} runCommand={runCommand} disabled={gesperrt} />
+          )}
+          {entity.openingType !== 'leibung' && (
+            <BeschlagAbschnitt opening={entity} runCommand={runCommand} disabled={gesperrt} />
+          )}
         </>
       )}
 
       {entity.kind !== 'storey' && entity.kind !== 'assembly' && entity.kind !== 'sheet' && (
-        <Row label="Umbau">
-          <KSelect
-            size="sm"
-            value={entity.meta?.renovation ?? ''}
-            onChange={(e) => {
-              try {
-                runCommand('design.renovationSetzen', {
-                  ids: [entity.id],
-                  ...(e.target.value ? { status: e.target.value } : {}),
-                });
-              } catch (err) {
-                meldeFehler(err);
-              }
-            }}
-            className="dp-feld-voll"
-            data-testid="inspector-renovation"
-          >
-            <option value="">—</option>
-            <option value="bestand">Bestand</option>
-            <option value="neu">Neubau (rot)</option>
-            <option value="abbruch">Abbruch (gelb)</option>
-          </KSelect>
-        </Row>
+        <>
+          <Row label="Umbau">
+            <KSelect
+              size="sm"
+              value={entity.meta?.renovation ?? ''}
+              onChange={(e) => {
+                try {
+                  runCommand('design.renovationSetzen', {
+                    ids: [entity.id],
+                    ...(e.target.value ? { status: e.target.value } : {}),
+                  });
+                } catch (err) {
+                  meldeFehler(err);
+                }
+              }}
+              className="dp-feld-voll"
+              data-testid="inspector-renovation"
+              disabled={gesperrt}
+            >
+              <option value="">—</option>
+              <option value="bestand">Bestand</option>
+              <option value="neu">Neubau (rot)</option>
+              <option value="abbruch">Abbruch (gelb)</option>
+            </KSelect>
+          </Row>
+
+          {/* v0.8.9 E2 (PA2, docs/V089-SPEZ.md §3 E2, Owner-Entscheid «CAD-
+              Ebenen = DXF-Interop + Sperren», Sanktion 4: KEIN Sichtbarkeits-
+              Panel). Ebene-Feld bleibt AUCH bei gesperrt bedienbar (reines
+              Interop-Metadatum, keine Geometrie/Löschung); der Sperr-Toggle
+              muss immer bedienbar bleiben — sonst gäbe es keinen Weg zurück. */}
+          <Row label="Ebene (DXF)">
+            <KInput
+              size="sm"
+              defaultValue={entity.meta?.layer ?? ''}
+              key={entity.id + (entity.meta?.layer ?? '')}
+              placeholder="automatisch (Semantik)"
+              onBlur={(e) => {
+                const wert = e.target.value.trim();
+                if (wert === (entity.meta?.layer ?? '')) return;
+                try {
+                  runCommand('design.ebeneSetzen', { entityId: entity.id, layer: wert.length > 0 ? wert : null });
+                } catch (err) {
+                  meldeFehler(err);
+                }
+              }}
+              className="dp-feld-voll"
+              data-testid="inspector-ebene"
+            />
+          </Row>
+          <Row label="Gesperrt">
+            <KSwitch
+              data-testid="inspector-sperren"
+              checked={gesperrt}
+              onChange={(e) => {
+                try {
+                  runCommand('design.sperren', { entityId: entity.id, locked: e.target.checked });
+                } catch (err) {
+                  meldeFehler(err);
+                }
+              }}
+            />
+          </Row>
+          {gesperrt && (
+            <div data-testid="inspector-gesperrt-hinweis" className="dp-hinweis">
+              Gesperrt — Verschieben, Griff-Ziehen und Löschen sind deaktiviert, bis das Element entsperrt wird.
+            </div>
+          )}
+        </>
       )}
 
       <Hairline />
@@ -374,7 +462,9 @@ export function Inspector() {
         size="sm"
         tone="danger"
         data-testid="inspector-delete"
+        disabled={gesperrt}
         onClick={() => {
+          if (gesperrt) return;
           runCommand('design.loeschen', { entityId: entity.id });
           select([]);
         }}
@@ -443,11 +533,15 @@ function NumberField({
   suffix,
   onCommit,
   testid,
+  disabled,
 }: {
   value: number;
   suffix: string;
   onCommit: (v: number) => void;
   testid?: string;
+  /** v0.8.9 E2 (PA2): gesperrte Elemente dürfen im Inspector nicht editiert
+   *  werden — s. `gesperrt`-Konstante im `Inspector()`-Body. */
+  disabled?: boolean;
 }) {
   return (
     <span className="dp-zahlfeld">
@@ -458,6 +552,7 @@ function NumberField({
         type="number"
         defaultValue={value}
         data-testid={testid}
+        disabled={disabled}
         onBlur={(e) => {
           const v = Number(e.target.value);
           if (Number.isFinite(v) && v !== value) onCommit(v);
@@ -504,9 +599,13 @@ const FLUEGELTYP_OPTIONEN: Array<{ value: NonNullable<Opening['fluegelTyp']>; la
 function FensterAbschnitt({
   opening,
   runCommand,
+  disabled = false,
 }: {
   opening: Opening;
   runCommand: (commandId: string, params: unknown) => unknown;
+  /** v0.8.9 E2 (PA2): gesperrtes Wirtselement — Fenster-Parametrik gilt als
+   *  Editieren desselben Elements und wird darum mitgesperrt. */
+  disabled?: boolean;
 }) {
   const typ = opening.fensterTyp ?? 'einfluegel';
   const n = opening.teilung?.n ?? 1;
@@ -556,6 +655,7 @@ function FensterAbschnitt({
           value={typ}
           onChange={(e) => parametrieren({ fensterTyp: e.target.value as Opening['fensterTyp'] })}
           className="dp-feld-voll"
+          disabled={disabled}
         >
           {FENSTERTYP_OPTIONEN.map((o) => (
             <option key={o.value} value={o.value}>
@@ -573,6 +673,7 @@ function FensterAbschnitt({
             key={`n-${n}`}
             defaultValue={n}
             data-testid="fenster-teilung-n"
+            disabled={disabled}
             onBlur={(e) => {
               const v = Number(e.target.value);
               if (Number.isFinite(v) && v !== n) parametrieren({ teilungN: v });
@@ -588,6 +689,7 @@ function FensterAbschnitt({
             key={`m-${m}`}
             defaultValue={m}
             data-testid="fenster-teilung-m"
+            disabled={disabled}
             onBlur={(e) => {
               const v = Number(e.target.value);
               if (Number.isFinite(v) && v !== m) parametrieren({ teilungM: v });
@@ -603,6 +705,7 @@ function FensterAbschnitt({
           suffix="mm"
           testid="fenster-rahmenbreite"
           onCommit={(v) => parametrieren({ rahmenbreite: v })}
+          disabled={disabled}
         />
       </Row>
       <Row label="Flügeltyp">
@@ -612,6 +715,7 @@ function FensterAbschnitt({
           value={fluegel}
           onChange={(e) => parametrieren({ fluegelTyp: e.target.value as Opening['fluegelTyp'] })}
           className="dp-feld-voll"
+          disabled={disabled}
         >
           {FLUEGELTYP_OPTIONEN.map((o) => (
             <option key={o.value} value={o.value}>
@@ -626,6 +730,7 @@ function FensterAbschnitt({
             type="checkbox"
             data-testid="fluegel-oeffnet-aussen"
             checked={oeffnetNachAussen}
+            disabled={disabled}
             onChange={(e) => parametrieren({ oeffnetNachAussen: e.target.checked })}
           />
           <span className="dp-einheit">nach aussen (gestrichelt)</span>
@@ -655,9 +760,13 @@ const BESCHLAG_KATEGORIEN: BeschlagKategorie[] = ['tuer', 'fenster', 'sicherheit
 function BeschlagAbschnitt({
   opening,
   runCommand,
+  disabled = false,
 }: {
   opening: Opening;
   runCommand: (commandId: string, params: unknown) => unknown;
+  /** v0.8.9 E2 (PA2): gesperrtes Wirtselement — Beschlag-Katalog gilt als
+   *  Editieren desselben Elements und wird darum mitgesperrt. */
+  disabled?: boolean;
 }) {
   const setzen = (patch: {
     band?: Opening['band'];
@@ -699,6 +808,7 @@ function BeschlagAbschnitt({
           value={opening.band ?? ''}
           onChange={(e) => setzen({ band: (e.target.value || undefined) as Opening['band'] })}
           className="dp-feld-voll"
+          disabled={disabled}
         >
           <option value="">—</option>
           <option value="links">Links</option>
@@ -714,6 +824,7 @@ function BeschlagAbschnitt({
           value={opening.griffseite ?? ''}
           onChange={(e) => setzen({ griffseite: (e.target.value || undefined) as Opening['griffseite'] })}
           className="dp-feld-voll"
+          disabled={disabled}
         >
           <option value="">—</option>
           <option value="links">Links</option>
@@ -725,6 +836,7 @@ function BeschlagAbschnitt({
           type="checkbox"
           data-testid="beschlag-antrieb"
           checked={opening.antrieb ?? false}
+          disabled={disabled}
           onChange={(e) => setzen({ antrieb: e.target.checked })}
         />
       </Row>
@@ -733,6 +845,7 @@ function BeschlagAbschnitt({
           type="checkbox"
           data-testid="beschlag-absturzsicherung"
           checked={opening.absturzsicherung ?? false}
+          disabled={disabled}
           onChange={(e) => setzen({ absturzsicherung: e.target.checked })}
         />
       </Row>
@@ -753,6 +866,7 @@ function BeschlagAbschnitt({
                     type="checkbox"
                     data-testid={`beschlag-s2-${typ.key}`}
                     checked={zugewiesen.includes(typ.key)}
+                    disabled={disabled}
                     onChange={() => toggleBeschlag(typ.key)}
                   />
                   <span>{typ.name}</span>

@@ -4005,3 +4005,79 @@ export const setOerebAuszug = registerCommand({
     },
   ],
 });
+
+/**
+ * v0.8.9 E2 (PA2, `docs/V089-SPEZ.md` §3 E2, Owner-Entscheid «CAD-Ebenen =
+ * DXF-Interop + Sperren», KEIN Sichtbarkeits-Panel — Sanktion 4): zwei
+ * additive Commands nach dem `design.renovationSetzen`-Muster oben (:1352) —
+ * EIN Patch (before/after auf `meta`), Undo/Redo automatisch symmetrisch
+ * über den generischen Patch-Mechanismus, kein Sonderfall nötig.
+ *
+ * `design.ebeneSetzen` patcht NUR `meta.layer` — ein reines DXF-Interop-Feld
+ * (`dxf/export.ts` `layerFuer()`-Override), OHNE jede Sichtbarkeits- oder
+ * Render-Wirkung im Plan/Schnitt/3D (Sanktion 4). `layer: null` entfernt die
+ * Übersteuerung wieder (Element fällt im Export auf die Semantik-Regel
+ * zurück); ein getrimmt LEERER String wirft (Owner-Klarheit: «null zum
+ * Löschen», kein leiser Leerstring in den DXF-Layern).
+ */
+export const setLayerOverride = registerCommand({
+  id: 'design.ebeneSetzen',
+  title: 'DXF-Ebene setzen',
+  description:
+    'Setzt eine manuelle CAD-Ebene (meta.layer) für den DXF-Export — überschreibt dort die automatische Semantik-Regel (LAYER_REGELN), hat aber KEINE Sichtbarkeits- oder Darstellungswirkung im Plan (reines Interop-Feld für AutoCAD/Rhino/Vectorworks). layer=null entfernt die Übersteuerung wieder.',
+  params: z.object({
+    entityId: z.string(),
+    layer: z.string().nullable().describe('CAD-Ebenenname (wird getrimmt); null entfernt die Übersteuerung'),
+  }),
+  summarize: (p) => (p.layer !== null ? `Ebene → ${p.layer.trim()}` : 'Ebenen-Übersteuerung entfernt'),
+  run: (doc, p) => {
+    const e = doc.get(p.entityId);
+    if (!e) throw new CommandError(`Element «${p.entityId}» existiert nicht`);
+    if (e.kind === 'storey' || e.kind === 'assembly' || e.kind === 'sheet') {
+      throw new CommandError(`Ebene gilt für Bauteile, nicht für ${e.kind}`);
+    }
+    const meta = { ...e.meta };
+    if (p.layer !== null) {
+      const getrimmt = p.layer.trim();
+      if (getrimmt.length === 0) {
+        throw new CommandError('Ebenenname darf nicht leer sein (null zum Entfernen nutzen)');
+      }
+      meta.layer = getrimmt;
+    } else {
+      delete meta.layer;
+    }
+    return [{ id: e.id, before: e, after: { ...e, meta } as typeof e }];
+  },
+});
+
+/**
+ * `design.sperren` patcht NUR `meta.locked`. Die eigentliche Durchsetzung
+ * (Verschieben/Griff-Drag/Löschen greifen nicht) lebt am Interaktions-Pfad
+ * ausserhalb dieses Kernel-Commands — s. `apps/kosmo-orbit/.../plan-hit-
+ * test.ts`s `istGesperrt()` und den PA2-Abschlussbericht (Cluster-B-
+ * Übergabepunkte an Fable, `DesignWorkspace.tsx` bleibt PA2-tabu,
+ * Betriebsregel 3/Sanktion 6). `pickEntityAt` bleibt UNVERÄNDERT — ein
+ * gesperrtes Element bleibt findbar (Sanktion 3).
+ */
+export const setLocked = registerCommand({
+  id: 'design.sperren',
+  title: 'Element sperren/entsperren',
+  description:
+    'Sperrt oder entsperrt ein Element (meta.locked). Gesperrt: Verschieben/Griff-Ziehen/Löschen greifen am Interaktions-Pfad nicht mehr, das Element bleibt aber weiterhin klickbar/anzeigbar und im Inspector entsperrbar. Keine Sichtbarkeits-Wirkung.',
+  params: z.object({
+    entityId: z.string(),
+    locked: z.boolean(),
+  }),
+  summarize: (p) => (p.locked ? 'Element gesperrt' : 'Element entsperrt'),
+  run: (doc, p) => {
+    const e = doc.get(p.entityId);
+    if (!e) throw new CommandError(`Element «${p.entityId}» existiert nicht`);
+    if (e.kind === 'storey' || e.kind === 'assembly' || e.kind === 'sheet') {
+      throw new CommandError(`Sperre gilt für Bauteile, nicht für ${e.kind}`);
+    }
+    const meta = { ...e.meta };
+    if (p.locked) meta.locked = true;
+    else delete meta.locked;
+    return [{ id: e.id, before: e, after: { ...e, meta } as typeof e }];
+  },
+});
