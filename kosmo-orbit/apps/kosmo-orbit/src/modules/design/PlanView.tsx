@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type PocheModus, type Pt, type Roof, type Wall, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -45,6 +45,37 @@ function federGefuehl(t: number): number {
   const c3 = c1 + 1;
   const p = t - 1;
   return 1 + c3 * p * p * p + c1 * p * p;
+}
+
+/**
+ * E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff»): projiziert einen
+ * Weltpunkt auf die Achse einer Wand und clampt das Ergebnis gegen
+ * `width/2 … wandLaenge−width/2` — dieselben Grenzen wie
+ * `planeOeffnungsBilanz` im Kernel (`commands/design.ts`, E1). D6: der
+ * Kernel prüft `design.eigenschaftSetzen('center')` NICHT gegen die
+ * Wandlänge — der App-seitige Clamp ist Pflicht, hier für die Live-Vorschau
+ * UND (identisch in DesignWorkspace.tsx) für den Commit.
+ */
+function projiziereOeffnungCenter(wall: { a: Pt; b: Pt }, width: number, p: Pt): number {
+  const dx = wall.b.x - wall.a.x;
+  const dy = wall.b.y - wall.a.y;
+  const len = Math.hypot(dx, dy);
+  const halbeBreite = width / 2;
+  if (len === 0) return halbeBreite;
+  const roh = ((p.x - wall.a.x) * dx + (p.y - wall.a.y) * dy) / len;
+  const obereGrenze = Math.max(halbeBreite, len - halbeBreite);
+  return Math.round(Math.min(Math.max(roh, halbeBreite), obereGrenze));
+}
+
+/** Weltpunkt auf der Wandachse a→b für ein gegebenes `center` (mm ab a) —
+ *  dieselbe Formel wie `oeffnungWeltpos` in `plan-hit-test.ts`, hier
+ *  parametrisiert nutzbar (Live-Vorschau mit einem NOCH nicht gespeicherten
+ *  Center-Wert, statt `o.center` aus dem Doc). */
+function wandAchsenPunkt(wall: { a: Pt; b: Pt }, center: number): Pt {
+  const dx = wall.b.x - wall.a.x;
+  const dy = wall.b.y - wall.a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return { x: wall.a.x + (dx / len) * center, y: wall.a.y + (dy / len) * center };
 }
 
 /**
@@ -636,6 +667,22 @@ export function PlanView({
     }
     if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
       return (e as Zone | MassBody | Roof).outline.map((p, i) => ({ id, key: i, p, kind: e.kind }));
+    }
+    // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff»): EIN Griff auf
+    // dem Öffnungs-Mittelpunkt in Weltkoordinaten — Achsenpunkt der
+    // Wirtswand (a + (b−a)·center/länge), dieselbe Formel wie
+    // `oeffnungWeltpos` in `plan-hit-test.ts` (das Klick-Pick dort kennt
+    // Öffnungen bereits, s. `pickEntityAt`). Verwaiste Öffnung (Wirtswand
+    // fehlt) oder Null-Länge-Wand → kein Griff statt zu raten.
+    if (e.kind === 'opening') {
+      const o = e as Opening;
+      const wall = doc.get(o.wallId);
+      if (!wall || wall.kind !== 'wall') return [];
+      const w = wall as Wall;
+      const len = Math.hypot(w.b.x - w.a.x, w.b.y - w.a.y);
+      if (len === 0) return [];
+      const p = { x: w.a.x + ((w.b.x - w.a.x) * o.center) / len, y: w.a.y + ((w.b.y - w.a.y) * o.center) / len };
+      return [{ id, key: 'center' as const, p, kind: 'opening' as const }];
     }
     return [];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1950,6 +1997,12 @@ export function PlanView({
             const vorschau = handlers.current?.griffOffset;
             const gezogenesEntity = vorschau ? doc.get(vorschau.id) : null;
             let gummibandD: string | null = null;
+            // E5 (v0.8.6 PB3): der Öffnungs-Griff darf nie von der
+            // Wandachse abheben — die Vorschau zeigt schon während des Zugs
+            // den projizierten+geclampten Punkt (`projiziereOeffnungCenter`),
+            // nicht den rohen Cursor wie bei Wand/Masskette/Zone oben (deren
+            // Punkte selbst keiner Achsen-Zwangsbedingung unterliegen).
+            let oeffnungVorschauPunkt: Pt | null = null;
             if (vorschau && gezogenesEntity) {
               if (gezogenesEntity.kind === 'wall') {
                 const wall = gezogenesEntity as Wall;
@@ -1967,6 +2020,13 @@ export function PlanView({
                   i === vorschau.key ? vorschau.p : q,
                 );
                 gummibandD = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`;
+              } else if (gezogenesEntity.kind === 'opening') {
+                const o = gezogenesEntity as Opening;
+                const wall = doc.get(o.wallId);
+                if (wall && wall.kind === 'wall') {
+                  const neuesCenter = projiziereOeffnungCenter(wall as Wall, o.width, vorschau.p);
+                  oeffnungVorschauPunkt = wandAchsenPunkt(wall as Wall, neuesCenter);
+                }
               }
             }
             return (
@@ -1982,13 +2042,20 @@ export function PlanView({
                   />
                 )}
                 {griffe.map((g) => {
-                  const angezeigt = vorschau && vorschau.id === g.id && vorschau.key === g.key ? vorschau.p : g.p;
+                  const wirdGezogen = vorschau && vorschau.id === g.id && vorschau.key === g.key;
+                  const angezeigt = wirdGezogen
+                    ? g.kind === 'opening' && oeffnungVorschauPunkt
+                      ? oeffnungVorschauPunkt
+                      : vorschau!.p
+                    : g.p;
                   const testid =
                     g.kind === 'wall'
                       ? `griff-endpunkt-${g.key}`
                       : g.kind === 'masskette'
                         ? `griff-massketten-punkt-${g.key}`
-                        : `griff-eckpunkt-${g.key}`;
+                        : g.kind === 'opening'
+                          ? 'griff-oeffnung'
+                          : `griff-eckpunkt-${g.key}`;
                   const groesse = 9 / view.scale;
                   return (
                     <rect

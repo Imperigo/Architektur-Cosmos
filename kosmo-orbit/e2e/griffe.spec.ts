@@ -48,6 +48,31 @@ async function zeichneWand(page: Page, a: { x: number; y: number }, b: { x: numb
   );
 }
 
+/** E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3) — Muster wörtlich aus dem
+ *  Inline-`page.evaluate` des Tests «C-1 (v0.8.6 E1)» oben übernommen, hier
+ *  als wiederverwendbarer Helfer (Fenster/Tür in eine bestehende Wand). */
+async function erstelleOeffnung(
+  page: Page,
+  wallId: string,
+  center: number,
+  width = 1200,
+): Promise<string> {
+  return page.evaluate(
+    ({ wallId, center, width }) => {
+      const r = window.__kosmo.run('design.oeffnungSetzen', {
+        wallId,
+        openingType: 'fenster',
+        center,
+        width,
+        height: 1500,
+        sill: 900,
+      });
+      return r.patches[0]!.id;
+    },
+    { wallId, center, width },
+  );
+}
+
 async function erstelleZone(page: Page, outline: { x: number; y: number }[], name = 'Testraum'): Promise<string> {
   return page.evaluate(
     ({ outline, name }) => {
@@ -466,4 +491,97 @@ test('C-18 (D10): Esc schliesst eine laufende Masskette in reinem view-2d ab (ni
   await expect.poll(() => page.evaluate(() => window.__kosmo.state().selection.length)).toBe(1);
   await page.keyboard.press('Escape');
   await expect.poll(() => page.evaluate(() => window.__kosmo.state().selection.length)).toBe(0);
+});
+
+/**
+ * C-15/C-16 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff», E5) —
+ * Öffnung einzeln gewählt → EIN Griff auf dem Öffnungs-Mittelpunkt; Schieben
+ * per EINEM `design.eigenschaftSetzen('center')` (Identität bleibt, EIN
+ * Undo-Schritt), App-Clamp gegen `width/2 … wandLaenge−width/2` (D6: der
+ * Kernel validiert `center` bei `eigenschaftSetzen` NICHT).
+ */
+test('C-15 (v0.8.6 E5): Öffnungs-Griff sichtbar bei Einzel-Auswahl, Drag entlang der Wand verschiebt center — EIN Ctrl+Z stellt es wieder her', async ({
+  page,
+}) => {
+  await starteManuell(page);
+  // Wand a(4000,2000)→b(8000,2000), Länge 4000. Öffnung center=1500 (Fenster
+  // 900..2100), Griff-Weltpunkt also (5500, 2000).
+  const w1 = await zeichneWand(page, { x: 4000, y: 2000 }, { x: 8000, y: 2000 });
+  const oeffnungId = await erstelleOeffnung(page, w1, 1500);
+
+  await waehle(page, [oeffnungId]);
+  await expect(page.locator('[data-testid="griff-oeffnung"]')).toBeVisible();
+
+  await page.screenshot({ path: 'e2e-results/pb3-086-oeffnungs-griff.png' });
+
+  // Entlang der Wandachse auf (6000, 2000) ziehen → projizierter/geclampter
+  // Zielwert: center = 6000 − 4000 = 2000 (liegt innerhalb 600..3400).
+  const von = await griffMitte(page, 'griff-oeffnung');
+  const nach = await weltZuBildschirm(page, 6000, 2000);
+  await ziehe(page, von, nach);
+
+  const stand = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    const oeffnungen = doc.byKind('opening') as { id: string; center: number; wallId: string }[];
+    return { oeffnungen, selection: window.__kosmo.state().selection as string[] };
+  });
+  expect(stand.oeffnungen).toHaveLength(1);
+  // Identität bleibt (kein Löschen+Neusetzen) — gleiche Öffnungs-Id, Wand
+  // unangetastet, Auswahl bleibt auf der Öffnung.
+  expect(stand.oeffnungen[0]!.id).toBe(oeffnungId);
+  expect(stand.oeffnungen[0]!.wallId).toBe(w1);
+  expect(stand.oeffnungen[0]!.center).toBe(2000);
+  expect(stand.selection).toEqual([oeffnungId]);
+
+  // EIN Ctrl+Z stellt center wieder auf 1500 — derselbe Undo-Schritt-Vertrag
+  // wie beim Wand-Endpunkt-Griff oben.
+  await page.keyboard.press('Control+z');
+  const nachUndo = await page.evaluate(
+    () => (window.__kosmo.state().doc.byKind('opening') as { id: string; center: number }[])[0]!,
+  );
+  expect(nachUndo.id).toBe(oeffnungId);
+  expect(nachUndo.center).toBe(1500);
+});
+
+test('C-15 (v0.8.6 E5, D6-Clamp-Beweis): Drag weit über das Wandende hinaus clampt center auf wandLaenge−width/2', async ({
+  page,
+}) => {
+  await starteManuell(page);
+  // Dieselbe Wand/Öffnung wie oben: Länge 4000, width 1200 → obere Clamp-
+  // Grenze 4000 − 600 = 3400.
+  const w1 = await zeichneWand(page, { x: 4000, y: 2000 }, { x: 8000, y: 2000 });
+  const oeffnungId = await erstelleOeffnung(page, w1, 1500);
+  await waehle(page, [oeffnungId]);
+  await expect(page.locator('[data-testid="griff-oeffnung"]')).toBeVisible();
+
+  // Zielpunkt weit jenseits von b (24000, 2000) — roh-Projektion wäre 20000,
+  // der App-Clamp (D6: Kernel prüft `center` nicht) hält bei 3400.
+  const von = await griffMitte(page, 'griff-oeffnung');
+  const nach = await weltZuBildschirm(page, 24000, 2000);
+  await ziehe(page, von, nach);
+
+  const oeffnungen = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('opening') as { id: string; center: number }[],
+  );
+  expect(oeffnungen).toHaveLength(1);
+  expect(oeffnungen[0]!.id).toBe(oeffnungId);
+  expect(oeffnungen[0]!.center).toBe(3400);
+});
+
+test('C-15 (v0.8.6 E5): Öffnungs-Griff verschwindet bei Mehrfach-Auswahl', async ({ page }) => {
+  await starteManuell(page);
+  const w1 = await zeichneWand(page, { x: 4000, y: 2000 }, { x: 8000, y: 2000 });
+  const oeffnungId = await erstelleOeffnung(page, w1, 1500);
+
+  await waehle(page, [oeffnungId]);
+  await expect(page.locator('[data-testid="griff-oeffnung"]')).toBeVisible();
+
+  // Mehrfach-Auswahl (Öffnung + Wand) — C-15 «weg bei Mehrfach-Auswahl» gilt
+  // auch für den Öffnungs-Griff.
+  await waehle(page, [oeffnungId, w1]);
+  await expect(page.locator('[data-testid="griff-oeffnung"]')).toHaveCount(0);
+
+  // Zurück zur Einzel-Auswahl — Griff wieder da.
+  await waehle(page, [oeffnungId]);
+  await expect(page.locator('[data-testid="griff-oeffnung"]')).toBeVisible();
 });

@@ -46,6 +46,9 @@ import {
   // unten) — der Kernel kennt keinen Endpunkt-/Eckpunkt-Weg über
   // `design.eigenschaftSetzen` (`editableFields`, `commands/design.ts`).
   type MassBody,
+  // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3): Öffnungs-Griff — `onGriffEnd`
+  // braucht den vollen Typ, um Wirtswand + Breite fürs Clamp zu lesen.
+  type Opening,
   type Pt,
   type Roof,
   type SectionSpec,
@@ -226,6 +229,26 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
     if (treffer) return treffer;
   }
   return { x: Math.round(p.x / SNAP) * SNAP, y: Math.round(p.y / SNAP) * SNAP };
+}
+
+/**
+ * E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff»): projiziert einen
+ * Weltpunkt auf die Achse der Wirtswand und clampt gegen
+ * `width/2 … wandLaenge−width/2` — dieselben Grenzen wie
+ * `planeOeffnungsBilanz` im Kernel (`commands/design.ts`, E1) bzw. die
+ * gleichnamige Funktion in `PlanView.tsx` (dort für die Live-Vorschau,
+ * hier für den Commit). D6: `design.eigenschaftSetzen('center')` prüft
+ * NICHT gegen die Wandlänge — der App-seitige Clamp ist Pflicht.
+ */
+function projiziereOeffnungCenter(wall: { a: Pt; b: Pt }, width: number, p: Pt): number {
+  const dx = wall.b.x - wall.a.x;
+  const dy = wall.b.y - wall.a.y;
+  const len = Math.hypot(dx, dy);
+  const halbeBreite = width / 2;
+  if (len === 0) return halbeBreite;
+  const roh = ((p.x - wall.a.x) * dx + (p.y - wall.a.y) * dy) / len;
+  const obereGrenze = Math.max(halbeBreite, len - halbeBreite);
+  return Math.round(Math.min(Math.max(roh, halbeBreite), obereGrenze));
 }
 
 /**
@@ -1215,7 +1238,15 @@ export function DesignWorkspace({
       const e = doc.get(id);
       if (!e) return false;
       const griffFaehig =
-        e.kind === 'wall' || e.kind === 'masskette' || e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof';
+        e.kind === 'wall' ||
+        e.kind === 'masskette' ||
+        e.kind === 'zone' ||
+        e.kind === 'mass' ||
+        e.kind === 'roof' ||
+        // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3): Öffnungs-Griff — nur bei
+        // Einzel-Auswahl möglich (`griffe` in PlanView liefert dann genau
+        // einen Griff-Eintrag, s. dort).
+        e.kind === 'opening';
       if (!griffFaehig) return false;
       setGriffDrag({ id, key: griffKey, start: snap(p, magnet) });
       setGriffCursor(p);
@@ -1306,6 +1337,18 @@ export function DesignWorkspace({
           runCommand('design.loeschen', { entityId: e.id });
           const neueId = neuePatchId(r.patches);
           select(neueId ? [neueId] : []);
+        } else if (e.kind === 'opening') {
+          // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3): Öffnungs-Griff — KEIN
+          // Löschen+Neusetzen (anders als oben): `design.eigenschaftSetzen`
+          // patcht `center` IN PLACE, Identität bleibt, EIN Undo-Schritt.
+          // Ziel wird auf die Wandachse projiziert und geclampt (D6: der
+          // Kernel prüft `center` nicht gegen die Wandlänge).
+          const o = e as Opening;
+          const wall = doc.get(o.wallId);
+          if (wall && wall.kind === 'wall') {
+            const neuesCenter = projiziereOeffnungCenter(wall as Wall, o.width, ziel);
+            runCommand('design.eigenschaftSetzen', { entityId: o.id, feld: 'center', wert: neuesCenter });
+          }
         }
       } catch (err) {
         meldeFehler(err);
