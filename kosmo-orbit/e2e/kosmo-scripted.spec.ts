@@ -139,7 +139,7 @@ test('H-28: ein beim Anwenden (nicht bei der Validierung) scheiternder Vorschlag
     await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
-  await page.click('[data-testid="kosmo-symbol"]');
+  await page.dblclick('[data-testid="kosmo-symbol"]'); // Doppelklick = volles Panel (Orb-Gesetz v0.8.4)
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
   await page.fill('[data-testid="kosmo-input"]', 'Zeichne die Decke im unbekannten Geschoss');
   await page.click('[data-testid="kosmo-send"]');

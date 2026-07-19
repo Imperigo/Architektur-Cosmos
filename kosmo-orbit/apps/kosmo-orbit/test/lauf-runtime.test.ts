@@ -165,6 +165,87 @@ describe('lauf-runtime — zuruecksetzen()', () => {
   });
 });
 
+describe('lauf-runtime — @ref-Auflösung VOR dem Runner (E4/C-13, `docs/V086-SPEZ.md` §3)', () => {
+  it('löst @ref:storey:<name> gegen eine Entity auf, die ein FRÜHERER Schritt DESSELBEN Laufs gerade erst erzeugt hat', async () => {
+    // Selbst-referenzierender Plan — exakt das Muster der drei kuratierten
+    // Bibliotheks-Drehbücher (`wissen/training/eval/kosmo-laufplaene/
+    // grundriss-rohbau.json`): Schritt 2 referenziert das in Schritt 1
+    // erzeugte Geschoss über `@ref:storey:<name>`, dessen ID erst zur
+    // Laufzeit entsteht.
+    const plan: LaufPlan = {
+      titel: 'Selbst-referenzierender Lauf',
+      schritte: [
+        {
+          commandId: 'design.geschossErstellen',
+          params: { name: 'Rohbau EG', index: 0, elevation: 0, height: 3000 },
+          begruendung: 'Erst das Geschoss.',
+        },
+        {
+          commandId: 'design.zoneErstellen',
+          params: {
+            storeyId: '@ref:storey:Rohbau EG',
+            outline: [
+              { x: 0, y: 0 },
+              { x: 4000, y: 0 },
+              { x: 4000, y: 4000 },
+              { x: 0, y: 4000 },
+            ],
+            name: 'Zone A',
+          },
+          begruendung: 'Zone im gerade erzeugten Geschoss.',
+        },
+      ],
+    };
+    useLaufRuntime.getState().starte(plan);
+    await warten(10);
+
+    const state = useLaufRuntime.getState();
+    expect(state.status).toBe('fertig');
+    expect(state.schritte.map((s) => s.status)).toEqual(['ok', 'ok']);
+    const storeys = useProject.getState().doc.byKind('storey');
+    const zonen = useProject.getState().doc.byKind('zone') as { storeyId: string }[];
+    expect(storeys).toHaveLength(1);
+    expect(zonen).toHaveLength(1);
+    expect(zonen[0]!.storeyId).toBe(storeys[0]!.id);
+  });
+
+  it('ein Plan mit einer unbekannten @ref-Referenz stoppt ehrlich mit einem verständlichen Fehler (kein stiller Absturz)', async () => {
+    const plan: LaufPlan = {
+      titel: 'Kaputte Referenz',
+      schritte: [
+        {
+          commandId: 'design.zoneErstellen',
+          params: {
+            storeyId: '@ref:storey:Existiert Nicht',
+            outline: [
+              { x: 0, y: 0 },
+              { x: 1000, y: 0 },
+              { x: 1000, y: 1000 },
+            ],
+            name: 'Zone',
+          },
+          begruendung: 'Referenziert ein nie erzeugtes Geschoss.',
+        },
+      ],
+    };
+    useLaufRuntime.getState().starte(plan);
+    await warten(10);
+
+    const state = useLaufRuntime.getState();
+    expect(state.status).toBe('fehler');
+    expect(state.schritte[0]?.status).toBe('fehler');
+    expect(state.schritte[0]?.fehler).toMatch(/@ref:storey:Existiert Nicht/);
+    expect(useProject.getState().doc.byKind('zone')).toHaveLength(0);
+  });
+
+  it('ein Plan ganz ohne @ref-Platzhalter läuft unverändert durch (Auflösung ist wirkungslos)', async () => {
+    useLaufRuntime.getState().starte(geschossPlan(1));
+    await warten(10);
+    expect(useLaufRuntime.getState().status).toBe('fertig');
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(1);
+  });
+});
+
 describe('lauf-runtime — Testhook window.__kosmoLauf', () => {
   it('startet einen Lauf über den Fensterhaken, wie es eine E2E-Kampagne täte', async () => {
     const hook = (window as unknown as {

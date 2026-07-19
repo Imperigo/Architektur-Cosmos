@@ -11,6 +11,7 @@ import {
 } from '@kosmo/kernel';
 import type { ToolCall, ToolDefinition } from './provider';
 import { schaetzeTokens } from './systemprompt';
+import { laufPlanSchema, pruefeLaufPlan, type LaufPlan } from './lauf-plan';
 
 /**
  * Tool-Registry — die Kernel-Commands werden automatisch zu LLM-Tools.
@@ -211,6 +212,34 @@ export interface FailedCall {
 }
 
 /**
+ * Roh-Argumente eines Tool-Calls in echtes JSON verwandeln — geteilte
+ * «eine Wahrheit» für `validateToolCall` UND `validateLaufPlanCall`
+ * (E4, `docs/V086-SPEZ.md` §3): lokale Modelle packen JSON gern in
+ * Markdown-Zäune oder liefern leicht kaputtes JSON (einfache statt doppelte
+ * Anführungszeichen, Trailing-Comma) — vor dem eigentlichen Schema-Parsen
+ * wird zuerst der Zaun geschält, dann `JSON.parse`, erst als letzter
+ * Rettungsweg `jsonrepair`. Nicht-String-Argumente (bereits ein Objekt)
+ * gehen unverändert durch.
+ */
+function parseRohArgumente(rawArgs: unknown): { ok: true; data: unknown } | { ok: false; error: string } {
+  if (typeof rawArgs !== 'string') return { ok: true, data: rawArgs };
+  const raw = rawArgs
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/```\s*$/, '')
+    .trim();
+  try {
+    return { ok: true, data: JSON.parse(raw) };
+  } catch {
+    try {
+      return { ok: true, data: JSON.parse(jsonrepair(raw)) };
+    } catch {
+      return { ok: false, error: 'Argumente sind kein gültiges JSON' };
+    }
+  }
+}
+
+/**
  * Tool-Call validieren: Argumente ggf. per jsonrepair retten, dann durchs
  * zod-Schema des Commands. Fehler gehen als präzises Feedback ans Modell
  * zurück (Retry-Muster für lokale LLMs).
@@ -228,25 +257,10 @@ export function validateToolCall(call: ToolCall, doc?: KosmoDoc): ValidatedCall 
   const cmd = allCommands().find((c) => c.id === commandId) as Command<unknown> | undefined;
   if (!cmd) return { ok: false, error: `Unbekanntes Werkzeug «${call.name}»` };
 
-  let args: unknown = call.arguments;
-  if (typeof args === 'string') {
-    // Lokale Modelle packen JSON gern in Markdown-Zäune — vor dem Parsen schälen
-    const raw: string = args
-      .trim()
-      .replace(/^```(?:json)?\s*/i, '')
-      .replace(/```\s*$/, '')
-      .trim();
-    try {
-      args = JSON.parse(raw);
-    } catch {
-      try {
-        args = JSON.parse(jsonrepair(raw));
-      } catch {
-        return { ok: false, error: 'Argumente sind kein gültiges JSON' };
-      }
-    }
-  }
-  const parsed = cmd.params.safeParse(args);
+  const geparst = parseRohArgumente(call.arguments);
+  if (!geparst.ok) return geparst;
+
+  const parsed = cmd.params.safeParse(geparst.data);
   if (!parsed.success) {
     return {
       ok: false,
@@ -263,4 +277,54 @@ export function validateToolCall(call: ToolCall, doc?: KosmoDoc): ValidatedCall 
     // (ChatSession) übergeben immer den aktuellen Doc-Stand.
     summary: cmd.summarize(parsed.data, doc as KosmoDoc),
   };
+}
+
+/**
+ * `lauf_planen` — Nicht-Command-Tool nach `modell_lesen`-Präzedenz (E4,
+ * `docs/V086-SPEZ.md` §3/§6 Sanktion 2+3). ANDERS als `modell_lesen` (liest
+ * sofort aus) UND anders als ein Command-Tool (`commandTools()` oben, wird
+ * zu einer normalen Diff-Karten-`Proposal`): der Aufruf wird NIE ausgeführt
+ * — `chat.ts#turn()` behandelt ihn als EIGENEN Vorschlagstyp
+ * (`LaufVorschlag`), gerendert als Lauf-Vorschlagskarte
+ * (`KosmoPanel.tsx`, testid `lauf-vorschlag-root`). «Lauf starten» ruft
+ * `lauf-runtime.starte()` — DERSELBE Weg wie der `__kosmoLauf`-Testhook.
+ * KEIN Auto-Start unter keinen Umständen (Sanktion 2). Ungültiges
+ * JSON/Schema → zod weist ab, Kosmo bekommt den Fehler als Tool-Ergebnis
+ * zurück (derselbe `parseRohArgumente`-Rettungsweg wie `validateToolCall`
+ * oben, VOR der zod-Prüfung).
+ */
+export const LAUF_PLANEN_TOOL_NAME = 'lauf_planen';
+
+export function laufPlanTool(): ToolDefinition {
+  return {
+    name: LAUF_PLANEN_TOOL_NAME,
+    description:
+      'Schlägt einen mehrstufigen LAUF vor — eine geplante Folge mehrerer Kernel-Commands mit einer Begründung je Schritt. WIRD NIE SELBST AUSGEFÜHRT: der Architekt sieht eine Vorschlagskarte mit der ganzen Schrittliste und entscheidet über «Lauf starten»/«Ablehnen». Nutze dieses Werkzeug für mehrstufige Bitten («baue mir …», «richte … ein», mehrere zusammenhängende Schritte) — für EINEN einzelnen Handgriff das passende Command-Werkzeug direkt aufrufen, nicht lauf_planen.',
+    parameters: z.toJSONSchema(laufPlanSchema, { io: 'input', target: 'draft-7' }),
+  };
+}
+
+export interface ValidatedLaufPlanCall {
+  ok: true;
+  plan: LaufPlan;
+}
+
+export interface FailedLaufPlanCall {
+  ok: false;
+  error: string;
+}
+
+/**
+ * Validiert einen `lauf_planen`-Aufruf: derselbe jsonrepair-dann-zod-Weg wie
+ * `validateToolCall` (geteilt über `parseRohArgumente`), geprüft gegen
+ * `laufPlanSchema` (`lauf-plan.ts#pruefeLaufPlan`) statt gegen ein einzelnes
+ * Command-Schema. Liefert ein Ergebnis statt zu werfen — `chat.ts` meldet
+ * einen Fehschlag als Tool-Ergebnis ans Modell zurück (Retry-Muster).
+ */
+export function validateLaufPlanCall(call: ToolCall): ValidatedLaufPlanCall | FailedLaufPlanCall {
+  const geparst = parseRohArgumente(call.arguments);
+  if (!geparst.ok) return geparst;
+  const geprueft = pruefeLaufPlan(geparst.data);
+  if (!geprueft.ok) return { ok: false, error: geprueft.error };
+  return { ok: true, plan: geprueft.plan };
 }

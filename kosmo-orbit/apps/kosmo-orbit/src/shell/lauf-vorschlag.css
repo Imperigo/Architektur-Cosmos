@@ -1,0 +1,78 @@
+/* Lauf-Vorschlagskarte + Lauf-Bibliothek (v0.8.6/PB1 «Autopilot-Dialog +
+   Lauf-Bibliothek», `docs/V086-SPEZ.md` §3 E4, C-10..C-13) — additive,
+   eigene Datei (Diff steht für sich), dieselben Flächen-/Abstands-Token wie
+   `kosmo-panel.css`/`lauf-anzeige.css`. Die Vorschlagskarte teilt bewusst die
+   `.kp-eyebrow`/`.kp-karte-titel`/`.kp-knopf-reihe`-Klassen aus
+   `kosmo-panel.css` (gleiche Optik wie eine normale Diff-Karte) und den
+   Status-Punkt `.lauf-schritt-punkt` aus `lauf-anzeige.css`. */
+
+.lauf-vorschlag-karte {
+  margin: 10px 14px;
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: var(--k-s3);
+  background: var(--k-raised);
+  border: 1px solid var(--k-accent);
+}
+
+.lauf-vorschlag-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lauf-vorschlag-schritt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--k-s2);
+}
+
+.lauf-vorschlag-schritt-begruendung {
+  font-size: 12.5px;
+  color: var(--k-ink);
+  line-height: 1.4;
+}
+
+.lauf-bibliothek {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--k-line);
+  flex-wrap: wrap;
+}
+
+.lauf-bibliothek-titel {
+  font-size: var(--k-t-sm);
+  color: var(--k-ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex: 0 0 auto;
+}
+
+.lauf-bibliothek-reihe {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lauf-bibliothek-eintrag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--k-line);
+  background: var(--k-surface-soft, var(--k-surface));
+  color: var(--k-ink);
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lauf-bibliothek-eintrag:hover {
+  border-color: var(--k-accent);
+}

@@ -1,6 +1,17 @@
 import { allCommands, type KosmoDoc } from '@kosmo/kernel';
 import type { ChatMessage, ChatProvider, ToolCall, ToolDefinition } from './provider';
-import { commandIdFor, commandTools, modelQueryTool, validateToolCall, type CommandToolsOptionen, type ValidatedCall } from './tools';
+import {
+  commandIdFor,
+  commandTools,
+  LAUF_PLANEN_TOOL_NAME,
+  laufPlanTool,
+  modelQueryTool,
+  validateLaufPlanCall,
+  validateToolCall,
+  type CommandToolsOptionen,
+  type ValidatedCall,
+} from './tools';
+import type { LaufPlan } from './lauf-plan';
 import { routePersona } from './personas';
 import { baueSystemprompt, dossierBlock, rolleBlock, projektKontextBlock, type SystemPromptBlock } from './systemprompt';
 import { skillBlock, type SkillMeta } from './skills';
@@ -34,6 +45,22 @@ export interface Proposal {
   summary: string;
   /** Aktionskette: mehrere Schritte eines Zugs = EIN Paket (eine Karte, ein Undo). */
   paket?: { id: string; index: number; groesse: number };
+}
+
+/**
+ * v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3) — das Ergebnis eines
+ * `lauf_planen`-Tool-Calls, ANALOG zu `Proposal` oben, aber EIGENSTÄNDIG:
+ * ein `LaufVorschlag` trägt den GANZEN `LaufPlan` (Titel + Schrittliste mit
+ * Begründungen), keinen einzelnen `commandId`/`params` — die App rendert ihn
+ * als eigene Lauf-Vorschlagskarte (`KosmoPanel.tsx`, testid
+ * `lauf-vorschlag-root`) statt als normale Diff-Karte. «Lauf starten» ruft
+ * `lauf-runtime.starte(plan)` — DERSELBE Weg wie der `__kosmoLauf`-Testhook,
+ * NIE ein direkter Command-Aufruf hier (Sanktion 3: «lauf_planen führt selbst
+ * Commands aus = Paket ungültig»).
+ */
+export interface LaufVorschlag {
+  callId: string;
+  plan: LaufPlan;
 }
 
 export interface SessionEvents {
@@ -73,6 +100,18 @@ export interface SessionEvents {
    * Optional — bestehende 219 KI-Tests ohne `onRolle` bleiben unverändert grün.
    */
   onRolle?(info: ZugRolle): void;
+  /**
+   * v0.8.6/PB1 (additiv, E4, `docs/V086-SPEZ.md` §3) — feuert, wenn
+   * `validateLaufPlanCall` (`tools.ts`) einen `lauf_planen`-Aufruf annimmt.
+   * ANALOG zu `onProposal`, aber für Läufe: der Vorschlag wird NIE
+   * ausgeführt, nur gemeldet — die App zeigt die Lauf-Vorschlagskarte und
+   * ruft bei «Lauf starten» `resolveLaufGestartet()`/bei «Ablehnen»
+   * `resolveLaufAbgelehnt()` (unten). Optional — bestehende Aufrufer ohne
+   * `onLaufVorschlag` bleiben unverändert grün (kein `lauf_planen`-Aufruf
+   * erzeugt dann einfach kein sichtbares Ereignis, der Zug bleibt trotzdem
+   * ehrlich blockiert, s. `pendingLauf` unten).
+   */
+  onLaufVorschlag?(v: LaufVorschlag): void;
 }
 
 /**
@@ -109,8 +148,15 @@ function brauchteReparatur(rohArgs: unknown): boolean {
 export class ChatSession {
   private messages: ChatMessage[] = [];
   private pending = new Map<string, ValidatedCall & { callId: string }>();
+  /** v0.8.6/PB1 (E4) — offene `lauf_planen`-Vorschläge, GETRENNT von `pending`
+   * (ein `LaufVorschlag` trägt keinen `commandId`/`params` im Sinne von
+   * `ValidatedCall`). Blockiert `turn()` genauso wie ein normaler
+   * schreibender Vorschlag: erst `resolveLaufGestartet`/`resolveLaufAbgelehnt`
+   * leert die Karte, danach darf ein neuer Zug laufen. */
+  private pendingLauf = new Map<string, LaufVorschlag>();
   private tools: ToolDefinition[];
   private queryTool: ReturnType<typeof modelQueryTool>;
+  private laufPlanToolDef: ToolDefinition;
   private readTools: Map<string, ReadTool>;
   /** v0.8.2/P3 B1 (additiv): Controller des GERADE laufenden `turn()` —
    * `stopStream()` bricht genau diesen ab, `null` wenn nichts läuft. */
@@ -182,10 +228,15 @@ export class ChatSession {
     private skills: readonly SkillMeta[] = [],
   ) {
     this.queryTool = modelQueryTool(doc, contextDefaults);
+    this.laufPlanToolDef = laufPlanTool();
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
     this.tools = [
       { name: this.queryTool.name, description: this.queryTool.description, parameters: this.queryTool.parameters },
       ...extraReadTools.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters })),
+      // E4 (`docs/V086-SPEZ.md` §3): `lauf_planen` steht nach der
+      // Nicht-Command-Tool-Präzedenz (`modell_lesen`/Read-Tools), VOR den
+      // Command-Tools — es ist selbst kein Kernel-Command.
+      this.laufPlanToolDef,
       ...commandTools(toolOptionen),
     ];
     if (systemPrompt) this.messages.push({ role: 'system', content: systemPrompt });
@@ -321,6 +372,28 @@ export class ChatSession {
         lesendAufgerufen = true;
         continue;
       }
+      if (call.name === LAUF_PLANEN_TOOL_NAME) {
+        // E4 (`docs/V086-SPEZ.md` §3, Sanktion 2+3): `lauf_planen` läuft NIE
+        // — kein `applyDefaults`/`validateToolCall` gegen die Kernel-
+        // Command-Registry (der Tool-Name ist dort unbekannt), sondern die
+        // eigene `laufPlanSchema`-Prüfung. Bei Erfolg: EIGENES Ereignis
+        // (`onLaufVorschlag`), NICHT `schreibend`/`onProposal` — ein
+        // LaufVorschlag ist kein einzelner Command-Vorschlag.
+        const validated = validateLaufPlanCall(call);
+        if (!validated.ok) {
+          this.messages.push({
+            role: 'tool',
+            toolName: call.name,
+            content: `FEHLER: ${validated.error}. Korrigiere den Lauf-Plan und rufe lauf_planen genau einmal erneut auf.`,
+          });
+          needsContinue = true;
+          continue;
+        }
+        const vorschlag: LaufVorschlag = { callId: call.id, plan: validated.plan };
+        this.pendingLauf.set(call.id, vorschlag);
+        this.events.onLaufVorschlag?.(vorschlag);
+        continue;
+      }
       const withDefaults = this.applyDefaults(call);
       const validated = validateToolCall(withDefaults, this.doc);
       // §4.2 (additiv): reiner Beobachter — feuert VOR dem Weiterlaufen als
@@ -361,7 +434,10 @@ export class ChatSession {
       });
     }
 
-    if (needsContinue && this.pending.size === 0) {
+    // v0.8.6/PB1 (E4): ein offener LaufVorschlag blockiert den nächsten Zug
+    // GENAUSO wie ein offener Command-Vorschlag — erst
+    // `resolveLaufGestartet`/`resolveLaufAbgelehnt` (unten) räumt ihn weg.
+    if (needsContinue && this.pending.size === 0 && this.pendingLauf.size === 0) {
       await this.turn();
     }
   }
@@ -437,7 +513,7 @@ export class ChatSession {
       toolName: call.commandId.replace(/\./g, '_'),
       content: `AUSGEFÜHRT: ${resultSummary}`,
     });
-    if (this.pending.size === 0) await this.turn();
+    if (this.pending.size === 0 && this.pendingLauf.size === 0) await this.turn();
   }
 
   /** Architekt hat abgelehnt. */
@@ -450,6 +526,37 @@ export class ChatSession {
       toolName: call.commandId.replace(/\./g, '_'),
       content: `ABGELEHNT vom Architekten${reason ? `: ${reason}` : ''}. Nicht erneut versuchen, ausser er bittet darum.`,
     });
-    if (this.pending.size === 0) await this.turn();
+    if (this.pending.size === 0 && this.pendingLauf.size === 0) await this.turn();
+  }
+
+  /**
+   * v0.8.6/PB1 (E4) — Architekt hat den Lauf-Vorschlag gestartet: die App
+   * hat bereits `lauf-runtime.starte(plan)` gerufen (derselbe Weg wie der
+   * `__kosmoLauf`-Testhook) — DIESE Methode meldet Kosmo nur noch das
+   * Ergebnis, sie startet selbst NICHTS (Sanktion 3).
+   */
+  async resolveLaufGestartet(callId: string, resultSummary: string): Promise<void> {
+    const vorschlag = this.pendingLauf.get(callId);
+    if (!vorschlag) return;
+    this.pendingLauf.delete(callId);
+    this.messages.push({
+      role: 'tool',
+      toolName: LAUF_PLANEN_TOOL_NAME,
+      content: `LAUF GESTARTET: ${resultSummary}`,
+    });
+    if (this.pending.size === 0 && this.pendingLauf.size === 0) await this.turn();
+  }
+
+  /** v0.8.6/PB1 (E4) — Architekt hat den Lauf-Vorschlag abgelehnt. */
+  async resolveLaufAbgelehnt(callId: string, reason?: string): Promise<void> {
+    const vorschlag = this.pendingLauf.get(callId);
+    if (!vorschlag) return;
+    this.pendingLauf.delete(callId);
+    this.messages.push({
+      role: 'tool',
+      toolName: LAUF_PLANEN_TOOL_NAME,
+      content: `ABGELEHNT vom Architekten${reason ? `: ${reason}` : ''}. Nicht erneut versuchen, ausser er bittet darum.`,
+    });
+    if (this.pending.size === 0 && this.pendingLauf.size === 0) await this.turn();
   }
 }

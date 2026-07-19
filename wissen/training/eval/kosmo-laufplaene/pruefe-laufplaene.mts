@@ -37,10 +37,11 @@ import { fileURLToPath } from 'node:url';
 // Relativer Import statt `@kosmo/*` — dieselbe Begründung wie im Vorbild
 // `../kosmo-zeichner-commands/pruefe-eval.mts`: diese Datei liegt unter
 // `wissen/` (Geschwisterverzeichnis von `kosmo-orbit/`, kein npm-Workspace-
-// Mitglied). Modulauflösung von `@kosmo/kernel` innerhalb der importierten
-// Quelldateien folgt deren eigenem Ablageort, nicht dem dieses Skripts.
+// Mitglied). Modulauflösung von `@kosmo/kernel`/`@kosmo/ai` innerhalb der
+// importierten Quelldateien folgt deren eigenem Ablageort, nicht dem dieses
+// Skripts.
 import { KosmoDoc, allCommands, execute, getCommand, type Entity } from '../../../../kosmo-orbit/packages/kosmo-kernel/src/index';
-import { pruefeLaufPlan, type LaufPlan } from '../../../../kosmo-orbit/packages/kosmo-ai/src/index';
+import { loeseLaufPlanRefs, pruefeLaufPlan, type LaufPlan } from '../../../../kosmo-orbit/packages/kosmo-ai/src/index';
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 
@@ -50,60 +51,35 @@ interface Drehbuch {
   pruefeErgebnis: (doc: KosmoDoc) => void;
 }
 
-// ── Platzhalter-Auflösung (README.md «Platzhalter-Konvention») ─────────────
-// Reine Prüf-/Testcode-Logik, KEIN Runner-/Kernel-Umbau — s. README.md.
-
 interface NamedEntityArtig {
   id: string;
   name?: string;
   nodes?: { id: string; typ: string }[];
 }
 
+/** Nur für die `pruefeErgebnis`-Assertionen unten (kein Ref-Bezug) —
+ * die eigentliche @ref-Platzhalter-Auflösung lebt jetzt in `@kosmo/ai`
+ * (`loeseLaufPlanRefs`, v0.8.6/PB1 E4: «eine Wahrheit», s. dortiger
+ * Kopfkommentar). */
 function alleVomKind(doc: KosmoDoc, kind: string): NamedEntityArtig[] {
   return doc.byKind(kind as Entity['kind']) as unknown as NamedEntityArtig[];
 }
 
-function findeEindeutig(doc: KosmoDoc, kind: string, name: string): NamedEntityArtig {
-  const treffer = alleVomKind(doc, kind).filter((e) => e.name === name);
-  if (treffer.length === 0) {
-    throw new Error(`@ref:${kind}:${name} — keine Entity dieses Namens im Doc gefunden`);
-  }
-  if (treffer.length > 1) {
-    throw new Error(`@ref:${kind}:${name} — Name ist NICHT eindeutig (${treffer.length} Treffer)`);
-  }
-  return treffer[0]!;
-}
-
-function loeseWertAuf(wert: unknown, doc: KosmoDoc): unknown {
-  if (typeof wert === 'string' && wert.startsWith('@ref:')) {
-    const rumpf = wert.slice('@ref:'.length);
-    const [kindRoh, ...rest] = rumpf.split(':');
-    if (kindRoh === 'node') {
-      const [graphName, typ] = rest;
-      if (!graphName || !typ) throw new Error(`Ungültiger @ref:node-Platzhalter: ${wert}`);
-      const graph = findeEindeutig(doc, 'visgraph', graphName);
-      const node = (graph.nodes ?? []).find((n) => n.typ === typ);
-      if (!node) throw new Error(`@ref:node:${graphName}:${typ} — kein Node dieses Typs im Graphen`);
-      return node.id;
-    }
-    const kindKarte: Record<string, string> = { storey: 'storey', aufbau: 'assembly', sheet: 'sheet', graph: 'visgraph' };
-    const kind = kindKarte[kindRoh ?? ''];
-    const name = rest.join(':');
-    if (!kind || !name) throw new Error(`Unbekannter/unvollständiger Platzhalter: ${wert}`);
-    return findeEindeutig(doc, kind, name).id;
-  }
-  if (Array.isArray(wert)) return wert.map((w) => loeseWertAuf(w, doc));
-  if (wert !== null && typeof wert === 'object') {
-    return Object.fromEntries(Object.entries(wert as Record<string, unknown>).map(([k, v]) => [k, loeseWertAuf(v, doc)]));
-  }
-  return wert;
-}
-
+/**
+ * v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3): die @ref-Auflösung selbst kommt
+ * jetzt aus `@kosmo/ai#loeseLaufPlanRefs` — PROGRESSIV, JE SCHRITT frisch
+ * gegen den bereits fortgeschrittenen `doc` aufgerufen (ein Ein-Schritt-
+ * „Plan" je Schleifendurchlauf), weil die drei Drehbücher hier bewusst
+ * SELBSTSTÄNDIG lauffähig sind (spätere Schritte referenzieren Entities, die
+ * frühere Schritte DESSELBEN Laufs gerade erst erzeugt haben) — unverändertes
+ * Verhalten gegenüber der vormals hier lokalen `loeseWertAuf`/
+ * `findeEindeutig`-Kopie, s. `@kosmo/ai/src/lauf-refs.ts`-Kopfkommentar.
+ */
 function fuehrePlanAus(plan: LaufPlan): KosmoDoc {
   const doc = new KosmoDoc();
   for (const schritt of plan.schritte) {
-    const params = loeseWertAuf(schritt.params, doc);
-    execute(doc, schritt.commandId, params, { actor: 'kosmodev' });
+    const aufgeloest = loeseLaufPlanRefs({ titel: plan.titel, schritte: [schritt] }, doc).schritte[0]!;
+    execute(doc, aufgeloest.commandId, aufgeloest.params, { actor: 'kosmodev' });
   }
   return doc;
 }

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { LaufRunner, type LaufGesamtStatus, type LaufPlan, type LaufSchrittZustand } from '@kosmo/ai';
+import { LaufRunner, loeseLaufPlanRefs, type LaufGesamtStatus, type LaufPlan, type LaufSchrittZustand } from '@kosmo/ai';
 import { useProject } from './project-store';
 
 /**
@@ -52,13 +52,36 @@ export interface LaufRuntimeState {
  * (`History#endGroup`: eine leere Gruppe landet nie auf dem Undo-Stack) —
  * ein fehlgeschlagener Schritt hinterlässt also KEINEN leeren Undo-Eintrag.
  * `actor: 'kosmo'` — derselbe Actor wie `applyPaket` in `KosmoPanel.tsx`.
+ *
+ * v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3, C-13) — **@ref-Auflösung VOR
+ * jedem Schritt:** die drei kuratierten Bibliotheks-Drehbücher
+ * (`wissen/training/eval/kosmo-laufplaene/*.json`, Lauf-Bibliothek im
+ * `KosmoPanel.tsx`) sind bewusst SELBSTSTÄNDIG lauffähig — ein späterer
+ * Schritt referenziert eine Entity (Geschoss/Aufbau/Blatt/Graph/Node), die
+ * ein FRÜHERER Schritt DESSELBEN Laufs gerade erst erzeugt hat
+ * (`@ref:storey:...` usw., README.md dort «Platzhalter-Konvention»). Ein
+ * einziger Auflöse-Durchlauf für den GANZEN Plan VOR Laufbeginn könnte diese
+ * Selbst-Referenzen nicht sehen (die Entity existiert dann noch nicht) —
+ * `loeseLaufPlanRefs` (`@kosmo/ai`, Semantik exakt aus dem ehemaligen
+ * Prüfcode-Duplikat `pruefe-laufplaene.mts`) läuft deshalb PROGRESSIV, JE
+ * SCHRITT frisch, gegen den zu diesem Zeitpunkt bereits fortgeschrittenen
+ * Live-Doc (`useProject.getState().doc`, von ALLEN vorherigen Schritten
+ * DIESES Laufs bereits mutiert) — «vor dem Runner» bezogen auf den
+ * jeweiligen Ausführungsschritt, den `LaufRunner#starte()` über `fuehreAus`
+ * anstösst. Ein Plan ganz ohne @ref-Platzhalter (z.B. ein Kosmo-Dialog-
+ * Vorschlag mit bereits realen IDs) durchläuft dieselbe Auflösung wirkungslos
+ * (`loeseWertAuf` lässt jeden Nicht-`@ref:`-Wert unverändert).
  */
 function baueFuehreAus(): (commandId: string, params: unknown) => string {
   return (commandId, params) => {
-    const { history, runCommand } = useProject.getState();
+    const { doc, history, runCommand } = useProject.getState();
+    const aufgeloest = loeseLaufPlanRefs(
+      { titel: '', schritte: [{ commandId, params, begruendung: '' }] },
+      doc,
+    ).schritte[0]!.params;
     history.beginGroup();
     try {
-      const result = runCommand(commandId, params, { actor: 'kosmo' });
+      const result = runCommand(commandId, aufgeloest, { actor: 'kosmo' });
       return result.summary;
     } finally {
       history.endGroup();

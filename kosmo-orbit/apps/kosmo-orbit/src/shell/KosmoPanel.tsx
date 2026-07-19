@@ -20,7 +20,10 @@ import {
   type ChatProvider,
   type CloudAuthArt,
   type AnthropicZugangsFehler,
+  parseLaufPlan,
   type KosmoRolle,
+  type LaufPlan,
+  type LaufVorschlag,
   type Proposal,
   type SkillMeta,
   type StaffelungKonfig,
@@ -66,6 +69,18 @@ import {
 import { useLaufRuntime } from '../state/lauf-runtime';
 import './kosmo-panel.css';
 import './lauf-anzeige.css';
+import './lauf-vorschlag.css';
+// v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3, C-13) — die drei kuratierten
+// Bibliotheks-Drehbücher DIREKT aus ihrer Quelldatei importiert
+// (`resolveJsonModule`, `tsconfig.base.json`) — EINE Wahrheit statt einer
+// gespiegelten Kopie, tsc/vite bündeln den JSON-Inhalt zur Build-Zeit (kein
+// Laufzeit-Fetch, geprüft gegen `npm run build -w @kosmo/orbit-app`). Die
+// Dateien selbst gehören zum Prüfcode-Dateikreis
+// (`wissen/training/eval/kosmo-laufplaene/`), NICHT zu diesem Paket — nur
+// lesend importiert.
+import grundrissRohbau from '../../../../../wissen/training/eval/kosmo-laufplaene/grundriss-rohbau.json';
+import visDemolauf from '../../../../../wissen/training/eval/kosmo-laufplaene/vis-demolauf.json';
+import publishBlatt from '../../../../../wissen/training/eval/kosmo-laufplaene/publish-blatt.json';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -86,6 +101,35 @@ import './lauf-anzeige.css';
  * mit `paket-card`/Zusammenfassungszeile) bleiben unverändert unauffällig.
  */
 const SCHWELLE_GROSSES_PAKET = 8;
+
+/**
+ * v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3, C-13) — Lauf-Bibliothek: die drei
+ * kuratierten Drehbücher aus `wissen/training/eval/kosmo-laufplaene/*.json`
+ * wählbar im Panel. `parseLaufPlan` (statt `pruefeLaufPlan`) ist hier
+ * bewusst — genau der Anwendungsfall aus dessen Kopfkommentar («Aufrufer,
+ * die bereits wissen, dass ihre Fixture/Konstante valide ist … statisch
+ * kuratierte Drehbücher»): ein kaputtes Drehbuch soll beim Laden LAUT
+ * scheitern (derselbe Prüfcode, `pruefe-laufplaene.mts`, hält alle drei
+ * ohnehin ständig grün), nicht still eine leere Bibliothek zeigen.
+ * Auswahl zeigt DIESELBE Lauf-Vorschlagskarte wie ein Kosmo-Dialog-Vorschlag
+ * (kein zweiter Start-Weg, `laufVorschlag`-State unten) — «Lauf starten»
+ * ruft in BEIDEN Fällen `useLaufRuntime.getState().starte(plan)`.
+ */
+export interface LaufBibliothekEintrag {
+  name: string;
+  label: string;
+  plan: LaufPlan;
+}
+/** Exportiert (Muster `rollenBadgeLabel` u.a.): Unit-Test-Zugriff OHNE einen
+ * vollen `KosmoPanel`-Render (der braucht IndexedDB/Zustand-Stores/
+ * localStorage-Settings, s. `rollen-badge.test.tsx`-Kopfkommentar) —
+ * `test/lauf-bibliothek.test.ts` vergleicht diese Konstante gegen die
+ * rohen JSON-Dateien. */
+export const LAUF_BIBLIOTHEK: readonly LaufBibliothekEintrag[] = [
+  { name: 'grundriss-rohbau', label: (grundrissRohbau as { titel: string }).titel, plan: parseLaufPlan(grundrissRohbau) },
+  { name: 'vis-demolauf', label: (visDemolauf as { titel: string }).titel, plan: parseLaufPlan(visDemolauf) },
+  { name: 'publish-blatt', label: (publishBlatt as { titel: string }).titel, plan: parseLaufPlan(publishBlatt) },
+];
 
 /**
  * v0.8.3/P7 (§5.4/§12.2 C-9, `docs/V083-SPEZ.md`) — Kosmos eigene, kuratierte
@@ -717,6 +761,20 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   const laufPlan = useLaufRuntime((s) => s.plan);
   const laufSchritte = useLaufRuntime((s) => s.schritte);
   const laufStatus = useLaufRuntime((s) => s.status);
+  /**
+   * v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3, C-10/C-11/C-12/C-13) — die
+   * Lauf-VORSCHLAGSKARTE (VOR dem Start, anders als `laufPlan` oben, das ist
+   * der bereits LAUFENDE/fertige Lauf). `quelle: 'chat'` trägt eine `callId`
+   * (die `ChatSession` über `resolveLaufGestartet`/`resolveLaufAbgelehnt`
+   * zurückerwartet), `quelle: 'bibliothek'` hat keine — «Lauf starten» ruft
+   * in BEIDEN Fällen denselben `useLaufRuntime.getState().starte(plan)`-Weg
+   * (KEIN zweiter Start-Pfad, C-13). Nur EIN offener Vorschlag gleichzeitig
+   * (ein neuer überschreibt den alten) — deckungsgleich mit `pendingLauf` in
+   * `ChatSession` (dort ebenfalls kein Mehrfach-Vorrat vorgesehen).
+   */
+  const [laufVorschlag, setLaufVorschlag] = useState<
+    { quelle: 'chat'; callId: string; plan: LaufPlan } | { quelle: 'bibliothek'; plan: LaufPlan } | null
+  >(null);
   // Belege des Gesprächs: [Qn] im Antworttext → Quelle (Chip mit Quellensprung)
   const quellenMap = useRef(new Map<number, QuellenRef>());
   const quellenZaehler = useRef(0);
@@ -931,6 +989,14 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                 : x,
             ),
           );
+        },
+        // v0.8.6/PB1 (additiv, E4, `docs/V086-SPEZ.md` §3) — `lauf_planen`
+        // wurde NIE ausgeführt (`chat.ts#turn()`), nur gemeldet: zeigt die
+        // Lauf-Vorschlagskarte. Ein zweiter Vorschlag in derselben Sitzung
+        // ersetzt einen noch offenen (kein Vorrat, s. `laufVorschlag`-State).
+        onLaufVorschlag: (v: LaufVorschlag) => {
+          setLaufVorschlag({ quelle: 'chat', callId: v.callId, plan: v.plan });
+          useKosmoStatus.getState().setzeLetzteAktivitaet(kurzform(`Lauf-Vorschlag: ${v.plan.titel}`));
         },
       },
       personas.kosmo.systemPrompt,
@@ -1515,6 +1581,41 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       ausgang: 'abgelehnt',
       ...(grund !== undefined ? { grund } : {}),
     });
+  };
+
+  /**
+   * v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3, Sanktion 2+3 — KEIN Auto-Start,
+   * dieses Tool führt NIE selbst aus) — «Lauf starten»: DERSELBE Weg wie der
+   * `__kosmoLauf`-Testhook (`lauf-runtime.ts`), egal ob der Vorschlag aus dem
+   * Chat kam oder aus der Lauf-Bibliothek (C-13, kein zweiter Start-Pfad).
+   * Löst NICHTS selbst auf — `lauf-runtime.ts#starte()` ruft die @ref-
+   * Auflösung intern VOR jedem Schritt (`loeseLaufPlanRefs`, `@kosmo/ai`).
+   * Meldet Kosmo den Start nur nach, wenn der Vorschlag aus dem Chat kam
+   * (`resolveLaufGestartet`) — ein Bibliotheks-Start hat keine offene
+   * `ChatSession`-Karte, die auf eine Antwort wartet.
+   */
+  const starteLaufVorschlag = () => {
+    if (!laufVorschlag) return;
+    const { plan } = laufVorschlag;
+    useLaufRuntime.getState().starte(plan);
+    if (laufVorschlag.quelle === 'chat') {
+      void session.resolveLaufGestartet(
+        laufVorschlag.callId,
+        `Lauf «${plan.titel}» gestartet (${plan.schritte.length} Schritt${plan.schritte.length === 1 ? '' : 'e'}).`,
+      );
+    }
+    setLaufVorschlag(null);
+  };
+
+  /** v0.8.6/PB1 (E4) — «Ablehnen»: verwirft die Karte, meldet Kosmo die
+   * Ablehnung nur bei einem Chat-Vorschlag (Bibliotheks-Vorschläge haben
+   * keine offene `ChatSession`-Karte). */
+  const lehneLaufVorschlagAb = () => {
+    if (!laufVorschlag) return;
+    if (laufVorschlag.quelle === 'chat') {
+      void session.resolveLaufAbgelehnt(laufVorschlag.callId);
+    }
+    setLaufVorschlag(null);
   };
 
   /**
@@ -2108,6 +2209,65 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           )}
           <Hairline />
           <DiagnosePanel />
+        </div>
+      )}
+
+      {/* v0.8.6/PB1 (E4, `docs/V086-SPEZ.md` §3, C-13) — Lauf-Bibliothek:
+          IMMER sichtbar (kein Gate hinter den Einstellungen), ausser
+          während ein Lauf gerade LÄUFT oder eine Vorschlagskarte offen ist
+          — bleibt nach einem FERTIGEN/fehlgeschlagenen/abgebrochenen Lauf
+          wieder wählbar (`laufStatus`, nicht `laufPlan`: ein einmal
+          gestarteter Lauf bleibt als Anzeige unten stehen, s. `laufPlan`-
+          Block). Auswahl zeigt DIESELBE Vorschlagskarte wie ein
+          Kosmo-Dialog-Vorschlag unten. */}
+      {!laufVorschlag && laufStatus !== 'laeuft' && (
+        <div data-testid="lauf-bibliothek-root" className="lauf-bibliothek">
+          <span className="lauf-bibliothek-titel">Lauf-Bibliothek</span>
+          <div className="lauf-bibliothek-reihe">
+            {LAUF_BIBLIOTHEK.map((eintrag) => (
+              <button
+                key={eintrag.name}
+                type="button"
+                className="k-druck lauf-bibliothek-eintrag"
+                data-testid={`lauf-bibliothek-${eintrag.name}`}
+                title={eintrag.label}
+                onClick={() => setLaufVorschlag({ quelle: 'bibliothek', plan: eintrag.plan })}
+              >
+                {eintrag.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* v0.8.6/PB1 (E4, C-10/C-11/C-12) — Lauf-Vorschlagskarte: rendert
+          IMMER den ganzen `LaufPlan` (Titel + Schrittliste mit
+          Begründungen) — egal ob er aus dem Chat (`onLaufVorschlag`) oder
+          aus der Bibliothek oben kommt. «Lauf starten» ruft
+          `lauf-runtime.starte(plan)` — KEIN Auto-Start unter keinen
+          Umständen, nur der explizite Klick hier tut das. */}
+      {laufVorschlag && (
+        <div data-testid="lauf-vorschlag-root" className="lauf-vorschlag-karte">
+          <div className="kp-eyebrow">
+            {laufVorschlag.quelle === 'bibliothek' ? 'Lauf aus der Bibliothek' : 'Lauf-Vorschlag von Kosmo'}
+          </div>
+          <div className="kp-karte-titel">{laufVorschlag.plan.titel}</div>
+          <ol className="lauf-vorschlag-liste">
+            {laufVorschlag.plan.schritte.map((schritt, i) => (
+              <li key={i} data-testid={`lauf-vorschlag-schritt-${i}`} className="lauf-vorschlag-schritt">
+                <span className="lauf-schritt-punkt" aria-hidden="true" />
+                <span className="lauf-vorschlag-schritt-begruendung">{schritt.begruendung}</span>
+              </li>
+            ))}
+          </ol>
+          <div className="kp-knopf-reihe">
+            <KButton size="sm" tone="accent" data-testid="lauf-vorschlag-starten" onClick={starteLaufVorschlag}>
+              Lauf starten
+            </KButton>
+            <KButton size="sm" tone="ghost" data-testid="lauf-vorschlag-ablehnen" onClick={lehneLaufVorschlagAb}>
+              Ablehnen
+            </KButton>
+          </div>
         </div>
       )}
 

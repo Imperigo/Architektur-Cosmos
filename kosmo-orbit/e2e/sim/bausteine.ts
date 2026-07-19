@@ -842,7 +842,10 @@ export async function kosmoFragen(page: Page, frage: string, erwartung: KosmoErw
   // kosmo.panelOffen bereits, aber ein Baustein soll auch robust bleiben,
   // wenn eine Journey das Panel zwischenzeitlich schliesst.
   if (!(await page.locator('[data-testid="kosmo-input"]').isVisible())) {
-    await page.click('[data-testid="kosmo-symbol"]');
+    // Orb-Gesetz (v0.8.4 PB4, ROADMAP 469): Einfachklick öffnet nur die
+    // Konversationskarte — das volle Panel (mit kosmo-input) öffnet der
+    // DOPPELklick. Fund v0.8.6-B (PB1-Bericht), Fable-Nachzug.
+    await page.dblclick('[data-testid="kosmo-symbol"]');
   }
   await page.fill('[data-testid="kosmo-input"]', frage); // [Quelle: sim-umbau.spec.ts Z.183 / sim-mfh.spec.ts Z.196]
   await page.click('[data-testid="kosmo-send"]'); // [Quelle: sim-umbau.spec.ts Z.184 / sim-mfh.spec.ts Z.197]
@@ -1213,7 +1216,7 @@ export async function kosmoChatSkript(
     await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
-  await page.click('[data-testid="kosmo-symbol"]'); // … und mit scripted-Settings neu öffnen [Quelle: kosmoFragen-Baustein oben]
+  await page.dblclick('[data-testid="kosmo-symbol"]'); // … und mit scripted-Settings neu öffnen (Doppelklick = volles Panel, Orb-Gesetz v0.8.4) [Quelle: kosmoFragen-Baustein oben]
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 
   const sendKnopf = page.locator('[data-testid="kosmo-send"]'); // [Quelle: KosmoPanel.tsx Z.1452, disabled={busy}]
