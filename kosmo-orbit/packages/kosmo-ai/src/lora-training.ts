@@ -332,8 +332,8 @@ export const LORA_ADAPTER_REGISTRY: readonly LoraAdapterStatus[] = [
     // (Stand des PD2-Laufs) — Begründung fürs manuelle statt Buildzeit-
     // Nachziehen am `eval`-Feld oben.
     eval: {
-      quote: '25/25 (100 %)',
-      stand: 'PD2 v0.8.4 — ScriptedProvider/ChatSession-Integrationsbeweis (Plumbing/Schema-Drift, kein Modell-Eval)',
+      quote: '35/35 (100 %)',
+      stand: 'PB2 v0.8.5 — Eval 25→35 Prompts, ScriptedProvider/ChatSession-Integrationsbeweis (Plumbing/Schema-Drift, kein Modell-Eval)',
     },
   },
   {

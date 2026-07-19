@@ -8,6 +8,7 @@ import { usePlanAnsicht } from '../../state/plan-ansicht';
 import { useUnternehmerplan } from './unternehmerplan';
 import type { ViewportHandlers } from './Viewport3D';
 import { SketchOverlay } from './SketchOverlay';
+import { KommentarErfassenAmPunkt } from './island/inhalte/kommentar-formular';
 import { distToSegment, outlineOf, pickEntityAt } from './plan-hit-test';
 import { NavLeiste } from './NavLeiste';
 import { planLod, type PlanLod } from './planLod';
@@ -136,31 +137,20 @@ const KOMMENTAR_TOLERANZ = 300; // mm, grosszügiger Marker-Klickradius
  * Sweep gesperrt — kein neues Token wird dafür erfunden). Reine Umbenennung,
  * 0 Wertänderung, 0 Optik-Änderung.
  */
-// Entspricht 1:1 `packages/kosmo-kernel/src/derive/schraffur.ts`
-// `KATALOG.beton.tint` — bewusst Print-Konvention, NICHT theme-abhängig
-// (Kommentar dort/hier: dieselbe Betontönung wie im Schnitt). Kein
-// `--k-*`-Token bildet eine theme-invariante Print-Tönung ab; NICHT als
-// `var(--k-…)` ersetzt, um die Kopplung an den Kernel-Katalogwert nicht zu
-// verlieren. Kandidat für aura.css (W5-Bericht): eine `--k-druck-beton`-
-// artige, theme-invariante Print-Tönung.
-const PLAN_HATCH_BETON_TINT = '#dad7d1';
-// Zugehörige Diagonal-Linie desselben Beton-Schraffur-Musters — dieselbe
-// Print-Konvention-Begründung wie oben; kein `--k-technik`-Wert trifft
-// exakt zu (`#1a1815` Papier / `#444b59` Kosmos sind Theme-Werte, diese
-// Linie bleibt bewusst fix). Kandidat für aura.css (W5-Bericht).
-const PLAN_HATCH_BETON_LINIE = '#333';
-// Unternehmerplan-Referenz-Overlay (C4b/C-E5): «reiner Durchpaus-Layer in
-// einer Akzentfarbe, nie wählbar» (Kopfkommentar am Verbraucher) — bewusst
-// EIN fixer Ton unabhängig vom gewählten UI-Akzent (`--k-accent` wechselt
-// mit `data-akzent`, dieser Durchpaus-Ton NICHT). Kein `--k-*`-Token trifft
-// exakt zu. Kandidat für aura.css (W5-Bericht).
-const UNTERNEHMERPLAN_OVERLAY_FARBE = '#1a6fb5';
-// Verletzte-Zone-Warnfarbe (nicht «fehler» — der Fehlerfall nutzt bereits
-// `var(--k-danger)`, s. Verbraucher). Liegt nahe, aber NICHT exakt auf
-// `--k-warning` (`#a37b22`) — keine Ersetzung ohne Optik-Änderung möglich.
-// Kandidat für aura.css (W5-Bericht): eine zweite Warnstufe neben
-// `--k-warning`.
-const ZONE_VERLETZT_WARN_FARBE = '#c68622';
+// E7 (v0.8.5, docs/V085-SPEZ.md): die vier PB6-Kandidaten (ROADMAP 471)
+// sind seit PB4-085 kanonische aura.css-Token (`:root`-invariant, Werte
+// byte-gleich gespiegelt — Herkunfts-Begründungen stehen jetzt DORT am
+// Token). Diese Konstanten konsumieren nur noch das Token; SVG-DOM im
+// Browser löst `var()` in Attributen auf.
+const PLAN_HATCH_BETON_TINT = 'var(--k-print-tint)';
+const PLAN_HATCH_BETON_LINIE = 'var(--k-print-linie)';
+// Unternehmerplan-Referenz-Overlay (C4b/C-E5): «reiner Durchpaus-Layer,
+// nie wählbar» — bewusst unabhängig vom UI-Akzent, darum das
+// theme-invariante Diagnose-Blau statt `--k-accent`.
+const UNTERNEHMERPLAN_OVERLAY_FARBE = 'var(--k-diagnose)';
+// Verletzte-Zone-Warnstufe NEBEN `--k-warning` (Fehlerfall bleibt
+// `var(--k-danger)` am Verbraucher).
+const ZONE_VERLETZT_WARN_FARBE = 'var(--k-warning-2)';
 // Raumgraph-Kanten/-Knoten (Diagnose-Overlay). `#2455a4` ist zufällig
 // identisch mit `--k-accent` unter `[data-akzent='blau']`
 // (`aura.css:150`) — NICHT als `var(--k-accent)` ersetzt, weil das den
@@ -2182,6 +2172,22 @@ export function PlanView({
           }}
         />
       )}
+      {/* D11/C-20 (v0.8.5 PB3, Fable-Nachzug — PlanView lag im PB1-Kreis):
+          Kommentar-Erfassen im MANUELL-Modus. Rendert sich nur, wenn die
+          Insel-Logik einen `kommentarPunkt` gesetzt hat (K→Klick, s.
+          DesignWorkspace) UND die Oberfläche manuell ist — exakt das
+          SketchOverlay-`toScreen`-Muster eine Zeile weiter oben. */}
+      <KommentarErfassenAmPunkt
+        toScreen={(p) => {
+          const rect = svgRef.current?.getBoundingClientRect();
+          const w = rect?.width ?? 800;
+          const h = rect?.height ?? 600;
+          return {
+            x: (p.x - view.cx) * view.scale + w / 2,
+            y: (view.cy - p.y) * view.scale + h / 2,
+          };
+        }}
+      />
       {kontext2d && (
         <ViewportKontextmenue
           x={kontext2d.x}

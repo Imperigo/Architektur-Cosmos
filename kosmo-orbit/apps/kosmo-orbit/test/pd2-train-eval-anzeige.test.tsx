@@ -14,11 +14,11 @@ import { TrainWorkspace } from '../src/modules/train/TrainWorkspace';
  */
 
 describe('TrainWorkspace — Eval-Zeile der Adapter-Registry (v0.8.4/PD2)', () => {
-  it('zeigt die Eval-Zeile NUR für kosmo-zeichner-commands, mit der 25/25-Quote', () => {
+  it('zeigt die Eval-Zeile NUR für kosmo-zeichner-commands, mit der 35/35-Quote (PB2 v0.8.5: 25→35)', () => {
     const html = renderToStaticMarkup(<TrainWorkspace />);
     expect(html).toContain('data-testid="train-adapter-eval-kosmo-zeichner-commands"');
-    expect(html).toContain('25/25');
-    expect(html).toContain('PD2');
+    expect(html).toContain('35/35');
+    expect(html).toContain('PB2');
   });
 
   it('zeigt KEINE Eval-Zeile für Adapter ohne eval-Feld (kein erfundener Eval-Stand)', () => {

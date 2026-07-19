@@ -15,12 +15,12 @@ describe('LoraAdapterStatus.eval (v0.8.4/PD2, additiv)', () => {
   it('kosmo-zeichner-commands trägt einen eval-Spiegel, der den eingecheckten eval-ergebnis.json-Stand nennt', () => {
     const zeile = LORA_ADAPTER_REGISTRY.find((r) => r.id === 'kosmo-zeichner-commands');
     expect(zeile?.eval).toBeDefined();
-    // Der Spiegel zitiert die reale 25/25-Quote aus
+    // Der Spiegel zitiert die reale 35/35-Quote aus
     // wissen/training/eval/kosmo-zeichner-commands/eval-ergebnis.json (Feld
-    // gesamt.bestanden/gesamt.von) — hier ehrlich als String, kein
-    // rückgerechneter Prozentwert, der die Quelle verdeckt.
-    expect(zeile?.eval?.quote).toContain('25/25');
-    expect(zeile?.eval?.stand).toMatch(/PD2/);
+    // gesamt.bestanden/gesamt.von, PB2 v0.8.5: 25→35) — hier ehrlich als
+    // String, kein rückgerechneter Prozentwert, der die Quelle verdeckt.
+    expect(zeile?.eval?.quote).toContain('35/35');
+    expect(zeile?.eval?.stand).toMatch(/PB2/);
     expect(zeile?.eval?.stand).toMatch(/kein Modell-Eval/i);
   });
 
