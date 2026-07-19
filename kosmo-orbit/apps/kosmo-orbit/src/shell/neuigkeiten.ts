@@ -35,6 +35,35 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.9',
+    datum: '2026-07-19',
+    punkte: [
+      {
+        text: 'Elemente können gesperrt und für den CAD-Austausch beschriftet werden: «Sperren» schützt ein Element überall — Inspector-Löschen, Delete-Taste, Verschieben und Griff-Ziehen greifen nicht mehr, das Element bleibt aber sichtbar, anwählbar und jederzeit entsperrbar. «Ebene setzen» vergibt einen CAD-Layernamen, der NUR im DXF-Export wirkt (AutoCAD/Rhino/Vectorworks) — bewusst kein Ebenen-System im Plan: Sichtbarkeit folgt weiterhin der Semantik.',
+        station: 'design',
+      },
+      {
+        text: 'Der Schnitt verschneidet jetzt auch Wand↔Wand: T-Stoss- und Eck-Überlappungen im Schnittband werden nach Materialpriorität zurückgeschnitten (Beton stösst durch, Dämmung weicht). Knoten mit mehr als zwei Wänden bleiben bewusst unangetastet — kein stilles Falschbild. Treppen sind in 3D an Antritt/Austritt (und Eckpunkt beim L-Lauf) ziehbar, und Massketten-Punkte wandern beim Griff-Zug in place: dieselbe Kette, ein Undo-Schritt.',
+        station: 'design',
+      },
+      {
+        text: 'Blattverzeichnis + Sammellegende: je Publikations-Set entsteht auf Klick ein druckfähiges A4-Blatt mit der Plan-Inhaltsliste (Nr/Blatt/Format/Massstab/Revision/Plancode) und darunter der über den ganzen Satz gesammelten Legende (Themenplan-Farben + Keynotes, ohne Duplikate) — als reine Ableitung immer aktuell, an beiden Export-Stellen (Werkstatt + Insel).',
+        station: 'publish',
+      },
+      {
+        text: 'Blender-Werkbank, ehrlich verdrahtet: Renderings lassen sich als Strichzeichnung (Line-Art) bestellen, die neue SONNE-Insel fragt Sonnenstunden für den Projektstandort an, und in der Asset-Bibliothek gibt es «Modell backen» (Textur-/Polygon-Optimierung). ALLE drei Wege brauchen einen echten Blender-Worker an der HomeStation-Bridge — ohne ihn endet jeder Auftrag offen als «kein-blender-worker» mit klarer Meldung: Bilder dürfen markierte Fakes sein, Physik-Zahlen und Geometrie-Optimierungen werden nie erfunden. Bild-Beschriftungen sind jetzt durchgängig ehrlich: «Vorschau (Fake-Render)», «Aufnahme (Viewport)» oder «Strichzeichnung (Line-Art)».',
+        station: 'vis',
+      },
+      {
+        text: 'Der Node-Editor ist im Dunkeltheme besser lesbar: die sechs Port-Farben liegen neu auf einem einheitlichen Kontrastband (Owner-Wahl «K2 Ausgewogen» aus drei gerechneten Kandidaten), das helle Papier-Theme bleibt unverändert. Der Einklapp-Knopf am Node-Kopf hat eine echte Trefferfläche (kein Pixel-Zielen mehr).',
+        station: 'vis',
+      },
+      {
+        text: 'Der glTF-Export trägt jetzt Geschoss-Hierarchie, Element-Identität (entityId/Art/Geschoss als extras) und doppelseitige Materialien — Downstream-Werkzeuge (Blender & Co.) sehen die Struktur statt einer flachen Mesh-Liste. UV/Texturen bleiben bewusst Worker-Aufgabe.',
+      },
+    ],
+  },
+  {
     version: '0.8.8',
     datum: '2026-07-19',
     punkte: [

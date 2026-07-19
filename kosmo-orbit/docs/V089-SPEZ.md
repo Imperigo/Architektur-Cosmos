@@ -211,18 +211,18 @@ bewegt / +N neu — der Tag-C-Lauf beweist es (E5).
 
 ## 7 · Vollständigkeits-Matrix (Abnahme Tag C)
 
-- [ ] **C-1** Wand↔Wand-Schnitt: Zwei-Wand-T-Stoss/Eck im Schnittband nach Priorität verschnitten; ungleiche assemblyId/Prioritäten getestet; >2-Knoten kontrolliert ausgelassen (kein stilles Falschbild) → PA1
-- [ ] **C-2** Die 3 Schnitt-Goldens sha256-identisch + früher GOLDEN_UPDATE-Probelauf belegt; RE-ARCHICAD-Schnitt-Zeile nachgezogen → PA1
-- [ ] **C-3** ebeneSetzen/sperren: DXF-Layer-Override wirkt (String-Assertion), locked blockiert Verschieben/Griff/Löschen, Element bleibt findbar + entsperrbar (Unit + E2E) → PA2
-- [ ] **C-4** Kein Schloss im Plan-SVG, svg-qa 36/0, Bestands-Goldens still; RE-ARCHICAD-Ebenen-Zeile nachgezogen → PA2
-- [ ] **C-5** Blattverzeichnis: listet die Blätter des Publikations-Sets korrekt und aktualisiert bei Blatt-Änderung (Unit + E2E) → PB3
-- [ ] **C-6** Sammellegende: aggregiert die Pro-Blatt-Legenden des Sets ohne Duplikate; Subspez-Signaturen eingehalten → PB3
-- [ ] **C-7** Additive Goldens: +N exakt wie Erwartungsliste, Guard beweist Bestand still (git status Trefferzahl == N) → PB3
-- [ ] **C-8** Treppen-3D: a/b(/ecke) in 3D ziehbar, Commit über treppeGeometrieSetzen, ID/Form/Breite stabil, Griffe nur bei Einzelauswahl, e2e-Spec grün → PA5
-- [ ] **C-9** GOLDEN-WECHSEL-089.md: Erwartungsliste VOR den Landungen, Tag-C-Lauf Ist==Prognose (0 bewegt / +N), vierstufige Verifikation dokumentiert → Fable
-- [ ] **C-10** Port-Paletten: Kandidaten rechnerisch ≥3:1 in beiden Themes, Owner-Wahl dokumentiert, Overrides + Kommentar-Nachzug, vis-token-Spec erweitert → Fable
-- [ ] **C-11** Kollaps-Fix: Klick im Kopf-Bereich neben dem Glyph toggelt Kollaps (kein Drag-Start), force:true an beiden Stellen entfernt, Spec grün ohne force → PB6a
-- [ ] **C-12** Verschlanktes Ritual komplett: Matrix, lehren/v0.8.9.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen), §0-Delta, Notiz (Owner-Testpause + Smoke-Puffer-Zeile), release-gate 0, Build-Request-Push — NACHWEISLICH kein PDF/keine Zustellung → Fable
+- [x] **C-1** Wand↔Wand-Schnitt: Zwei-Wand-T-Stoss/Eck im Schnittband nach Priorität verschnitten; ungleiche assemblyId/Prioritäten getestet; >2-Knoten kontrolliert ausgelassen (kein stilles Falschbild) → PA1
+- [x] **C-2** Die 3 Schnitt-Goldens sha256-identisch + früher GOLDEN_UPDATE-Probelauf belegt; RE-ARCHICAD-Schnitt-Zeile nachgezogen → PA1
+- [x] **C-3** ebeneSetzen/sperren: DXF-Layer-Override wirkt (String-Assertion), locked blockiert Verschieben/Griff/Löschen, Element bleibt findbar + entsperrbar (Unit + E2E) → PA2
+- [x] **C-4** Kein Schloss im Plan-SVG, svg-qa 36/0, Bestands-Goldens still; RE-ARCHICAD-Ebenen-Zeile nachgezogen → PA2
+- [x] **C-5** Blattverzeichnis: listet die Blätter des Publikations-Sets korrekt und aktualisiert bei Blatt-Änderung (Unit + E2E) → PB3
+- [x] **C-6** Sammellegende: aggregiert die Pro-Blatt-Legenden des Sets ohne Duplikate; Subspez-Signaturen eingehalten → PB3
+- [x] **C-7** Additive Goldens: +N exakt wie Erwartungsliste, Guard beweist Bestand still (git status Trefferzahl == N) → PB3
+- [x] **C-8** Treppen-3D: a/b(/ecke) in 3D ziehbar, Commit über treppeGeometrieSetzen, ID/Form/Breite stabil, Griffe nur bei Einzelauswahl, e2e-Spec grün → PA5
+- [x] **C-9** GOLDEN-WECHSEL-089.md: Erwartungsliste VOR den Landungen, Tag-C-Lauf Ist==Prognose (0 bewegt / +N), vierstufige Verifikation dokumentiert → Fable
+- [x] **C-10** Port-Paletten: Kandidaten rechnerisch ≥3:1 in beiden Themes, Owner-Wahl dokumentiert, Overrides + Kommentar-Nachzug, vis-token-Spec erweitert → Fable
+- [x] **C-11** Kollaps-Fix: Klick im Kopf-Bereich neben dem Glyph toggelt Kollaps (kein Drag-Start), force:true an beiden Stellen entfernt, Spec grün ohne force → PB6a
+- [x] **C-12** Verschlanktes Ritual komplett: Matrix, lehren/v0.8.9.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen), §0-Delta, Notiz (Owner-Testpause + Smoke-Puffer-Zeile), release-gate 0, Build-Request-Push — NACHWEISLICH kein PDF/keine Zustellung → Fable
 
 ## 8 · Ehrliche Nicht-Ziele
 
@@ -334,11 +334,11 @@ Label-Kette ohne Shortlist-Mandat).
 
 ### Matrix-Erweiterung (Abnahme Tag C, zusätzlich zu C-1…C-12)
 
-- [ ] **C-13** Bake-Job: bake--Contract Fünfschritt komplett, Fake-Zweig meldet kein-blender-worker SOFORT (nie running/done im Container), Härtetest-Block grün (Präfix-Regex, out-Injektion, 400, 413, Freigabe-Symmetrie) → PBL1
-- [ ] **C-14** Line-Art: mode 'lineart' erzwingt vis.skip:true (Netzwerk-Mock beweist das gesendete JSON), AUSTAUSCH-Insel-Checkbox löst aus, NodeCanvas.tsx unberührt (git diff beweist es) → PBL2
-- [ ] **C-15** Sonnenstunden: eigene Insel mit Datum-Input, params aus doc.settings.standort nur gelesen, design.ts unberührt, kein-blender-worker-Anzeige wortgleich ehrlich → PBL2
-- [ ] **C-16** glTF: extras/Hierarchie/doubleSided vorhanden, gltf.test.ts grün, kein UV-/Texturexport, KIND_LABEL bereinigt, Bestands-Inline-Tests grün → PBL3
-- [ ] **C-17** Label-Kette: Fake bleibt «Vorschau (Fake-Render)», Aufnahme «Aufnahme (Viewport)», Echt-Zweig per Unit-Test mit künstlichem JobRecord erreicht und als Container-unerreichbar dokumentiert; Bake-Trigger schreibt NICHTS in den Asset-Vault ohne done → PBL2/PBL4
+- [x] **C-13** Bake-Job: bake--Contract Fünfschritt komplett, Fake-Zweig meldet kein-blender-worker SOFORT (nie running/done im Container), Härtetest-Block grün (Präfix-Regex, out-Injektion, 400, 413, Freigabe-Symmetrie) → PBL1
+- [x] **C-14** Line-Art: mode 'lineart' erzwingt vis.skip:true (Netzwerk-Mock beweist das gesendete JSON), AUSTAUSCH-Insel-Checkbox löst aus, NodeCanvas.tsx unberührt (git diff beweist es) → PBL2
+- [x] **C-15** Sonnenstunden: eigene Insel mit Datum-Input, params aus doc.settings.standort nur gelesen, design.ts unberührt, kein-blender-worker-Anzeige wortgleich ehrlich → PBL2
+- [x] **C-16** glTF: extras/Hierarchie/doubleSided vorhanden, gltf.test.ts grün, kein UV-/Texturexport, KIND_LABEL bereinigt, Bestands-Inline-Tests grün → PBL3
+- [x] **C-17** Label-Kette: Fake bleibt «Vorschau (Fake-Render)», Aufnahme «Aufnahme (Viewport)», Echt-Zweig per Unit-Test mit künstlichem JobRecord erreicht und als Container-unerreichbar dokumentiert; Bake-Trigger schreibt NICHTS in den Asset-Vault ohne done → PBL2/PBL4
 
 ### Nicht-Ziele des Nachtrags
 
@@ -348,3 +348,26 @@ HomeStation-Abnahme (Geräte-Termin; Drehbuch-only per Owner-Entscheid) ·
 Worker-Runner-Mittelweg (festes 0.8.10-Paket) · UV-/Textur-Export aus
 gltf.ts · Bake-Ergebnis als editierbares Mesh (nur setGlbContext-
 Referenz-Weg; glb-zu-mesh verlöre die AO-Textur).
+
+## 10 · Ergebnis (Release-Stand, 19.07.2026)
+
+Alle 17 Matrix-Zellen sind erfüllt (adversarialer 16-Prüfer-Fan-out,
+ROADMAP 536; C-12 durch den Release-Commit selbst). Zwei TEIL-Funde wurden
+vor dem Release gefixt (Commit 27d3ab9): der PA2-Revert von PA1s
+RE-ARCHICAD-Nachzug (C-2, Parallel-Paket-Konflikt an geteilter Doku-Datei)
+und der fehlende onGriffStart-E2E-Beweis (C-3, neuer Test (f) in
+ebenen-sperren.spec). E5 ist als Konsolidierungsnachweis vollständig
+erbracht: GOLDEN-WECHSEL-089 Teil 2 mit identischer aggregierter sha256
+vor/nach dem gemeinsamen GOLDEN_UPDATE-Lauf, 0 bewegte Bestandsdateien,
++2 additive PB3-Goldens exakt nach Teil-1-Prognose → 39 Dateien, svg-qa
+38/0. Suiten-Endstand: Kernel 1164 + App 1713 + KI 322 + Contracts 54 +
+Data 44 + Lizenz 8 + UI 111 = **3416**; Eval 55/55; Bridge-Härtetest 118
+OK-Checks. Ehrliche Grenzen bleiben benannt: alle Blender-Ergebnisse im
+Container sind markierte Fakes bzw. enden ehrlich auf kein-blender-worker
+(E9–E13, Sanktionen 12–15); der bildLabel-Echt-Zweig ist nur per
+Unit-Test mit künstlichem JobRecord bewiesen; Owner-Testpause bis v0.9.0
+(kein Rundgang-PDF, keine Installer-Zustellung — Sanktion 10 eingehalten,
+Build-Request für die Website-Kette lief). Owner-Entscheide während des
+Baus: Port-Palette «K2 Ausgewogen» (ROADMAP 532); Manuell-Rückbau
+KosmoVis + E2E-Island-Migration = festes 0.8.10-Paket (neben dem
+Python-Worker-Runner-Mittelweg aus §9).
