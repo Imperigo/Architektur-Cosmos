@@ -6,6 +6,17 @@ import { deriveAll } from './scene';
  * GLB-Export — das Modell als binäres glTF 2.0.
  * Direkter Weg in die KosmoVis-Pipeline (render-scene.geometry.format = glb)
  * und in Blender/Speckle. Koordinaten: Kern (mm, z-oben) → glTF (m, y-oben).
+ *
+ * Hierarchie (E12): statt einer flachen Node-Liste bekommt jedes Geschoss
+ * mit mind. einem Bauteil einen Eltern-Node (`name` = Storey-Name,
+ * `children` = Indizes der Bauteil-Nodes dieses Geschosses); Bauteile ohne
+ * Storey-Zuordnung hängen direkt an der Szene. `scenes[0].nodes`
+ * referenziert NUR Wurzel-Nodes (Storey-Eltern + storeylose Bauteile).
+ * Jeder Bauteil-Node trägt `extras: { entityId, kind, geschoss? }` —
+ * `geschoss` fehlt ganz (statt leer/undefined), wenn kein Storey
+ * zuordenbar ist. Storey-Eltern-Nodes selbst tragen keine extras.
+ * KEINE UVs/Texturen/Tangenten/Kameras — der Unwrap ist Worker-Aufgabe
+ * (s. `docs/V089-SPEZ.md` §9 E12), kein Kernel-Anliegen.
  */
 
 const MM = 1 / 1000;
@@ -26,29 +37,37 @@ const KIND_LABEL: Record<string, string> = {
   stair: 'Treppe',
   column: 'Stuetze',
   beam: 'Unterzug',
-  furniture: 'Moebel',
-  zone: 'Zone',
   freemesh: 'FreeMesh',
+  // furniture/zone bewusst NICHT gemappt (E12-Bereinigung): deriveAll
+  // (derive/scene.ts) liefert für diese Kinds nie ein GeometryArtifact —
+  // ein Label hier wäre totes Mapping, das spätere Agenten für «schon
+  // unterstützt» halten könnten.
 };
+
+/** Storey des Entity, sofern eines zuordenbar ist — gemeinsame Logik für
+ * Objektname (§4) und extras.geschoss (E12), nicht duplizieren. */
+function resolveStorey(doc: KosmoDoc, e: Entity): Storey | undefined {
+  if ('storeyId' in e && typeof e.storeyId === 'string') {
+    const st = doc.get<Storey>(e.storeyId);
+    if (st?.kind === 'storey') return st;
+  }
+  return undefined;
+}
 
 /**
  * Lesbarer Objektname für den Blender-Outliner: «Wand AW Beton 40 · EG»
  * statt roher Entity-Id. Die Id bleibt als Suffix — der Rückweg (welches
  * Bauteil war das?) geht nie verloren.
  */
-function objektName(doc: KosmoDoc, entityId: string): string {
-  const e = doc.get<Entity>(entityId);
-  if (!e) return entityId;
+function objektName(doc: KosmoDoc, entityId: string, e: Entity): string {
   const teile: string[] = [KIND_LABEL[e.kind] ?? e.kind];
   if ('name' in e && typeof e.name === 'string' && e.name) teile.push(e.name);
   else if ('assemblyId' in e && typeof e.assemblyId === 'string') {
     const asm = doc.get<Assembly>(e.assemblyId);
     if (asm?.kind === 'assembly') teile.push(asm.name);
   } else if ('typ' in e && typeof e.typ === 'string') teile.push(e.typ);
-  if ('storeyId' in e && typeof e.storeyId === 'string') {
-    const st = doc.get<Storey>(e.storeyId);
-    if (st?.kind === 'storey') teile.push(`· ${st.name}`);
-  }
+  const st = resolveStorey(doc, e);
+  if (st) teile.push(`· ${st.name}`);
   return `${teile.join(' ')} [${entityId.slice(-6)}]`;
 }
 
@@ -81,6 +100,10 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
   const nodes: unknown[] = [];
   const materials: unknown[] = [];
   const materialIndex = new Map<string, number>();
+  // Geschoss-Hierarchie (E12): storeyId → Bauteil-Node-Indizes dieses
+  // Geschosses; Bauteile ohne Storey landen in rootLeafNodes.
+  const storeyChildren = new Map<string, number[]>();
+  const rootLeafNodes: number[] = [];
 
   const palette: Record<string, [number, number, number]> = {
     beton: [0.79, 0.77, 0.74],
@@ -96,6 +119,9 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
     const idx = materials.length;
     materials.push({
       name: MATERIAL_NAME[key] ?? key,
+      // Einseitige Wand-/Dachflächen sind in Blender sonst unsichtbar,
+      // sobald man von der falschen Seite hineinschaut (E12).
+      doubleSided: true,
       pbrMetallicRoughness: {
         baseColorFactor: [...rgb, 1],
         metallicFactor: 0,
@@ -154,7 +180,8 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
     });
 
     const meshIdx = meshes.length;
-    const label = objektName(doc, a.entityId);
+    const entity = doc.get<Entity>(a.entityId);
+    const label = entity ? objektName(doc, a.entityId, entity) : a.entityId;
     meshes.push({
       name: label,
       primitives: [
@@ -165,13 +192,42 @@ export function exportGlb(doc: KosmoDoc, name = 'KosmoOrbit-Modell'): ArrayBuffe
         },
       ],
     });
-    nodes.push({ name: label, mesh: meshIdx });
+
+    const storey = entity ? resolveStorey(doc, entity) : undefined;
+    const extras = {
+      entityId: a.entityId,
+      ...(entity ? { kind: entity.kind } : {}),
+      ...(storey ? { geschoss: storey.name } : {}),
+    };
+    const nodeIdx = nodes.length;
+    nodes.push({ name: label, mesh: meshIdx, extras });
+
+    if (storey) {
+      const list = storeyChildren.get(storey.id) ?? [];
+      list.push(nodeIdx);
+      storeyChildren.set(storey.id, list);
+    } else {
+      rootLeafNodes.push(nodeIdx);
+    }
   }
+
+  // Geschoss-Hierarchie (E12): ein Eltern-Node je Storey MIT Bauteilen;
+  // storeylose Bauteile bleiben direkte Wurzel-Nodes.
+  const rootNodes: number[] = [];
+  for (const st of doc.storeysOrdered()) {
+    const children = storeyChildren.get(st.id);
+    if (children && children.length) {
+      const storeyNodeIdx = nodes.length;
+      nodes.push({ name: st.name, children });
+      rootNodes.push(storeyNodeIdx);
+    }
+  }
+  rootNodes.push(...rootLeafNodes);
 
   const gltf = {
     asset: { version: '2.0', generator: 'KosmoOrbit V1' },
     scene: 0,
-    scenes: [{ name, nodes: nodes.map((_, i) => i) }],
+    scenes: [{ name, nodes: rootNodes }],
     nodes,
     meshes,
     materials,
