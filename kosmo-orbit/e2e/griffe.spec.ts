@@ -418,12 +418,18 @@ test('Masskette-Punkt-Griff: Drag ändert den Punkt, EIN Ctrl+Z stellt die Kette
   await ziehe(page, von, nach);
 
   const massketten = await page.evaluate(
-    () => window.__kosmo.state().doc.byKind('masskette') as { punkte: { x: number; y: number }[] }[],
+    () => window.__kosmo.state().doc.byKind('masskette') as { id: string; punkte: { x: number; y: number }[] }[],
   );
   expect(massketten).toHaveLength(1);
   expect(massketten[0]!.punkte[1]).toEqual({ x: 1000, y: 2000 });
   expect(massketten[0]!.punkte[0]).toEqual(punkte[0]);
   expect(massketten[0]!.punkte[2]).toEqual(punkte[2]);
+  // E8 (v0.8.9): der Punkt-Zug läuft in place über
+  // `design.massKetteGeometrieSetzen` — die Entity-Id bleibt STABIL (vorher
+  // Löschen+Neusetzen mit neuer Id, benannter 0.8.8-C-3-Aufschub) und die
+  // Auswahl hängt weiter an derselben Kette.
+  expect(massketten[0]!.id).toBe(mkId);
+  expect(await auswahl(page)).toEqual([mkId]);
 
   await page.keyboard.press('Control+z');
   const nachUndo = await page.evaluate(

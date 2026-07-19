@@ -1,10 +1,10 @@
 {
   "adapter": "kosmo-zeichner-commands",
   "modus": "Selbstcheck (ScriptedProvider durch die echte ChatSession)",
-  "erzeugt_um": "2026-07-19T17:04:42.681Z",
+  "erzeugt_um": "2026-07-19T22:20:11.455Z",
   "gesamt": {
-    "bestanden": 45,
-    "von": 45
+    "bestanden": 55,
+    "von": 55
   },
   "klassen": [
     {
@@ -39,8 +39,8 @@
     },
     {
       "kategorie": "vis",
-      "bestanden": 11,
-      "von": 11
+      "bestanden": 15,
+      "von": 15
     },
     {
       "kategorie": "publish",
@@ -81,6 +81,16 @@
       "kategorie": "command-fehler",
       "bestanden": 1,
       "von": 1
+    },
+    {
+      "kategorie": "geometrie",
+      "bestanden": 4,
+      "von": 4
+    },
+    {
+      "kategorie": "baukonstruktion",
+      "bestanden": 2,
+      "von": 2
     }
   ],
   "befunde": [
@@ -353,6 +363,66 @@
       "kategorie": "command-fehler",
       "ok": true,
       "begruendung": "Treffer: Aufruf korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «feld: Invalid option»), kein onProposal, Doc unverändert"
+    },
+    {
+      "id": "cmd-46-verschieben-wand",
+      "kategorie": "geometrie",
+      "ok": true,
+      "begruendung": "Treffer: design.verschieben — 1 Vorschlag, zod-valide Parameter (Verschieben um 500/0 mm)"
+    },
+    {
+      "id": "cmd-47-wand-geometrie-setzen",
+      "kategorie": "geometrie",
+      "ok": true,
+      "begruendung": "Treffer: design.wandGeometrieSetzen — 1 Vorschlag, zod-valide Parameter (Wand-Geometrie 0.0 m)"
+    },
+    {
+      "id": "cmd-48-treppe-geometrie-setzen",
+      "kategorie": "geometrie",
+      "ok": true,
+      "begruendung": "Treffer: design.treppeGeometrieSetzen — 1 Vorschlag, zod-valide Parameter (Treppen-Geometrie 0.0 m)"
+    },
+    {
+      "id": "cmd-49-masskette-geometrie-setzen",
+      "kategorie": "geometrie",
+      "ok": true,
+      "begruendung": "Treffer: design.massKetteGeometrieSetzen — 1 Vorschlag, zod-valide Parameter (Masskette-Punkt gesetzt)"
+    },
+    {
+      "id": "cmd-50-vis-node-kollabieren",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeKollabieren — 1 Vorschlag, zod-valide Parameter (Node eingeklappt)"
+    },
+    {
+      "id": "cmd-51-vis-trennen",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.trennen — 1 Vorschlag, zod-valide Parameter (Verbindung getrennt)"
+    },
+    {
+      "id": "cmd-52-vis-node-loeschen",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.nodeLoeschen — 1 Vorschlag, zod-valide Parameter (Node gelöscht)"
+    },
+    {
+      "id": "cmd-53-vis-graph-loeschen",
+      "kategorie": "vis",
+      "ok": true,
+      "begruendung": "Treffer: vis.graphLoeschen — 1 Vorschlag, zod-valide Parameter (Render-Graph gelöscht)"
+    },
+    {
+      "id": "cmd-54-treppe-erstellen-gerade",
+      "kategorie": "baukonstruktion",
+      "ok": true,
+      "begruendung": "Treffer: design.treppeErstellen — 1 Vorschlag, zod-valide Parameter (Treppe 4.2 m, 1200 mm breit)"
+    },
+    {
+      "id": "cmd-55-dach-erstellen-sattel",
+      "kategorie": "baukonstruktion",
+      "ok": true,
+      "begruendung": "Treffer: design.dachErstellen — 1 Vorschlag, zod-valide Parameter (Satteldach 40° über 4 Eckpunkten (First x))"
     }
   ]
 }

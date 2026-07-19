@@ -36,11 +36,10 @@ import {
   // Seit v0.8.8 PA1 (E1, docs/V088-SPEZ.md) kennt `design.verschieben`
   // ALLE ziehbaren Kinds — der historische PB5-Workaround (Löschen+
   // Neusetzen für masskette/kommentar, C-26) ist in `onMoveEnd` gefallen.
-  // `MassKette` bleibt für den GRIFF-Einzelpunkt-Zug nötig (der ist kein
-  // verschieben und läuft weiter über Löschen+Neusetzen, benannter
-  // Aufschub C-3).
+  // Seit v0.8.9 E8 ist auch der GRIFF-Einzelpunkt-Zug in place
+  // (`design.massKetteGeometrieSetzen` in `onGriffEnd`) — der `MassKette`-
+  // Typ-Import ist damit gefallen, der 0.8.8-C-3-Aufschub eingelöst.
   type AnyPatch,
-  type MassKette,
   // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16): Griff-Ziehen (Eck-Griffe
   // Zone/Volumen/Dach) braucht die vollen Entity-Typen für dasselbe
   // Löschen+Neusetzen-Muster wie Masskette/Kommentar oben (`onGriffEnd`
@@ -1272,12 +1271,15 @@ export function DesignWorkspace({
             ...(key === 'a' ? { a: ziel } : { b: ziel }),
           });
         } else if (e.kind === 'masskette') {
-          const mk = e as MassKette;
-          const punkte = mk.punkte.map((q, i) => (i === key ? ziel : q));
-          const r = runCommand('design.massKetteSetzen', { storeyId: mk.storeyId, punkte });
-          runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
-          const neueId = neuePatchId(r.patches);
-          select(neueId ? [neueId] : []);
+          // E8 (v0.8.9): kein Löschen+Neusetzen mehr — das neue
+          // `design.massKetteGeometrieSetzen` patcht den EINEN Punkt IN
+          // PLACE (Muster wandGeometrieSetzen oben); die Entity-Id bleibt,
+          // damit auch die Auswahl — kein neuePatchId/select-Nachführen.
+          runCommand('design.massKetteGeometrieSetzen', {
+            entityId: e.id,
+            punktIndex: key as number,
+            punkt: ziel,
+          });
         } else if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
           const outline = e.outline.map((q, i) => (i === key ? ziel : q));
           let r;

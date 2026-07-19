@@ -1,6 +1,6 @@
 {
   "adapter": "kosmo-zeichner-commands",
-  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9; erweitert v0.8.7/PA3, docs/V087-SPEZ.md §3 E7; erweitert v0.8.8/PA3, docs/V088-SPEZ.md §3 E8). 45 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle plus drei lauf_planen-Vorschlagsfälle plus zwei Mehr-Zug-Fälle plus zwei weitere Negativfälle (Dedup, Feld-Ablehnung). ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern, (6) PA3-Nachtrag (v0.8.7, E7): ein echter lauf_planen-Aufruf erzeugt genau EINEN onLaufVorschlag mit dem erwarteten Titel/der erwarteten Schrittfolge UND KEINEN onProposal (Sanktion 4: Vorschlag ≠ Ausführung), UND ein Plan mit erfundener commandId wird von ChatSession VOR jeder Karte als Tool-FEHLER abgewiesen (kein LaufVorschlag, kein onProposal). Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das damals noch nicht existierte). PA3-Nachtrag (cmd-39..cmd-41, E7): NEU `erwartung.typ:\"lauf-vorschlag\"`/`\"lauf-vorschlag-abgelehnt\"` — jetzt gegen das ECHTE, seit v0.8.6/PB1 existierende `lauf_planen`-Werkzeug geprüft (ein einziger Tool-Aufruf statt mehrerer Command-Aufrufe im selben Zug). PA3-Nachtrag v0.8.8 (cmd-42..cmd-45, E8, docs/V088-SPEZ.md §3 E8/§6 Sanktion 9/§7 C-12): NEU `kategorie:\"mehrzug\"` mit einer `zuege`-Liste statt eines einzelnen nutzerwunsch/erwartung-Paars (cmd-42/cmd-43) — Referenzen über Folge-Züge AUSSCHLIESSLICH über den literalen `@ref:kind:name`-String (lauf-refs.ts-Konvention, Kinds storey/aufbau — wall/oeffnung sind KEIN von lauf-refs.ts unterstützter @ref-Kind, darum bewusst nicht verwendet, s. README.md-Nachtrag), NIE über eine echte Laufzeit-ID (Sanktion 9, Kopfkommentar pruefe-eval.mts dokumentiert die H-37-Grenze). NEU `erwartung.typ:\"command-fehler\"` (cmd-45) — ein ECHTER Tool-Aufruf, den validateToolCall() ablehnt, bevor er zur Diff-Karte wird. `docUnveraendert` ist jetzt überall ein echter Byte-Diff (JSON.stringify(doc.toJSON()) vorher/nachher, ROADMAP-498) statt der alten revision/entities-Heuristik. `lauf-vorschlag-abgelehnt` bekommt ein optionales `dedupFragmente`-Feld (cmd-44: zwei verschiedene erfundene commandIds, eine davon zweimal im Plan — beide müssen genau einmal im Tool-FEHLER genannt werden).",
+  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9; erweitert v0.8.7/PA3, docs/V087-SPEZ.md §3 E7; erweitert v0.8.8/PA3, docs/V088-SPEZ.md §3 E8; erweitert v0.8.9/E8-Fokus, docs/V089-SPEZ.md §3: die vier Geometrie-in-place-/Verschiebe-Züge, die vier Graph-Aufräum-Commands und zwei Baukonstruktions-Vertreter). 55 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle plus drei lauf_planen-Vorschlagsfälle plus zwei Mehr-Zug-Fälle plus zwei weitere Negativfälle (Dedup, Feld-Ablehnung). ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern, (6) PA3-Nachtrag (v0.8.7, E7): ein echter lauf_planen-Aufruf erzeugt genau EINEN onLaufVorschlag mit dem erwarteten Titel/der erwarteten Schrittfolge UND KEINEN onProposal (Sanktion 4: Vorschlag ≠ Ausführung), UND ein Plan mit erfundener commandId wird von ChatSession VOR jeder Karte als Tool-FEHLER abgewiesen (kein LaufVorschlag, kein onProposal). Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das damals noch nicht existierte). PA3-Nachtrag (cmd-39..cmd-41, E7): NEU `erwartung.typ:\"lauf-vorschlag\"`/`\"lauf-vorschlag-abgelehnt\"` — jetzt gegen das ECHTE, seit v0.8.6/PB1 existierende `lauf_planen`-Werkzeug geprüft (ein einziger Tool-Aufruf statt mehrerer Command-Aufrufe im selben Zug). PA3-Nachtrag v0.8.8 (cmd-42..cmd-45, E8, docs/V088-SPEZ.md §3 E8/§6 Sanktion 9/§7 C-12): NEU `kategorie:\"mehrzug\"` mit einer `zuege`-Liste statt eines einzelnen nutzerwunsch/erwartung-Paars (cmd-42/cmd-43) — Referenzen über Folge-Züge AUSSCHLIESSLICH über den literalen `@ref:kind:name`-String (lauf-refs.ts-Konvention, Kinds storey/aufbau — wall/oeffnung sind KEIN von lauf-refs.ts unterstützter @ref-Kind, darum bewusst nicht verwendet, s. README.md-Nachtrag), NIE über eine echte Laufzeit-ID (Sanktion 9, Kopfkommentar pruefe-eval.mts dokumentiert die H-37-Grenze). NEU `erwartung.typ:\"command-fehler\"` (cmd-45) — ein ECHTER Tool-Aufruf, den validateToolCall() ablehnt, bevor er zur Diff-Karte wird. `docUnveraendert` ist jetzt überall ein echter Byte-Diff (JSON.stringify(doc.toJSON()) vorher/nachher, ROADMAP-498) statt der alten revision/entities-Heuristik. `lauf-vorschlag-abgelehnt` bekommt ein optionales `dedupFragmente`-Feld (cmd-44: zwei verschiedene erfundene commandIds, eine davon zweimal im Plan — beide müssen genau einmal im Tool-FEHLER genannt werden).",
   "kriterien_legende": {
     "command": "erwartete commandId ist ein reales, aktuelles Kosmo-Werkzeug (commandTools()) UND die erwarteten Parameter bestehen validateToolCall() gegen das ECHTE zod-Schema UND ChatSession meldet genau EINEN onProposal mit exakt dieser commandId/diesen Parametern",
     "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug",
@@ -1137,6 +1137,187 @@
         "enthaeltFehlertext": "feld: Invalid option"
       },
       "notiz": "Fable-Nachführung 19.07.2026 NACH PA1-088-Landung (ROADMAP 508): der ursprüngliche Fall (rotationGrad='schräg') scheitert seit E2 NICHT mehr vor der Karte — rotationGrad ist jetzt ein bekanntes, schema-gültiges Feld; der Wert-Fehler («schräg» ist keine gültige Zahl) feuert erst beim ANWENDEN im Kernel-run und ist dort unit-getestet (verschieben-symmetrie.test.ts). Dieser Eval-Fall verankert darum den verbleibenden Vor-Karte-Ablehnweg: ein UNBEKANNTES Feld (schwebehoehe) wird vom zod-Enum als Tool-Fehler abgewiesen, keine Karte, kein onProposal."
+    },
+    {
+      "id": "cmd-46-verschieben-wand",
+      "kategorie": "geometrie",
+      "nutzerwunsch": "Verschiebe die Wand wand-eg-nord um 500 mm nach Osten.",
+      "kosmoText": "Ich verschiebe wand-eg-nord um 500 mm in x (Osten), y bleibt.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.verschieben",
+        "params": {
+          "entityId": "wand-eg-nord",
+          "dx": 500,
+          "dy": 0
+        }
+      }
+    },
+    {
+      "id": "cmd-47-wand-geometrie-setzen",
+      "kategorie": "geometrie",
+      "nutzerwunsch": "Zieh den Endpunkt b der Wand wand-eg-nord auf x 8000, y 0 — die Wand soll dabei dieselbe bleiben (Fenster nicht verlieren).",
+      "kosmoText": "Ich setze b von wand-eg-nord in place auf 8000/0 — Identität und Öffnungen bleiben erhalten.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.wandGeometrieSetzen",
+        "params": {
+          "entityId": "wand-eg-nord",
+          "b": {
+            "x": 8000,
+            "y": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "cmd-48-treppe-geometrie-setzen",
+      "kategorie": "geometrie",
+      "nutzerwunsch": "Setze den Austritt der Treppe treppe-eg-1 auf x 4000, y 2500, ohne die Treppe neu zu bauen.",
+      "kosmoText": "Ich setze b (Austritt) von treppe-eg-1 in place auf 4000/2500.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.treppeGeometrieSetzen",
+        "params": {
+          "entityId": "treppe-eg-1",
+          "b": {
+            "x": 4000,
+            "y": 2500
+          }
+        }
+      }
+    },
+    {
+      "id": "cmd-49-masskette-geometrie-setzen",
+      "kategorie": "geometrie",
+      "nutzerwunsch": "Korrigiere in der Masskette masskette-fassade den zweiten Punkt auf x 6000, y 0.",
+      "kosmoText": "Ich setze Punkt 1 (0-basiert) der Kette masskette-fassade auf 6000/0 — dieselbe Kette, ein Undo-Schritt.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.massKetteGeometrieSetzen",
+        "params": {
+          "entityId": "masskette-fassade",
+          "punktIndex": 1,
+          "punkt": {
+            "x": 6000,
+            "y": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "cmd-50-vis-node-kollabieren",
+      "kategorie": "vis",
+      "nutzerwunsch": "Klapp den Render-Node node-render im Graphen graph-1 ein, ich will nur den Kopf sehen.",
+      "kosmoText": "Ich klappe node-render in graph-1 ein (collapsed: true).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeKollabieren",
+        "params": {
+          "graphId": "graph-1",
+          "nodeId": "node-render",
+          "collapsed": true
+        }
+      }
+    },
+    {
+      "id": "cmd-51-vis-trennen",
+      "kategorie": "vis",
+      "nutzerwunsch": "Trenn im Graphen graph-1 die Verbindung kante-szene wieder.",
+      "kosmoText": "Ich entferne die Kante kante-szene aus graph-1.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.trennen",
+        "params": {
+          "graphId": "graph-1",
+          "edgeId": "kante-szene"
+        }
+      }
+    },
+    {
+      "id": "cmd-52-vis-node-loeschen",
+      "kategorie": "vis",
+      "nutzerwunsch": "Lösch den Stimmungs-Node node-stimmung aus dem Graphen graph-1, samt seinen Verbindungen.",
+      "kosmoText": "Ich lösche node-stimmung aus graph-1 — seine Kanten räumt der Command mit.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.nodeLoeschen",
+        "params": {
+          "graphId": "graph-1",
+          "nodeId": "node-stimmung"
+        }
+      }
+    },
+    {
+      "id": "cmd-53-vis-graph-loeschen",
+      "kategorie": "vis",
+      "nutzerwunsch": "Den ganzen Render-Graphen graph-1 brauche ich nicht mehr — weg damit.",
+      "kosmoText": "Ich lösche graph-1 komplett (undo-fähig).",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "vis.graphLoeschen",
+        "params": {
+          "graphId": "graph-1"
+        }
+      }
+    },
+    {
+      "id": "cmd-54-treppe-erstellen-gerade",
+      "kategorie": "baukonstruktion",
+      "nutzerwunsch": "Setz im Geschoss geschoss-eg eine gerade Treppe vom Antritt 0/0 zum Austritt 4200/0, Laufbreite 1200 mm.",
+      "kosmoText": "Ich erstelle eine gerade Treppe 0/0 → 4200/0 mit 1200 mm Laufbreite im geschoss-eg.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.treppeErstellen",
+        "params": {
+          "storeyId": "geschoss-eg",
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 4200,
+            "y": 0
+          },
+          "width": 1200,
+          "form": "gerade"
+        }
+      }
+    },
+    {
+      "id": "cmd-55-dach-erstellen-sattel",
+      "kategorie": "baukonstruktion",
+      "nutzerwunsch": "Erstelle über dem Obergeschoss geschoss-og ein Satteldach mit First in x-Richtung, Neigung 40 Grad, 600 mm Überstand — Grundriss 0/0, 10000/0, 10000/6000, 0/6000.",
+      "kosmoText": "Ich erstelle ein Satteldach (First entlang x, 40°, 600 mm Überstand) über dem 10×6-m-Umriss im geschoss-og.",
+      "erwartung": {
+        "typ": "command",
+        "commandId": "design.dachErstellen",
+        "params": {
+          "storeyId": "geschoss-og",
+          "outline": [
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 10000,
+              "y": 0
+            },
+            {
+              "x": 10000,
+              "y": 6000
+            },
+            {
+              "x": 0,
+              "y": 6000
+            }
+          ],
+          "pitch": 40,
+          "overhang": 600,
+          "form": "sattel",
+          "firstrichtung": "x"
+        }
+      }
     }
   ]
 }

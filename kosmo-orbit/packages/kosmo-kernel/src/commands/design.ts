@@ -3518,6 +3518,45 @@ export const massKetteLoeschen = registerCommand({
 });
 
 /**
+ * v0.8.9 E8 (`docs/V089-SPEZ.md` §3) — Punkt-Zug IN PLACE, Muster
+ * `design.wandGeometrieSetzen`/`design.treppeGeometrieSetzen`: Identität und
+ * storeyId bleiben, NUR `punkte[punktIndex]` ändert sich. Ersetzt den
+ * bisherigen Löschen+Neusetzen-Griffweg in `DesignWorkspace.tsx` (der bei
+ * jedem Eck-Zug eine NEUE Entity-Id erzeugte — Auswahl/Undo-Gruppe mussten
+ * die Id-Wanderung von Hand nachführen). Der Range-Wurf läuft VOR jedem
+ * Patch — ein ungültiger Index lässt die Kette unangetastet.
+ */
+export const massKetteGeometrieSetzen = registerCommand({
+  id: 'design.massKetteGeometrieSetzen',
+  title: 'Masskette-Geometrie setzen',
+  description:
+    'Setzt EINEN Punkt einer bestehenden Messkette neu (punktIndex, 0-basiert), OHNE sie zu ersetzen: Identität und storeyId bleiben erhalten. Ein punktIndex ausserhalb der bestehenden Punktliste wirft — die Kette bleibt unangetastet. EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    punktIndex: z.number().int().min(0),
+    punkt: PtSchema,
+  }),
+  summarize: (p, doc) => {
+    const mk = doc.get<MassKette>(p.entityId);
+    const pts = mk?.punkte;
+    if (!pts) return 'Masskette-Punkt gesetzt';
+    let gesamt = 0;
+    for (let i = 1; i < pts.length; i++) gesamt += dist(pts[i - 1]!, pts[i]!);
+    return `Masskette ${formatLength(Math.round(gesamt))}`;
+  },
+  run: (doc, p) => {
+    const masskette = require<MassKette>(doc, p.entityId, 'masskette');
+    if (p.punktIndex >= masskette.punkte.length) {
+      throw new CommandError(
+        `punktIndex ${p.punktIndex} ausserhalb der Kette (${masskette.punkte.length} Punkte)`,
+      );
+    }
+    const punkte = masskette.punkte.map((q, i) => (i === p.punktIndex ? (p.punkt as Pt) : q));
+    return [{ id: masskette.id, before: masskette, after: { ...masskette, punkte } }];
+  },
+});
+
+/**
  * Kosmo-Präzisier (V2-E5-iv, `docs/V070-KONZEPT.md`, Finch-«Archie»-
  * Äquivalent, `docs/RE-FINCH.md` §1): «repetitive Präzisionsarbeit — exakte
  * Türplatzierung, Compliance-Checks, konsistente Updates über verknüpfte

@@ -122,6 +122,84 @@ describe('design.massKetteLoeschen — Commands + Undo', () => {
   });
 });
 
+describe('design.massKetteGeometrieSetzen — Punkt-Zug in place (v0.8.9 E8)', () => {
+  function ketteMitId(doc: KosmoDoc): string {
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const res = ketteSetzen(doc, storeyId);
+    return (res.patches[0] as { id: string }).id;
+  }
+
+  it('setzt genau den einen Punkt neu — Identität, storeyId und übrige Punkte bleiben', () => {
+    const doc = new KosmoDoc();
+    const id = ketteMitId(doc);
+    const vorher = doc.get<MassKette>(id)!;
+    execute(doc, 'design.massKetteGeometrieSetzen', {
+      entityId: id,
+      punktIndex: 1,
+      punkt: { x: 5000, y: 1000 },
+    });
+    const nachher = doc.get<MassKette>(id)!;
+    expect(nachher.id).toBe(id);
+    expect(nachher.storeyId).toBe(vorher.storeyId);
+    expect(nachher.punkte).toEqual([vorher.punkte[0], { x: 5000, y: 1000 }, vorher.punkte[2]]);
+  });
+
+  it('EIN Undo-Schritt stellt den alten Punkt wieder her (in-place-Patch, kein Löschen+Neusetzen)', () => {
+    const doc = new KosmoDoc();
+    const id = ketteMitId(doc);
+    const vorher = doc.get<MassKette>(id)!;
+    const res = execute(doc, 'design.massKetteGeometrieSetzen', {
+      entityId: id,
+      punktIndex: 0,
+      punkt: { x: -777, y: 42 },
+    });
+    expect(res.patches).toHaveLength(1);
+    doc.apply(invertPatches(res.patches));
+    expect(doc.get<MassKette>(id)).toEqual(vorher);
+  });
+
+  it('Range-Wurf: punktIndex ausserhalb der Kette wirft, die Kette bleibt unangetastet', () => {
+    const doc = new KosmoDoc();
+    const id = ketteMitId(doc);
+    const vorher = doc.get<MassKette>(id)!;
+    expect(() =>
+      execute(doc, 'design.massKetteGeometrieSetzen', { entityId: id, punktIndex: 3, punkt: { x: 0, y: 0 } }),
+    ).toThrow(CommandError);
+    expect(doc.get<MassKette>(id)).toEqual(vorher);
+  });
+
+  it('lehnt negative/nicht-ganzzahlige Indizes (zod) und unbekannte entityId (CommandError) ab', () => {
+    const doc = new KosmoDoc();
+    const id = ketteMitId(doc);
+    expect(() =>
+      execute(doc, 'design.massKetteGeometrieSetzen', { entityId: id, punktIndex: -1, punkt: { x: 0, y: 0 } }),
+    ).toThrow();
+    expect(() =>
+      execute(doc, 'design.massKetteGeometrieSetzen', { entityId: id, punktIndex: 0.5, punkt: { x: 0, y: 0 } }),
+    ).toThrow();
+    expect(() =>
+      execute(doc, 'design.massKetteGeometrieSetzen', {
+        entityId: 'masskette_unbekannt',
+        punktIndex: 0,
+        punkt: { x: 0, y: 0 },
+      }),
+    ).toThrow(CommandError);
+  });
+
+  it('summarize zeigt die NEUE Gesamtlänge (läuft nach doc.apply, Command-Vertrag)', () => {
+    const doc = new KosmoDoc();
+    const id = ketteMitId(doc);
+    // 0,0 -> 3000,0 -> 3000,4000 (7.0 m); Punkt 2 auf 3000,1000 → 3.0+1.0 = 4.0 m
+    const res = execute(doc, 'design.massKetteGeometrieSetzen', {
+      entityId: id,
+      punktIndex: 2,
+      punkt: { x: 3000, y: 1000 },
+    });
+    expect(res.summary).toBe('Masskette 4.0 m');
+  });
+});
+
 describe('derivePlan — Masskette-Guard (§0.5/§2.3, Golden-Politik)', () => {
   it('OHNE MassKette-Entität bleibt derivePlan exakt wie zuvor (kein masskette-Element)', () => {
     const { doc, storeyId } = testhausWalmdachGrundriss();
