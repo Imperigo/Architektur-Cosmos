@@ -96,20 +96,24 @@ function gleich(a: Box | null, b: Box | null): boolean {
  * unverändert weiter (kein Assertion-Abbau).
  */
 // PE1 (v0.8.4 W4, Flake-Härtung) — `timeoutMs` (die harte Obergrenze, NICHT
-// das Ruhefenster `ruheMs` selbst) von 10000 auf 20000 angehoben: in den
+// das Ruhefenster `ruheMs` selbst) war von 10000 auf 20000 angehoben: in den
 // PE1-Beweisläufen unter dokumentiert echter Fremdlast (mehrere parallele
 // W4-Pakete im selben Container) riss der Chevron-Test reproduzierbar
 // («Received: 573» statt 34 — der Solve war zum Messzeitpunkt schlicht noch
 // nicht fertig, nicht falsch synchronisiert) — dieselbe Klasse Symptom wie
 // die bereits dokumentierten 500ms-Re-Solve-Fälle, nur mit einer unter
-// dieser Fremdlast zu knappen Obergrenze. Letztes Mittel laut Auftrag
-// (bevorzugt wäre ein weiteres echtes Signal, das existiert hier aber
-// bereits — `data-solve-generation` selbst): die WARTEBEDINGUNG bleibt
-// unverändert ein echtes Ruhefenster (`ruheMs` unverändert 700ms — kein
-// Millisekunden-Sleep wird verlängert), nur das Zeitbudget, bis zu dem
-// dieses reale Signal noch abgewartet wird, wächst. Ein tatsächlich
-// hängender/kaputter Solve fällt weiterhin nach spätestens 20s durch.
-async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 20000): Promise<void> {
+// dieser Fremdlast zu knappen Obergrenze. Die WARTEBEDINGUNG selbst blieb
+// immer ein echtes Ruhefenster (`ruheMs` unverändert 700ms — kein
+// Millisekunden-Sleep wird verlängert), nur das Zeitbudget wuchs mit.
+// PB4 (v0.8.5, D13/C-21, `docs/V085-SPEZ.md` §2/§7, ROADMAP 471/472) —
+// Rückbau-Probe 19.07.2026: `timeoutMs` probeweise auf den PE1-Ausgangswert
+// 10000 zurückgesetzt, der Chevron-Test («Chevron klappt ein/aus») 5×
+// ISOLIERT unter Normallast gelaufen (KOSMO_E2E_PORT=5177,
+// `--grep "Chevron klappt ein/aus"`) — 5/5 grün. Rückbau bleibt: die
+// PE1-Anhebung war nachweislich reine Fremdlast-Kompensation, unter
+// Normallast trägt der PE1-Ausgangswert wieder. Ein tatsächlich
+// hängender/kaputter Solve fällt weiterhin nach spätestens 10s durch.
+async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 10000): Promise<void> {
   await page.evaluate(
     ({ ruheMs, timeoutMs }) => {
       return new Promise<void>((resolve) => {
@@ -149,14 +153,18 @@ async function warteAufSolveStabilitaet(page: Page, ruheMs = 700, timeoutMs = 20
  *  bevor sich `left/top/width/height` überhaupt zu ändern beginnen) —
  *  reproduzierbar beobachtet, als ein reiner 2-Messungen-Vergleich ohne
  *  Anlaufpuffer die UNVERÄNDERTE Ausgangsgrösse zurückgab. */
-// PE1 (v0.8.4 W4, Flake-Härtung) — `timeoutMs` von 4000 auf 8000 angehoben,
-// als Begleitmassnahme zu `warteAufSolveStabilitaet()`s Anhebung oben
-// (dieselbe Fremdlast-Begründung dort). `anlaufMs`/`ruheMs` (die eigentliche
-// Ruhebedingung) bleiben unverändert — nur das Zeitbudget für dasselbe reale
-// Signal wächst.
+// PE1 (v0.8.4 W4, Flake-Härtung) — `timeoutMs` war von 4000 auf 8000
+// angehoben, als Begleitmassnahme zu `warteAufSolveStabilitaet()`s Anhebung
+// oben (dieselbe Fremdlast-Begründung dort). `anlaufMs`/`ruheMs` (die
+// eigentliche Ruhebedingung) blieben immer unverändert — nur das Zeitbudget
+// für dasselbe reale Signal wuchs mit.
+// PB4 (v0.8.5, D13/C-21, ROADMAP 471/472) — Rückbau-Probe 19.07.2026:
+// zusammen mit `warteAufSolveStabilitaet()` oben auf den PE1-Ausgangswert
+// 4000 zurückgesetzt, dieselben 5 isolierten Chevron-Läufe (s. Kommentar
+// oben) 5/5 grün. Rückbau bleibt.
 async function stabileBox(
   locator: Locator,
-  timeoutMs = 8000,
+  timeoutMs = 4000,
   intervalMs = 100,
   anlaufMs = 700,
   ruheMs = 300,

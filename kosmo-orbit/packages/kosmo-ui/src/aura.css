@@ -289,6 +289,47 @@
   --k-dock-reflow: 0.28s;
   --k-dock-orb: 0.55s;
   --k-dock-schnell: 0.16s;
+
+  /* v0.8.5 / PB4 (E7 aura-Token-Nachträge, `docs/V085-SPEZ.md` §3/§7 C-21,
+     ROADMAP 471 «Token-Sweep»-Nachtrag) — vier additive Token, reine
+     Kanonisierung bestehender Werte, 0 sichtbare Änderung. Alle vier
+     theme-invariant (ein Wert für Papier UND Kosmos, kein Override im
+     `[data-theme='orbit']`-Block nötig) — kein bestehender Wert oben in
+     diesem Block wurde verändert.
+     `--k-glass-ink` kanonisiert den bisherigen lokalen `--isl-pill-ink`-
+     Alias (`apps/kosmo-orbit/src/modules/design/island/island.css`,
+     PB6-Kandidat ROADMAP 471) — «Ink auf dunklem Glas» (Pillen/Toast/Logo-
+     Kreise, in BEIDEN Themes dunkles Glas), zufällig identisch mit Kosmos'
+     `--k-ink` (#f4f6fa), aber bewusst NICHT darüber referenziert (Papiers
+     `--k-ink` ist dunkel — die Pille bleibt immer helle Schrift auf
+     dunklem Glas, unabhängig vom aktiven Thema). Die Alias-Zeile in
+     island.css bleibt als Brücke stehen (0 Konsumenten-Änderung dort). */
+  --k-glass-ink: #f4f6fa;
+  /* `--k-print-tint`/`--k-print-linie`: Print-Konvention, Wert gespiegelt
+     aus kernel schraffur.ts KATALOG.beton — NICHT den Kernel ändern
+     (`packages/kosmo-kernel/src/derive/schraffur.ts:22`,
+     `beton: { …, tint: '#dad7d1' }`; die Linie ist derselben Datei-Familie
+     das SVG-Text-/Strich-`#333333`, hier auf 3-stelliges Kurz-Hex `#333`
+     gekürzt — identischer Farbwert). Theme-invariant wie die Kernel-Quelle
+     selbst (Print kennt kein Theme). PlanView-Kandidaten (ROADMAP 471,
+     `PlanView.tsx` `PLAN_HATCH_BETON_TINT`/`_LINIE`) bleiben in dieser
+     Welle unangetastet — die Datei ist PB1-Hoheitsgebiet, die Umstellung
+     auf `var(--k-print-tint/-linie)` ist ein Nachzug-Kandidat (s.
+     PB4-Bericht). */
+  --k-print-tint: #dad7d1;
+  --k-print-linie: #333;
+  /* `--k-warning-2`: Zonenwarnstufe NEBEN `--k-warning` (#a37b22) — liegt
+     nahe, ist aber nicht identisch, keine Ersetzung ohne Optik-Änderung
+     möglich (PlanView-Kandidat `ZONE_VERLETZT_WARN_FARBE`, ROADMAP 471). */
+  --k-warning-2: #c68622;
+  /* `--k-diagnose`: Durchpaus-/Diagnose-Blau, theme-invariant unabhängig
+     vom gewählten UI-Akzent (PlanView-Kandidat
+     `UNTERNEHMERPLAN_OVERLAY_FARBE`, ROADMAP 471) — `RAUMGRAPH_FARBE`
+     (`#2455a4`) bleibt bewusst AUSSERHALB dieser Kanonisierung (PB6-Urteil:
+     zufällig identisch mit `--k-accent` NUR unter `data-akzent='blau'`,
+     ein Mapping wäre unter dem Teal-Default eine sichtbare Regression —
+     V085-SPEZ §3 E7). */
+  --k-diagnose: #1a6fb5;
 }
 
 /* Alte Engines ohne linear()-Easing (Konzept §2): --k-feder zeigt dann die

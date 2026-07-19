@@ -25,9 +25,15 @@
    neuem globalem Token (`--isl-kopf-logo-*` liegt ausserhalb `.isl-root`,
    ein Alias dort wäre nicht global genug — s. `App.tsx`). Kandidat für
    aura.css (W5-Bericht): ein `--k-glass-ink`-artiges, theme-invariantes
-   Gegenstück zu `--k-glass-fill`. */
+   Gegenstück zu `--k-glass-fill`.
+   PB4 (v0.8.5, E7 aura-Token-Nachträge, `docs/V085-SPEZ.md` §3/§7 C-21,
+   ROADMAP 471) — EINGELÖST: aura.css führt jetzt `--k-glass-ink` (identischer
+   Hex `#f4f6fa`, theme-invariant, s. dort). Dieser Alias bleibt als Brücke
+   stehen und zeigt nur noch auf das kanonische Token — 0 Konsumenten-
+   Änderung, alle bestehenden `var(--isl-pill-ink)`-Verbraucher in dieser
+   Datei bleiben unverändert. */
 :root {
-  --isl-pill-ink: #f4f6fa;
+  --isl-pill-ink: var(--k-glass-ink);
 }
 
 .isl-root {
