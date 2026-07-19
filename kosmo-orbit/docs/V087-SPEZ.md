@@ -174,7 +174,31 @@ sha256 HEAD↔Arbeitsbaum sind Gate JEDES Pakets.
 - [x] **C-12** `oerebAuszug` überlebt Reload/`.kosmo`, Undo entfernt ihn; Fehler/Offline → ehrliche Fehlerzone → PB1
 - [x] **C-13** CSP: genau `https://api.geo.admin.ch` neu, kein Wildcard, Owner-Freigabe im Commit belegt → Fable
 - [x] **C-14** Shift-Drag wählt Frustum-Schnitt via onMarqueeAuswahl (additiv wie 2D), Orbit ohne Shift ungestört, Esc bricht ab → PB2
-- [ ] **C-15** Release-Ritual komplett: Fan-out-Matrix, lehren/v0.8.7.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen benannt), §0-Delta (Rückwärts-Wächter verlangt 0.8.7), Release-Notiz, Rundgang-PDF gesichtet, release-gate 0, Installer+sha256+Zustellung, Owner-Smoke-Punkt → PC
+- [x] **C-15** Release-Ritual komplett: Fan-out-Matrix, lehren/v0.8.7.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen benannt), §0-Delta (Rückwärts-Wächter verlangt 0.8.7), Release-Notiz, Rundgang-PDF gesichtet, release-gate 0, Installer+sha256+Zustellung, Owner-Smoke-Punkt → PC
+
+
+### Ergebnis der Matrix-Abnahme (19.07.2026, ROADMAP 505)
+
+13 unabhängige adversariale Prüfer (Workflow-Fan-out, je Zelle einer,
+StructuredOutput; C-10 = Fable-Puffer-Nachweis, C-15 = Release-Ritual)
+gegen den Live-Build auf :5183: **11/13 sofort bestanden, 2 echte Funde
+— beide vor dem Release gefixt und regressionsgetestet:**
+
+- **C-14 (Fund, ernst):** Marquee-Loslassen über der HUD-Karte
+  (Dock-Float ausserhalb des Mounts) liess die Geste hängen — der
+  nächste normale Klick feuerte eine Phantom-Auswahl mit alten
+  Koordinaten. Fix: `setPointerCapture` im Marquee-Start (meshDrag-
+  Muster) + pointerId-Stale-Guard; Regressionstest C-14f.
+- **C-8 (Fund, klein):** der Graph-Toggle-Button färbte sich über
+  literales `#2455a4` → konsumiert jetzt `var(--k-graph)`. Zwei
+  verbleibende Alt-Hexes sind semantisch legitim und dokumentiert
+  (Akzent-Palette definiert sich selbst; 2D-Canvas löst keine
+  CSS-Variablen auf — Kandidat Canvas-Token-Brücke).
+
+C-10: der Owner-Smoke-Puffer stand bereit, es traf keine Rückmeldung
+ein — Leerstand benannt in Release-Notiz + ROADMAP 506 (kein
+verschwiegener Aufschub). Zellen-Verdicts mit Beweisen im
+Workflow-Journal; Details ROADMAP 505, Commit `163e41e`.
 
 ## 8 · Ehrliche Nicht-Ziele
 

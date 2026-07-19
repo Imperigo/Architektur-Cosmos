@@ -35,6 +35,30 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.7',
+    datum: '2026-07-19',
+    punkte: [
+      {
+        text: 'Der Projektstandort wird auskunftsfähig: nach der Adress-Suche holt die App die ÖREB-Betroffenheit der Parzelle (welche öffentlich-rechtlichen Eigentumsbeschränkungs-Themen betroffen sind) und zeigt sie als Liste im Standort-Panel und als Zeile in KosmoData — persistent im Dokument, ein eigener Undo-Schritt. Ehrlich beschriftet: «Auszug light — kein rechtsgültiger ÖREB-Auszug», Netz- und API-Fehler werden sichtbar gemeldet statt still verschluckt.',
+        station: 'data',
+      },
+      {
+        text: 'Auch Treppen haben jetzt Griffe: Antritt und Austritt lassen sich ziehen, bei L-Treppen zusätzlich das Eckpodest — die Treppe behält dabei Identität, Breite und Form, ein Undo stellt alles wieder her, und unmögliche Züge (zu kurzer Lauf, zu steile Steigung) werden mit sichtbarer Meldung abgewiesen, ohne die Treppe anzutasten.',
+        station: 'design',
+      },
+      {
+        text: 'Die 3D-Ansicht zieht nach: Shift-Aufziehen wählt ganze Gruppen im Sichtkegel (das Gegenstück zum 2D-Aufziehrechteck; ehrliche Grenze: es sieht durch Wände — auch verdeckte Elemente werden gewählt), das Auswahl-Leuchten ist jetzt deutlich sichtbar (kräftiger Kantenrahmen statt nur schwachem Glühen), und die KAMERA-Anzeige folgt der Bewegung sofort statt mit bis zu 0.4 Sekunden Verzögerung.',
+        station: 'design',
+      },
+      {
+        text: 'Unter der Haube aufgeräumt: die Öffnungs-Projektionsformel lebt nur noch EINMAL im Kern statt doppelt in zwei Dateien (millimetergenau unverändert, per Regressionsnetz bewiesen), und die Raumgraph-Diagnosefarbe hängt am neuen theme-invarianten Design-Token statt an verstreuten Hex-Werten.',
+      },
+      {
+        text: 'Die Zeichner-Eval prüft jetzt auch das echte Lauf-Vorschlagsformat des Autopiloten (Karte statt Ausführung, erfundene Befehls-IDs werden abgewiesen) — 41 Prüffälle, 41 bestanden. Die Release-Matrix lief mit 13 unabhängigen Prüfern: 11 sofort bestanden, die zwei Funde (hängengebliebene Marquee-Geste über der Statuskarte, Graph-Knopf mit fester Farbe) sind vor dem Release gefixt und regressionsgetestet.',
+      },
+    ],
+  },
+  {
     version: '0.8.6',
     datum: '2026-07-19',
     punkte: [
