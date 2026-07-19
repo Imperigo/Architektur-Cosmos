@@ -291,13 +291,13 @@ test('Node-Kollaps: Node schrumpft, Kante bleibt verbunden, erneuter Klick expan
   await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1, { timeout: 5000 });
 
   const hoeheOffen = (await promptNode.boundingBox())!.height;
-  await promptNode.locator('[data-testid="node-kollaps"]').click({ force: true });
+  await promptNode.locator('[data-testid="node-kollaps"]').click();
   const hoeheZu = (await promptNode.boundingBox())!.height;
   expect(hoeheZu).toBeLessThan(hoeheOffen - 20);
   // Die Kante bleibt verbunden — kein Verwaisen beim Kollaps.
   await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(1);
 
-  await promptNode.locator('[data-testid="node-kollaps"]').click({ force: true });
+  await promptNode.locator('[data-testid="node-kollaps"]').click();
   const hoeheWiederOffen = (await promptNode.boundingBox())!.height;
   expect(Math.abs(hoeheWiederOffen - hoeheOffen)).toBeLessThan(1.5);
 

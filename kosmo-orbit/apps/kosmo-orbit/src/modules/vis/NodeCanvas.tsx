@@ -1362,6 +1362,19 @@ export function NodeCanvas({
                 }}
               >
                 <title>{n0.collapsed ? 'Node aufklappen' : 'Node einklappen'}</title>
+                {/* D7-Fund (V089-SPEZ §2): das Chevron-Icon allein ist nur an
+                    seinen Glyph-Strichen hit-testbar — Klicks daneben (aber
+                    noch im Kopf) fielen durch auf die grössere, darunter-
+                    liegende Kopf-Drag-Rect (:1343) und lösten einen
+                    versehentlichen Node-Drag statt des Kollaps aus (die zwei
+                    bisherigen force:true in vis-editor.spec.ts waren die
+                    Krücke dafür). Eigene transparente Hit-Fläche als erstes
+                    (unterstes) Kind deckt die volle Icon-Bbox (x 160–174,
+                    y 6–20) mit Rand ab, bleibt aber vor der Löschen-Zone
+                    (ab x=178) stehen — Drag am restlichen Kopf ist
+                    unverändert, weil dieser g weiterhin vor der Drag-Rect
+                    gemalt wird (Dokumentreihenfolge = Trefferpriorität). */}
+                <rect x={NODE_W - 48} y={3} width={24} height={20} fill="transparent" />
                 <KIcon
                   name={n0.collapsed ? 'pfeil-unten' : 'pfeil-oben'}
                   size={14}
