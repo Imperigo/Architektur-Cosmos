@@ -10,6 +10,7 @@ export * from './commands/vis';
 export * from './commands/grundlagen';
 export * from './geometry/clip';
 export * from './geometry/wall';
+export * from './geometry/plan-projektion';
 export * from './derive/mesh';
 export * from './derive/mesh-topo';
 export * from './derive/scene';

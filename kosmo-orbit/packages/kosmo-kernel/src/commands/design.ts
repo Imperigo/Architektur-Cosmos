@@ -1300,6 +1300,90 @@ export const createStair = registerCommand({
   },
 });
 
+/**
+ * E1 (V087-SPEZ, `docs/V087-SPEZ.md` §3): In-place-Endpunkt-Setter für eine
+ * bestehende Treppe, Muster `design.wandGeometrieSetzen` (E1, V086-SPEZ) —
+ * Identität/width/form/storeyId bleiben, NUR a/b/ecke ändern sich. Die
+ * Wurf-Regeln laufen VOR jedem Patch auf der NEUEN Geometrie und sind
+ * deckungsgleich mit `design.treppeErstellen`: (1) Gesamtlauf a→b < 1 m
+ * (dieselbe rohe Achsdistanz wie im Erstellen-Command, nicht die geformte
+ * `gesamtLauflaenge` aus `treppenTeile`); (2) `ecke` nur bei form «l»
+ * zulässig; (3) form «l» braucht eine (bestehende oder neue) `ecke`; (4)
+ * degenerierte Teilstrecken um die Ecke (< 1 mm) — Punkt (1) deckt |a−b|
+ * bereits ab, da 1 mm < 1000 mm; (5) Steigungs-Gate über `treppenTeile` der
+ * NEUEN Stair (riser > 200 mm), dieselbe Meldung wie beim Erstellen.
+ */
+export const setStairGeometry = registerCommand({
+  id: 'design.treppeGeometrieSetzen',
+  title: 'Treppen-Geometrie setzen',
+  description:
+    'Setzt Antritt (a), Austritt (b) und/oder Eckpunkt (ecke) einer bestehenden Treppe neu, OHNE sie zu ersetzen: Identität, width, form und storeyId bleiben erhalten. Mindestens einer der Punkte a/b/ecke ist Pflicht. «ecke» ist nur bei form «l» zulässig. Dieselben Wurf-Regeln wie design.treppeErstellen gelten auf der NEUEN Geometrie: Gesamtlauf < 1 m, form «l» ohne ecke, degenerierte Punkte um die Ecke (< 1 mm) und das Steigungs-Gate (riser > 200 mm) verhindern jeden Patch — die Treppe bleibt unangetastet. EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    a: PtSchema.optional(),
+    b: PtSchema.optional(),
+    ecke: PtSchema.optional().describe('Eckpunkt des L-Laufs (nur form «l»)'),
+  }),
+  summarize: (p, doc) => {
+    const stair = doc.get<Stair>(p.entityId);
+    const neueA = (p.a ?? stair?.a) as Pt | undefined;
+    const neueB = (p.b ?? stair?.b) as Pt | undefined;
+    const laenge = neueA && neueB ? Math.round(dist(neueA, neueB)) : 0;
+    return `Treppen-Geometrie ${formatLength(laenge)}`;
+  },
+  run: (doc, p) => {
+    if (!p.a && !p.b && !p.ecke) {
+      throw new CommandError('design.treppeGeometrieSetzen braucht mindestens einen Punkt (a, b oder ecke)');
+    }
+    const stair = require<Stair>(doc, p.entityId, 'stair');
+    const storey = require<Storey>(doc, stair.storeyId, 'storey');
+    const neueA = (p.a ?? stair.a) as Pt;
+    const neueB = (p.b ?? stair.b) as Pt;
+    const neueEcke = (p.ecke ?? stair.ecke) as Pt | undefined;
+
+    // (1) Gesamtlauf < 1 m — dieselbe rohe a→b-Distanz wie treppeErstellen
+    const len = Math.hypot(neueB.x - neueA.x, neueB.y - neueA.y);
+    if (len < 1000) throw new CommandError('Treppenlauf zu kurz (< 1 m)');
+
+    // (2) ecke nur bei form «l» zulässig
+    if (p.ecke && stair.form !== 'l') {
+      throw new CommandError('«ecke» ist nur bei form «l» zulässig');
+    }
+
+    // (3) form «l» braucht (bestehende oder neue) ecke
+    if (stair.form === 'l' && !neueEcke) {
+      throw new CommandError('L-Lauf braucht den Eckpunkt «ecke»');
+    }
+
+    // (4) degeneriert (< 1 mm): die beiden Teilstrecken um die Ecke — |a−b|
+    // selbst deckt bereits Punkt (1) ab (1 mm < 1000 mm).
+    if (stair.form === 'l' && neueEcke) {
+      if (Math.hypot(neueEcke.x - neueA.x, neueEcke.y - neueA.y) < 1) {
+        throw new CommandError('Treppe degeneriert (a und ecke liegen praktisch übereinander)');
+      }
+      if (Math.hypot(neueB.x - neueEcke.x, neueB.y - neueEcke.y) < 1) {
+        throw new CommandError('Treppe degeneriert (ecke und b liegen praktisch übereinander)');
+      }
+    }
+
+    const neu: Stair = {
+      ...stair,
+      a: neueA,
+      b: neueB,
+      ...(neueEcke ? { ecke: neueEcke } : {}),
+    };
+
+    // (5) Steigungs-Gate über die tatsächliche Gesamtlauflänge der Form
+    const teile = treppenTeile(neu, storey.height, storey.elevation);
+    if (teile.spec.riser > 200) {
+      throw new CommandError(
+        `Lauf zu kurz für ${formatLength(storey.height)} Geschosshöhe: Steigung wäre ${Math.round(teile.spec.riser)} mm (max. 200). Mindestens ${formatLength(Math.round(teile.spec.minRun))} Gesamtlauf nötig.`,
+      );
+    }
+
+    return [{ id: stair.id, before: stair, after: neu }];
+  },
+});
 
 export const setRaumprogramm = registerCommand({
   id: 'design.raumprogrammSetzen',
