@@ -63,6 +63,39 @@ describe('render-scene/v1', () => {
     ).toThrow();
   });
 
+  it('v0.8.9 E9: style.mode nimmt "lineart" an', () => {
+    const scene = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+      style: { mode: 'lineart' },
+    });
+    expect(scene.style.mode).toBe('lineart');
+  });
+
+  it('v0.8.9 E9: alte Payloads ohne style.mode parsen weiter mit Default (Rückwärtskompatibilität)', () => {
+    const scene = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+    });
+    expect(scene.style.mode).toBe('none');
+    const sceneOhneStyleBlock = RenderScene.parse({
+      geometry: { path: 'm.glb', format: 'glb' },
+      out: 'x',
+      style: undefined,
+    });
+    expect(sceneOhneStyleBlock.style.mode).toBe('none');
+  });
+
+  it('verweigert einen unbekannten style.mode-Wert', () => {
+    expect(() =>
+      RenderScene.parse({
+        geometry: { path: 'm.glb', format: 'glb' },
+        out: 'x',
+        style: { mode: 'realistisch' },
+      }),
+    ).toThrow();
+  });
+
   it('K20/A10: komposition trägt Seitenverhältnis/Brennweite/Horizontlinie eines Cycles-Presets', () => {
     const scene = RenderScene.parse({
       geometry: { path: 'm.glb', format: 'glb' },
@@ -204,6 +237,33 @@ describe('V2-Technik Block 1 — Job-Lebenszyklus (additiv, kein Breaking Change
     expect(job.requested_engine).toBe('cycles');
   });
 
+  it('v0.8.9 E9: requested_style ist additiv und optional', () => {
+    const ohne = RenderJob.parse({
+      job_id: 'vis-1783414811-ab095c',
+      status: 'queued',
+      scene: 's.json',
+      created_at: '2026-07-07T08:00:00Z',
+    });
+    expect(ohne.requested_style).toBeUndefined();
+    const mit = RenderJob.parse({
+      job_id: 'vis-1783414811-ab095c',
+      status: 'queued',
+      scene: 's.json',
+      created_at: '2026-07-07T08:00:00Z',
+      requested_style: 'lineart',
+    });
+    expect(mit.requested_style).toBe('lineart');
+    expect(() =>
+      RenderJob.parse({
+        job_id: 'vis-1-abcdef',
+        status: 'queued',
+        scene: 's.json',
+        created_at: 'x',
+        requested_style: 'unbekannt',
+      }),
+    ).toThrow();
+  });
+
   it('weist ungültigen Fortschritt (pct > 1) und unbekannte Engine ab', async () => {
     const { RenderJobProgress } = await import('../src');
     expect(() => RenderJobProgress.parse({ phase: 'x', pct: 1.4 })).toThrow();
@@ -329,6 +389,133 @@ describe('kosmo.blender-sim/v1 — Physik wird nie gefakt', () => {
     });
     expect(job.status).toBe('awaiting_approval');
     expect(job.approval_token).toBe('CONFIRMED_SIM_1c214b97');
+  });
+
+  it('v0.8.9 E9: SonnenstundenResult parst und BlenderSimJob.result nimmt es an', async () => {
+    const { SonnenstundenResult, BlenderSimJob } = await import('../src');
+    const result = SonnenstundenResult.parse({
+      stunden: 3.5,
+      kriteriumErfuellt: true,
+      methode: 'blender-cycles-sun-sampling',
+    });
+    expect(result.schema).toBe('kosmo.sonnenstunden-result/v1');
+    const job = BlenderSimJob.parse({
+      job_id: 'bsim-1783414062-a2c3b1',
+      status: 'done',
+      art: 'sonnenstunden',
+      scene: 'blender-sim.json',
+      created_at: '2026-07-07T08:00:00Z',
+      result,
+    });
+    expect(job.result?.stunden).toBe(3.5);
+    expect(job.result?.kriteriumErfuellt).toBe(true);
+  });
+
+  it('v0.8.9 E9: SonnenstundenResult verweigert fehlende Pflichtfelder', async () => {
+    const { SonnenstundenResult } = await import('../src');
+    expect(() => SonnenstundenResult.parse({ stunden: 3.5 })).toThrow();
+  });
+});
+
+describe('kosmo.bake-job/v1 — Geometrie-Klasse mit Optimierungs-Behauptung (v0.8.9 §9 E9)', () => {
+  it('akzeptiert eine Bake-Szene und füllt Defaults (unwrap smart-uv)', async () => {
+    const { BakeJobScene } = await import('../src');
+    const scene = BakeJobScene.parse({
+      geometry: { path: 'model/model.glb' },
+      params: {},
+      out: 'bakes/bake-001',
+    });
+    expect(scene.schema).toBe('kosmo.bake-job/v1');
+    expect(scene.geometry.format).toBe('glb');
+    expect(scene.params.unwrap).toBe('smart-uv');
+  });
+
+  it('verweigert eine unbekannte unwrap-Strategie', async () => {
+    const { BakeJobScene } = await import('../src');
+    expect(() =>
+      BakeJobScene.parse({
+        geometry: { path: 'm.glb' },
+        params: { unwrap: 'marching-cubes' },
+        out: 'x',
+      }),
+    ).toThrow();
+  });
+
+  it('verweigert eine Szene ohne geometry', async () => {
+    const { BakeJobScene } = await import('../src');
+    expect(() =>
+      BakeJobScene.parse({
+        params: {},
+        out: 'x',
+      }),
+    ).toThrow();
+  });
+
+  it('parst den kein-blender-worker-Record und erzwingt das bake-Präfix', async () => {
+    const { BakeJob } = await import('../src');
+    const job = BakeJob.parse({
+      job_id: 'bake-1783414062-a2c3b1',
+      status: 'kein-blender-worker',
+      scene: 'bake-job.json',
+      created_at: '2026-07-07T08:00:00Z',
+      message: 'Braucht Blender headless auf der HomeStation.',
+    });
+    expect(job.kind).toBe('bake');
+    expect(job.status).toBe('kein-blender-worker');
+    expect(() =>
+      BakeJob.parse({
+        job_id: 'bsim-1-abcdef',
+        status: 'queued',
+        scene: 's.json',
+        created_at: 'x',
+      }),
+    ).toThrow();
+  });
+
+  it('nimmt awaiting_approval + CONFIRMED_BAKE_-Token an (Freigabe-Pflicht-Symmetrie)', async () => {
+    const { BakeJob } = await import('../src');
+    const job = BakeJob.parse({
+      job_id: 'bake-1783414062-a2c3b1',
+      status: 'awaiting_approval',
+      approval_token: 'CONFIRMED_BAKE_1c214b97',
+      scene: 'bake-job.json',
+      created_at: '2026-07-07T08:00:00Z',
+    });
+    expect(job.status).toBe('awaiting_approval');
+    expect(job.approval_token).toBe('CONFIRMED_BAKE_1c214b97');
+    expect(() =>
+      BakeJob.parse({
+        job_id: 'bake-1783414062-a2c3b1',
+        status: 'awaiting_approval',
+        approval_token: 'CONFIRMED_SIM_1c214b97',
+        scene: 'bake-job.json',
+        created_at: '2026-07-07T08:00:00Z',
+      }),
+    ).toThrow();
+  });
+
+  it('parst ein done-Ergebnis mit BakeResult (triangles_before/after optional)', async () => {
+    const { BakeJob } = await import('../src');
+    const job = BakeJob.parse({
+      job_id: 'bake-1783414062-a2c3b1',
+      status: 'done',
+      scene: 'bake-job.json',
+      created_at: '2026-07-07T08:00:00Z',
+      worker: 'echter-worker',
+      result: {
+        baked_glb: 'out/baked.glb',
+        method: 'blender-smart-uv-ao-bake',
+        triangles_before: 120000,
+        triangles_after: 45000,
+      },
+    });
+    expect(job.result?.schema).toBe('kosmo.bake-result/v1');
+    expect(job.result?.triangles_after).toBe(45000);
+  });
+
+  it('bridgeRoutes.jobsBake ist additiv verankert', async () => {
+    const { bridgeRoutes } = await import('../src');
+    expect(bridgeRoutes.jobsBake).toBe('/jobs/bake');
   });
 });
 

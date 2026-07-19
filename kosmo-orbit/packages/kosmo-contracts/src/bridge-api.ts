@@ -122,6 +122,10 @@ export const bridgeRoutes = {
   /** Blender-Simulation (Wind/Sonne/Gebäude) — ohne Blender-Worker endet der
    * Job als `kein-blender-worker` (Physik wird NIE gefakt). */
   jobsBlenderSim: '/jobs/blender-sim',
+  /** Textur-Bake (Smart-UV-Unwrap + AO-Bake) — ohne Blender-Worker endet der
+   * Job als `kein-blender-worker` (eine Geometrie-Optimierungs-Behauptung
+   * wird NIE gefakt, v0.8.9 §9 E9, Sanktion 12). */
+  jobsBake: '/jobs/bake',
   /** Video→Splat: ehrliche Übergabe der lokal extrahierten Frames — keine
    * SfM-Optimierung in der Bridge selbst (siehe kosmo_bridge/main.py). */
   jobsVideoSplat: '/jobs/video-splat',

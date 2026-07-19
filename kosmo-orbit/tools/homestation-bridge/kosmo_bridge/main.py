@@ -19,6 +19,18 @@ Endpoints (Vertrag: @kosmo/contracts bridge-api.ts):
                                     "kein-blender-worker" statt eine
                                     Simulationszahl zu erfinden (Physik wird
                                     NIE gefakt, Fable-Urteil §3.2).
+  POST /jobs/bake                  Textur-Bake (multipart: szene + model.glb;
+                                    Smart-UV-Unwrap + AO-Bake, kosmo.bake-job/
+                                    v1) — braucht denselben Blender-Worker wie
+                                    oben, sonst meldet der Status
+                                    "kein-blender-worker" SOFORT (nie running/
+                                    done). Anders als beim Bild-Platzhalter
+                                    wäre ein unverändertes Eingangs-GLB, das
+                                    als "gebackt" zurückgereicht wird, eine
+                                    UNSICHTBARE Falschbehauptung (die Geometrie
+                                    sähe exakt gleich aus) — darum gibt es
+                                    hier keinen Pass-Through-Pfad (v0.8.9 §9
+                                    E9, Sanktion 12).
   POST /jobs/dev                   KosmoDev-Workorder (kosmodev.workorder/v1,
                                     JSON-Body) — die Bridge speichert und
                                     vermittelt NUR Text, sie führt NIE Code
@@ -335,6 +347,10 @@ async def create_job(scene: str = Form(...), model: UploadFile = File(...)):
     # im Szenen-Vertrag heisst „reines Cycles, keine KI-Veredelung“ — der Client
     # zeigt es am Node, der Contract kennt beide Werte (render-result.ts).
     requested_engine = "cycles" if (scene_obj.get("vis") or {}).get("skip") else "ki"
+    # requested_style (v0.8.9 §9 E9): was BESTELLT wurde, analog
+    # requested_engine — der style.mode-Wert aus der render-scene.json, direkt
+    # gespiegelt statt neu interpretiert (render-result.ts requested_style).
+    requested_style = (scene_obj.get("style") or {}).get("mode", "none")
     # Status-Anker: Default (Pflicht AUS) bleibt "queued" — exakt das heutige
     # Verhalten, auf das die E2E-/Contract-Fläche pinnt. Nur mit Pflicht AN
     # startet der Job in "awaiting_approval".
@@ -345,6 +361,7 @@ async def create_job(scene: str = Form(...), model: UploadFile = File(...)):
         "approval_token": f"CONFIRMED_RENDER_{secrets.token_hex(4)}",
         "idle_window_only": True,
         "requested_engine": requested_engine,
+        "requested_style": requested_style,
         "created_at": _now(),
     }
     (job_dir / "job.json").write_text(json.dumps(record, indent=2))
@@ -677,6 +694,12 @@ async def get_job(job_id: str):
     result_file = job_dir / "render-result.json"
     if result_file.exists():
         record["result"] = json.loads(result_file.read_text())
+    # Bake-Ergebnis (kosmo.bake-result/v1) — analog render-result.json, aber
+    # eigener Dateiname (der Fake-Worker legt ihn nie an, siehe
+    # _fake_worker_step: bake endet immer auf kein-blender-worker).
+    bake_result_file = job_dir / "bake-result.json"
+    if bake_result_file.exists():
+        record["result"] = json.loads(bake_result_file.read_text())
     return record
 
 
@@ -783,6 +806,62 @@ async def create_blender_sim_job(szene: str = Form(...), model: UploadFile = Fil
     }
     if APPROVAL_PFLICHT:
         record["approval_token"] = f"CONFIRMED_SIM_{secrets.token_hex(4)}"
+    (job_dir / "job.json").write_text(json.dumps(record, indent=2))
+    return record
+
+
+# ---------- Bake-Jobs (ehrliche Übergabe, keine Optimierung hier) ----------
+#
+# v0.8.9 §9 E9 (Owner-Shortlist «Bake-Rückweg», Vertrag kosmo.bake-job/v1,
+# siehe packages/kosmo-contracts/src/bake-job.ts): Smart-UV-Unwrap + AO-Bake
+# laufen NUR mit Blender headless auf der HomeStation (5090). Anders als beim
+# Render-Job ist die Ehrlichkeitsgrenze hier NICHT "ein Bild sieht wie ein
+# Platzhalter aus", sondern schärfer: ein Bake-Ergebnis behauptet, dass die
+# GEOMETRIE optimiert wurde (Unwrap + gebackene Textur, ggf. Decimate). Ein
+# unverändertes Eingangs-GLB, das kommentarlos als `baked_glb` zurückgereicht
+# würde, wäre eine stille Falschbehauptung — darum gibt es HIER keinen
+# Pass-Through-Pfad überhaupt: dieser Endpoint legt nur den Job an, das
+# tatsächliche Baken bleibt vollständig dem (noch fehlenden) Blender-Worker
+# vorbehalten (siehe _fake_worker_step unten, Sanktion 12).
+
+@app.post("/jobs/bake")
+async def create_bake_job(szene: str = Form(...), model: UploadFile = File(...)):
+    try:
+        szene_obj = json.loads(szene)
+    except json.JSONDecodeError as e:
+        raise HTTPException(400, f"szene ist kein JSON: {e}")
+
+    params = szene_obj.get("params")
+    if not isinstance(params, dict):
+        raise HTTPException(400, "szene.params fehlt oder ist kein Objekt")
+    unwrap = params.get("unwrap", "smart-uv")
+    if unwrap != "smart-uv":
+        raise HTTPException(400, f"ungültiges unwrap: {unwrap!r} (nur 'smart-uv' unterstützt)")
+
+    job_id = f"bake-{int(time.time())}-{secrets.token_hex(3)}"
+    job_dir = STORE / job_id
+    job_dir.mkdir(parents=True, exist_ok=True)
+
+    model_bytes = await _read_capped(model, MAX_UPLOAD_MODEL_BYTES, "model.glb")
+    model_path = job_dir / "model.glb"
+    model_path.write_bytes(model_bytes)
+    szene_obj["geometry"] = {"path": str(model_path), "format": "glb"}
+    # Schreibziel IMMER serverseitig erzwingen — exakt wie bei /jobs und
+    # /jobs/blender-sim (R4).
+    szene_obj["out"] = str(job_dir / "out")
+    (job_dir / "bake-job.json").write_text(json.dumps(szene_obj, indent=2))
+
+    record = {
+        "job_id": job_id,
+        "kind": "bake",
+        # Freigabe-Pflicht gilt auch für den (teuren) Bake-Lauf, Symmetrie zu
+        # /jobs und /jobs/blender-sim.
+        "status": "awaiting_approval" if APPROVAL_PFLICHT else "queued",
+        "scene": str(job_dir / "bake-job.json"),
+        "created_at": _now(),
+    }
+    if APPROVAL_PFLICHT:
+        record["approval_token"] = f"CONFIRMED_BAKE_{secrets.token_hex(4)}"
     (job_dir / "job.json").write_text(json.dumps(record, indent=2))
     return record
 
@@ -1018,6 +1097,25 @@ def _fake_worker_step(job_dir: Path) -> None:
             "Diese Bridge hat keinen Blender-Worker angeschlossen — Wind/"
             "Sonnenstunden/Energie brauchen Blender headless auf der "
             "HomeStation (5090). Physik wird nicht erfunden."
+        )
+        record["updated_at"] = _now()
+        f.write_text(json.dumps(record, indent=2))
+        return
+
+    if status == "queued" and record.get("kind") == "bake":
+        # v0.8.9 §9 E9, Sanktion 12: Bake/Decimate ist eine Geometrie-Klasse
+        # mit Optimierungs-Behauptung — ein unverändertes GLB, das als
+        # "gebackt" ausgeliefert würde, wäre eine unsichtbare Falschbehauptung
+        # (die Geometrie sähe exakt gleich aus wie vorher). Darum gibt es hier
+        # KEINEN Pass-Through: der Fake-Worker rechnet nie an, sondern meldet
+        # SOFORT die ehrliche Grenze — nie running/done, nie eine
+        # bake-result.json.
+        record["status"] = "kein-blender-worker"
+        record["message"] = (
+            "Diese Bridge hat keinen Blender-Worker angeschlossen — der "
+            "Smart-UV-Unwrap + AO-Bake braucht Blender headless auf der "
+            "HomeStation (5090). Ein unverändertes Modell wird nicht als "
+            "gebackt ausgegeben."
         )
         record["updated_at"] = _now()
         f.write_text(json.dumps(record, indent=2))

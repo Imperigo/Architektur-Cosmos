@@ -22,11 +22,37 @@ export const BlenderSimScene = z.object({
     format: z.literal('glb').default('glb'),
   }),
   /** Art-spezifische Parameter (z. B. Windrichtung, Datum/Ort). Generisch,
-   * damit neue Simulationsarten ohne Schema-Bruch andocken. */
+   * damit neue Simulationsarten ohne Schema-Bruch andocken.
+   *
+   * Schlüssel für `art: 'sonnenstunden'` (v0.8.9 §9 E9/E11, Sampling-
+   * Konvention siehe README «Sonnenstunden»):
+   *   lat: number               — Breitengrad (WGS84).
+   *   lon: number                — Längengrad (WGS84).
+   *   datum: string              — ISO-Datum (z. B. "2026-12-21"), kein
+   *                                 Doc-Feld (Laufzeit ≠ Modell, PA2-Grenze).
+   *   kriteriumStunden?: number  — Schwellwert für `kriteriumErfuellt` im
+   *                                 Ergebnis; optional, Default 3.
+   */
   params: z.record(z.string(), z.unknown()).default({}),
   out: z.string(),
 });
 export type BlenderSimScene = z.infer<typeof BlenderSimScene>;
+
+/**
+ * kosmo.sonnenstunden-result/v1 — Ergebnis einer Sonnenstunden-Simulation
+ * (art: 'sonnenstunden'). Additiv zu BlenderSimJob.result, analog dem
+ * render-result-Einbettungsmuster von RenderJob. Wie bei jeder Blender-
+ * Simulation gilt die harte Ehrlichkeitsgrenze dieser Datei: dieses Ergebnis
+ * existiert NUR nach einem echten Blender-Worker-Lauf — der Fake-Worker
+ * erzeugt es nie (er endet auf `kein-blender-worker`).
+ */
+export const SonnenstundenResult = z.object({
+  schema: z.literal('kosmo.sonnenstunden-result/v1').default('kosmo.sonnenstunden-result/v1'),
+  stunden: z.number(),
+  kriteriumErfuellt: z.boolean(),
+  methode: z.string(),
+});
+export type SonnenstundenResult = z.infer<typeof SonnenstundenResult>;
 
 /**
  * Job-Record der Blender-Simulation. Eigenes Präfix `bsim-` (die `vis-`-Regex
@@ -63,5 +89,10 @@ export const BlenderSimJob = z.object({
   /** Ehrliche Begründung, v. a. bei `kein-blender-worker`. */
   message: z.string().optional(),
   worker: z.string().optional(),
+  /** Das eingebettete Ergebnis, sobald `done` — nur für `art:
+   * 'sonnenstunden'` befüllt (weitere Arten bekommen ihr eigenes Result-
+   * Schema erst, wenn sie es brauchen). Ohne dieses Feld würde
+   * `BlenderSimJob.parse()` es stumm strippen (Fable-Review-1-Muster). */
+  result: SonnenstundenResult.optional(),
 });
 export type BlenderSimJob = z.infer<typeof BlenderSimJob>;

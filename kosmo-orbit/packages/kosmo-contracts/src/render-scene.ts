@@ -59,7 +59,13 @@ export const RenderScene = z.object({
     .prefault({}),
   style: z
     .object({
-      mode: z.enum(['none', 'redux', 'ipadapter', 'lora']).default('none'),
+      // v0.8.9 §9 E9/E10: 'lineart' additiv — eine Strichzeichnung ist kein
+      // KI-Stil-Transfer, sondern Cycles/Freestyle- bzw. Grease-Pencil-
+      // Rendering. Vertragskopplung (die Erzwingung selbst baut PBL2 in
+      // vis-jobs.ts, hier wird nur der Vertrag dokumentiert): jeder Client,
+      // der `mode:'lineart'` sendet, MUSS zugleich `vis.skip:true` setzen —
+      // eine Strichzeichnung wartet nie auf einen KI-Veredelungs-Schritt.
+      mode: z.enum(['none', 'redux', 'ipadapter', 'lora', 'lineart']).default('none'),
       refs: z.array(z.string()).default([]),
       prompt: z.string().default(''),
     })

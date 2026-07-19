@@ -78,6 +78,11 @@ export const RenderJob = z.object({
   progress: RenderJobProgress.optional(),
   /** Was BESTELLT wurde (nicht was gerendert wurde) — Cycles vs. KI-Veredelung. */
   requested_engine: z.enum(['cycles', 'ki']).optional(),
+  /** Hält fest, was BESTELLT wurde (nicht was gerendert wurde) — der
+   * style.mode-Wert aus der render-scene.json, additiv analog
+   * requested_engine (v0.8.9 §9 E9). Optional, weil die heutige Bridge es
+   * noch nicht liefert — alte Records bleiben wortgleich gültig. */
+  requested_style: z.enum(['none', 'redux', 'ipadapter', 'lora', 'lineart']).optional(),
   /** Menschlicher Zusatztext (z. B. Abbruch-/Wartegrund), UI-lesbar. */
   message: z.string().optional(),
   /** Das eingebettete Ergebnis, sobald `done` — `GET /jobs/{id}` liefert es

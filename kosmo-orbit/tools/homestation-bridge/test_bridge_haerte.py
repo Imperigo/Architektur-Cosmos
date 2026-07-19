@@ -364,10 +364,12 @@ def _hs2_reload(store: Path):
     return TestClient(bridge.app)
 
 
-def _hs2_render_job(cl, vis_skip: bool = False):
+def _hs2_render_job(cl, vis_skip: bool = False, style_mode: str | None = None):
     scene = {"schema": "kosmovis.render-scene/v1", "geometry": {"path": "x", "format": "glb"}, "out": "x"}
     if vis_skip:
         scene["vis"] = {"skip": True}
+    if style_mode is not None:
+        scene["style"] = {"mode": style_mode}
     return cl.post(
         "/jobs",
         data={"scene": json.dumps(scene)},
@@ -387,6 +389,10 @@ check("HS2 Default-Create: requested_engine 'ki' (KI-Veredelung)", res.json().ge
 
 res_cyc = _hs2_render_job(cl, vis_skip=True)
 check("HS2 vis.skip → requested_engine 'cycles'", res_cyc.json().get("requested_engine") == "cycles")
+
+# v0.8.9 §9 E9: requested_style wird aus scene.style.mode gespiegelt
+res_lineart = _hs2_render_job(cl, style_mode="lineart")
+check("v0.8.9 E9: requested_style spiegelt scene.style.mode ('lineart')", res_lineart.json().get("requested_style") == "lineart")
 
 # --- (b) Health meldet GPU NUR im Fake-Modus, ehrlich als Simulation ---
 bridge.FAKE_WORKER = True
@@ -729,6 +735,113 @@ check(
     bridge._cors_origins() == ["http://localhost:5175", "http://127.0.0.1:5175"],
 )
 os.environ.pop("KOSMO_BRIDGE_ORIGIN", None)
+
+# ---------------------------------------------------------------------------
+# 12) Bake-Jobs (v0.8.9 §9 E9, Matrix C-13): /jobs/bake, ehrliche Grenze
+#    "kein-blender-worker" SOFORT (nie running/done im Container — Bake ist
+#    eine Geometrie-Klasse mit Optimierungs-Behauptung, Sanktion 12), `out`-
+#    Injektion abgewiesen, ungültige params → 400, Deckel → 413,
+#    Freigabe-Pflicht-Symmetrie. Eigener temp-Store (Modul-Reload), wie die
+#    Blender-Sim-Prüfungen oben (Abschnitt 7).
+# ---------------------------------------------------------------------------
+bake_stores: list[Path] = []
+
+
+def _bake_store() -> Path:
+    p = Path(tempfile.mkdtemp(prefix="kosmo-bake-"))
+    bake_stores.append(p)
+    return p
+
+
+def _bake_job(cl, unwrap: str = "smart-uv", out_value: str = "/tmp/böse-schreibstelle", model_bytes: bytes = b"glb-daten"):
+    szene = {
+        "schema": "kosmo.bake-job/v1",
+        "geometry": {"path": "irrelevant", "format": "glb"},
+        "params": {"unwrap": unwrap},
+        "out": out_value,
+    }
+    return cl.post(
+        "/jobs/bake",
+        data={"szene": json.dumps(szene)},
+        files={"model": ("model.glb", model_bytes, "model/gltf-binary")},
+    )
+
+
+store_bake = _bake_store()
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+cl_bake = _hs2_reload(store_bake)
+
+# --- (a) gültiger Job: 200, kind/Präfix/Status wie erwartet ---
+res = _bake_job(cl_bake, out_value="/etc/böse")
+check("POST /jobs/bake (gültige params) antwortet 200", res.status_code == 200)
+rec = res.json()
+check("bake-Record: kind == 'bake'", rec.get("kind") == "bake")
+check("bake-Record: job_id beginnt mit 'bake-'", rec.get("job_id", "").startswith("bake-"))
+check("bake-Record: Status 'queued'", rec.get("status") == "queued")
+
+bake_job_id = rec["job_id"]
+
+# --- (b) out-Injektion: Client-Pfad wird verworfen, Schreibziel erzwungen ---
+bake_szene_path = store_bake / bake_job_id / "bake-job.json"
+bake_szene_geschrieben = json.loads(bake_szene_path.read_text()) if bake_szene_path.exists() else {}
+check(
+    "bake: Schreibziel serverseitig auf <job_dir>/out erzwungen",
+    bake_szene_geschrieben.get("out") == str(store_bake / bake_job_id / "out"),
+)
+check("bake: Client-geliefertes 'out' NICHT übernommen", bake_szene_geschrieben.get("out") != "/etc/böse")
+
+# --- (c) Fake-Worker: queued → 'kein-blender-worker' SOFORT, NIE running/done,
+#     KEIN bake-result.json (Sanktion 12 — kein Pass-Through) ---
+bridge._fake_worker_pass()
+rec_nach = json.loads((store_bake / bake_job_id / "job.json").read_text())
+check("bake nach Fake-Worker-Pass: Status 'kein-blender-worker'", rec_nach.get("status") == "kein-blender-worker")
+check("bake nach Fake-Worker-Pass: NIE 'running'", rec_nach.get("status") != "running")
+check("bake nach Fake-Worker-Pass: NIE 'done'", rec_nach.get("status") != "done")
+check("bake nach Fake-Worker-Pass: keine bake-result.json geschrieben", not (store_bake / bake_job_id / "bake-result.json").exists())
+bake_msg = rec_nach.get("message", "")
+check("bake Begründung enthält 'Blender'", "Blender" in bake_msg)
+check("bake Begründung enthält 'HomeStation'", "HomeStation" in bake_msg)
+# ein zweiter Pass darf den Endzustand nicht mehr verändern (kein Zustandssprung)
+bridge._fake_worker_pass()
+rec_nach2 = json.loads((store_bake / bake_job_id / "job.json").read_text())
+check("bake bleibt nach weiterem Pass auf 'kein-blender-worker' stehen", rec_nach2.get("status") == "kein-blender-worker")
+
+# --- (d) ungültige params (unwrap != 'smart-uv') → 400 ---
+res_bad_params = _bake_job(cl_bake, unwrap="marching-cubes")
+check("bake mit ungültigem unwrap → 400", res_bad_params.status_code == 400)
+
+# --- (e) Deckel: Modell über der Testgrenze (2 MB) → 413 ---
+res_big = _bake_job(cl_bake, model_bytes=b"x" * (3 * 1024 * 1024))
+check("bake Modell-Upload über Deckel → 413", res_big.status_code == 413)
+
+for _s in bake_stores:
+    shutil.rmtree(_s, ignore_errors=True)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
+
+# --- (f) Freigabe-Pflicht-Symmetrie: awaiting_approval + approve-Flow ---
+store_bake_fp = _bake_store()
+os.environ["KOSMO_BRIDGE_APPROVAL_PFLICHT"] = "1"
+os.environ.pop("KOSMO_BRIDGE_GPU_IDLE", None)
+cl_bake_fp = _hs2_reload(store_bake_fp)
+res_fp = _bake_job(cl_bake_fp, out_value="/tmp/x")
+rec_fp = res_fp.json()
+jid_fp = rec_fp["job_id"]
+tok_fp = rec_fp.get("approval_token", "")
+check("bake mit Pflicht AN startet 'awaiting_approval'", rec_fp.get("status") == "awaiting_approval")
+check("bake trägt approval_token mit Präfix CONFIRMED_BAKE_", tok_fp.startswith("CONFIRMED_BAKE_"))
+res_approve = cl_bake_fp.post(f"/jobs/{jid_fp}/approve", json={"approval_token": tok_fp})
+check("bake: /approve gibt den Job frei → 'queued'", res_approve.status_code == 200 and res_approve.json().get("status") == "queued")
+res_cancel = cl_bake_fp.post(f"/jobs/{jid_fp}/cancel")
+check("bake: /cancel bricht den Job ab → 'cancelled'", res_cancel.json().get("status") == "cancelled")
+
+for _s in bake_stores:
+    shutil.rmtree(_s, ignore_errors=True)
+for _k in ("KOSMO_BRIDGE_APPROVAL_PFLICHT", "KOSMO_BRIDGE_GPU_IDLE"):
+    os.environ.pop(_k, None)
+importlib.reload(bridge)
+bridge.STORE = TMP_STORE
 
 # ---------------------------------------------------------------------------
 # Aufräumen + Ergebnis

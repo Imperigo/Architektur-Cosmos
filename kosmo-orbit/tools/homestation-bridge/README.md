@@ -207,6 +207,69 @@ Kein Ergebnis vortäuschen: fehlt die Fähigkeit (kein Blender, kein SfM),
 gehört der Job auf einen ehrlichen `kein-…-worker`-Status mit Begründung, nicht
 auf `done`.
 
+Drei weitere Werkbank-Arten (v0.8.9 §9, Owner-Shortlist «Blender-Verträge»)
+reiten auf demselben Zustandsautomaten oder auf der bestehenden Render-Kette.
+Ein bpy-Skript liegt dafür bewusst NICHT in diesem Repo (ROADMAP 179, in
+0.8.9 per Owner-Rückfrage bestätigt) — die folgenden Absätze sind Drehbuch,
+kein Code: sie beschreiben, was ein künftiger Blender-Worker tun muss, nicht
+wie er es tut.
+
+#### Bake (Smart-UV-Unwrap + AO-Bake)
+
+`POST /jobs/bake` (Vertrag `kosmo.bake-job/v1`, siehe
+`packages/kosmo-contracts/src/bake-job.ts`) legt einen Job für einen
+Textur-Bake an. Ein echter Worker holt ihn nach demselben Protokoll wie oben
+(`queued` → `running` → `done`), rechnet aber in einer festen Reihenfolge:
+zuerst das Smart-UV-Unwrap, ERST DANACH den AO-Bake — ein Bake auf ein noch
+unentfaltetes Mesh würde eine Textur erzeugen, die auf dem entfalteten Modell
+nicht mehr passt. Ist `params.decimateRatio` gesetzt, geschieht die
+Dreiecksreduktion vor dem Unwrap, damit die gebackene Textur zur endgültigen
+(reduzierten) Geometrie passt, nicht zur ursprünglichen. Das fertige Modell
+landet als `baked_glb` unter dem serverseitig erzwungenen `out`-Verzeichnis;
+der Record trägt zusätzlich ein `kosmo.bake-result/v1`-Objekt
+(`baked_glb`, `method`, optional `triangles_before`/`triangles_after`) analog
+zur eingebetteten `render-result.json` oben. Die Ehrlichkeitsgrenze ist hier
+schärfer als beim Bild-Platzhalter: ein Bake behauptet eine GEOMETRIE-
+Optimierung, und ein unverändertes Eingangs-GLB, das kommentarlos als
+gebackt zurückgereicht würde, wäre unsichtbar falsch — die Geometrie sähe
+exakt gleich aus wie vorher. Darum gibt es für diesen Job-Typ keinen
+Fake-Zwischenschritt: ohne Worker bleibt er sofort und für immer
+`kein-blender-worker`.
+
+#### Line-Art (Strichzeichnung)
+
+Line-Art bekommt bewusst KEINEN eigenen Job-Typ — eine Strichzeichnung ist
+technisch ein Render mit `style.mode: "lineart"` auf der ganz normalen
+`kosmovis.render-scene/v1`-Kette. Ein echter Worker erkennt den Modus im
+Szenen-Vertrag und rechnet headless entweder über Cycles mit dem
+Freestyle-Kantenrenderer oder über einen Grease-Pencil-Line-Art-Modifier —
+beide Wege liefern ein Bild, kein separates Datenformat. Das Ergebnis wird
+wie jedes andere Render-Bild als normales Artefakt der bestehenden
+`vis-`-Job-Kette abgelegt (`render-result.json`, `GET /jobs/{id}/artifacts/
+{name}`) — kein neuer Endpoint, kein neuer Job-Präfix. Der Vertrag hält im
+Client-seitigen Kopplungshinweis fest, dass `style.mode: "lineart"` stets mit
+`vis.skip: true` einhergeht (`packages/kosmo-contracts/src/render-scene.ts`):
+eine Strichzeichnung wartet nie auf eine KI-Veredelung, sie IST bereits das
+fertige Bild.
+
+#### Sonnenstunden
+
+`art: "sonnenstunden"` auf `POST /jobs/blender-sim` (Vertrag
+`kosmo.blender-sim/v1`) verlangt in `params` mindestens `lat`, `lon` und ein
+ISO-Datum `datum`; optional `kriteriumStunden` (Default 3) als Schwelle für
+das Bestehen-Kriterium. Ein echter Worker tastet den Sonnenstand über den Tag
+in einer festen Sampling-Konvention ab (z. B. minütlich oder in festen
+Zeitschritten über die Tageslichtstunden) und prüft je Abtastpunkt, ob die
+Zielfläche unverschattet besonnt ist — die Summe der besonnten Zeit ergibt
+`stunden`. Das Ergebnis landet als `kosmo.sonnenstunden-result/v1`
+(`stunden`, `kriteriumErfuellt`, `methode`) im Job-Record
+(`BlenderSimJob.result`, siehe `packages/kosmo-contracts/src/blender-sim.ts`).
+Dieselbe Ehrlichkeitsregel wie bei Wind/Gebäude-Energie gilt unverändert und
+uneingeschränkt: NIE eine Sonnenstunden-Zahl erfinden. Ohne echten
+Blender-Worker bleibt der Job `kein-blender-worker` — eine erfundene Zahl
+sähe aus wie ein Analyseergebnis und könnte eine Bau-Entscheidung
+verseuchen.
+
 ### Dev-Worker andocken (Auftragsbuch → Ausführung)
 
 V2-Technik Block 2 (`docs/V2-TECHNIK-BLOCK2-BUILDPLAN.md`, Entscheid E3):
