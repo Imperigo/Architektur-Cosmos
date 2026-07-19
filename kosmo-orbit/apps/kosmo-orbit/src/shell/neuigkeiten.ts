@@ -35,6 +35,34 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.6',
+    datum: '2026-07-19',
+    punkte: [
+      {
+        text: 'Griffe sind jetzt verlustfrei: Wer einen Wand-Endpunkt zieht, behält die Wand — Identität, Umbau-Status, Auswahl und alle eingesetzten Fenster und Türen überleben den Zug als EIN Undo-Schritt (neues Kernel-Kommando statt Löschen+Neusetzen). Wird die Wand zu kurz für eine Öffnung, rückt diese nach, wenn es geht, sonst wird sie mit sichtbarer Meldung entfernt — nie still. Auch Öffnungen selbst haben jetzt einen Griff und lassen sich entlang der Wandachse schieben (begrenzt auf die Wandlänge), und Nachbar-Zonen behalten beim Eck-Zug ihre Kennzeichnung.',
+        station: 'design',
+      },
+      {
+        text: 'Kosmo schlägt Läufe jetzt im Gespräch vor: auf eine Bau-Anfrage antwortet Kosmo mit einer Vorschlagskarte (Titel, Schrittliste mit Begründungen) — «Lauf starten» oder «Ablehnen» entscheidet der Architekt, nie Kosmo selbst. Eine kleine Lauf-Bibliothek macht die drei kuratierten Drehbücher per Klick startbar, Schritt-Verweise auf gerade erst erzeugte Elemente werden zur Laufzeit aufgelöst, erfundene Befehls-IDs werden VOR der Karte abgewiesen, und der Abbrechen-Knopf greift jetzt beweisbar während eines echten Laufs (per Klick getestet, nicht nur per API). Die Zeichner-Eval wuchs von 35 auf 38 Prüffälle (38/38 bestanden).',
+      },
+      {
+        text: 'Auf dem Publish-Blatt lassen sich Raumtypen ein- und ausblenden (dritter Schalter im Sichtbarkeits-Werkzeug der DARSTELLUNG-Insel): Grundriss-Räume tragen ihren Raumtyp jetzt als Daten-Attribut im Blatt — rein als Anzeige-Schalter, alle 36 abgeleiteten Plan-Goldens blieben byte-identisch.',
+        station: 'publish',
+      },
+      {
+        text: 'Die 3D-Ansicht wählt jetzt wie der Plan: Shift-Klick nimmt Elemente in die Auswahl auf oder wieder heraus, Esc leert sie — dieselben Regeln in beiden Welten.',
+        station: 'design',
+      },
+      {
+        text: 'Der Projekt-Standort bleibt: die Adress-Suche (geo.admin.ch) schreibt Adresse und LV95-Koordinaten jetzt als Projekt-Einstellung ins Dokument — ein Undo-Schritt, überlebt Speichern und Neuladen, läuft über Sync mit — und KosmoData zeigt den Standort als eigene Zeile im Projektkopf.',
+        station: 'data',
+      },
+      {
+        text: 'Unter der Haube: Der Scan-Auswertungs-Wächter prüft jetzt rückwärts alle Releases (Lücken können nicht mehr still passieren), ein seit v0.8.4 still roter Simulations-Test wurde gefunden und gefixt, und die Release-Matrix wurde von 16 unabhängigen Prüfern adversarial abgenommen — 14 sofort bestanden, die zwei Funde (Abbrechen-Knopf real unerreichbar, erfundene Befehls-IDs) sind vor dem Release gefixt.',
+      },
+    ],
+  },
+  {
     version: '0.8.5',
     datum: '2026-07-19',
     punkte: [

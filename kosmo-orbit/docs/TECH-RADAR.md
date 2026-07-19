@@ -151,7 +151,7 @@ verifiziert.
 |---|---|---|---|
 | BIM-Edit (IFC-Editing-Benchmark) | **PATTERN** — externer Beleg für den Command-Ansatz: LLMs lösen <3.4 % direkter IFC-Edits; Kosmo bleibt bei zod-validierten Commands (E4-Autopilot inklusive). | arxiv.org/abs/2606.20146 | Paper CC-BY (laut Scan) |
 | VectorGym (SVG-Dataset + 8B-Modell) | **TEST (HomeStation)** — Apache-2.0-Dataset (~8000 SVGs, human-annotiert) als SVG-Finetuning-Basis; Annotation-Lizenz vor kommerziellem Training prüfen. | huggingface.co/datasets/ServiceNow/VectorGym | Apache 2.0 (laut Scan) |
-| swisstopo-mcp (13 CH-Geodaten-Tools) | **EVALUATE** — ÖREB/LV95/STAC/WMTS ohne API-Key als MCP-Server; Kandidat für die Standort-/Parzellen-Kette in KosmoData (v0.8.6+). Erst gegen die neue MCP-Spec (28.07.) prüfen. | github.com/malkreide/swisstopo-mcp | MIT (laut Scan) |
+| swisstopo-mcp (13 CH-Geodaten-Tools) | **EVALUATE** — ÖREB/LV95/STAC/WMTS ohne API-Key als MCP-Server; Kandidat für die Standort-/Parzellen-Kette in KosmoData (v0.8.6+). Erst gegen die neue MCP-Spec (28.07.) prüfen. | github.com/malkreide/swisstopo-mcp | widersprüchlich ⚠ (18.07.-Scan: MIT · 19.07.-Scan: «prüfen» — vor jedem Einbau SELBST verifizieren) |
 | MCP-Spezifikation 2026-07-28 | **WATCH** — Protokoll wird stateless, Roots/Sampling/Logging depreciert, OAuth 2.1 Pflicht; jede künftige Kosmo-MCP-Arbeit gegen die neue Spec entwerfen. | blog.modelcontextprotocol.io | Spez (laut Scan) |
 | IfcOpenShell Bonsai 0.8.6-alpha | **WATCH** — tägliche Alpha-Builds seit 12.07.; produktiv bleibt 0.8.5 stable. | github.com/IfcOpenShell/IfcOpenShell | LGPL (laut Scan) |
 | landingai-ade (Visual-Grounding-Extraktion) | **EVALUATE (Prepare)** — Quelle-pro-Wert-PDF-Extraktion für die KosmoPrepare-M2-Kette. | github.com/landing-ai/agentic-doc | MIT (laut Scan) |
@@ -161,3 +161,15 @@ verifiziert.
 Alle Angaben dieser Tabelle sind Scan-Aussagen (13 Notion-Seiten
 12.–18.07.), nicht selbst verifiziert — Details und Ehrlichkeit in
 `AI-SCAN-AUSWERTUNG-0.8.5.md` §4.
+
+## Nachtrag 2026-07-19 (Abend) — aus der Scan-Delta-Auswertung v0.8.6 (AI-SCAN-AUSWERTUNG-0.8.6.md)
+
+| Baustein | Entscheid | Quelle | Lizenz |
+|---|---|---|---|
+| Typst 0.15.1 | **WATCH** — Bug-fix-Release vom 17.07. (SVG-Output-Formatierungs-Korrektur, `typst eval`-Exit-Code-Fix); nur relevant, falls die Publish-Kette je auf Typst setzt — heute bewusst Eigenbau-SVG. | typst.app | Apache 2.0 (laut Scan) |
+| Gemini Omni Flash (API live) | **TEST (Owner-Entscheid, aktualisiert)** — seit 30.06. live, kein Preview mehr (~0.10 USD/Sek Video); das KosmoVis-Bridge-Skeleton wäre erstmals smoke-testbar, aber Cloud-only/DSGVO → Owner-Gate bleibt. | Gemini API | proprietär |
+
+Zusätzlich Lizenz-Korrektur oben: die swisstopo-mcp-Zeile (Nachtrag 0.8.5)
+trägt jetzt den Diskrepanz-Vermerk — der 18.07.-Scan nannte MIT, der
+19.07.-Scan sagt «Lizenz prüfen». Alle Angaben Scan-Aussagen (2 Notion-Seiten
+19.07.), nicht selbst verifiziert — Details in `AI-SCAN-AUSWERTUNG-0.8.6.md`.

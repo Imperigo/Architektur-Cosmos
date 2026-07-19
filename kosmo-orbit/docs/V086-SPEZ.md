@@ -178,7 +178,27 @@ E3 ist opt-in-additiv; E1/E2 berühren kein derive.
 - [x] **C-15** Öffnungs-Griff: sichtbar bei Einzel-Auswahl, Schieben per EINEM eigenschaftSetzen, App-Clamp an Wandkanten → PB3
 - [x] **C-16** Öffnungs-Griff-Vorrang vor Wand-Hit (C-17-Muster) → PB3
 - [x] **C-17** Standort überlebt Reload/Save-Load (`.kosmo`), Undo entfernt ihn; KosmoData zeigt LV95+Adresse bzw. ehrlichen Leer-Zustand → PC1
-- [ ] **C-18** Release: Matrix adversarial (Fan-out, PE3-Lehren), lehren/v0.8.6.md, Sechs-Träger-Bump, Neuigkeiten, §0-Delta, Release-Notiz, Rundgang-PDF gesichtet, release-gate 0, Installer+sha256+Zustellung, Owner-Smoke-Punkt → PC3
+- [x] **C-18** Release: Matrix adversarial (Fan-out, PE3-Lehren), lehren/v0.8.6.md, Sechs-Träger-Bump, Neuigkeiten, §0-Delta, Release-Notiz, Rundgang-PDF gesichtet, release-gate 0, Installer+sha256+Zustellung, Owner-Smoke-Punkt → PC3
+
+### Ergebnis der Matrix-Abnahme (19.07.2026, ROADMAP 495)
+
+16 unabhängige adversariale Prüfer (Workflow-Fan-out, je Zelle einer,
+StructuredOutput, PE3-Lehren im Präambel) gegen den Live-Build auf :5183:
+**14/16 sofort bestanden, 2 echte Funde — beide vor dem Release gefixt:**
+
+- **C-11 (Fund):** «Abbrechen» war für ECHTE Klicks unerreichbar — die
+  synchrone Schrittschleife lief in einem einzigen Task durch (0/400
+  Klick-Abbrüche). Fix: Macrotask-Yield vor jedem Schritt in
+  `lauf-runner.ts`; Beweis seither per echtem Klick gegen einen
+  400-Schritt-Lauf (`autopilot-kern.spec.ts`).
+- **C-12 (Fund):** schema-gültige Pläne mit erfundener `commandId`
+  erreichten die Vorschlagskarte — ein Start hätte einen halben Lauf
+  gerissen. Fix: Registry-Prüfung (`bekannteCommandIds`) zur
+  Vorschlags-Zeit in der ChatSession, unbekannte IDs → benannter
+  Tool-Fehler, keine Karte.
+
+C-17 war durch die PC1-E2E bereits bewiesen (Prüfer bestätigte). Details
+und Zellen-Verdicts: ROADMAP 495, Commit `259b012`.
 
 ## 8 · Ehrliche Nicht-Ziele
 

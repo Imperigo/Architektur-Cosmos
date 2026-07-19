@@ -1,6 +1,6 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
-> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.5** (Stand 19.07.2026);
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.8.6** (Stand 19.07.2026);
 > alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
 > älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
 > (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal
@@ -11,7 +11,7 @@
 > **Versions-Hinweis:** Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
 > `tauri.conf.json`/`vite.config.ts` (`APP_VERSION`, fünfter Bump-Träger —
 > beim v0.8.2-Release vergessen, P10-Fund ROADMAP 447) sind deckungsgleich
-> **0.8.5**. Details in `../STAND.md`.
+> **0.8.6**. Details in `../STAND.md`.
 
 Dies ist die Architektur-Designzentrale des Baubüros Andrin (ArchitekturKosmos):
 ein **lokal-first Monorepo** für Architektur — BIM-Kern, 2D-Pläne, Visualisierung,
@@ -20,7 +20,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 
 ## Was du zuerst liest
 
-1. `ROADMAP.md` — 485 nummerierte Einträge (Stand v0.8.5), jeder ein
+1. `ROADMAP.md` — 496 nummerierte Einträge (Stand v0.8.6), jeder ein
    abgeschlossenes Feature mit Belegen. Der jüngste Stand steht **unten** vor
    dem Marker «Phase 3 abgeschlossen».
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
@@ -42,7 +42,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 cd kosmo-orbit
 npm install                 # Root-Workspace (npm workspaces)
 npm run build               # baut alle Pakete + die App
-npm test                    # 1010 Kernel + 1671 App + 290 KI + 41 Contracts + 44 Data + 8 Lizenz + 106 UI = 3170 (Stand v0.8.5)
+npm test                    # 1043 Kernel + 1686 App + 310 KI + 41 Contracts + 44 Data + 8 Lizenz + 106 UI = 3238 (Stand v0.8.6)
 npm run typecheck           # 8 Workspaces, exactOptionalPropertyTypes ist AN
 npm run svg-qa              # 36 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
 ```
