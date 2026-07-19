@@ -15,6 +15,12 @@ import {
   type Opening,
   type Patch,
 } from '@kosmo/kernel';
+// E6 (v0.8.10, docs/V0810-SPEZ.md §2, Z5): Material-Auswahl für
+// column/beam bezieht dieselbe Katalog-Quelle wie die Wand-Aufbauten
+// (kein neuer Katalog) — `materialkatalog` (@kosmo/data) ist bereits der
+// Bestandsweg für Material-Dropdowns im Design-Modul, s.
+// `modules/design/texturen.ts`/`Viewport3D.tsx`.
+import { materialkatalog } from '@kosmo/data';
 import { useProject } from '../../state/project-store';
 import { stufeUmschalten, useDockZustand } from '../../state/dock-zustand';
 
@@ -43,7 +49,19 @@ const kindLabel: Record<string, string> = {
   mass: 'Volumen',
   opening: 'Öffnung',
   freemesh: 'FreeMesh',
+  // E6 (v0.8.10, Z5): additive Labels — die drei neuen Zweige unten.
+  column: 'Stütze',
+  beam: 'Unterzug',
+  furniture: 'Möbel',
 };
+
+// E6 (v0.8.10, Z5): Zone.raumTyp-Werteliste — dieselbe Aufzählung wie
+// `design.raumTypSetzen`/`design.eigenschaftSetzen`s RAUMTYP_WERTE
+// (packages/kosmo-kernel/src/commands/design.ts), additiv dupliziert wie
+// FENSTERTYP_OPTIONEN unten (kein Kernel-Export dieser internen Konstante).
+const RAUMTYP_OPTIONEN = [
+  'zimmer', 'wohnen', 'kueche', 'bad', 'korridor', 'treppenhaus', 'abstellraum', 'balkon', 'technik', 'gewerbe',
+] as const;
 
 /** §2.2 Kopfzeile-Rezept («WAND · W-014») — Kurzbezeichnung ist der Zonen-
  *  Name (falls vorhanden) oder ein kurzes ID-Fragment, sonst wäre die
@@ -180,6 +198,21 @@ export function Inspector() {
               <option value="kern-innen">Kern innen</option>
             </KSelect>
           </Row>
+          {/* E6 (v0.8.10, Z5): additiv — die allowed-Map erlaubt `height`
+              für wall bereits (design.ts:793). Ehrlicher Hinweis: das Feld
+              wirkt nur bei heightMode 'fix' (Standard ist 'geschoss', bis
+              OK nächstes Geschoss) — das Umschalten des Modus selbst ist
+              hier NICHT Teil des Auftrags (nur das kernel-bereits-erlaubte
+              Feld editierbar machen), s. `model/entities.ts` Wall.heightMode. */}
+          <Row label="Höhe (fix)">
+            <NumberField
+              value={entity.height ?? 0}
+              suffix="mm"
+              testid="inspector-wand-hoehe"
+              onCommit={(v) => set('height', v)}
+              disabled={gesperrt}
+            />
+          </Row>
           <Row label="Öffnungen">
             {/* v0.6.9 Stream F: Öffnungen sind im Plan (noch) nicht direkt
                 anklickbar (kein Hit-Test-Ziel, plan-hit-test.ts) — die Liste
@@ -278,6 +311,49 @@ export function Inspector() {
               ))}
             </KSelect>
           </Row>
+          {/* E6 (v0.8.10, Z5): additiv — allowed-Map erlaubt program/number/
+              raumTyp für zone bereits (design.ts:789). */}
+          <Row label="Nutzung">
+            <KInput
+              size="sm"
+              defaultValue={entity.program ?? ''}
+              key={entity.id + 'program' + (entity.program ?? '')}
+              onBlur={(e) => e.target.value !== (entity.program ?? '') && set('program', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-zone-program"
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Raumnummer">
+            <KInput
+              size="sm"
+              defaultValue={entity.number ?? ''}
+              key={entity.id + 'number' + (entity.number ?? '')}
+              onBlur={(e) => e.target.value !== (entity.number ?? '') && set('number', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-zone-number"
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Raumtyp">
+            <KSelect
+              size="sm"
+              value={entity.raumTyp ?? ''}
+              onChange={(e) => set('raumTyp', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-zone-raumtyp"
+              disabled={gesperrt}
+            >
+              <option value="" disabled>
+                —
+              </option>
+              {RAUMTYP_OPTIONEN.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </KSelect>
+          </Row>
           <Row label="Fläche">
             <Measure>{formatArea(areaOf(entity.outline) * 1_000_000)}</Measure>
           </Row>
@@ -299,6 +375,20 @@ export function Inspector() {
         <>
           <Row label="Höhe">
             <NumberField value={entity.height} suffix="mm" onCommit={(v) => set('height', v)} disabled={gesperrt} />
+          </Row>
+          {/* E6 (v0.8.10, Z5): additiv — allowed-Map erlaubt program für
+              mass bereits (design.ts:791), gleiches Freitext-Muster wie
+              Zone.program oben. */}
+          <Row label="Nutzung">
+            <KInput
+              size="sm"
+              defaultValue={entity.program ?? ''}
+              key={entity.id + 'program' + (entity.program ?? '')}
+              onBlur={(e) => e.target.value !== (entity.program ?? '') && set('program', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-mass-program"
+              disabled={gesperrt}
+            />
           </Row>
           <Row label="GF">
             <Measure>{formatArea(areaOf(entity.outline) * 1_000_000)}</Measure>
@@ -330,6 +420,29 @@ export function Inspector() {
 
       {entity.kind === 'freemesh' && (
         <>
+          {/* E6 (v0.8.10, Z5): additiv — allowed-Map erlaubt name für
+              freemesh bereits (design.ts:804). Ehrlicher Hinweis: die
+              name→meta-Ausnahme (design.ts:900-903) gilt nur für
+              storey/assembly/zone — bei freemesh landet der Wert darum in
+              `entity.meta.name`, nicht im eigenen `FreeMesh.name`-Feld;
+              das Anzeigefeld liest darum bewusst `entity.meta?.name`
+              (identisch zum bestehenden `Ebene (DXF)`-Feld unten, das auch
+              gegen `entity.meta` liest). `kurzbezeichnung()` oben liest nur
+              das direkte `entity.name` und zeigt den neuen Namen darum
+              NICHT in der Kopfzeile — ein bestehender Kernel-Zustand, den
+              dieses Paket (Inspector.tsx/Spec, design.ts TABU) nicht
+              verändert. */}
+          <Row label="Name">
+            <KInput
+              size="sm"
+              defaultValue={entity.meta?.name ?? ''}
+              key={entity.id + 'freemesh-name' + (entity.meta?.name ?? '')}
+              onBlur={(e) => e.target.value !== (entity.meta?.name ?? '') && set('name', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-freemesh-name"
+              disabled={gesperrt}
+            />
+          </Row>
           <Row label="Vertices">
             <span>{entity.positions.length / 3}</span>
           </Row>
@@ -353,6 +466,125 @@ export function Inspector() {
       {entity.kind === 'slab' && (
         <Row label="Dicke">
           <NumberField value={entity.thickness} suffix="mm" onCommit={(v) => set('thickness', v)} disabled={gesperrt} />
+        </Row>
+      )}
+
+      {/* E6 (v0.8.10, Z5, docs/V0810-SPEZ.md §2/§6 C-10): NEUER Zweig —
+          die allowed-Map erlaubt column: material/b/t/rotationGrad bereits
+          (design.ts:811); Bestands-Bereiche für b/t (80–2000 mm) prüft der
+          Kernel selbst (design.ts:845-850) und wirft über denselben
+          Fehlerweg wie jedes andere Feld (`set()` oben, try/catch →
+          `meldeFehler`). Material-Optionen aus `materialkatalog`
+          (@kosmo/data) — derselbe Katalog wie `texturen.ts`/`Viewport3D.tsx`,
+          kein neuer Katalog (Bauauftrag-Vorgabe). */}
+      {entity.kind === 'column' && (
+        <>
+          <Row label="Material">
+            <KSelect
+              size="sm"
+              value={entity.material}
+              onChange={(e) => set('material', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-stuetze-material"
+              disabled={gesperrt}
+            >
+              {materialkatalog.map((m) => (
+                <option key={m.key} value={m.key}>
+                  {m.name}
+                </option>
+              ))}
+            </KSelect>
+          </Row>
+          <Row label="Breite">
+            <NumberField
+              value={entity.b}
+              suffix="mm"
+              testid="inspector-stuetze-b"
+              onCommit={(v) => set('b', v)}
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Tiefe">
+            {/* Rund-Profil führt kein eigenes t (b = Durchmesser) — Fallback
+                auf b, wie `design.stuetzeSetzen`s Erstellungs-Default. */}
+            <NumberField
+              value={entity.t ?? entity.b}
+              suffix="mm"
+              testid="inspector-stuetze-t"
+              onCommit={(v) => set('t', v)}
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Rotation">
+            <NumberField
+              value={entity.rotationGrad ?? 0}
+              suffix="°"
+              testid="inspector-stuetze-rotation"
+              onCommit={(v) => set('rotationGrad', v)}
+              disabled={gesperrt}
+            />
+          </Row>
+        </>
+      )}
+
+      {/* E6 (v0.8.10, Z5): NEUER Zweig — allowed-Map erlaubt beam:
+          breite/hoehe/material bereits (design.ts:812); Bestands-Bereiche
+          (breite 80–2000 mm, hoehe 100–3000 mm) prüft der Kernel
+          (design.ts:851-858). */}
+      {entity.kind === 'beam' && (
+        <>
+          <Row label="Breite">
+            <NumberField
+              value={entity.breite}
+              suffix="mm"
+              testid="inspector-unterzug-breite"
+              onCommit={(v) => set('breite', v)}
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Höhe">
+            <NumberField
+              value={entity.hoehe}
+              suffix="mm"
+              testid="inspector-unterzug-hoehe"
+              onCommit={(v) => set('hoehe', v)}
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Material">
+            <KSelect
+              size="sm"
+              value={entity.material}
+              onChange={(e) => set('material', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-unterzug-material"
+              disabled={gesperrt}
+            >
+              {materialkatalog.map((m) => (
+                <option key={m.key} value={m.key}>
+                  {m.name}
+                </option>
+              ))}
+            </KSelect>
+          </Row>
+        </>
+      )}
+
+      {/* E6 (v0.8.10, Z5): NEUER Zweig — allowed-Map erlaubt furniture:
+          rotationGrad bereits (design.ts:810). Ehrlicher Hinweis: der
+          Kernel normalisiert rotationGrad mod 360 statt zu werfen (kein
+          Falschwert-Fall wie bei sia/raumTyp, design.ts:833-844) — dieser
+          Zweig hat darum bewusst keinen erzwingbaren Kernel-Wurf-Fall über
+          gültige Zahleneingaben (Spec-Bericht nennt das ehrlich). */}
+      {entity.kind === 'furniture' && (
+        <Row label="Rotation">
+          <NumberField
+            value={entity.rotationGrad}
+            suffix="°"
+            testid="inspector-moebel-rotation"
+            onCommit={(v) => set('rotationGrad', v)}
+            disabled={gesperrt}
+          />
         </Row>
       )}
 
