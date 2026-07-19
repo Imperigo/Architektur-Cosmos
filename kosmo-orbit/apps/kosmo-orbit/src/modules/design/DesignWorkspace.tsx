@@ -1251,19 +1251,15 @@ export function DesignWorkspace({
       // Command (keine Überlappungs-Prüfungen auf diesen Wegen).
       try {
         if (e.kind === 'wall') {
-          const wall = e as Wall;
-          const neuA = key === 'a' ? ziel : wall.a;
-          const neuB = key === 'b' ? ziel : wall.b;
-          const r = runCommand('design.wandZeichnen', {
-            storeyId: wall.storeyId,
-            a: neuA,
-            b: neuB,
-            assemblyId: wall.assemblyId,
-            alignment: wall.alignment,
+          // E1 (v0.8.6 PA2): kein Löschen+Neusetzen mehr — das neue
+          // `design.wandGeometrieSetzen` patcht a/b IN PLACE; Identität,
+          // height, Umbau-Felder und alle gehosteten Öffnungen bleiben
+          // (Kürzer-Wand-Regel passt/clamp/entfernen lebt im Kernel).
+          // Auswahl bleibt unverändert dieselbe ID.
+          runCommand('design.wandGeometrieSetzen', {
+            entityId: e.id,
+            ...(key === 'a' ? { a: ziel } : { b: ziel }),
           });
-          runCommand('design.loeschen', { entityId: wall.id });
-          const neueId = neuePatchId(r.patches);
-          select(neueId ? [neueId] : []);
         } else if (e.kind === 'masskette') {
           const mk = e as MassKette;
           const punkte = mk.punkte.map((q, i) => (i === key ? ziel : q));
@@ -1283,12 +1279,10 @@ export function DesignWorkspace({
               sia: zone.sia,
               ...(zone.raumTyp ? { raumTyp: zone.raumTyp } : {}),
               ...(zone.program ? { program: zone.program } : {}),
-              // Schema (`design.zoneErstellen`) kennt nur `zonenArt: 'parzelle'`
-              // — eine 'nachbar'-Zone (entsteht nur über
-              // `design.nachbarnUebernehmen`) verlöre den Marker beim
-              // Eck-Ziehen; ehrliche, bewusst schmale Lücke (Kontext-Zonen
-              // sind kein Griffe-Ziel dieses Pakets, s. Bericht).
-              ...(zone.zonenArt === 'parzelle' ? { zonenArt: zone.zonenArt } : {}),
+              // E2 (v0.8.6 PA1/PA2): das Schema kennt jetzt beide Site-Marker
+              // ('parzelle' UND 'nachbar') — der Ist-Wert wird 1:1
+              // durchgereicht, keine Marker-Verluste mehr beim Eck-Zug.
+              ...(zone.zonenArt ? { zonenArt: zone.zonenArt } : {}),
             });
           } else if (e.kind === 'mass') {
             const mass = e as MassBody;

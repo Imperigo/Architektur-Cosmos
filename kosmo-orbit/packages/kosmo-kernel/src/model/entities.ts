@@ -281,8 +281,10 @@ export interface Zone extends Base {
    * eigener Raum). Genau wie `'parzelle'` von Raumtyp-Checks und der
    * SIA-416-Flächensumme ausgenommen (`derive/checks.ts`, `derive/
    * sia416.ts`); `derive/schwarzplan.ts` zeichnet Nachbar-Zonen separat als
-   * graue Footprints. Entsteht NUR über `design.nachbarnUebernehmen`
-   * (`commands/design.ts`), nicht über das freie `zoneErstellen`.
+   * graue Footprints. Entsteht über `design.nachbarnUebernehmen`
+   * (`commands/design.ts`) und seit v0.8.6 (E2) auch über das freie
+   * `zoneErstellen` — nötig, damit der Eck-Griff-Zug (Erstellen+Löschen
+   * in einer Gruppe) den Marker nicht verliert.
    */
   zonenArt?: 'parzelle' | 'nachbar';
 }

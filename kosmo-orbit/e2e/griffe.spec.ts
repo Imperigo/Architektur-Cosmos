@@ -169,6 +169,93 @@ test('C-15: Drag am Endpunkt-Griff b ändert NUR den b-Punkt — EIN Ctrl+Z stel
   expect(nachUndo[0]!.b).toEqual({ x: 6000, y: 2000 });
 });
 
+test('C-1 (v0.8.6 E1): Wand-Endpunkt-Drag erhält Öffnung UND Wand-Identität (wandGeometrieSetzen)', async ({
+  page,
+}) => {
+  await starteManuell(page);
+  const w1 = await zeichneWand(page, { x: 4000, y: 2000 }, { x: 8000, y: 2000 });
+  const oeffnungId = await page.evaluate((wallId) => {
+    const r = window.__kosmo.run('design.oeffnungSetzen', {
+      wallId,
+      openingType: 'fenster',
+      center: 1500,
+      width: 1200,
+      height: 1500,
+      sill: 900,
+    });
+    return r.patches[0]!.id;
+  }, w1);
+  await waehle(page, [w1]);
+  await expect(page.locator('[data-testid="griff-endpunkt-b"]')).toBeVisible();
+
+  // b von (8000,2000) auf (7000,2000) ziehen — Wand wird kürzer, die
+  // Öffnung (center 1500, Breite 1200 → 900..2100) passt weiterhin.
+  const von = await griffMitte(page, 'griff-endpunkt-b');
+  const nach = await weltZuBildschirm(page, 7000, 2000);
+  await ziehe(page, von, nach);
+
+  const stand = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    const waende = doc.byKind('wall') as { id: string; b: { x: number; y: number } }[];
+    const oeffnungen = doc.byKind('opening') as { id: string; center: number; width: number }[];
+    return { waende, oeffnungen, selection: window.__kosmo.state().selection as string[] };
+  });
+  // In-place: GLEICHE Wand-ID, b neu, Öffnung byte-erhalten, Auswahl bleibt.
+  expect(stand.waende).toHaveLength(1);
+  expect(stand.waende[0]!.id).toBe(w1);
+  expect(stand.waende[0]!.b).toEqual({ x: 7000, y: 2000 });
+  expect(stand.oeffnungen).toHaveLength(1);
+  expect(stand.oeffnungen[0]!.id).toBe(oeffnungId);
+  expect(stand.oeffnungen[0]!.center).toBe(1500);
+  expect(stand.selection).toEqual([w1]);
+
+  // EIN Ctrl+Z stellt die alte Geometrie wieder her, Öffnung bleibt.
+  await page.keyboard.press('Control+z');
+  const nachUndo = await page.evaluate(() => {
+    const doc = window.__kosmo.state().doc;
+    return {
+      b: (doc.byKind('wall')[0] as { b: { x: number; y: number } }).b,
+      oeffnungen: doc.byKind('opening').length,
+    };
+  });
+  expect(nachUndo.b).toEqual({ x: 8000, y: 2000 });
+  expect(nachUndo.oeffnungen).toBe(1);
+});
+
+test('C-4 (v0.8.6 E2): nachbar-Zone behält den zonenArt-Marker beim Eck-Zug', async ({ page }) => {
+  await starteManuell(page);
+  const zoneId = await page.evaluate(() => {
+    const k = window.__kosmo;
+    const st = k.state();
+    const r = k.run('design.zoneErstellen', {
+      storeyId: st.activeStoreyId,
+      outline: [
+        { x: 2000, y: 2000 },
+        { x: 6000, y: 2000 },
+        { x: 6000, y: 6000 },
+        { x: 2000, y: 6000 },
+      ],
+      name: 'Nachbar West',
+      sia: 'HNF',
+      zonenArt: 'nachbar',
+    });
+    return r.patches[0]!.id;
+  });
+  await waehle(page, [zoneId]);
+  await expect(page.locator('[data-testid="griff-eckpunkt-2"]')).toBeVisible();
+
+  const von = await griffMitte(page, 'griff-eckpunkt-2');
+  const nach = await weltZuBildschirm(page, 7000, 7000);
+  await ziehe(page, von, nach);
+
+  const zonen = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('zone') as { zonenArt?: string; outline: { x: number; y: number }[] }[],
+  );
+  expect(zonen).toHaveLength(1);
+  expect(zonen[0]!.zonenArt).toBe('nachbar');
+  expect(zonen[0]!.outline[2]).toEqual({ x: 7000, y: 7000 });
+});
+
 test('C-16: Zonen-Eck-Griff ziehen ändert die Outline — EIN Undo-Schritt stellt sie wieder her', async ({ page }) => {
   await starteManuell(page);
   const outline = [
