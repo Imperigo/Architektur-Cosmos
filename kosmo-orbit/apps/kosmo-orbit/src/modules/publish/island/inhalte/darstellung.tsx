@@ -11,7 +11,9 @@ import '../publish-island.css';
  * (NEU, C-19), Massstab (die bisherige «Auswahl»-Massstab-Auswahl),
  * Plankopf-Presets (`PlankopfPanel`, unverändert wiederverwendet) und
  * Sichtbarkeit (PB3, v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19 — echte
- * Bemassungs-/Zonen-Toggles, s. `SichtbarkeitStufe2` unten).
+ * Bemassungs-/Zonen-Toggles; PA3, v0.8.6 §3 E3 + §7 C-6/C-7 — dritter
+ * «Raumtypen»-Toggle, UNABHÄNGIG von «Zonen» (Parzellen-/Nachbarkontext
+ * bleibt unverändert), s. `SichtbarkeitStufe2` unten).
  *
  * **Zoom** ist ein reiner Fernauslöser (`sendeCanvasBefehl`) — die
  * eigentliche Rechnung bleibt in `island/BlattZoomBuehne.tsx` (Muster
@@ -109,6 +111,8 @@ function SichtbarkeitStufe2() {
   const setZeigeBemassung = usePublishRuntime((s) => s.setZeigeBemassung);
   const zeigeZonen = usePublishRuntime((s) => s.zeigeZonen);
   const setZeigeZonen = usePublishRuntime((s) => s.setZeigeZonen);
+  const zeigeRaumtypen = usePublishRuntime((s) => s.zeigeRaumtypen);
+  const setZeigeRaumtypen = usePublishRuntime((s) => s.setZeigeRaumtypen);
   return (
     <div className="pubisl-stufe2" data-testid="island-sichtbarkeit-stufe2" onClick={(e) => e.stopPropagation()}>
       <div className="pubisl-reihe">
@@ -125,6 +129,13 @@ function SichtbarkeitStufe2() {
           onChange={(e) => setZeigeZonen(e.target.checked)}
           label="Zonen"
           title="Parzellen-/Nachbarkontext-Zonenflächen platzierter Ansichten auf dem Blatt zeigen/ausblenden"
+        />
+        <KSwitch
+          data-testid="island-sichtbarkeit-raumtypen"
+          checked={zeigeRaumtypen}
+          onChange={(e) => setZeigeRaumtypen(e.target.checked)}
+          label="Raumtypen"
+          title="Raumtyp-Füllflächen platzierter Grundriss-Ansichten auf dem Blatt zeigen/ausblenden (unabhängig von «Zonen»)"
         />
       </div>
     </div>

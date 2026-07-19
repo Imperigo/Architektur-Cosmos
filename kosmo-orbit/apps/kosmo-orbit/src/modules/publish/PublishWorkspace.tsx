@@ -249,7 +249,15 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
   const islandSheet = sheets.find((s) => s.id === aktiverSheetIdInsel) ?? sheets[0] ?? null;
   const islandPaper = islandSheet ? sheetPaperSize(islandSheet) : null;
   const islandSvgMarkup = useMemo(
-    () => (islandSheet ? sheetToSvg(doc, islandSheet.id, { projectName: doc.settings.projectName }) : ''),
+    // E3 (v0.8.6 §3, PA3): `datenAttribute: true` — dies ist der
+    // Publish-Blatt-Renderpfad (`BlattCanvas` via `BlattZoomBuehne`), der
+    // EINZIGE Ort, der das Opt-in-Flag setzt (s. Kopfkommentar
+    // `publish-runtime.ts`s `zeigeRaumtypen`). Jeder andere `sheetToSvg`-
+    // Aufrufer (Export/`.kosmo`/Transmittal) lässt es bewusst weg.
+    () =>
+      islandSheet
+        ? sheetToSvg(doc, islandSheet.id, { projectName: doc.settings.projectName, datenAttribute: true })
+        : '',
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [revision, islandSheet?.id],
   );
@@ -332,9 +340,11 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
   );
 
   const svgMarkup = useMemo(
+    // E3 (v0.8.6 §3, PA3): `datenAttribute: true` — Manuell-Modus-Gegenstück
+    // zu `islandSvgMarkup` oben, dieselbe Begründung.
     () =>
       sheet
-        ? sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName })
+        ? sheetToSvg(doc, sheet.id, { projectName: doc.settings.projectName, datenAttribute: true })
         : '',
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [revision, sheet?.id],

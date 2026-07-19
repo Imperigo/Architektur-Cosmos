@@ -39,6 +39,22 @@ import { create } from 'zustand';
  * beiden Feldern erhält den heutigen Anzeige-Zustand byte-/pixel-gleich, bis
  * die Insel aktiv ausgeschaltet wird (Bestandsschutz für jede Bestands-Spec,
  * die ein Blatt screenshottet).
+ *
+ * `zeigeRaumtypen` (PA3, v0.8.6 §3 E3 + §7 C-6/C-7) — dritter Sichtbarkeits-
+ * Toggle «Raumtypen», UNABHÄNGIG von «Zonen» (das bleibt Parzellen-/
+ * Nachbarkontext, s.o.). Anders als die beiden Bestands-Toggles ist dieser
+ * NICHT rein app-seitiges CSS-Filtern eines bereits vorhandenen Fragments —
+ * `derive/plansvg.ts`s `opts.datenAttribute` (Default AUS, Golden-Sanktion)
+ * muss dafür AKTIV gesetzt werden, und zwar NUR im Publish-Blatt-Renderpfad
+ * (`PublishWorkspace.tsx`s beide `sheetToSvg(...)`-Aufrufe, `svgMarkup`/
+ * `islandSvgMarkup`) — jeder andere `sheetToSvg`-Aufrufer (PDF-/DXF-Export,
+ * `.kosmo`-Paket, Transmittal-Vorschau) lässt das Flag bewusst weg. Erst
+ * dadurch trägt jede Raumtyp-Fläche `data-raumtyp="<typ>"`, das `publish.css`
+ * per Attribut-Selektor ausblenden kann (analog zu `data-zonen`). Default
+ * `true` (Toggle zeigt den heutigen — bereits über den Kernel-Renderpfad
+ * möglichen — Zustand), aber die Golden-Byte-Identität ist dadurch NIE in
+ * Gefahr: `datenAttribute` wird nur im App-Renderpfad gesetzt, nie in einem
+ * Kernel-Test/Golden-Aufruf.
  */
 export type PublishCanvasBefehlTyp = 'zoom-in' | 'zoom-out' | 'zoom-fit';
 
@@ -64,6 +80,12 @@ interface PublishRuntime {
    *  Ansichten auf dem Blatt. */
   zeigeZonen: boolean;
   setZeigeZonen: (v: boolean) => void;
+  /** DARSTELLUNG-Insel «Sichtbarkeit» (PA3, v0.8.6 §3 E3 + §7 C-6/C-7):
+   *  zeigt/versteckt die Raumtyp-Füllflächen (`data-raumtyp`, nur vorhanden
+   *  wenn der Publish-Blatt-Renderpfad `sheetToSvg(..., { datenAttribute:
+   *  true })` ruft) platzierter Grundriss-Ansichten auf dem Blatt. */
+  zeigeRaumtypen: boolean;
+  setZeigeRaumtypen: (v: boolean) => void;
 }
 
 export const usePublishRuntime = create<PublishRuntime>((set) => ({
@@ -77,4 +99,6 @@ export const usePublishRuntime = create<PublishRuntime>((set) => ({
   setZeigeBemassung: (v) => set({ zeigeBemassung: v }),
   zeigeZonen: true,
   setZeigeZonen: (v) => set({ zeigeZonen: v }),
+  zeigeRaumtypen: true,
+  setZeigeRaumtypen: (v) => set({ zeigeRaumtypen: v }),
 }));

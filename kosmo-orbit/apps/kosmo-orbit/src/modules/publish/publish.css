@@ -343,6 +343,17 @@
 .k-publish-blatt-svg--ohne-zonen svg path[stroke='#8a8a8a'] {
   display: none;
 }
+/* PA3 (v0.8.6 §3 E3 + §7 C-6/C-7) — «Raumtypen»-Toggle, UNABHÄNGIG von
+   «Zonen» oben (das bleibt Parzellen-/Nachbarkontext). Anders als Bemassung/
+   Zonen filtert dieser Selektor kein zufällig eindeutiges Stift/Fill-Muster,
+   sondern das ECHTE, dafür gedachte `data-raumtyp`-Attribut (`derive/
+   plansvg.ts`s `opts.datenAttribute`) — nur vorhanden, wenn der
+   Publish-Blatt-Renderpfad (`PublishWorkspace.tsx`) `sheetToSvg(...,
+   { datenAttribute: true })` ruft; ohne das Flag bleibt diese Regel
+   wirkungslos (kein `[data-raumtyp]`-Element im Markup). */
+.k-publish-blatt-svg--ohne-raumtypen svg [data-raumtyp] {
+  display: none;
+}
 
 .k-publish-overlay {
   position: absolute;

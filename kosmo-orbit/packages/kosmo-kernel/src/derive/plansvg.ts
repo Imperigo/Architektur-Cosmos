@@ -112,12 +112,20 @@ export interface InnerSvg {
 
 /** Grundriss-Inhalt (Regionen, Symbole, Bemassung) in Welt-mm.
  * opts.thema (A5): Themenplan-Regeln tönen passende Regionen — erste
- * Treffer-Regel gewinnt, der Stift bleibt. */
+ * Treffer-Regel gewinnt, der Stift bleibt.
+ * opts.datenAttribute (v0.8.6 §3 E3, D3): Default AUS (byte-identisch zu
+ * jedem Bestands-Golden, Sanktion 1). Bei `true` trägt jede Region mit einer
+ * `raumtyp-<typ>`-Klasse (`derive/plan.ts:744`, Zonen mit `Zone.raumTyp`)
+ * zusätzlich `data-raumtyp="<typ>"` auf ihrem `<path>` — Flächen ohne
+ * Raumtyp bleiben ohne Attribut (Guard-Prinzip, kein erfundener Wert). NUR
+ * der App-seitige Publish-Blatt-Renderpfad (`derive/sheet.ts` → `apps/
+ * kosmo-orbit`) setzt dieses Flag; der Design-Einzelexport (`planToSvg`
+ * unten) reicht es bewusst NICHT durch. */
 export function planInnerSvg(
   doc: KosmoDoc,
   storeyId: string,
   scale: number,
-  opts?: { thema?: import('../model/doc').ThemenPlan },
+  opts?: { thema?: import('../model/doc').ThemenPlan; datenAttribute?: boolean },
 ): InnerSvg {
   const plan = derivePlan(doc, storeyId);
   const parts: string[] = [];
@@ -234,8 +242,13 @@ export function planInnerSvg(
         : r.classes.includes('ueber-schnitt')
           ? ` stroke-dasharray="${dashWelt(DASH.ueberSchnitt, scale)}"`
           : '';
+    // E3-Opt-in (v0.8.6, D3): `raumtyp-<typ>`-Klasse → `data-raumtyp`-Attribut
+    // NUR wenn `opts.datenAttribute` gesetzt ist; ohne Raumtyp-Klasse bleibt
+    // die Fläche ohne Attribut (kein erfundener Wert).
+    const raumTypKlasse = opts?.datenAttribute ? r.classes.find((c) => c.startsWith('raumtyp-')) : undefined;
+    const raumTypAttr = raumTypKlasse ? ` data-raumtyp="${escapeXml(raumTypKlasse.slice('raumtyp-'.length))}"` : '';
     parts.push(
-      `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}/>`,
+      `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}${raumTypAttr}/>`,
     );
   }
   for (const l of plan.lines) {

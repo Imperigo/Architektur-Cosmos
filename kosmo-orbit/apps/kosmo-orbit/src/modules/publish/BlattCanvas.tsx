@@ -37,6 +37,16 @@ import { usePublishRuntime } from './publish-runtime';
  * (`publish.css`) — `svgMarkup` selbst (das echte, golden-geprüfte
  * `sheetToSvg()`-Ergebnis) bleibt STRING-IDENTISCH, nur die Bildschirm-
  * Darstellung filtert per Attribut-Selektor.
+ *
+ * **PA3 (v0.8.6 §3 E3 + §7 C-6/C-7) — Raumtypen-Toggle:** `zeigeRaumtypen`
+ * folgt demselben Muster (Runtime-Store, dritte Modifier-Klasse
+ * `k-publish-blatt-svg--ohne-raumtypen`, drittes `data-raumtypen`-Attribut).
+ * Unterschied zu Bemassung/Zonen: `svgMarkup` TRÄGT hier tatsächlich neue
+ * `data-raumtyp`-Attribute (der Publish-Blatt-Aufrufer setzt `sheetToSvg`s
+ * `datenAttribute: true`, s. `PublishWorkspace.tsx`) — trotzdem bleibt
+ * `derive/plansvg.ts` golden-still, weil das Flag NUR in diesem einen
+ * App-Aufruf gesetzt wird (Default AUS überall sonst, inkl. jedem
+ * Kernel-Test).
  */
 export interface BlattCanvasProps {
   sheet: Sheet;
@@ -90,6 +100,7 @@ export function BlattCanvas({
   const svgHostRef = useRef<HTMLDivElement>(null);
   const zeigeBemassung = usePublishRuntime((s) => s.zeigeBemassung);
   const zeigeZonen = usePublishRuntime((s) => s.zeigeZonen);
+  const zeigeRaumtypen = usePublishRuntime((s) => s.zeigeRaumtypen);
 
   /** Bildschirm-px → Papier-mm im Vorschau-SVG. */
   function toPaper(e: React.PointerEvent): { x: number; y: number } | null {
@@ -163,13 +174,14 @@ export function BlattCanvas({
       }}
     >
       <div
-        className={`k-publish-blatt-svg${zeigeBemassung ? '' : ' k-publish-blatt-svg--ohne-bemassung'}${zeigeZonen ? '' : ' k-publish-blatt-svg--ohne-zonen'}`}
-        // C-19 (PB3): reiner Bildschirm-Beweis für die Toggle-Mechanik
-        // (e2e/publish-toggles.spec.ts) — `svgMarkup` (unten) bleibt
-        // unangetastet, nur diese zwei Attribute + die Modifier-Klasse oben
-        // steuern die CSS-Filterung.
+        className={`k-publish-blatt-svg${zeigeBemassung ? '' : ' k-publish-blatt-svg--ohne-bemassung'}${zeigeZonen ? '' : ' k-publish-blatt-svg--ohne-zonen'}${zeigeRaumtypen ? '' : ' k-publish-blatt-svg--ohne-raumtypen'}`}
+        // C-19 (PB3)/C-6+C-7 (PA3): reiner Bildschirm-Beweis für die
+        // Toggle-Mechanik (e2e/publish-toggles.spec.ts) — `svgMarkup` (unten)
+        // bleibt unangetastet, nur diese drei Attribute + die Modifier-
+        // Klassen oben steuern die CSS-Filterung.
         data-bemassung={zeigeBemassung ? 'an' : 'aus'}
         data-zonen={zeigeZonen ? 'an' : 'aus'}
+        data-raumtypen={zeigeRaumtypen ? 'an' : 'aus'}
         // Vorschau = echtes Druck-SVG aus dem Kern
         dangerouslySetInnerHTML={{ __html: svgMarkup.replace('<svg ', '<svg style="width:100%;height:100%" ') }}
       />

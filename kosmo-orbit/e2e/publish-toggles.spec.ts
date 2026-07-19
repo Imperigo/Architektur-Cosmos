@@ -17,6 +17,14 @@ import { expect, test, type Page } from '@playwright/test';
  *   (`fill="none" stroke="#111"` MIT `stroke-dasharray`) bzw. Nachbar
  *   (`stroke="#8a8a8a"`).
  *
+ * PA3 (v0.8.6 §3 E3 + §7 C-6/C-7) — dritter Toggle «Raumtypen»: anders als
+ * die zwei obigen filtert er kein zufällig eindeutiges Stift/Fill-Muster,
+ * sondern das ECHTE `data-raumtyp`-Attribut (`derive/plansvg.ts`s
+ * `opts.datenAttribute`, Default AUS) — nur der Publish-Blatt-Renderpfad
+ * (`PublishWorkspace.tsx`s beide `sheetToSvg(..., {datenAttribute:true})`-
+ * Aufrufe) setzt es überhaupt. «Zonen» bleibt davon UNBERÜHRT (Parzellen-/
+ * Nachbarkontext, kein Raumtyp).
+ *
  * Diese Spec setzt den globalen Manuell-Seed selbst ausser Kraft (Muster
  * `publish-island.spec.ts`), damit der echte Island-Default (`storageState`
  * leer) geprüft wird.
@@ -57,10 +65,12 @@ async function oeffneInsel(page: Page, island: string): Promise<void> {
  * Seed über den Kosmo-Test-Hook (Muster `publish-island.spec.ts`s
  * `seedBlatt`): zwei Wände (Bemassungs-Ketten brauchen `walls.length > 0`,
  * `derive/dimensions.ts:42/43`) + eine Parzellen-Zone (`zonenArt:'parzelle'`,
- * `design.zoneErstellen`, `commands/design.ts:555-560`) + ein Blatt mit
- * einer platzierten Grundriss-Ansicht des Geschosses. `bootstrapProject()`
- * (`PublishWorkspace.tsx`) hat beim Öffnen der Station bereits EG/1.OG +
- * die beiden Standard-Aufbauten («AW Beton 36»/«IW Beton 18») angelegt.
+ * `design.zoneErstellen`, `commands/design.ts:555-560`) + eine Raumtyp-Zone
+ * (`raumTyp:'wohnen'`, PA3 v0.8.6 §3 E3 — Grundlage für die `data-raumtyp`-
+ * Beweise unten) + ein Blatt mit einer platzierten Grundriss-Ansicht des
+ * Geschosses. `bootstrapProject()` (`PublishWorkspace.tsx`) hat beim Öffnen
+ * der Station bereits EG/1.OG + die beiden Standard-Aufbauten («AW Beton
+ * 36»/«IW Beton 18») angelegt.
  */
 async function seedGrundrissMitBemassungUndZone(page: Page): Promise<void> {
   await page.evaluate(() => {
@@ -93,6 +103,18 @@ async function seedGrundrissMitBemassungUndZone(page: Page): Promise<void> {
         { x: -3000, y: 8000 },
       ],
     });
+    window.__kosmo.run('design.zoneErstellen', {
+      storeyId,
+      name: 'Wohnen',
+      sia: 'HNF',
+      raumTyp: 'wohnen',
+      outline: [
+        { x: 500, y: 500 },
+        { x: 3000, y: 500 },
+        { x: 3000, y: 3000 },
+        { x: 500, y: 3000 },
+      ],
+    });
     const sheet = window.__kosmo.run('publish.blattErstellen', {
       name: 'Toggle-Test',
       format: 'A1',
@@ -123,6 +145,9 @@ async function oeffneSichtbarkeit(page: Page): Promise<void> {
 const svgKanvas = (page: Page) => page.locator('[data-testid="sheet-canvas"] .k-publish-blatt-svg');
 const massketteGruppen = (page: Page) => svgKanvas(page).locator("svg g[stroke='#111'][fill='#111']");
 const zonenPfade = (page: Page) => svgKanvas(page).locator("svg path[fill='none'][stroke='#111'][stroke-dasharray]");
+/** PA3 (E3, C-6/C-7): echtes `data-raumtyp`-Attribut statt eines
+ *  Stift/Fill-Musters — s. Kopfkommentar. */
+const raumtypFlaechen = (page: Page) => svgKanvas(page).locator('svg [data-raumtyp]');
 
 /**
  * `KSwitch` (`@kosmo/ui`, `packages/kosmo-ui/src/aura.css` `.k-switch`) hält
@@ -268,5 +293,93 @@ test.describe('C-19 — Blatt-Darstellungs-Toggles «Bemassung»/«Zonen» (DARS
     // Dieselbe Blattfläche (BlattCanvas), derselbe Store — Zustand bleibt AUS.
     const manuellCanvas = page.locator('[data-testid="sheet-canvas"] .k-publish-blatt-svg');
     await expect(manuellCanvas).toHaveAttribute('data-zonen', 'aus');
+  });
+});
+
+test.describe('C-6/C-7 — Blatt-Darstellungs-Toggle «Raumtypen» (DARSTELLUNG-Insel, PA3 v0.8.6 §3 E3)', () => {
+  test('DARSTELLUNG-Insel zeigt den dritten Toggle «Raumtypen» NEBEN Bemassung/Zonen, Default EIN', async ({ page }) => {
+    await oeffnePublishIsland(page);
+    await oeffneSichtbarkeit(page);
+    const raumtypen = page.locator('[data-testid="island-sichtbarkeit-raumtypen"]');
+    await expect(raumtypen).toBeVisible();
+    await expect(raumtypen).toBeChecked();
+    // Bleibt neben den beiden Bestands-Toggles, keine Ersetzung.
+    await expect(page.locator('[data-testid="island-sichtbarkeit-bemassung"]')).toBeVisible();
+    await expect(page.locator('[data-testid="island-sichtbarkeit-zonen"]')).toBeVisible();
+  });
+
+  test('C-6: data-raumtyp erscheint im Publish-Blatt-SVG — Default data-raumtypen="an"', async ({ page }) => {
+    await oeffnePublishIsland(page);
+    await seedGrundrissMitBemassungUndZone(page);
+    await expect(svgKanvas(page)).toHaveAttribute('data-raumtypen', 'an');
+    expect(await raumtypFlaechen(page).count()).toBeGreaterThan(0);
+    await expect(raumtypFlaechen(page).first()).toHaveAttribute('data-raumtyp', 'wohnen');
+  });
+
+  test('Raumtypen-Toggle blendet die data-raumtyp-Flächen auf dem Blatt aus/ein (echter SVG-Beweis)', async ({ page }) => {
+    await oeffnePublishIsland(page);
+    await seedGrundrissMitBemassungUndZone(page);
+
+    const flaechen = raumtypFlaechen(page);
+    const anzahl = await flaechen.count();
+    expect(anzahl).toBeGreaterThan(0);
+    for (let i = 0; i < anzahl; i++) {
+      await expect(flaechen.nth(i)).toBeVisible();
+    }
+    await page.screenshot({ path: 'e2e-results/pa3-086-raumtypen-ein.png' });
+
+    await oeffneSichtbarkeit(page);
+    await klickSchalter(page, 'island-sichtbarkeit-raumtypen');
+    await expect(svgKanvas(page)).toHaveAttribute('data-raumtypen', 'aus');
+    for (let i = 0; i < anzahl; i++) {
+      await expect(flaechen.nth(i)).toBeHidden();
+    }
+    await page.screenshot({ path: 'e2e-results/pa3-086-raumtypen-aus.png' });
+
+    // C-7: Zonen (Parzellen-Kontext) bleiben von diesem Toggle unberührt.
+    expect(await zonenPfade(page).count()).toBeGreaterThan(0);
+    await expect(zonenPfade(page).first()).toBeVisible();
+
+    await oeffneSichtbarkeit(page);
+    await klickSchalter(page, 'island-sichtbarkeit-raumtypen');
+    await expect(svgKanvas(page)).toHaveAttribute('data-raumtypen', 'an');
+    for (let i = 0; i < anzahl; i++) {
+      await expect(flaechen.nth(i)).toBeVisible();
+    }
+  });
+
+  test('C-7: Zonen-Toggle blendet die Parzellenfläche aus, lässt data-raumtyp-Flächen unangetastet — unabhängig schaltbar', async ({
+    page,
+  }) => {
+    await oeffnePublishIsland(page);
+    await seedGrundrissMitBemassungUndZone(page);
+
+    expect(await raumtypFlaechen(page).count()).toBeGreaterThan(0);
+    await expect(raumtypFlaechen(page).first()).toBeVisible();
+
+    await oeffneSichtbarkeit(page);
+    await klickSchalter(page, 'island-sichtbarkeit-zonen');
+    await expect(svgKanvas(page)).toHaveAttribute('data-zonen', 'aus');
+
+    // Raumtypen bleiben trotz Zonen-AUS sichtbar (zwei unabhängige Felder).
+    await expect(svgKanvas(page)).toHaveAttribute('data-raumtypen', 'an');
+    await expect(raumtypFlaechen(page).first()).toBeVisible();
+  });
+
+  test('Zustand überlebt Insel-Schliessen (Laufzeit-Store, kein Reset beim Popup-Schliessen)', async ({ page }) => {
+    await oeffnePublishIsland(page);
+    await seedGrundrissMitBemassungUndZone(page);
+
+    await oeffneSichtbarkeit(page);
+    await klickSchalter(page, 'island-sichtbarkeit-raumtypen');
+    await expect(svgKanvas(page)).toHaveAttribute('data-raumtypen', 'aus');
+
+    await page.click('[data-testid="island-sichtbarkeit-popup-schliessen"]');
+    await expect(page.locator('[data-testid="island-sichtbarkeit-stufe2"]')).toHaveCount(0);
+    await expect(svgKanvas(page)).toHaveAttribute('data-raumtypen', 'aus');
+    await expect(raumtypFlaechen(page).first()).toBeHidden();
+
+    await oeffneSichtbarkeit(page);
+    await expect(page.locator('[data-testid="island-sichtbarkeit-raumtypen"]')).not.toBeChecked();
   });
 });

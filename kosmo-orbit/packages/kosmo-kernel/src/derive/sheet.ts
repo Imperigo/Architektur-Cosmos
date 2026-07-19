@@ -57,13 +57,17 @@ export function sheetPaperSize(sheet: Pick<Sheet, 'format' | 'orientation'>): {
   return sheet.orientation === 'quer' ? { ...s } : { width: s.height, height: s.width };
 }
 
-function placementInner(doc: KosmoDoc, pl: SheetPlacement): InnerSvg {
+function placementInner(doc: KosmoDoc, pl: SheetPlacement, datenAttribute?: boolean): InnerSvg {
   // Umbau-Filter je Platzierung (A2): gefilterte Sicht, dieselbe Ableitung
   const sicht = docFuerUmbau(doc, pl.umbau);
   if (pl.view === 'grundriss' && pl.storeyId) {
     // Themenplan (A5): Regeln aus settings.themen tönen die Platzierung
     const thema = pl.thema ? (doc.settings.themen ?? []).find((t) => t.name === pl.thema) : undefined;
-    return planInnerSvg(sicht, pl.storeyId, pl.scale, thema ? { thema } : undefined);
+    // E3-Opt-in (v0.8.6 §3, D3): `datenAttribute` reicht NUR hier bis zu
+    // `planInnerSvg` durch — Axo/Schnitt/Situationsplan kennen keine
+    // Raumtyp-Regionen, das Flag bleibt dort wirkungslos (kein Parameter).
+    const planOpts = thema || datenAttribute ? { ...(thema ? { thema } : {}), ...(datenAttribute ? { datenAttribute } : {}) } : undefined;
+    return planInnerSvg(sicht, pl.storeyId, pl.scale, planOpts);
   }
   if (pl.view === 'axo') {
     return axoInnerSvg(sicht, {}, pl.scale);
@@ -151,6 +155,15 @@ export interface SheetSvgOptions {
    * <image> unzuverlässig — die Bilder setzt jsPDF.addImage danach exakt).
    */
   ohneRaster?: boolean;
+  /**
+   * E3-Opt-in (v0.8.6 §3, D3): reicht `planInnerSvg`s `opts.datenAttribute`
+   * an JEDE `grundriss`-Platzierung durch (`data-raumtyp` auf den
+   * Raumtyp-Flächen). Default AUS (Golden-Sanktion) — bestehende Aufrufer
+   * (`export-sheets.ts`, `.kosmo`-Paket, Transmittal-CSV-Vorschau) bleiben
+   * dadurch unverändert; NUR der Publish-Blatt-Renderpfad der App
+   * (`apps/kosmo-orbit`s `PublishWorkspace.tsx`) setzt es explizit.
+   */
+  datenAttribute?: boolean;
 }
 
 /** Bogenkette einer Änderungswolke ums Rechteck (Papier-mm, «revision cloud»). */
@@ -277,7 +290,7 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
   let primaryScale: number | undefined;
   let primaryFlaeche = -1;
   for (const pl of sheet.placements) {
-    const { inner, bounds } = placementInner(doc, pl);
+    const { inner, bounds } = placementInner(doc, pl, opts.datenAttribute);
     if (!bounds) continue;
     const f = 1 / pl.scale;
     const flaeche = (bounds.maxX - bounds.minX) * f * ((bounds.maxY - bounds.minY) * f);

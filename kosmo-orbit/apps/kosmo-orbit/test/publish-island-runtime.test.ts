@@ -15,6 +15,7 @@ beforeEach(() => {
     canvasBefehl: null,
     zeigeBemassung: true,
     zeigeZonen: true,
+    zeigeRaumtypen: true,
   });
 });
 
@@ -88,5 +89,36 @@ describe('publish-runtime — PB3 Sichtbarkeits-Toggles (C-19)', () => {
     // Komponenten-`useState`, s. `BlattCanvas.tsx`-Kopfkommentar).
     expect(usePublishRuntime.getState().zeigeBemassung).toBe(false);
     expect(usePublishRuntime.getState().zeigeZonen).toBe(false);
+  });
+});
+
+/**
+ * PA3 (v0.8.6 §3 E3 + §7 C-6/C-7) — dritter Sichtbarkeits-Toggle
+ * «Raumtypen», UNABHÄNGIG von «Zonen» (Parzellen-/Nachbarkontext bleibt
+ * unverändert). S. `publish-runtime.ts`-Kopfkommentar zu `zeigeRaumtypen`
+ * für die volle Begründung (`derive/plansvg.ts`s `opts.datenAttribute` wird
+ * NUR im Publish-Blatt-Renderpfad aktiv gesetzt, golden-still überall
+ * sonst).
+ */
+describe('publish-runtime — PA3 Raumtypen-Toggle (E3, C-6/C-7)', () => {
+  it('zeigeRaumtypen: Default true, unabhängig von zeigeZonen/zeigeBemassung setzbar', () => {
+    expect(usePublishRuntime.getState().zeigeRaumtypen).toBe(true);
+    usePublishRuntime.getState().setZeigeRaumtypen(false);
+    expect(usePublishRuntime.getState().zeigeRaumtypen).toBe(false);
+    // Zonen/Bemassung bleiben vom Raumtypen-Toggle unberührt.
+    expect(usePublishRuntime.getState().zeigeZonen).toBe(true);
+    expect(usePublishRuntime.getState().zeigeBemassung).toBe(true);
+    usePublishRuntime.getState().setZeigeRaumtypen(true);
+    expect(usePublishRuntime.getState().zeigeRaumtypen).toBe(true);
+  });
+
+  it('zeigeZonen-Toggle lässt zeigeRaumtypen unberührt (zwei unabhängige Felder, C-7)', () => {
+    usePublishRuntime.getState().setZeigeZonen(false);
+    expect(usePublishRuntime.getState().zeigeRaumtypen).toBe(true);
+  });
+
+  it('zeigeRaumtypen überlebt einen Store-Zugriff ohne neues setState (Modul-Singleton)', () => {
+    usePublishRuntime.getState().setZeigeRaumtypen(false);
+    expect(usePublishRuntime.getState().zeigeRaumtypen).toBe(false);
   });
 });
