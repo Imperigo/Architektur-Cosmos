@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Wall, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Stair, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -652,6 +652,22 @@ export function PlanView({
       if (len === 0) return [];
       const p = { x: w.a.x + ((w.b.x - w.a.x) * o.center) / len, y: w.a.y + ((w.b.y - w.a.y) * o.center) / len };
       return [{ id, key: 'center' as const, p, kind: 'opening' as const }];
+    }
+    // PA5 (v0.8.7, docs/V087-SPEZ.md §3 E1/C-3): Treppen-Griffe — a/b wie
+    // beim Wand-Zweig (feste Keys, EIN Griff je Punkt), bei form 'l'
+    // zusätzlich der Eckpunkt-Griff. Griff-Hit-Test/Vorrang (`griffAn`
+    // unten) und «nur bei Einzel-Auswahl» (Guard oben) sind kind-neutral —
+    // dieselbe Maschine wie bei Wand/Zone/Öffnung, kein Sonderweg nötig.
+    if (e.kind === 'stair') {
+      const s = e as Stair;
+      const punkte: { id: string; key: 'a' | 'b' | 'ecke'; p: Pt; kind: 'stair' }[] = [
+        { id, key: 'a' as const, p: s.a, kind: 'stair' as const },
+        { id, key: 'b' as const, p: s.b, kind: 'stair' as const },
+      ];
+      if (s.form === 'l' && s.ecke) {
+        punkte.push({ id, key: 'ecke' as const, p: s.ecke, kind: 'stair' as const });
+      }
+      return punkte;
     }
     return [];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1997,6 +2013,17 @@ export function PlanView({
                   oeffnungVorschauPunkt = wandAchsenPunkt(wall as Wall, neuesCenter);
                 }
               }
+              // PA5 (v0.8.7, docs/V087-SPEZ.md §3 E1): bewusst KEIN
+              // Gummiband-Zweig für `stair` — anders als Wand/Masskette/
+              // Zone/Volumen/Dach oben würde ein ehrliches Gummiband die
+              // volle Lauf-/Podest-Geometrie aus `treppenTeile` neu ableiten
+              // müssen (Steigungen/Podest-Outline hängen von der
+              // Geschosshöhe ab, nicht nur von a/b/ecke). Der Auftrag
+              // erlaubt ausdrücklich «Vorschau zeigt NUR den gezogenen
+              // Punkt» — die Treppe selbst bleibt bis zum Drag-Ende
+              // unverändert im Plan sichtbar (`gummibandD` bleibt hier
+              // `null`), nur der Griff-Quadrat springt an die Cursor-
+              // Position (`angezeigt` unten).
             }
             return (
               <g data-testid="plan-griffe" pointerEvents="none">
@@ -2018,7 +2045,7 @@ export function PlanView({
                       : vorschau!.p
                     : g.p;
                   const testid =
-                    g.kind === 'wall'
+                    g.kind === 'wall' || g.kind === 'stair'
                       ? `griff-endpunkt-${g.key}`
                       : g.kind === 'masskette'
                         ? `griff-massketten-punkt-${g.key}`

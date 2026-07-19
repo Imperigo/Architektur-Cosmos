@@ -1230,7 +1230,11 @@ export function DesignWorkspace({
         // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3): Öffnungs-Griff — nur bei
         // Einzel-Auswahl möglich (`griffe` in PlanView liefert dann genau
         // einen Griff-Eintrag, s. dort).
-        e.kind === 'opening';
+        e.kind === 'opening' ||
+        // PA5 (v0.8.7, docs/V087-SPEZ.md §3 E1/C-3): Treppen-Griffe — a/b,
+        // bei form 'l' zusätzlich ecke (PlanView `griffe`-Zweig oben liefert
+        // die passenden Einträge nur bei Einzel-Auswahl).
+        e.kind === 'stair';
       if (!griffFaehig) return false;
       setGriffDrag({ id, key: griffKey, start: snap(p, magnet) });
       setGriffCursor(p);
@@ -1333,6 +1337,20 @@ export function DesignWorkspace({
             const neuesCenter = projiziereOeffnungCenter(wall as Wall, o.width, ziel);
             runCommand('design.eigenschaftSetzen', { entityId: o.id, feld: 'center', wert: neuesCenter });
           }
+        } else if (e.kind === 'stair') {
+          // PA5 (v0.8.7, docs/V087-SPEZ.md §3 E1/Sanktion 2): kein Löschen+
+          // Neusetzen — `design.treppeGeometrieSetzen` patcht a/b/ecke IN
+          // PLACE (Muster `design.wandGeometrieSetzen` oben). Identität/
+          // width/form/storeyId bleiben, Auswahl bleibt dieselbe ID, EIN
+          // Undo-Schritt. Wirft der Kernel (Lauf < 1 m, Steigungs-Gate,
+          // degenerierte Ecke, «ecke» ohne form 'l'), bleibt die Treppe dank
+          // `require()` im Kernel unangetastet — `meldeFehler` zeigt den
+          // Fehler sichtbar, GENAU wie beim Wand-Zweig oben.
+          const stair = e as Stair;
+          runCommand('design.treppeGeometrieSetzen', {
+            entityId: stair.id,
+            ...(key === 'a' ? { a: ziel } : key === 'b' ? { b: ziel } : { ecke: ziel }),
+          });
         }
       } catch (err) {
         meldeFehler(err);
