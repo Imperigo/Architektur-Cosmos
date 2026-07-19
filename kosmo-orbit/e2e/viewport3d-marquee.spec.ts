@@ -367,3 +367,48 @@ test('C-14e: Mini-Drag (<4px) mit Shift verhält sich wie ein Shift-Klick (Toggl
   // Ergebnis nicht dieses exakte Einzelelement.
   await expect.poll(() => auswahl(page)).toEqual([w2]);
 });
+
+test('C-14f (Matrix-Fund): Loslassen über der HUD-Karte committet die Geste sauber — kein hängendes Overlay, keine Phantom-Auswahl beim nächsten Klick', async ({
+  page,
+}) => {
+  // Matrix-Prüfer-Repro (v0.8.7, ROADMAP 505): VOR dem Capture-Fix blieb die
+  // Geste hängen, wenn das pointerup über der rechten `viewport-hud`-Karte
+  // (Dock-Float AUSSERHALB des Mounts) landete — das Overlay blieb stehen
+  // und der NÄCHSTE normale Klick ohne Shift feuerte eine Phantom-Marquee-
+  // Auswahl mit den alten Koordinaten. Seit `setPointerCapture` im
+  // Marquee-Start (Muster meshDrag) landet das up garantiert auf dem Canvas.
+  await starteManuell3D(page);
+  const { w1 } = await zweiWaendeLinks(page);
+
+  const r = await rechteckFuerWand(page, 1000, 3000, 3000, 20);
+  const hud = page.locator('[data-testid="viewport-hud"]').first();
+  await expect(hud).toBeVisible();
+  const hudBox = (await hud.boundingBox())!;
+
+  // Start an der UNTEREN linken Wand-Ecke: die HUD-Mitte liegt oberhalb der
+  // Wand-Oberkante — nur so überspannt das Rechteck (Start → HUD-Mitte) die
+  // Wand wirklich (ein Start an der Oberkante ergäbe ein Rechteck komplett
+  // ÜBER der Wand und ehrlich eine leere Auswahl).
+  await page.mouse.move(r.x0, r.y1);
+  await page.keyboard.down('Shift');
+  await page.mouse.down();
+  await page.mouse.move((r.x0 + r.x1) / 2, (r.y0 + r.y1) / 2, { steps: 6 });
+  await expect(marqueeOverlay(page)).toBeVisible();
+
+  // Mitten auf die HUD-Karte ziehen und DORT loslassen.
+  await page.mouse.move(hudBox.x + hudBox.width / 2, hudBox.y + hudBox.height / 2, { steps: 6 });
+  await page.mouse.up();
+  await page.keyboard.up('Shift');
+
+  // Die Geste ist beendet: Overlay weg, der Frustum-Schnitt des echten
+  // Rechtecks (Start → HUD-Mitte, überspannt w1) wurde EINMAL committet.
+  await expect(marqueeOverlay(page)).toBeHidden();
+  await expect.poll(async () => (await auswahl(page)).includes(w1)).toBe(true);
+
+  // Der Kernbefund des Prüfers: ein anschliessender NORMALER Leerklick
+  // (ohne Shift, zwischen den Wänden) darf KEINE Phantom-Auswahl aus alten
+  // Marquee-Koordinaten feuern — er leert die Auswahl schlicht (onPick(null)).
+  await klickPick3D(page, { x: 5000, y: 3000, z: 1400 });
+  await expect.poll(() => auswahl(page)).toEqual([]);
+  await expect(marqueeOverlay(page)).toBeHidden();
+});

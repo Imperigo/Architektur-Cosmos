@@ -44,7 +44,10 @@
   color: inherit;
 }
 .pv-toggle-btn--aktiv {
-  background: #2455a4;
+  /* C-8-Matrix-Nachzug (v0.8.7): der Graph-Toggle konsumiert dasselbe
+     kanonische Token wie das Raumgraph-Overlay selbst (aura.css,
+     byte-gleich zum bisherigen #2455a4) — kein literales Hex mehr. */
+  background: var(--k-graph);
   color: white;
 }
 .pv-toggle-btn--uplan {

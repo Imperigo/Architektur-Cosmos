@@ -160,20 +160,20 @@ sha256 HEAD↔Arbeitsbaum sind Gate JEDES Pakets.
 
 ## 7 · Vollständigkeits-Matrix (Abnahme Tag C)
 
-- [ ] **C-1** Treppen-Endpunkt-Drag: EIN `treppeGeometrieSetzen`, ID/form/width/ecke bleiben, EIN Undo → PA1/PA5
-- [ ] **C-2** Degenerierte Treppe (Null-Länge, a≈ecke, ecke≈b, riser>200, ecke ohne form l) wirft VOR jedem Patch, Treppe unverändert → PA1
-- [ ] **C-3** Treppen-Griffe sichtbar NUR bei Einzel-Auswahl, Hit-Vorrang nach C-17-Muster (v0.8.5), andere Griffe unverändert → PA5
-- [ ] **C-4** Projektions-Util: EINE Wahrheit im Kernel, byte-gleiche Rundung (griffe.spec unverändert grün), grep findet kein Duplikat mehr → PA1/PA4
-- [ ] **C-5** Goldens byte-still + svg-qa 36/0 (sha256-Beweis) → alle
-- [ ] **C-6** 3D-Highlight: gewähltes Element deutlich hervorgehoben (Pixel-Readback ≫ +22 R), ungewählte byte-gleich, keine neue Lib → PA2
-- [ ] **C-7** KAMERA-HUD folgt der Bewegung ereignisbasiert (kein 400-ms-Nachhinken), Fallback-Poll nachweisbar, Listener-Cleanup → PA2
-- [ ] **C-8** Akzentwechsel ändert die Raumgraph-Diagnosefarbe NICHT (Computed-Style-Beweis); kein neuer Hex ausserhalb aura.css → PA4
-- [ ] **C-9** Eval: lauf-vorschlag-Erwartung prüft onLaufVorschlag-Plan, KEIN onProposal, erfundene commandId abgewiesen, Gesamtquote grün → PA3
+- [x] **C-1** Treppen-Endpunkt-Drag: EIN `treppeGeometrieSetzen`, ID/form/width/ecke bleiben, EIN Undo → PA1/PA5
+- [x] **C-2** Degenerierte Treppe (Null-Länge, a≈ecke, ecke≈b, riser>200, ecke ohne form l) wirft VOR jedem Patch, Treppe unverändert → PA1
+- [x] **C-3** Treppen-Griffe sichtbar NUR bei Einzel-Auswahl, Hit-Vorrang nach C-17-Muster (v0.8.5), andere Griffe unverändert → PA5
+- [x] **C-4** Projektions-Util: EINE Wahrheit im Kernel, byte-gleiche Rundung (griffe.spec unverändert grün), grep findet kein Duplikat mehr → PA1/PA4
+- [x] **C-5** Goldens byte-still + svg-qa 36/0 (sha256-Beweis) → alle
+- [x] **C-6** 3D-Highlight: gewähltes Element deutlich hervorgehoben (Pixel-Readback ≫ +22 R), ungewählte byte-gleich, keine neue Lib → PA2
+- [x] **C-7** KAMERA-HUD folgt der Bewegung ereignisbasiert (kein 400-ms-Nachhinken), Fallback-Poll nachweisbar, Listener-Cleanup → PA2
+- [x] **C-8** Akzentwechsel ändert die Raumgraph-Diagnosefarbe NICHT (Computed-Style-Beweis); kein neuer Hex ausserhalb aura.css → PA4
+- [x] **C-9** Eval: lauf-vorschlag-Erwartung prüft onLaufVorschlag-Plan, KEIN onProposal, erfundene commandId abgewiesen, Gesamtquote grün → PA3
 - [ ] **C-10** Jeder Owner-Smoke-Fund 0.8.4–0.8.6: Fix ODER benannter Aufschub in der Release-Notiz — der Puffer verfällt nicht → PB3
-- [ ] **C-11** Standortsuche → ÖREB-Betroffenheitsliste (Fixture) + sichtbarer Hinweis «kein rechtsgültiger Auszug» → PB1
-- [ ] **C-12** `oerebAuszug` überlebt Reload/`.kosmo`, Undo entfernt ihn; Fehler/Offline → ehrliche Fehlerzone → PB1
-- [ ] **C-13** CSP: genau `https://api.geo.admin.ch` neu, kein Wildcard, Owner-Freigabe im Commit belegt → Fable
-- [ ] **C-14** Shift-Drag wählt Frustum-Schnitt via onMarqueeAuswahl (additiv wie 2D), Orbit ohne Shift ungestört, Esc bricht ab → PB2
+- [x] **C-11** Standortsuche → ÖREB-Betroffenheitsliste (Fixture) + sichtbarer Hinweis «kein rechtsgültiger Auszug» → PB1
+- [x] **C-12** `oerebAuszug` überlebt Reload/`.kosmo`, Undo entfernt ihn; Fehler/Offline → ehrliche Fehlerzone → PB1
+- [x] **C-13** CSP: genau `https://api.geo.admin.ch` neu, kein Wildcard, Owner-Freigabe im Commit belegt → Fable
+- [x] **C-14** Shift-Drag wählt Frustum-Schnitt via onMarqueeAuswahl (additiv wie 2D), Orbit ohne Shift ungestört, Esc bricht ab → PB2
 - [ ] **C-15** Release-Ritual komplett: Fan-out-Matrix, lehren/v0.8.7.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen benannt), §0-Delta (Rückwärts-Wächter verlangt 0.8.7), Release-Notiz, Rundgang-PDF gesichtet, release-gate 0, Installer+sha256+Zustellung, Owner-Smoke-Punkt → PC
 
 ## 8 · Ehrliche Nicht-Ziele

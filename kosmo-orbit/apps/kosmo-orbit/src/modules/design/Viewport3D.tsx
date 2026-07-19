@@ -1657,7 +1657,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3): Shift-Drag-Marquee — Zustand der
     // laufenden Geste (null = keine Marquee-Geste aktiv). Start/Ende leben in
     // `onCaptureDown`/`onPointerUp` unten, die Live-Vorschau in `onPointerMove`.
-    let marqueeDrag: { startX: number; startY: number } | null = null;
+    // C-14-Matrix-Fix (v0.8.7): `pointerId` gehört zum Zustand, damit ein
+    // NEUER Down eine veraltete Geste erkennen und verwerfen kann.
+    let marqueeDrag: { startX: number; startY: number; pointerId: number } | null = null;
 
     // E5: Screen-Rechteck (Client-px) → Sub-Frustum der Kamera. Herleitung
     // (Pyramidenmantel, am drei.js-eigenen `examples/jsm/interactive/
@@ -1767,8 +1769,15 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // (`onCaptureDown` unten) gestartet — hier NICHT zusätzlich die
       // normale Handle-/Gesten-/Klick-Verarbeitung anstossen (`downPos`
       // bleibt null, Gesten-Automat unberührt), sonst würde derselbe Down
-      // doppelt gedeutet.
-      if (marqueeDrag) return;
+      // doppelt gedeutet. C-14-Matrix-Fix: gilt NUR für denselben Pointer —
+      // ein NEUER Down auf einer veralteten Geste (sollte seit dem Capture-
+      // Fix nicht mehr vorkommen) verwirft sie, statt dass der spätere
+      // `pointerup` eine Phantom-Auswahl mit alten Koordinaten feuert.
+      if (marqueeDrag) {
+        if (ev.pointerId === marqueeDrag.pointerId) return;
+        marqueeDrag = null;
+        setMarquee3dRef.current(null);
+      }
       // Block 3 / E4: pointerdown auf einem Vertex-Handle startet den lokalen
       // Zieh-Zustand — hat Vorrang vor Gesten-Automat/Klick-Erkennung, sonst
       // würde ein Doppel-Tap auf einem Handle versehentlich «Einpassen» lösen.
@@ -2074,7 +2083,15 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         controls.enabled = false;
         setzeTouchStyles();
         const rect = renderer.domElement.getBoundingClientRect();
-        marqueeDrag = { startX: ev.clientX, startY: ev.clientY };
+        marqueeDrag = { startX: ev.clientX, startY: ev.clientY, pointerId: ev.pointerId };
+        // C-14-Matrix-Fund (v0.8.7): OHNE Capture landet das `pointerup`
+        // nicht auf dem Canvas, wenn die Maus über einem Dock-Float (z.B.
+        // der rechten `viewport-hud`-Karte, seit v0.7.9 AUSSERHALB des
+        // Mounts) losgelassen wird — die Geste blieb dann hängen und der
+        // NÄCHSTE normale Klick feuerte eine Phantom-Marquee-Auswahl mit
+        // den alten Koordinaten. Capture (Muster `meshDrag` oben) leitet
+        // move/up der Geste garantiert hierher zurück.
+        (renderer.domElement as Element).setPointerCapture(ev.pointerId);
         setMarquee3dRef.current({ x: ev.clientX - rect.left, y: ev.clientY - rect.top, width: 0, height: 0 });
         return;
       }
