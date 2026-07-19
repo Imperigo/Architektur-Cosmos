@@ -378,6 +378,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
   const [kontext, setKontext] = useState<{ x: number; y: number; clientX: number; clientY: number } | null>(null);
   const setKontextRef = useRef(setKontext);
   setKontextRef.current = setKontext;
+  // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3): Shift-Drag-Marquee — Screen-Space-
+  // Rechteck (Client-px relativ zur Canvas-Ecke) fürs sichtbare Aufzieh-
+  // Overlay. Derselbe Ref-Brücken-Trick wie `kontext`/`setKontextRef` oben:
+  // der Szenenaufbau-Effekt weiter unten ist imperativ/three.js-pur und
+  // schreibt React-State nur über einen stabilen Ref auf den Setter.
+  const [marquee3d, setMarquee3d] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const setMarquee3dRef = useRef(setMarquee3d);
+  setMarquee3dRef.current = setMarquee3d;
   // J1b (Fable-Auflage): der Menü-offen-Zustand fliesst in die EINE
   // Capture-Down-Entscheidung ein (kein zweiter, verstreuter enabled-Schreiber)
   // — solange das Kontextmenü offen ist, bleibt die Kamera still.
@@ -1646,6 +1654,87 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     let downPos: { x: number; y: number } | null = null;
 
+    // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3): Shift-Drag-Marquee — Zustand der
+    // laufenden Geste (null = keine Marquee-Geste aktiv). Start/Ende leben in
+    // `onCaptureDown`/`onPointerUp` unten, die Live-Vorschau in `onPointerMove`.
+    let marqueeDrag: { startX: number; startY: number } | null = null;
+
+    // E5: Screen-Rechteck (Client-px) → Sub-Frustum der Kamera. Herleitung
+    // (Pyramidenmantel, am drei.js-eigenen `examples/jsm/interactive/
+    // SelectionBox.js`-Muster orientiert, hier ohne die Zusatzdatei/-Klasse
+    // nachgebaut — nur THREE-Kernklassen; `camera.projectionMatrix`-Weg über
+    // `Vector3.unproject`, das intern die inverse Projektions-/View-Matrix
+    // anwendet):
+    //  1. Die vier Rechteck-Ecken werden auf NDC (-1..1) abgebildet und mit
+    //     `unproject(camera)` in je einen Weltpunkt auf ihrem Sichtstrahl
+    //     zurückgeholt («nahe» Eckpunkte — alle vier liegen auf derselben
+    //     View-Tiefe, weil hier mit NDC-z=0 gerechnet wird).
+    //  2. Die Kameraposition ist die Pyramidenspitze; je zwei benachbarte
+    //     nahe Eckpunkte + Kameraposition spannen eine der vier SEITEN-
+    //     Ebenen auf (`setFromCoplanarPoints`).
+    //  3. Die drei nahen Eckpunkte selbst (ohne Kamera) spannen die NAHE
+    //     Ebene auf — bei symmetrischem FOV liegen sie exakt auf einer zur
+    //     Blickachse senkrechten Ebene (jeder Eckstrahl schliesst denselben
+    //     Winkel mit der Blickachse ein).
+    //  4. Für die FERNE Ebene wird jeder Eckstrahl (Kamera→naher Eckpunkt)
+    //     normalisiert und um `DEEP_M` verlängert — aus demselben
+    //     Symmetriegrund liegen die drei so gewonnenen fernen Punkte auf
+    //     einer zweiten, zur Blickachse senkrechten Ebene; ihre Normale wird
+    //     gespiegelt, damit «innen» weiter kameraseitig bleibt.
+    // OHNE Occlusion (ehrliches Nicht-Ziel, V087-SPEZ.md §8): das Frustum
+    // sieht durch Wände — es prüft nur räumliche Lage, keine Sichtbarkeit.
+    const DEEP_M = 100_000; // 100 km — endlich statt Number.MAX_VALUE (vermeidet Inf/NaN in der Vektor-Arithmetik unten), deckt jede Projektgrösse ab.
+    function frustumAusRechteck(x0: number, y0: number, x1: number, y1: number): THREE.Frustum {
+      const rect = renderer.domElement.getBoundingClientRect();
+      const minX = Math.min(x0, x1);
+      const maxX = Math.max(x0, x1);
+      const minY = Math.min(y0, y1);
+      const maxY = Math.max(y0, y1);
+      const ndcXmin = ((minX - rect.left) / rect.width) * 2 - 1;
+      const ndcXmax = ((maxX - rect.left) / rect.width) * 2 - 1;
+      const ndcYoben = -((minY - rect.top) / rect.height) * 2 + 1; // Bildschirm-oben = grösseres NDC-y
+      const ndcYunten = -((maxY - rect.top) / rect.height) * 2 + 1;
+      const camPos = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld);
+      const nah = (ndcX: number, ndcY: number) => new THREE.Vector3(ndcX, ndcY, 0).unproject(camera);
+      const obenLinks = nah(ndcXmin, ndcYoben);
+      const obenRechts = nah(ndcXmax, ndcYoben);
+      const untenRechts = nah(ndcXmax, ndcYunten);
+      const untenLinks = nah(ndcXmin, ndcYunten);
+      const fern = (nahPunkt: THREE.Vector3) =>
+        camPos.clone().add(nahPunkt.clone().sub(camPos).normalize().multiplyScalar(DEEP_M));
+      const fernObenLinks = fern(obenLinks);
+      const fernObenRechts = fern(obenRechts);
+      const fernUntenRechts = fern(untenRechts);
+      const frustum = new THREE.Frustum();
+      const p = frustum.planes;
+      p[0]!.setFromCoplanarPoints(camPos, obenLinks, obenRechts); // Seite oben
+      p[1]!.setFromCoplanarPoints(camPos, obenRechts, untenRechts); // Seite rechts
+      p[2]!.setFromCoplanarPoints(untenRechts, untenLinks, camPos); // Seite unten
+      p[3]!.setFromCoplanarPoints(untenLinks, obenLinks, camPos); // Seite links
+      p[4]!.setFromCoplanarPoints(obenRechts, untenRechts, untenLinks); // nahe Ebene
+      p[5]!.setFromCoplanarPoints(fernUntenRechts, fernObenRechts, fernObenLinks); // ferne Ebene
+      p[5]!.normal.multiplyScalar(-1);
+      return frustum;
+    }
+
+    // E5: Boundingbox-Schnitttest gegen ALLE Entity-Meshes (`model.children`,
+    // `userData['entityId']`, Muster wie `entityMeshCount`) — kein
+    // Occlusion-Test, reiner `frustum.intersectsBox`-Schnitt je Mesh.
+    function idsImFrustum(x0: number, y0: number, x1: number, y1: number): string[] {
+      const frustum = frustumAusRechteck(x0, y0, x1, y1);
+      const box = new THREE.Box3();
+      const ids: string[] = [];
+      for (const child of model.children) {
+        const mesh = child as THREE.Mesh;
+        if (!mesh.isMesh) continue;
+        const entityId = mesh.userData['entityId'] as string | undefined;
+        if (!entityId) continue;
+        box.setFromObject(mesh);
+        if (frustum.intersectsBox(box)) ids.push(entityId);
+      }
+      return ids;
+    }
+
     // Serie J / J1b: Gesten-Detektor (Doppel-Tap = Einpassen, Long-Press =
     // Kontextmenü + Fokus). Reiner Automat aus eingabe-3d.ts; gefüttert aus den
     // Pointer-Handlern (nur ausserhalb des Skizzenmodus), Long-Press geprüft im
@@ -1674,6 +1763,12 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // konservativer Trigger statt jeden einzelnen Folgefall separat zu
       // instrumentieren.
       invalidate();
+      // E5 (v0.8.7 PB2): Shift-Marquee wurde bereits in der Capture-Phase
+      // (`onCaptureDown` unten) gestartet — hier NICHT zusätzlich die
+      // normale Handle-/Gesten-/Klick-Verarbeitung anstossen (`downPos`
+      // bleibt null, Gesten-Automat unberührt), sonst würde derselbe Down
+      // doppelt gedeutet.
+      if (marqueeDrag) return;
       // Block 3 / E4: pointerdown auf einem Vertex-Handle startet den lokalen
       // Zieh-Zustand — hat Vorrang vor Gesten-Automat/Klick-Erkennung, sonst
       // würde ein Doppel-Tap auf einem Handle versehentlich «Einpassen» lösen.
@@ -1740,6 +1835,40 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         meshDrag = null;
         downPos = null;
+        return;
+      }
+      // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5): Shift-Marquee committet HIER
+      // — verbraucht das up, bevor Gesten-Automat/Klick-Erkennung etwas damit
+      // anfangen (analog zum `meshDrag`-Commit oben). Winzige Rechtecke
+      // (<4px Bildschirm, C-14e) sind KEIN Marquee, sondern derselbe
+      // Klick-Pick wie im `pickMode`-Zweig unten (mit Shift-Toggle) — kein
+      // Doppel-Feuern, keine 1-Element-„Marquee"-Auswahl über einen blossen
+      // Klick.
+      if (marqueeDrag) {
+        const md = marqueeDrag;
+        marqueeDrag = null;
+        setMarquee3dRef.current(null);
+        const moved = Math.hypot(ev.clientX - md.startX, ev.clientY - md.startY);
+        if (moved < 4) {
+          const rect = renderer.domElement.getBoundingClientRect();
+          ndc.set(
+            ((ev.clientX - rect.left) / rect.width) * 2 - 1,
+            -((ev.clientY - rect.top) / rect.height) * 2 + 1,
+          );
+          raycaster.setFromCamera(ndc, camera);
+          const hits = raycaster.intersectObjects(model.children, false);
+          const hit = hits.find((h) => (h.object as THREE.Mesh).isMesh && h.object.userData['entityId']);
+          handlers.current?.onPick?.(
+            hit ? (hit.object.userData['entityId'] as string) : null,
+            ev.shiftKey ? { toggle: true } : undefined,
+          );
+          return;
+        }
+        const ids = idsImFrustum(md.startX, md.startY, ev.clientX, ev.clientY);
+        // E5/DesignWorkspace.tsx-Vertrag (~1073): Shift-Marquee ist IMMER
+        // additiv — derselbe Vertrag wie das 2D-Rubber-Band (PlanView.tsx),
+        // hier 1:1 übernommen statt neu erfunden.
+        handlers.current?.onMarqueeAuswahl?.(ids, { additiv: true });
         return;
       }
       // J1b: Doppel-Tap → Einpassen auf den getroffenen Körper (sonst das ganze
@@ -1841,6 +1970,19 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         return;
       }
+      // E5 (v0.8.7 PB2): Shift-Marquee — nur das Overlay-Rechteck nachziehen,
+      // kein Gesten-/Ground-Move (der Zeiger malt hier ein Auswahlrechteck,
+      // keine Zeichen-Vorschau/keinen Hover).
+      if (marqueeDrag) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        setMarquee3dRef.current({
+          x: Math.min(marqueeDrag.startX, ev.clientX) - rect.left,
+          y: Math.min(marqueeDrag.startY, ev.clientY) - rect.top,
+          width: Math.abs(ev.clientX - marqueeDrag.startX),
+          height: Math.abs(ev.clientY - marqueeDrag.startY),
+        });
+        return;
+      }
       if (!handlers.current?.sketchMode) {
         gesten.ereignis({ typ: 'move', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
       }
@@ -1853,6 +1995,31 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     };
     const onKey = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') {
+        // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5): Esc bricht eine laufende
+        // Shift-Marquee-Geste ab — «kein Feuern» heisst auch: KEIN
+        // `onEscape`-Fanout (der leert im DesignWorkspace-Handler die ganze
+        // Auswahl, C-14d) — nur die Geste selbst endet, die bestehende
+        // Auswahl bleibt unverändert stehen.
+        if (marqueeDrag) {
+          marqueeDrag = null;
+          setMarquee3dRef.current(null);
+          controls.enabled = true;
+          setzeTouchStyles();
+          invalidate();
+          // DesignWorkspace.tsx trägt EINEN EIGENEN, unabhängigen
+          // `window`-Keydown-Listener für Escape (D10-Fix v0.8.5 PB1), der
+          // `handlersRef.current.onEscape()` bei JEDEM Escape direkt aufruft
+          // — unabhängig vom Zustand hier. Dieser Listener hier (Viewport3D)
+          // registriert sich auf demselben `window` zuerst (React committet
+          // Kind-Effekte vor Eltern-Effekten), darum verhindert
+          // `stopImmediatePropagation()` HIER zuverlässig, dass der spätere
+          // DesignWorkspace-Listener dieselbe Taste noch als «Auswahl
+          // leeren» deutet (sonst FEUERT die Marquee-Geste indirekt doch,
+          // nur über den Umweg des fremden Listeners statt über
+          // `onMarqueeAuswahl`).
+          ev.stopImmediatePropagation();
+          return;
+        }
         handlers.current?.onEscape?.();
         invalidate(); // V-M1 Commit 2: Escape bricht i.d.R. eine sichtbare Vorschau/Auswahl ab
       }
@@ -1879,6 +2046,36 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (kontextOffenRef.current) {
         controls.enabled = false;
         setzeTouchStyles();
+        return;
+      }
+      // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5, Sanktion 8): Shift+Linksklick
+      // (Maus) im Auswahl-Werkzeug startet die Marquee-Geste — der Fall biegt
+      // HIER, VOR jeder camera-controls-Zuweisung, ab (`controls.enabled =
+      // false` + `return`), exakt dasselbe Kapermuster wie J1a fürs
+      // Skizzieren oben. camera-controls' eigener pointerdown-Listener liegt
+      // auf demselben Element in der TARGET-Phase und läuft darum erst NACH
+      // diesem Capture-Listener — er sieht `enabled=false` und beginnt keinen
+      // Orbit/Pan/Zoom. Ohne Shift bleibt dieser Zweig unbetreten, camera-
+      // controls unangetastet (Sanktion-8-Vertrag: „Marquee kapert die
+      // Kamera-Geste ohne Shift NICHT"). `pickMode` (Werkzeug „Auswahl")
+      // grenzt gegen Zeichenwerkzeuge ab, die Shift bereits für Ortho-Snap
+      // brauchen (`onGroundClick`/`onGroundMove` `shiftKey`,
+      // DesignWorkspace.tsx `zielPunkt`); `meshEditId` grenzt gegen die
+      // Vertex-Handle-Vertikal-Geste ab, die Shift ebenfalls belegt (oben,
+      // `onPointerDown`/hier unten `handleGetroffen`).
+      if (
+        ev.pointerType === 'mouse' &&
+        ev.button === 0 &&
+        ev.shiftKey &&
+        !!handlers.current?.pickMode &&
+        !handlers.current?.sketchMode &&
+        !handlers.current?.meshEditId
+      ) {
+        controls.enabled = false;
+        setzeTouchStyles();
+        const rect = renderer.domElement.getBoundingClientRect();
+        marqueeDrag = { startX: ev.clientX, startY: ev.clientY };
+        setMarquee3dRef.current({ x: ev.clientX - rect.left, y: ev.clientY - rect.top, width: 0, height: 0 });
         return;
       }
       // Maus: volle Belegung aus mausBelegung (Shift+Mitte → Pan) VOR
@@ -2372,6 +2569,32 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         data-testid="viewport3d"
         data-darstellung3d={darstellung3dAufgeloest}
       />
+      {/* E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5): Shift-Marquee-Overlay —
+          reines Screen-Space-div (kein SVG/Three-Objekt, `marquee3d` kommt
+          über den `setMarquee3dRef`-Brücken-Ref aus dem imperativen
+          Pointer-Automaten oben), positioniert relativ zu `.v3d-root`
+          (`position:absolute; inset:0`, deckungsgleich mit `.v3d-mount` —
+          dieselbe Canvas-`getBoundingClientRect()`-Herkunft wie `x`/`y`
+          oben). Optik an PlanView.tsx `plan-marquee` angelehnt (dieselben
+          `--k-accent`/`--k-accent-wash`-Tokens, kein neuer Hex — Sanktion 6),
+          hier als CSS-Border statt SVG-Stroke, weil kein SVG-Layer über dem
+          3D-Canvas liegt. */}
+      {marquee3d && (
+        <div
+          data-testid="viewport3d-marquee"
+          style={{
+            position: 'absolute',
+            left: marquee3d.x,
+            top: marquee3d.y,
+            width: marquee3d.width,
+            height: marquee3d.height,
+            backgroundColor: 'var(--k-accent-wash)',
+            border: '1.5px dashed var(--k-accent)',
+            pointerEvents: 'none',
+            zIndex: 3,
+          }}
+        />
+      )}
       <ViewportChrome
         sichtbar={viewportBereit && designOberflaeche === 'manuell'}
         modus={viewportModus}
