@@ -72,7 +72,12 @@ test('Leertaste halten + Ziehen verschiebt die Ansicht (Pan) und pausiert das We
   await oeffneKosmoDesign(page);
   await page.click('[data-testid="view-2d"]');
   await page.click('[data-testid="nav-fit"]');
-  await page.waitForTimeout(300);
+  // Ersetzt: fixe 300ms nach dem Fit-Klick — die echte Bedingung ist «die
+  // Plan-transform-Matrix ist fertig geschrieben» (Dock-Solver-Nachkorrektur
+  // möglich), nicht eine geschätzte Dauer; `wartetBisRuhig` (unten in dieser
+  // Datei, function-hoisted) beobachtet genau dieses Attribut per
+  // MutationObserver statt zu raten.
+  await wartetBisRuhig(page, 250);
   await page.click('[data-testid="tool-wand"]');
   expect(await werkzeugIstAktiv(page, 'tool-wand')).toBe(true);
   // Der Werkzeug-Klick lässt den Knopf fokussiert zurück — ein echter User
@@ -213,7 +218,8 @@ test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt vo
   await oeffneKosmoDesign(page);
   await page.click('[data-testid="view-2d"]');
   await page.click('[data-testid="nav-fit"]');
-  await page.waitForTimeout(300);
+  // Ersetzt: fixe 300ms nach dem Fit-Klick, s. Begründung im ersten Test oben.
+  await wartetBisRuhig(page, 250);
   // Pan-Modus über die Nav-Leiste (kein Werkzeug-Gummiband im Weg).
   await page.click('[data-testid="nav-pan"]');
 
@@ -271,8 +277,16 @@ test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt vo
 
   // Erst settlen lassen (derselbe Render-Nachlauf-Grund wie im reduced-
   // motion-Test unten — die Baseline soll NICHT den regulären Drag-Render
-  // nachlaufend als «Momentum» missverstehen).
-  await page.waitForTimeout(400);
+  // nachlaufend als «Momentum» missverstehen). ACHTUNG: hier NICHT
+  // `wartetBisRuhig()` (das wartet auf ECHTE Stille, d.h. bis der Fling
+  // FERTIG ist — genau das würde die Baseline zur Endposition machen und
+  // `momentumDelta` strukturell auf ~0 zwingen). Die echte Bedingung ist
+  // stattdessen «zwei echte Frames sind gemalt» — genug, damit React den
+  // letzten synthetischen `pointermove` sicher gerendert hat, ohne auf das
+  // Ende der (hier gewollt noch laufenden) Fling-Animation zu warten.
+  await page.evaluate(
+    () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+  );
   const sofortNachLoslassen = await holeVerschiebung(page);
 
   // v0.8.1/P2 (s. `wartetBisRuhig()`-Kopfkommentar) — Assertion #1 bleibt
@@ -302,8 +316,12 @@ test('Fling/Momentum: schnelles Maus-Drag-Pan-Loslassen läuft aus und stoppt vo
   // (grosszügiges Poll-Timeout statt einer festen 3500ms-Annahme) — s.
   // Kopfkommentar dort.
   const spaeterA = await wartetBisRuhig(page);
-  await page.waitForTimeout(300);
-  const spaeterB = await holeVerschiebung(page);
+  // Ersetzt: fixe 300ms Zusatzwarten, um «bleibt stabil» zu behaupten. Ein
+  // ZWEITER `wartetBisRuhig`-Aufruf beweist das ECHT: mutiert das
+  // transform-Attribut doch noch (Restdrift), verlängert das die Ruhe-Uhr
+  // real und `spaeterB` fängt es auf — statt eine feste Dauer blind
+  // abzuwarten und dann zu hoffen, dass nichts mehr passiert ist.
+  const spaeterB = await wartetBisRuhig(page);
   expect(Math.abs(spaeterB.e - spaeterA.e) + Math.abs(spaeterB.f - spaeterA.f)).toBeLessThan(2);
 });
 
@@ -318,7 +336,8 @@ test('Fling/Momentum: bei reduced-motion läuft NACH dem Loslassen nichts mehr a
   await oeffneKosmoDesign(page);
   await page.click('[data-testid="view-2d"]');
   await page.click('[data-testid="nav-fit"]');
-  await page.waitForTimeout(300);
+  // Ersetzt: fixe 300ms nach dem Fit-Klick, s. Begründung im ersten Test oben.
+  await wartetBisRuhig(page, 250);
   await page.click('[data-testid="nav-pan"]');
   // `emulateMedia` setzt sich manchmal erst NACH dem `reload()` in
   // `oeffneKosmoDesign` durch (Race, dieselbe Chromium/Playwright-Lücke wie
@@ -356,8 +375,10 @@ test('Fling/Momentum: bei reduced-motion läuft NACH dem Loslassen nichts mehr a
   // s. dortiger Kopfkommentar) statt des ersten festen Waits — dieselbe
   // Assertion (<0.5) bleibt unangetastet.
   const sofort = await wartetBisRuhig(page);
-  await page.waitForTimeout(300);
-  const danach = await holeVerschiebung(page);
+  // Ersetzt: fixe 300ms Zusatzwarten (dieselbe «bleibt stabil»-Behauptung wie
+  // im Fling-Test oben) — ein zweiter `wartetBisRuhig`-Aufruf bestätigt ECHTE
+  // Ruhe über ein weiteres Fenster statt eine feste Dauer zu erraten.
+  const danach = await wartetBisRuhig(page);
   // Keine Weiterbewegung ohne gehaltene Maustaste — der Pan endet exakt dort,
   // wo losgelassen wurde (kein Fake-Momentum unter reduced-motion).
   expect(Math.abs(danach.e - sofort.e) + Math.abs(danach.f - sofort.f)).toBeLessThan(0.5);

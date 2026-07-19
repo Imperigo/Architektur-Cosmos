@@ -130,8 +130,49 @@ describe('StandortSuche — ein gewählter Treffer schreibt design.standortAdres
   });
 
   it('Suchen → Treffer wählen → BEIDE Standort-Commands liefen, doc.settings.standortAdresse trägt LV95+Adresse+Quelle+Zeitstempel', async () => {
+    // PB3-088 (V088-SPEZ §7 C-13): der Treffer-Klick stösst NACHGELAGERT
+    // `oerebAbrufen()` an (v0.8.7 PB1, `void oerebAbrufen(...)` in
+    // DesignWorkspace.tsx :5001) — zwei sequentielle `fetch()`-Runden
+    // (GetEGRID über `ech/SearchServer?...origins=parcel`, dann
+    // `oereb/extract/json/<egrid>`). Der VORHERIGE Mock beantwortete JEDE
+    // URL mit der Adress-Suchantwort — die GetEGRID-Runde fand daher nie ein
+    // `attrs.egrid`, `oerebAbrufen` brach früh mit `setOerebFehler(...)` ab,
+    // und DIESE State-Änderung lief ausserhalb jedes `act()`-Callbacks (die
+    // act()-Warnung unten). Fix: der Mock verzweigt jetzt nach URL-Muster
+    // (`origins=parcel` → EGRID-Antwort, `oereb/extract` → Themen-Antwort,
+    // sonst die bestehende Adress-Suchantwort) UND der Klick unten wartet
+    // INNERHALB desselben `act(async () => …)`-Callbacks auf das sichtbare
+    // Ende des Abrufs (`oereb-block`/`oereb-fehler`) — React kann damit den
+    // kompletten Promise-Rattenschwanz (beide `fetch()`-Runden + die States,
+    // die sie am Ende setzen) dem act()-Bereich zuordnen, statt ihn lose
+    // nach dessen Ende weiterlaufen zu lassen.
     globalThis.fetch = vi.fn(async (url: unknown) => {
-      expect(String(url)).toContain('SearchServer');
+      const u = String(url);
+      if (u.includes('origins=parcel')) {
+        // GetEGRID (oerebAbrufen Schritt 1, DesignWorkspace.tsx :4817f.) —
+        // dieselbe SearchServer-Form wie die Adresssuche, mit `attrs.egrid`.
+        return {
+          ok: true,
+          json: async () => ({ results: [{ attrs: { egrid: 'CH777999999999' } }] }),
+        };
+      }
+      if (u.includes('oereb/extract')) {
+        // ÖREB-Extract (oerebAbrufen Schritt 2, :4827f.) — minimaler, aber
+        // vollständiger ConcernedTheme/NotConcernedTheme-Fixture-Vertrag.
+        return {
+          ok: true,
+          json: async () => ({
+            GetExtractByIdResponse: {
+              extract: {
+                ConcernedTheme: [{ Code: 'ProjectionZone', Text: [{ Language: 'de', Text: 'Projektierungszone' }] }],
+                NotConcernedTheme: [{ Code: 'ContaminatedSites', Text: [{ Language: 'de', Text: 'Belastete Standorte' }] }],
+              },
+            },
+          }),
+        };
+      }
+      // Adress-Suche (Standardfall, unverändert).
+      expect(u).toContain('SearchServer');
       return {
         ok: true,
         json: async () => ({
@@ -166,8 +207,17 @@ describe('StandortSuche — ein gewählter Treffer schreibt design.standortAdres
     expect(trefferBtn).not.toBeNull();
     expect(trefferBtn.textContent).toBe('Musterstrasse 1 Zug');
 
-    act(() => {
+    await act(async () => {
       trefferBtn.click();
+      // `oerebAbrufen()` läuft NACH dem Klick asynchron nach (s. Kommentar
+      // beim Mock oben) — INNERHALB dieses act()-Callbacks auf ihr sichtbares
+      // Ende warten (Erfolg → `oereb-block`, Fehlerpfad → `oereb-fehler`),
+      // damit React beide `fetch()`-Runden + die States, die sie setzen,
+      // noch als act()-geschützt behandelt.
+      await vi.waitFor(() => {
+        const abgeschlossen = container!.querySelector('[data-testid="oereb-block"], [data-testid="oereb-fehler"]');
+        expect(abgeschlossen).not.toBeNull();
+      });
     });
 
     // design.standortSetzen (bestehend, WGS84/LV95 fürs Sonnenstudien-

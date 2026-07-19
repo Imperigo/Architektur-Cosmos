@@ -66,6 +66,27 @@ async function zweiWaende(page: Page): Promise<[string, string]> {
 const auswahl = (page: Page) => page.evaluate(() => window.__kosmo.state().selection as string[]);
 const highlights = (page: Page) => page.locator('[data-testid="auswahl-highlight"]');
 
+/**
+ * PB3-088 (V088-SPEZ §7 C-13) — EHRLICHE AUSNAHME, keine Zustands-Politur:
+ * die drei Aufrufe unten (C-1) trennen zwei Einzelklicks auf DENSELBEN Punkt
+ * weit genug, damit der Browser sie NICHT nativ zu einem `dblclick`
+ * zusammenzieht (`onDoubleClick` in `PlanView.tsx` hängt am nativen
+ * `dblclick`-Event, das Chromium anhand des Zeitabstands zwischen zwei
+ * REALEN Klick-Inputs bildet — VOR jeder React-Verarbeitung, ausserhalb
+ * jedes App-/Doc-Zustands). Es gibt darum KEIN `__kosmo.state()`-Feld, kein
+ * DOM-Attribut und keinen Locator-Zustand, der «das Doppelklick-Fenster ist
+ * verstrichen» widerspiegelt — die Bedingung IST verstrichene Wanduhrzeit,
+ * sonst nichts. Statt eines blinden, festen Warte-Aufrufs drückt
+ * `expect.poll` das explizit als das aus, was es ist (eine echte, aber
+ * NICHT-zustandsbasierte Bedingung) — ehrlich benannt statt als
+ * App-Zustands-Poll getarnt (Bericht Abschnitt 6, einer von drei
+ * dokumentierten Nicht-Zustands-Fällen unter den 16 Fundstellen).
+ */
+async function wartetEchteZeit(ms: number): Promise<void> {
+  const ziel = Date.now() + ms;
+  await expect.poll(() => Date.now() >= ziel, { timeout: ms + 5000, intervals: [20] }).toBe(true);
+}
+
 async function marqueeZug(page: Page, von: { x: number; y: number }, nach: { x: number; y: number }, shift = false) {
   const a = await weltZuBildschirm(page, von.x, von.y);
   const b = await weltZuBildschirm(page, nach.x, nach.y);
@@ -100,18 +121,18 @@ test('C-1: Shift-Klick toggelt, Klick ohne Modifier ersetzt, Esc leert', async (
   // 400ms Abstand: zwei Klicks auf DENSELBEN Punkt im Doppelklick-Fenster
   // wären eine Doppelklick-Geste (eigene Bedeutung, E1) — kein Nutzer
   // toggelt schneller als das Fenster.
-  await page.waitForTimeout(600);
+  await wartetEchteZeit(600);
   await page.keyboard.down('Shift');
   await page.mouse.click(p2.x, p2.y);
   await page.keyboard.up('Shift');
   await expect.poll(() => auswahl(page)).toEqual([w1]);
 
   // Klick ohne Modifier ersetzt (Bestandsverhalten, Sanktion 4).
-  await page.waitForTimeout(600);
+  await wartetEchteZeit(600);
   await page.keyboard.down('Shift');
   await page.mouse.click(p2.x, p2.y);
   await page.keyboard.up('Shift');
-  await page.waitForTimeout(600);
+  await wartetEchteZeit(600);
   await page.mouse.click(p1.x, p1.y);
   await expect.poll(() => auswahl(page)).toEqual([w1]);
 
@@ -219,7 +240,13 @@ test('C-2/Pan: Leertaste-Pan bleibt unberührt — kein Marquee, keine Auswahl-�
   // ein Leerklick in den Plan verschiebt den Fokus, wie es ein echter
   // Nutzer vor dem Pan auch täte.
   await page.mouse.click(von.x, von.y);
-  await page.waitForTimeout(100);
+  // Ersetzt: fixe 100ms «hoffentlich ist der Fokus weg». Die echte Bedingung
+  // steht wörtlich in `darfPannen()` (PlanView.tsx): `document.activeElement`
+  // ist kein BUTTON/A mehr — genau das wird hier gepollt, statt zu raten,
+  // wie lange der Fokuswechsel nach dem Klick braucht.
+  await expect
+    .poll(() => page.evaluate(() => document.activeElement?.tagName ?? null))
+    .not.toBe('BUTTON');
   await page.keyboard.down('Space');
   await page.mouse.move(von.x, von.y);
   await page.mouse.down();

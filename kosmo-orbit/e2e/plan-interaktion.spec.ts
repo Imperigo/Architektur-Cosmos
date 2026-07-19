@@ -138,6 +138,53 @@ async function planScale(page: Page): Promise<number> {
   return Number(m![1]);
 }
 
+/**
+ * PB3-088 (V088-SPEZ §7 C-13) — ersetzt geschätzte feste Wartezeiten nach
+ * Fit-/Zoom-Aktionen durch eine echte Zustandsbedingung: wartet, bis das
+ * `transform`-Attribut der Plan-Inhalts-Gruppe (`[data-testid="planview"] > g`
+ * — dieselbe Matrix wie `weltZuBildschirm`/`planScale`) für `ruheMs` am Stück
+ * UNVERÄNDERT bleibt. `view`/`scale` sind reiner PlanView-Lokalzustand (nicht
+ * Teil von `__kosmo.state()`), darum ist ein DOM-Locator-Zustand (MutationObserver)
+ * hier die einzig echte Poll-Quelle — Muster wörtlich aus `wartetBisRuhig()` in
+ * `kurztasten-pan.spec.ts` (v0.8.1/P2-Lehre) übernommen: die Ruhe-Uhr läuft ab
+ * dem Aufruf und wird bei JEDER Mutation zurückgesetzt, läuft im Browser selbst
+ * (kein Node↔Browser-Poll-Race) und terminiert korrekt auch dann, wenn GAR
+ * NICHTS mutiert (Ruhe-Uhr erreicht `ruheMs`, ohne je zurückgesetzt worden zu
+ * sein) — deckt damit sowohl «auf eine laufende Federanimation warten» als auch
+ * «beweisen, dass NICHTS (mehr) passiert» ab, ohne eine Dauer zu erraten.
+ */
+async function wartetAufTransformRuhe(page: Page, ruheMs = 250, timeoutMs = 5000): Promise<void> {
+  await page.evaluate(
+    ({ ruheMs, timeoutMs }) => {
+      return new Promise<void>((resolve) => {
+        const svg = document.querySelector('[data-testid="planview"]');
+        const inhalt = svg?.querySelector(':scope > g') ?? null;
+        if (!inhalt) {
+          resolve();
+          return;
+        }
+        const start = performance.now();
+        let letzteAenderung = start;
+        const beobachter = new MutationObserver(() => {
+          letzteAenderung = performance.now();
+        });
+        beobachter.observe(inhalt, { attributes: true, attributeFilter: ['transform'] });
+        const tick = () => {
+          const jetzt = performance.now();
+          if (jetzt - letzteAenderung >= ruheMs || jetzt - start >= timeoutMs) {
+            beobachter.disconnect();
+            resolve();
+            return;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    },
+    { ruheMs, timeoutMs },
+  );
+}
+
 test('v0.6.6 Welle 2 Stream C: Doppelklick auf leere Fläche (Auswahl-Werkzeug) zoomt Faktor 2', async ({ page }) => {
   // §7: Bewegung wird HIER gezielt geprüft — eigene Spec-Zeile ohne die
   // projektweite reduced-motion-Fixture.
@@ -148,7 +195,12 @@ test('v0.6.6 Welle 2 Stream C: Doppelklick auf leere Fläche (Auswahl-Werkzeug) 
   await page.click('[data-testid="module-design"]');
   await page.click('[data-testid="view-2d"]');
   await page.click('[data-testid="nav-fit"]');
-  await page.waitForTimeout(300);
+  // Ersetzt: fixe 300ms nach dem Fit-Klick. `einpassen()` (PlanView.tsx)
+  // setzt `view` synchron im Klick-Handler, aber der Dock-Solver
+  // (`useDockZeichenfeld`) kann eine ResizeObserver-getaktete Nachkorrektur
+  // nachschieben — die echte Bedingung ist «die transform-Matrix ist fertig
+  // geschrieben», nicht «300ms sind vergangen».
+  await wartetAufTransformRuhe(page);
 
   // Standard-Werkzeug ist «Auswahl» (siehe Test oben) — kein Extra-Klick nötig.
   // Frisches Projekt (keine Wände/Zonen gezeichnet) → JEDE Stelle im
@@ -160,16 +212,22 @@ test('v0.6.6 Welle 2 Stream C: Doppelklick auf leere Fläche (Auswahl-Werkzeug) 
   const mitte = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
   await page.mouse.click(mitte.x, mitte.y, { clickCount: 2 });
 
-  // Federanimation läuft aus (--k-feder 260ms, ~2% Überschwung) — erst
-  // GROSSZÜGIG warten, bis sie fertig ist, DANN erst den Endwert lesen
-  // (ein `expect.poll`-Treffer mitten im Überschwung wäre kein Endwert).
-  await page.waitForTimeout(500);
+  // Federanimation läuft aus (--k-feder 260ms, ~2% Überschwung) — ersetzt:
+  // fixe 500ms «grosszügig warten». `wartetAufTransformRuhe` pollt die ECHTE
+  // Bedingung («die Federanimation hat aufgehört, das transform-Attribut zu
+  // mutieren») statt eine Dauer zu erraten — robust auch bei einer unter
+  // Last verzögert startenden/laufenden rAF-Taktung (dieselbe Klasse Flake
+  // wie die Fling-Härtung in `kurztasten-pan.spec.ts`, v0.8.1/P2).
+  await wartetAufTransformRuhe(page, 200);
   const nachScale = await planScale(page);
   expect(nachScale).toBeGreaterThan(vorScale * 1.7);
   expect(nachScale).toBeLessThan(vorScale * 2.3); // ~Faktor 2, kein Wegdriften
 
-  // Wert bleibt stabil (Animation ist wirklich fertig, kein Weiterlaufen ins Unendliche).
-  await page.waitForTimeout(200);
+  // Wert bleibt stabil (Animation ist wirklich fertig, kein Weiterlaufen ins
+  // Unendliche) — ersetzt: fixe 200ms. Ein zweiter `wartetAufTransformRuhe`-
+  // Aufruf beweist ECHTE Ruhe über ein weiteres Fenster (statt sie nur
+  // anzunehmen): mutiert doch noch etwas nach, verlängert die Ruhe-Uhr real.
+  await wartetAufTransformRuhe(page, 200);
   expect(await planScale(page)).toBeCloseTo(nachScale, 2);
 });
 
@@ -188,12 +246,17 @@ test('v0.6.6 Welle 2 Stream C: Doppelklick auf ein Element (Auswahl-Werkzeug) zo
     k.run('design.wandZeichnen', { storeyId: st.activeStoreyId, a: { x: 4000, y: 2000 }, b: { x: 6000, y: 2000 }, assemblyId: aw.id });
   });
   await page.click('[data-testid="nav-fit"]');
-  await page.waitForTimeout(300);
+  // Ersetzt: fixe 300ms nach dem Fit-Klick, s. Begründung im Zoom-Faktor-2-Test oben.
+  await wartetAufTransformRuhe(page);
 
   const vorScale = await planScale(page);
   const mitte = await weltZuBildschirm(page, 5000, 2000); // Wandmitte — ein echter Treffer
   await page.mouse.click(mitte.x, mitte.y, { clickCount: 2 });
-  await page.waitForTimeout(400); // genug Zeit für eine (nicht stattfindende) Animation
+  // Ersetzt: fixe 400ms «genug Zeit für eine (nicht stattfindende) Animation».
+  // `wartetAufTransformRuhe` beweist die Abwesenheit ECHT (die Ruhe-Uhr läuft
+  // bis zum Timeout durch, weil nie eine Mutation sie zurücksetzt) statt eine
+  // Dauer zu erraten, die «wahrscheinlich lang genug» ist.
+  await wartetAufTransformRuhe(page, 350);
   expect(await planScale(page)).toBeCloseTo(vorScale, 5);
 });
 
@@ -212,7 +275,8 @@ test('v0.6.6 Welle 2 Stream C: Touch-Longpress auf ein Element öffnet das Konte
     return r.patches[0]!.id;
   });
   await page.click('[data-testid="nav-fit"]');
-  await page.waitForTimeout(300);
+  // Ersetzt: fixe 300ms nach dem Fit-Klick, s. Begründung im Zoom-Faktor-2-Test oben.
+  await wartetAufTransformRuhe(page);
   const mitte = await weltZuBildschirm(page, 5000, 2000);
 
   // Rechtsklick öffnet dasselbe Kontextmenü-Bauteil wie im 3D-Viewport.
