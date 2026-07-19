@@ -108,7 +108,16 @@ test('Ein Deep-Link-Fall (Rendern → KosmoVis): die PD3c-verdrahtete Brücke we
   await expect(page.locator('[data-testid="island-rendern-zur-station"]')).toBeVisible();
   await page.click('[data-testid="island-rendern-zur-station"]');
   // Echter Stationswechsel: KosmoVis ist offen, die design-Islands sind weg.
-  await expect(page.locator('[data-testid="island-austausch-root"]')).toHaveCount(0);
+  // Z6-Fix (v0.8.10, Fable): die frühere Assertion prüfte
+  // `island-austausch-root` → 0 — seit KosmoVis EIGENE Islands trägt
+  // (PC1-084ff.), existiert dort eine gleichnamige AUSTAUSCH-Insel mit
+  // demselben generierten testid (`IslandShell` baut `island-<id>-root`
+  // stations-agnostisch): der Wechsel GELANG, die Zählung traf die
+  // vis-Insel. Neu: die vis-exklusive GRAPH-Insel beweist positiv, dass
+  // KosmoVis steht; die design-exklusive ZEICHNEN-Insel beweist, dass
+  // die design-Islands weg sind.
+  await expect(page.locator('[data-testid="island-graph-root"]')).toBeVisible();
+  await expect(page.locator('[data-testid="island-zeichnen-root"]')).toHaveCount(0);
   await page.screenshot({ path: 'test-results/pd3b-082-rendern-stufe3-deep-link.png' });
 });
 
