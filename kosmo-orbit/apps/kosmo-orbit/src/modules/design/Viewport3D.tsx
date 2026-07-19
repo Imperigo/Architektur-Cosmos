@@ -1660,6 +1660,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // C-14-Matrix-Fix (v0.8.7): `pointerId` gehört zum Zustand, damit ein
     // NEUER Down eine veraltete Geste erkennen und verwerfen kann.
     let marqueeDrag: { startX: number; startY: number; pointerId: number } | null = null;
+    // E5 (v0.8.8 PB1): Perf-Beweis-Anker fürs Occlusion-Post-Processing im
+    // Marquee-Commit (Muster wie `camHudEventCount`/`frameCount` unten) —
+    // -1 solange noch KEIN Marquee-Commit mit Occlusion-Filter lief.
+    let letzteMarqueeOcclusionMs = -1;
 
     // E5: Screen-Rechteck (Client-px) → Sub-Frustum der Kamera. Herleitung
     // (Pyramidenmantel, am drei.js-eigenen `examples/jsm/interactive/
@@ -1737,6 +1741,61 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       return ids;
     }
 
+    // E5 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E5, §6 Sanktion 7, D5): Occlusion-
+    // Sichtbarkeitsfilter — AUSSCHLIESSLICH als Post-Verarbeitung von
+    // `idsImFrustum`, im pointerup-Commit aufgerufen (s. `onPointerUp` unten).
+    // NIE aus `onPointerMove` — die Live-Vorschau bleibt reines Frustum-
+    // Overlay ohne Occlusion (V088-SPEZ.md §8 «Occlusion-Echtzeit-Vorschau»
+    // bleibt Nicht-Ziel dieser Version).
+    //
+    // `entityMeshesFuerOcclusion()` filtert exakt wie `idsImFrustum` oben
+    // (`isMesh` + `userData.entityId`) — dieselbe Bedingung schliesst
+    // LineSegments (Kanten-Overlay, `artifactToObjects` gibt `[mesh, lines]`
+    // zurück, `lines.isMesh` ist undefined) automatisch aus. Griffe
+    // (`meshHandleGroup`) und Overlays (`previewGroup`/`sketchGroup`, das
+    // Marquee-Rechteck selbst ist ein reines DOM-Overlay, kein Szenen-Objekt)
+    // sind NICHT Kinder von `model` — die Selbst-Occlusion-Falle (ein
+    // Kandidat verdeckt sich an seiner eigenen Kante/seinem eigenen Griff)
+    // ist damit strukturell ausgeschlossen, ohne einen Zusatz-Filter.
+    //
+    // Sample-Punkte: Bbox-Mitte + 4 Bbox-Ecken (`bboxSamplePunkte`, Tetraeder-
+    // Auswahl über gerade Achsen-Parität — deckt alle drei Achsen ab, ohne
+    // alle 8 Ecken zu testen; 5 statt 9 Strahlen je Kandidat, Perf-Budget
+    // <20 ms am Demo-Doc, s. Sanktion 7 / C-9). Je Punkt EIN Strahl von der
+    // Kameraposition; der ERSTE gefilterte Treffer entscheidet: ist er das
+    // Kandidaten-Mesh selbst (oder liegt er — Koplanaritäts-Toleranz
+    // `EPS_KOPLANAR_M` — AM/HINTER dem Sample-Punkt statt echt davor), gilt
+    // der Punkt frei. Kurzschluss beim ersten freien Punkt → sichtbar; kein
+    // freier Punkt unter allen 5 → «überwiegend verdeckt» → im Aufrufer
+    // ausgelassen (Semantik aus D5/E5, steht so in den Neuigkeiten).
+    const EPS_KOPLANAR_M = 1e-4; // Meter — Rundungstoleranz an koplanaren Flächen (z.B. Wand/Boden-Anschluss, Wand-an-Wand-Stoss): ein Treffer AUF dem Sample-Punkt selbst darf nicht als „davor liegender Blocker" zählen.
+    function bboxSamplePunkte(box: THREE.Box3): THREE.Vector3[] {
+      const mitte = box.getCenter(new THREE.Vector3());
+      const ecken: THREE.Vector3[] = [];
+      for (let i = 0; i < 8; i++) {
+        const bx = i & 1;
+        const by = (i >> 1) & 1;
+        const bz = (i >> 2) & 1;
+        if ((bx ^ by ^ bz) !== 0) continue; // gerade Parität → 4 von 8 Ecken (Tetraeder-Streuung über alle 3 Achsen)
+        ecken.push(new THREE.Vector3(bx ? box.max.x : box.min.x, by ? box.max.y : box.min.y, bz ? box.max.z : box.min.z));
+      }
+      return [mitte, ...ecken];
+    }
+    const occlusionRaycaster = new THREE.Raycaster();
+    function istUeberwiegendSichtbar(mesh: THREE.Mesh, kandidatenMeshes: THREE.Mesh[], camPos: THREE.Vector3): boolean {
+      const box = new THREE.Box3().setFromObject(mesh);
+      for (const punkt of bboxSamplePunkte(box)) {
+        const delta = punkt.clone().sub(camPos);
+        const distanz = delta.length();
+        if (distanz < 1e-6) return true; // Kamera praktisch AUF dem Sample-Punkt (entartet) — gilt als frei
+        occlusionRaycaster.set(camPos, delta.normalize());
+        occlusionRaycaster.far = distanz + EPS_KOPLANAR_M;
+        const treffer = occlusionRaycaster.intersectObjects(kandidatenMeshes, false)[0];
+        if (!treffer || treffer.object === mesh || treffer.distance >= distanz - EPS_KOPLANAR_M) return true;
+      }
+      return false; // kein freier Sample-Punkt unter allen 5 → überwiegend verdeckt
+    }
+
     // Serie J / J1b: Gesten-Detektor (Doppel-Tap = Einpassen, Long-Press =
     // Kontextmenü + Fokus). Reiner Automat aus eingabe-3d.ts; gefüttert aus den
     // Pointer-Handlern (nur ausserhalb des Skizzenmodus), Long-Press geprüft im
@@ -1777,6 +1836,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         if (ev.pointerId === marqueeDrag.pointerId) return;
         marqueeDrag = null;
         setMarquee3dRef.current(null);
+        // E6 (v0.8.8 PB1): Stale-Discard-Ende der Marquee-Geste.
+        useViewportChromeRuntime.setState({ marqueeAktiv: false });
       }
       // Block 3 / E4: pointerdown auf einem Vertex-Handle startet den lokalen
       // Zieh-Zustand — hat Vorrang vor Gesten-Automat/Klick-Erkennung, sonst
@@ -1857,6 +1918,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         const md = marqueeDrag;
         marqueeDrag = null;
         setMarquee3dRef.current(null);
+        // E6 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): Ende der Marquee-Geste —
+        // deckt sowohl den Mini-Klick-Pfad (<4px) als auch den echten
+        // Marquee-Commit unten ab (beide beenden dieselbe Geste, die in
+        // `onCaptureDown` mit `marqueeAktiv:true` begann).
+        useViewportChromeRuntime.setState({ marqueeAktiv: false });
         const moved = Math.hypot(ev.clientX - md.startX, ev.clientY - md.startY);
         if (moved < 4) {
           const rect = renderer.domElement.getBoundingClientRect();
@@ -1874,10 +1940,28 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           return;
         }
         const ids = idsImFrustum(md.startX, md.startY, ev.clientX, ev.clientY);
+        // E5 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E5, §6 Sanktion 7): Occlusion-
+        // Filter NUR hier im Commit — `entityMeshesFuerOcclusion` einmal
+        // gesammelt und für ALLE Kandidaten wiederverwendet (Perf: EIN
+        // `model.children`-Durchlauf statt k separate). Perf-Messung als
+        // Testhook-Zeitstempel (`__kosmoViewport.letzteMarqueeOcclusionMs`,
+        // C-9-Beweis <20 ms).
+        const occlusionStart = performance.now();
+        const entityMeshesFuerOcclusion: THREE.Mesh[] = [];
+        for (const child of model.children) {
+          const m = child as THREE.Mesh;
+          if (m.isMesh && m.userData['entityId']) entityMeshesFuerOcclusion.push(m);
+        }
+        const camPosOcclusion = new THREE.Vector3().setFromMatrixPosition(camera.matrixWorld);
+        const sichtbareIds = ids.filter((id) => {
+          const mesh = entityMeshesFuerOcclusion.find((m) => m.userData['entityId'] === id);
+          return mesh ? istUeberwiegendSichtbar(mesh, entityMeshesFuerOcclusion, camPosOcclusion) : false;
+        });
+        letzteMarqueeOcclusionMs = performance.now() - occlusionStart;
         // E5/DesignWorkspace.tsx-Vertrag (~1073): Shift-Marquee ist IMMER
         // additiv — derselbe Vertrag wie das 2D-Rubber-Band (PlanView.tsx),
         // hier 1:1 übernommen statt neu erfunden.
-        handlers.current?.onMarqueeAuswahl?.(ids, { additiv: true });
+        handlers.current?.onMarqueeAuswahl?.(sichtbareIds, { additiv: true });
         return;
       }
       // J1b: Doppel-Tap → Einpassen auf den getroffenen Körper (sonst das ganze
@@ -2015,6 +2099,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           controls.enabled = true;
           setzeTouchStyles();
           invalidate();
+          // E6 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): Esc-Ende der
+          // Marquee-Geste über den neuen Store-Kanal.
+          useViewportChromeRuntime.setState({ marqueeAktiv: false });
           // DesignWorkspace.tsx trägt EINEN EIGENEN, unabhängigen
           // `window`-Keydown-Listener für Escape (D10-Fix v0.8.5 PB1), der
           // `handlersRef.current.onEscape()` bei JEDEM Escape direkt aufruft
@@ -2026,6 +2113,27 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           // leeren» deutet (sonst FEUERT die Marquee-Geste indirekt doch,
           // nur über den Umweg des fremden Listeners statt über
           // `onMarqueeAuswahl`).
+          //
+          // ÜBERGABE-PUNKT AN FABLE (E6, D6, C-8, geprüfte ENTSCHEID-Zeile
+          // dieses Pakets): `stopImmediatePropagation()` bleibt HIER bewusst
+          // STEHEN, obwohl C-8 langfristig „kein `stopImmediatePropagation`
+          // mehr im Pfad" verlangt (§7, dort ausdrücklich „→ PB1/Fable"
+          // zugeordnet, also gemeinsam). Grund: ohne einen Guard in
+          // `DesignWorkspace.tsx`, der `marqueeAktiv` VOR dem Leeren der
+          // Auswahl prüft, würde ein Entfernen dieses Aufrufs HEUTE dazu
+          // führen, dass derselbe Esc-Tastendruck ZUSÄTZLICH den
+          // unabhängigen DesignWorkspace-Escape-Handler erreicht und die
+          // GESAMTE Auswahl leert (statt nur die Marquee-Geste abzubrechen)
+          // — geprüft, nicht nur behauptet: das Entfernen dieser Zeile ohne
+          // Gegenstück lässt `e2e/viewport3d-marquee.spec.ts` C-14d
+          // („Esc bricht ab, Auswahl bleibt unverändert") rot laufen, weil
+          // `DesignWorkspace.tsx`s Escape-Zweig (TABU für dieses Paket,
+          // Betriebsregel Dateikreis) noch KEINEN `marqueeAktiv`-Guard
+          // besitzt. Der neue `marqueeAktiv`-Store-Kanal (oben gesetzt) ist
+          // exakt der vorbereitete Lese-Anker dafür — Fable entfernt
+          // `stopImmediatePropagation()` HIER zusammen mit dem neuen Guard
+          // in `DesignWorkspace.tsx` in EINEM atomaren Zug (s. `viewport-
+          // chrome-runtime.ts` `marqueeAktiv`-Kopfkommentar).
           ev.stopImmediatePropagation();
           return;
         }
@@ -2084,6 +2192,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         setzeTouchStyles();
         const rect = renderer.domElement.getBoundingClientRect();
         marqueeDrag = { startX: ev.clientX, startY: ev.clientY, pointerId: ev.pointerId };
+        // E6 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): Start-Signal für den
+        // Esc-Zustands-Kanal (Brücken-Feld, s. viewport-chrome-runtime.ts).
+        useViewportChromeRuntime.setState({ marqueeAktiv: true });
         // C-14-Matrix-Fund (v0.8.7): OHNE Capture landet das `pointerup`
         // nicht auf dem Canvas, wenn die Maus über einem Dock-Float (z.B.
         // der rechten `viewport-hud`-Karte, seit v0.7.9 AUSSERHALB des
@@ -2116,9 +2227,26 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         : kameraDarfSehen(ev.pointerType, ev.button, !!handlers.current?.sketchMode);
       setzeTouchStyles(); // enabled-Toggle räumt die Touch-Styles ab (J2-2)
     };
-    const onCaptureUp = () => {
+    const onCaptureUp = (ev: PointerEvent) => {
       controls.enabled = true;
       setzeTouchStyles();
+      // E6 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): `pointercancel` ist ein
+      // GÜLTIGES Marquee-Ende (Browser bricht die Pointer-Sequenz selbst ab,
+      // z.B. Touch-/Pen-Interrupt) — es gibt KEINEN eigenen `pointercancel`-
+      // Listener auf dem Canvas (nur `pointerup`/`pointerdown`/`pointermove`,
+      // s. Registrierung unten), darum räumt dieser Capture-Listener (auf
+      // dem Mount-DIV, läuft für BEIDE Ereignisse: `pointerup`+
+      // `pointercancel`) die Geste — aber NUR im `pointercancel`-Zweig: ein
+      // normales `pointerup` durchläuft hier noch NICHT den Ziel-Commit
+      // (`onPointerUp` unten, Target-Phase, läuft ERST NACH dieser Capture-
+      // Phase) — würde `marqueeDrag` schon hier bei jedem `pointerup`
+      // genullt, säße der spätere Commit-Zweig dort auf leerem Zustand.
+      if (ev.type === 'pointercancel' && marqueeDrag) {
+        marqueeDrag = null;
+        setMarquee3dRef.current(null);
+        useViewportChromeRuntime.setState({ marqueeAktiv: false });
+        invalidate();
+      }
     };
     // Capture-Phase auf dem Mount-DIV (nicht dem Canvas), damit der Filter
     // wirklich VOR camera-controls' eigenem pointerdown-Listener läuft.
@@ -2458,6 +2586,15 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // rAF-gebündelt) — vom 400ms-Fallback-Poll unabhängig, damit E2E den
       // Event-Weg beweisen kann, ohne gegen dessen Timing zu wetten.
       kameraHudEventCount: (): number => camHudEventCount,
+      // E5-Beweis-Anker (v0.8.8 PB1, C-9): Dauer des LETZTEN Occlusion-Post-
+      // Processing im Marquee-Commit (ms, `performance.now()`-Differenz) —
+      // -1 solange noch kein Marquee mit Occlusion committet hat.
+      letzteMarqueeOcclusionMs: (): number => letzteMarqueeOcclusionMs,
+      // E6-Beweis-Anker (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): liest den
+      // neuen Esc-Zustands-Kanal (`viewport-chrome-runtime.ts` `marqueeAktiv`)
+      // — kein neuer globaler Store-Zugriff nötig, dieselbe
+      // `__kosmoViewport`-Testhook-Konvention wie alle Anker oben.
+      marqueeAktiv: (): boolean => useViewportChromeRuntime.getState().marqueeAktiv,
     };
 
     return () => {
@@ -2486,6 +2623,13 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       captureRef.current = null;
       cameraRef.current = null;
       setViewportBereit(false);
+      // E6 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): Unmount-Cleanup — eine
+      // laufende Marquee-Geste kann nicht über einen Unmount hinweg
+      // fortbestehen (das DOM-Overlay verschwindet mit `mount` ohnehin);
+      // der Store-Kanal räumt unbedingt mit, sonst bliebe `marqueeAktiv`
+      // bei einem Unmount MITTEN in der Geste (z.B. Ansichtswechsel 3D→2D
+      // während eines Shift-Drags) fälschlich `true` stehen.
+      useViewportChromeRuntime.setState({ marqueeAktiv: false });
     };
     // navModus wird über den separaten Sync-Effekt oben nachgezogen (controlsRef) —
     // hier zählt nur der Startwert beim Aufbau der Szene.
