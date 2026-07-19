@@ -1,10 +1,10 @@
 {
   "adapter": "kosmo-zeichner-commands",
   "modus": "Selbstcheck (ScriptedProvider durch die echte ChatSession)",
-  "erzeugt_um": "2026-07-19T04:51:38.434Z",
+  "erzeugt_um": "2026-07-19T12:52:51.282Z",
   "gesamt": {
-    "bestanden": 38,
-    "von": 38
+    "bestanden": 41,
+    "von": 41
   },
   "klassen": [
     {
@@ -61,6 +61,16 @@
       "kategorie": "laufplan",
       "bestanden": 3,
       "von": 3
+    },
+    {
+      "kategorie": "lauf-vorschlag",
+      "bestanden": 2,
+      "von": 2
+    },
+    {
+      "kategorie": "lauf-vorschlag-abgelehnt",
+      "bestanden": 1,
+      "von": 1
     }
   ],
   "befunde": [
@@ -291,6 +301,24 @@
       "kategorie": "laufplan",
       "ok": true,
       "begruendung": "Treffer: LaufPlan mit 3 Schritt(en) (vis.nodeSetzen → vis.nodeSetzen → vis.verbinden), Sequenz + zod-valide Kernparameter, als EINE Aktionskette gemeldet"
+    },
+    {
+      "id": "cmd-39-laufvorschlag-drei-geschosse",
+      "kategorie": "lauf-vorschlag",
+      "ok": true,
+      "begruendung": "Treffer: LaufVorschlag «Drei Geschosse anlegen» mit 3 Schritt(en) (design.geschossErstellen → design.geschossErstellen → design.geschossErstellen), KEIN onProposal, Doc unverändert"
+    },
+    {
+      "id": "cmd-40-laufvorschlag-rechteck-vier-waende",
+      "kategorie": "lauf-vorschlag",
+      "ok": true,
+      "begruendung": "Treffer: LaufVorschlag «Wand-Rechteck 8×6 m» mit 4 Schritt(en) (design.wandZeichnen → design.wandZeichnen → design.wandZeichnen → design.wandZeichnen), KEIN onProposal, Doc unverändert"
+    },
+    {
+      "id": "cmd-41-laufvorschlag-abgelehnt-erfundene-commandid",
+      "kategorie": "lauf-vorschlag-abgelehnt",
+      "ok": true,
+      "begruendung": "Treffer: erfundene commandId korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «unbekannte commandId»), kein LaufVorschlag, kein onProposal"
     }
   ]
 }

@@ -1,10 +1,12 @@
 {
   "adapter": "kosmo-zeichner-commands",
-  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9). 38 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern. Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das noch nicht existiert).",
+  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9; erweitert v0.8.7/PA3, docs/V087-SPEZ.md §3 E7). 41 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle plus drei lauf_planen-Vorschlagsfälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern, (6) PA3-Nachtrag (v0.8.7, E7): ein echter lauf_planen-Aufruf erzeugt genau EINEN onLaufVorschlag mit dem erwarteten Titel/der erwarteten Schrittfolge UND KEINEN onProposal (Sanktion 4: Vorschlag ≠ Ausführung), UND ein Plan mit erfundener commandId wird von ChatSession VOR jeder Karte als Tool-FEHLER abgewiesen (kein LaufVorschlag, kein onProposal). Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das damals noch nicht existierte). PA3-Nachtrag (cmd-39..cmd-41, E7): NEU `erwartung.typ:\"lauf-vorschlag\"`/`\"lauf-vorschlag-abgelehnt\"` — jetzt gegen das ECHTE, seit v0.8.6/PB1 existierende `lauf_planen`-Werkzeug geprüft (ein einziger Tool-Aufruf statt mehrerer Command-Aufrufe im selben Zug).",
   "kriterien_legende": {
     "command": "erwartete commandId ist ein reales, aktuelles Kosmo-Werkzeug (commandTools()) UND die erwarteten Parameter bestehen validateToolCall() gegen das ECHTE zod-Schema UND ChatSession meldet genau EINEN onProposal mit exakt dieser commandId/diesen Parametern",
     "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug",
-    "laufplan": "PA4-Nachtrag (v0.8.6, E8): die Erwartung nennt eine ganze Schritt-Folge [{commandId, params?}] statt eines einzelnen Tool-Aufrufs — alle erwarteten commandIds sind reale, aktuelle Kosmo-Werkzeuge UND die genannten Schritt-Parameter bestehen validateToolCall() je Schritt UND ChatSession meldet in EINEM Zug genau so viele onProposal-Aufrufe wie Schritte, in derselben Reihenfolge/commandId-Sequenz, mit den genannten Kernparametern als Teilmenge, gemeldet als EINE Aktionskette (paket-Metadatum)"
+    "laufplan": "PA4-Nachtrag (v0.8.6, E8): die Erwartung nennt eine ganze Schritt-Folge [{commandId, params?}] statt eines einzelnen Tool-Aufrufs — alle erwarteten commandIds sind reale, aktuelle Kosmo-Werkzeuge UND die genannten Schritt-Parameter bestehen validateToolCall() je Schritt UND ChatSession meldet in EINEM Zug genau so viele onProposal-Aufrufe wie Schritte, in derselben Reihenfolge/commandId-Sequenz, mit den genannten Kernparametern als Teilmenge, gemeldet als EINE Aktionskette (paket-Metadatum)",
+    "lauf-vorschlag": "PA3-Nachtrag (v0.8.7, E7): das Skript ruft das ECHTE lauf_planen-Werkzeug EINMAL auf, mit {titel, schritte} als Argumente — ChatSession meldet genau EINEN onLaufVorschlag, dessen plan.titel + Schrittfolge (commandId-Sequenz + Kernparameter als Teilmenge) der Erwartung entsprechen, UND KEINEN onProposal (Sanktion 4: ein Vorschlag ist keine Ausführung), UND der vom Prüfer gehaltene KosmoDoc bleibt unverändert (kein Command lief)",
+    "lauf-vorschlag-abgelehnt": "PA3-Negativfall (v0.8.7, E7): der geplante lauf_planen-Aufruf trägt (mindestens) eine ERFUNDENE commandId (design.dasGibtEsNicht-Muster) — ChatSession weist sie VOR jeder Karte als Tool-FEHLER ab (bekannteCommandIds, C-12-Fund v0.8.6): KEIN onLaufVorschlag, KEIN onProposal, die Tool-FEHLER-Meldung in der Session-Historie enthält den erwarteten Fehlertext-Ausschnitt (z.B. «unbekannte commandId»), Doc bleibt unverändert"
   },
   "prompts": [
     {
@@ -562,6 +564,118 @@
             "params": { "graphId": "graph-vis01", "from": "node-modell01", "fromPort": "szene", "to": "node-render01", "toPort": "szene" }
           }
         ]
+      }
+    },
+    {
+      "id": "cmd-39-laufvorschlag-drei-geschosse",
+      "kategorie": "lauf-vorschlag",
+      "nutzerwunsch": "Plane mir das als EINEN Lauf, den ich erst noch bestätigen will: alle drei Geschosse — EG auf Kote 0 mit 3.0 m Geschosshöhe, dann 1. und 2. Obergeschoss direkt aufeinander mit je 2.8 m.",
+      "kosmoText": "Ich schlage den Lauf «Drei Geschosse anlegen» mit drei Schritten vor: EG (0 mm, 3000 mm hoch), 1.OG (3000 mm, 2800 mm hoch), 2.OG (5800 mm, 2800 mm hoch). Sieh dir die Lauf-Vorschlagskarte an und entscheide über «Lauf starten».",
+      "erwartung": {
+        "typ": "lauf-vorschlag",
+        "titel": "Drei Geschosse anlegen",
+        "schritte": [
+          {
+            "commandId": "design.geschossErstellen",
+            "params": { "name": "EG", "index": 0, "elevation": 0, "height": 3000 },
+            "begruendung": "Erdgeschoss auf Kote 0 mit 3.0 m Geschosshöhe anlegen."
+          },
+          {
+            "commandId": "design.geschossErstellen",
+            "params": { "name": "1.OG", "index": 1, "elevation": 3000, "height": 2800 },
+            "begruendung": "1. Obergeschoss direkt auf dem EG (3000 mm) mit 2.8 m Geschosshöhe."
+          },
+          {
+            "commandId": "design.geschossErstellen",
+            "params": { "name": "2.OG", "index": 2, "elevation": 5800, "height": 2800 },
+            "begruendung": "2. Obergeschoss direkt auf dem 1.OG (5800 mm) mit 2.8 m Geschosshöhe."
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmd-40-laufvorschlag-rechteck-vier-waende",
+      "kategorie": "lauf-vorschlag",
+      "nutzerwunsch": "Plane mir als EINEN Lauf, den ich mir erst noch ansehen will: ein geschlossenes 8×6 m Aussenwand-Rechteck aus vier Wänden im EG ab der Ecke (0/0), Aufbau AW Beton 36.",
+      "kosmoText": "Ich schlage den Lauf «Wand-Rechteck 8×6 m» mit vier Schritten vor: Süd 8 m, Ost 6 m, Nord 8 m, West 6 m im Uhrzeigersinn ab (0/0) — das Rechteck schliesst sich zur Ausgangsecke. Sieh dir die Lauf-Vorschlagskarte an und entscheide über «Lauf starten».",
+      "erwartung": {
+        "typ": "lauf-vorschlag",
+        "titel": "Wand-Rechteck 8×6 m",
+        "schritte": [
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 0, "y": 0 },
+              "b": { "x": 8000, "y": 0 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            },
+            "begruendung": "Südwand, 8 m, ab der Ausgangsecke (0/0)."
+          },
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 8000, "y": 0 },
+              "b": { "x": 8000, "y": 6000 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            },
+            "begruendung": "Ostwand, 6 m, im Uhrzeigersinn ab der Südwand."
+          },
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 8000, "y": 6000 },
+              "b": { "x": 0, "y": 6000 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            },
+            "begruendung": "Nordwand, 8 m, im Uhrzeigersinn ab der Ostwand."
+          },
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 0, "y": 6000 },
+              "b": { "x": 0, "y": 0 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            },
+            "begruendung": "Westwand, 6 m, schliesst das Rechteck zur Ausgangsecke."
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmd-41-laufvorschlag-abgelehnt-erfundene-commandid",
+      "kategorie": "lauf-vorschlag-abgelehnt",
+      "nutzerwunsch": "Plane mir einen Lauf, der zuerst eine Wand zeichnet und danach automatisch das passende Dach fertig konstruiert.",
+      "kosmoText": "Ich schlage den Lauf «Wand und Dach» vor: zuerst die Wand, danach ein automatisches Dach-Finish.",
+      "erwartung": {
+        "typ": "lauf-vorschlag-abgelehnt",
+        "titel": "Wand und Dach",
+        "schritte": [
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 0, "y": 0 },
+              "b": { "x": 5000, "y": 0 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            },
+            "begruendung": "Erst die Wand ziehen, 5 m."
+          },
+          {
+            "commandId": "design.dasGibtEsNicht",
+            "params": { "storeyId": "geschoss-eg01" },
+            "begruendung": "Danach automatisch das Dach fertig konstruieren."
+          }
+        ],
+        "enthaeltFehlertext": "unbekannte commandId"
       }
     }
   ]

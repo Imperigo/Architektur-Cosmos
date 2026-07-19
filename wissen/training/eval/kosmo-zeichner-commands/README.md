@@ -1,4 +1,4 @@
-# Eval-Suite `kosmo-zeichner-commands` (v0.8.4/PD2, erweitert v0.8.5/PB2, v0.8.6/PA4)
+# Eval-Suite `kosmo-zeichner-commands` (v0.8.4/PD2, erweitert v0.8.5/PB2, v0.8.6/PA4, v0.8.7/PA3)
 
 Feste, versionierte Eval-Suite für den Adapter `kosmo-zeichner-commands`
 (`../../REGISTRY.md`), gebaut in PD2 (`docs/V084-SPEZ.md` D14/C-23). Vorbild:
@@ -77,9 +77,51 @@ validiert weiterhin nur Schema/Sequenz, keine Doc-Ausführung.
 Stand nach der Erweiterung: **38/38 bestanden** (`eval-ergebnis.json`, per
 `npx tsx pruefe-eval.mts` nachgeführt).
 
+## PA3-Nachtrag (v0.8.7, `docs/V087-SPEZ.md` §3 E7): 38→41 Prompts, echter `lauf_planen`-Weg
+
+**D8 (Ausgangslücke):** der PA4-Nachtrag oben (E8, `'laufplan'`) simuliert
+einen Plan bewusst über MEHRERE echte Command-Tool-Aufrufe im selben Zug —
+`lauf_planen` selbst (E4, v0.8.6/PB1) existierte zu jenem Zeitpunkt noch
+nicht und durfte von PA4 auch nicht gebaut werden. Seit v0.8.6/PB1 gibt es
+das Werkzeug wirklich (`packages/kosmo-ai/src/tools.ts`
+`LAUF_PLANEN_TOOL_NAME`/`laufPlanTool`/`validateLaufPlanCall`, verdrahtet in
+`chat.ts#turn()`, testid `lauf-vorschlag-root` in `KosmoPanel.tsx`) — aber
+`pruefe-eval.mts` prüfte dieses Tool-Format bis PA3 nicht (ehrliche Grenze,
+Kopfkommentar vor PA3 + ROADMAP 487).
+
+**E7-Lösung:** NEU `erwartung.typ: "lauf-vorschlag"` (positiv, `cmd-39`/
+`cmd-40`: Drei-Geschosse-Plan, Vier-Wände-Rechteck) UND
+`"lauf-vorschlag-abgelehnt"` (Negativfall, `cmd-41`). Der Prüfer baut daraus
+EIN `SzenarioSkript` mit GENAU EINEM Tool-Aufruf ans echte `lauf_planen`-
+Werkzeug (`{name: LAUF_PLANEN_TOOL_NAME, args: {titel, schritte}}`) — anders
+als beim `'laufplan'`-Fall (mehrere Command-Aufrufe im selben Zug) ist das
+hier ein einziger Aufruf an ein einziges Nicht-Command-Werkzeug. Zusätzlich
+registriert der Prüfer `onLaufVorschlag` bei der `ChatSession` (`spieleAb`)
+und prüft für `'lauf-vorschlag'`: (1) genau EIN `LaufVorschlag` feuert,
+(2) `plan.titel` + Schrittfolge (commandId-Sequenz + Kernparameter als
+Teilmenge, dieselbe `enthaeltErwartete`-Logik wie beim `'laufplan'`-Fall)
+entsprechen der Erwartung, (3) KEIN `onProposal` feuert (Sanktion 4:
+«Eval-Zug, der onProposal auslöst oder Commands ausführt = ungültig» — ein
+Vorschlag ist keine Ausführung), (4) der vom Prüfer selbst gehaltene
+`KosmoDoc` bleibt unverändert (kein Command lief). Für
+`'lauf-vorschlag-abgelehnt'` trägt der Plan (mindestens) eine ERFUNDENE
+commandId nach dem `design.dasGibtEsNicht`-Muster — `ChatSession` weist sie
+VOR jeder Karte ab (`bekannteCommandIds`, C-12-Fund v0.8.6,
+`chat.ts:403-417`): erwartet wird KEIN `LaufVorschlag`, KEIN `onProposal`,
+und ein Tool-FEHLER-Ergebnis in der Session-Historie, das den erwarteten
+Fehlertext-Ausschnitt («unbekannte commandId») enthält.
+
+**Dateikreis-Grenze:** dieses Paket durfte nur `wissen/training/eval/**`
+anfassen — `LAUF_PLANEN_TOOL_NAME`/`LaufVorschlag`/`onLaufVorschlag` waren
+bereits vor PA3 aus `packages/kosmo-ai` exportiert (v0.8.6/PB1), `packages/
+kosmo-ai` wurde für dieses Paket nur GELESEN, nichts dort geändert.
+
+Stand nach der Erweiterung: **41/41 bestanden** (`eval-ergebnis.json`, per
+`npx tsx pruefe-eval.mts` nachgeführt).
+
 ## Dateien
 
-- **`prompts.json`** — 38 feste deutsche Zeichner-Aufträge quer über die
+- **`prompts.json`** — 41 feste deutsche Zeichner-Aufträge quer über die
   Command-Klassen Geschoss (`design.geschossErstellen`/`design.
   geschossKopieren`), Aufbau (`design.aufbauErstellen`, PB2-Nachtrag), Wand
   (`design.wandZeichnen`), Zone (`design.zoneErstellen`/`design.
@@ -91,12 +133,16 @@ Stand nach der Erweiterung: **38/38 bestanden** (`eval-ergebnis.json`, per
   ansichtPlatzieren`, letzterer PB2-Nachtrag) — plus **vier Ablehn-Fälle**
   (fehlende Koordinaten, fehlendes Pflichtfeld, ausserhalb des
   Befehlsumfangs, Echtzeit-Render ohne HomeStation) — plus **drei
-  LaufPlan-Fälle** (`cmd-36`..`cmd-38`, PA4-Nachtrag, s. oben). Jeder Prompt
+  LaufPlan-Fälle** (`cmd-36`..`cmd-38`, PA4-Nachtrag, s. oben) — plus **drei
+  lauf_planen-Vorschlagsfälle** (`cmd-39`..`cmd-41`, PA3-Nachtrag, s. oben:
+  zwei positive + ein Negativfall mit erfundener commandId). Jeder Prompt
   trägt ein maschinenlesbares `erwartung`-Feld (`typ: "command"` mit
-  `commandId`+`params`, `typ: "ablehnung"`, oder `typ: "laufplan"` mit
-  `schritte: [{commandId, params?}]`) plus den deutschen `nutzerwunsch` und
-  den Text, den das ScriptedProvider-Skript als Kosmo-Antwort abspielt
-  (`kosmoText`).
+  `commandId`+`params`, `typ: "ablehnung"`, `typ: "laufplan"` mit
+  `schritte: [{commandId, params?}]`, `typ: "lauf-vorschlag"` mit
+  `titel`+`schritte: [{commandId, params?, begruendung?}]`, oder `typ:
+  "lauf-vorschlag-abgelehnt"` mit zusätzlich `enthaeltFehlertext`) plus den
+  deutschen `nutzerwunsch` und den Text, den das ScriptedProvider-Skript als
+  Kosmo-Antwort abspielt (`kosmoText`).
 - **`pruefe-eval.mts`** — ausführbarer Prüfer, EIN Modus (Selbstcheck, kein
   Kandidaten-Modus — Begründung unten): fährt jeden Prompt als Ein-Zug-Skript
   über den ECHTEN `ScriptedProvider` durch die ECHTE `ChatSession`
@@ -110,7 +156,11 @@ Stand nach der Erweiterung: **38/38 bestanden** (`eval-ergebnis.json`, per
   (Skript-Zug ohne Tool-Aufruf) erzeugt NULL `onProposal`-Meldungen, (5) ein
   LaufPlan-Fall (mehrere Tool-Aufrufe im selben Zug, PA4-Nachtrag) erzeugt
   genau so viele `onProposal`s wie erwartete Schritte, in Sequenz, als EINE
-  Aktionskette. Schreibt `eval-ergebnis.json` (eingecheckt) + eine
+  Aktionskette, (6) ein lauf_planen-Vorschlagsfall (EIN Aufruf ans echte
+  `lauf_planen`-Werkzeug, PA3-Nachtrag) erzeugt genau EINEN `onLaufVorschlag`
+  mit dem erwarteten Titel/der erwarteten Schrittfolge und KEINEN
+  `onProposal`, UND eine erfundene commandId im Plan wird VOR jeder Karte als
+  Tool-FEHLER abgewiesen. Schreibt `eval-ergebnis.json` (eingecheckt) + eine
   Konsolentabelle mit der Quote je Kategorie.
 
 ## Aufruf
@@ -120,7 +170,7 @@ cd kosmo-orbit
 npx tsx ../wissen/training/eval/kosmo-zeichner-commands/pruefe-eval.mts
 ```
 
-Exit-Code 0 nur wenn alle 38 Prompts bestehen, sonst 1. Deterministisch:
+Exit-Code 0 nur wenn alle 41 Prompts bestehen, sonst 1. Deterministisch:
 zwei Läufe hintereinander liefern byte-gleiche `eval-ergebnis.json` bis auf
 das reine Zeitstempel-Feld `erzeugt_um` (geprüft per Doppellauf-Diff im
 PD2-Abschlussbericht).
@@ -161,3 +211,5 @@ Prüfer bereits über den echten `ChatSession`-Weg ausführt.
 | `command` | erwartete `commandId` ist ein reales, aktuelles Kosmo-Werkzeug UND die erwarteten Parameter bestehen `validateToolCall()` gegen das ECHTE zod-Schema UND `ChatSession` meldet genau EINEN `onProposal` mit exakt dieser `commandId`/diesen Parametern |
 | `ablehnung` | das Skript enthält für diesen Zug KEINEN Tool-Aufruf — `ChatSession` meldet NULL `onProposal`-Aufrufe für den Zug |
 | `laufplan` (PA4, v0.8.6) | alle erwarteten `commandId`s sind reale, aktuelle Kosmo-Werkzeuge UND `ChatSession` meldet in EINEM Zug genau so viele `onProposal`s wie erwartete Schritte, in derselben Sequenz/`commandId`-Reihenfolge, mit den genannten Schritt-Parametern als Teilmenge, als EINE Aktionskette (`paket`-Metadatum) |
+| `lauf-vorschlag` (PA3, v0.8.7) | das Skript ruft das ECHTE `lauf_planen`-Werkzeug EINMAL auf — `ChatSession` meldet genau EINEN `onLaufVorschlag`, dessen `plan.titel`+Schrittfolge (commandId-Sequenz + Kernparameter als Teilmenge) der Erwartung entsprechen, UND KEINEN `onProposal` (Sanktion 4), UND der Prüfer-`KosmoDoc` bleibt unverändert |
+| `lauf-vorschlag-abgelehnt` (PA3, v0.8.7) | der geplante `lauf_planen`-Aufruf trägt eine ERFUNDENE `commandId` — `ChatSession` weist sie VOR jeder Karte als Tool-FEHLER ab: KEIN `onLaufVorschlag`, KEIN `onProposal`, die Tool-FEHLER-Meldung enthält den erwarteten Fehlertext-Ausschnitt |

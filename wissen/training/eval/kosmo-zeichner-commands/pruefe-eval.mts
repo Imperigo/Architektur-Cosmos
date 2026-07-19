@@ -60,6 +60,35 @@
  * künftiges `lauf_planen`-Tool-Ergebnis exakt in dieses Schema passt (das
  * ist Sache von PB1/E4, sobald das Tool existiert).
  *
+ * v0.8.7/PA3 (E7 «Eval: lauf_planen-Vorschlagsformat», D8, `docs/V087-SPEZ.md`
+ * §3 E7, §6 Sanktion 4): der D9-Nachtrag oben ist jetzt eingelöst — `lauf_planen`
+ * (E4, v0.8.6/PB1) existiert seither wirklich (`packages/kosmo-ai/src/tools.ts`
+ * `LAUF_PLANEN_TOOL_NAME`/`laufPlanTool`/`validateLaufPlanCall`, verdrahtet in
+ * `chat.ts#turn()`). NEU `erwartung.typ: 'lauf-vorschlag'` (positiv) UND
+ * `'lauf-vorschlag-abgelehnt'` (Negativfall) — ANDERS als `'laufplan'` oben
+ * (simuliert einen Plan über MEHRERE echte Command-Tool-Aufrufe im selben
+ * Zug) prüft dieser Fall den ECHTEN `lauf_planen`-Weg: das Skript enthält
+ * EINEN einzigen Tool-Aufruf `{name: LAUF_PLANEN_TOOL_NAME, args: {titel,
+ * schritte: [...]}}`, den `ChatSession#turn()` als EIGENEN `LaufVorschlag`
+ * behandelt (`chat.ts:386-421`), NIE als `schreibend`/`onProposal`. Der
+ * Prüfer registriert zusätzlich `onLaufVorschlag` bei der `ChatSession`
+ * (`spieleAb`) und prüft für `'lauf-vorschlag'`: (a) genau EIN
+ * `LaufVorschlag` feuert, (b) `plan.titel` + die Schrittfolge
+ * (commandId-Sequenz + Kernparameter als Teilmenge, dieselbe
+ * `enthaeltErwartete`-Logik wie beim `'laufplan'`-Fall) entsprechen der
+ * Erwartung, (c) KEIN `onProposal` feuert (Sanktion 4: «Eval-Zug, der
+ * onProposal auslöst oder Commands ausführt = ungültig» — ein Vorschlag ist
+ * keine Ausführung), (d) der vom Prüfer selbst gehaltene `KosmoDoc` bleibt
+ * unverändert (`revision === 0`, keine Entities) — kein Command lief. Für
+ * `'lauf-vorschlag-abgelehnt'` (eine ERFUNDENE commandId nach dem
+ * `design.dasGibtEsNicht`-Muster IM Plan): `ChatSession` weist unbekannte
+ * `commandId`s VOR jeder Karte ab (`bekannteCommandIds`, C-12-Fund v0.8.6,
+ * `chat.ts:403-417`) — erwartet wird KEIN `LaufVorschlag`, KEIN
+ * `onProposal`, und ein Tool-FEHLER-Ergebnis in der Session-Historie, das
+ * den erwarteten Fehlertext-Ausschnitt (z.B. «unbekannte commandId»)
+ * enthält. Dateikreis dieses Pakets bleibt exklusiv `wissen/training/eval/**`
+ * — `packages/kosmo-ai` wird nur GELESEN, nichts dort wurde angefasst.
+ *
  * Aufruf:
  *   npx tsx wissen/training/eval/kosmo-zeichner-commands/pruefe-eval.mts
  */
@@ -77,9 +106,12 @@ import { fileURLToPath } from 'node:url';
 import { KosmoDoc } from '../../../../kosmo-orbit/packages/kosmo-kernel/src/index';
 import {
   ChatSession,
+  LAUF_PLANEN_TOOL_NAME,
   ScriptedProvider,
   commandTools,
   toolNameFor,
+  type ChatMessage,
+  type LaufVorschlag,
   type Proposal,
   type SzenarioSkript,
 } from '../../../../kosmo-orbit/packages/kosmo-ai/src/index';
@@ -104,10 +136,16 @@ interface PromptAblehnung {
 
 /** EIN erwarteter Schritt eines LaufPlans — `params` optional (ein Schritt
  * ohne genannte Parameter gilt als bestanden, sobald die commandId + die
- * Position in der Sequenz stimmen; Teilmengen-Vergleich wie beim Ein-Zug-Fall). */
+ * Position in der Sequenz stimmen; Teilmengen-Vergleich wie beim Ein-Zug-Fall).
+ * `begruendung` optional (E7, v0.8.7/PA3): nur der `'lauf-vorschlag'`/
+ * `'lauf-vorschlag-abgelehnt'`-Weg braucht sie überhaupt (Pflichtfeld im
+ * echten `laufPlanSchema`) — fehlt sie in `prompts.json`, synthetisiert
+ * `baueLaufPlanSchritte` unten eine generische; der Vergleich selbst prüft
+ * `begruendung` NICHT (wie ein vom Schema ergänzter Command-Default). */
 interface LaufPlanSchrittErwartung {
   commandId: string;
   params?: Record<string, unknown>;
+  begruendung?: string;
 }
 
 /** E8 (v0.8.6/PA4, D9): eine ganze Schritt-Folge statt eines einzelnen
@@ -120,7 +158,39 @@ interface PromptLaufplan {
   erwartung: { typ: 'laufplan'; schritte: LaufPlanSchrittErwartung[] };
 }
 
-type Prompt = PromptCommand | PromptAblehnung | PromptLaufplan;
+/** E7 (v0.8.7/PA3, D8, `docs/V087-SPEZ.md` §3): der ECHTE `lauf_planen`-Weg —
+ * EIN Tool-Aufruf, dessen Argumente den GANZEN Plan (Titel + Schrittliste)
+ * tragen. `titel` wird zusätzlich zur Schrittfolge verglichen (`plan.titel`
+ * aus dem gemeldeten `LaufVorschlag`). */
+interface PromptLaufVorschlag {
+  id: string;
+  kategorie: 'lauf-vorschlag';
+  nutzerwunsch: string;
+  kosmoText: string;
+  erwartung: { typ: 'lauf-vorschlag'; titel: string; schritte: LaufPlanSchrittErwartung[] };
+}
+
+/** E7-Negativfall (v0.8.7/PA3): der Plan trägt (mindestens) eine ERFUNDENE
+ * commandId nach dem `design.dasGibtEsNicht`-Muster — `ChatSession` muss sie
+ * VOR jeder Karte abweisen (`bekannteCommandIds`, C-12-Fund v0.8.6). Anders
+ * als bei `'ablehnung'` (Skript hat GAR KEINEN Tool-Aufruf) ruft dieser Fall
+ * `lauf_planen` sehr wohl auf — die Ablehnung passiert INNERHALB der
+ * ChatSession, nicht schon im Skript. `enthaeltFehlertext` ist der erwartete
+ * Ausschnitt der Tool-FEHLER-Meldung (z.B. «unbekannte commandId»). */
+interface PromptLaufVorschlagAbgelehnt {
+  id: string;
+  kategorie: 'lauf-vorschlag-abgelehnt';
+  nutzerwunsch: string;
+  kosmoText: string;
+  erwartung: {
+    typ: 'lauf-vorschlag-abgelehnt';
+    titel: string;
+    schritte: LaufPlanSchrittErwartung[];
+    enthaeltFehlertext: string;
+  };
+}
+
+type Prompt = PromptCommand | PromptAblehnung | PromptLaufplan | PromptLaufVorschlag | PromptLaufVorschlagAbgelehnt;
 
 interface PromptsDatei {
   adapter: string;
@@ -159,11 +229,28 @@ function enthaeltErwartete(erwartet: unknown, tatsaechlich: unknown): boolean {
   );
 }
 
+/** E7 (v0.8.7/PA3): baut die `lauf_planen`-Schritt-Nutzlast aus einer
+ * Erwartung — `begruendung` ist im echten `laufPlanSchema` Pflicht, wird vom
+ * Vergleich in `werteAus` aber nicht geprüft (s. `LaufPlanSchrittErwartung`). */
+function baueLaufPlanSchritte(
+  schritte: LaufPlanSchrittErwartung[],
+): Array<{ commandId: string; params: unknown; begruendung: string }> {
+  return schritte.map((s, i) => ({
+    commandId: s.commandId,
+    params: s.params ?? {},
+    begruendung: s.begruendung ?? `Schritt ${i + 1}: ${s.commandId}`,
+  }));
+}
+
 /** Baut aus EINEM Prompt ein Ein-Zug-Skript für den ScriptedProvider —
  * `command`: genau EIN Tool-Aufruf (die erwartete commandId/Parameter);
  * `laufplan`: MEHRERE Tool-Aufrufe IM SELBEN Zug (ein Paket/eine
  * Diff-Karten-Kette, `scripted.ts` — `SkriptZug.toolCalls`), einer je
- * erwartetem Schritt, in Sequenz; `ablehnung`: KEIN Tool-Aufruf (Kosmo würde
+ * erwartetem Schritt, in Sequenz; `lauf-vorschlag`/`lauf-vorschlag-abgelehnt`
+ * (E7, v0.8.7/PA3): EIN Tool-Aufruf ans echte `lauf_planen`-Werkzeug, dessen
+ * Argumente den GANZEN Plan tragen — ANDERS als `laufplan` (mehrere echte
+ * Command-Aufrufe im selben Zug) ist das hier ein einziger Aufruf an ein
+ * einziges Nicht-Command-Werkzeug; `ablehnung`: KEIN Tool-Aufruf (Kosmo würde
  * nachfragen/ehrlich absagen). */
 function skriptFuer(p: Prompt): SzenarioSkript {
   let toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
@@ -171,6 +258,13 @@ function skriptFuer(p: Prompt): SzenarioSkript {
     toolCalls = [{ name: toolNameFor(p.erwartung.commandId), args: p.erwartung.params }];
   } else if (p.erwartung.typ === 'laufplan') {
     toolCalls = p.erwartung.schritte.map((s) => ({ name: toolNameFor(s.commandId), args: s.params ?? {} }));
+  } else if (p.erwartung.typ === 'lauf-vorschlag' || p.erwartung.typ === 'lauf-vorschlag-abgelehnt') {
+    toolCalls = [
+      {
+        name: LAUF_PLANEN_TOOL_NAME,
+        args: { titel: p.erwartung.titel, schritte: baueLaufPlanSchritte(p.erwartung.schritte) },
+      },
+    ];
   } else {
     toolCalls = [];
   }
@@ -182,12 +276,27 @@ function skriptFuer(p: Prompt): SzenarioSkript {
 
 /** Fährt EINEN Prompt durch die echte ChatSession (ScriptedProvider-Weg,
  * exakt das Muster aus `packages/kosmo-ai/test/scripted.test.ts`) und liefert
- * die tatsächlich gemeldeten Vorschläge + einen etwaigen Fehlertext. */
-async function spieleAb(p: Prompt): Promise<{ proposals: Proposal[]; fehler: string; text: string }> {
+ * die tatsächlich gemeldeten Vorschläge + einen etwaigen Fehlertext.
+ *
+ * E7 (v0.8.7/PA3) erweitert die Rückgabe um `laufVorschlaege` (der
+ * `onLaufVorschlag`-Beobachter, s. Kopfkommentar), `historie` (Session-
+ * Nachrichten inkl. der `role: 'tool'`-FEHLER-Meldungen, für den
+ * Negativfall) und `docUnveraendert` (item d: kein Command lief — der
+ * einfachste ehrliche Beweis ist `revision === 0` UND keine Entity, weil
+ * NUR `doc.apply()` beides ändert). */
+async function spieleAb(p: Prompt): Promise<{
+  proposals: Proposal[];
+  laufVorschlaege: LaufVorschlag[];
+  fehler: string;
+  text: string;
+  historie: readonly ChatMessage[];
+  docUnveraendert: boolean;
+}> {
   const doc = new KosmoDoc();
   const skript = skriptFuer(p);
   const provider = new ScriptedProvider(p.id, { [p.id]: skript });
   const proposals: Proposal[] = [];
+  const laufVorschlaege: LaufVorschlag[] = [];
   let fehler = '';
   let text = '';
   const session = new ChatSession(provider, doc, {
@@ -195,9 +304,17 @@ async function spieleAb(p: Prompt): Promise<{ proposals: Proposal[]; fehler: str
     onProposal: (prop) => proposals.push(prop),
     onBusy: () => {},
     onError: (e) => (fehler = e),
+    onLaufVorschlag: (v) => laufVorschlaege.push(v),
   });
   await session.send(p.nutzerwunsch);
-  return { proposals, fehler, text };
+  return {
+    proposals,
+    laufVorschlaege,
+    fehler,
+    text,
+    historie: session.history,
+    docUnveraendert: doc.revision === 0 && doc.entities.size === 0,
+  };
 }
 
 const TOOLNAMEN_LIVE = new Set(commandTools().map((t) => t.name));
@@ -316,6 +433,149 @@ async function werteAus(p: Prompt): Promise<Befund> {
       kategorie: p.kategorie,
       ok: true,
       begruendung: `Treffer: LaufPlan mit ${erwarteteSchritte.length} Schritt(en) (${erwarteteSchritte.map((s) => s.commandId).join(' → ')}), Sequenz + zod-valide Kernparameter, als EINE Aktionskette gemeldet`,
+    };
+  }
+
+  if (p.erwartung.typ === 'lauf-vorschlag') {
+    // E7 (v0.8.7/PA3): wie beim laufplan-Fall zuerst die Registry prüfen —
+    // eine erfundene/umbenannte commandId im POSITIVEN Fall wäre ein Fehler
+    // in prompts.json, kein Prüfziel dieses Zweigs (das prüft der eigene
+    // 'lauf-vorschlag-abgelehnt'-Zweig unten).
+    const unbekannt = p.erwartung.schritte.filter((s) => !TOOLNAMEN_LIVE.has(toolNameFor(s.commandId)));
+    if (unbekannt.length > 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Werkzeug(e) ${unbekannt.map((s) => `«${toolNameFor(s.commandId)}»`).join(', ')} sind keine aktuellen Kosmo-Werkzeuge mehr (commandTools() kennt sie nicht — Command(s) umbenannt/entfernt?)`,
+      };
+    }
+    const { proposals, laufVorschlaege, fehler, docUnveraendert } = await spieleAb(p);
+    if (fehler) {
+      return { id: p.id, kategorie: p.kategorie, ok: false, begruendung: `ChatSession meldete einen Fehler: ${fehler}` };
+    }
+    // (a) genau EIN LaufVorschlag feuert.
+    if (laufVorschlaege.length !== 1) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartet: genau 1 LaufVorschlag (onLaufVorschlag), erhalten: ${laufVorschlaege.length} (zod-Validierung des lauf_planen-Aufrufs oder die bekannteCommandIds-Prüfung ist vermutlich fehlgeschlagen — geprüft gegen das ECHTE laufPlanSchema)`,
+      };
+    }
+    // (c) KEIN onProposal feuert (Sanktion 4: Vorschlag ≠ Ausführung).
+    if (proposals.length !== 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Sanktion 4 verletzt: ${proposals.length} onProposal(s) feuerten zusätzlich zum LaufVorschlag — ein lauf_planen-Aufruf darf NIE als Diff-Karte/Ausführung durchgehen`,
+      };
+    }
+    // (b) plan.titel + Schrittfolge (commandId-Sequenz + Kernparameter-Teilmenge).
+    const plan = laufVorschlaege[0]!.plan;
+    if (plan.titel !== p.erwartung.titel) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwarteter Plan-Titel «${p.erwartung.titel}», erhalten «${plan.titel}»`,
+      };
+    }
+    if (plan.schritte.length !== p.erwartung.schritte.length) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartet: ${p.erwartung.schritte.length} Plan-Schritt(e), erhalten: ${plan.schritte.length}`,
+      };
+    }
+    for (let i = 0; i < p.erwartung.schritte.length; i++) {
+      const erwartet = p.erwartung.schritte[i]!;
+      const tatsaechlich = plan.schritte[i]!;
+      if (tatsaechlich.commandId !== erwartet.commandId) {
+        return {
+          id: p.id,
+          kategorie: p.kategorie,
+          ok: false,
+          begruendung: `Schritt ${i + 1}: erwartete commandId «${erwartet.commandId}», erhalten «${tatsaechlich.commandId}» (Sequenz muss stimmen)`,
+        };
+      }
+      if (erwartet.params !== undefined && !enthaeltErwartete(erwartet.params, tatsaechlich.params)) {
+        return {
+          id: p.id,
+          kategorie: p.kategorie,
+          ok: false,
+          begruendung: `Schritt ${i + 1} (${erwartet.commandId}): Parameter weichen ab — erwartet (Teilmenge): ${JSON.stringify(erwartet.params)}, erhalten: ${JSON.stringify(tatsaechlich.params)}`,
+        };
+      }
+    }
+    // (d) kein Command lief — der Prüfer hält selbst einen KosmoDoc (spieleAb).
+    if (!docUnveraendert) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Doc wurde verändert (revision>0 oder Entities vorhanden) — ein LaufVorschlag darf NIE selbst einen Command ausführen`,
+      };
+    }
+    return {
+      id: p.id,
+      kategorie: p.kategorie,
+      ok: true,
+      begruendung: `Treffer: LaufVorschlag «${plan.titel}» mit ${plan.schritte.length} Schritt(en) (${plan.schritte.map((s) => s.commandId).join(' → ')}), KEIN onProposal, Doc unverändert`,
+    };
+  }
+
+  if (p.erwartung.typ === 'lauf-vorschlag-abgelehnt') {
+    // Negativfall (E7): das Skript RUFT lauf_planen auf (anders als
+    // 'ablehnung', wo das Skript gar keinen Tool-Aufruf hat) — die Ablehnung
+    // passiert INNERHALB der ChatSession (bekannteCommandIds, chat.ts).
+    const { proposals, laufVorschlaege, fehler, historie, docUnveraendert } = await spieleAb(p);
+    if (fehler) {
+      return { id: p.id, kategorie: p.kategorie, ok: false, begruendung: `ChatSession meldete einen Fehler: ${fehler}` };
+    }
+    if (laufVorschlaege.length !== 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartet: KEIN LaufVorschlag (erfundene commandId muss VOR der Karte abgewiesen werden), erhalten: ${laufVorschlaege.length}`,
+      };
+    }
+    if (proposals.length !== 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartet: KEIN onProposal, erhalten: ${proposals.length}`,
+      };
+    }
+    const fehlermeldungen = historie
+      .filter((m) => m.role === 'tool' && m.content.startsWith('FEHLER:'))
+      .map((m) => m.content)
+      .join(' | ');
+    if (!fehlermeldungen.includes(p.erwartung.enthaeltFehlertext)) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartetes Tool-FEHLER-Fragment «${p.erwartung.enthaeltFehlertext}» nicht gefunden — tatsächliche Tool-FEHLER-Meldung(en): ${fehlermeldungen || '(keine)'}`,
+      };
+    }
+    if (!docUnveraendert) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Doc wurde verändert — ein abgewiesener lauf_planen-Aufruf darf keinen Command ausführen`,
+      };
+    }
+    return {
+      id: p.id,
+      kategorie: p.kategorie,
+      ok: true,
+      begruendung: `Treffer: erfundene commandId korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «${p.erwartung.enthaeltFehlertext}»), kein LaufVorschlag, kein onProposal`,
     };
   }
 
