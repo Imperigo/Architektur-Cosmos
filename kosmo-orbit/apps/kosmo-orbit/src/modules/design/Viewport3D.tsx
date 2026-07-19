@@ -1740,7 +1740,16 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         raycaster.setFromCamera(ndc, camera);
         const hits = raycaster.intersectObjects(model.children, false);
         const hit = hits.find((h) => (h.object as THREE.Mesh).isMesh && h.object.userData['entityId']);
-        handlers.current.onPick?.(hit ? (hit.object.userData['entityId'] as string) : null);
+        // D5-Fix (v0.8.6 PB2, docs/V086-SPEZ.md): Shift-Klick verdrahtet den
+        // seit PA1 deklarierten `opts.toggle` — derselbe Vertrag wie PlanView
+        // (2D). Shift-Klick ins Leere (kein Treffer) ruft onPick(null,
+        // {toggle:true}); der DesignWorkspace-Handler behandelt das bereits
+        // als No-op (onPick: `if (opts?.toggle) { if (!id) return; ... }`,
+        // DesignWorkspace.tsx ~1056-1064) — hier also unverändert weiterreichen.
+        handlers.current.onPick?.(
+          hit ? (hit.object.userData['entityId'] as string) : null,
+          ev.shiftKey ? { toggle: true } : undefined,
+        );
         return;
       }
       const p = groundPoint(ev);
@@ -2142,6 +2151,14 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         });
         return n;
       },
+      // D5-Fix (v0.8.6 PB2): `syncModel()` baut Doc-Entities NICHT synchron
+      // in `model` ein (Golden-Präzedenz `applyArtifacts`/Worker-Pfad,
+      // Zeile ~1514-1540) — ein einzelnes `renderOnce()` direkt nach
+      // `__kosmo.run('design.wandZeichnen', …)` sieht darum manchmal noch
+      // die ALTE Mesh-Menge. Deterministischer Zähl-Anker (wie
+      // `glbMeshCount` oben), damit E2E VOR einem 3D-Pick auf die passende
+      // Mesh-Anzahl pollen kann, statt eine geratene Wartezeit zu raten.
+      entityMeshCount: (): number => model.children.filter((c) => (c as THREE.Mesh).isMesh).length,
     };
 
     return () => {
