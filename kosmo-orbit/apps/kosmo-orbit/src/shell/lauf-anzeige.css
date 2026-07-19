@@ -1,0 +1,82 @@
+/* Lauf-Anzeige (v0.8.5 PA3 «Autopilot-Kern», `docs/V085-SPEZ.md` §3 E4, C-9)
+   — additive, minimale Schrittliste für einen laufenden `LaufPlan` in
+   `KosmoPanel.tsx`. Bewusst kein Neu-Design: dieselben Flächen-/Abstands-
+   Token wie der Rest des Panels (`kosmo-panel.css`), nur eine eigene Datei,
+   damit dieser Zuwachs im Diff für sich steht. */
+
+.lauf-anzeige {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--k-line);
+  background: var(--k-surface-soft, var(--k-surface));
+}
+
+.lauf-anzeige-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+}
+
+.lauf-anzeige-titel {
+  font-weight: 550;
+  font-size: var(--k-t-sm);
+}
+
+.lauf-anzeige-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lauf-schritt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--k-s2);
+}
+
+.lauf-schritt-punkt {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--k-ink-faint);
+}
+
+.lauf-schritt--laeuft .lauf-schritt-punkt {
+  background: var(--k-warning);
+}
+.lauf-schritt--ok .lauf-schritt-punkt {
+  background: var(--k-success);
+}
+.lauf-schritt--fehler .lauf-schritt-punkt {
+  background: var(--k-danger);
+}
+
+.lauf-schritt-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lauf-schritt-begruendung {
+  font-size: 12.5px;
+  color: var(--k-ink);
+  line-height: 1.4;
+}
+
+.lauf-schritt--offen .lauf-schritt-begruendung {
+  color: var(--k-ink-soft);
+}
+
+.lauf-schritt-fehler {
+  font-size: 11.5px;
+  color: var(--k-danger);
+  line-height: 1.4;
+}

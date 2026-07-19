@@ -63,7 +63,9 @@ import {
   ergaenzendeBilderAusRing,
   type Blick,
 } from '../state/kosmo-blick';
+import { useLaufRuntime } from '../state/lauf-runtime';
 import './kosmo-panel.css';
+import './lauf-anzeige.css';
 
 /**
  * KosmoPanel — der ständige Begleiter (Vision: Kosmo ist immer da).
@@ -705,6 +707,16 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   const eingabeRef = useRef<HTMLInputElement>(null);
   const bubbleSeq = useRef(0);
   const runCommand = useProject((s) => s.runCommand);
+  /**
+   * v0.8.5 PA3 «Autopilot-Kern» (`docs/V085-SPEZ.md` §3 E4, C-9) — reine
+   * ANZEIGE des aktuellen Laufs (Laufzeit-Store `state/lauf-runtime.ts`,
+   * bewusst getrennt vom Doc). Kein Auslöser hier: der Store startet nur über
+   * `window.__kosmoLauf`/einen künftigen Kosmo-Dialog (C-10) — dieses Panel
+   * zeigt nur, was ANDERSWO bereits läuft, und bietet den Abbrechen-Knopf.
+   */
+  const laufPlan = useLaufRuntime((s) => s.plan);
+  const laufSchritte = useLaufRuntime((s) => s.schritte);
+  const laufStatus = useLaufRuntime((s) => s.status);
   // Belege des Gesprächs: [Qn] im Antworttext → Quelle (Chip mit Quellensprung)
   const quellenMap = useRef(new Map<number, QuellenRef>());
   const quellenZaehler = useRef(0);
@@ -2096,6 +2108,65 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
           )}
           <Hairline />
           <DiagnosePanel />
+        </div>
+      )}
+
+      {laufPlan && (
+        <div data-testid="lauf-plan-root" className={`lauf-anzeige lauf-anzeige--${laufStatus}`}>
+          <div className="lauf-anzeige-kopf">
+            <span className="lauf-anzeige-titel">{laufPlan.titel}</span>
+            <Badge
+              hue={
+                laufStatus === 'fehler'
+                  ? 'var(--k-danger)'
+                  : laufStatus === 'fertig'
+                    ? 'var(--k-success)'
+                    : laufStatus === 'abgebrochen'
+                      ? 'var(--k-ink-faint)'
+                      : 'var(--k-warning)'
+              }
+            >
+              {laufStatus === 'laeuft'
+                ? 'läuft'
+                : laufStatus === 'fertig'
+                  ? 'fertig'
+                  : laufStatus === 'fehler'
+                    ? 'fehler'
+                    : laufStatus === 'abgebrochen'
+                      ? 'abgebrochen'
+                      : 'offen'}
+            </Badge>
+            <div className="kp-fuell" />
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="lauf-abbrechen"
+              disabled={laufStatus !== 'laeuft'}
+              onClick={() => useLaufRuntime.getState().abbrechen()}
+            >
+              Abbrechen
+            </KButton>
+          </div>
+          <ul className="lauf-anzeige-liste">
+            {laufPlan.schritte.map((schritt, i) => {
+              const zustand = laufSchritte[i] ?? { status: 'offen' as const };
+              return (
+                <li
+                  key={i}
+                  data-testid={`lauf-schritt-${i}`}
+                  className={`lauf-schritt lauf-schritt--${zustand.status}`}
+                >
+                  <span className="lauf-schritt-punkt" aria-hidden="true" />
+                  <span className="lauf-schritt-text">
+                    <span className="lauf-schritt-begruendung">{schritt.begruendung}</span>
+                    {zustand.status === 'fehler' && zustand.fehler && (
+                      <span className="lauf-schritt-fehler">{zustand.fehler}</span>
+                    )}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       )}
 

@@ -1,0 +1,178 @@
+// @vitest-environment jsdom
+import { beforeEach, describe, expect, it } from 'vitest';
+import { History, KosmoDoc } from '@kosmo/kernel';
+import { useProject } from '../src/state/project-store';
+import { useLaufRuntime } from '../src/state/lauf-runtime';
+import type { LaufPlan } from '@kosmo/ai';
+
+/**
+ * v0.8.5 PA3 «Autopilot-Kern» (`docs/V085-SPEZ.md` §3 E4, C-8/C-9/C-10) —
+ * `lauf-runtime.ts` gegen den ECHTEN `useProject`-Store (kein Mock von
+ * `runCommand`): jeder Test prüft, dass ein Lauf tatsächlich über
+ * `runCommand` ins Doc schreibt (Sanktion 3 V085-SPEZ §6) und dass jeder
+ * Schritt eine EIGENE Undo-Gruppe hinterlässt (E4).
+ */
+
+function frischesDoc(): void {
+  useProject.setState({
+    doc: new KosmoDoc(),
+    history: new History(),
+    journal: [],
+    revision: 0,
+    activeStoreyId: null,
+    selection: [],
+    meshEditId: null,
+  });
+}
+
+beforeEach(() => {
+  frischesDoc();
+  useLaufRuntime.getState().zuruecksetzen();
+});
+
+function warten(ms = 0): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function geschossPlan(anzahl: number): LaufPlan {
+  return {
+    titel: 'Geschosse anlegen',
+    schritte: Array.from({ length: anzahl }, (_, i) => ({
+      commandId: 'design.geschossErstellen',
+      params: { name: `Geschoss ${i}`, index: i, elevation: i * 3000 },
+      begruendung: `Geschoss ${i} für den Rohbau`,
+    })),
+  };
+}
+
+describe('lauf-runtime — C-10: kein Auto-Start', () => {
+  it('der Store ist ohne jeden Aufruf leer — Import allein legt keinen Lauf an', () => {
+    expect(useLaufRuntime.getState().plan).toBeNull();
+    expect(useLaufRuntime.getState().schritte).toEqual([]);
+    expect(useLaufRuntime.getState().status).toBe('offen');
+  });
+});
+
+describe('lauf-runtime — starte() Happy Path (echter runCommand-Weg)', () => {
+  it('führt alle Schritte über runCommand aus und schreibt wirklich ins Doc', async () => {
+    useLaufRuntime.getState().starte(geschossPlan(2));
+    await warten(10);
+
+    const state = useLaufRuntime.getState();
+    expect(state.status).toBe('fertig');
+    expect(state.schritte.map((s) => s.status)).toEqual(['ok', 'ok']);
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(2);
+  });
+
+  it('jeder Schritt hinterlässt eine EIGENE Undo-Gruppe (nicht eine gemeinsame)', async () => {
+    useLaufRuntime.getState().starte(geschossPlan(3));
+    await warten(10);
+
+    expect(useProject.getState().history.depth).toBe(3);
+    // Undo nur EINES Schritts rollt nur EIN Geschoss zurück.
+    useProject.getState().undo();
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(2);
+    useProject.getState().undo();
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(1);
+    useProject.getState().undo();
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(0);
+  });
+
+  it('journalt jeden Schritt mit actor "kosmo"', async () => {
+    useLaufRuntime.getState().starte(geschossPlan(1));
+    await warten(10);
+    const letzter = useProject.getState().journal.at(-1);
+    expect(letzter?.actor).toBe('kosmo');
+    expect(letzter?.commandId).toBe('design.geschossErstellen');
+  });
+});
+
+describe('lauf-runtime — Fehler-Stopp (E4: ehrlich, kein Weiterlaufen)', () => {
+  it('stoppt beim ungültigen Schritt, Rest bleibt offen, kein Geist-Undo-Eintrag', async () => {
+    const plan: LaufPlan = {
+      titel: 'Fehlerhafter Lauf',
+      schritte: [
+        { commandId: 'design.geschossErstellen', params: { name: 'EG', index: 0, elevation: 0 }, begruendung: 'EG zuerst' },
+        // elevation fehlt bewusst — zod lehnt ab, execute() wirft CommandError.
+        { commandId: 'design.geschossErstellen', params: { name: 'Kaputt', index: 1 }, begruendung: 'absichtlich ungültig' },
+        { commandId: 'design.geschossErstellen', params: { name: '2.OG', index: 2, elevation: 6000 }, begruendung: 'wird nie erreicht' },
+      ],
+    };
+    useLaufRuntime.getState().starte(plan);
+    await warten(10);
+
+    const state = useLaufRuntime.getState();
+    expect(state.status).toBe('fehler');
+    expect(state.schritte[0]?.status).toBe('ok');
+    expect(state.schritte[1]?.status).toBe('fehler');
+    expect(state.schritte[1]?.fehler).toBeTruthy();
+    expect(state.schritte[2]?.status).toBe('offen');
+    // Nur Schritt 1 schrieb ins Doc — Schritt 3 lief NIE.
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(1);
+    // Der gescheiterte Schritt hinterlässt KEINE leere Undo-Gruppe.
+    expect(useProject.getState().history.depth).toBe(1);
+  });
+});
+
+describe('lauf-runtime — Abbruch', () => {
+  it('abbrechen() waehrend des Laufs lässt den begonnenen Schritt zu Ende laufen, stoppt vor dem nächsten', async () => {
+    useLaufRuntime.getState().starte(geschossPlan(3));
+    // Synchron direkt danach: Schritt 0 hat bereits real ausgeführt (runCommand
+    // ist synchron), der Runner hängt aber noch VOR dem `await`-Resume für
+    // Schritt 1 (Microtask-Grenze) — siehe `lauf-runner.ts`-Kommentar.
+    useLaufRuntime.getState().abbrechen();
+    await warten(10);
+
+    const state = useLaufRuntime.getState();
+    expect(state.status).toBe('abgebrochen');
+    expect(state.schritte[0]?.status).toBe('ok');
+    expect(state.schritte[1]?.status).toBe('offen');
+    expect(state.schritte[2]?.status).toBe('offen');
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(1);
+    expect(useProject.getState().history.depth).toBe(1);
+  });
+
+  it('abbrechen() ohne aktiven Lauf ist ein No-Op', () => {
+    expect(() => useLaufRuntime.getState().abbrechen()).not.toThrow();
+    expect(useLaufRuntime.getState().status).toBe('offen');
+  });
+});
+
+describe('lauf-runtime — Doppel-Start-Schutz', () => {
+  it('ein zweiter starte()-Aufruf waehrend "laeuft" wird ignoriert', () => {
+    useLaufRuntime.getState().starte(geschossPlan(3));
+    // Synchron NOCH VOR dem ersten Resume (Status ist jetzt entweder 'laeuft'
+    // oder direkt schon fortgeschritten) — ein zweiter starte()-Aufruf mit
+    // einem KOMPLETT anderen Plan darf den ersten laufenden Lauf nicht
+    // ersetzen.
+    const ersterPlan = useLaufRuntime.getState().plan;
+    useLaufRuntime.getState().starte(geschossPlan(1));
+    expect(useLaufRuntime.getState().plan).toBe(ersterPlan);
+  });
+});
+
+describe('lauf-runtime — zuruecksetzen()', () => {
+  it('räumt den Store nach einem abgeschlossenen Lauf auf', async () => {
+    useLaufRuntime.getState().starte(geschossPlan(1));
+    await warten(10);
+    useLaufRuntime.getState().zuruecksetzen();
+
+    const state = useLaufRuntime.getState();
+    expect(state.plan).toBeNull();
+    expect(state.schritte).toEqual([]);
+    expect(state.status).toBe('offen');
+    expect(state.runner).toBeNull();
+  });
+});
+
+describe('lauf-runtime — Testhook window.__kosmoLauf', () => {
+  it('startet einen Lauf über den Fensterhaken, wie es eine E2E-Kampagne täte', async () => {
+    const hook = (window as unknown as {
+      __kosmoLauf: { starte: (p: LaufPlan) => void; zustand: () => { status: string } };
+    }).__kosmoLauf;
+    expect(hook).toBeDefined();
+    hook.starte(geschossPlan(1));
+    await warten(10);
+    expect(hook.zustand().status).toBe('fertig');
+  });
+});
