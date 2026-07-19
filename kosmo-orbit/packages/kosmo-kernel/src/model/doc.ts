@@ -442,6 +442,11 @@ export interface DocSettings {
    * oben. Fehlend ODER `null` = kein offener Wunsch (Golden-Guard, Muster
    * `schnitt?: SchnittSpec | null`). Nur über `vis.render` gesetzt. */
   visRenderAuftrag?: VisRenderWunsch | null;
+  /** Standort-Persistenz (v0.8.6 PC1, `docs/V086-SPEZ.md` E6/D7) — s.
+   * `StandortAdresse`-Kommentar oben. Fehlend ODER `null` = «kein Standort
+   * gesetzt» (Golden-Guard, Muster `schnitt?: SchnittSpec | null`). Nur über
+   * `design.standortAdresseSetzen` gesetzt. */
+  standortAdresse?: StandortAdresse | null;
 }
 
 /** Auflösung von `darstellung3d: 'auto'` (v0.7.0 E3) — pure Funktion, testbar
@@ -546,6 +551,30 @@ export interface ProjektStandort {
   n: number;
   /** Absolutbezug ±0.00 in m ü.M. (B2: erscheint an der EG-Kote). */
   hoeheM?: number;
+}
+
+/**
+ * Standort-Adresssuche-Beleg (v0.8.6 PC1, `docs/V086-SPEZ.md` E6/D7/C-17):
+ * das amtliche Suchergebnis der StandortSuche (geo.admin.ch SearchServer,
+ * `DesignWorkspace.tsx`) — Adresstext, LV95-Koordinaten, Herkunft, Abrufzeit.
+ * BEWUSST ein eigenes Feld (`DocSettings.standortAdresse`), NICHT eine
+ * Erweiterung von `ProjektStandort`/`standort`: Letzteres trägt WGS84 lat/lon
+ * + optional `hoeheM` fürs Sonnenstudien-/Schwarzplan-/Viewport3D-Fundament
+ * und wird bereits von `design.standortSetzen` gesetzt (registriert seit V2-
+ * V4) — dieselbe Kommando-Kennung für ein neues Setting hätte
+ * `registerCommand` bei der doppelten Registrierung werfen lassen
+ * (`commands/core.ts`). `standortAdresse` ist rein additiv, fliesst NICHT in
+ * `derive/*` ein (Golden-Guard, wie `schnitt`/`visRenderAuftrag`) und dient
+ * einzig der Reload-/`.kosmo`-Persistenz + der KosmoData-Anzeige. Nur über
+ * `design.standortAdresseSetzen` gesetzt.
+ */
+export interface StandortAdresse {
+  adresse: string;
+  /** LV95 Ost/Nord (m). */
+  lv95: { e: number; n: number };
+  quelle: 'geoadmin';
+  /** ISO-Zeitstempel des Abrufs (App-seitig erzeugt, s. Kommentar im Command). */
+  abgerufenAm: string;
 }
 
 /** Zonen-Vorlage (V2-F7): Zonen relativ zur BBox-Ecke, Grösse fürs Strecken. */

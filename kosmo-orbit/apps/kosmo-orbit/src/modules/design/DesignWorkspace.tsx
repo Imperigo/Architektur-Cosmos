@@ -4770,9 +4770,15 @@ function punktInRing(punkt: readonly [number, number], ring: readonly number[][]
 }
 
 /** V4: CH-Standort — Adresssuche (geo.admin.ch), Parzellen-Import, alles im Doc. */
-function StandortSuche() {
+export function StandortSuche() {
   const runCommand = useProject((s) => s.runCommand);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
+  // v0.8.6 PC1 (V086-SPEZ E6/D7/C-17): reaktiver Selektor statt lokalem
+  // useState — liest den persistierten Adressbeleg direkt aus dem Doc, damit
+  // (a) ein frisch geladenes Doc den Block ohne Zusatz-Effekt initialisiert
+  // (Reload-Beweis) UND (b) Undo den Block sofort synchron nachzieht (kein
+  // veralteter lokaler Snapshot).
+  const standortAdresse = useProject((s) => s.doc.settings.standortAdresse);
   const [text, setText] = useState('');
   const [treffer, setTreffer] = useState<{ label: string; lat: number; lon: number; e: number; n: number }[]>([]);
   const [meldung, setMeldung] = useState<string | null>(null);
@@ -4922,7 +4928,29 @@ function StandortSuche() {
                 key={i}
                 className="dw-treffer-btn"
                 onClick={() => {
-                  runCommand('design.standortSetzen', { label: t.label, lat: t.lat, lon: t.lon, e: t.e, n: t.n });
+                  // v0.8.6 PC1 (V086-SPEZ E6/D7/C-17) + Fable-Nachzug: BEIDE
+                  // Standort-Commands in EINER history-Gruppe — ein Ctrl+Z
+                  // nimmt den Treffer-Klick als Ganzes zurück (vorher zwei
+                  // getrennte Undo-Schritte, PC1-Berichts-Lücke). Der
+                  // Adressbeleg (eigenes Setting/Command wegen der
+                  // Namenskollision, s. `StandortAdresse` in model/doc.ts)
+                  // kommt zusätzlich zum bestehenden design.standortSetzen
+                  // (WGS84 fürs Sonnenstudien-/Schwarzplan-Fundament).
+                  // `new Date().toISOString()` ist hier zulässig:
+                  // Laufzeit-App-Code, kein Determinismus-Pfad.
+                  const { history } = useProject.getState();
+                  history.beginGroup();
+                  try {
+                    runCommand('design.standortSetzen', { label: t.label, lat: t.lat, lon: t.lon, e: t.e, n: t.n });
+                    runCommand('design.standortAdresseSetzen', {
+                      adresse: t.label,
+                      lv95: { e: t.e, n: t.n },
+                      quelle: 'geoadmin',
+                      abgerufenAm: new Date().toISOString(),
+                    });
+                  } finally {
+                    history.endGroup();
+                  }
                   setTreffer([]);
                 }}
               >
@@ -4933,6 +4961,11 @@ function StandortSuche() {
         )}
         {meldung && <span className="dw-standort-meldung" data-testid="standort-meldung">{meldung}</span>}
       </span>
+      {standortAdresse && (
+        <span className="dw-faint-klein" data-testid="standort-adresse-aktuell">
+          Standort: {standortAdresse.adresse} (LV95 {Math.round(standortAdresse.lv95.e)}/{Math.round(standortAdresse.lv95.n)})
+        </span>
+      )}
       {parzellenZentrum && (
         <span className="dw-faint-klein" data-testid="nachbarn-fussnote">
           Quelle: swisstopo VECTOR25 — amtlich, Datenstand ~2008

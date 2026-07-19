@@ -1838,6 +1838,38 @@ const sammlungHue: Record<KosmoDataSammlung, string> = {
 };
 
 /**
+ * v0.8.6 PC1 (`docs/V086-SPEZ.md` E6/D7/C-17): Kopfzeile des Übersichts-Tabs
+ * — zeigt den persistierten Projektstandort (`DocSettings.standortAdresse`,
+ * `design.standortAdresseSetzen` in DesignWorkspace-StandortSuche) als
+ * schlichte KKeyValue-Karte, ehrlicher Leer-Zustand sonst. Rein lesend
+ * (reaktiver `useProject`-Selektor) — kein eigener State, zieht Undo/Reload
+ * also automatisch nach.
+ */
+export function KosmoDataProjektStandort() {
+  const standort = useProject((s) => s.doc.settings.standortAdresse);
+  if (!standort) {
+    return (
+      <div data-testid="data-projekt-standort-leer" className="kd-panel kd-p-s3-s4 kd-c-faint">
+        Kein Standort gesetzt
+      </div>
+    );
+  }
+  const abgerufenAmText = new Date(standort.abgerufenAm).toLocaleDateString('de-CH');
+  return (
+    <div data-testid="data-projekt-standort" className="kd-panel kd-grid kd-g2 kd-p-s3-s4">
+      <Badge hue={moduleHue.data}>Projekt-Standort</Badge>
+      <KKeyValue
+        zeilen={[
+          { key: 'Adresse', wert: standort.adresse },
+          { key: 'LV95', wert: `${Math.round(standort.lv95.e)} / ${Math.round(standort.lv95.n)}` },
+          { key: 'Abgerufen', wert: `${abgerufenAmText} · ${standort.quelle}` },
+        ]}
+      />
+    </div>
+  );
+}
+
+/**
  * D1 (KosmoData-Dach) — der Übersichts-Tab: sechs Sammlungen mit Zähler
  * (`sammlungen()`) und eine Suche über alle sechs (`sucheDach`). Ein Klick
  * springt in die passende Station: Referenz, Wissen, Training, Gedächtnis
@@ -1911,6 +1943,7 @@ function KosmoDataUebersicht({
 
   return (
     <div data-testid="kosmodata-dach" className="kd-grid kd-g5">
+      <KosmoDataProjektStandort />
       <div className="kd-grid kd-col-fill-150 kd-g3">
         {zahlen
           ? sammlungIds.map((s) => (

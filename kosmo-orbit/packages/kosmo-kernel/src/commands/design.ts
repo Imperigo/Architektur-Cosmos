@@ -3716,3 +3716,36 @@ export const einheitTypAktualisieren = registerCommand({
     return patches;
   },
 });
+
+export const setStandortAdresse = registerCommand({
+  id: 'design.standortAdresseSetzen',
+  title: 'Projekt-Standort (Adressbeleg) setzen',
+  description:
+    'Speichert den zuletzt gewählten StandortSuche-Treffer (Adresse, LV95-Koordinaten, Herkunft geo.admin.ch, Abrufzeitpunkt) als Doc-Setting `standortAdresse` — läuft wie jede DocSettings-Änderung über Undo/Yjs-Sync/`.kosmo`-Export (SettingsPatch-Weg), damit der Projektstandort einen Reload überlebt (v0.8.6 PC1, docs/V086-SPEZ.md E6/D7/C-17). Getrennt vom bestehenden design.standortSetzen (WGS84 lat/lon + LV95 fürs Sonnenstudien-/Schwarzplan-/Viewport3D-Fundament, ProjektStandort seit V2-V4) — s. Kommentar bei `StandortAdresse`, model/doc.ts: dieselbe Kommando-Kennung hätte registerCommand bei der doppelten Registrierung geworfen. Erneutes Ausführen überschreibt den vorherigen Beleg vollständig (kein Merge — es gibt immer nur EINEN aktuellen Standort).',
+  params: z.object({
+    adresse: z.string().min(1),
+    lv95: z.object({ e: z.number(), n: z.number() }),
+    quelle: z.literal('geoadmin'),
+    abgerufenAm: z.string().min(1),
+  }),
+  summarize: (p) => `Standort «${p.adresse}»`,
+  run: (doc, p) => [
+    {
+      settings: true as const,
+      // Schmales Patch (nur `standortAdresse`), wie bei schnitt/
+      // visRenderAuftrag: optionales Feld ohne defaultSettings-Eintrag — ein
+      // voller doc.settings-Snapshot würde beim Undo die Abwesenheit des
+      // Schlüssels nicht wiederherstellen (Object-Spread löscht keine
+      // Keys), «vorher» braucht also einen expliziten Wert.
+      before: { standortAdresse: doc.settings.standortAdresse ?? null },
+      after: {
+        standortAdresse: {
+          adresse: p.adresse,
+          lv95: { e: p.lv95.e, n: p.lv95.n },
+          quelle: p.quelle,
+          abgerufenAm: p.abgerufenAm,
+        },
+      },
+    },
+  ],
+});
