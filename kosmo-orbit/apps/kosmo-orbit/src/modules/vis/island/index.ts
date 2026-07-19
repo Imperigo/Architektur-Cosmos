@@ -12,3 +12,6 @@ import './inhalte/graph';
 import './inhalte/ansicht';
 import './inhalte/stimmung';
 import './inhalte/austausch';
+// v0.8.9 §9 E11 (PBL2, `docs/V089-SPEZ.md`) — SONNE-Insel (Sonnenstunden-
+// Client), Registrierung als Import-Seiteneffekt wie die vier Bestands-Inseln.
+import './inhalte/sonne';

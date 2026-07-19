@@ -1,5 +1,6 @@
+import { z } from 'zod';
 import { evaluiereGraph, exportGlb, type AutoKameraStandpunkt, type Sheet, type VisGraph } from '@kosmo/kernel';
-import { RenderJob, bridgeRoutes } from '@kosmo/contracts';
+import { RenderJob, BlenderSimJob, BakeJob, bridgeRoutes, type BlenderSimArt } from '@kosmo/contracts';
 import { melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
 import { memoKey, useVisRuntime, type NodeLaufStatus } from './vis-runtime';
@@ -140,10 +141,23 @@ export async function postRenderJob(params: {
    * (`backbone: 'qwen'`, wie vor v0.8.4).
    */
   backbone?: 'qwen' | 'flux2-klein' | 'flux-krea' | 'sdxl';
+  /**
+   * v0.8.9 §9 E9/E10 (Line-Art, `docs/V089-SPEZ.md`) — additiv, spiegelt
+   * `RenderScene.style.mode`s neuen Wert `'lineart'`. Ohne Parameter bleibt
+   * der Job byte-identisch zum bisherigen Stand (`mode: 'none'`, wie vor
+   * v0.8.9). Der Vertragskommentar (`render-scene.ts`) ist hier bindend:
+   * «jeder Client, der `mode:'lineart'` sendet, MUSS zugleich `vis.skip:true`
+   * setzen — eine Strichzeichnung wartet nie auf einen KI-Veredelungs-
+   * Schritt.» Darum HART erzwungen (nicht optional/überschreibbar durch
+   * `nurCycles`): eine Strichzeichnung ist Cycles/Freestyle-Rendering, kein
+   * KI-Stil-Transfer, egal was `nurCycles` sagt.
+   */
+  mode?: 'none' | 'lineart';
 }): Promise<JobRecord> {
   const { doc } = useProject.getState();
   const glb = exportGlb(doc, doc.settings.projectName);
   const kameras = params.kameras && params.kameras.length > 0 ? params.kameras : undefined;
+  const lineArt = params.mode === 'lineart';
   const scene = {
     schema: 'kosmovis.render-scene/v1',
     cameras: kameras
@@ -156,10 +170,11 @@ export async function postRenderJob(params: {
       ...(params.sun ? { sun: params.sun } : {}),
       ...(params.environment ? { environment: params.environment } : {}),
     },
-    style: { mode: 'none', refs: [], prompt: params.prompt },
+    style: { mode: lineArt ? 'lineart' : 'none', refs: [], prompt: params.prompt },
     // HS5: «Nur Cycles» → vis.skip: true (reines Cycles, keine KI-Veredelung).
-    // Die Bridge leitet das in requested_engine "cycles" ab (HS2).
-    vis: { skip: params.nurCycles === true, backbone: params.backbone ?? 'qwen', upscale: false },
+    // Die Bridge leitet das in requested_engine "cycles" ab (HS2). E10:
+    // `lineArt` gewinnt HART über `nurCycles` — s. Kommentar an `mode` oben.
+    vis: { skip: lineArt || params.nurCycles === true, backbone: params.backbone ?? 'qwen', upscale: false },
     ...(params.komposition ? { komposition: params.komposition } : {}),
     out: '',
     geometry: { path: '', format: 'glb' },
@@ -199,6 +214,10 @@ export function sendeGraphRenderAuftrag(
     kameraWahl?: 'auto' | 'saved';
     backbone?: 'qwen' | 'flux2-klein' | 'flux-krea' | 'sdxl';
     aufloesung?: readonly [number, number];
+    /** v0.8.9 §9 E10 — spiegelt `postRenderJob`s `mode`, s. dortigen
+     *  Kommentar (vis.skip wird hart miterzwungen). Weggelassen = 'none',
+     *  byte-identisch zum bisherigen Stand. */
+    mode?: 'none' | 'lineart';
   },
 ): void {
   const { doc } = useProject.getState();
@@ -225,6 +244,7 @@ export function sendeGraphRenderAuftrag(
     // `aufloesung` spiegelt denselben Job-Parameter wie das bestehende
     // `resolution` (K20/A10-Presets nutzen ihn schon) — kein Zweitfeld.
     ...(opts?.aufloesung !== undefined ? { resolution: opts.aufloesung } : {}),
+    ...(opts?.mode !== undefined ? { mode: opts.mode } : {}),
   })
     .then((j) =>
       patchLauf(nodeId, {
@@ -286,6 +306,165 @@ function parseJob(raw: unknown): JobRecord {
     throw new Error('Bridge-Antwort passt nicht zum Render-Job-Vertrag');
   }
   return geprueft.data;
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Blender-Sim-/Bake-Jobs (v0.8.9 §9 E9/E11, PBL2) — EIGENE Verträge
+// (`BlenderSimJob`/`BakeJob`, NICHT `RenderJob`), eigene Präfixe (`bsim-`/
+// `bake-`) und eigene Endpoints (`bridgeRoutes.jobsBlenderSim`/`jobsBake`).
+// Physik/Geometrie-Optimierung werden NIE gefakt — der Fake-Betrieb endet
+// beweisbar auf `kein-blender-worker` (s. `blender-sim.ts`/`bake-job.ts`-
+// Kopfkommentare, Sanktion 12).
+// ─────────────────────────────────────────────────────────────────────────
+
+/**
+ * Client-seitiges Shape der `art:'sonnenstunden'`-Params (v0.8.9 §9 E11) —
+ * die Bridge selbst erzwingt hier NICHTS (`BlenderSimScene.params` ist ein
+ * offenes `z.record(z.string(), z.unknown())`, s. `blender-sim.ts`
+ * Kopfkommentar); ein Tippfehler (z.B. `lng` statt `lon`) fiele sonst erst
+ * am echten Blender-Worker auf der HomeStation auf, nicht am Client. Prüft
+ * NUR den Sonnenstunden-Shape — `wind`/`gebaeude-energie` haben eigene
+ * Params, die diese Version clientseitig (noch) nicht validiert (kein
+ * Client dafür in 0.8.9).
+ */
+export const SonnenstundenParams = z.object({
+  lat: z.number(),
+  lon: z.number(),
+  datum: z.string().min(1),
+  kriteriumStunden: z.number().optional(),
+});
+export type SonnenstundenParams = z.infer<typeof SonnenstundenParams>;
+
+/** Validiert eine Bridge-Antwort gegen den Blender-Sim-Job-Vertrag. */
+function parseBlenderSimJob(raw: unknown): BlenderSimJob {
+  const geprueft = BlenderSimJob.safeParse(raw);
+  if (!geprueft.success) {
+    throw new Error('Bridge-Antwort passt nicht zum Blender-Sim-Job-Vertrag');
+  }
+  return geprueft.data;
+}
+
+/** Validiert eine Bridge-Antwort gegen den Bake-Job-Vertrag. */
+function parseBakeJob(raw: unknown): BakeJob {
+  const geprueft = BakeJob.safeParse(raw);
+  if (!geprueft.success) {
+    throw new Error('Bridge-Antwort passt nicht zum Bake-Job-Vertrag');
+  }
+  return geprueft.data;
+}
+
+/**
+ * Blender-Simulation senden (Wind/Sonnenstunden/Gebäude-Energie) — multipart
+ * an `bridgeRoutes.jobsBlenderSim`, Antwort gegen `BlenderSimJob.safeParse`
+ * (NICHT `RenderJob`). Für `art:'sonnenstunden'` wird `params` VOR dem Senden
+ * gegen `SonnenstundenParams` geprüft — ein ungültiges Shape wirft, BEVOR
+ * überhaupt ein Netzwerk-Request losgeht.
+ */
+export async function postBlenderSimJob(
+  art: BlenderSimArt,
+  params: Record<string, unknown>,
+  glbBytes: BlobPart,
+): Promise<BlenderSimJob> {
+  if (art === 'sonnenstunden') {
+    const geprueft = SonnenstundenParams.safeParse(params);
+    if (!geprueft.success) {
+      throw new Error(
+        `Sonnenstunden-Parameter ungültig: ${geprueft.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`,
+      );
+    }
+  }
+  const scene = {
+    schema: 'kosmo.blender-sim/v1',
+    art,
+    geometry: { path: '', format: 'glb' },
+    params,
+    out: '',
+  };
+  const form = new FormData();
+  // WICHTIG: die Bridge erwartet hier das Feld `szene` (deutsch), NICHT
+  // `scene` wie beim generischen Render-Endpoint `/jobs` (main.py
+  // `create_job(scene: str = Form(...))` vs. `create_blender_sim_job(szene:
+  // str = Form(...))`) — unterschiedliche Feldnamen an zwei Endpoints
+  // desselben Servers, wörtlich gegen main.py verifiziert.
+  form.append('szene', JSON.stringify(scene));
+  form.append('model', new Blob([glbBytes], { type: 'model/gltf-binary' }), 'model.glb');
+  const res = await bridgeFetch(bridgeRoutes.jobsBlenderSim, { method: 'POST', body: form });
+  if (!res.ok) throw new BridgeHttpError(res.status, 'Bridge antwortet mit');
+  return parseBlenderSimJob(await res.json());
+}
+
+export async function holeBlenderSimJob(jobId: string): Promise<BlenderSimJob> {
+  const res = await bridgeFetch(bridgeRoutes.job(jobId));
+  if (!res.ok) throw new BridgeHttpError(res.status, `Job ${jobId}`);
+  return parseBlenderSimJob(await res.json());
+}
+
+/** Wartenden Blender-Sim-Job freigeben (nur bei aktiver Freigabe-Pflicht). */
+export async function freigebenBlenderSimJob(jobId: string, approvalToken: string): Promise<BlenderSimJob> {
+  const res = await bridgeFetch(bridgeRoutes.jobApprove(jobId), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ approval_token: approvalToken }),
+  });
+  if (!res.ok) throw new BridgeHttpError(res.status, `Freigabe ${jobId}`);
+  return parseBlenderSimJob(await res.json());
+}
+
+/** Kooperativer Abbruch — awaiting_approval/queued/running → cancelled. */
+export async function abbrechenBlenderSimJob(jobId: string): Promise<BlenderSimJob> {
+  const res = await bridgeFetch(bridgeRoutes.jobCancel(jobId), { method: 'POST' });
+  if (!res.ok) throw new BridgeHttpError(res.status, `Abbruch ${jobId}`);
+  return parseBlenderSimJob(await res.json());
+}
+
+/**
+ * Textur-Bake senden (Smart-UV-Unwrap + AO-Bake) — multipart an
+ * `bridgeRoutes.jobsBake`, Antwort gegen `BakeJob.safeParse`. Endet im
+ * Fake-/Container-Betrieb IMMER auf `kein-blender-worker` (Sanktion 12) —
+ * dieser Client-Helfer täuscht nichts vor, er reicht nur ehrlich durch.
+ */
+export async function postBakeJob(
+  glbBytes: BlobPart,
+  params: { textureSize?: number; unwrap?: 'smart-uv'; decimateRatio?: number },
+): Promise<BakeJob> {
+  const scene = {
+    schema: 'kosmo.bake-job/v1',
+    geometry: { path: '', format: 'glb' },
+    params: { unwrap: 'smart-uv' as const, ...params },
+    out: '',
+  };
+  const form = new FormData();
+  // Dasselbe Feldnamen-Detail wie bei `postBlenderSimJob` (s. dortigen
+  // Kommentar): `/jobs/bake` erwartet `szene` (main.py `create_bake_job`).
+  form.append('szene', JSON.stringify(scene));
+  form.append('model', new Blob([glbBytes], { type: 'model/gltf-binary' }), 'model.glb');
+  const res = await bridgeFetch(bridgeRoutes.jobsBake, { method: 'POST', body: form });
+  if (!res.ok) throw new BridgeHttpError(res.status, 'Bridge antwortet mit');
+  return parseBakeJob(await res.json());
+}
+
+export async function holeBakeJob(jobId: string): Promise<BakeJob> {
+  const res = await bridgeFetch(bridgeRoutes.job(jobId));
+  if (!res.ok) throw new BridgeHttpError(res.status, `Job ${jobId}`);
+  return parseBakeJob(await res.json());
+}
+
+/** Wartenden Bake-Job freigeben (nur bei aktiver Freigabe-Pflicht). */
+export async function freigebenBakeJob(jobId: string, approvalToken: string): Promise<BakeJob> {
+  const res = await bridgeFetch(bridgeRoutes.jobApprove(jobId), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ approval_token: approvalToken }),
+  });
+  if (!res.ok) throw new BridgeHttpError(res.status, `Freigabe ${jobId}`);
+  return parseBakeJob(await res.json());
+}
+
+/** Kooperativer Abbruch — awaiting_approval/queued/running → cancelled. */
+export async function abbrechenBakeJob(jobId: string): Promise<BakeJob> {
+  const res = await bridgeFetch(bridgeRoutes.jobCancel(jobId), { method: 'POST' });
+  if (!res.ok) throw new BridgeHttpError(res.status, `Abbruch ${jobId}`);
+  return parseBakeJob(await res.json());
 }
 
 /**
@@ -385,13 +564,33 @@ function pruefeBildDeckel(dataUrl: string): void {
 }
 
 /**
- * E7 (V088-SPEZ §3, Sanktion 8): JEDES Bild, das über diesen Weg aufs Blatt
- * kommt, stammt aus dem Fake-Bridge-Betrieb dieser Version (keine echte
- * HomeStation-Render-Strecke existiert bislang, `echte-Render-Grössenstrategie`
- * ist ehrlicher Nicht-Ziel-Punkt) — der Slot-Titel trägt darum IMMER dieses
- * Label, unabhängig vom aufrufer-seitigen `titel`-Argument.
+ * E13 (`docs/V089-SPEZ.md` §9, PBL2) — Herkunfts-Label eines Bildes, das aufs
+ * Blatt kommt. Ersetzt die frühere feste `BILD_LABEL_FAKE_RENDER`-Konstante
+ * (E7/V088-SPEZ) durch eine echte Herkunftsprüfung:
+ *  - `worker` fehlt ODER ist `'fake-worker'` → «Vorschau (Fake-Render)»
+ *    (Sanktion 8/V088: Fake-Bild ohne Kennzeichnung = ungültig — bleibt die
+ *    Default-Antwort, damit JEDER Aufrufer ohne Herkunftsangabe weiter
+ *    ehrlich als Fake gekennzeichnet wird).
+ *  - `requestedStyle === 'lineart'` (und ein ECHTER Worker) → «Strichzeichnung
+ *    (Line-Art)» (E10).
+ *  - sonst (echter Worker, kein Line-Art) → «Render (Cycles)».
+ *
+ * WICHTIG (Container-Grenze, wörtlich): der `worker`-Wert kommt IMMER von der
+ * Fake-Bridge (`tools/homestation-bridge/kosmo_bridge/main.py`
+ * `_fake_worker_step`, setzt `record["worker"] = "fake-worker"`) — der
+ * `'Render (Cycles)'`-Zweig dieser Funktion ist im Container-Betrieb NIE
+ * erreichbar, weil hier nie ein anderer `worker`-String ankommt. Er wird
+ * AUSSCHLIESSLICH per Unit-Test mit einem künstlichen `JobRecord` bewiesen
+ * (`apps/kosmo-orbit/test/blender-label.test.ts`) und bleibt bis zu einer
+ * echten HomeStation-Abnahme (0.8.10+, Owner-Termin) ein unbewiesener
+ * Live-Pfad — genau so dokumentiert, nicht stillschweigend als «getestet»
+ * behauptet.
  */
-const BILD_LABEL_FAKE_RENDER = 'Vorschau (Fake-Render)';
+export function bildLabel(h: { worker?: string; requestedStyle?: string }): string {
+  if (!h.worker || h.worker === 'fake-worker') return 'Vorschau (Fake-Render)';
+  if (h.requestedStyle === 'lineart') return 'Strichzeichnung (Line-Art)';
+  return 'Render (Cycles)';
+}
 
 /**
  * Gemeinsamer Kern von `bildAufsBlatt`/`aufnahmeAufsBlatt` — leerer Bild-Slot
@@ -402,11 +601,18 @@ const BILD_LABEL_FAKE_RENDER = 'Vorschau (Fake-Render)';
  *
  * `titel` bleibt als Parameter erhalten (Aufrufer in KuratierFlaeche.tsx/
  * island/inhalte/austausch.tsx ausserhalb dieses Pakets bleiben unverändert),
- * bestimmt aber NICHT mehr das Slot-Label — E7 zwingt `BILD_LABEL_FAKE_RENDER`
- * (Sanktion 8: Fake-Bild ohne Kennzeichnung = ungültig).
+ * bestimmt aber NICHT das Slot-Label.
+ *
+ * `label` ist NEU (E13) und OPTIONAL: `bildAufsBlatt` berechnet ihn aus dem
+ * Job-Record (`bildLabel`), `aufnahmeAufsBlatt` erzwingt sein eigenes Label
+ * fest. Fehlt `label` (jeder Aufrufer AUSSERHALB dieses Pakets, s.o.), bleibt
+ * das Verhalten byte-identisch zum bisherigen Stand: `bildLabel({})` liefert
+ * ohne Herkunftsangabe immer «Vorschau (Fake-Render)» (Sanktion 8 bleibt
+ * scharf, auch ohne den neuen Parameter).
  */
-export function platziereBildAufsBlatt(dataUrl: string, _titel: string): string {
+export function platziereBildAufsBlatt(dataUrl: string, _titel: string, label?: string): string {
   pruefeBildDeckel(dataUrl); // wirft VOR jedem Doc-Zugriff — kein Command läuft an
+  const slotLabel = label ?? bildLabel({});
   const { doc, runCommand, history } = useProject.getState();
   history.beginGroup();
   try {
@@ -422,7 +628,7 @@ export function platziereBildAufsBlatt(dataUrl: string, _titel: string): string 
       // `bildFuellen` kennt kein `title`-Param (Kernel-Vertrag bleibt
       // unverändert) — das Pflicht-Label kommt über den bestehenden
       // `bildAnpassen`-Command, in DERSELBEN Undo-Gruppe.
-      runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: leer.id, title: BILD_LABEL_FAKE_RENDER });
+      runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: leer.id, title: slotLabel });
     } else {
       runCommand('publish.bildPlatzieren', {
         sheetId: sheet.id,
@@ -430,7 +636,7 @@ export function platziereBildAufsBlatt(dataUrl: string, _titel: string): string 
         y: 40,
         w: 160,
         dataUrl,
-        title: BILD_LABEL_FAKE_RENDER,
+        title: slotLabel,
       });
     }
     return sheet.name;
@@ -442,6 +648,12 @@ export function platziereBildAufsBlatt(dataUrl: string, _titel: string): string 
 /**
  * Bild als Blatt-Bürger nach KosmoPublish (C1) — Bridge-Artefakt (Render-Job).
  * Gibt den Blattnamen zurück.
+ *
+ * E13: holt `worker`/`requested_style` aus dem echten Job-Record
+ * (`holeJob`) und berechnet daraus das Label — dieselbe Quelle, die den Job
+ * auch sonst beschreibt, keine zweite Wahrheit. Schlägt der Zusatz-Fetch
+ * fehl (Netz-Aussetzer o.ä.), fällt das Label ehrlich auf `bildLabel({})`
+ * zurück («Vorschau (Fake-Render)») — NIE ein erfundenes «Render (Cycles)».
  */
 export async function bildAufsBlatt(jobId: string, imageName: string, titel: string): Promise<string> {
   // Über bridgeFetch (Token-Header + connect-src) statt rohem fetch — sonst
@@ -453,7 +665,18 @@ export async function bildAufsBlatt(jobId: string, imageName: string, titel: str
     r.onerror = () => reject(r.error ?? new Error('Bild nicht lesbar'));
     r.readAsDataURL(blob);
   });
-  return platziereBildAufsBlatt(dataUrl, titel);
+  let label = bildLabel({});
+  try {
+    const job = await holeJob(jobId);
+    label = bildLabel({
+      ...(job.worker !== undefined ? { worker: job.worker } : {}),
+      ...(job.requested_style !== undefined ? { requestedStyle: job.requested_style } : {}),
+    });
+  } catch {
+    // Ehrlicher Rückfall auf das Fake-Render-Label (s. Kommentar oben) —
+    // ein gescheiterter Zusatz-Fetch darf das Platzieren selbst nicht kippen.
+  }
+  return platziereBildAufsBlatt(dataUrl, titel, label);
 }
 
 /**
@@ -462,7 +685,12 @@ export async function bildAufsBlatt(jobId: string, imageName: string, titel: str
  * `vis-runtime.Aufnahme.dataUrl`). Async wie `bildAufsBlatt` (einheitlicher
  * Aufrufer-Weg, `.then().catch()`), auch wenn hier nichts zu awaiten ist.
  * Gibt den Blattnamen zurück.
+ *
+ * E13: EIGENES, ehrliches Label «Aufnahme (Viewport)» — unabhängig von
+ * `bildLabel()`/jedem Job-Record (ein Viewport-Screenshot hat keinen Bridge-
+ * Job und war NIE ein Fake-Render, das «Vorschau (Fake-Render)»-Label wäre
+ * hier selbst eine Falschbehauptung).
  */
 export async function aufnahmeAufsBlatt(dataUrl: string, titel: string): Promise<string> {
-  return platziereBildAufsBlatt(dataUrl, titel);
+  return platziereBildAufsBlatt(dataUrl, titel, 'Aufnahme (Viewport)');
 }

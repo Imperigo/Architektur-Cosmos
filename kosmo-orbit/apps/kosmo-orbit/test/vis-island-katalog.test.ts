@@ -5,19 +5,25 @@ import { VIS_INSELN, VIS_ISLAND_REIHENFOLGE, VIS_WERKZEUG_KATALOG } from '../src
  * PC1 (`docs/V084-SPEZ.md` §5 W2, C-15/E1) — der Vis-Island-Katalog, gebaut
  * GEGEN die generische `InselKonfig`/`IslandWerkzeug`-Schnittstelle aus
  * `design/island/island-katalog.ts` (E1, W1). Eigene, additive Testdatei.
+ *
+ * v0.8.9 §9 E11 (PBL2, `docs/V089-SPEZ.md`): fünfte Insel SONNE (unten-
+ * links, EIN Werkzeug `sonnenstunden`) additiv dazugekommen — die vier
+ * Bestandsinseln/-Werkzeuge bleiben unverändert, nur die Gesamtzahlen ziehen
+ * nach (13→14 Werkzeuge, 4→5 Inseln).
  */
 
 describe('vis-island-katalog — Aufbau', () => {
-  it('vier Inseln, Bühnenordnung links·oben·rechts·unten (wie design)', () => {
-    expect(VIS_ISLAND_REIHENFOLGE).toEqual(['graph', 'ansicht', 'stimmung', 'austausch']);
-    expect(VIS_INSELN.map((k) => k.id)).toEqual(['graph', 'ansicht', 'stimmung', 'austausch']);
+  it('fünf Inseln, Bühnenordnung links·oben·rechts·unten·sonne (v0.8.9: +SONNE)', () => {
+    expect(VIS_ISLAND_REIHENFOLGE).toEqual(['graph', 'ansicht', 'stimmung', 'austausch', 'sonne']);
+    expect(VIS_INSELN.map((k) => k.id)).toEqual(['graph', 'ansicht', 'stimmung', 'austausch', 'sonne']);
   });
 
-  it('Orientierung + Randklasse folgen demselben Muster wie design (links/rechts vertikal, oben/unten horizontal)', () => {
+  it('Orientierung + Randklasse folgen demselben Muster wie design (links/rechts vertikal, oben/unten horizontal); SONNE eigene Ecke', () => {
     const graph = VIS_INSELN.find((k) => k.id === 'graph')!;
     const ansicht = VIS_INSELN.find((k) => k.id === 'ansicht')!;
     const stimmung = VIS_INSELN.find((k) => k.id === 'stimmung')!;
     const austausch = VIS_INSELN.find((k) => k.id === 'austausch')!;
+    const sonne = VIS_INSELN.find((k) => k.id === 'sonne')!;
     expect(graph.orientierung).toBe('vertikal');
     expect(graph.randKlasse).toBe('isl-rand-links');
     expect(ansicht.orientierung).toBe('horizontal');
@@ -26,12 +32,22 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(stimmung.randKlasse).toBe('isl-rand-rechts');
     expect(austausch.orientierung).toBe('horizontal');
     expect(austausch.randKlasse).toBe('isl-rand-unten');
+    expect(sonne.orientierung).toBe('vertikal');
+    // Eigene, additive Rand-Klasse (`vis-island.css`) — überlagert weder
+    // `isl-rand-links` noch `isl-rand-unten` (s. Kopfkommentar dort).
+    expect(sonne.randKlasse).toBe('isl-rand-sonne');
   });
 
-  it('13 Werkzeuge total, jedes genau einer Insel zugeordnet', () => {
-    expect(VIS_WERKZEUG_KATALOG).toHaveLength(13);
+  it('14 Werkzeuge total, jedes genau einer Insel zugeordnet', () => {
+    expect(VIS_WERKZEUG_KATALOG).toHaveLength(14);
     const summe = VIS_INSELN.reduce((n, k) => n + k.werkzeuge.length, 0);
-    expect(summe).toBe(13);
+    expect(summe).toBe(14);
+  });
+
+  it('SONNE: genau EIN Werkzeug (Sonnenstunden, v0.8.9 §9 E11)', () => {
+    const werkzeuge = VIS_INSELN.find((k) => k.id === 'sonne')!.werkzeuge;
+    expect(werkzeuge.map((w) => w.id)).toEqual(['sonnenstunden']);
+    expect(werkzeuge[0]!.hatPopup).toBe(true);
   });
 
   it('GRAPH: Node-Palette, Ausrichten, Verbinden (Owner-Auftrag §1)', () => {
@@ -62,7 +78,17 @@ describe('vis-island-katalog — Aufbau', () => {
   });
 
   it('alle übrigen Werkzeuge haben hatPopup:true', () => {
-    for (const id of ['palette', 'ausrichten', 'verbinden', 'zoom', 'minimap', 'stimmung', 'render-senden', 'aufs-plakat']) {
+    for (const id of [
+      'palette',
+      'ausrichten',
+      'verbinden',
+      'zoom',
+      'minimap',
+      'stimmung',
+      'render-senden',
+      'aufs-plakat',
+      'sonnenstunden',
+    ]) {
       const w = VIS_WERKZEUG_KATALOG.find((x) => x.id === id)!;
       expect(w.hatPopup).toBe(true);
     }

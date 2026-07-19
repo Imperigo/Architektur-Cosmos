@@ -29,6 +29,10 @@ import { PREPARE_ISLAND_REIHENFOLGE } from '../src/modules/prepare/island/prepar
  *    abgedeckt, `IslandShell.tsx` löst die Pille stationsunabhängig rein
  *    über den String-Insel-Id auf.
  *
+ * v0.8.9 §9 E11 (PBL2, `docs/V089-SPEZ.md`): + 1 weiterer Eintrag `sonne`
+ * (12. Pille) für die neue, fünfte vis-Insel SONNE (Sonnenstunden-Client,
+ * `vis-island-katalog.ts`) — dieselbe additive Logik wie PE2 oben.
+ *
  * **Wichtig für die Distinktheits-Probe:** `ISLAND_GLYPHEN` (Werkzeug-Icons)
  * und `ISLAND_PILL_GLYPHEN` (Insel-Pillen) teilen sich zwei Schlüssel
  * (`graph`, `darstellung`) — das sind bewusst ZWEI VERSCHIEDENE Zeichnungen
@@ -117,11 +121,24 @@ describe('island-glyphen: 11 Pill-Icons decken alle Insel-Ids aller vier Station
     }
   });
 
-  it('genau 11 Pill-Icons total (4 design + graph/stimmung + blatt/darstellung + aufnahme/wissen/bestand)', () => {
+  it('genau 12 Pill-Icons total (4 design + graph/stimmung + blatt/darstellung + aufnahme/wissen/bestand + sonne)', () => {
     expect(Object.keys(ISLAND_PILL_GLYPHEN).sort()).toEqual(
-      ['ansicht', 'aufnahme', 'austausch', 'bestand', 'blatt', 'darstellung', 'graph', 'projekt', 'stimmung', 'wissen', 'zeichnen'].sort(),
+      [
+        'ansicht',
+        'aufnahme',
+        'austausch',
+        'bestand',
+        'blatt',
+        'darstellung',
+        'graph',
+        'projekt',
+        'sonne',
+        'stimmung',
+        'wissen',
+        'zeichnen',
+      ].sort(),
     );
-    expect(Object.keys(ISLAND_PILL_GLYPHEN)).toHaveLength(11);
+    expect(Object.keys(ISLAND_PILL_GLYPHEN)).toHaveLength(12);
   });
 
   it('jeder ISLAND_PILL_GLYPHEN-Schlüssel ist eine echte Insel-Id einer der vier Stationen (kein Tippfehler)', () => {
@@ -137,7 +154,7 @@ describe('island-glyphen: 11 Pill-Icons decken alle Insel-Ids aller vier Station
   });
 });
 
-describe('island-glyphen: alle 32 Icons (21 Werkzeug + 11 Pille) — Bauvorschrift je Icon (werkzeug-icons.tsx:1-31)', () => {
+describe('island-glyphen: alle 33 Icons (21 Werkzeug + 12 Pille) — Bauvorschrift je Icon (werkzeug-icons.tsx:1-31)', () => {
   // s. Datei-Kopfkommentar: bewusst KEIN Objekt-Merge (würde die zwei
   // geteilten Schlüssel `graph`/`darstellung` stillschweigend kollabieren)
   // — stattdessen zwei präfigierte Namenslisten über eine gemeinsame Map.
@@ -146,8 +163,8 @@ describe('island-glyphen: alle 32 Icons (21 Werkzeug + 11 Pille) — Bauvorschri
   for (const [id, Icon] of Object.entries(ISLAND_PILL_GLYPHEN)) ALLE.set(`pille:${id}`, Icon);
   const NAMEN = [...ALLE.keys()];
 
-  it('insgesamt genau 32 Icons (21 Werkzeug + 11 Pille), keine Kollision beim Zählen', () => {
-    expect(NAMEN).toHaveLength(32);
+  it('insgesamt genau 33 Icons (21 Werkzeug + 12 Pille), keine Kollision beim Zählen', () => {
+    expect(NAMEN).toHaveLength(33);
   });
 
   it('jedes Icon rendert ein SVG mit viewBox 0 0 24 24, strokeWidth 1.75, runden Kappen/Joins, aria-hidden', () => {
@@ -203,7 +220,7 @@ describe('island-glyphen: alle 32 Icons (21 Werkzeug + 11 Pille) — Bauvorschri
     expect(html).toContain('viewBox="0 0 24 24"');
   });
 
-  it('die 32 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat — auch nicht zwischen werkzeug:graph/pille:graph oder werkzeug:darstellung/pille:darstellung)', () => {
+  it('die 33 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat — auch nicht zwischen werkzeug:graph/pille:graph oder werkzeug:darstellung/pille:darstellung oder werkzeug:sonne/pille:sonne)', () => {
     const markup = NAMEN.map((name) => renderToStaticMarkup(ALLE.get(name)!({})));
     expect(new Set(markup).size).toBe(NAMEN.length);
   });

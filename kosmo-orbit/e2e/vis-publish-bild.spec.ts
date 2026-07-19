@@ -15,6 +15,17 @@ import { waehleOption } from './helfer/waehleOption';
  *
  * Eigene Fake-Bridge auf Port 8600 (Hauptbaum-Default, Muster
  * `visgraph.spec.ts`-Dateikopf) — reine Testumgebungs-Anpassung.
+ *
+ * **v0.8.9 §9 E13 Nachtrag (`docs/V089-SPEZ.md`, PBL2-089):** die feste
+ * `BILD_LABEL_FAKE_RENDER`-Konstante wurde durch `bildLabel()` ersetzt —
+ * `aufnahmeAufsBlatt` trägt seither das EIGENE, ehrliche Label «Aufnahme
+ * (Viewport)» statt des Fake-Render-Labels (ein Screenshot war nie ein
+ * Fake-Render). Der erste Test unten (Aufnahme→Blatt-Pfad) wurde auf diese
+ * NEUE, korrekte Semantik umgeschrieben; die drei übrigen Tests (Render-Job-
+ * Pfad, C-11-Matrix-Fund, Deckel) bleiben unverändert bei
+ * `LABEL_FAKE_RENDER` — sie hängen alle am Render-Job-Pfad
+ * (`bildAufsBlatt`/`platziereBildAufsBlatt` ohne Herkunft), für den die E7/
+ * V088-Garantie unverändert gilt.
  */
 
 declare global {
@@ -116,15 +127,26 @@ test('Fake-Render via Bridge → Aufnahme → Aufs Blatt: Asset gesetzt, Pflicht
     return { bildId: bild.id, assetId: bild.assetId, title: bild.title };
   });
   expect(sheetInfo.assetId).not.toBeNull();
-  // E7 Sanktion 8: Titel ist ZWINGEND das Fake-Render-Label — unabhängig vom
-  // `titel`-Node-Param («Visualisierung»), den der Aufrufer sonst gesetzt hätte.
-  expect(sheetInfo.title).toBe(LABEL_FAKE_RENDER);
+  // v0.8.9 §9 E13 (`docs/V089-SPEZ.md`, PBL2-089) ändert diese EINE
+  // Erwartung bewusst: der `blatt`-Node in diesem Test ist mit dem
+  // AUFNAHME-Node verbunden (Schritt 2 oben), NICHT mit dem Render-Node aus
+  // Schritt 1 (der nur die Bridge-Strecke separat mitbeweist) — «Aufs Blatt»
+  // läuft für ihn also über `aufnahmeAufsBlatt`, nicht über `bildAufsBlatt`.
+  // Vor E13 trugen BEIDE Pfade dieselbe feste `BILD_LABEL_FAKE_RENDER`-
+  // Konstante (E7/V088-SPEZ Sanktion 8) — ein Viewport-Screenshot wurde damit
+  // fälschlich als «Fake-Render» beschriftet, obwohl er nie einer war. E13
+  // macht das ehrlich: der Aufnahme-Pfad trägt jetzt sein EIGENES Label
+  // «Aufnahme (Viewport)» (`vis-jobs.ts::aufnahmeAufsBlatt`), unabhängig von
+  // `bildLabel()`. Die Render-Pfad-Garantie (E7 Sanktion 8 bleibt für ECHTE
+  // Bridge-Jobs scharf) bleibt unverändert und ist unten in `C-11-Matrix-
+  // Fund`/`Deckel`-Test weiter mit `LABEL_FAKE_RENDER` bewiesen.
+  expect(sheetInfo.title).toBe('Aufnahme (Viewport)');
 
   // 4) Station wechseln: das Label muss in der ECHTEN Publish-Ansicht auftauchen,
   // nicht nur im Doc-Feld (Inspector-Input `bild-titel`, PublishWorkspace.tsx).
   await page.evaluate(() => window.__kosmo.open('publish'));
   await page.locator(`[data-testid="blatt-bild-${sheetInfo.bildId}"]`).click();
-  await expect(page.locator('[data-testid="bild-titel"]')).toHaveValue(LABEL_FAKE_RENDER);
+  await expect(page.locator('[data-testid="bild-titel"]')).toHaveValue('Aufnahme (Viewport)');
   await page.screenshot({ path: 'e2e-results/vis-publish-bild-label.png' });
 });
 

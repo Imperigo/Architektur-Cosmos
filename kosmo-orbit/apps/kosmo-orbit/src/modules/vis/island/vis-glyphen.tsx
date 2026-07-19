@@ -4,7 +4,9 @@ import type { ComponentType, ReactNode } from 'react';
  * Vis-Glyphen-Bibliothek (PA4, `docs/V085-SPEZ.md` §3 E6 + §7 C-13) — 13
  * echte SVG-Icons für den kompletten `vis-island-katalog.ts`-Werkzeugsatz
  * (GRAPH 3 / ANSICHT 4 / STIMMUNG 1 / AUSTAUSCH 5), bisher reine
- * Zwei-Buchstaben-Text-Kürzel (`'NO'`, `'AR'`, …).
+ * Zwei-Buchstaben-Text-Kürzel (`'NO'`, `'AR'`, …). v0.8.9 §9 E11 (PBL2,
+ * `docs/V089-SPEZ.md`): additiv um ein 14. Icon für die neue SONNE-Insel
+ * (Sonnenstunden, 1) erweitert.
  *
  * **Bauvorschrift (BINDEND, identisch zu `design/werkzeug-icons.tsx:1-31` +
  * `design/island/island-glyphen.tsx` — dieselbe 24er-Norm, hier für den
@@ -181,7 +183,21 @@ const manuell = glyphe(
   </>,
 );
 
-/** Die 13 Vis-Werkzeug-Icons, geschlüsselt nach `vis-island-katalog.ts`s `IslandWerkzeug.id`. */
+/**
+ * Sonnenstunden — Sonnenscheibe mit acht Strahlen (Sonnenuhr-Motiv, bewusst
+ * verschieden vom «Sonne-hinter-Wolke»-Motiv von `stimmung`), Akzent im
+ * Zentrum. v0.8.9 §9 E11 (PBL2, `docs/V089-SPEZ.md`) — SONNE-Insel
+ * (`vis-island-katalog.ts`).
+ */
+const sonnenstunden = glyphe(
+  <>
+    <circle cx="12" cy="12" r="4.2" />
+    <path d="M12 3 V5.4 M12 18.6 V21 M3 12 H5.4 M18.6 12 H21 M5.9 5.9 L7.6 7.6 M16.4 16.4 L18.1 18.1 M5.9 18.1 L7.6 16.4 M16.4 7.6 L18.1 5.9" />
+    {akzent(12, 12)}
+  </>,
+);
+
+/** Die Vis-Werkzeug-Icons, geschlüsselt nach `vis-island-katalog.ts`s `IslandWerkzeug.id`. */
 export const VIS_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   palette,
   ausrichten,
@@ -196,4 +212,5 @@ export const VIS_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   'kamera-vorschlagen': kameraVorschlagen,
   report,
   manuell,
+  sonnenstunden,
 };

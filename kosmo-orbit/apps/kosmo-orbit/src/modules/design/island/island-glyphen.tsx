@@ -429,10 +429,27 @@ const bestandPille = glyphe(
   </>,
 );
 
-/** Die 11 Pill-Icons — 4 design-Inseln + 7 weitere Insel-Ids der anderen
- *  drei Stationen (Bauauftrag Punkt 3). Geschlüsselt nach der jeweiligen
- *  Katalog-`IslandId` (design/vis/publish/prepare teilen den String-Raum,
- *  s. Kommentar oben). */
+/**
+ * Sonne-Pille (vis, v0.8.9 §9 E11, `docs/V089-SPEZ.md`, PBL2) — Sonne über
+ * einer Horizontlinie mit zwei Schrägstrahlen (Sonnenstand/Schattenwurf-
+ * Andeutung), Akzent im Sonnenkern. Bewusst ein DRITTES, eigenes Motiv
+ * (weder das design-Werkzeug-Icon `sonne` (Z.138, Strahlenkranz-Kreis) noch
+ * `vis-glyphen.tsx`s `sonnenstunden` (Sonnenuhr-Strahlenkranz) — die
+ * Distinktheits-Probe (`island-glyphen.test.tsx`) verlangt paarweise
+ * verschiedene Zeichnungen über ALLE Werkzeug-/Pill-Icons hinweg).
+ */
+const sonnePille = glyphe(
+  <>
+    <circle cx="12" cy="9" r="3.4" />
+    <path d="M3 18 H21 M6 18 L9 13 M18 18 L15 13" />
+    {akzent(12, 9)}
+  </>,
+);
+
+/** Die 12 Pill-Icons — 4 design-Inseln + 8 weitere Insel-Ids der anderen
+ *  drei Stationen (Bauauftrag Punkt 3 + v0.8.9 §9 E11 SONNE). Geschlüsselt
+ *  nach der jeweiligen Katalog-`IslandId` (design/vis/publish/prepare teilen
+ *  den String-Raum, s. Kommentar oben). */
 export const ISLAND_PILL_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   zeichnen: zeichnenPille,
   ansicht: ansichtPille,
@@ -445,4 +462,5 @@ export const ISLAND_PILL_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   aufnahme: aufnahmePille,
   wissen: wissenPille,
   bestand: bestandPille,
+  sonne: sonnePille,
 };

@@ -1,9 +1,22 @@
 /* PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — Stufe-2/3-Innenraum-Styling der
-   vier Vis-Inseln (`island/inhalte/*.tsx`). Muster 1:1 aus `design/island/
+   Vis-Inseln (`island/inhalte/*.tsx`). Muster 1:1 aus `design/island/
    inhalte/pd3a.css` übernommen (eigene, additive Datei — `island.css` selbst
    bleibt unangetastet, nur importiert): reine Innenraum-Typografie/-Abstände
    für den `.isl-popup`/`.isl-fenster`-Rahmen (PD1), NUR `var(--k-*)`-Token,
    kein neuer Hex-Wert. */
+
+/* v0.8.9 §9 E11 (PBL2, `docs/V089-SPEZ.md`) — fünfte, eigene Rand-Position
+   für die neue SONNE-Insel (`vis-island-katalog.ts`). ADDITIV neben den vier
+   design-`.isl-rand-*`-Ankern (`design/island/island.css`, dort NICHT
+   angefasst — nur importiert/gelesen wie der Rest dieser Datei): unten-
+   links, ein eigener Anker-Punkt, überlagert weder `.isl-rand-links`
+   (`left:64px; top:50%`) noch `.isl-rand-unten` (`bottom:14px; left:50%`).
+   `.isl-root` liefert bereits `position:fixed` (`design/island/island.css`
+   Z.73) — hier nur die Koordinaten, exakt wie die vier design-Anker es tun. */
+.isl-rand-sonne {
+  left: 14px;
+  bottom: 14px;
+}
 
 .visisl-stufe2 {
   display: flex;

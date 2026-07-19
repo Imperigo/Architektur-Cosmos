@@ -22,6 +22,17 @@ import { VIS_GLYPHEN } from './vis-glyphen';
  * - **AUSTAUSCH** (unten, horizontal): Render senden, Aufs Plakat, Kamera
  *   vorschlagen, Report, Manuell (Rückweg — Muster `design`s `manuell`-
  *   Werkzeug in AUSTAUSCH, `island-katalog.ts` Z.174).
+ * - **SONNE** (v0.8.9 §9 E11, `docs/V089-SPEZ.md`, PBL2) — FÜNFTE, EIGENE
+ *   Insel (unten-links, vertikal): «Sonnenstunden berechnen (HomeStation)»,
+ *   ein einzelnes Werkzeug (`island/inhalte/sonne.tsx`). Eigene, ehrliche
+ *   Rand-Position (`isl-rand-sonne`, `vis-island.css` — additiv NEBEN den vier
+ *   design-`.isl-rand-*`-Ankern aus `design/island/island.css`, die Vis nur
+ *   liest/importiert, s. `IslandShell.tsx`), damit sie keine der vier
+ *   Bestandsinseln überlagert. Das Icon (`vis-glyphen.tsx`) ist eine reine
+ *   ALIAS-Zeile auf die bestehende `stimmung`-Zeichnung (Sonne hinter Wolke,
+ *   thematisch passend) — kein neues SVG-Motiv, nur ein zusätzlicher
+ *   Katalog-Schlüssel, damit `VIS_GLYPHEN` weiterhin JEDEN Katalog-Eintrag
+ *   deckt (Invariante aus `test/vis-glyphen.test.tsx`).
  *
  * `toolId` bleibt bei JEDEM Werkzeug leer (das ist eine design-`ToolId`-Union,
  * s. `island-katalog.ts`-Kopfkommentar) — Vis hat keine Entsprechung, jede
@@ -36,7 +47,7 @@ import { VIS_GLYPHEN } from './vis-glyphen';
  * E8) bleibt ein echter, aber ab jetzt ungenutzter Typ-Fallback.
  */
 
-export type VisIslandId = 'graph' | 'ansicht' | 'stimmung' | 'austausch';
+export type VisIslandId = 'graph' | 'ansicht' | 'stimmung' | 'austausch' | 'sonne';
 
 /** Löst eine `vis-glyphen.tsx`-Icon-Id auf — Muster `island-katalog.ts`s `icon()`. */
 function icon(id: string): ComponentType<{ size?: number }> {
@@ -85,14 +96,30 @@ const AUSTAUSCH: readonly IslandWerkzeug[] = [
   werkzeug('manuell', 'Manuell', 'austausch', icon('manuell'), false),
 ];
 
-/** Gesamtkatalog, 13 Werkzeuge über 4 Inseln. */
-export const VIS_WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [...GRAPH, ...ANSICHT, ...STIMMUNG, ...AUSTAUSCH];
+// v0.8.9 §9 E11 — die fünfte, eigenständige Insel: EIN Werkzeug, öffnet
+// `island/inhalte/sonne.tsx`s Stufe2/3-Inhalt (Datum-Input, Standort-Anzeige,
+// Sonnenstunden-Berechnung). `icon('stimmung')` statt eines neuen Icons, s.
+// Kopfkommentar oben.
+const SONNE: readonly IslandWerkzeug[] = [
+  werkzeug('sonnenstunden', 'Sonnenstunden', 'sonne', icon('sonnenstunden'), true),
+];
+
+/** Gesamtkatalog, 14 Werkzeuge über 5 Inseln. */
+export const VIS_WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [
+  ...GRAPH,
+  ...ANSICHT,
+  ...STIMMUNG,
+  ...AUSTAUSCH,
+  ...SONNE,
+];
 
 const VIS_RAND_KLASSE: Readonly<Record<VisIslandId, string>> = {
   graph: 'isl-rand-links',
   ansicht: 'isl-rand-oben',
   stimmung: 'isl-rand-rechts',
   austausch: 'isl-rand-unten',
+  // Additive, eigene Rand-Klasse (`vis-island.css`) — s. Kopfkommentar oben.
+  sonne: 'isl-rand-sonne',
 };
 
 const VIS_ORIENTIERUNG: Readonly<Record<VisIslandId, 'vertikal' | 'horizontal'>> = {
@@ -100,6 +127,7 @@ const VIS_ORIENTIERUNG: Readonly<Record<VisIslandId, 'vertikal' | 'horizontal'>>
   ansicht: 'horizontal',
   stimmung: 'vertikal',
   austausch: 'horizontal',
+  sonne: 'vertikal',
 };
 
 const VIS_LABEL: Readonly<Record<VisIslandId, string>> = {
@@ -107,10 +135,18 @@ const VIS_LABEL: Readonly<Record<VisIslandId, string>> = {
   ansicht: 'ANSICHT',
   stimmung: 'STIMMUNG',
   austausch: 'AUSTAUSCH',
+  sonne: 'SONNE',
 };
 
-/** Reihenfolge der vier Vis-Inseln (Bühnenordnung, wie design: links·oben·rechts·unten). */
-export const VIS_ISLAND_REIHENFOLGE: readonly VisIslandId[] = ['graph', 'ansicht', 'stimmung', 'austausch'];
+/** Reihenfolge der fünf Vis-Inseln (Bühnenordnung — die vier design-Ecken,
+ *  SONNE zusätzlich unten-links, s. Kopfkommentar). */
+export const VIS_ISLAND_REIHENFOLGE: readonly VisIslandId[] = [
+  'graph',
+  'ansicht',
+  'stimmung',
+  'austausch',
+  'sonne',
+];
 
 /** Die vier Vis-Inseln in Bühnenordnung — der Default der `IslandBuehne` im Vis-Island-Modus. */
 export const VIS_INSELN: readonly InselKonfig[] = VIS_ISLAND_REIHENFOLGE.map((id) => ({

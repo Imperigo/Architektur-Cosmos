@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { KButton, melde, meldeFehler } from '@kosmo/ui';
+import { KButton, KSwitch, melde, meldeFehler } from '@kosmo/ui';
 import type { VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { useVisRuntime } from '../../vis-runtime';
@@ -24,6 +24,12 @@ function RenderSendenStufe2() {
   const doc = useProject.getState().doc;
   const graph = graphId ? doc.get<VisGraph>(graphId) : undefined;
   const renderNodes = graph?.nodes.filter((n) => n.typ === 'render') ?? [];
+  // v0.8.9 §9 E10 (Line-Art, `docs/V089-SPEZ.md`): EIN Schalter für den
+  // ganzen bestehenden Render-Auslöser dieser Insel (kein zweiter, eigener
+  // Job-Typ — E10 reitet auf der vis--Render-Kette). Reicht `mode:'lineart'`
+  // an `sendeGraphRenderAuftrag` durch, das `vis.skip:true` HART erzwingt
+  // (s. `vis-jobs.ts` Kommentar an `postRenderJob`s `mode`-Param).
+  const [lineArt, setLineArt] = useState(false);
 
   if (!graph || renderNodes.length === 0) {
     return (
@@ -35,6 +41,12 @@ function RenderSendenStufe2() {
 
   return (
     <div className="visisl-stufe2" data-testid="island-render-senden-stufe2" onClick={(e) => e.stopPropagation()}>
+      <KSwitch
+        label="Als Strichzeichnung (Line-Art)"
+        data-testid="island-render-lineart"
+        checked={lineArt}
+        onChange={(e) => setLineArt(e.target.checked)}
+      />
       {renderNodes.map((n, i) => {
         const status = laeufe[n.id]?.status;
         return (
@@ -45,7 +57,14 @@ function RenderSendenStufe2() {
               size="sm"
               tone="accent"
               data-testid={`island-render-ausfuehren-${n.id}`}
-              onClick={() => sendeGraphRenderAuftrag(graphId!, n.id, renderStimmungPreset ? { preset: renderStimmungPreset } : undefined)}
+              onClick={() =>
+                sendeGraphRenderAuftrag(
+                  graphId!,
+                  n.id,
+                  renderStimmungPreset ? { preset: renderStimmungPreset } : undefined,
+                  lineArt ? { mode: 'lineart' } : undefined,
+                )
+              }
             >
               Ausführen
             </KButton>
