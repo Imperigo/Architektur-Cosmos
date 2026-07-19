@@ -89,6 +89,70 @@
  * enthält. Dateikreis dieses Pakets bleibt exklusiv `wissen/training/eval/**`
  * — `packages/kosmo-ai` wird nur GELESEN, nichts dort wurde angefasst.
  *
+ * v0.8.8/PA3 (E8 «Eval-Ausbau: Mehr-Zug + Byte-Diff + Negativfälle»,
+ * `docs/V088-SPEZ.md` §3 E8, §6 Sanktion 9, §7 C-12): DREI additive
+ * Ausbauten, bestehende Ein-Zug-Prompts bleiben byte-identisch lesbar.
+ *
+ * (1) NEU `erwartung`-freie Prompts mit `kategorie: 'mehrzug'` und einer
+ * `zuege`-Liste (`PromptMehrzug`/`MehrZugTurn` unten) — mehrere
+ * Nutzerwunsch/Erwartung-Paare, JEDES als eigener `SkriptZug`
+ * (`skriptFuer` baut jetzt optional eine ganze Zugfolge statt eines
+ * einzigen Zugs), gespielt über MEHRERE `session.send()`-Aufrufe DERSELBEN
+ * `ChatSession` (`spieleAbMehrzug`). **H-37-Grenze (Sanktion 9, bindend):**
+ * ein `SzenarioSkript` bleibt STATISCH (`scripted.ts`-Kopfkommentar) — die
+ * Parameter von Zug N+1 stehen zur AUTORENZEIT in `prompts.json`, NIE
+ * abgeleitet aus der tatsächlichen, zur Laufzeit vom Kernel vergebenen ID
+ * einer in Zug N vorgeschlagenen Entity. Referenzen über Folge-Züge laufen
+ * darum AUSSCHLIESSLICH über den literalen `@ref:kind:name`-String (dieselbe
+ * Schreibweise wie `lauf-refs.ts#loeseWertAuf`, Kinds `storey`/`aufbau`/
+ * `sheet`/`graph`) — dieser Prüfer LÖST diese Strings NIE auf (kein Aufruf
+ * von `loeseLaufPlanRefs`/`loeseWertAuf`), er beweist nur, dass der literale
+ * Platzhalter unverändert durch den ScriptedProvider→ChatSession→Proposal-Weg
+ * läuft (derselbe `enthaeltErwartete`-Teilmengenvergleich wie bei jedem
+ * anderen Parameter). Zwischen zwei Zügen ruft `spieleAbMehrzug`
+ * `session.resolveApplied()`/`resolveLaufAbgelehnt()` für JEDEN offenen
+ * Vorschlag des GERADE gespielten Zugs — das ist KEIN simulierter
+ * Command-Vollzug (kein `doc.apply()`, keine Kernel-Ausführung, der
+ * übergebene `resultSummary` ist eine erfundene Eval-Quittierung): es
+ * dient EINZIG dazu, dem `ScriptedProvider` intern zu signalisieren „dieser
+ * Zug ist fertig" (die „Folge-Turn NACH Tool-Resultaten"-Verzweigung in
+ * `scripted.ts`), damit sein `zugIndex` auf den NÄCHSTEN Zug weiterzählt.
+ * Der Byte-Diff (Punkt 2) beweist das für jeden Mehr-Zug-Lauf: `doc.toJSON()`
+ * ist vor Zug 1 und nach dem letzten Zug identisch. Ehrliche Grenze: ein
+ * Mehr-Zug-Turn deckt hier nur `erwartung.typ` `'command'`/`'ablehnung'`/
+ * `'laufplan'` ab (`pruefeZugErwartung` wirft für alles andere bewusst statt
+ * still falsch zu prüfen) — echte Mehrschritt-AUSFÜHRUNG mit @ref-Auflösung
+ * gegen einen fortschreitenden Live-Doc bleibt exklusiv `../kosmo-laufplaene/
+ * pruefe-laufplaene.mts`.
+ *
+ * (2) `docUnveraendert` ist jetzt ein ECHTER Byte-Diff (ROADMAP-498): statt
+ * der bisherigen Heuristik `doc.revision === 0 && doc.entities.size === 0`
+ * vergleicht `spieleAb`/`spieleAbMehrzug` `JSON.stringify(doc.toJSON())` VOR
+ * dem ersten und NACH dem letzten Zug — gilt jetzt für JEDEN Fall (nicht nur
+ * `lauf-vorschlag`/`lauf-vorschlag-abgelehnt`), auch wenn nur diese beiden
+ * (plus die neuen `command-fehler`/`mehrzug`-Zweige) das Feld tatsächlich in
+ * ihrem Bestehen/Scheitern auswerten.
+ *
+ * (3) Zwei neue Negativfälle: (a) `cmd-44` — ein `lauf_planen`-Plan mit ZWEI
+ * verschiedenen erfundenen commandIds, eine davon zweimal im Plan wiederholt
+ * — beweist, dass `chat.ts`s bestehende `[...new Set(unbekannt)]`-Dedup
+ * (C-12-Fund v0.8.6, unverändert) BEIDE Namen nennt und KEINEN davon
+ * wiederholt (`erwartung.dedupFragmente`, neues optionales Feld auf
+ * `lauf-vorschlag-abgelehnt`). (b) `cmd-45` — NEU `erwartung.typ:
+ * 'command-fehler'` (`PromptCommandFehler`): ein ECHTER Tool-Aufruf, den
+ * `validateToolCall()` ablehnt, BEVOR er zur Diff-Karte wird (KEIN
+ * `onProposal`, Doc bleibt Byte-gleich) — hier `design.eigenschaftSetzen`
+ * mit `feld: 'rotationGrad'` auf einer `furniture`-Entity. **Ehrlicher
+ * Stand (Live-Sondierung 19.07.2026 gegen DIESEN Worktree-HEAD):**
+ * `editableFields` (`design.ts:702-723`) kennt `rotationGrad` noch NICHT
+ * (das ist PA1-088/E2, paralleles Paket) — der Fall prüft darum HEUTE den
+ * generischen Ablehnungsweg „unbekanntes Feld" (`feld: Invalid option:
+ * expected one of …`, zod-enum-Fehler VOR jeder kind-spezifischen Prüfung).
+ * Sobald PA1-088/E2 landet und `rotationGrad` ein bekanntes Feld wird, prüft
+ * derselbe Aufruf stattdessen `eigenschaftSetzen`s WERT-Validierung
+ * (`'schräg'` ist keine gültige Zahl) — `erwartung.enthaeltFehlertext` muss
+ * dann nachgeführt werden (s. `notiz`-Feld bei `cmd-45` in `prompts.json`).
+ *
  * Aufruf:
  *   npx tsx wissen/training/eval/kosmo-zeichner-commands/pruefe-eval.mts
  */
@@ -118,12 +182,27 @@ import {
 
 const HIER = dirname(fileURLToPath(import.meta.url));
 
+/** E8 (v0.8.8/PA3): die einzelnen `erwartung`-Formen als eigene Typen —
+ * VORHER inline in jedem `Prompt*`-Interface dupliziert, jetzt geteilt, damit
+ * `MehrZugTurn` (NEU, s. unten) dieselben Formen je Zug wiederverwenden kann,
+ * ohne die bestehenden `Prompt*`-Interfaces (und damit die bestehende
+ * `prompts.json`-Lesbarkeit) zu ändern — reine Typ-Extraktion, keine
+ * Feld-Änderung an einer bestehenden Form. */
+interface ErwartungCommand {
+  typ: 'command';
+  commandId: string;
+  params: Record<string, unknown>;
+}
+interface ErwartungAblehnung {
+  typ: 'ablehnung';
+}
+
 interface PromptCommand {
   id: string;
   kategorie: string;
   nutzerwunsch: string;
   kosmoText: string;
-  erwartung: { typ: 'command'; commandId: string; params: Record<string, unknown> };
+  erwartung: ErwartungCommand;
 }
 
 interface PromptAblehnung {
@@ -131,7 +210,7 @@ interface PromptAblehnung {
   kategorie: 'ablehnung';
   nutzerwunsch: string;
   kosmoText: string;
-  erwartung: { typ: 'ablehnung' };
+  erwartung: ErwartungAblehnung;
 }
 
 /** EIN erwarteter Schritt eines LaufPlans — `params` optional (ein Schritt
@@ -148,6 +227,42 @@ interface LaufPlanSchrittErwartung {
   begruendung?: string;
 }
 
+interface ErwartungLaufplan {
+  typ: 'laufplan';
+  schritte: LaufPlanSchrittErwartung[];
+}
+interface ErwartungLaufVorschlag {
+  typ: 'lauf-vorschlag';
+  titel: string;
+  schritte: LaufPlanSchrittErwartung[];
+}
+/** E8 (v0.8.8/PA3, Negativfall Dedup): `dedupFragmente` optional/additiv —
+ * jedes Fragment muss im Tool-FEHLER-Text GENAU EINMAL vorkommen, auch wenn
+ * die zugrundeliegende erfundene commandId MEHRFACH im Plan steht (beweist
+ * `chat.ts`s bestehende `[...new Set(unbekannt)]`-Dedup, C-12-Fund v0.8.6,
+ * unverändert). Fehlt das Feld, bleibt das Verhalten wie bei `cmd-41`
+ * (v0.8.7/PA3) — nur `enthaeltFehlertext` wird geprüft. */
+interface ErwartungLaufVorschlagAbgelehnt {
+  typ: 'lauf-vorschlag-abgelehnt';
+  titel: string;
+  schritte: LaufPlanSchrittErwartung[];
+  enthaeltFehlertext: string;
+  dedupFragmente?: string[];
+}
+/** E8 (v0.8.8/PA3, Negativfall E2-Anker): ein ECHTER Tool-Aufruf, den
+ * `validateToolCall()` ablehnt, BEVOR er zur Diff-Karte wird — anders als
+ * `'ablehnung'` (Skript hat GAR KEINEN Tool-Aufruf, Kosmo würde nachfragen)
+ * ruft dieser Fall das Werkzeug tatsächlich auf; anders als
+ * `'lauf-vorschlag-abgelehnt'` ist es ein normaler Command-Tool-Aufruf
+ * (kein `lauf_planen`), die Ablehnung passiert in `validateToolCall()`
+ * (zod-Schema), nicht in der `bekannteCommandIds`-Prüfung. */
+interface ErwartungCommandFehler {
+  typ: 'command-fehler';
+  commandId: string;
+  params: Record<string, unknown>;
+  enthaeltFehlertext: string;
+}
+
 /** E8 (v0.8.6/PA4, D9): eine ganze Schritt-Folge statt eines einzelnen
  * Tool-Aufrufs — s. Kopfkommentar für die Grenze ggü. dem `lauf_planen`-Weg (E4). */
 interface PromptLaufplan {
@@ -155,7 +270,7 @@ interface PromptLaufplan {
   kategorie: 'laufplan';
   nutzerwunsch: string;
   kosmoText: string;
-  erwartung: { typ: 'laufplan'; schritte: LaufPlanSchrittErwartung[] };
+  erwartung: ErwartungLaufplan;
 }
 
 /** E7 (v0.8.7/PA3, D8, `docs/V087-SPEZ.md` §3): der ECHTE `lauf_planen`-Weg —
@@ -167,7 +282,7 @@ interface PromptLaufVorschlag {
   kategorie: 'lauf-vorschlag';
   nutzerwunsch: string;
   kosmoText: string;
-  erwartung: { typ: 'lauf-vorschlag'; titel: string; schritte: LaufPlanSchrittErwartung[] };
+  erwartung: ErwartungLaufVorschlag;
 }
 
 /** E7-Negativfall (v0.8.7/PA3): der Plan trägt (mindestens) eine ERFUNDENE
@@ -182,15 +297,53 @@ interface PromptLaufVorschlagAbgelehnt {
   kategorie: 'lauf-vorschlag-abgelehnt';
   nutzerwunsch: string;
   kosmoText: string;
-  erwartung: {
-    typ: 'lauf-vorschlag-abgelehnt';
-    titel: string;
-    schritte: LaufPlanSchrittErwartung[];
-    enthaeltFehlertext: string;
-  };
+  erwartung: ErwartungLaufVorschlagAbgelehnt;
 }
 
-type Prompt = PromptCommand | PromptAblehnung | PromptLaufplan | PromptLaufVorschlag | PromptLaufVorschlagAbgelehnt;
+/** E8 (v0.8.8/PA3, Negativfall E2-Anker, s. Kopfkommentar für den ehrlichen
+ * PA1-Nachführungs-Vermerk). `notiz` ist rein dokumentarisch (fliesst in
+ * keine Prüf-Logik ein) — hier für den «Erwartung ändert sich nach PA1-088/
+ * E2»-Hinweis genutzt. */
+interface PromptCommandFehler {
+  id: string;
+  kategorie: 'command-fehler';
+  nutzerwunsch: string;
+  kosmoText: string;
+  erwartung: ErwartungCommandFehler;
+  notiz?: string;
+}
+
+/** E8 (v0.8.8/PA3, Mehr-Zug): EIN Zug innerhalb eines Mehr-Zug-Prompts —
+ * wiederverwendet dieselben Erwartungsformen wie ein Ein-Zug-Prompt. Nur
+ * `command`/`ablehnung`/`laufplan` werden je Zug tatsächlich geprüft
+ * (`pruefeZugErwartung` unten wirft für alles andere bewusst statt still
+ * falsch zu prüfen — s. Kopfkommentar). */
+interface MehrZugTurn {
+  nutzerwunsch: string;
+  kosmoText: string;
+  erwartung: ErwartungCommand | ErwartungAblehnung | ErwartungLaufplan | ErwartungLaufVorschlag | ErwartungLaufVorschlagAbgelehnt;
+}
+
+/** E8 (v0.8.8/PA3, D-, `docs/V088-SPEZ.md` §3 E8): eine ganze Zugfolge STATT
+ * eines einzelnen `nutzerwunsch`/`erwartung`-Paars — additiv (kein
+ * bestehendes `Prompt*`-Interface verliert oder ändert ein Feld). Referenzen
+ * über Züge hinweg AUSSCHLIESSLICH via `@ref:kind:name` (s. Kopfkommentar,
+ * Sanktion 9) — nie ein rohes `entityId`, das aus einem früheren Zug
+ * „zurückgelesen" würde. */
+interface PromptMehrzug {
+  id: string;
+  kategorie: 'mehrzug';
+  zuege: MehrZugTurn[];
+}
+
+type Prompt =
+  | PromptCommand
+  | PromptAblehnung
+  | PromptLaufplan
+  | PromptLaufVorschlag
+  | PromptLaufVorschlagAbgelehnt
+  | PromptCommandFehler
+  | PromptMehrzug;
 
 interface PromptsDatei {
   adapter: string;
@@ -242,49 +395,79 @@ function baueLaufPlanSchritte(
   }));
 }
 
-/** Baut aus EINEM Prompt ein Ein-Zug-Skript für den ScriptedProvider —
- * `command`: genau EIN Tool-Aufruf (die erwartete commandId/Parameter);
+/** E8 (v0.8.8/PA3): baut die `toolCalls` EINES Zugs aus einer Erwartungsform
+ * — herausgezogen aus `skriptFuer` (vormals inline), damit sowohl ein
+ * Ein-Zug-`Prompt` als auch JEDER einzelne `MehrZugTurn` (NEU) denselben Weg
+ * nehmen. `command`/`command-fehler`: genau EIN Tool-Aufruf (bei
+ * `command-fehler` bewusst ein Aufruf, den `validateToolCall()` ablehnen
+ * SOLL — der Aufruf selbst unterscheidet sich nicht von `command`);
  * `laufplan`: MEHRERE Tool-Aufrufe IM SELBEN Zug (ein Paket/eine
  * Diff-Karten-Kette, `scripted.ts` — `SkriptZug.toolCalls`), einer je
  * erwartetem Schritt, in Sequenz; `lauf-vorschlag`/`lauf-vorschlag-abgelehnt`
  * (E7, v0.8.7/PA3): EIN Tool-Aufruf ans echte `lauf_planen`-Werkzeug, dessen
- * Argumente den GANZEN Plan tragen — ANDERS als `laufplan` (mehrere echte
- * Command-Aufrufe im selben Zug) ist das hier ein einziger Aufruf an ein
- * einziges Nicht-Command-Werkzeug; `ablehnung`: KEIN Tool-Aufruf (Kosmo würde
- * nachfragen/ehrlich absagen). */
-function skriptFuer(p: Prompt): SzenarioSkript {
-  let toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
-  if (p.erwartung.typ === 'command') {
-    toolCalls = [{ name: toolNameFor(p.erwartung.commandId), args: p.erwartung.params }];
-  } else if (p.erwartung.typ === 'laufplan') {
-    toolCalls = p.erwartung.schritte.map((s) => ({ name: toolNameFor(s.commandId), args: s.params ?? {} }));
-  } else if (p.erwartung.typ === 'lauf-vorschlag' || p.erwartung.typ === 'lauf-vorschlag-abgelehnt') {
-    toolCalls = [
+ * Argumente den GANZEN Plan tragen; `ablehnung`: KEIN Tool-Aufruf (Kosmo
+ * würde nachfragen/ehrlich absagen). */
+function toolCallsFuerErwartung(
+  erwartung: ErwartungCommand | ErwartungAblehnung | ErwartungLaufplan | ErwartungLaufVorschlag | ErwartungLaufVorschlagAbgelehnt | ErwartungCommandFehler,
+): Array<{ name: string; args: Record<string, unknown> }> {
+  if (erwartung.typ === 'command' || erwartung.typ === 'command-fehler') {
+    return [{ name: toolNameFor(erwartung.commandId), args: erwartung.params }];
+  }
+  if (erwartung.typ === 'laufplan') {
+    return erwartung.schritte.map((s) => ({ name: toolNameFor(s.commandId), args: s.params ?? {} }));
+  }
+  if (erwartung.typ === 'lauf-vorschlag' || erwartung.typ === 'lauf-vorschlag-abgelehnt') {
+    return [
       {
         name: LAUF_PLANEN_TOOL_NAME,
-        args: { titel: p.erwartung.titel, schritte: baueLaufPlanSchritte(p.erwartung.schritte) },
+        args: { titel: erwartung.titel, schritte: baueLaufPlanSchritte(erwartung.schritte) },
       },
     ];
-  } else {
-    toolCalls = [];
+  }
+  // 'ablehnung'
+  return [];
+}
+
+/** Baut aus EINEM Prompt ein Skript für den ScriptedProvider — ein Ein-Zug-
+ * `Prompt` (`command`/`ablehnung`/`laufplan`/`lauf-vorschlag`/
+ * `lauf-vorschlag-abgelehnt`/`command-fehler`) wird zu GENAU EINEM `SkriptZug`
+ * (unverändert ggü. vor E8); ein `PromptMehrzug` (E8, v0.8.8/PA3, NEU) wird
+ * zu MEHREREN `SkriptZug`s, einem je `zuege`-Eintrag — die `'zuege' in p`-
+ * Prüfung diskriminiert strukturell statt über `kategorie` (die bei den
+ * bestehenden `Prompt*`-Formen bewusst ein loses `string` bleibt, s. o.). */
+function skriptFuer(p: Prompt): SzenarioSkript {
+  if ('zuege' in p) {
+    return {
+      id: p.id,
+      zuege: p.zuege.map((z) => ({
+        nutzerErwartung: z.nutzerwunsch,
+        antwortText: z.kosmoText,
+        toolCalls: toolCallsFuerErwartung(z.erwartung),
+      })),
+    };
   }
   return {
     id: p.id,
-    zuege: [{ nutzerErwartung: p.nutzerwunsch, antwortText: p.kosmoText, toolCalls }],
+    zuege: [{ nutzerErwartung: p.nutzerwunsch, antwortText: p.kosmoText, toolCalls: toolCallsFuerErwartung(p.erwartung) }],
   };
 }
 
-/** Fährt EINEN Prompt durch die echte ChatSession (ScriptedProvider-Weg,
- * exakt das Muster aus `packages/kosmo-ai/test/scripted.test.ts`) und liefert
- * die tatsächlich gemeldeten Vorschläge + einen etwaigen Fehlertext.
+/** Fährt EINEN Ein-Zug-Prompt durch die echte ChatSession (ScriptedProvider-
+ * Weg, exakt das Muster aus `packages/kosmo-ai/test/scripted.test.ts`) und
+ * liefert die tatsächlich gemeldeten Vorschläge + einen etwaigen Fehlertext.
+ * NICHT für `PromptMehrzug` (s. `spieleAbMehrzug` unten, braucht mehrere
+ * `session.send()`-Aufrufe derselben Session).
  *
  * E7 (v0.8.7/PA3) erweitert die Rückgabe um `laufVorschlaege` (der
- * `onLaufVorschlag`-Beobachter, s. Kopfkommentar), `historie` (Session-
+ * `onLaufVorschlag`-Beobachter, s. Kopfkommentar) und `historie` (Session-
  * Nachrichten inkl. der `role: 'tool'`-FEHLER-Meldungen, für den
- * Negativfall) und `docUnveraendert` (item d: kein Command lief — der
- * einfachste ehrliche Beweis ist `revision === 0` UND keine Entity, weil
- * NUR `doc.apply()` beides ändert). */
-async function spieleAb(p: Prompt): Promise<{
+ * Negativfall). E8 (v0.8.8/PA3, ROADMAP-498): `docUnveraendert` ist jetzt ein
+ * ECHTER Byte-Diff (`JSON.stringify(doc.toJSON())` vor/nach `session.send()`)
+ * statt der bisherigen `revision === 0 && entities.size === 0`-Heuristik —
+ * derselbe Beweis, aber ohne Kenntnis der internen `KosmoDoc`-Felder
+ * vorauszusetzen (ein künftiges internes Refactoring von `revision`/
+ * `entities` bräche diese Prüfung sonst still). */
+async function spieleAb(p: Exclude<Prompt, PromptMehrzug>): Promise<{
   proposals: Proposal[];
   laufVorschlaege: LaufVorschlag[];
   fehler: string;
@@ -293,6 +476,7 @@ async function spieleAb(p: Prompt): Promise<{
   docUnveraendert: boolean;
 }> {
   const doc = new KosmoDoc();
+  const vorher = JSON.stringify(doc.toJSON());
   const skript = skriptFuer(p);
   const provider = new ScriptedProvider(p.id, { [p.id]: skript });
   const proposals: Proposal[] = [];
@@ -307,19 +491,186 @@ async function spieleAb(p: Prompt): Promise<{
     onLaufVorschlag: (v) => laufVorschlaege.push(v),
   });
   await session.send(p.nutzerwunsch);
+  const nachher = JSON.stringify(doc.toJSON());
   return {
     proposals,
     laufVorschlaege,
     fehler,
     text,
     historie: session.history,
-    docUnveraendert: doc.revision === 0 && doc.entities.size === 0,
+    docUnveraendert: vorher === nachher,
+  };
+}
+
+/** E8 (v0.8.8/PA3, Mehr-Zug): prüft EINEN Zug-Ergebnis gegen seine Erwartung
+ * — dieselbe Vergleichslogik wie die entsprechenden Zweige in `werteAus`
+ * unten, aber wiederverwendbar je Zug eines `PromptMehrzug`. Nur
+ * `command`/`ablehnung`/`laufplan` sind unterstützt (s. Kopfkommentar/
+ * `MehrZugTurn`) — für alles andere wirft diese Funktion bewusst, statt still
+ * eine falsche/unvollständige Prüfung vorzutäuschen. Liefert `null` bei
+ * Erfolg, sonst einen Begründungstext. */
+function pruefeZugErwartung(
+  erwartung: MehrZugTurn['erwartung'],
+  ergebnis: { proposals: Proposal[]; laufVorschlaege: LaufVorschlag[] },
+): string | null {
+  if (erwartung.typ === 'command') {
+    if (ergebnis.proposals.length !== 1) {
+      return `erwartet: genau 1 Vorschlag, erhalten: ${ergebnis.proposals.length} (zod-Validierung des erwarteten Tool-Calls ist vermutlich fehlgeschlagen)`;
+    }
+    const prop = ergebnis.proposals[0]!;
+    if (prop.commandId !== erwartung.commandId) {
+      return `erwartete commandId «${erwartung.commandId}», erhalten «${prop.commandId}»`;
+    }
+    if (!enthaeltErwartete(erwartung.params, prop.params)) {
+      return `Parameter weichen ab — erwartet (Teilmenge): ${JSON.stringify(erwartung.params)}, erhalten: ${JSON.stringify(prop.params)}`;
+    }
+    return null;
+  }
+  if (erwartung.typ === 'ablehnung') {
+    if (ergebnis.proposals.length !== 0) {
+      return `erwartet: KEIN Vorschlag (Ablehn-Zug), erhalten: ${ergebnis.proposals.length} Vorschlag/Vorschläge`;
+    }
+    return null;
+  }
+  if (erwartung.typ === 'laufplan') {
+    if (ergebnis.proposals.length !== erwartung.schritte.length) {
+      return `erwartet: LaufPlan mit ${erwartung.schritte.length} Schritt(en), erhalten: ${ergebnis.proposals.length} Vorschlag/Vorschläge`;
+    }
+    for (let i = 0; i < erwartung.schritte.length; i++) {
+      const erwartet = erwartung.schritte[i]!;
+      const prop = ergebnis.proposals[i]!;
+      if (prop.commandId !== erwartet.commandId) {
+        return `Schritt ${i + 1}: erwartete commandId «${erwartet.commandId}», erhalten «${prop.commandId}» (Sequenz muss stimmen)`;
+      }
+      if (erwartet.params !== undefined && !enthaeltErwartete(erwartet.params, prop.params)) {
+        return `Schritt ${i + 1} (${erwartet.commandId}): Parameter weichen ab — erwartet (Teilmenge): ${JSON.stringify(erwartet.params)}, erhalten: ${JSON.stringify(prop.params)}`;
+      }
+    }
+    return null;
+  }
+  throw new Error(
+    `Mehr-Zug-Prüfer: erwartung.typ «${erwartung.typ}» wird innerhalb eines Mehr-Zug-Turns (noch) nicht geprüft — nur command/ablehnung/laufplan sind unterstützt (s. Kopfkommentar).`,
+  );
+}
+
+/** E8 (v0.8.8/PA3, Mehr-Zug): fährt einen `PromptMehrzug` als Folge ECHTER
+ * `session.send()`-Aufrufe DERSELBEN `ChatSession` — jeder Zug bekommt sein
+ * eigenes `{ proposals, laufVorschlaege }`-Zwischenergebnis (die globalen
+ * `onProposal`/`onLaufVorschlag`-Listen werden je Zug per Index-Offset
+ * aufgeteilt). **Sanktion 9 / H-37 (bindend, s. Kopfkommentar):** zwischen
+ * zwei Zügen löst diese Funktion JEDEN offenen Vorschlag/LaufVorschlag des
+ * GERADE gespielten Zugs auf — AUSSCHLIESSLICH damit der `ScriptedProvider`
+ * seinen `zugIndex` weiterzählt (`resolveApplied`/`resolveLaufAbgelehnt`
+ * hängen dafür lediglich eine `role: 'tool'`-Quittierung an; KEINER von
+ * beiden führt selbst einen Kernel-Command aus, `doc.apply()` wird an KEINER
+ * Stelle dieser Funktion gerufen). Der Byte-Diff (`docUnveraendert`) beweist
+ * das: `doc.toJSON()` vor Zug 1 muss `doc.toJSON()` nach dem letzten Zug
+ * exakt entsprechen. */
+async function spieleAbMehrzug(p: PromptMehrzug): Promise<{
+  turnErgebnisse: Array<{ proposals: Proposal[]; laufVorschlaege: LaufVorschlag[] }>;
+  fehler: string;
+  docUnveraendert: boolean;
+}> {
+  const doc = new KosmoDoc();
+  const vorher = JSON.stringify(doc.toJSON());
+  const skript = skriptFuer(p);
+  const provider = new ScriptedProvider(p.id, { [p.id]: skript });
+  const alleProposals: Proposal[] = [];
+  const alleLaufVorschlaege: LaufVorschlag[] = [];
+  let fehler = '';
+  const session = new ChatSession(provider, doc, {
+    onText: () => {},
+    onProposal: (prop) => alleProposals.push(prop),
+    onBusy: () => {},
+    onError: (e) => (fehler = e),
+    onLaufVorschlag: (v) => alleLaufVorschlaege.push(v),
+  });
+
+  const turnErgebnisse: Array<{ proposals: Proposal[]; laufVorschlaege: LaufVorschlag[] }> = [];
+  for (const zug of p.zuege) {
+    const vorProposals = alleProposals.length;
+    const vorLauf = alleLaufVorschlaege.length;
+    await session.send(zug.nutzerwunsch);
+    const neueProposals = alleProposals.slice(vorProposals);
+    const neueLauf = alleLaufVorschlaege.slice(vorLauf);
+    turnErgebnisse.push({ proposals: neueProposals, laufVorschlaege: neueLauf });
+    // Nur die Buchhaltung des ScriptedProviders weiterzählen (s. Funktions-
+    // kommentar) — NIE ein echter Kernel-Command-Vollzug. Ein abgelehnter
+    // LaufVorschlag (bekannteCommandIds-Fehler) räumt sich bereits INNERHALB
+    // von `session.send()` selbst weg (kein `pendingLauf`-Eintrag entsteht),
+    // taucht hier also gar nicht erst auf.
+    for (const prop of neueProposals) {
+      await session.resolveApplied(prop.callId, `Eval-Quittierung (kein echter Vollzug): ${prop.summary}`);
+    }
+    for (const lauf of neueLauf) {
+      await session.resolveLaufAbgelehnt(lauf.callId, 'Eval-Quittierung (kein echter Lauf-Start)');
+    }
+  }
+
+  const nachher = JSON.stringify(doc.toJSON());
+  return { turnErgebnisse, fehler, docUnveraendert: vorher === nachher };
+}
+
+/** E8 (v0.8.8/PA3, Mehr-Zug): wertet EINEN `PromptMehrzug` komplett aus —
+ * jeder Zug wird gegen seine eigene Erwartung geprüft (`pruefeZugErwartung`),
+ * zusätzlich muss der Byte-Diff über die GESAMTE Zugfolge unverändert
+ * bleiben (Sanktion 9: kein Zug führt einen Command wirklich aus). */
+async function werteAusMehrzug(p: PromptMehrzug): Promise<Befund> {
+  for (let i = 0; i < p.zuege.length; i++) {
+    const erwartung = p.zuege[i]!.erwartung;
+    const commandIds = erwartung.typ === 'command' ? [erwartung.commandId] : erwartung.typ === 'laufplan' ? erwartung.schritte.map((s) => s.commandId) : [];
+    const unbekannt = commandIds.filter((id) => !TOOLNAMEN_LIVE.has(toolNameFor(id)));
+    if (unbekannt.length > 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Zug ${i + 1}: Werkzeug(e) ${unbekannt.map((id) => `«${toolNameFor(id)}»`).join(', ')} sind keine aktuellen Kosmo-Werkzeuge mehr`,
+      };
+    }
+  }
+  const { turnErgebnisse, fehler, docUnveraendert } = await spieleAbMehrzug(p);
+  if (fehler) {
+    return { id: p.id, kategorie: p.kategorie, ok: false, begruendung: `ChatSession meldete einen Fehler: ${fehler}` };
+  }
+  if (turnErgebnisse.length !== p.zuege.length) {
+    return {
+      id: p.id,
+      kategorie: p.kategorie,
+      ok: false,
+      begruendung: `erwartet: ${p.zuege.length} gespielte Züge, erhalten: ${turnErgebnisse.length} Zug-Ergebnisse`,
+    };
+  }
+  for (let i = 0; i < p.zuege.length; i++) {
+    const fehlerText = pruefeZugErwartung(p.zuege[i]!.erwartung, turnErgebnisse[i]!);
+    if (fehlerText) {
+      return { id: p.id, kategorie: p.kategorie, ok: false, begruendung: `Zug ${i + 1}: ${fehlerText}` };
+    }
+  }
+  if (!docUnveraendert) {
+    return {
+      id: p.id,
+      kategorie: p.kategorie,
+      ok: false,
+      begruendung: `Doc wurde über die Mehr-Zug-Folge verändert (Byte-Diff) — kein Zug darf einen Command wirklich ausführen (Sanktion 9)`,
+    };
+  }
+  return {
+    id: p.id,
+    kategorie: p.kategorie,
+    ok: true,
+    begruendung: `Treffer: ${p.zuege.length} Züge korrekt (@ref-Referenzen unverändert durchgereicht), Doc über die ganze Folge Byte-gleich`,
   };
 }
 
 const TOOLNAMEN_LIVE = new Set(commandTools().map((t) => t.name));
 
 async function werteAus(p: Prompt): Promise<Befund> {
+  // E8 (v0.8.8/PA3, Mehr-Zug): eigener Auswertungsweg — `PromptMehrzug` hat
+  // KEIN `erwartung`-Feld (sondern `zuege`), die strukturelle `in`-Prüfung
+  // diskriminiert das sauber (s. `skriptFuer`-Kommentar).
+  if ('zuege' in p) return werteAusMehrzug(p);
+
   if (p.erwartung.typ === 'command') {
     const toolName = toolNameFor(p.erwartung.commandId);
     if (!TOOLNAMEN_LIVE.has(toolName)) {
@@ -510,13 +861,14 @@ async function werteAus(p: Prompt): Promise<Befund> {
         };
       }
     }
-    // (d) kein Command lief — der Prüfer hält selbst einen KosmoDoc (spieleAb).
+    // (d) kein Command lief — der Prüfer hält selbst einen KosmoDoc (spieleAb),
+    // E8 (v0.8.8/PA3, ROADMAP-498): jetzt ein echter Byte-Diff (s. spieleAb).
     if (!docUnveraendert) {
       return {
         id: p.id,
         kategorie: p.kategorie,
         ok: false,
-        begruendung: `Doc wurde verändert (revision>0 oder Entities vorhanden) — ein LaufVorschlag darf NIE selbst einen Command ausführen`,
+        begruendung: `Doc wurde verändert (Byte-Diff) — ein LaufVorschlag darf NIE selbst einen Command ausführen`,
       };
     }
     return {
@@ -563,19 +915,88 @@ async function werteAus(p: Prompt): Promise<Befund> {
         begruendung: `erwartetes Tool-FEHLER-Fragment «${p.erwartung.enthaeltFehlertext}» nicht gefunden — tatsächliche Tool-FEHLER-Meldung(en): ${fehlermeldungen || '(keine)'}`,
       };
     }
+    // E8 (v0.8.8/PA3, Negativfall Dedup): optional — je Fragment GENAU EIN
+    // Vorkommen, auch wenn die erfundene commandId mehrfach im Plan steht
+    // (beweist `chat.ts`s `[...new Set(unbekannt)]`-Dedup, C-12-Fund v0.8.6).
+    if (p.erwartung.dedupFragmente) {
+      for (const fragment of p.erwartung.dedupFragmente) {
+        const vorkommen = fragment ? fehlermeldungen.split(fragment).length - 1 : 0;
+        if (vorkommen !== 1) {
+          return {
+            id: p.id,
+            kategorie: p.kategorie,
+            ok: false,
+            begruendung: `Dedup-Erwartung verletzt: «${fragment}» kommt ${vorkommen}× im Tool-FEHLER vor statt genau 1× — tatsächliche Meldung(en): ${fehlermeldungen}`,
+          };
+        }
+      }
+    }
     if (!docUnveraendert) {
       return {
         id: p.id,
         kategorie: p.kategorie,
         ok: false,
-        begruendung: `Doc wurde verändert — ein abgewiesener lauf_planen-Aufruf darf keinen Command ausführen`,
+        begruendung: `Doc wurde verändert (Byte-Diff) — ein abgewiesener lauf_planen-Aufruf darf keinen Command ausführen`,
       };
     }
     return {
       id: p.id,
       kategorie: p.kategorie,
       ok: true,
-      begruendung: `Treffer: erfundene commandId korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «${p.erwartung.enthaeltFehlertext}»), kein LaufVorschlag, kein onProposal`,
+      begruendung: `Treffer: erfundene commandId(s) korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «${p.erwartung.enthaeltFehlertext}»${p.erwartung.dedupFragmente ? `, dedupliziert: ${p.erwartung.dedupFragmente.join(', ')}` : ''}), kein LaufVorschlag, kein onProposal`,
+    };
+  }
+
+  if (p.erwartung.typ === 'command-fehler') {
+    // E8 (v0.8.8/PA3, Negativfall E2-Anker): ECHTER Tool-Aufruf, den
+    // `validateToolCall()` ablehnen MUSS, bevor er zur Diff-Karte wird — s.
+    // Kopfkommentar für den ehrlichen PA1-Nachführungs-Vermerk.
+    const toolName = toolNameFor(p.erwartung.commandId);
+    if (!TOOLNAMEN_LIVE.has(toolName)) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Werkzeug «${toolName}» ist kein aktuelles Kosmo-Werkzeug mehr (commandTools() kennt es nicht — Command umbenannt/entfernt?)`,
+      };
+    }
+    const { proposals, fehler, historie, docUnveraendert } = await spieleAb(p);
+    if (fehler) {
+      return { id: p.id, kategorie: p.kategorie, ok: false, begruendung: `ChatSession meldete einen Fehler: ${fehler}` };
+    }
+    if (proposals.length !== 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartet: KEIN onProposal (der Aufruf soll VOR der Karte scheitern), erhalten: ${proposals.length}`,
+      };
+    }
+    const fehlermeldungen = historie
+      .filter((m) => m.role === 'tool' && m.content.startsWith('FEHLER:'))
+      .map((m) => m.content)
+      .join(' | ');
+    if (!fehlermeldungen.includes(p.erwartung.enthaeltFehlertext)) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartetes Tool-FEHLER-Fragment «${p.erwartung.enthaeltFehlertext}» nicht gefunden — tatsächliche Tool-FEHLER-Meldung(en): ${fehlermeldungen || '(keine)'}`,
+      };
+    }
+    if (!docUnveraendert) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Doc wurde verändert (Byte-Diff) — ein abgelehnter Tool-Aufruf darf keinen Command ausführen`,
+      };
+    }
+    return {
+      id: p.id,
+      kategorie: p.kategorie,
+      ok: true,
+      begruendung: `Treffer: Aufruf korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «${p.erwartung.enthaeltFehlertext}»), kein onProposal, Doc unverändert`,
     };
   }
 

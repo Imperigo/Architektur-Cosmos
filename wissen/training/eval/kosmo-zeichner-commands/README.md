@@ -119,9 +119,88 @@ kosmo-ai` wurde für dieses Paket nur GELESEN, nichts dort geändert.
 Stand nach der Erweiterung: **41/41 bestanden** (`eval-ergebnis.json`, per
 `npx tsx pruefe-eval.mts` nachgeführt).
 
+## PA3-Nachtrag (v0.8.8, `docs/V088-SPEZ.md` §3 E8/§6 Sanktion 9/§7 C-12): 41→45 Prompts, Mehr-Zug + Byte-Diff + zwei weitere Negativfälle
+
+**Ausgangslücke:** `pruefe-eval.mts` kannte bis hierhin nur Ein-Zug-Prompts
+(ein `nutzerwunsch`/`erwartung`-Paar je Prompt) — es gab kein Format für
+einen mehrteiligen Dialog, in dem ein späterer Zug auf eine Entity
+verweist, die ein früherer Zug DESSELBEN Prompts gerade erst vorgeschlagen
+hat. Ausserdem prüfte `docUnveraendert` (lauf-vorschlag/-abgelehnt) nur
+über die Heuristik `doc.revision === 0 && doc.entities.size === 0`
+(ROADMAP-498) statt über einen echten Vergleich, und es fehlte ein
+Negativfall für einen *tatsächlichen* Tool-Aufruf, der an der zod-
+Validierung scheitert (anders als `ablehnung`, wo das Skript gar keinen
+Tool-Aufruf enthält).
+
+**E8-Lösung, drei Teile:**
+
+1. **Mehr-Zug** — NEU `kategorie: "mehrzug"` mit einer `zuege`-Liste
+   (`cmd-42`/`cmd-43`) statt eines einzelnen `nutzerwunsch`/`erwartung`-
+   Paars. Jeder Zug läuft als eigener `SkriptZug` über MEHRERE
+   `session.send()`-Aufrufe DERSELBEN `ChatSession` (`spieleAbMehrzug`);
+   jeder Zug wird gegen seine eigene Erwartung geprüft
+   (`command`/`ablehnung`/`laufplan` — mehr ist bewusst nicht unterstützt).
+   **Bindende Grenze (Sanktion 9, H-37):** ein `SzenarioSkript` bleibt
+   STATISCH — die Parameter von Zug 2 stehen zur AUTORENZEIT in
+   `prompts.json`, NIE abgeleitet aus der tatsächlichen, zur Laufzeit vom
+   Kernel vergebenen ID einer in Zug 1 vorgeschlagenen Entity. Referenzen
+   über Züge hinweg laufen darum AUSSCHLIESSLICH über den literalen
+   `@ref:kind:name`-String (`lauf-refs.ts`-Konvention) — der Prüfer LÖST
+   diesen String nie auf, er beweist nur, dass er unverändert durch den
+   ScriptedProvider→ChatSession→Proposal-Weg läuft. `cmd-42`: Geschoss
+   anlegen → Zone im Geschoss via `@ref:storey:<name>`. `cmd-43`: Aufbau
+   anlegen → Wand mit diesem Aufbau via `@ref:aufbau:<name>`. **Bewusste
+   Abweichung vom ursprünglich skizzierten «Wand → Öffnung»-Beispiel:**
+   `lauf-refs.ts#loeseWertAuf`s `kindKarte` kennt nur `storey`/`aufbau`/
+   `sheet`/`graph` (+ `node`) als `@ref`-Kinds — `wall` ist dort NICHT
+   gelistet (Wände tragen im Kernel auch gar kein `name`-Feld). Ein
+   `@ref:wall:...` wäre ein erfundener, von der echten Konvention nicht
+   gedeckter Platzhalter gewesen — für ein Paket, dessen ganzer Zweck
+   «IDs ausschliesslich über den @ref-Weg» ist, wurde stattdessen der
+   ebenfalls reale `aufbau`-Kind gewählt. Zwischen zwei Zügen ruft
+   `spieleAbMehrzug` `session.resolveApplied()`/`resolveLaufAbgelehnt()`
+   für jeden offenen Vorschlag — das simuliert KEINEN Kernel-Command-Vollzug
+   (kein `doc.apply()` an irgendeiner Stelle), sondern signalisiert dem
+   `ScriptedProvider` intern nur „dieser Zug ist fertig, spiel den
+   nächsten" (dessen `zugIndex`-Buchhaltung).
+2. **Byte-Diff** (ROADMAP-498) — `docUnveraendert` ist jetzt in `spieleAb`/
+   `spieleAbMehrzug` ein echter Vergleich `JSON.stringify(doc.toJSON())` vor
+   dem ersten und nach dem letzten Zug, für JEDEN Fall (nicht nur
+   `lauf-vorschlag`/`lauf-vorschlag-abgelehnt`).
+3. **Zwei neue Negativfälle:** (a) `cmd-44` — ein `lauf_planen`-Plan mit
+   ZWEI verschiedenen erfundenen commandIds, eine davon zweimal im Plan
+   wiederholt; NEU `erwartung.dedupFragmente` (optional, additiv auf
+   `lauf-vorschlag-abgelehnt`) beweist, dass die bestehende
+   `[...new Set(unbekannt)]`-Dedup in `chat.ts` (C-12-Fund v0.8.6,
+   unverändert) beide Namen nennt und keinen davon wiederholt. (b) `cmd-45`
+   — NEU `erwartung.typ: "command-fehler"` (`PromptCommandFehler`): ein
+   ECHTER Tool-Aufruf (`design.eigenschaftSetzen` mit `feld: "rotationGrad"`,
+   `wert: "schräg"` auf einer `furniture`-Entity), den `validateToolCall()`
+   ablehnt, BEVOR er zur Diff-Karte wird (kein `onProposal`, Doc bleibt
+   Byte-gleich). **Ehrlicher Stand (verankert PA1-088/E2):** Live-Sondierung
+   19.07.2026 gegen den PA3-088-Worktree-HEAD zeigt, dass `editableFields`
+   (`packages/kosmo-kernel/src/commands/design.ts:702-723`) `rotationGrad`
+   noch NICHT kennt — PA1-088/E2 (paralleles Paket) fügt dieses Feld erst
+   hinzu. Der Fall prüft darum HEUTE den generischen zod-Ablehnungsweg
+   „unbekanntes Feld" (`feld: Invalid option: expected one of …`). **Sobald
+   PA1-088/E2 landet** und `rotationGrad` ein bekanntes `eigenschaftSetzen`-
+   Feld wird, greift stattdessen dessen WERT-Validierung (`"schräg"` ist
+   keine gültige Zahl) — `erwartung.enthaeltFehlertext` bei `cmd-45` muss
+   dann auf die neue Meldung nachgeführt werden (s. `notiz`-Feld bei
+   `cmd-45` in `prompts.json`, rein dokumentarisch, fliesst in keine
+   Prüf-Logik ein).
+
+**Dateikreis-Grenze:** dieses Paket durfte nur `wissen/training/eval/**`
+anfassen — `packages/kosmo-ai`/`packages/kosmo-kernel` wurden für dieses
+Paket nur GELESEN (u.a. zur Live-Sondierung der zod-Fehlermeldung für
+`cmd-45`), nichts dort geändert.
+
+Stand nach der Erweiterung: **45/45 bestanden** (`eval-ergebnis.json`, per
+`npx tsx pruefe-eval.mts` nachgeführt).
+
 ## Dateien
 
-- **`prompts.json`** — 41 feste deutsche Zeichner-Aufträge quer über die
+- **`prompts.json`** — 45 feste deutsche Zeichner-Aufträge quer über die
   Command-Klassen Geschoss (`design.geschossErstellen`/`design.
   geschossKopieren`), Aufbau (`design.aufbauErstellen`, PB2-Nachtrag), Wand
   (`design.wandZeichnen`), Zone (`design.zoneErstellen`/`design.
@@ -135,21 +214,31 @@ Stand nach der Erweiterung: **41/41 bestanden** (`eval-ergebnis.json`, per
   Befehlsumfangs, Echtzeit-Render ohne HomeStation) — plus **drei
   LaufPlan-Fälle** (`cmd-36`..`cmd-38`, PA4-Nachtrag, s. oben) — plus **drei
   lauf_planen-Vorschlagsfälle** (`cmd-39`..`cmd-41`, PA3-Nachtrag, s. oben:
-  zwei positive + ein Negativfall mit erfundener commandId). Jeder Prompt
-  trägt ein maschinenlesbares `erwartung`-Feld (`typ: "command"` mit
-  `commandId`+`params`, `typ: "ablehnung"`, `typ: "laufplan"` mit
-  `schritte: [{commandId, params?}]`, `typ: "lauf-vorschlag"` mit
-  `titel`+`schritte: [{commandId, params?, begruendung?}]`, oder `typ:
-  "lauf-vorschlag-abgelehnt"` mit zusätzlich `enthaeltFehlertext`) plus den
+  zwei positive + ein Negativfall mit erfundener commandId) — plus **zwei
+  Mehr-Zug-Fälle** (`cmd-42`/`cmd-43`, PA3-Nachtrag v0.8.8, s. oben) — plus
+  **zwei weitere Negativfälle** (`cmd-44` Dedup bei zwei erfundenen
+  commandIds, `cmd-45` `eigenschaftSetzen`-Feld-Ablehnung, PA3-Nachtrag
+  v0.8.8, s. oben). Jeder Ein-Zug-Prompt trägt ein maschinenlesbares
+  `erwartung`-Feld (`typ: "command"` mit `commandId`+`params`, `typ:
+  "ablehnung"`, `typ: "laufplan"` mit `schritte: [{commandId, params?}]`,
+  `typ: "lauf-vorschlag"` mit `titel`+`schritte: [{commandId, params?,
+  begruendung?}]`, `typ: "lauf-vorschlag-abgelehnt"` mit zusätzlich
+  `enthaeltFehlertext`+optional `dedupFragmente`, oder NEU `typ:
+  "command-fehler"` mit `commandId`+`params`+`enthaeltFehlertext`) plus den
   deutschen `nutzerwunsch` und den Text, den das ScriptedProvider-Skript als
-  Kosmo-Antwort abspielt (`kosmoText`).
+  Kosmo-Antwort abspielt (`kosmoText`). Ein Mehr-Zug-Prompt (`kategorie:
+  "mehrzug"`) trägt STATT `nutzerwunsch`/`kosmoText`/`erwartung` eine
+  `zuege`-Liste — je Zug dasselbe `nutzerwunsch`/`kosmoText`/`erwartung`-Tripel
+  (nur `command`/`ablehnung`/`laufplan` als `erwartung.typ` unterstützt).
 - **`pruefe-eval.mts`** — ausführbarer Prüfer, EIN Modus (Selbstcheck, kein
-  Kandidaten-Modus — Begründung unten): fährt jeden Prompt als Ein-Zug-Skript
-  über den ECHTEN `ScriptedProvider` durch die ECHTE `ChatSession`
-  (`@kosmo/ai`, exakt das Muster aus `packages/kosmo-ai/test/scripted.test.ts`)
-  und prüft: (1) die erwartete `commandId` ist ein reales, aktuelles
-  Kosmo-Werkzeug (`commandTools()`), (2) die erwarteten Parameter bestehen die
-  ECHTE zod-Validierung (`validateToolCall`, innerhalb von `ChatSession#turn()`
+  Kandidaten-Modus — Begründung unten): fährt jeden Ein-Zug-Prompt als
+  Ein-Zug-Skript, jeden Mehr-Zug-Prompt als Zugfolge über MEHRERE
+  `session.send()`-Aufrufe DERSELBEN Session, über den ECHTEN
+  `ScriptedProvider` durch die ECHTE `ChatSession` (`@kosmo/ai`, exakt das
+  Muster aus `packages/kosmo-ai/test/scripted.test.ts`) und prüft: (1) die
+  erwartete `commandId` ist ein reales, aktuelles Kosmo-Werkzeug
+  (`commandTools()`), (2) die erwarteten Parameter bestehen die ECHTE
+  zod-Validierung (`validateToolCall`, innerhalb von `ChatSession#turn()`
   aufgerufen), (3) genau EIN `onProposal` mit exakt dieser `commandId` und
   diesen Parametern (Teilmengen-Vergleich — ein vom Schema ergänzter Default
   wie `alignment: 'zentrum'` bricht den Vergleich nicht), (4) ein Ablehn-Fall
@@ -160,8 +249,15 @@ Stand nach der Erweiterung: **41/41 bestanden** (`eval-ergebnis.json`, per
   `lauf_planen`-Werkzeug, PA3-Nachtrag) erzeugt genau EINEN `onLaufVorschlag`
   mit dem erwarteten Titel/der erwarteten Schrittfolge und KEINEN
   `onProposal`, UND eine erfundene commandId im Plan wird VOR jeder Karte als
-  Tool-FEHLER abgewiesen. Schreibt `eval-ergebnis.json` (eingecheckt) + eine
-  Konsolentabelle mit der Quote je Kategorie.
+  Tool-FEHLER abgewiesen (bei mehreren erfundenen commandIds dedupliziert
+  genannt, PA3-Nachtrag v0.8.8), (7) ein Mehr-Zug-Fall (PA3-Nachtrag v0.8.8)
+  prüft jeden Zug einzeln UND dass der Doc-Zustand über die ganze Folge
+  Byte-gleich bleibt (`JSON.stringify(doc.toJSON())` vorher/nachher, ersetzt
+  die alte `revision`/`entities`-Heuristik, ROADMAP-498), (8) ein
+  `command-fehler`-Fall (PA3-Nachtrag v0.8.8) prüft, dass ein ECHTER
+  Tool-Aufruf VOR jeder Diff-Karte an der zod-Validierung scheitert. Schreibt
+  `eval-ergebnis.json` (eingecheckt) + eine Konsolentabelle mit der Quote je
+  Kategorie.
 
 ## Aufruf
 
@@ -170,7 +266,7 @@ cd kosmo-orbit
 npx tsx ../wissen/training/eval/kosmo-zeichner-commands/pruefe-eval.mts
 ```
 
-Exit-Code 0 nur wenn alle 41 Prompts bestehen, sonst 1. Deterministisch:
+Exit-Code 0 nur wenn alle 45 Prompts bestehen, sonst 1. Deterministisch:
 zwei Läufe hintereinander liefern byte-gleiche `eval-ergebnis.json` bis auf
 das reine Zeitstempel-Feld `erzeugt_um` (geprüft per Doppellauf-Diff im
 PD2-Abschlussbericht).
@@ -212,4 +308,6 @@ Prüfer bereits über den echten `ChatSession`-Weg ausführt.
 | `ablehnung` | das Skript enthält für diesen Zug KEINEN Tool-Aufruf — `ChatSession` meldet NULL `onProposal`-Aufrufe für den Zug |
 | `laufplan` (PA4, v0.8.6) | alle erwarteten `commandId`s sind reale, aktuelle Kosmo-Werkzeuge UND `ChatSession` meldet in EINEM Zug genau so viele `onProposal`s wie erwartete Schritte, in derselben Sequenz/`commandId`-Reihenfolge, mit den genannten Schritt-Parametern als Teilmenge, als EINE Aktionskette (`paket`-Metadatum) |
 | `lauf-vorschlag` (PA3, v0.8.7) | das Skript ruft das ECHTE `lauf_planen`-Werkzeug EINMAL auf — `ChatSession` meldet genau EINEN `onLaufVorschlag`, dessen `plan.titel`+Schrittfolge (commandId-Sequenz + Kernparameter als Teilmenge) der Erwartung entsprechen, UND KEINEN `onProposal` (Sanktion 4), UND der Prüfer-`KosmoDoc` bleibt unverändert |
-| `lauf-vorschlag-abgelehnt` (PA3, v0.8.7) | der geplante `lauf_planen`-Aufruf trägt eine ERFUNDENE `commandId` — `ChatSession` weist sie VOR jeder Karte als Tool-FEHLER ab: KEIN `onLaufVorschlag`, KEIN `onProposal`, die Tool-FEHLER-Meldung enthält den erwarteten Fehlertext-Ausschnitt |
+| `lauf-vorschlag-abgelehnt` (PA3, v0.8.7; `dedupFragmente` additiv seit PA3, v0.8.8) | der geplante `lauf_planen`-Aufruf trägt eine (oder mehrere) ERFUNDENE `commandId`(s) — `ChatSession` weist sie VOR jeder Karte als Tool-FEHLER ab: KEIN `onLaufVorschlag`, KEIN `onProposal`, die Tool-FEHLER-Meldung enthält den erwarteten Fehlertext-Ausschnitt UND — falls `dedupFragmente` gesetzt — jedes Fragment GENAU EINMAL (Dedup-Beweis) |
+| `command-fehler` (PA3, v0.8.8) | ein ECHTER Tool-Aufruf — `validateToolCall()` weist ihn VOR jeder Diff-Karte ab (zod-Schema-Fehler): KEIN `onProposal`, die Tool-FEHLER-Meldung enthält den erwarteten Fehlertext-Ausschnitt, Doc bleibt Byte-gleich |
+| `mehrzug` (PA3, v0.8.8, `kategorie` statt `erwartung.typ`) | eine Zugfolge (`zuege: [...]`) statt eines einzelnen Paars — jeder Zug wird gegen `command`/`ablehnung`/`laufplan` geprüft, Referenzen über Züge hinweg AUSSCHLIESSLICH via literalem `@ref:kind:name`-String (nie eine echte Laufzeit-ID), Doc bleibt über die GANZE Folge Byte-gleich (kein Zug führt einen Command wirklich aus) |

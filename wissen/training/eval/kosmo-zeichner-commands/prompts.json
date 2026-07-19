@@ -1,12 +1,14 @@
 {
   "adapter": "kosmo-zeichner-commands",
-  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9; erweitert v0.8.7/PA3, docs/V087-SPEZ.md §3 E7). 41 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle plus drei lauf_planen-Vorschlagsfälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern, (6) PA3-Nachtrag (v0.8.7, E7): ein echter lauf_planen-Aufruf erzeugt genau EINEN onLaufVorschlag mit dem erwarteten Titel/der erwarteten Schrittfolge UND KEINEN onProposal (Sanktion 4: Vorschlag ≠ Ausführung), UND ein Plan mit erfundener commandId wird von ChatSession VOR jeder Karte als Tool-FEHLER abgewiesen (kein LaufVorschlag, kein onProposal). Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das damals noch nicht existierte). PA3-Nachtrag (cmd-39..cmd-41, E7): NEU `erwartung.typ:\"lauf-vorschlag\"`/`\"lauf-vorschlag-abgelehnt\"` — jetzt gegen das ECHTE, seit v0.8.6/PB1 existierende `lauf_planen`-Werkzeug geprüft (ein einziger Tool-Aufruf statt mehrerer Command-Aufrufe im selben Zug).",
+  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9; erweitert v0.8.7/PA3, docs/V087-SPEZ.md §3 E7; erweitert v0.8.8/PA3, docs/V088-SPEZ.md §3 E8). 45 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle plus drei lauf_planen-Vorschlagsfälle plus zwei Mehr-Zug-Fälle plus zwei weitere Negativfälle (Dedup, Feld-Ablehnung). ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern, (6) PA3-Nachtrag (v0.8.7, E7): ein echter lauf_planen-Aufruf erzeugt genau EINEN onLaufVorschlag mit dem erwarteten Titel/der erwarteten Schrittfolge UND KEINEN onProposal (Sanktion 4: Vorschlag ≠ Ausführung), UND ein Plan mit erfundener commandId wird von ChatSession VOR jeder Karte als Tool-FEHLER abgewiesen (kein LaufVorschlag, kein onProposal). Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das damals noch nicht existierte). PA3-Nachtrag (cmd-39..cmd-41, E7): NEU `erwartung.typ:\"lauf-vorschlag\"`/`\"lauf-vorschlag-abgelehnt\"` — jetzt gegen das ECHTE, seit v0.8.6/PB1 existierende `lauf_planen`-Werkzeug geprüft (ein einziger Tool-Aufruf statt mehrerer Command-Aufrufe im selben Zug). PA3-Nachtrag v0.8.8 (cmd-42..cmd-45, E8, docs/V088-SPEZ.md §3 E8/§6 Sanktion 9/§7 C-12): NEU `kategorie:\"mehrzug\"` mit einer `zuege`-Liste statt eines einzelnen nutzerwunsch/erwartung-Paars (cmd-42/cmd-43) — Referenzen über Folge-Züge AUSSCHLIESSLICH über den literalen `@ref:kind:name`-String (lauf-refs.ts-Konvention, Kinds storey/aufbau — wall/oeffnung sind KEIN von lauf-refs.ts unterstützter @ref-Kind, darum bewusst nicht verwendet, s. README.md-Nachtrag), NIE über eine echte Laufzeit-ID (Sanktion 9, Kopfkommentar pruefe-eval.mts dokumentiert die H-37-Grenze). NEU `erwartung.typ:\"command-fehler\"` (cmd-45) — ein ECHTER Tool-Aufruf, den validateToolCall() ablehnt, bevor er zur Diff-Karte wird. `docUnveraendert` ist jetzt überall ein echter Byte-Diff (JSON.stringify(doc.toJSON()) vorher/nachher, ROADMAP-498) statt der alten revision/entities-Heuristik. `lauf-vorschlag-abgelehnt` bekommt ein optionales `dedupFragmente`-Feld (cmd-44: zwei verschiedene erfundene commandIds, eine davon zweimal im Plan — beide müssen genau einmal im Tool-FEHLER genannt werden).",
   "kriterien_legende": {
     "command": "erwartete commandId ist ein reales, aktuelles Kosmo-Werkzeug (commandTools()) UND die erwarteten Parameter bestehen validateToolCall() gegen das ECHTE zod-Schema UND ChatSession meldet genau EINEN onProposal mit exakt dieser commandId/diesen Parametern",
     "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug",
     "laufplan": "PA4-Nachtrag (v0.8.6, E8): die Erwartung nennt eine ganze Schritt-Folge [{commandId, params?}] statt eines einzelnen Tool-Aufrufs — alle erwarteten commandIds sind reale, aktuelle Kosmo-Werkzeuge UND die genannten Schritt-Parameter bestehen validateToolCall() je Schritt UND ChatSession meldet in EINEM Zug genau so viele onProposal-Aufrufe wie Schritte, in derselben Reihenfolge/commandId-Sequenz, mit den genannten Kernparametern als Teilmenge, gemeldet als EINE Aktionskette (paket-Metadatum)",
-    "lauf-vorschlag": "PA3-Nachtrag (v0.8.7, E7): das Skript ruft das ECHTE lauf_planen-Werkzeug EINMAL auf, mit {titel, schritte} als Argumente — ChatSession meldet genau EINEN onLaufVorschlag, dessen plan.titel + Schrittfolge (commandId-Sequenz + Kernparameter als Teilmenge) der Erwartung entsprechen, UND KEINEN onProposal (Sanktion 4: ein Vorschlag ist keine Ausführung), UND der vom Prüfer gehaltene KosmoDoc bleibt unverändert (kein Command lief)",
-    "lauf-vorschlag-abgelehnt": "PA3-Negativfall (v0.8.7, E7): der geplante lauf_planen-Aufruf trägt (mindestens) eine ERFUNDENE commandId (design.dasGibtEsNicht-Muster) — ChatSession weist sie VOR jeder Karte als Tool-FEHLER ab (bekannteCommandIds, C-12-Fund v0.8.6): KEIN onLaufVorschlag, KEIN onProposal, die Tool-FEHLER-Meldung in der Session-Historie enthält den erwarteten Fehlertext-Ausschnitt (z.B. «unbekannte commandId»), Doc bleibt unverändert"
+    "lauf-vorschlag": "PA3-Nachtrag (v0.8.7, E7): das Skript ruft das ECHTE lauf_planen-Werkzeug EINMAL auf, mit {titel, schritte} als Argumente — ChatSession meldet genau EINEN onLaufVorschlag, dessen plan.titel + Schrittfolge (commandId-Sequenz + Kernparameter als Teilmenge) der Erwartung entsprechen, UND KEINEN onProposal (Sanktion 4: ein Vorschlag ist keine Ausführung), UND der vom Prüfer gehaltene KosmoDoc bleibt unverändert (Byte-Diff, kein Command lief)",
+    "lauf-vorschlag-abgelehnt": "PA3-Negativfall (v0.8.7, E7; Dedup-Feld dedupFragmente additiv seit v0.8.8/PA3): der geplante lauf_planen-Aufruf trägt (mindestens) eine ERFUNDENE commandId (design.dasGibtEsNicht-Muster) — ChatSession weist sie VOR jeder Karte als Tool-FEHLER ab (bekannteCommandIds, C-12-Fund v0.8.6): KEIN onLaufVorschlag, KEIN onProposal, die Tool-FEHLER-Meldung in der Session-Historie enthält den erwarteten Fehlertext-Ausschnitt (z.B. «unbekannte commandId») UND — falls dedupFragmente gesetzt ist — jedes genannte Fragment GENAU EINMAL (Dedup-Beweis bei mehreren erfundenen commandIds), Doc bleibt Byte-gleich",
+    "mehrzug": "PA3-Nachtrag (v0.8.8, E8, docs/V088-SPEZ.md §3 E8/§6 Sanktion 9): eine ganze Zugfolge (`zuege: [{nutzerwunsch, kosmoText, erwartung}, …]`) statt eines einzelnen nutzerwunsch/erwartung-Paars — jeder Zug läuft als eigener SkriptZug durch DIESELBE ChatSession (mehrere session.send()-Aufrufe); jeder Zug wird gegen seine eigene Erwartung geprüft (command/ablehnung/laufplan), UND der gesamte Doc-Zustand bleibt über ALLE Züge Byte-gleich (kein Zug führt je einen Command wirklich aus — Sanktion 9). Referenzen auf eine in einem früheren Zug vorgeschlagene Entity laufen AUSSCHLIESSLICH über den literalen `@ref:kind:name`-String (lauf-refs.ts-Konvention) — nie über eine echte, zur Laufzeit vergebene ID (keine Laufzeit-ID-Rückkopplung, H-37-Grenze s. pruefe-eval.mts-Kopfkommentar)",
+    "command-fehler": "PA3-Negativfall (v0.8.8, E8): ein ECHTER Tool-Aufruf (anders als 'ablehnung', wo das Skript GAR KEINEN Tool-Aufruf enthält) — validateToolCall() weist ihn VOR jeder Diff-Karte ab (zod-Schema-Fehler, z.B. ein nicht erlaubter eigenschaftSetzen-Feldname). Erwartet: KEIN onProposal, die Tool-FEHLER-Meldung in der Session-Historie enthält den erwarteten Fehlertext-Ausschnitt, Doc bleibt Byte-gleich (verankert PA1-088/E2, s. notiz-Feld/README.md für den ehrlichen Nachführungs-Vermerk)"
   },
   "prompts": [
     {
@@ -17,7 +19,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "design.geschossErstellen",
-        "params": { "name": "EG", "index": 0, "elevation": 0, "height": 3000 }
+        "params": {
+          "name": "EG",
+          "index": 0,
+          "elevation": 0,
+          "height": 3000
+        }
       }
     },
     {
@@ -28,7 +35,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "design.geschossErstellen",
-        "params": { "name": "1.OG", "index": 1, "elevation": 3000, "height": 2800 }
+        "params": {
+          "name": "1.OG",
+          "index": 1,
+          "elevation": 3000,
+          "height": 2800
+        }
       }
     },
     {
@@ -39,7 +51,10 @@
       "erwartung": {
         "typ": "command",
         "commandId": "design.geschossKopieren",
-        "params": { "storeyId": "geschoss-eg01", "anzahl": 2 }
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "anzahl": 2
+        }
       }
     },
     {
@@ -52,8 +67,14 @@
         "commandId": "design.wandZeichnen",
         "params": {
           "storeyId": "geschoss-eg01",
-          "a": { "x": 0, "y": 0 },
-          "b": { "x": 8000, "y": 0 },
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 8000,
+            "y": 0
+          },
           "assemblyId": "aufbau-awbeton01",
           "alignment": "zentrum"
         }
@@ -69,8 +90,14 @@
         "commandId": "design.wandZeichnen",
         "params": {
           "storeyId": "geschoss-eg01",
-          "a": { "x": 8000, "y": 0 },
-          "b": { "x": 8000, "y": 6000 },
+          "a": {
+            "x": 8000,
+            "y": 0
+          },
+          "b": {
+            "x": 8000,
+            "y": 6000
+          },
           "assemblyId": "aufbau-awbeton01"
         }
       }
@@ -85,8 +112,14 @@
         "commandId": "design.wandZeichnen",
         "params": {
           "storeyId": "geschoss-1og",
-          "a": { "x": 0, "y": 0 },
-          "b": { "x": 0, "y": 5000 },
+          "a": {
+            "x": 0,
+            "y": 0
+          },
+          "b": {
+            "x": 0,
+            "y": 5000
+          },
           "assemblyId": "aufbau-iwks01",
           "alignment": "kern-innen"
         }
@@ -103,10 +136,22 @@
         "params": {
           "storeyId": "geschoss-eg01",
           "outline": [
-            { "x": 0, "y": 0 },
-            { "x": 4000, "y": 0 },
-            { "x": 4000, "y": 5000 },
-            { "x": 0, "y": 5000 }
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 4000,
+              "y": 0
+            },
+            {
+              "x": 4000,
+              "y": 5000
+            },
+            {
+              "x": 0,
+              "y": 5000
+            }
           ],
           "name": "Wohnen",
           "sia": "HNF"
@@ -124,10 +169,22 @@
         "params": {
           "storeyId": "geschoss-eg01",
           "outline": [
-            { "x": 4000, "y": 0 },
-            { "x": 7000, "y": 0 },
-            { "x": 7000, "y": 3500 },
-            { "x": 4000, "y": 3500 }
+            {
+              "x": 4000,
+              "y": 0
+            },
+            {
+              "x": 7000,
+              "y": 0
+            },
+            {
+              "x": 7000,
+              "y": 3500
+            },
+            {
+              "x": 4000,
+              "y": 3500
+            }
           ],
           "name": "Küche",
           "sia": "HNF",
@@ -143,7 +200,10 @@
       "erwartung": {
         "typ": "command",
         "commandId": "design.raumTypSetzen",
-        "params": { "zoneId": "zone-wohnen01", "raumTyp": "wohnen" }
+        "params": {
+          "zoneId": "zone-wohnen01",
+          "raumTyp": "wohnen"
+        }
       }
     },
     {
@@ -190,7 +250,14 @@
       "erwartung": {
         "typ": "command",
         "commandId": "design.tuerSetzen",
-        "params": { "storeyId": "geschoss-eg01", "at": { "x": 4000, "y": 2000 }, "breite": 900 }
+        "params": {
+          "storeyId": "geschoss-eg01",
+          "at": {
+            "x": 4000,
+            "y": 2000
+          },
+          "breite": 900
+        }
       }
     },
     {
@@ -204,8 +271,14 @@
         "params": {
           "storeyId": "geschoss-eg01",
           "punkte": [
-            { "x": 0, "y": 0 },
-            { "x": 8000, "y": 0 }
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 8000,
+              "y": 0
+            }
           ]
         }
       }
@@ -221,9 +294,18 @@
         "params": {
           "storeyId": "geschoss-eg01",
           "punkte": [
-            { "x": 0, "y": 0 },
-            { "x": 4000, "y": 0 },
-            { "x": 7000, "y": 0 }
+            {
+              "x": 0,
+              "y": 0
+            },
+            {
+              "x": 4000,
+              "y": 0
+            },
+            {
+              "x": 7000,
+              "y": 0
+            }
           ]
         }
       }
@@ -239,7 +321,10 @@
         "params": {
           "text": "Fenster Küche zu tief - bitte prüfen",
           "autor": "A. Baumann",
-          "at": { "x": 2000, "y": 2000 },
+          "at": {
+            "x": 2000,
+            "y": 2000
+          },
           "storeyId": "geschoss-eg01",
           "erstelltAm": "18.07.2026"
         }
@@ -256,7 +341,10 @@
         "params": {
           "text": "Treppenlauf Breite prüfen (Fluchtweg)",
           "autor": "M. Keller",
-          "at": { "x": 6000, "y": 1000 },
+          "at": {
+            "x": 6000,
+            "y": 1000
+          },
           "erstelltAm": "18.07.2026"
         }
       }
@@ -269,7 +357,9 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.graphErstellen",
-        "params": { "name": "Wettbewerbsbilder" }
+        "params": {
+          "name": "Wettbewerbsbilder"
+        }
       }
     },
     {
@@ -285,7 +375,9 @@
           "typ": "prompt",
           "x": 100,
           "y": 100,
-          "params": { "prompt": "Wohnen am Wasser, Abendlicht" }
+          "params": {
+            "prompt": "Wohnen am Wasser, Abendlicht"
+          }
         }
       }
     },
@@ -300,7 +392,9 @@
         "params": {
           "graphId": "graph-wettbewerb01",
           "nodeId": "node-stimmung01",
-          "params": { "preset": "abend" }
+          "params": {
+            "preset": "abend"
+          }
         }
       }
     },
@@ -312,7 +406,13 @@
       "erwartung": {
         "typ": "command",
         "commandId": "publish.setSpeichern",
-        "params": { "name": "Baugesuch 1:100", "sheetIds": ["blatt-eg01", "blatt-1og01"] }
+        "params": {
+          "name": "Baugesuch 1:100",
+          "sheetIds": [
+            "blatt-eg01",
+            "blatt-1og01"
+          ]
+        }
       }
     },
     {
@@ -323,7 +423,11 @@
       "erwartung": {
         "typ": "command",
         "commandId": "publish.blattErstellen",
-        "params": { "name": "Grundrisse 1:100", "format": "A1", "orientation": "quer" }
+        "params": {
+          "name": "Grundrisse 1:100",
+          "format": "A1",
+          "orientation": "quer"
+        }
       }
     },
     {
@@ -331,28 +435,36 @@
       "kategorie": "ablehnung",
       "nutzerwunsch": "Zeichne irgendwo im Erdgeschoss eine Wand.",
       "kosmoText": "Dafür brauche ich Start- und Endpunkt der Wand (und den Aufbau) — ohne Koordinaten würde ich raten, das mache ich nicht. Wo genau soll sie verlaufen?",
-      "erwartung": { "typ": "ablehnung" }
+      "erwartung": {
+        "typ": "ablehnung"
+      }
     },
     {
       "id": "cmd-23-ablehn-fehlendes-pflichtfeld",
       "kategorie": "ablehnung",
       "nutzerwunsch": "Setz noch ein Fenster in die Wand.",
       "kosmoText": "In welche Wand und an welcher Stelle (Abstand vom Wandanfang)? Ohne Position würde ich die Lage erfinden — sag mir Wand-ID und Mass, dann setze ich das Fenster.",
-      "erwartung": { "typ": "ablehnung" }
+      "erwartung": {
+        "typ": "ablehnung"
+      }
     },
     {
       "id": "cmd-24-ablehn-ausserhalb-befehlsumfang",
       "kategorie": "ablehnung",
       "nutzerwunsch": "Bestell bitte Baumaterial beim Lieferanten und aktualisiere gleich die Buchhaltung.",
       "kosmoText": "Bestellungen und Buchhaltung gehören nicht zu meinen Werkzeugen — ich kann Geometrie, Pläne und Dossiers bearbeiten, aber keine Lieferanten-Bestellung auslösen oder Buchhaltungsdaten pflegen.",
-      "erwartung": { "typ": "ablehnung" }
+      "erwartung": {
+        "typ": "ablehnung"
+      }
     },
     {
       "id": "cmd-25-ablehn-echtzeit-render",
       "kategorie": "ablehnung",
       "nutzerwunsch": "Rendere mir jetzt sofort ein fertiges fotorealistisches Bild vom Gebäude, ohne HomeStation.",
       "kosmoText": "Ein echtes GPU-Rendering läuft nur über die HomeStation (Cycles-Job) — ohne sie kann ich kein echtes fotorealistisches Bild liefern, ich würde sonst nur ein Ergebnis vortäuschen. Sobald die HomeStation erreichbar ist, stosse ich den Render-Job gern an.",
-      "erwartung": { "typ": "ablehnung" }
+      "erwartung": {
+        "typ": "ablehnung"
+      }
     },
     {
       "id": "cmd-26-aufbau-erstellen-aw-rohbau",
@@ -366,9 +478,21 @@
           "name": "AW Rohbau 36",
           "target": "wall",
           "layers": [
-            { "material": "putz", "thickness": 20, "function": "bekleidung" },
-            { "material": "daemmung-mw", "thickness": 160, "function": "daemmung" },
-            { "material": "beton", "thickness": 180, "function": "tragend" }
+            {
+              "material": "putz",
+              "thickness": 20,
+              "function": "bekleidung"
+            },
+            {
+              "material": "daemmung-mw",
+              "thickness": 160,
+              "function": "daemmung"
+            },
+            {
+              "material": "beton",
+              "thickness": 180,
+              "function": "tragend"
+            }
           ]
         }
       }
@@ -381,7 +505,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.nodeSetzen",
-        "params": { "graphId": "graph-demolauf01", "typ": "modell", "x": 0, "y": 0 }
+        "params": {
+          "graphId": "graph-demolauf01",
+          "typ": "modell",
+          "x": 0,
+          "y": 0
+        }
       }
     },
     {
@@ -392,7 +521,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.nodeSetzen",
-        "params": { "graphId": "graph-demolauf01", "typ": "kamera", "x": 0, "y": 220 }
+        "params": {
+          "graphId": "graph-demolauf01",
+          "typ": "kamera",
+          "x": 0,
+          "y": 220
+        }
       }
     },
     {
@@ -403,7 +537,15 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.nodeSetzen",
-        "params": { "graphId": "graph-demolauf01", "typ": "stimmung", "x": 260, "y": 0, "params": { "preset": "morgen" } }
+        "params": {
+          "graphId": "graph-demolauf01",
+          "typ": "stimmung",
+          "x": 260,
+          "y": 0,
+          "params": {
+            "preset": "morgen"
+          }
+        }
       }
     },
     {
@@ -414,7 +556,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.nodeSetzen",
-        "params": { "graphId": "graph-demolauf01", "typ": "material", "x": 260, "y": 220 }
+        "params": {
+          "graphId": "graph-demolauf01",
+          "typ": "material",
+          "x": 260,
+          "y": 220
+        }
       }
     },
     {
@@ -425,7 +572,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.nodeSetzen",
-        "params": { "graphId": "graph-demolauf01", "typ": "kombinierer", "x": 390, "y": 100 }
+        "params": {
+          "graphId": "graph-demolauf01",
+          "typ": "kombinierer",
+          "x": 390,
+          "y": 100
+        }
       }
     },
     {
@@ -436,7 +588,12 @@
       "erwartung": {
         "typ": "command",
         "commandId": "vis.nodeSetzen",
-        "params": { "graphId": "graph-demolauf01", "typ": "render", "x": 520, "y": 100 }
+        "params": {
+          "graphId": "graph-demolauf01",
+          "typ": "render",
+          "x": 520,
+          "y": 100
+        }
       }
     },
     {
@@ -481,7 +638,14 @@
       "erwartung": {
         "typ": "command",
         "commandId": "publish.ansichtPlatzieren",
-        "params": { "sheetId": "blatt-kontroll01", "view": "axo", "scale": 100, "x": 100, "y": 80, "title": "Übersicht Axo" }
+        "params": {
+          "sheetId": "blatt-kontroll01",
+          "view": "axo",
+          "scale": 100,
+          "x": 100,
+          "y": 80,
+          "title": "Übersicht Axo"
+        }
       }
     },
     {
@@ -492,9 +656,33 @@
       "erwartung": {
         "typ": "laufplan",
         "schritte": [
-          { "commandId": "design.geschossErstellen", "params": { "name": "EG", "index": 0, "elevation": 0, "height": 3000 } },
-          { "commandId": "design.geschossErstellen", "params": { "name": "1.OG", "index": 1, "elevation": 3000, "height": 2800 } },
-          { "commandId": "design.geschossErstellen", "params": { "name": "2.OG", "index": 2, "elevation": 5800, "height": 2800 } }
+          {
+            "commandId": "design.geschossErstellen",
+            "params": {
+              "name": "EG",
+              "index": 0,
+              "elevation": 0,
+              "height": 3000
+            }
+          },
+          {
+            "commandId": "design.geschossErstellen",
+            "params": {
+              "name": "1.OG",
+              "index": 1,
+              "elevation": 3000,
+              "height": 2800
+            }
+          },
+          {
+            "commandId": "design.geschossErstellen",
+            "params": {
+              "name": "2.OG",
+              "index": 2,
+              "elevation": 5800,
+              "height": 2800
+            }
+          }
         ]
       }
     },
@@ -510,8 +698,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 0, "y": 0 },
-              "b": { "x": 8000, "y": 0 },
+              "a": {
+                "x": 0,
+                "y": 0
+              },
+              "b": {
+                "x": 8000,
+                "y": 0
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             }
@@ -520,8 +714,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 8000, "y": 0 },
-              "b": { "x": 8000, "y": 6000 },
+              "a": {
+                "x": 8000,
+                "y": 0
+              },
+              "b": {
+                "x": 8000,
+                "y": 6000
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             }
@@ -530,8 +730,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 8000, "y": 6000 },
-              "b": { "x": 0, "y": 6000 },
+              "a": {
+                "x": 8000,
+                "y": 6000
+              },
+              "b": {
+                "x": 0,
+                "y": 6000
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             }
@@ -540,8 +746,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 0, "y": 6000 },
-              "b": { "x": 0, "y": 0 },
+              "a": {
+                "x": 0,
+                "y": 6000
+              },
+              "b": {
+                "x": 0,
+                "y": 0
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             }
@@ -557,11 +769,33 @@
       "erwartung": {
         "typ": "laufplan",
         "schritte": [
-          { "commandId": "vis.nodeSetzen", "params": { "graphId": "graph-vis01", "typ": "modell", "x": 0, "y": 0 } },
-          { "commandId": "vis.nodeSetzen", "params": { "graphId": "graph-vis01", "typ": "render", "x": 300, "y": 0 } },
+          {
+            "commandId": "vis.nodeSetzen",
+            "params": {
+              "graphId": "graph-vis01",
+              "typ": "modell",
+              "x": 0,
+              "y": 0
+            }
+          },
+          {
+            "commandId": "vis.nodeSetzen",
+            "params": {
+              "graphId": "graph-vis01",
+              "typ": "render",
+              "x": 300,
+              "y": 0
+            }
+          },
           {
             "commandId": "vis.verbinden",
-            "params": { "graphId": "graph-vis01", "from": "node-modell01", "fromPort": "szene", "to": "node-render01", "toPort": "szene" }
+            "params": {
+              "graphId": "graph-vis01",
+              "from": "node-modell01",
+              "fromPort": "szene",
+              "to": "node-render01",
+              "toPort": "szene"
+            }
           }
         ]
       }
@@ -577,17 +811,32 @@
         "schritte": [
           {
             "commandId": "design.geschossErstellen",
-            "params": { "name": "EG", "index": 0, "elevation": 0, "height": 3000 },
+            "params": {
+              "name": "EG",
+              "index": 0,
+              "elevation": 0,
+              "height": 3000
+            },
             "begruendung": "Erdgeschoss auf Kote 0 mit 3.0 m Geschosshöhe anlegen."
           },
           {
             "commandId": "design.geschossErstellen",
-            "params": { "name": "1.OG", "index": 1, "elevation": 3000, "height": 2800 },
+            "params": {
+              "name": "1.OG",
+              "index": 1,
+              "elevation": 3000,
+              "height": 2800
+            },
             "begruendung": "1. Obergeschoss direkt auf dem EG (3000 mm) mit 2.8 m Geschosshöhe."
           },
           {
             "commandId": "design.geschossErstellen",
-            "params": { "name": "2.OG", "index": 2, "elevation": 5800, "height": 2800 },
+            "params": {
+              "name": "2.OG",
+              "index": 2,
+              "elevation": 5800,
+              "height": 2800
+            },
             "begruendung": "2. Obergeschoss direkt auf dem 1.OG (5800 mm) mit 2.8 m Geschosshöhe."
           }
         ]
@@ -606,8 +855,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 0, "y": 0 },
-              "b": { "x": 8000, "y": 0 },
+              "a": {
+                "x": 0,
+                "y": 0
+              },
+              "b": {
+                "x": 8000,
+                "y": 0
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             },
@@ -617,8 +872,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 8000, "y": 0 },
-              "b": { "x": 8000, "y": 6000 },
+              "a": {
+                "x": 8000,
+                "y": 0
+              },
+              "b": {
+                "x": 8000,
+                "y": 6000
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             },
@@ -628,8 +889,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 8000, "y": 6000 },
-              "b": { "x": 0, "y": 6000 },
+              "a": {
+                "x": 8000,
+                "y": 6000
+              },
+              "b": {
+                "x": 0,
+                "y": 6000
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             },
@@ -639,8 +906,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 0, "y": 6000 },
-              "b": { "x": 0, "y": 0 },
+              "a": {
+                "x": 0,
+                "y": 6000
+              },
+              "b": {
+                "x": 0,
+                "y": 0
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             },
@@ -662,8 +935,14 @@
             "commandId": "design.wandZeichnen",
             "params": {
               "storeyId": "geschoss-eg01",
-              "a": { "x": 0, "y": 0 },
-              "b": { "x": 5000, "y": 0 },
+              "a": {
+                "x": 0,
+                "y": 0
+              },
+              "b": {
+                "x": 5000,
+                "y": 0
+              },
               "assemblyId": "aufbau-awbeton01",
               "alignment": "zentrum"
             },
@@ -671,12 +950,193 @@
           },
           {
             "commandId": "design.dasGibtEsNicht",
-            "params": { "storeyId": "geschoss-eg01" },
+            "params": {
+              "storeyId": "geschoss-eg01"
+            },
             "begruendung": "Danach automatisch das Dach fertig konstruieren."
           }
         ],
         "enthaeltFehlertext": "unbekannte commandId"
       }
+    },
+    {
+      "id": "cmd-42-mehrzug-geschoss-dann-zone",
+      "kategorie": "mehrzug",
+      "zuege": [
+        {
+          "nutzerwunsch": "Erstelle das Attikageschoss auf Kote 8.6 m, Geschosshöhe 2.6 m.",
+          "kosmoText": "Ich erstelle das Attikageschoss auf 8600 mm mit 2600 mm Geschosshöhe.",
+          "erwartung": {
+            "typ": "command",
+            "commandId": "design.geschossErstellen",
+            "params": {
+              "name": "Attika",
+              "index": 3,
+              "elevation": 8600,
+              "height": 2600
+            }
+          }
+        },
+        {
+          "nutzerwunsch": "Leg im Attikageschoss die Zone «Dachterrasse» an, Umriss 4×3 m ab (0/0), NNF.",
+          "kosmoText": "Ich erstelle die Zone «Dachterrasse» (NNF) im Attikageschoss, 4000×3000 mm.",
+          "erwartung": {
+            "typ": "command",
+            "commandId": "design.zoneErstellen",
+            "params": {
+              "storeyId": "@ref:storey:Attika",
+              "outline": [
+                {
+                  "x": 0,
+                  "y": 0
+                },
+                {
+                  "x": 4000,
+                  "y": 0
+                },
+                {
+                  "x": 4000,
+                  "y": 3000
+                },
+                {
+                  "x": 0,
+                  "y": 3000
+                }
+              ],
+              "name": "Dachterrasse",
+              "sia": "NNF"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "cmd-43-mehrzug-aufbau-dann-wand",
+      "kategorie": "mehrzug",
+      "zuege": [
+        {
+          "nutzerwunsch": "Leg einen neuen Aussenwand-Aufbau «AW Attika 30» an: 15 mm Putz aussen, 140 mm Mineralwolldämmung, 150 mm Beton tragend.",
+          "kosmoText": "Ich erstelle den Wandaufbau «AW Attika 30» (Putz/Dämmung/Beton, 305 mm gesamt).",
+          "erwartung": {
+            "typ": "command",
+            "commandId": "design.aufbauErstellen",
+            "params": {
+              "name": "AW Attika 30",
+              "target": "wall",
+              "layers": [
+                {
+                  "material": "putz",
+                  "thickness": 15,
+                  "function": "bekleidung"
+                },
+                {
+                  "material": "daemmung-mw",
+                  "thickness": 140,
+                  "function": "daemmung"
+                },
+                {
+                  "material": "beton",
+                  "thickness": 150,
+                  "function": "tragend"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "nutzerwunsch": "Zeichne im EG eine 5 m Attikawand ab (0/0) mit genau diesem neuen Aufbau.",
+          "kosmoText": "Ich zeichne die 5000 mm Attikawand mit dem Aufbau «AW Attika 30».",
+          "erwartung": {
+            "typ": "command",
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": {
+                "x": 0,
+                "y": 0
+              },
+              "b": {
+                "x": 5000,
+                "y": 0
+              },
+              "assemblyId": "@ref:aufbau:AW Attika 30",
+              "alignment": "zentrum"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "cmd-44-laufvorschlag-abgelehnt-zwei-erfundene-commandids",
+      "kategorie": "lauf-vorschlag-abgelehnt",
+      "nutzerwunsch": "Plane mir einen Lauf: erst eine Wand zeichnen, dann automatisch entwerfen lassen, dann automatisch rendern, dann nochmal automatisch entwerfen lassen.",
+      "kosmoText": "Ich schlage den Lauf «Wand, Auto-Entwurf, Auto-Render» vor: Wand zeichnen, danach zweimal automatisch entwerfen und einmal automatisch rendern.",
+      "erwartung": {
+        "typ": "lauf-vorschlag-abgelehnt",
+        "titel": "Wand, Auto-Entwurf, Auto-Render",
+        "schritte": [
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": {
+                "x": 0,
+                "y": 0
+              },
+              "b": {
+                "x": 5000,
+                "y": 0
+              },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            },
+            "begruendung": "Erst die Wand ziehen, 5 m."
+          },
+          {
+            "commandId": "design.automatischEntwerfen",
+            "params": {
+              "storeyId": "geschoss-eg01"
+            },
+            "begruendung": "Danach automatisch weiterentwerfen (erfundene commandId, 1. Vorkommen)."
+          },
+          {
+            "commandId": "vis.automatischRendern",
+            "params": {
+              "graphId": "graph-wettbewerb01"
+            },
+            "begruendung": "Automatisch rendern (zweite, andere erfundene commandId)."
+          },
+          {
+            "commandId": "design.automatischEntwerfen",
+            "params": {
+              "storeyId": "geschoss-eg01"
+            },
+            "begruendung": "Nochmal automatisch weiterentwerfen (erfundene commandId, 2. Vorkommen — testet Dedup)."
+          }
+        ],
+        "enthaeltFehlertext": "unbekannte commandId",
+        "dedupFragmente": [
+          "design.automatischEntwerfen",
+          "vis.automatischRendern"
+        ]
+      }
+    },
+    {
+      "id": "cmd-45-command-fehler-unbekanntes-feld",
+      "kategorie": "command-fehler",
+      "nutzerwunsch": "Setz beim Doppelbett die Schwebehöhe auf 50.",
+      "kosmoText": "Ich versuche, das Feld schwebehoehe von moebel-bett01 auf 50 zu setzen.",
+      "erwartung": {
+        "typ": "command-fehler",
+        "commandId": "design.eigenschaftSetzen",
+        "params": {
+          "entityId": "moebel-bett01",
+          "feld": "schwebehoehe",
+          "wert": 50
+        },
+        "enthaeltFehlertext": "feld: Invalid option"
+      },
+      "notiz": "Fable-Nachführung 19.07.2026 NACH PA1-088-Landung (ROADMAP 508): der ursprüngliche Fall (rotationGrad='schräg') scheitert seit E2 NICHT mehr vor der Karte — rotationGrad ist jetzt ein bekanntes, schema-gültiges Feld; der Wert-Fehler («schräg» ist keine gültige Zahl) feuert erst beim ANWENDEN im Kernel-run und ist dort unit-getestet (verschieben-symmetrie.test.ts). Dieser Eval-Fall verankert darum den verbleibenden Vor-Karte-Ablehnweg: ein UNBEKANNTES Feld (schwebehoehe) wird vom zod-Enum als Tool-Fehler abgewiesen, keine Karte, kein onProposal."
     }
   ]
 }

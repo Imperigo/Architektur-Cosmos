@@ -1,10 +1,10 @@
 {
   "adapter": "kosmo-zeichner-commands",
   "modus": "Selbstcheck (ScriptedProvider durch die echte ChatSession)",
-  "erzeugt_um": "2026-07-19T12:52:51.282Z",
+  "erzeugt_um": "2026-07-19T17:04:42.681Z",
   "gesamt": {
-    "bestanden": 41,
-    "von": 41
+    "bestanden": 45,
+    "von": 45
   },
   "klassen": [
     {
@@ -69,6 +69,16 @@
     },
     {
       "kategorie": "lauf-vorschlag-abgelehnt",
+      "bestanden": 2,
+      "von": 2
+    },
+    {
+      "kategorie": "mehrzug",
+      "bestanden": 2,
+      "von": 2
+    },
+    {
+      "kategorie": "command-fehler",
       "bestanden": 1,
       "von": 1
     }
@@ -318,7 +328,31 @@
       "id": "cmd-41-laufvorschlag-abgelehnt-erfundene-commandid",
       "kategorie": "lauf-vorschlag-abgelehnt",
       "ok": true,
-      "begruendung": "Treffer: erfundene commandId korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «unbekannte commandId»), kein LaufVorschlag, kein onProposal"
+      "begruendung": "Treffer: erfundene commandId(s) korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «unbekannte commandId»), kein LaufVorschlag, kein onProposal"
+    },
+    {
+      "id": "cmd-42-mehrzug-geschoss-dann-zone",
+      "kategorie": "mehrzug",
+      "ok": true,
+      "begruendung": "Treffer: 2 Züge korrekt (@ref-Referenzen unverändert durchgereicht), Doc über die ganze Folge Byte-gleich"
+    },
+    {
+      "id": "cmd-43-mehrzug-aufbau-dann-wand",
+      "kategorie": "mehrzug",
+      "ok": true,
+      "begruendung": "Treffer: 2 Züge korrekt (@ref-Referenzen unverändert durchgereicht), Doc über die ganze Folge Byte-gleich"
+    },
+    {
+      "id": "cmd-44-laufvorschlag-abgelehnt-zwei-erfundene-commandids",
+      "kategorie": "lauf-vorschlag-abgelehnt",
+      "ok": true,
+      "begruendung": "Treffer: erfundene commandId(s) korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «unbekannte commandId», dedupliziert: design.automatischEntwerfen, vis.automatischRendern), kein LaufVorschlag, kein onProposal"
+    },
+    {
+      "id": "cmd-45-command-fehler-unbekanntes-feld",
+      "kategorie": "command-fehler",
+      "ok": true,
+      "begruendung": "Treffer: Aufruf korrekt VOR jeder Karte abgewiesen (Tool-FEHLER enthält «feld: Invalid option»), kein onProposal, Doc unverändert"
     }
   ]
 }
