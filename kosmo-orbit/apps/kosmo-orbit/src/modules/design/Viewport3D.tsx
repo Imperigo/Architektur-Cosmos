@@ -4,7 +4,7 @@ import CameraControls from 'camera-controls';
 import { gestenDetektor, kameraDarfSehen, mausBelegung, touchBelegung, werkzeugCursorFuer, type KameraAktion } from './eingabe-3d';
 import { ViewportKontextmenue } from './ViewportKontextmenue';
 import * as SunCalc from 'suncalc';
-import { aufgeloesteDarstellung3d, offizielleDarstellung3d, deriveAllMitFensterdetails, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Storey, type Wall } from '@kosmo/kernel';
+import { aufgeloesteDarstellung3d, offizielleDarstellung3d, deriveAllMitFensterdetails, finalerRenderPrompt, renderPromptBausteine, type ElementFangPunkt, type FreeMesh, type GeometryArtifact, type Pt, type Stair, type Storey, type Wall } from '@kosmo/kernel';
 import { Badge, KButton, KIcon, melde, meldeFehler, moduleHue } from '@kosmo/ui';
 import './viewport3d-chrome.css';
 import { useProject } from '../../state/project-store';
@@ -1091,6 +1091,92 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       return raycaster.intersectObjects(meshHandleGroup.children, false)[0] ?? null;
     };
 
+    // PA5 (v0.8.9 «Geordnet», docs/V089-SPEZ.md §2 D5, §3 E4, §7 C-8):
+    // Treppen-3D-Griffe — dieselbe Gruppen-/Cache-/Raycast-Maschine wie das
+    // FreeMesh-Muster oben, aber AUSWAHL-gated statt meshEditId-gated: kein
+    // zusätzlicher externer Modus-Schalter, die Einzel-Auswahl selbst
+    // entscheidet, ob Griffe erscheinen (2D-Vorbild: PlanView.tsx `griffe`-
+    // useMemo, «nur bei Einzel-Auswahl», hier 1:1 auf die Auswahl im
+    // gemeinsamen `useProject`-Store übertragen). Marker an Antritt `a`,
+    // Austritt `b` und — bei form 'l' — `ecke`; gleicher Stil/gleiche Grösse
+    // wie die Mesh-Handles: `meshHandleGeo`/`meshHandleMaterial` werden
+    // bewusst WIEDERVERWENDET (kein zweites Geometrie-/Material-Paar, kein
+    // zusätzlicher Dispose-Bedarf). x/y-only (E4, dokumentiertes
+    // Nicht-Ziel «Treppen-z-Griff»): die Höhe des Handles bleibt an der
+    // Geschoss-Elevation der Treppe fix, nur x/z (Kern x/y) folgen dem
+    // Zeiger — s. die horizontale Ziehebene bei `stairDrag` unten.
+    const stairHandleGroup = new THREE.Group();
+    stairHandleGroup.scale.set(MM, MM, MM);
+    scene.add(stairHandleGroup);
+    let stairHandlesBuiltFor: { id: string; revision: number } | null = null;
+
+    interface StairDragState {
+      entityId: string;
+      key: 'a' | 'b' | 'ecke';
+      /** Weltposition (Meter) des Handles BEIM Down — Basis der horizontalen
+       *  Ziehebene UND des Esc-/Fehler-Rückbaus (Handle exakt zurück, kein
+       *  Commit) — Muster `meshDrag.startWorld` oben. */
+      startWorld: THREE.Vector3;
+      plane: THREE.Plane;
+      handle: THREE.Mesh;
+    }
+    let stairDrag: StairDragState | null = null;
+
+    /** Handle exakt auf die Zieh-Startposition zurücksetzen — gebraucht bei
+     *  Esc-Abbruch UND bei einem Kernel-Wurf im Commit (`onPointerUp`
+     *  unten): in BEIDEN Fällen bleibt die Treppe im Doc unangetastet, also
+     *  bumpt auch keine `revision` — ohne diesen expliziten Rückbau bliebe
+     *  der Handle visuell am (verworfenen) Zielpunkt hängen, weil
+     *  `syncStairHandles` unten NUR bei einer neuen `{id, revision}`-
+     *  Kombination neu baut. */
+    function stairDragZurueck(d: StairDragState): void {
+      d.handle.position.set(d.startWorld.x / MM, d.startWorld.y / MM, d.startWorld.z / MM);
+    }
+
+    function syncStairHandles() {
+      if (stairDrag) return; // nicht mitten im Ziehen neu aufbauen (meshHandle-Muster)
+      const { doc, selection, revision: rev } = useProject.getState();
+      const id = selection.length === 1 ? selection[0]! : null;
+      if (!id) {
+        if (stairHandlesBuiltFor) {
+          stairHandleGroup.clear();
+          stairHandlesBuiltFor = null;
+        }
+        return;
+      }
+      const stair = doc.get<Stair>(id);
+      if (!stair || stair.kind !== 'stair') {
+        if (stairHandlesBuiltFor) {
+          stairHandleGroup.clear();
+          stairHandlesBuiltFor = null;
+        }
+        return;
+      }
+      if (stairHandlesBuiltFor && stairHandlesBuiltFor.id === id && stairHandlesBuiltFor.revision === rev) return;
+      stairHandlesBuiltFor = { id, revision: rev };
+      stairHandleGroup.clear();
+      const storey = doc.get<Storey>(stair.storeyId);
+      const elevation = storey && storey.kind === 'storey' ? storey.elevation : 0;
+      const punkte: { key: 'a' | 'b' | 'ecke'; p: Pt }[] = [
+        { key: 'a', p: stair.a },
+        { key: 'b', p: stair.b },
+      ];
+      if (stair.form === 'l' && stair.ecke) punkte.push({ key: 'ecke', p: stair.ecke });
+      for (const punkt of punkte) {
+        const handleMesh = new THREE.Mesh(meshHandleGeo, meshHandleMaterial);
+        handleMesh.position.set(punkt.p.x, elevation, -punkt.p.y);
+        handleMesh.userData['stairHandle'] = { entityId: id, key: punkt.key };
+        stairHandleGroup.add(handleMesh);
+      }
+    }
+
+    const stairHandleTrefferAt = (clientX: number, clientY: number) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
+      raycaster.setFromCamera(ndc, camera);
+      return raycaster.intersectObjects(stairHandleGroup.children, false)[0] ?? null;
+    };
+
     // T5, Punkt 3 + A4 (ROADMAP 155): KosmoSketch im 3D-Viewport — Roh-
     // Striche (dünn, gedämpft), der aktuell gezogene Strich (Akzentfarbe)
     // und die gefittete Vorschau (nach «Übergeben»). Boden/Terrain-Striche
@@ -1875,6 +1961,28 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           return;
         }
       }
+      // PA5 (v0.8.9 E4): pointerdown auf einem Treppen-Griff startet den
+      // lokalen Zieh-Zustand — Vorrang vor Gesten-Automat/Kamera (dieselbe
+      // Pencil-Trennung wie beim Vertex-Handle oben, Stift/linke Maus
+      // greifen, Finger navigieren weiter). Trifft der Down daneben, bleibt
+      // es ein normaler Klick/Kamera-Zug. Läuft UNABHÄNGIG von `meshEditId`
+      // — Griffe sind auswahl-, nicht modus-gated (s. `syncStairHandles`).
+      if (!handlers.current?.sketchMode && !kameraDarfSehen(ev.pointerType, ev.button, true)) {
+        const stairHit = stairHandleTrefferAt(ev.clientX, ev.clientY);
+        if (stairHit) {
+          const info = stairHit.object.userData['stairHandle'] as { entityId: string; key: 'a' | 'b' | 'ecke' };
+          const worldPos = stairHit.object.getWorldPosition(new THREE.Vector3());
+          stairDrag = {
+            entityId: info.entityId,
+            key: info.key,
+            startWorld: worldPos,
+            plane: new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), worldPos),
+            handle: stairHit.object as THREE.Mesh,
+          };
+          (renderer.domElement as Element).setPointerCapture(ev.pointerId);
+          return;
+        }
+      }
       if (!handlers.current?.sketchMode) {
         gesten.ereignis({ typ: 'down', t: performance.now(), x: ev.clientX, y: ev.clientY, pointerId: ev.pointerId, pointerType: ev.pointerType });
       }
@@ -1905,6 +2013,47 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         meshDrag = null;
         downPos = null;
+        return;
+      }
+      // PA5 (v0.8.9 E4, docs/V089-SPEZ.md §3 E4, §7 C-8): ein laufender
+      // Treppen-Griff-Zug committet HIER — verbraucht das up wie der
+      // Vertex-Drag-Commit oben, EIN Aufruf, nur bei echter Bewegung
+      // (kein spurenloser Undo-Schritt bei einem reinen Klick).
+      if (stairDrag) {
+        const drag = stairDrag;
+        stairDrag = null;
+        downPos = null;
+        const zielX = Math.round(drag.handle.position.x);
+        const zielY = Math.round(-drag.handle.position.z);
+        const startX = Math.round(drag.startWorld.x / MM);
+        const startY = Math.round(-drag.startWorld.z / MM);
+        if (zielX !== startX || zielY !== startY) {
+          // Commit-Weg: DIREKT über den globalen `useProject`-Store
+          // (`runCommand`), NICHT über den `handlers.current`-Callback-Weg
+          // wie die 2D-Griffe (DesignWorkspace.tsx `onGriffEnd`) — dessen
+          // Datei ist im Dateikreis dieses Pakets TABU (Betriebsregeln),
+          // ein neuer Handler dort war nicht verfügbar. `runCommand` bleibt
+          // trotzdem der EINE zentrale Schreib-Weg (CLAUDE.md «Alles ist
+          // ein Command») — Undo/Journal/Yjs-Sync laufen identisch,
+          // unabhängig vom Aufrufer. Kein neuer Kernel-Command: derselbe
+          // BESTEHENDE `design.treppeGeometrieSetzen` (In-place-Setter,
+          // PA1 v0.8.7) wie im 2D-Griff. Wirft der Kernel VOR jedem Patch
+          // (Lauf < 1 m, Steigungs-Gate, degenerierte Ecke), bleibt die
+          // Treppe unangetastet (`require()` im Kernel) — der Handle
+          // springt über `stairDragZurueck` sichtbar auf seine echte
+          // Position zurück, `meldeFehler` zeigt den Fehler (2D-Muster,
+          // `griffe-treppe.spec.ts` C-2).
+          const ziel: Pt = { x: zielX, y: zielY };
+          try {
+            useProject.getState().runCommand('design.treppeGeometrieSetzen', {
+              entityId: drag.entityId,
+              ...(drag.key === 'a' ? { a: ziel } : drag.key === 'b' ? { b: ziel } : { ecke: ziel }),
+            });
+          } catch (err) {
+            stairDragZurueck(drag);
+            meldeFehler(err);
+          }
+        }
         return;
       }
       // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5): Shift-Marquee committet HIER
@@ -2063,6 +2212,20 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         return;
       }
+      // PA5 (v0.8.9 E4): der Treppen-Griff folgt lokal dem Zeiger — x/y-only
+      // (Kern x/y), die Ziehebene liegt horizontal auf der ursprünglichen
+      // Handle-Höhe (`stairDrag.plane`), die Höhe selbst bleibt fix (Kein
+      // z-Griff, E4/dokumentiertes Nicht-Ziel).
+      if (stairDrag) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        ndc.set(((ev.clientX - rect.left) / rect.width) * 2 - 1, -((ev.clientY - rect.top) / rect.height) * 2 + 1);
+        raycaster.setFromCamera(ndc, camera);
+        const hit = new THREE.Vector3();
+        if (raycaster.ray.intersectPlane(stairDrag.plane, hit)) {
+          stairDrag.handle.position.set(hit.x / MM, stairDrag.startWorld.y / MM, hit.z / MM);
+        }
+        return;
+      }
       // E5 (v0.8.7 PB2): Shift-Marquee — nur das Overlay-Rechteck nachziehen,
       // kein Gesten-/Ground-Move (der Zeiger malt hier ein Auswahlrechteck,
       // keine Zeichen-Vorschau/keinen Hover).
@@ -2088,6 +2251,38 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     };
     const onKey = (ev: KeyboardEvent) => {
       if (ev.key === 'Escape') {
+        // PA5 (v0.8.9 E4, docs/V089-SPEZ.md §3 E4): Esc bricht einen
+        // laufenden Treppen-Griff-Zug ab — Handle exakt zurück
+        // (`stairDragZurueck`), KEIN Commit, KEIN `onEscape`-Fanout (dieselbe
+        // «kein Feuern»-Regel wie beim Marquee-Esc unten). Bewusst ein rein
+        // LOKALER Zustands-Schutz (früher return, kein neuer Store-Kanal) —
+        // anders als der Marquee-Esc-Zweig berührt das NICHT den 0.8.8-
+        // `marqueeAktiv`-Kanal.
+        //
+        // BEKANNTE RANDWIRKUNG (dokumentierte Lücke, Übergabe-Punkt an
+        // Fable, s. `e2e/griffe-treppe-3d.spec.ts`-Kopfkommentar für Details):
+        // `DesignWorkspace.tsx` trägt einen EIGENEN, unabhängigen
+        // `window`-Keydown-Escape-Listener (~Zeile 864-896), der NUR
+        // `marqueeAktiv` (Zeile 876) als Ausnahme kennt und sonst
+        // unbedingt die vorbestehende ArchiCAD-Dritte-Stufe
+        // `escAuswahlRef.current()` (Zeile 595-602) feuert — die leert die
+        // Auswahl. Ein `stairDrag` setzt `marqueeAktiv` bewusst nicht (s.
+        // oben), die Auswahl fällt also mitten im Zug weg, OBWOHL der Zug
+        // selbst hier sauber abbricht (kein Commit). Derselbe Effekt
+        // betrifft den BESTEHENDEN `meshDrag` (Vertex-Griff) ebenso — dort
+        // existiert nicht einmal ein eigener Esc-Abbruch-Zweig, älter als
+        // PA5-089. Fix ausserhalb dieses Dateikreises: ein weiterer
+        // Zustands-Kanal nach dem `marqueeAktiv`-Muster (z. B.
+        // `griffDragAktiv`, gesetzt bei Start/Ende von `stairDrag`/
+        // `meshDrag`), den `DesignWorkspace.tsx:876` zusätzlich prüfen
+        // müsste — `DesignWorkspace.tsx` ist im Dateikreis PA5-089 TABU,
+        // daher hier nur dokumentiert, nicht gefixt.
+        if (stairDrag) {
+          stairDragZurueck(stairDrag);
+          stairDrag = null;
+          invalidate();
+          return;
+        }
         // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5): Esc bricht eine laufende
         // Shift-Marquee-Geste ab — «kein Feuern» heisst auch: KEIN
         // `onEscape`-Fanout (der leert im DesignWorkspace-Handler die ganze
@@ -2199,8 +2394,13 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // Pencil-Trennung wie im Skizzenmodus (Stift/linke Maus ziehen den
       // Handle, Kamera steht still; Finger navigieren weiter — J1, kein
       // Sonderweg für Touch).
+      // PA5 (v0.8.9 E4): Treppen-Griffe sind auswahl-, nicht meshEditId-
+      // gated — der Treffer-Test läuft darum UNBEDINGT (billig: leere
+      // Gruppe ausserhalb der Einzel-Auswahl einer Treppe, s.
+      // `syncStairHandles`).
       const handleGetroffen =
-        !!handlers.current?.meshEditId && meshHandleTrefferAt(ev.clientX, ev.clientY) !== null;
+        (!!handlers.current?.meshEditId && meshHandleTrefferAt(ev.clientX, ev.clientY) !== null) ||
+        stairHandleTrefferAt(ev.clientX, ev.clientY) !== null;
       controls.enabled = handleGetroffen
         ? kameraDarfSehen(ev.pointerType, ev.button, true)
         : kameraDarfSehen(ev.pointerType, ev.button, !!handlers.current?.sketchMode);
@@ -2373,6 +2573,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncSketchModus();
       syncSketchDrawing();
       syncMeshHandles();
+      syncStairHandles();
       // Auswahl-Highlight (Kupfer-Glut, E3 v0.8.7 um den Kanten-Akzent
       // erweitert: `model.children` enthält je Entity GENAU ein Mesh + eine
       // LineSegments-Kante — beide tragen `entityId` (Kante seit E3, s.o.
@@ -2574,6 +2775,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // — kein neuer globaler Store-Zugriff nötig, dieselbe
       // `__kosmoViewport`-Testhook-Konvention wie alle Anker oben.
       marqueeAktiv: (): boolean => useViewportChromeRuntime.getState().marqueeAktiv,
+      // PA5-Beweis-Anker (v0.8.9 E4, docs/V089-SPEZ.md §3 E4, §7 C-8):
+      // deterministischer Zähl-Anker wie `entityMeshCount`/`glbMeshCount`
+      // oben — 0 ausserhalb einer Einzel-Auswahl einer Treppe, sonst 2
+      // (a/b) bzw. 3 (a/b/ecke bei form 'l').
+      stairHandleCount: (): number => stairHandleGroup.children.length,
     };
 
     return () => {
