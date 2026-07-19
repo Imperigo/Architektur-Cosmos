@@ -144,3 +144,20 @@ Qwen2.5-VL) und liefert einen GIS-Merker (swissALTI3D 2026 LiDAR /
 swissNAMES3D 2026 — WATCH für die Standort-Kette). Details und Ehrlichkeit
 in `AI-SCAN-AUSWERTUNG-0.7.0.md` §5 — alles Scan-Aussagen, nicht selbst
 verifiziert.
+
+## Nachtrag 2026-07-19 — aus der Scan-Delta-Auswertung v0.8.5 (AI-SCAN-AUSWERTUNG-0.8.5.md)
+
+| Baustein | Entscheid | Quelle | Lizenz |
+|---|---|---|---|
+| BIM-Edit (IFC-Editing-Benchmark) | **PATTERN** — externer Beleg für den Command-Ansatz: LLMs lösen <3.4 % direkter IFC-Edits; Kosmo bleibt bei zod-validierten Commands (E4-Autopilot inklusive). | arxiv.org/abs/2606.20146 | Paper CC-BY (laut Scan) |
+| VectorGym (SVG-Dataset + 8B-Modell) | **TEST (HomeStation)** — Apache-2.0-Dataset (~8000 SVGs, human-annotiert) als SVG-Finetuning-Basis; Annotation-Lizenz vor kommerziellem Training prüfen. | huggingface.co/datasets/ServiceNow/VectorGym | Apache 2.0 (laut Scan) |
+| swisstopo-mcp (13 CH-Geodaten-Tools) | **EVALUATE** — ÖREB/LV95/STAC/WMTS ohne API-Key als MCP-Server; Kandidat für die Standort-/Parzellen-Kette in KosmoData (v0.8.6+). Erst gegen die neue MCP-Spec (28.07.) prüfen. | github.com/malkreide/swisstopo-mcp | MIT (laut Scan) |
+| MCP-Spezifikation 2026-07-28 | **WATCH** — Protokoll wird stateless, Roots/Sampling/Logging depreciert, OAuth 2.1 Pflicht; jede künftige Kosmo-MCP-Arbeit gegen die neue Spec entwerfen. | blog.modelcontextprotocol.io | Spez (laut Scan) |
+| IfcOpenShell Bonsai 0.8.6-alpha | **WATCH** — tägliche Alpha-Builds seit 12.07.; produktiv bleibt 0.8.5 stable. | github.com/IfcOpenShell/IfcOpenShell | LGPL (laut Scan) |
+| landingai-ade (Visual-Grounding-Extraktion) | **EVALUATE (Prepare)** — Quelle-pro-Wert-PDF-Extraktion für die KosmoPrepare-M2-Kette. | github.com/landing-ai/agentic-doc | MIT (laut Scan) |
+| Grundriss-KI-Paperwelle (HouseMind/FloorplanVLM/FML/RLRF/IntroSVG/GeoSVG-RL) | **WATCH** — durchweg ohne Code; Konzepte (Render-als-Verifier, Layout-Token) als Referenz. | arXiv (je Paper) | kein Code (laut Scan) |
+| MCP4IFC | **REJECT (Lizenz)** — CC BY-NC-SA, für Erwerbsnutzung ungeeignet; dokumentiert gegen erneutes Vorschlagen. | arxiv.org/abs/2511.05533 | CC BY-NC-SA ⚠ |
+
+Alle Angaben dieser Tabelle sind Scan-Aussagen (13 Notion-Seiten
+12.–18.07.), nicht selbst verifiziert — Details und Ehrlichkeit in
+`AI-SCAN-AUSWERTUNG-0.8.5.md` §4.

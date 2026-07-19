@@ -35,6 +35,29 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.5',
+    datum: '2026-07-19',
+    punkte: [
+      {
+        text: 'Der Plan ist jetzt greifbar: Shift-Klick nimmt Elemente in die Auswahl auf oder wieder heraus, ein Aufziehrechteck (Rubber-Band) wählt ganze Gruppen — mit Shift additiv, nur voll umschlossene Elemente zählen —, Esc leert die Auswahl, und der Inspector zeigt bei Mehrfach-Auswahl «N Elemente» mit «Alle löschen». Löschen und Verschieben über die ganze Gruppe laufen als EIN Undo-Schritt.',
+        station: 'design',
+      },
+      {
+        text: 'Einzeln gewählte Wände, Massketten, Zonen, Volumen und Dächer zeigen schmale Griffe an Endpunkten und Ecken: Anfassen und Ziehen ändert genau diesen einen Punkt (mit Gummiband-Vorschau), ein Undo stellt alles wieder her — und wenn ein Zug geometrisch unmöglich ist (etwa ein nicht-konvexes Dach), bleibt das Original unangetastet stehen statt zu verschwinden. Esc schliesst eine laufende Masskette jetzt auch in der reinen 2D-Ansicht ab, und Kommentare lassen sich im klassischen Modus direkt am Klickpunkt erfassen (Kurztaste K).',
+        station: 'design',
+      },
+      {
+        text: 'Kosmo kann jetzt ganze Läufe fahren: Ein «Kosmo-Lauf» ist eine geplante Folge von Befehlen (LaufPlan), die Schritt für Schritt über denselben geprüften Command-Weg läuft wie jede Handbedienung — mit sichtbarer Schrittliste samt Begründungen im Kosmo-Panel, Abbrechen-Knopf, Stopp beim ersten Fehler und einem Undo-Schritt pro Lauf-Schritt. Kein Lauf startet je von selbst. Drei kuratierte Drehbücher liegen bei (Rohbau-Grundriss, Vis-Demolauf, Publish-Blatt), und die Zeichner-Eval wuchs von 25 auf 35 Prüffälle (35/35 bestanden).',
+      },
+      {
+        text: 'Auf dem Blatt lassen sich Bemassung und Zonen-Kontext jetzt ein- und ausblenden (DARSTELLUNG-Insel, Werkzeug «Sichtbarkeit») — rein als Anzeige-Schalter, die abgeleiteten Pläne bleiben byte-identisch. PDF-Export-Fehler werden sichtbar gemeldet statt still verschluckt, und die Werkzeuge der Vis-, Publish- und Prepare-Inseln zeigen echte gezeichnete Symbole statt Buchstaben-Kürzeln (34 neue Icons nach der Design-Bauvorschrift).',
+      },
+      {
+        text: 'Unter der Haube: Ein lange als «Flake» abgetaner Auswahl-Fehler entpuppte sich als echter Browser-Bug-Auslöser (Zieh-Gesten bauten unbemerkt eine Text-Selektion auf, die die nächste Geste einfrieren liess) und ist an der Wurzel gefixt. Die Release-Matrix wurde von 21 unabhängigen Prüfern adversarial am laufenden System abgenommen (20 von 21 sofort bestanden, der eine Fund — das Dach-Verlust-Risiko — ist gefixt), und die Design-Token-Familie wuchs um fünf kanonische Werte (Print-Tönung, zweite Warnstufe, Diagnose-Blau, Glas-Tinte).',
+      },
+    ],
+  },
+  {
     version: '0.8.4',
     datum: '2026-07-18',
     punkte: [

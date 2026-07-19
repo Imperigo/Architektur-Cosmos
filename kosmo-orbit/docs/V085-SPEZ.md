@@ -137,7 +137,27 @@ Kommandoform (fester cd-Ausgangspunkt, Lehren v0.8.4).
 - [x] **C-19** Publish: Bemassungs-/Zonen-Toggles wirken auf dem Blatt; Goldens byte-still (sha256) → PB3
 - [x] **C-20** Kommentar-Erfassen im manuell-Modus erreichbar (D11) → PB3
 - [x] **C-21** Token-Nachträge aktiv, `--isl-pill-ink`-Alias ersetzt, visuelle Gleichheit bewiesen; Fetch-Mock-Leck gefixt (voller Batch 3× grün); Chevron-Probe dokumentiert → PB4
-- [ ] **C-22** Release: Matrix adversarial (Kürzel TIPPEN, 980px-Viewport, Island-Default via leerem storageState), Lehren v0.8.5, Sechs-Träger-Bump, Neuigkeiten, Release-Notiz, Rundgang-PDF, release-gate 0, Installer + sha256 + Zustellung, Owner-Smoke-Punkt → W3
+- [x] **C-22** Release: Matrix adversarial (Kürzel TIPPEN, 980px-Viewport, Island-Default via leerem storageState), Lehren v0.8.5, Sechs-Träger-Bump, Neuigkeiten, Release-Notiz, Rundgang-PDF, release-gate 0, Installer + sha256 + Zustellung, Owner-Smoke-Punkt → W3
+
+### Ergebnis der Abnahme (19.07.2026)
+
+21 adversariale Prüfer (Workflow-Fan-out, je Zelle einer, eigene
+Playwright-Proben + Spec-Reruns + Code-Review am Live-Build :5183):
+**20/21 sofort bestanden, 1 echte Lücke — gefixt vor dem Release.**
+
+- **C-16-Fund:** Dach-Eck-Zug auf nicht-konvexes Ziel verlor das Dach
+  (Löschen vor dem scheiternden Neusetzen) → Fix: Erst-erstellen-dann-
+  löschen in allen `onGriffEnd`-Zweigen + Regressionstest in
+  `e2e/griffe.spec.ts` (ROADMAP 484, Commit `02f0217`).
+- Bemerkenswerte bestandene Angriffe: C-2 hielt >70 Marquee-Zügen über
+  dem Auto-Bemassungs-Dekor stand (0 pointercancel nach dem 482-Fix);
+  C-8 stoppte bei absichtlich kaputter commandId mit Status «fehler»;
+  C-10 bewies Kein-Auto-Start am Live-DOM; C-20 verweigerte den
+  Manuell-Kommentar-Anker im Island-Modus.
+- Ehrlich offen geblieben (dokumentiert, kein Release-Blocker):
+  Wand-Endpunkt-Drag verliert Öffnungen (Löschen+Neusetzen-Muster,
+  ROADMAP 482); Zonen-Toggle wirkt auf Parzellen-/Nachbar-Kontext
+  (ROADMAP 480); `zonenArt: 'nachbar'` überlebt den Eck-Zug nicht.
 
 ## 8 · Ehrliche Nicht-Ziele
 

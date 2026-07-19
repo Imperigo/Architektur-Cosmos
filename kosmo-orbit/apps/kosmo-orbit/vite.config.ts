@@ -8,7 +8,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 // bewusst von `package.json` entkoppelt (statt es zur Build-Zeit
 // auszulesen) — dieselbe Stelle trägt so auch die nächste Teil-Release-
 // Buchstaben-Ausnahme wieder, ohne den Mechanismus neu zu bauen.
-const APP_VERSION = '0.8.4';
+const APP_VERSION = '0.8.5';
 
 export default defineConfig({
   // Baut die Anzeige-Version in die App (Header/Fusszeile zeigen sie statt

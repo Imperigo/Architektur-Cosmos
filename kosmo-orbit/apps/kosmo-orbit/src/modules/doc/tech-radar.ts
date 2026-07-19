@@ -24,7 +24,7 @@ export interface RadarPosten {
   unverifiziert?: boolean;
 }
 
-export const RADAR_STAND = 'verifiziert 02.07.2026 · Nachträge bis 11.07.2026 · Quelle docs/TECH-RADAR.md';
+export const RADAR_STAND = 'verifiziert 02.07.2026 · Nachträge bis 19.07.2026 · Quelle docs/TECH-RADAR.md';
 
 export const TECH_RADAR: RadarPosten[] = [
   // Geometrie & BIM-Kern
@@ -67,6 +67,12 @@ export const TECH_RADAR: RadarPosten[] = [
   { bereich: 'Beobachtung (Scan 10.07.)', baustein: 'Nemotron 3 Ultra (OpenRouter)', entscheid: 'WATCH', paket: 'openrouter.ai (Cloud)', lizenz: 'OpenMDW-1.1 (laut Scan)', kommentar: 'Cloud-Grossmodell für Konzepttexte (1M Kontext); lokal auf RTX 5090 unmöglich — Konto/Datenabfluss = Owner-Entscheid.', unverifiziert: true },
   // Notion-Scan-Nachlauf 11.07. (AI-SCAN-AUSWERTUNG-0.7.0.md §5) — Scan-Aussagen, nicht selbst verifiziert
   { bereich: 'Beobachtung (Scan 11.07.)', baustein: 'HiVG (Image-to-SVG)', entscheid: 'WATCH', paket: 'HiVG (MIT laut Scan)', lizenz: 'MIT (laut Scan)', kommentar: 'Hierarchisches Bild→SVG — Evaluations-Kandidat 0.7.x auf der HomeStation (~2–3 h); Scan warnt selbst: nicht CAD-genau. Kein Einbau ohne Messung gegen echte Handskizzen.', unverifiziert: true },
+  // Scan-Delta 12.–18.07. (AI-SCAN-AUSWERTUNG-0.8.5.md) — Scan-Aussagen, nicht selbst verifiziert
+  { bereich: 'Beobachtung (Scan 19.07.)', baustein: 'BIM-Edit (IFC-Editing-Benchmark)', entscheid: 'PATTERN', paket: 'arxiv.org/abs/2606.20146', lizenz: 'Paper CC-BY (laut Scan)', kommentar: 'Externer Beleg für den Command-Ansatz: LLMs lösen <3.4 % direkter IFC-Edits — Kosmo bleibt bei zod-validierten Commands, der E4-Autopilot inklusive.', unverifiziert: true },
+  { bereich: 'Beobachtung (Scan 19.07.)', baustein: 'VectorGym (SVG-Dataset)', entscheid: 'TEST', paket: 'huggingface.co/datasets/ServiceNow/VectorGym', lizenz: 'Apache-2.0 (laut Scan)', kommentar: 'Erste kommerziell nutzbare SVG-Finetuning-Datenbasis (~8000 SVGs, human-annotiert) — HomeStation-Kandidat; Annotation-Lizenz vor Training prüfen.', unverifiziert: true },
+  { bereich: 'Beobachtung (Scan 19.07.)', baustein: 'swisstopo-mcp (CH-Geodaten als MCP)', entscheid: 'EVALUATE', paket: 'github.com/malkreide/swisstopo-mcp', lizenz: 'MIT (laut Scan)', kommentar: 'ÖREB/LV95/STAC/WMTS ohne API-Key — Kandidat für die Standort-/Parzellen-Kette in KosmoData (v0.8.6+); erst gegen die neue MCP-Spec (28.07.) prüfen.', unverifiziert: true },
+  { bereich: 'Beobachtung (Scan 19.07.)', baustein: 'MCP-Spezifikation 2026-07-28', entscheid: 'WATCH', paket: 'blog.modelcontextprotocol.io', lizenz: 'Spez (laut Scan)', kommentar: 'Protokoll wird stateless, Roots/Sampling/Logging depreciert, OAuth 2.1 Pflicht — künftige Kosmo-MCP-Arbeit gegen die neue Spec entwerfen.', unverifiziert: true },
+  { bereich: 'Beobachtung (Scan 19.07.)', baustein: 'MCP4IFC', entscheid: 'REJECT', paket: 'arxiv.org/abs/2511.05533', lizenz: 'CC BY-NC-SA ⚠', kommentar: 'Lizenz-Sperre (non-commercial) — für Erwerbsnutzung ungeeignet; dokumentiert, damit künftige Scans ihn nicht erneut vorschlagen.', unverifiziert: true },
   { bereich: 'Beobachtung (Scan 11.07.)', baustein: 'PosterCraft (FLUX)', entscheid: 'REJECT', paket: 'PosterCraft', lizenz: 'FLUX non-commercial ⚠', kommentar: 'Lizenz-Sperre: FLUX-Gewichte non-commercial — für Wettbewerbsabgaben eines Erwerbsbüros ungeeignet. Dokumentiert, damit künftige Scans ihn nicht erneut vorschlagen.', unverifiziert: true },
 ];
 
