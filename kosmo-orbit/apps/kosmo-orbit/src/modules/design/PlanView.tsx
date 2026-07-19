@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type MassKette, type PocheModus, type Pt, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type PocheModus, type Pt, type Roof, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -610,6 +610,11 @@ export function PlanView({
   };
   // Ziehen im Plan: EIN design.verschieben bei pointerup, kein Patch pro Move
   const moveActive = useRef(false);
+  // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16/C-17): Griff-Ziehen —
+  // dasselbe Aktiv-Flag-Muster wie `moveActive` oben, nur für EINEN
+  // angefassten Punkt (Wand-Endpunkt/Masskette-Punkt/Zonen-Ecke) statt das
+  // ganze Element.
+  const griffActive = useRef(false);
   // E1 (v0.8.5 PA1): Rubber-Band — Start auf LEERER Fläche im Auswahl-
   // Werkzeug (NodeCanvas-Marquee-Vorbild, `NodeCanvas.tsx`). Der Startpunkt
   // trägt die Client-Koordinaten mit, damit ein Klick ohne echten Zug
@@ -619,6 +624,32 @@ export function PlanView({
   const [marquee, setMarquee] = useState<{ a: Pt; b: Pt } | null>(null);
   const selection = useProject((s) => s.selection);
   const select = useProject((s) => s.select);
+  // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16): Griffe NUR bei
+  // Einzel-Auswahl («sichtbar bei Auswahl/weg bei Mehrfach-Auswahl», C-15) —
+  // Wand-Endpunkte (a/b, feste Keys) bzw. je ein Griff pro Punkt der
+  // Masskette/pro Outline-Ecke (Zone/Volumen/Dach). Reine Ableitung aus
+  // `doc`/`selection`, kein eigener Store (wie `kontextZonen`/`graph` oben).
+  const griffe = useMemo(() => {
+    if (selection.length !== 1 || !activeStoreyId) return [];
+    const id = selection[0]!;
+    const e = doc.get(id);
+    if (!e) return [];
+    if (e.kind === 'wall') {
+      const w = e as Wall;
+      return [
+        { id, key: 'a' as const, p: w.a, kind: 'wall' as const },
+        { id, key: 'b' as const, p: w.b, kind: 'wall' as const },
+      ];
+    }
+    if (e.kind === 'masskette') {
+      return (e as MassKette).punkte.map((p, i) => ({ id, key: i, p, kind: 'masskette' as const }));
+    }
+    if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
+      return (e as Zone | MassBody | Roof).outline.map((p, i) => ({ id, key: i, p, kind: e.kind }));
+    }
+    return [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selection, doc, activeStoreyId, revision]);
   // Filter aus → eine evtl. gewählte, jetzt verborgene Kommentar-Auswahl
   // fällt weg (kein «Geister»-Highlight/Löschen-Ziel auf Unsichtbarem).
   useEffect(() => {
@@ -637,6 +668,35 @@ export function PlanView({
       x: Math.round(view.cx + px / view.scale),
       y: Math.round(view.cy - py / view.scale),
     };
+  };
+
+  /** Umkehrung von `toWorld` — Welt-mm → Bildschirm-Client-Koordinaten,
+   *  fürs Griff-Hit-Test unten (screen-Toleranz statt Welt-Toleranz, damit
+   *  sie bei jedem Zoom gleich «greifbar» bleibt). */
+  const toScreen = (p: Pt): { x: number; y: number } => {
+    const rect = svgRef.current!.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2 + (p.x - view.cx) * view.scale,
+      y: rect.top + rect.height / 2 - (p.y - view.cy) * view.scale,
+    };
+  };
+
+  // C-17 (v0.8.5 PB1, docs/V085-SPEZ.md §7): Griff-Hit-Test — ~8px
+  // Bildschirm-Toleranz um jeden Griff (screen-konstant wie die Griffe
+  // selbst), nächstliegender Treffer gewinnt. Aufgerufen VOR `pickAt`/dem
+  // Rubber-Band-Start im `onPointerDown` unten (Vorrang-Pflicht C-17).
+  const GRIFF_TOLERANZ_PX = 8;
+  const griffAn = (clientX: number, clientY: number): { id: string; key: string | number; p: Pt } | null => {
+    if (griffe.length === 0 || !svgRef.current) return null;
+    let beste: { id: string; key: string | number; p: Pt; dist: number } | null = null;
+    for (const g of griffe) {
+      const s = toScreen(g.p);
+      const dist = Math.hypot(clientX - s.x, clientY - s.y);
+      if (dist <= GRIFF_TOLERANZ_PX && (!beste || dist < beste.dist)) {
+        beste = { id: g.id, key: g.key, p: g.p, dist };
+      }
+    }
+    return beste ? { id: beste.id, key: beste.key, p: beste.p } : null;
   };
 
   // T3: «Einpassen» — auf den Modellinhalt zoomen (Home/Fit-Knopf UND einmalig
@@ -945,6 +1005,25 @@ export function PlanView({
             zoomDrag.current = { y: e.clientY, scale: view.scale };
             (e.target as Element).setPointerCapture(e.pointerId);
           } else if (e.button === 0 && handlers.current?.pickMode && activeStoreyId) {
+            // C-17 (v0.8.5 PB1, docs/V085-SPEZ.md §7): Griff-Hit-Test hat
+            // VORRANG vor dem Element-Hit-Test — sonst würde ein Treffer auf
+            // einem Griff, der auf der Wandachse/Zonen-Ecke liegt, statt des
+            // EINEN Punkts gleich das ganze Element ziehen (`onMoveStart`)
+            // oder, knapp daneben, das Rubber-Band starten (E1/PA1). Ein
+            // Griff-Treffer klaut daher auch die Auswahl NICHT — Auswahl
+            // bleibt exakt wie vor dem Klick (dieselbe Entität war ja schon
+            // einzeln gewählt, sonst gäbe es hier keinen Griff).
+            const griffHit = griffAn(e.clientX, e.clientY);
+            if (griffHit && handlers.current.onGriffStart?.(griffHit.id, griffHit.key, griffHit.p)) {
+              griffActive.current = true;
+              // Capture auf dem SVG (currentTarget), NICHT auf e.target: der
+              // Treffer kann ein live abgeleitetes Kind sein (Auto-Bemassung,
+              // Graph-Punkte), das der nächste Render ersetzt — dann verliert
+              // Chromium die Capture und schickt pointerup am SVG vorbei
+              // (C-2-Flake-Befund v0.8.5-W2, gilt für alle drei Pick-Gesten).
+              e.currentTarget.setPointerCapture(e.pointerId);
+              return;
+            }
             // Auswahl-Werkzeug: Treffer auf einem Bauteil startet gleich die
             // Zieh-Geste (Klick ohne Bewegung = reine Auswahl, dx/dy bleiben 0).
             const p = toWorld(e.clientX, e.clientY);
@@ -955,13 +1034,15 @@ export function PlanView({
             // `onMoveStart` die Auswahl sofort ersetzen).
             if (hit && !e.shiftKey && handlers.current.onMoveStart?.(hit, p)) {
               moveActive.current = true;
-              (e.target as Element).setPointerCapture(e.pointerId);
+              e.currentTarget.setPointerCapture(e.pointerId);
             } else if (!hit) {
               // E1 (v0.8.5 PA1): leere Fläche im Auswahl-Werkzeug startet das
               // Rubber-Band — ob es ein Zug oder nur ein Leerklick war,
-              // entscheidet erst pointerup (4px-Schwelle dort).
+              // entscheidet erst pointerup (4px-Schwelle dort). Capture aufs
+              // SVG (s. Griff-Kommentar oben): «leer» heisst nur pickAt-leer,
+              // e.target kann trotzdem ein abgeleitetes Dekor-Element sein.
               marqueeStart.current = { a: p, shift: e.shiftKey, cx: e.clientX, cy: e.clientY };
-              (e.target as Element).setPointerCapture(e.pointerId);
+              e.currentTarget.setPointerCapture(e.pointerId);
             }
           }
         }}
@@ -1006,6 +1087,9 @@ export function PlanView({
             setMarquee({ a: marqueeStart.current.a, b: toWorld(e.clientX, e.clientY) });
           } else if (moveActive.current) {
             handlers.current?.onMoveDrag?.(toWorld(e.clientX, e.clientY));
+          } else if (griffActive.current) {
+            // E3 (v0.8.5 PB1): Griff-Vorschau live nachziehen (Gummiband).
+            handlers.current?.onGriffDrag?.(toWorld(e.clientX, e.clientY));
           } else if (!gestureAktiv.current && !spaceGedrueckt) {
             // F5: solange die Leertaste gehalten wird (Pan-Bereitschaft, noch
             // kein Drag), pausiert das Werkzeug-Gummiband komplett — sonst
@@ -1082,6 +1166,13 @@ export function PlanView({
             handlers.current?.onMoveEnd?.(toWorld(e.clientX, e.clientY));
             return;
           }
+          if (griffActive.current) {
+            // E3 (v0.8.5 PB1, §7 C-15/C-16): Drag-Ende = EIN Command bzw.
+            // eine Löschen+Neusetzen-Gruppe, s. `onGriffEnd` (DesignWorkspace).
+            griffActive.current = false;
+            handlers.current?.onGriffEnd?.(toWorld(e.clientX, e.clientY));
+            return;
+          }
           // E1 (v0.8.5 PA1): Rubber-Band beenden — echter Zug (≥4px
           // Bildschirm) setzt die Menge (`onMarqueeAuswahl`), ein blosser
           // Leerklick fällt unverändert in den Pick-Pfad darunter durch
@@ -1131,6 +1222,7 @@ export function PlanView({
             }
           }
           moveActive.current = false;
+          griffActive.current = false;
           zoomDrag.current = null;
           panning.current = null;
           setPanAktiv(false);
@@ -1853,6 +1945,78 @@ export function PlanView({
               </g>
             );
           })}
+
+          {/* E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16): Griffe — NUR
+              bei Einzel-Auswahl (`griffe` oben ist bei Mehrfach-Auswahl
+              leer, C-15 «weg bei Mehrfach-Auswahl»). Quadrate, screen-
+              konstant über `/view.scale` (Kommentar-Marker-Konvention),
+              Token-Farben `--k-accent`/`--k-surface`. Während eines Griff-
+              Zugs (`griffOffset`) zeichnet dieselbe Gruppe zusätzlich das
+              Gummiband (Achse bei Wand, Polylinie/-gon bei Masskette bzw.
+              Zonen-/Volumen-/Dach-Outline mit dem einen verschobenen
+              Punkt) UND zeigt den gezogenen Griff an seiner Vorschau-
+              Position statt der (noch unveränderten) Doc-Position. */}
+          {griffe.length > 0 && (() => {
+            const vorschau = handlers.current?.griffOffset;
+            const gezogenesEntity = vorschau ? doc.get(vorschau.id) : null;
+            let gummibandD: string | null = null;
+            if (vorschau && gezogenesEntity) {
+              if (gezogenesEntity.kind === 'wall') {
+                const wall = gezogenesEntity as Wall;
+                const andererPunkt = vorschau.key === 'a' ? wall.b : wall.a;
+                gummibandD = `M ${andererPunkt.x} ${-andererPunkt.y} L ${vorschau.p.x} ${-vorschau.p.y}`;
+              } else if (gezogenesEntity.kind === 'masskette') {
+                const pts = (gezogenesEntity as MassKette).punkte.map((q, i) => (i === vorschau.key ? vorschau.p : q));
+                gummibandD = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')}`;
+              } else if (
+                gezogenesEntity.kind === 'zone' ||
+                gezogenesEntity.kind === 'mass' ||
+                gezogenesEntity.kind === 'roof'
+              ) {
+                const pts = (gezogenesEntity as Zone | MassBody | Roof).outline.map((q, i) =>
+                  i === vorschau.key ? vorschau.p : q,
+                );
+                gummibandD = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')} Z`;
+              }
+            }
+            return (
+              <g data-testid="plan-griffe" pointerEvents="none">
+                {gummibandD && (
+                  <path
+                    data-testid="griff-gummiband"
+                    d={gummibandD}
+                    fill="none"
+                    stroke="var(--k-accent)"
+                    strokeWidth={2 / view.scale}
+                    strokeDasharray={`${10 / view.scale} ${7 / view.scale}`}
+                  />
+                )}
+                {griffe.map((g) => {
+                  const angezeigt = vorschau && vorschau.id === g.id && vorschau.key === g.key ? vorschau.p : g.p;
+                  const testid =
+                    g.kind === 'wall'
+                      ? `griff-endpunkt-${g.key}`
+                      : g.kind === 'masskette'
+                        ? `griff-massketten-punkt-${g.key}`
+                        : `griff-eckpunkt-${g.key}`;
+                  const groesse = 9 / view.scale;
+                  return (
+                    <rect
+                      key={`griff-${g.kind}-${g.key}`}
+                      data-testid={testid}
+                      x={angezeigt.x - groesse / 2}
+                      y={-angezeigt.y - groesse / 2}
+                      width={groesse}
+                      height={groesse}
+                      fill="var(--k-surface)"
+                      stroke="var(--k-accent)"
+                      strokeWidth={2.5 / view.scale}
+                    />
+                  );
+                })}
+              </g>
+            );
+          })()}
 
           {/* E1 (v0.8.5 PA1): Rubber-Band-Vorschau — Welt-Koordinaten (y
               negiert wie überall in dieser Gruppe), Strichstärke/Dash

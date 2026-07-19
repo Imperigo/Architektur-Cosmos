@@ -40,7 +40,14 @@ import {
   type AnyPatch,
   type Kommentar,
   type MassKette,
+  // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16): Griff-Ziehen (Eck-Griffe
+  // Zone/Volumen/Dach) braucht die vollen Entity-Typen für dasselbe
+  // Löschen+Neusetzen-Muster wie Masskette/Kommentar oben (`onGriffEnd`
+  // unten) — der Kernel kennt keinen Endpunkt-/Eckpunkt-Weg über
+  // `design.eigenschaftSetzen` (`editableFields`, `commands/design.ts`).
+  type MassBody,
   type Pt,
+  type Roof,
   type SectionSpec,
   type SiaPhase,
   type Stair,
@@ -570,6 +577,13 @@ export function DesignWorkspace({
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
   const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt; gruppe?: string[] } | null>(null);
   const [dragCursor, setDragCursor] = useState<Pt | null>(null);
+  // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16): Griff-Ziehen (Wand-/
+  // Masskette-Endpunkt, Zonen-/Volumen-/Dach-Ecke) — dasselbe Start/Cursor-
+  // Paar-Muster wie `dragEntity`/`dragCursor` oben, nur für EINEN Punkt
+  // statt eine Gruppen-Translation. `key` ist `'a'|'b'` bei einer Wand,
+  // sonst der Punktindex (Masskette/Zone/Volumen/Dach-Outline).
+  const [griffDrag, setGriffDrag] = useState<{ id: string; key: string | number; start: Pt } | null>(null);
+  const [griffCursor, setGriffCursor] = useState<Pt | null>(null);
   // E1 (v0.8.5 PA1): Esc-Stufenfolge (Kette abbrechen → zur Auswahl →
   // Auswahl leeren). Der keydown-Listener unten ist mit LEEREN Deps
   // registriert (Bestand) — er liest den frischen tool/points-Stand über
@@ -848,6 +862,18 @@ export function DesignWorkspace({
       if (document.querySelector('[role="dialog"]')) return; // Palette/Bestätigung/Kurzbefehle behalten die Tastatur
       const fokusImEingabefeld = istEingabefeld(document.activeElement);
       if (!e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && !fokusImEingabefeld && e.key === 'Escape') {
+        // D10-Fix (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-18): eine laufende
+        // Masskette (Werkzeug 'messen', ≥2 Punkte) soll Esc auch in REINEM
+        // view-2d abschliessen statt nur verwerfen — bislang lief der
+        // Abschluss-Weg (`massKetteAbschliessen()`) NUR über
+        // `handlersRef.current.onEscape`, aufgerufen vom Escape-Listener in
+        // Viewport3D.tsx (nur in 3d/split gemountet). Reines view-2d hat
+        // KEINEN Viewport3D-Mount, also nie diesen Weg — derselbe Weg
+        // (`handlersRef.current.onEscape?.()`) hier zusätzlich aufgerufen
+        // deckt 2d ab UND bleibt in 3d/split ein reiner Doppel-Aufruf
+        // (onEscape ist idempotent: der zweite Aufruf trifft nach dem
+        // Commit auf eine bereits geleerte `points`-Liste und tut nichts).
+        handlersRef.current?.onEscape?.();
         // ArchiCAD-Reflex: Esc bricht die laufende Kette ab UND geht zur Auswahl zurück.
         // E1 (v0.8.5 PA1): ist das Auswahl-Werkzeug schon aktiv und keine
         // Kette offen, leert Esc stattdessen die Auswahl (dritte Stufe).
@@ -1180,6 +1206,114 @@ export function DesignWorkspace({
             };
           })()
         : null,
+    // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16/C-17): Griff-Ziehen —
+    // PlanView hat den Griff-Treffer bereits VOR dem Element-Hit-Test
+    // erkannt (C-17, PlanView.tsx `griffAn`); hier nur noch Start/Vorschau/
+    // Commit. `griffKey` ist `'a'|'b'` bei einer Wand, sonst der
+    // Punktindex (Masskette-Punkt bzw. Zonen-/Volumen-/Dach-Outline-Ecke).
+    onGriffStart: (id, griffKey, p) => {
+      const e = doc.get(id);
+      if (!e) return false;
+      const griffFaehig =
+        e.kind === 'wall' || e.kind === 'masskette' || e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof';
+      if (!griffFaehig) return false;
+      setGriffDrag({ id, key: griffKey, start: snap(p, magnet) });
+      setGriffCursor(p);
+      return true;
+    },
+    onGriffDrag: (p) => setGriffCursor(p),
+    // Drag-Ende = EIN Command (Wand: kein Endpunkt-Weg über
+    // `design.eigenschaftSetzen`, s. `editableFields` in `commands/
+    // design.ts` — Löschen+Neusetzen wie bei Masskette/Kommentar oben) bzw.
+    // bei Masskette/Zone/Volumen/Dach dasselbe Muster, jeweils EINE
+    // history-Gruppe (C-15/C-16 «eine Undo-Gruppe»).
+    onGriffEnd: (p) => {
+      if (!griffDrag) return;
+      const { id, key, start } = griffDrag;
+      const ziel = snap(p, magnet);
+      setGriffDrag(null);
+      setGriffCursor(null);
+      // E1/Sanktion-4-Muster (`onMoveEnd` oben): Anfassen OHNE Bewegung ist
+      // ein Klick, kein Zug — sonst würde ein blosser Griff-Klick unnötig
+      // löschen+neusetzen (neue Id, leerer Undo-Eintrag) statt einfach
+      // nichts zu tun (C-17: «Griff-Klick klaut keine Auswahl»).
+      if (ziel.x === start.x && ziel.y === start.y) return;
+      const e = doc.get(id);
+      if (!e) return;
+      const { history } = useProject.getState();
+      history.beginGroup();
+      try {
+        if (e.kind === 'wall') {
+          const wall = e as Wall;
+          const neuA = key === 'a' ? ziel : wall.a;
+          const neuB = key === 'b' ? ziel : wall.b;
+          runCommand('design.loeschen', { entityId: wall.id });
+          const r = runCommand('design.wandZeichnen', {
+            storeyId: wall.storeyId,
+            a: neuA,
+            b: neuB,
+            assemblyId: wall.assemblyId,
+            alignment: wall.alignment,
+          });
+          const neueId = neuePatchId(r.patches);
+          select(neueId ? [neueId] : []);
+        } else if (e.kind === 'masskette') {
+          const mk = e as MassKette;
+          const punkte = mk.punkte.map((q, i) => (i === key ? ziel : q));
+          runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
+          const r = runCommand('design.massKetteSetzen', { storeyId: mk.storeyId, punkte });
+          const neueId = neuePatchId(r.patches);
+          select(neueId ? [neueId] : []);
+        } else if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
+          const outline = e.outline.map((q, i) => (i === key ? ziel : q));
+          runCommand('design.loeschen', { entityId: e.id });
+          let r;
+          if (e.kind === 'zone') {
+            const zone = e as Zone;
+            r = runCommand('design.zoneErstellen', {
+              storeyId: zone.storeyId,
+              outline,
+              name: zone.name,
+              sia: zone.sia,
+              ...(zone.raumTyp ? { raumTyp: zone.raumTyp } : {}),
+              ...(zone.program ? { program: zone.program } : {}),
+              // Schema (`design.zoneErstellen`) kennt nur `zonenArt: 'parzelle'`
+              // — eine 'nachbar'-Zone (entsteht nur über
+              // `design.nachbarnUebernehmen`) verlöre den Marker beim
+              // Eck-Ziehen; ehrliche, bewusst schmale Lücke (Kontext-Zonen
+              // sind kein Griffe-Ziel dieses Pakets, s. Bericht).
+              ...(zone.zonenArt === 'parzelle' ? { zonenArt: zone.zonenArt } : {}),
+            });
+          } else if (e.kind === 'mass') {
+            const mass = e as MassBody;
+            r = runCommand('design.volumenErstellen', {
+              storeyId: mass.storeyId,
+              outline,
+              height: mass.height,
+              ...(mass.program ? { program: mass.program } : {}),
+            });
+          } else {
+            const roof = e as Roof;
+            r = runCommand('design.dachErstellen', {
+              storeyId: roof.storeyId,
+              outline,
+              pitch: roof.pitch,
+              overhang: roof.overhang,
+              form: roof.form ?? 'walm',
+              firstrichtung: roof.firstrichtung ?? 'x',
+            });
+          }
+          const neueId = neuePatchId(r.patches);
+          select(neueId ? [neueId] : []);
+        }
+      } catch (err) {
+        meldeFehler(err);
+      } finally {
+        history.endGroup();
+      }
+    },
+    griffOffset:
+      griffDrag && griffCursor ? { id: griffDrag.id, key: griffDrag.key, p: snap(griffCursor, magnet) } : null,
     onGroundDoubleClick: (e) => {
       // ArchiCAD-Geste: Doppelklick schliesst/setzt die laufende Platzierung ab
       // — C-10 (Abschluss-Gesetz, PB1): dieselbe Funktion, die auch Enter mit

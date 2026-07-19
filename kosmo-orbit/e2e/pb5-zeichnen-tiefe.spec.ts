@@ -141,8 +141,11 @@ test.describe('PB5 — Masskette wählen/verschieben/löschen (§8 C-26)', () =>
 
     // Verschieben: Ziehen von einem Kettenpunkt um (+1000, +500) — EIN
     // pointerdown/move/up-Zyklus, wie beim bestehenden Wand-Drag (PB1).
-    const start = await weltZuBildschirm(page, 4000, 4000);
-    const ziel = await weltZuBildschirm(page, 5000, 4500);
+    // Anfasspunkt = Segmentmitte, NICHT ein Kettenpunkt: auf den Punkten
+    // sitzen seit v0.8.5 Griffe mit Vorrang (C-17), die nur den einen Punkt
+    // verschieben — der Ganzelement-Zug gilt auf der Linie dazwischen.
+    const start = await weltZuBildschirm(page, 5500, 4000);
+    const ziel = await weltZuBildschirm(page, 6500, 4500);
     await page.mouse.move(start.x, start.y);
     await page.mouse.down();
     await page.mouse.move(ziel.x, ziel.y, { steps: 8 });

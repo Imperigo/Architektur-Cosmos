@@ -68,6 +68,13 @@
   height: 100%;
   display: block;
   touch-action: none;
+  /* C-2-Flake-Fix (v0.8.5-W2): Zieh-Gesten über dem Plan (Rubber-Band E1,
+     Move, Griffe E3) dürfen NIE eine Browser-Selektion aufziehen — sonst
+     startet der nächste pointerdown auf selektiertem Dekor (Auto-Bemassung,
+     Graph) Chromiums nativen Selektions-Drag, der den Pointer-Stream mit
+     pointercancel abbricht (pointerup geht verloren, Geste friert ein). */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* C-11 (PE3-Fix v0.8.4): schwebender Inspector im Island-Modus — Glas-Karte

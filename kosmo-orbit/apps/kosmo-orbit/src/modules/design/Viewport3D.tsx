@@ -224,6 +224,23 @@ export interface ViewportHandlers {
   /** Klick auf eine Mesh-Fläche im Editiermodus — `face` = Kernel-Dreiecks-
    * Index (deriveFreeMesh explodiert 1:1, `intersection.faceIndex` passt). */
   onMeshFaceClick?: (entityId: string, face: number) => void;
+  /**
+   * E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16/C-17): Griff-Ziehen an
+   * Wand-/Masskette-Endpunkten und Zonen-/Volumen-/Dach-Ecken — reines
+   * 2D-Overlay (PlanView malt die Quadrate UND testet den Treffer selbst,
+   * `onMeshVertexDrag`-Vorbild oben, KEIN allgemeines Gizmo-Framework,
+   * Sanktion D4/E3). `griffKey` ist `'a'|'b'` bei einer Wand, sonst der
+   * Punktindex (Masskette-Punkt bzw. Zonen-/Volumen-/Dach-Outline-Ecke).
+   * `onGriffStart` liefert `false`, wenn das Element/der Griff (noch) nicht
+   * ziehbar ist — PlanView startet dann kein Gummiband.
+   */
+  onGriffStart?: (entityId: string, griffKey: string | number, p: Pt) => boolean;
+  onGriffDrag?: (p: Pt) => void;
+  onGriffEnd?: (p: Pt) => void;
+  /** Lebende Zieh-Vorschau des angefassten Griffs (Kern-mm, bereits
+   *  gefangen) — PlanView malt daraus das Gummiband + den verschobenen
+   *  Griff, analog zu `moveOffset` oben. */
+  griffOffset?: { id: string; key: string | number; p: Pt } | null;
 }
 
 import { materialKarten, texturenAktiv } from './texturen';
