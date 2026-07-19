@@ -1957,6 +1957,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             plane: new THREE.Plane().setFromNormalAndCoplanarPoint(normal, worldPos),
             handle: hit.object as THREE.Mesh,
           };
+          // Fable-Nachzug v0.8.9 (PA5-Übergabepunkt): Griff-Drag-Kanal —
+          // schützt die Auswahl vor dem DesignWorkspace-Escape-Leeren
+          // (s. viewport-chrome-runtime.ts `griffDragAktiv`).
+          useViewportChromeRuntime.setState({ griffDragAktiv: true });
           (renderer.domElement as Element).setPointerCapture(ev.pointerId);
           return;
         }
@@ -1979,6 +1983,8 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
             plane: new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), worldPos),
             handle: stairHit.object as THREE.Mesh,
           };
+          // Fable-Nachzug v0.8.9 (PA5-Übergabepunkt): Griff-Drag-Kanal.
+          useViewportChromeRuntime.setState({ griffDragAktiv: true });
           (renderer.domElement as Element).setPointerCapture(ev.pointerId);
           return;
         }
@@ -2013,6 +2019,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         meshDrag = null;
         downPos = null;
+        useViewportChromeRuntime.setState({ griffDragAktiv: false });
         return;
       }
       // PA5 (v0.8.9 E4, docs/V089-SPEZ.md §3 E4, §7 C-8): ein laufender
@@ -2023,6 +2030,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         const drag = stairDrag;
         stairDrag = null;
         downPos = null;
+        useViewportChromeRuntime.setState({ griffDragAktiv: false });
         const zielX = Math.round(drag.handle.position.x);
         const zielY = Math.round(-drag.handle.position.z);
         const startX = Math.round(drag.startWorld.x / MM);
@@ -2259,28 +2267,21 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         // anders als der Marquee-Esc-Zweig berührt das NICHT den 0.8.8-
         // `marqueeAktiv`-Kanal.
         //
-        // BEKANNTE RANDWIRKUNG (dokumentierte Lücke, Übergabe-Punkt an
-        // Fable, s. `e2e/griffe-treppe-3d.spec.ts`-Kopfkommentar für Details):
-        // `DesignWorkspace.tsx` trägt einen EIGENEN, unabhängigen
-        // `window`-Keydown-Escape-Listener (~Zeile 864-896), der NUR
-        // `marqueeAktiv` (Zeile 876) als Ausnahme kennt und sonst
-        // unbedingt die vorbestehende ArchiCAD-Dritte-Stufe
-        // `escAuswahlRef.current()` (Zeile 595-602) feuert — die leert die
-        // Auswahl. Ein `stairDrag` setzt `marqueeAktiv` bewusst nicht (s.
-        // oben), die Auswahl fällt also mitten im Zug weg, OBWOHL der Zug
-        // selbst hier sauber abbricht (kein Commit). Derselbe Effekt
-        // betrifft den BESTEHENDEN `meshDrag` (Vertex-Griff) ebenso — dort
-        // existiert nicht einmal ein eigener Esc-Abbruch-Zweig, älter als
-        // PA5-089. Fix ausserhalb dieses Dateikreises: ein weiterer
-        // Zustands-Kanal nach dem `marqueeAktiv`-Muster (z. B.
-        // `griffDragAktiv`, gesetzt bei Start/Ende von `stairDrag`/
-        // `meshDrag`), den `DesignWorkspace.tsx:876` zusätzlich prüfen
-        // müsste — `DesignWorkspace.tsx` ist im Dateikreis PA5-089 TABU,
-        // daher hier nur dokumentiert, nicht gefixt.
+        // Fable-Nachzug v0.8.9 (löst den PA5-Übergabepunkt ein): der
+        // `griffDragAktiv`-Kanal (viewport-chrome-runtime.ts, Muster
+        // marqueeAktiv 0.8.8) schützt die Auswahl — der DesignWorkspace-
+        // Escape-Handler prüft ihn und lässt dieses Esc der Geste. Der
+        // Reset läuft als MACROTASK nach dem Dispatch (dieselbe
+        // Listener-Reihenfolge-Begründung wie beim marqueeAktiv-Esc-Reset
+        // unten: dieser Listener läuft ZUERST, ein synchroner Reset zöge
+        // dem Guard im selben Keydown den Zustand weg).
         if (stairDrag) {
           stairDragZurueck(stairDrag);
           stairDrag = null;
           invalidate();
+          window.setTimeout(() => {
+            useViewportChromeRuntime.setState({ griffDragAktiv: false });
+          }, 0);
           return;
         }
         // E5 (v0.8.7 PB2, docs/V087-SPEZ.md §3 E5): Esc bricht eine laufende
@@ -2775,6 +2776,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // — kein neuer globaler Store-Zugriff nötig, dieselbe
       // `__kosmoViewport`-Testhook-Konvention wie alle Anker oben.
       marqueeAktiv: (): boolean => useViewportChromeRuntime.getState().marqueeAktiv,
+      // v0.8.9 Fable-Nachzug: Griff-Drag-Kanal (stairDrag/meshDrag) — die
+      // Specs pollen ihn, statt gegen den Macrotask-Esc-Reset zu wetten.
+      griffDragAktiv: (): boolean => useViewportChromeRuntime.getState().griffDragAktiv,
       // PA5-Beweis-Anker (v0.8.9 E4, docs/V089-SPEZ.md §3 E4, §7 C-8):
       // deterministischer Zähl-Anker wie `entityMeshCount`/`glbMeshCount`
       // oben — 0 ausserhalb einer Einzel-Auswahl einer Treppe, sonst 2
@@ -2813,8 +2817,9 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // fortbestehen (das DOM-Overlay verschwindet mit `mount` ohnehin);
       // der Store-Kanal räumt unbedingt mit, sonst bliebe `marqueeAktiv`
       // bei einem Unmount MITTEN in der Geste (z.B. Ansichtswechsel 3D→2D
-      // während eines Shift-Drags) fälschlich `true` stehen.
-      useViewportChromeRuntime.setState({ marqueeAktiv: false });
+      // während eines Shift-Drags) fälschlich `true` stehen. Gleiches gilt
+      // für den Griff-Drag-Kanal (v0.8.9).
+      useViewportChromeRuntime.setState({ marqueeAktiv: false, griffDragAktiv: false });
     };
     // navModus wird über den separaten Sync-Effekt oben nachgezogen (controlsRef) —
     // hier zählt nur der Startwert beim Aufbau der Szene.

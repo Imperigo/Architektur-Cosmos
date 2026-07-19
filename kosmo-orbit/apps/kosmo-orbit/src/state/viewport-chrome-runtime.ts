@@ -85,6 +85,17 @@ export interface ViewportChromeRuntime {
    *  später registrierte DesignWorkspace-Listener im selben Keydown noch
    *  true liest (s. `onKey`-Kommentar dort). */
   marqueeAktiv: boolean;
+
+  // -- v0.8.9 Fable-Nachzug (PA5-Übergabepunkt) — Griff-Drag-Kanal ---------
+  /** true, solange in Viewport3D ein Griff-Zug läuft (`stairDrag` ODER der
+   *  ältere `meshDrag`-Vertex-Griff — beide teilen sich denselben Kanal).
+   *  Gleicher Zweck wie `marqueeAktiv`: der DesignWorkspace-Escape-Handler
+   *  lässt ein Esc, das einer laufenden Griff-Geste gehört, unangetastet
+   *  (kein Auswahl-Leeren, ArchiCAD-Dritte-Stufe pausiert). Timing wie beim
+   *  Marquee: der Esc-Reset auf false läuft in Viewport3D als Macrotask
+   *  NACH dem Event-Dispatch, damit der später registrierte
+   *  DesignWorkspace-Listener im selben Keydown noch true liest. */
+  griffDragAktiv: boolean;
 }
 
 function nichts(): void {
@@ -122,4 +133,5 @@ export const useViewportChromeRuntime = create<ViewportChromeRuntime>(() => ({
   onFuerVisAufnehmen: nichts,
   onTexturToggle: nichts,
   marqueeAktiv: false,
+  griffDragAktiv: false,
 }));

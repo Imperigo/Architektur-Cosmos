@@ -12,13 +12,11 @@ import { readFileSync } from 'node:fs';
  * `[data-testid="inspector-delete"]` und alle kind-spezifischen
  * Eigenschaftsfelder (`Inspector.tsx`, PA2-exklusiv). Canvas-Drag/
  * Griff-Ziehen (`DesignWorkspace.tsx` `onMoveStart`/`onGriffStart`) und
- * Tastatur-Löschen (`DesignWorkspace.tsx`-Keydown-Handler) sitzen in
- * Cluster B (`DesignWorkspace.tsx`/`PlanView.tsx`) — laut Betriebsregel 3/
- * Sanktion 6 für dieses Paket TABU. Diese Spec behauptet darum NICHT, dass
- * ein Canvas-Drag eines gesperrten Elements wirkungslos bleibt — das ist
- * ein benannter, offener Cluster-B-Nachzug (s. PA2-Abschlussbericht Punkt 3
- * + Kommentar über `istGesperrt()` in `plan-hit-test.ts`), keine stille
- * Lücke.
+ * Tastatur-Löschen (`DesignWorkspace.tsx`-Keydown-Handler) sassen in
+ * Cluster B und waren für das PA2-Paket TABU — der v0.8.9-Fable-Nachzug
+ * hat die drei Guards (onMoveStart/onGriffStart/Delete via `istGesperrt`)
+ * direkt danach eingelöst: Test (e) unten beweist Canvas-Drag- und
+ * Delete-Tasten-Schutz Ende-zu-Ende (a–d stammen aus dem PA2-Paket).
  *
  * Muster: `flaechennachweis.spec.ts` (Download-Beweis über den
  * `window.__kosmo`-Testhook) + `griffe.spec.ts` (`weltZuBildschirm`/
@@ -204,4 +202,57 @@ test('d) Undo-Kette: ebeneSetzen und sperren räumen bei Ctrl+Z sauber auf', asy
 
   // Die Wand selbst ist von beiden Undo-Schritten unberührt geblieben.
   expect(await wandExistiert(page, wallId)).toBe(true);
+});
+
+test('e) Cluster-B-Nachzug (v0.8.9 Fable): Canvas-Drag und Delete-Taste greifen bei gesperrten Elementen nicht', async ({
+  page,
+}) => {
+  await starteManuell(page);
+  const wallId = await zeichneWand(page, { x: 1000, y: 1000 }, { x: 5000, y: 1000 });
+  await page.evaluate((id) => window.__kosmo.run('design.sperren', { entityId: id, locked: true }), wallId);
+  expect(await gesperrtStatus(page, wallId)).toBe(true);
+
+  const geometrie = () =>
+    page.evaluate((id) => {
+      const e = window.__kosmo.state().doc.get(id) as unknown as {
+        a?: { x: number; y: number };
+        b?: { x: number; y: number };
+      };
+      return JSON.stringify({ a: e?.a ?? null, b: e?.b ?? null });
+    }, wallId);
+  const vor = await geometrie();
+
+  // Klick (ohne Zug): Findbarkeit — gesperrt bleibt anwählbar (Sanktion 3).
+  const mitte = await weltZuBildschirm(page, 3000, 1000);
+  const ziel = await weltZuBildschirm(page, 3000, 4000);
+  await page.mouse.click(mitte.x, mitte.y);
+  await expect.poll(() => auswahl(page)).toEqual([wallId]);
+
+  // Canvas-Drag: `onMoveStart` lehnt den Zug ab (`istGesperrt`-Guard) —
+  // die Geometrie bleibt exakt. Der abgelehnte Move fällt in PlanView aufs
+  // Gummiband zurück (dasselbe Bestandsverhalten wie bei nicht-beweglichen
+  // Kinds, erster Lauf bewies es) — darum nach dem Drag KEINE
+  // Auswahl-Assertion, nur der Geometrie-Beweis.
+  await page.mouse.move(mitte.x, mitte.y);
+  await page.mouse.down();
+  await page.mouse.move(ziel.x, ziel.y, { steps: 5 });
+  await page.mouse.up();
+  expect(await geometrie()).toBe(vor);
+
+  // Delete-Taste: erst wieder anwählen (das Gummiband oben ersetzte die
+  // Auswahl), dann löschen — die gesperrte Wand überlebt und BLEIBT
+  // ausgewählt (sichtbar, was stehen blieb — der Inspector zeigt «gesperrt»).
+  await page.mouse.click(mitte.x, mitte.y);
+  await expect.poll(() => auswahl(page)).toEqual([wallId]);
+  await page.keyboard.press('Delete');
+  expect(await wandExistiert(page, wallId)).toBe(true);
+  await expect.poll(() => auswahl(page)).toEqual([wallId]);
+
+  // Entsperren → derselbe Drag wirkt wieder (Gegenprobe).
+  await page.evaluate((id) => window.__kosmo.run('design.sperren', { entityId: id, locked: false }), wallId);
+  await page.mouse.move(mitte.x, mitte.y);
+  await page.mouse.down();
+  await page.mouse.move(ziel.x, ziel.y, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(() => geometrie()).not.toBe(vor);
 });

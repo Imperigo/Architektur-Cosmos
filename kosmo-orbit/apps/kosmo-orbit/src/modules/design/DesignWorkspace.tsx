@@ -61,7 +61,7 @@ import {
 } from '@kosmo/kernel';
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { verarbeiteUnternehmerplanDatei, useUnternehmerplan } from './unternehmerplan';
-import { VERSCHIEBBAR, wandTreffer } from './plan-hit-test';
+import { VERSCHIEBBAR, istGesperrt, wandTreffer } from './plan-hit-test';
 import { oeffnungVorgabeLesen } from './island/inhalte/zeichnen';
 import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
@@ -873,7 +873,11 @@ export function DesignWorkspace({
         // das frühere `ev.stopImmediatePropagation()` im Viewport3D-onKey-
         // Escape-Zweig (dort im selben Zug entfernt): Zustand statt
         // Listener-Reihenfolge-Kopplung.
-        if (useViewportChromeRuntime.getState().marqueeAktiv) return;
+        // v0.8.9 Fable-Nachzug (PA5-Übergabepunkt): dasselbe gilt für einen
+        // laufenden 3D-Griff-Zug (stairDrag/meshDrag) — `griffDragAktiv`
+        // teilt sich Kanal und Macrotask-Reset-Timing mit `marqueeAktiv`.
+        const chrome = useViewportChromeRuntime.getState();
+        if (chrome.marqueeAktiv || chrome.griffDragAktiv) return;
         // D10-Fix (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-18): eine laufende
         // Masskette (Werkzeug 'messen', ≥2 Punkte) soll Esc auch in REINEM
         // view-2d abschliessen statt nur verwerfen — bislang lief der
@@ -913,12 +917,17 @@ export function DesignWorkspace({
         !fokusImEingabefeld &&
         (e.key === 'Delete' || e.key === 'Backspace')
       ) {
-        const { selection, history } = useProject.getState();
+        const { selection, history, doc: aktuellesDoc } = useProject.getState();
         if (selection.length === 0) return;
         e.preventDefault();
+        // v0.8.9 Fable-Nachzug (PA2-Übergabepunkt, E2): gesperrte Elemente
+        // überleben das Tastatur-Löschen — sie bleiben ausgewählt, damit
+        // sichtbar ist, WAS stehen blieb (der Inspector zeigt «gesperrt»).
+        const loeschbar = selection.filter((id) => !istGesperrt(aktuellesDoc, id));
+        if (loeschbar.length === 0) return;
         history.beginGroup();
         try {
-          for (const id of selection) {
+          for (const id of loeschbar) {
             try {
               runCommand('design.loeschen', { entityId: id });
             } catch (err) {
@@ -928,7 +937,7 @@ export function DesignWorkspace({
         } finally {
           history.endGroup();
         }
-        useProject.getState().select([]);
+        useProject.getState().select(selection.filter((id) => istGesperrt(aktuellesDoc, id)));
         return;
       }
       const werkzeug = kurztasteFuer(e, fokusImEingabefeld);
@@ -1111,6 +1120,13 @@ export function DesignWorkspace({
         select([id]);
         return false;
       }
+      // v0.8.9 Fable-Nachzug (PA2-Übergabepunkt, E2): gesperrte Elemente
+      // bleiben anwählbar (pickEntityAt findet sie weiter — Sanktion 3),
+      // aber der Zug startet nicht.
+      if (istGesperrt(doc, id)) {
+        select([id]);
+        return false;
+      }
       // E1/C-5 (v0.8.5 PA1): Anfassen eines Elements, das Teil einer
       // Mehrfach-Auswahl ist, zieht die GANZE (bewegliche) Gruppe — die
       // Auswahl bleibt stehen. Einzelfall unten unverändert (ersetzt).
@@ -1118,7 +1134,9 @@ export function DesignWorkspace({
       if (sel.length > 1 && sel.includes(id)) {
         const gruppe = sel.filter((sid) => {
           const se = doc.get(sid);
-          return !!se && beweglich(se.kind);
+          // gesperrte Gruppen-Mitglieder bleiben stehen (v0.8.9 E2) —
+          // die Auswahl behalten sie trotzdem.
+          return !!se && beweglich(se.kind) && !istGesperrt(doc, sid);
         });
         if (gruppe.length > 1) {
           setDragEntity({ id, start: snap(p, magnet), gruppe });
@@ -1207,6 +1225,9 @@ export function DesignWorkspace({
         // die passenden Einträge nur bei Einzel-Auswahl).
         e.kind === 'stair';
       if (!griffFaehig) return false;
+      // v0.8.9 Fable-Nachzug (PA2-Übergabepunkt, E2): gesperrte Elemente
+      // haben keine ziehbaren Griffe.
+      if (istGesperrt(doc, id)) return false;
       setGriffDrag({ id, key: griffKey, start: snap(p, magnet) });
       setGriffCursor(p);
       return true;

@@ -33,34 +33,15 @@ import { expect, test, type Page } from '@playwright/test';
  * läuft jetzt über echte Pointer-Events auf dem 3D-Canvas statt der
  * SVG-PlanView.
  *
- * **Bekannte Randwirkung (Übergabe-Punkt an Fable, kein Fehler dieses
- * Pakets):** Esc bricht einen laufenden `stairDrag` in Viewport3D.tsx
- * korrekt ab (kein Commit, Handle zurück, `stairDragZurueck()`, Kern-
- * Anforderung E4/C-8 — Test C-8 (d) unten beweist das). DASSELBE
- * Escape leert aber ZUSÄTZLICH die Auswahl, weil `DesignWorkspace.tsx`
- * einen eigenen, unabhängigen `window`-Keydown-Listener für Escape trägt
- * (~Zeile 864-896): er prüft NUR `useViewportChromeRuntime.getState().
- * marqueeAktiv` (Zeile 876, Marquee-Guard aus v0.8.8) als Ausnahme und
- * feuert sonst unbedingt die vorbestehende ArchiCAD-Dritte-Stufe
- * `escAuswahlRef.current()` (Zeile 595-602: Auswahl-Werkzeug aktiv, keine
- * Kette offen, Auswahl nicht leer → `select([])`). Ein Treppen-Griff-Zug
- * (dieses Paket) setzt `marqueeAktiv` bewusst NICHT (E4-Auftrag: «ohne die
- * 0.8.8-Esc-Kanal-Semantik zu berühren») — die Auswahl wird also mitten im
- * Zug geleert, obwohl der Zug selbst sauber abbricht. **Derselbe Effekt
- * betrifft den BESTEHENDEN Mesh-Vertex-Griff genauso**
- * (`meshDrag`/`meshEditId`-Zweig, Viewport3D.tsx, kein Esc-Zweig dort
- * überhaupt vorhanden) — auch ein laufender Vertex-Drag wird durch Esc
- * nicht sauber abgebrochen UND die Auswahl fällt weg, älter als PA5-089.
- * Fix (ausserhalb des Dateikreises dieses Pakets, `DesignWorkspace.tsx` ist
- * TABU): ein weiterer Zustands-Kanal nach dem `marqueeAktiv`-Muster
- * (v0.8.8, `viewport-chrome-runtime.ts`), z. B. `griffDragAktiv`, von
- * Viewport3D.tsx beim Start eines `stairDrag`/`meshDrag` gesetzt und beim
- * Ende (Commit/Esc/Unmount) wieder gelöscht — `DesignWorkspace.tsx:876`
- * müsste dann `if (marqueeAktiv || griffDragAktiv) return;` prüfen, analog
- * zum bestehenden Guard. Test C-8 (d) unten beweist die Randwirkung
- * bewusst mit (kein Verstecken) und beweist zusätzlich, dass danach kein
- * dauerhaft kaputter Zustand bleibt (erneute Auswahl zeigt die Griffe
- * wieder normal, an der unveränderten Geometrie).
+ * **Esc-Verhalten (PA5-Übergabepunkt, im v0.8.9-Fable-Nachzug direkt
+ * eingelöst):** Esc bricht einen laufenden `stairDrag` korrekt ab (kein
+ * Commit, Handle zurück — Kern-Anforderung E4/C-8). Der neue
+ * `griffDragAktiv`-Kanal (`viewport-chrome-runtime.ts`, Muster
+ * `marqueeAktiv` v0.8.8; gesetzt beim Start von `stairDrag` UND dem
+ * älteren `meshDrag`, geräumt bei Commit/Esc-Macrotask/Unmount) lässt den
+ * unabhängigen DesignWorkspace-Escape-Handler dieses Esc der GESTE — die
+ * Auswahl bleibt stehen; erst ein ZWEITES Esc feuert die
+ * ArchiCAD-Dritte-Stufe. Test C-8 (d) beweist beides.
  */
 
 declare global {
@@ -84,6 +65,7 @@ declare global {
       // Anzahl sichtbarer Treppen-Griffe (0 ausserhalb Einzel-Auswahl einer
       // Treppe, sonst 2 bzw. 3 bei form 'l').
       stairHandleCount: () => number;
+      griffDragAktiv: () => boolean;
     };
   }
 }
@@ -342,14 +324,22 @@ test('C-8 (d): Esc mitten im Griff-Zug bricht ab — kein Commit, Treppe unverä
   const nachUp = await treppen(page);
   expect(nachUp).toEqual(vorDrag);
 
-  // Bekannte Randwirkung (KEIN Fehler dieses Pakets — s. Kopfkommentar
-  // «Bekannte Randwirkung»): dasselbe Escape leert zusätzlich die Auswahl
-  // über die vorbestehende, unabhängige ArchiCAD-Dritte-Stufe in
-  // `DesignWorkspace.tsx` (`escAuswahlRef`, ~Zeile 595-602 + der
-  // Escape-Listener ~Zeile 864-896) — die läuft für JEDEN Escape-Tastendruck
-  // ohne offene Kette durch, ausser `marqueeAktiv` ist gesetzt (Zeile 876).
-  // `stairDrag` setzt diesen Kanal bewusst NICHT (s. Viewport3D.tsx
-  // `onKey`-Kommentar) — die Auswahl darf hier also leer sein.
+  // v0.8.9 Fable-Nachzug (löst die frühere «Bekannte Randwirkung» ein):
+  // der neue `griffDragAktiv`-Kanal (viewport-chrome-runtime.ts) lässt den
+  // DesignWorkspace-Escape-Handler dieses Esc der GESTE — die Auswahl
+  // bleibt STEHEN, die Griffe bleiben sichtbar (vorher leerte die
+  // ArchiCAD-Dritte-Stufe die Auswahl mitten im Zug).
+  await expect.poll(() => auswahl(page)).toEqual([t1]);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  expect(await treppen(page)).toEqual(vorDrag);
+
+  // Ein ZWEITES Esc (keine Geste mehr aktiv) greift wieder normal:
+  // ArchiCAD-Dritte-Stufe leert die Auswahl. Der Kanal-Reset läuft als
+  // Macrotask NACH dem Esc1-Dispatch — hier explizit gepollt, statt gegen
+  // das Timing zu wetten (erster Lauf war exakt daran rot).
+  await expect.poll(() => page.evaluate(() => window.__kosmoViewport!.griffDragAktiv())).toBe(false);
+  await page.keyboard.press('Escape');
+  await expect.poll(() => auswahl(page)).toEqual([]);
   await expect.poll(() => stairHandleCountFrisch(page)).toBe(0);
 
   // Kein dauerhaft kaputter Zustand: erneute Einzel-Auswahl derselben
