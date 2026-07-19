@@ -54,6 +54,39 @@ import { expect, test, type Page } from '@playwright/test';
  *     Daten fand die Wand dagegen anstandslos. Die Kamera in
  *     `zweiWaendeMitKamera` zielt darum bewusst so, dass BEIDE Wände in die
  *     linke, kartenfreie Bildschirmhälfte (Bildschirm-X < 650) projizieren.
+ *
+ * PA2 (v0.8.7 «Verortet», `docs/V087-SPEZ.md` §3 E3/E4, C-6/C-7) erweitert
+ * diese Datei um zwei Gate-Beweise, KEIN neuer Datei-Kreis:
+ *
+ *  - **E3/C-6 (Pixel-Readback):** die ROADMAP-493-Ehrlichkeitsgrenze nannte
+ *    das alte Auswahl-Highlight («Kupfer-Glut», emissiv 0.35) «per
+ *    Pixel-Readback messbar (+22 R), aber fürs Auge schwach». E3 schaltet
+ *    zusätzlich das per-Entity-Kanten-`LineSegments` auf ein eigenes,
+ *    wiederverwendetes Material (`selectedEdgeMaterial`, Viewport3D.tsx
+ *    ~1394-1409: gleiche Akzent-Familie wie die Emissivfarbe, aber auf
+ *    R=255 aufgehellt, `depthTest:false` als linewidth-Ersatz). Statt einen
+ *    einzelnen, analytisch aus Wanddicke/-höhe hergeleiteten Kantenpixel zu
+ *    treffen (fehleranfällig — Wanddicke hängt vom Aufbau-Katalog ab, s.
+ *    `apps/kosmo-orbit/src/state/project-store.ts` `AW Beton 36` = 360mm),
+ *    scannt der Beweis eine ganze Bildschirm-Spalte um die Wand (volle
+ *    Canvas-Höhe) auf die grösste R-Differenz zwischen einem Vorher-/
+ *    Nachher-Snapshot (`erfasseFrame`/`vergleicheSpalte` unten, komplett
+ *    im Browser gerechnet — kein Multi-MB-Pixelarray über die Playwright-
+ *    Brücke). Rechnerische Obergrenze für die R-Differenz: 255 (neue Kante)
+ *    − 42 (alte dunkle Basiskante `0x2a2620`) = 213 — mehr ist mit einem
+ *    einzelnen 8-Bit-Kanal nicht erreichbar (keine Zehnerpotenz möglich,
+ *    ehrlich vermerkt statt eines falschen ×10-Versprechens).
+ *  - **E4/C-7 (HUD-Ereignis-Beweis):** camera-controls dispatcht `control`/
+ *    `update`/`rest`; Viewport3D.tsx bündelt sie per rAF auf einen
+ *    KAMERA-HUD-Schreibzugriff pro Frame und zählt NUR diese
+ *    ereignisgetriebenen Schreibungen separat vom bestehenden 400ms-Poll
+ *    (`__kosmoViewport.kameraHudEventCount()`). Ein exakter Race gegen die
+ *    Poll-Phase (~150ms-Fenster) wäre unter Containerlast geraten — die
+ *    Poll-Phase seit Mount ist der Testzeit unbekannt, ein zufällig naher
+ *    Poll-Tick könnte einen 150ms-Erfolg vortäuschen, ohne den Event-Weg zu
+ *    beweisen. Der Zähler ist der robuste, architektonische Beweis
+ *    (Event-Zähler-Testhook, wie in der Auftragsbeschreibung als Ausweg
+ *    genannt); ein kurzes Wert-Poll (~250ms) ergänzt ihn informativ.
  */
 
 declare global {
@@ -73,6 +106,11 @@ declare global {
       getCamera: () => { px: number; py: number; pz: number; tx: number; ty: number; tz: number };
       setCamera: (px: number, py: number, pz: number, tx: number, ty: number, tz: number) => void;
       renderOnce: () => void;
+      // E3/C-6-Beweis (v0.8.7, s. Kopfkommentar): derselbe synchrone
+      // render+capture-Weg wie `e2e/eingabe-3d.spec.ts`s Fenster-Pixel-Beweis
+      // (0.6.7 P0 «Für Vis aufnehmen») — `null`, solange kein Frame gerendert
+      // werden kann.
+      captureFrame: () => string | null;
       // D5-Fix-Begleiter (v0.8.6 PB2, Viewport3D.tsx ~2154-2161): `syncModel()`
       // baut neue Doc-Entities erst beim NÄCHSTEN echten rAF-Tick in `model`
       // ein — ein einzelnes `renderOnce()` direkt nach `__kosmo.run(...)`
@@ -81,6 +119,12 @@ declare global {
       // Wartezeit). Dieser Zähler ersetzt eine geratene feste Wartezeit
       // durch einen echten Poll-Anker.
       entityMeshCount: () => number;
+      // E4-Beweis-Anker (v0.8.7, PA2 `docs/V087-SPEZ.md` §3): zählt NUR die
+      // ereignisgetriebenen KAMERA-HUD-Schreibungen (control/update/rest,
+      // rAF-gebündelt, Viewport3D.tsx ~840-870) — unabhängig vom 400ms-
+      // Fallback-Poll, damit E2E den Event-Weg robust beweisen kann, ohne
+      // gegen dessen Timing zu wetten (Kopfkommentar C-7-Test unten).
+      kameraHudEventCount: () => number;
     };
   }
 }
@@ -207,6 +251,79 @@ async function zweiWaendeMitKamera(page: Page): Promise<{
   return { w1, w2, p1, p2, leer };
 }
 
+/** E3/C-6-Helfer: rendert EINEN frischen Frame (`renderOnce()` + `captureFrame()`,
+ *  derselbe synchrone Weg wie `e2e/eingabe-3d.spec.ts`s Fenster-Pixel-Beweis)
+ *  und legt sein dekodiertes Pixelbild im Browser-Fenster ab
+ *  (`window.__kosmoPixelSnaps`, Rückgabewert = Array-Index). Der Vergleich
+ *  selbst läuft komplett im Browser (`vergleicheSpalte` unten) — kein
+ *  Multi-MB-Pixelarray über die Playwright-Brücke. */
+async function erfasseFrame(page: Page): Promise<number> {
+  return page.evaluate(async () => {
+    const hook = window.__kosmoViewport!;
+    hook.renderOnce();
+    const dataUrl = hook.captureFrame();
+    if (!dataUrl) throw new Error('captureFrame lieferte null');
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Snapshot-Bild liess sich nicht dekodieren'));
+      img.src = dataUrl;
+    });
+    const off = document.createElement('canvas');
+    off.width = img.naturalWidth;
+    off.height = img.naturalHeight;
+    const ctx = off.getContext('2d')!;
+    ctx.drawImage(img, 0, 0);
+    const win = window as unknown as { __kosmoPixelSnaps?: ImageData[] };
+    win.__kosmoPixelSnaps ??= [];
+    win.__kosmoPixelSnaps.push(ctx.getImageData(0, 0, off.width, off.height));
+    return win.__kosmoPixelSnaps.length - 1;
+  });
+}
+
+/** Vergleicht zwei per `erfasseFrame` abgelegte Snapshots in einer vertikalen
+ *  Bildschirm-Spalte (CSS-Pixel-`xCss` ± `breiteCss`/2, volle Canvas-Höhe) —
+ *  liefert die grösste (positive) R-Differenz und die grösste Differenz
+ *  irgendeines Kanals irgendeines Pixels in der Spalte. Volle Höhe statt
+ *  eines einzelnen analytisch berechneten Kanten-Punkts: robust gegen
+ *  Wanddicke/-höhen-Annahmen, findet den Ausschlag, wo immer er im
+ *  gerenderten Bild tatsächlich landet. */
+async function vergleicheSpalte(
+  page: Page,
+  xCss: number,
+  breiteCss: number,
+  idxVorher: number,
+  idxNachher: number,
+): Promise<{ maxDeltaR: number; maxDeltaAny: number }> {
+  return page.evaluate(
+    ({ xCss, breiteCss, idxVorher, idxNachher }) => {
+      const win = window as unknown as { __kosmoPixelSnaps: ImageData[] };
+      const a = win.__kosmoPixelSnaps[idxVorher]!;
+      const b = win.__kosmoPixelSnaps[idxNachher]!;
+      const canvas = document.querySelector('canvas') as HTMLCanvasElement;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = a.width / rect.width;
+      const x0 = Math.max(0, Math.floor((xCss - breiteCss / 2) * scaleX));
+      const x1 = Math.min(a.width, Math.ceil((xCss + breiteCss / 2) * scaleX));
+      let maxDeltaR = -255;
+      let maxDeltaAny = 0;
+      for (let y = 0; y < a.height; y++) {
+        for (let x = x0; x < x1; x++) {
+          const i = (y * a.width + x) * 4;
+          const dR = b.data[i]! - a.data[i]!;
+          if (dR > maxDeltaR) maxDeltaR = dR;
+          for (let c = 0; c < 4; c++) {
+            const d = Math.abs(b.data[i + c]! - a.data[i + c]!);
+            if (d > maxDeltaAny) maxDeltaAny = d;
+          }
+        }
+      }
+      return { maxDeltaR, maxDeltaAny };
+    },
+    { xCss, breiteCss, idxVorher, idxNachher },
+  );
+}
+
 test('C-14a: Klick wählt w1, Shift-Klick w2 fügt hinzu — 3D-Mehrfachauswahl per state() bewiesen + Screenshot', async ({ page }) => {
   await starteManuell3D(page);
   const { w1, w2, p1, p2 } = await zweiWaendeMitKamera(page);
@@ -270,4 +387,88 @@ test('C-14d (D10-Beweis): Escape leert die Mehrfachauswahl auch bei reinem 3D-Fo
   // dieser Druck trotzdem leeren.
   await page.keyboard.press('Escape');
   await expect.poll(async () => (await auswahl(page)).length).toBe(0);
+});
+
+test('C-6 (E3): Auswahl schaltet die Wand-Kante auf einen kräftigen Akzent — Pixel-Readback ≫ die alte +22-R-Emissiv-Marke; unselektierte Wand bleibt byte-gleich', async ({
+  page,
+}) => {
+  await starteManuell3D(page);
+  const { w1, w2, p1, p2 } = await zweiWaendeMitKamera(page);
+
+  const vorher = await erfasseFrame(page); // beide Wände unselektiert
+
+  await klickPick3D(page, p1);
+  await expect.poll(() => auswahl(page)).toEqual([w1]);
+
+  const nachher = await erfasseFrame(page); // w1 gewählt, w2 unverändert
+
+  // Spalten aus den TATSÄCHLICHEN Klickpunkt-Projektionen (nicht den im
+  // Kopfkommentar dokumentierten Schätzwerten) — self-consistent mit den
+  // Punkten, die auch tatsächlich geklickt wurden.
+  const p1Screen = await weltZuBildschirm3D(page, p1);
+  const p2Screen = await weltZuBildschirm3D(page, p2);
+  expect(p1Screen.x + 150).toBeLessThan(p2Screen.x - 150); // Spalten dürfen sich nicht überlappen
+
+  const diffW1 = await vergleicheSpalte(page, p1Screen.x, 300, vorher, nachher);
+  // Baseline (ROADMAP 493): Kupfer-Glut emissiv 0.35 allein mass +22 R. Die
+  // neue Auswahlkante (`selectedEdgeMaterial`, Viewport3D.tsx ~1394-1409:
+  // R=255, `depthTest:false`) ersetzt die dunkle Basiskante (`edgeMaterial`
+  // 0x2a2620, R=42) — rechnerisches Maximum 213 (8-Bit-Kanalgrenze). 150 ist
+  // ein grosszügiger Schwellwert klar über einer Grössenordnung des alten
+  // +22-Werts, ohne gegen Antialiasing-Rundung am exakten Kantenpixel zu
+  // wetten.
+  expect(diffW1.maxDeltaR).toBeGreaterThanOrEqual(150);
+
+  const diffW2 = await vergleicheSpalte(page, p2Screen.x, 300, vorher, nachher);
+  // w2 bleibt komplett unselektiert — E3-Vorgabe «Basis-Material unangetastet»:
+  // KEIN Pixel irgendeines Kanals in der w2-Spalte darf sich ändern (nicht
+  // nur "annähernd gleich" — die Materialien sind Referenz-Swaps, kein neuer
+  // Zufalls-/Zeit-Term fliesst ein).
+  expect(diffW2.maxDeltaAny).toBe(0);
+
+  await page.screenshot({ path: 'e2e-results/pa2-087-3d-auswahl-kante.png' });
+});
+
+test('C-7 (E4): KAMERA-HUD folgt echten camera-controls-Events — Event-Zähler steigt unabhängig vom 400ms-Fallback-Poll, AZIMUT-Anzeige aktualisiert sich schnell', async ({
+  page,
+}) => {
+  await starteManuell3D(page);
+  await zweiWaendeMitKamera(page); // deterministische Startkamera (setCamera + renderOnce, s. setzeKamera3D)
+
+  const azimutZelle = page.locator('.k-keyvalue-zeile', { hasText: 'AZIMUT' }).locator('.k-keyvalue-wert').first();
+  await expect(azimutZelle).toBeVisible();
+  const textVorher = await azimutZelle.textContent();
+
+  const zaehlerVorher = await page.evaluate(() => window.__kosmoViewport!.kameraHudEventCount());
+
+  // Kamera per Testhook auf einen GEOMETRISCH garantiert anderen Azimut
+  // drehen: Ziel bleibt, Position wandert vom bisherigen +Z-Anflug auf einen
+  // +X-Anflug (90°-Versatz um das Ziel) — kein Nachrechnen der
+  // `controls.azimuthAngle`-Formel nötig, der Winkel MUSS sich ändern.
+  // `renderOnce()` ruft `controls.update()` synchron auf — exakt die
+  // Bedingung, unter der camera-controls das 'update'-Event dispatcht
+  // (camera-controls.module.js:2263-2269, Kommentar an der Listener-Stelle
+  // in Viewport3D.tsx).
+  await page.evaluate(() => {
+    const hook = window.__kosmoViewport!;
+    const cam = hook.getCamera();
+    hook.setCamera(cam.tx + 15, cam.ty, cam.tz, cam.tx, cam.ty, cam.tz);
+    hook.renderOnce();
+  });
+
+  // Primärer, robuster Beweis (Kopfkommentar): der ereignisgetriebene Zähler
+  // steigt — dieser Zähler wird NUR vom control/update/rest-Listener
+  // inkrementiert, NIE vom 400ms-Poll (Viewport3D.tsx). Grosszügiger
+  // Timeout: beweist den EREIGNIS-Weg architektonisch, nicht seine
+  // Geschwindigkeit unter Containerlast.
+  await expect
+    .poll(() => page.evaluate(() => window.__kosmoViewport!.kameraHudEventCount()), { timeout: 2000 })
+    .toBeGreaterThan(zaehlerVorher);
+
+  // Ergänzender, informativer Wert-Beweis mit kurzem Poll-Fenster: die
+  // sichtbare AZIMUT-Zelle ändert sich, ohne auf einen vollen 400ms-Zyklus
+  // zu warten. Bewusst NICHT der alleinige Beweis (die Poll-Phase seit Mount
+  // ist der Testzeit unbekannt, ein zufällig naher 400ms-Tick könnte sonst
+  // mitspielen) — der Zähler oben bleibt entscheidend.
+  await expect.poll(() => azimutZelle.textContent(), { timeout: 250, intervals: [20] }).not.toBe(textVorher);
 });

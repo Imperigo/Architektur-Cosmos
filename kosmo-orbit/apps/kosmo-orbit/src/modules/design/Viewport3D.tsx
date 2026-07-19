@@ -840,6 +840,45 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     distanzStartRef.current = controls.distance;
     setViewportBereit(true);
 
+    // E4 (v0.8.7, docs/V087-SPEZ.md §3): KAMERA-HUD ereignisbasiert — camera-
+    // controls dispatcht 'control' (während einer Nutzer-Geste, z.B. je
+    // pointermove-Schritt), 'update' (JEDER echte Bewegungs-Tick — exakt
+    // dieselbe Bedingung, unter der `controls.update()` im Renderloop unten
+    // `true` zurückgibt, s. Bibliotheksquelle camera-controls.module.js:2263-
+    // 2269) und 'rest' (Bewegung/Transition ausgelaufen, inkl. programmatische
+    // `setLookAt(...)`-Sprünge). Ein rAF-Throttle bündelt mehrfache Events
+    // desselben Frames (mehrere native pointermove-'control'-Events VOR dem
+    // nächsten Repaint sind möglich) auf HÖCHSTENS einen State-Write pro
+    // Frame — kein Re-Render-Sturm beim Orbit. Der bestehende 400ms-Poll
+    // (unten) bleibt als Fallback für Werte ohne Event-Kanal (Canvas-Rect,
+    // Kontext-/Splat-/Sonnen-Zustand) unangetastet.
+    let camHudRaf = 0;
+    let camHudEventCount = 0; // Test-Beweis (E2E-Hook unten): zählt NUR ereignisgetriebene Schreibungen, getrennt vom 400ms-Poll-Zähler.
+    const schreibeKameraHud = () => {
+      camHudRaf = 0;
+      const c = controlsRef.current;
+      const cam = cameraRef.current;
+      if (!c || !cam) return;
+      setChromeSnapshot((prev) => ({
+        ...prev,
+        azimutRad: c.azimuthAngle,
+        polarGrad: (c.polarAngle * 180) / Math.PI,
+        distanzM: c.distance,
+        fovGrad: cam.fov,
+      }));
+      // Derselbe Store-Write wie der 400ms-Poll unten (P5: Orientierungskreuz-
+      // Float liest nur azimutRad) — jetzt zusätzlich ereignisgetrieben.
+      useViewportChromeRuntime.setState({ azimutRad: c.azimuthAngle });
+      camHudEventCount++;
+    };
+    const kameraHudEvent = () => {
+      if (camHudRaf) return; // schon ein Write für DIESEN Frame geplant
+      camHudRaf = requestAnimationFrame(schreibeKameraHud);
+    };
+    controls.addEventListener('control', kameraHudEvent);
+    controls.addEventListener('update', kameraHudEvent);
+    controls.addEventListener('rest', kameraHudEvent);
+
     // Licht: warme Sonne + weiches Himmelslicht
     const sun = new THREE.DirectionalLight(0xfff3e0, 2.6);
     sun.position.set(30, 42, 18);
@@ -1391,6 +1430,25 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x2a2620 });
     const previewMaterial = new THREE.LineBasicMaterial({ color: 0xa84b2b });
+    // E3 (v0.8.7, docs/V087-SPEZ.md §3): Auswahl-Kantenmaterial — EINE
+    // wiederverwendete Instanz (nie pro Frame neu erzeugt, Lehre v0.8.5 §2
+    // "Materialien nicht pro Frame neu erzeugen"). Aufgehellte Variante
+    // derselben Akzent-Familie wie die bestehende "Kupfer-Glut"-Emissivfarbe
+    // 0xa84b2b (kein neuer Farbton, nur maximal aufgehellt: R an die
+    // 8-Bit-Kanalgrenze 255 statt 168 — die grösstmögliche R-Differenz
+    // gegenüber der dunklen Basiskante 0x2a2620 ist rechnerisch 213, mehr
+    // ist mit einem einzelnen Farbkanal nicht erreichbar), voll gesättigt/
+    // opak statt gedämpft emissiv. `depthTest:false` ersetzt das in WebGL
+    // wirkungslose `linewidth` (D1/E3-Vorgabe): die Auswahlkante liegt
+    // sichtbar VOR der Fläche statt im Material zu verschwinden.
+    // `toneMapped:false` hält die Farbe unter Belichtung satt. KEIN Puls
+    // (statischer Farbwechsel) — `prefers-reduced-motion` ist damit
+    // automatisch erfüllt, ohne eine Bewegungs-Ausnahme zu brauchen.
+    const selectedEdgeMaterial = new THREE.LineBasicMaterial({
+      color: 0xff7a33,
+      depthTest: false,
+      toneMapped: false,
+    });
 
     // v0.7.0 E3 (docs/V070-KONZEPT.md): 3D-Darstellungsmodus — 'material' ist
     // das heutige Verhalten (Katalog-Farben + Textur-Toggle) byte-/pixel-
@@ -1489,6 +1547,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       }
       eGeo.setAttribute('position', new THREE.BufferAttribute(ePos, 3));
       const lines = new THREE.LineSegments(eGeo, edgeMaterial);
+      // E3 (v0.8.7): Die Auswahl-Schleife unten muss jede LineSegments-Kante
+      // ihrem Entity zuordnen können, um GENAU die richtige auf
+      // `selectedEdgeMaterial` umzuschalten — bisher trug nur `mesh` eine
+      // `entityId`.
+      lines.userData['entityId'] = a.entityId;
       return [mesh, lines];
     }
 
@@ -1989,15 +2052,32 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       syncSketchModus();
       syncSketchDrawing();
       syncMeshHandles();
-      // Auswahl-Highlight (Kupfer-Glut)
+      // Auswahl-Highlight (Kupfer-Glut, E3 v0.8.7 um den Kanten-Akzent
+      // erweitert: `model.children` enthält je Entity GENAU ein Mesh + eine
+      // LineSegments-Kante — beide tragen `entityId` (Kante seit E3, s.o.
+      // `artifactToObjects`), keine anderen Objekttypen leben in `model`
+      // (Sketch/Preview/Handles/Kontext/GLB sind eigene Gruppen). Die Kante
+      // wird per Material-REFERENZ getauscht (nie mutiert) — `edgeMaterial`
+      // ist eine EINZIGE, von ALLEN Entities geteilte Instanz; ein `.color.
+      // set(...)` darauf würde jede Kante im Modell verfärben, nicht nur die
+      // gewählte. `selectedEdgeMaterial` ist ebenfalls eine einmalige,
+      // wiederverwendete Instanz (oben) — kein Material entsteht hier neu.
       const sel = new Set(useProject.getState().selection);
       for (const child of model.children) {
+        const entityId = child.userData['entityId'] as string | undefined;
+        if (entityId === undefined) continue;
+        const isSel = sel.has(entityId);
         const mesh = child as THREE.Mesh;
-        if (!mesh.isMesh) continue;
-        const mat = mesh.material as THREE.MeshStandardMaterial;
-        const isSel = sel.has(mesh.userData['entityId'] as string);
-        if (mat.emissive) mat.emissive.setHex(isSel ? 0xa84b2b : 0x000000);
-        if ('emissiveIntensity' in mat) mat.emissiveIntensity = isSel ? 0.35 : 0;
+        if (mesh.isMesh) {
+          const mat = mesh.material as THREE.MeshStandardMaterial;
+          if (mat.emissive) mat.emissive.setHex(isSel ? 0xa84b2b : 0x000000);
+          if ('emissiveIntensity' in mat) mat.emissiveIntensity = isSel ? 0.35 : 0;
+          continue;
+        }
+        const lines = child as THREE.LineSegments;
+        if (lines.isLineSegments) {
+          lines.material = isSel ? selectedEdgeMaterial : edgeMaterial;
+        }
       }
       // Punktgrösse der Splats folgt Brennweite × Pufferhöhe (perspektivisch korrekt)
       splatUniforms.uFocal.value = 0.5 * renderer.domElement.height * camera.projectionMatrix.elements[5]!;
@@ -2159,12 +2239,21 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       // `glbMeshCount` oben), damit E2E VOR einem 3D-Pick auf die passende
       // Mesh-Anzahl pollen kann, statt eine geratene Wartezeit zu raten.
       entityMeshCount: (): number => model.children.filter((c) => (c as THREE.Mesh).isMesh).length,
+      // E4-Beweis-Anker (v0.8.7, wie `entityMeshCount`): zählt NUR die
+      // ereignisgetriebenen KAMERA-HUD-Schreibungen (control/update/rest,
+      // rAF-gebündelt) — vom 400ms-Fallback-Poll unabhängig, damit E2E den
+      // Event-Weg beweisen kann, ohne gegen dessen Timing zu wetten.
+      kameraHudEventCount: (): number => camHudEventCount,
     };
 
     return () => {
       unsubscribeProjekt();
       deriveWorker?.terminate();
       cancelAnimationFrame(raf);
+      if (camHudRaf) cancelAnimationFrame(camHudRaf);
+      controls.removeEventListener('control', kameraHudEvent);
+      controls.removeEventListener('update', kameraHudEvent);
+      controls.removeEventListener('rest', kameraHudEvent);
       ro.disconnect();
       renderer.domElement.removeEventListener('pointerdown', onPointerDown);
       renderer.domElement.removeEventListener('pointerup', onPointerUp);
