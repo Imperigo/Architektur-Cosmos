@@ -236,3 +236,115 @@ Commands — nur der E8-Fokus) · Coverage-Report-Werkzeug für die Eval ·
 Stimmungs-Token-Paletten (kein Kontrast-Fall) · ÖREB-Live/swisstopo-mcp
 (0.9.x, D9-Befund 0.8.8 gilt) · Rundgang-PDF + Installer-Zustellung
 (bis 0.9.0) · HomeStation-/Owner-Konto-Posten.
+
+## 9 · Nachtrag «Blender-Werkbank» (eingefroren 19.07.2026, Owner-Auftrag)
+
+> Owner wörtlich: «baue blender tools nach deinen empfehlungen alles ein
+> was du für gut findest. packe es noch in diese version hinein.»
+> Shortlist (Fable, freigegeben): Cycles-Anbindung, Sonnenstunden,
+> Line-Art, glTF-Härtung, Bake-Rückweg. **Owner-Entscheid per Rückfrage:
+> die bpy-Regel (ROADMAP 179, «kein Blender-Python-Skript im Repo»)
+> BLEIBT in 0.8.9 — Drehbuch-only; der testbare
+> Python-Worker-Runner-Mittelweg (lora_empfaenger-Vorbild) ist festes
+> 0.8.10-Paket.** Lizenz: OWNER-MANDAT «kein GPL-Link» — nur
+> Prozessgrenze (Worker) und Apache-2.0-Teile; die glTF-Härtung ist
+> reiner Eigenbau (keine Attribution nötig, ehrlich benannt).
+> Ehrlichkeitsregel (vier Fundstellen, bindend): **Bilder dürfen
+> markierte Fakes sein, Physik-Zahlen nie**; Bake/Decimate =
+> Geometrie-Klasse mit Optimierungs-Behauptung → endet im Container
+> IMMER `kein-blender-worker`, nie Pass-Through.
+
+### Entscheide E9–E13 (bindend)
+
+- **E9 Bridge/Verträge** (PBL1): `render-scene.ts` `style.mode` additiv
+  um `'lineart'`; `render-result.ts` `RenderJob.requested_style?`
+  (main.py spiegelt aus scene.style.mode, analog requested_engine);
+  NEU `bake-job.ts` (kosmo.bake-job/v1: BakeJobScene mit
+  geometry/params{textureSize?,unwrap:'smart-uv',decimateRatio?}/out,
+  Präfix `bake-` mit eigener Regex, Status wortgleich zu
+  BlenderSimJobStatus inkl. `kein-blender-worker`, approval_token
+  CONFIRMED_BAKE_, BakeResult{baked_glb,method,triangles_before?/after?});
+  `blender-sim.ts` additiv um `SonnenstundenResult`
+  (kosmo.sonnenstunden-result/v1: stunden/kriteriumErfuellt/methode)
+  als `BlenderSimJob.result?` + params-Schlüssel-Kommentar
+  (lat/lon/datum ISO, optional kriteriumStunden); bridgeRoutes.jobsBake;
+  main.py: POST /jobs/bake nach create_blender_sim_job-Muster
+  (_read_capped, out serverseitig erzwungen), Fake-Worker-Zweig
+  `kind:'bake'` VOR dem generischen queued-Zweig → SOFORT
+  kein-blender-worker (nie running/done); get_job liest
+  bake-result.json; README «Worker andocken» + Drehbücher für
+  Bake (Smart-UV vor Bake), Line-Art (Freestyle/Grease-Pencil-Line-Art
+  headless), Sonnenstunden (Sampling-Konvention).
+- **E10 Line-Art** (PBL2): KEIN neuer Job-Typ — reitet auf der
+  vis--Render-Kette; Trigger AUSSCHLIESSLICH in der AUSTAUSCH-Insel
+  (NodeCanvas ist PB6a-exklusiv, Sanktion 13); `mode:'lineart'`
+  erzwingt client-seitig `vis.skip:true` (eine Strichzeichnung wartet
+  nie auf einen KI-Schritt).
+- **E11 Sonnenstunden-Client** (PBL2): eigene Insel
+  `island/inhalte/sonne.tsx` mit eigenem Datum-State (KEIN Doc-Feld,
+  Laufzeit ≠ Modell); params={lat,lon,datum} aus `doc.settings.standort`
+  NUR GELESEN (design.ts ist PA2-exklusiv, Sanktion 14); client-seitige
+  Zod-Validierung des params-Shapes VOR dem Senden; Container zeigt den
+  `kein-blender-worker`-Status mit Bridge-message WORTGLEICH — keine
+  erfundene Zahl, keine «ungefähr»-Formulierung; echte Zahlen NUR aus
+  `result` eines done-Jobs (echter Worker am Gerät).
+- **E12 glTF-Härtung** (PBL3): `extras{entityId,kind,geschoss}` je Node,
+  Geschoss-Hierarchie (ein Node je Storey mit children statt flacher
+  Liste), `doubleSided:true` an den Materialien, totes
+  KIND_LABEL-Mapping (furniture/zone — von deriveAll nie geliefert)
+  ENTFERNEN; EIGENE test/gltf.test.ts (JSON-Chunk rückparsen);
+  KEINE UVs/Texturen/Tangenten/Kameras (Unwrap = Worker-Aufgabe;
+  MeshData-Erweiterung würde scene.ts berühren = PA1-Nachbarschaft).
+  Bestands-Inline-Tests in kernel.test.ts bleiben als Regression.
+- **E13 Label-/Herkunftskette** (PBL2): `BILD_LABEL_FAKE_RENDER` wird
+  Funktion `bildLabel({worker?,requestedStyle?})` — worker fehlt oder
+  'fake-worker' → «Vorschau (Fake-Render)»; requestedStyle 'lineart' →
+  «Strichzeichnung (Line-Art)»; sonst «Render (Cycles)»; der
+  Aufnahme-Pfad bekommt das eigene, ehrliche Label «Aufnahme (Viewport)»
+  (ein Screenshot war nie ein Fake-Render). Der Echt-Zweig ist im
+  Container NIE erreichbar (Fake-Bridge liefert immer worker
+  'fake-worker') — er wird per Unit-Test mit künstlichem JobRecord
+  bewiesen und GENAU SO als unbewiesener Live-Pfad dokumentiert.
+
+### Betrieb Tag B' (bindend)
+
+Welle 1 parallel: **PBL1** (contracts/* + main.py + test_bridge_haerte
++ README) ‖ **PBL3** (derive/gltf.ts + test/gltf.test.ts). Welle 2
+NACH PBL1-Gate parallel: **PBL2** (vis-jobs.ts, NEU
+blender-jobs-runtime.ts, island: katalog+index+sonne.tsx+austausch.tsx,
+NEUE e2e/blender-bridge.spec.ts) ‖ **PBL4** (AssetWorkspace.tsx
+«Ins Modell laden» via bestehendem setGlbContext — KEIN Viewport3D-Edit;
+asset-bibliothek.ts nur falls Titel-Konvention; Insel-Trigger).
+Kein Blender-Paket berührt NodeCanvas/design.ts/DesignWorkspace/
+PlanView/Viewport3D/sheet/publikation/blattlayout. EEVEE (A2) fällt —
+die praktisch-gratis-Prüfung war negativ (eigenes Engine-Feld + zweite
+Label-Kette ohne Shortlist-Mandat).
+
+### Sanktionen 12–15
+
+12. Ein Bake-/Decimate-Ergebnis, das im Fake-/Container-Betrieb ein
+    unverändertes oder erfundenes GLB als «gebackt» ausliefert, statt
+    kein-blender-worker zu melden = ungültig.
+13. NodeCanvas.tsx von einem Blender-Paket angefasst = ungültig
+    (PB6a bleibt exklusiv; Line-Art-Node-UI ist 0.8.10-Kandidat).
+14. design.ts angefasst oder neues Doc-Feld für Sonnen-Params =
+    ungültig (PA2 bleibt exklusiv; Job-Params statt Doc-Feld).
+15. bpy-Skript im Repo = ROADMAP-179-Bruch (der Runner-Mittelweg ist
+    per Owner-Entscheid 0.8.10, nicht 0.8.9).
+
+### Matrix-Erweiterung (Abnahme Tag C, zusätzlich zu C-1…C-12)
+
+- [ ] **C-13** Bake-Job: bake--Contract Fünfschritt komplett, Fake-Zweig meldet kein-blender-worker SOFORT (nie running/done im Container), Härtetest-Block grün (Präfix-Regex, out-Injektion, 400, 413, Freigabe-Symmetrie) → PBL1
+- [ ] **C-14** Line-Art: mode 'lineart' erzwingt vis.skip:true (Netzwerk-Mock beweist das gesendete JSON), AUSTAUSCH-Insel-Checkbox löst aus, NodeCanvas.tsx unberührt (git diff beweist es) → PBL2
+- [ ] **C-15** Sonnenstunden: eigene Insel mit Datum-Input, params aus doc.settings.standort nur gelesen, design.ts unberührt, kein-blender-worker-Anzeige wortgleich ehrlich → PBL2
+- [ ] **C-16** glTF: extras/Hierarchie/doubleSided vorhanden, gltf.test.ts grün, kein UV-/Texturexport, KIND_LABEL bereinigt, Bestands-Inline-Tests grün → PBL3
+- [ ] **C-17** Label-Kette: Fake bleibt «Vorschau (Fake-Render)», Aufnahme «Aufnahme (Viewport)», Echt-Zweig per Unit-Test mit künstlichem JobRecord erreicht und als Container-unerreichbar dokumentiert; Bake-Trigger schreibt NICHTS in den Asset-Vault ohne done → PBL2/PBL4
+
+### Nicht-Ziele des Nachtrags
+
+Wind-/Energie-UI (Contract-Arten existieren, kein Client) · EEVEE ·
+Line-Art als Node-UI (0.8.10 nach PB6a) · echte bpy-Worker/
+HomeStation-Abnahme (Geräte-Termin; Drehbuch-only per Owner-Entscheid) ·
+Worker-Runner-Mittelweg (festes 0.8.10-Paket) · UV-/Textur-Export aus
+gltf.ts · Bake-Ergebnis als editierbares Mesh (nur setGlbContext-
+Referenz-Weg; glb-zu-mesh verlöre die AO-Textur).
