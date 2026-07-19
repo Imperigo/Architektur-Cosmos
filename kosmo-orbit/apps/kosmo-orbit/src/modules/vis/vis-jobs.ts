@@ -405,7 +405,7 @@ const BILD_LABEL_FAKE_RENDER = 'Vorschau (Fake-Render)';
  * bestimmt aber NICHT mehr das Slot-Label — E7 zwingt `BILD_LABEL_FAKE_RENDER`
  * (Sanktion 8: Fake-Bild ohne Kennzeichnung = ungültig).
  */
-function platziereBildAufsBlatt(dataUrl: string, _titel: string): string {
+export function platziereBildAufsBlatt(dataUrl: string, _titel: string): string {
   pruefeBildDeckel(dataUrl); // wirft VOR jedem Doc-Zugriff — kein Command läuft an
   const { doc, runCommand, history } = useProject.getState();
   history.beginGroup();

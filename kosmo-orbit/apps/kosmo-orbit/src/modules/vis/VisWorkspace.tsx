@@ -16,10 +16,10 @@ import {
   moduleHue,
   type KTabItem,
 } from '@kosmo/ui';
-import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, VIS_STIMMUNGEN, type Sheet, type VisGraph } from '@kosmo/kernel';
+import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, VIS_STIMMUNGEN, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { basisNodeHoehe, NODE_W, NodeCanvas } from './NodeCanvas';
-import { bridgeToken, sendeGraphRenderAuftrag } from './vis-jobs';
+import { bridgeToken, platziereBildAufsBlatt, sendeGraphRenderAuftrag } from './vis-jobs';
 import { BridgeBild } from './BridgeBild';
 import { presetAnwenden } from '../../state/dock-preset-anwendung';
 import { PRESET_IDS, type PresetId } from '../../state/dock-presets';
@@ -756,25 +756,13 @@ function EinfachAnsicht() {
         r.onerror = () => reject(r.error ?? new Error('Bild nicht lesbar'));
         r.readAsDataURL(blob);
       });
-      const { doc, runCommand, history } = useProject.getState();
-      history.beginGroup();
-      try {
-        const sheets = doc.byKind<Sheet>('sheet').sort((a, b) => a.index - b.index);
-        let sheet = sheets.find((s) => (s.bilder ?? []).some((b) => !b.assetId)) ?? sheets[0];
-        if (!sheet) {
-          const res = runCommand('publish.blattErstellen', { name: 'Renderblatt', format: 'A1', orientation: 'quer' });
-          sheet = doc.get<Sheet>((res.patches[0] as { id: string }).id)!;
-        }
-        const leer = (sheet.bilder ?? []).find((b) => !b.assetId);
-        if (leer) {
-          runCommand('publish.bildFuellen', { sheetId: sheet.id, bildId: leer.id, dataUrl });
-        } else {
-          runCommand('publish.bildPlatzieren', { sheetId: sheet.id, x: 40, y: 40, w: 160, dataUrl, title: titel });
-        }
-        setHinweis(`Render liegt auf «${sheet.name}» — im KosmoPublish weiterschieben`);
-      } finally {
-        history.endGroup();
-      }
+      // C-11-Matrix-Fund (v0.8.8): dieser ältere Manuell-Weg trug eine EIGENE
+      // Platzierungs-Kopie ohne den E7-Deckel und ohne das Pflicht-Label
+      // «Vorschau (Fake-Render)» — jetzt derselbe gehärtete Kern wie der
+      // Node-Graph-Weg (`vis-jobs.ts::platziereBildAufsBlatt`: Deckel wirft
+      // VOR jedem Doc-Zugriff, Label in derselben Undo-Gruppe).
+      const blattName = platziereBildAufsBlatt(dataUrl, titel);
+      setHinweis(`Render liegt auf «${blattName}» — im KosmoPublish weiterschieben`);
     } catch (e) {
       setError(`Aufs Blatt fehlgeschlagen: ${e instanceof Error ? e.message : String(e)}`);
     }

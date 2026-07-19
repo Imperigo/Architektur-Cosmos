@@ -197,6 +197,31 @@ test('Undo nach Aufs Blatt leert den Slot UND räumt den Asset (GC) — window._
   expect(nachLaenge).toBeLessThan(zwischenLaenge);
 });
 
+test('C-11-Matrix-Fund: auch der Manuell/Einfach-Weg («Aufs Blatt» am Render-Job) trägt das Pflicht-Label', async ({ page }) => {
+  // v0.8.8-Matrix-Fund: VisWorkspace.tsx trug eine EIGENE Platzierungs-Kopie
+  // ohne E7-Deckel/Label — seit dem Fable-Fix läuft der Weg über denselben
+  // gehärteten Kern (`platziereBildAufsBlatt`). Ablauf-Muster 1:1 aus
+  // `module.spec.ts` (~:600ff, inkl. der dort begründeten Jobstore-
+  // Akkumulations-Robustheit und des grosszügigen Fake-Worker-Timeouts).
+  await oeffneVisMitBridge(page);
+  await page.click('[data-testid="tab-einfach"]');
+  await page.click('[data-testid="send-render"]');
+  await page
+    .locator('[data-testid="render-job"]')
+    .getByText('Aufs Blatt')
+    .first()
+    .click({ timeout: 90_000 });
+  await expect(page.locator('[data-testid="vis-hinweis"]')).toBeVisible();
+  const bild = await page.evaluate(() => {
+    const sheets = window.__kosmo.state().doc.byKind('sheet');
+    return sheets.flatMap((s) => s.bilder ?? []).find((b) => b.assetId) ?? null;
+  });
+  expect(bild).not.toBeNull();
+  // Kern-Beweis: der ältere Manuell-Weg erzwingt jetzt DASSELBE Label wie
+  // der Node-Graph-Weg (Sanktion 8 gilt pfadunabhängig).
+  expect(bild!.title).toBe(LABEL_FAKE_RENDER);
+});
+
 test('Deckel: Base64 über ~1 MB wirft eine ehrliche Fehlerzone STATT eines Doc-Schreibens', async ({ page }) => {
   await oeffneVisMitBridge(page);
   await page.click('[data-testid="graph-neu"]');
