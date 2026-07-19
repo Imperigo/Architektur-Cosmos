@@ -26,14 +26,22 @@ freigegeben wird.
 **Erwartung Teil 2:** 0 bewegte Bestandsdateien, +2 additive → **39 Dateien
 (38 SVG + 1 IFC), svg-qa 38/0.**
 
-## Teil 2 — gemeinsamer Lauf (Tag C, NACH allen Landungen)
+## Teil 2 — gemeinsamer Lauf (Tag C, 19.07.2026) — **BESTANDEN, Ist == Prognose**
 
-Noch offen — Ablauf (Ritual aus GOLDEN-WECHSEL-080/081/083):
+Alle neun Pakete im Baum (ROADMAP 522–534, HEAD `4aeb270`), die +2
+PB3-Goldens bereits mit dem PB3-Gate regeneriert und committet. Der
+gemeinsame Abschluss-Lauf beweist den Stillstand des GESAMTBESTANDS:
 
-1. Alle Pakete im Baum, Suiten grün.
-2. EIN gemeinsamer `GOLDEN_UPDATE=1 npx vitest run`-Lauf im Kernel.
-3. Vierstufige Verifikation: `git status` (nur die +2 erwarteten neuen
-   Dateien) → `git diff --stat` (0 Bestandszeilen) → sha256-Liste vorher/
-   nachher (36 SVG + IFC identisch) → svg-qa 38/0.
-4. Ist ≠ Prognose → Hard-Stop, Diff-Klassifikation durch Fable, kein
-   Commit vor der Klärung.
+1. `GOLDEN_UPDATE=1 npx vitest run` im Kernel — 59 Dateien / 1164 Tests
+   grün, JEDES Golden neu geschrieben.
+2. Vierstufige Verifikation:
+   - aggregierte sha256 über alle 39 Dateien VOR dem Lauf:
+     `ce144f5c283fce246c390823ed1fa774efba5c0e840e6af11d0321386dd2fab5`
+   - aggregierte sha256 NACH dem Lauf: **identisch** (byte-stiller
+     Regenerations-Beweis, deckt alle 38 SVG + 1 IFC gleichzeitig);
+   - `git status --short`: leer (0 bewegte, 0 neue Dateien);
+   - svg-qa: **38 Goldens geprüft — 0 harte Fehler** (4 bekannte
+     Text-Overlap-Warnungen, Bestand).
+3. Ergebnis gegen Teil 1: 0 bewegte Bestandsdateien ✓, +2 additive nur
+   aus PB3 ✓ → **39 Dateien (38 SVG + 1 IFC), svg-qa 38/0.** Kein
+   Hard-Stop-Fall.
