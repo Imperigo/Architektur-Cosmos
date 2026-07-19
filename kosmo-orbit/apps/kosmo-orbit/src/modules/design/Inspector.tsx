@@ -76,6 +76,39 @@ export function Inspector() {
     return id ? (doc.get(id) ?? null) : null;
   }, [selection, doc, revision]);
 
+  // E1/C-6 (v0.8.5 PA1): Mehrfach-Auswahl — kompakte Sammel-Ansicht statt
+  // der Einzelelement-Felder («N Elemente» + gemeinsames Löschen als EINE
+  // Undo-Gruppe, derselbe Weg wie Delete/Backspace im DesignWorkspace).
+  if (selection.length > 1) {
+    const loescheAlle = () => {
+      const { history } = useProject.getState();
+      history.beginGroup();
+      try {
+        for (const id of selection) {
+          try {
+            runCommand('design.loeschen', { entityId: id });
+          } catch (err) {
+            meldeFehler(err);
+          }
+        }
+      } finally {
+        history.endGroup();
+      }
+      select([]);
+    };
+    return (
+      <div className="insp-koerper" data-testid="inspector-mehrfach">
+        <Hairline />
+        <Row label="Auswahl">
+          <span data-testid="inspector-mehrfach-anzahl">{selection.length} Elemente</span>
+        </Row>
+        <KButton size="sm" tone="danger" data-testid="inspector-mehrfach-loeschen" onClick={loescheAlle}>
+          Alle löschen
+        </KButton>
+      </div>
+    );
+  }
+
   if (!entity) return null;
 
   const set = (feld: string, wert: string | number) => {

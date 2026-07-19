@@ -568,8 +568,20 @@ export function DesignWorkspace({
   const [masseingabe, setMasseingabe] = useState('');
   // Ziehen im Plan (Auswahl-Werkzeug): Startpunkt gemerkt, aktuelle Position
   // folgt der Maus als reine Vorschau — erst bei pointerup EIN design.verschieben
-  const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt } | null>(null);
+  const [dragEntity, setDragEntity] = useState<{ id: string; start: Pt; gruppe?: string[] } | null>(null);
   const [dragCursor, setDragCursor] = useState<Pt | null>(null);
+  // E1 (v0.8.5 PA1): Esc-Stufenfolge (Kette abbrechen → zur Auswahl →
+  // Auswahl leeren). Der keydown-Listener unten ist mit LEEREN Deps
+  // registriert (Bestand) — er liest den frischen tool/points-Stand über
+  // diesen je Render neu zugewiesenen Ref statt über eine stale Closure.
+  const escAuswahlRef = useRef<() => boolean>(() => false);
+  escAuswahlRef.current = () => {
+    if (tool !== 'auswahl' || points.length > 0) return false;
+    const sel = useProject.getState().selection;
+    if (sel.length === 0) return false;
+    useProject.getState().select([]);
+    return true;
+  };
   // C-11 (PE3-Fix v0.8.4): schwebender Inspector im Island-Modus — geöffnet
   // NUR über das Kontextmenü «Eigenschaften» (kein automatisches Aufpoppen
   // bei blosser Auswahl, Island bleibt radikal leer, PD3c).
@@ -836,7 +848,10 @@ export function DesignWorkspace({
       if (document.querySelector('[role="dialog"]')) return; // Palette/Bestätigung/Kurzbefehle behalten die Tastatur
       const fokusImEingabefeld = istEingabefeld(document.activeElement);
       if (!e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && !fokusImEingabefeld && e.key === 'Escape') {
-        // ArchiCAD-Reflex: Esc bricht die laufende Kette ab UND geht zur Auswahl zurück
+        // ArchiCAD-Reflex: Esc bricht die laufende Kette ab UND geht zur Auswahl zurück.
+        // E1 (v0.8.5 PA1): ist das Auswahl-Werkzeug schon aktiv und keine
+        // Kette offen, leert Esc stattdessen die Auswahl (dritte Stufe).
+        if (escAuswahlRef.current()) return;
         setTool('auswahl');
         setPoints([]);
         return;
@@ -1009,7 +1024,23 @@ export function DesignWorkspace({
     massLabel,
     sketchMode: tool === 'skizze',
     pickMode: tool === 'auswahl',
-    onPick: (id) => select(id ? [id] : []),
+    // E1 (v0.8.5 PA1): Klick ohne Modifier ersetzt (Bestand, byte-gleich);
+    // Shift-Klick toggelt das Element in der Mehrfach-Auswahl — Shift auf
+    // leerer Fläche lässt die Auswahl bewusst stehen (ArchiCAD-Gefühl).
+    onPick: (id, opts) => {
+      if (opts?.toggle) {
+        if (!id) return;
+        const sel = useProject.getState().selection;
+        select(sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id]);
+        return;
+      }
+      select(id ? [id] : []);
+    },
+    // E1 (v0.8.5 PA1): Rubber-Band — Menge setzen, mit Shift vereinigen.
+    onMarqueeAuswahl: (ids, { additiv }) => {
+      const sel = useProject.getState().selection;
+      select(additiv ? [...new Set([...sel, ...ids])] : ids);
+    },
     // C-11 (PE3-Fix v0.8.4): «Eigenschaften» im Kontextmenü — im
     // Island-Default (kein Dock) öffnet der schwebende Inspector; im
     // manuell-Modus genügt die Auswahl (gedockter Inspector zeigt sie).
@@ -1037,9 +1068,25 @@ export function DesignWorkspace({
       // im Kernel NICHT über `design.verschieben` beweglich (`VERSCHIEBBAR`,
       // `plan-hit-test.ts`, PB1-Dateikreis — hier bewusst NICHT erweitert),
       // bekommen aber additiv dieselbe Zieh-Geste — s. `onMoveEnd` unten.
-      if (!e || !(VERSCHIEBBAR.has(e.kind) || e.kind === 'masskette' || e.kind === 'kommentar')) {
+      const beweglich = (kind: string) => VERSCHIEBBAR.has(kind) || kind === 'masskette' || kind === 'kommentar';
+      if (!e || !beweglich(e.kind)) {
         select([id]);
         return false;
+      }
+      // E1/C-5 (v0.8.5 PA1): Anfassen eines Elements, das Teil einer
+      // Mehrfach-Auswahl ist, zieht die GANZE (bewegliche) Gruppe — die
+      // Auswahl bleibt stehen. Einzelfall unten unverändert (ersetzt).
+      const sel = useProject.getState().selection;
+      if (sel.length > 1 && sel.includes(id)) {
+        const gruppe = sel.filter((sid) => {
+          const se = doc.get(sid);
+          return !!se && beweglich(se.kind);
+        });
+        if (gruppe.length > 1) {
+          setDragEntity({ id, start: snap(p, magnet), gruppe });
+          setDragCursor(p);
+          return true;
+        }
       }
       select([id]);
       setDragEntity({ id, start: snap(p, magnet) });
@@ -1052,73 +1099,85 @@ export function DesignWorkspace({
       const ziel = snap(p, magnet);
       const dx = ziel.x - dragEntity.start.x;
       const dy = ziel.y - dragEntity.start.y;
+      // E1/C-5 (v0.8.5 PA1): der Zug gilt für die GANZE Gruppe (Mehrfach-
+      // Auswahl) bzw. wie bisher für das eine Element — in EINER
+      // Undo-Gruppe, ein «Rückgängig» hebt den kompletten Zug auf.
+      const gruppe = dragEntity.gruppe ?? [dragEntity.id];
       setDragEntity(null);
       setDragCursor(null);
-      if (dx === 0 && dy === 0) return;
-      const e = doc.get(dragEntity.id);
-      const { history } = useProject.getState();
-      try {
-        if (e && e.kind === 'masskette') {
-          // C-26: kein `design.verschieben`-Zweig für `masskette` im Kernel
-          // — Löschen+Neusetzen mit verschobenen Punkten als EINE
-          // Undo-Gruppe (Muster T5/`onSketchAccept` oben), die ID ändert
-          // sich dabei (neuer `newId('masskette')`), darum wird die
-          // Auswahl auf die NEUE ID nachgezogen.
-          const mk = e as MassKette;
-          history.beginGroup();
-          try {
-            runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
-            const r = runCommand('design.massKetteSetzen', {
-              storeyId: mk.storeyId,
-              punkte: mk.punkte.map((q) => ({ x: q.x + dx, y: q.y + dy })),
-            });
-            const neueId = neuePatchId(r.patches);
-            if (neueId) select([neueId]);
-          } finally {
-            history.endGroup();
-          }
-        } else if (e && e.kind === 'kommentar') {
-          // C-26: derselbe Löschen+Neusetzen-Weg wie Masskette oben — UND
-          // (wichtig) der Status wird explizit nachgezogen, weil
-          // `design.kommentarSetzen` jeden neuen Kommentar zwingend mit
-          // status «offen» anlegt (kein Parameter dafür) — ein «erledigter»
-          // Kommentar dürfte durch ein blosses Verschieben seinen Status
-          // NICHT verlieren.
-          const km = e as Kommentar;
-          history.beginGroup();
-          try {
-            runCommand('design.kommentarLoeschen', { kommentarId: km.id });
-            const r = runCommand('design.kommentarSetzen', {
-              text: km.text,
-              autor: km.autor,
-              at: { x: km.at.x + dx, y: km.at.y + dy },
-              ...(km.storeyId !== undefined ? { storeyId: km.storeyId } : {}),
-              erstelltAm: km.erstelltAm,
-            });
-            const neueId = neuePatchId(r.patches);
-            if (neueId && km.status === 'erledigt' && km.erledigtAm) {
-              runCommand('design.kommentarStatusSetzen', {
-                kommentarId: neueId,
-                status: 'erledigt',
-                erledigtAm: km.erledigtAm,
-              });
-            }
-            if (neueId) select([neueId]);
-          } finally {
-            history.endGroup();
-          }
-        } else {
-          runCommand('design.verschieben', { entityId: dragEntity.id, dx, dy });
-        }
-      } catch (err) {
-        meldeFehler(err);
+      if (dx === 0 && dy === 0) {
+        // E1/Sanktion 4: Anfassen OHNE Bewegung ist ein Klick — und ein
+        // Klick ohne Modifier ERSETZT die Auswahl durch das angefasste
+        // Element (Bestandsverhalten). Nur der echte Zug hält die Gruppe.
+        if (dragEntity.gruppe) select([dragEntity.id]);
+        return;
       }
+      const { history } = useProject.getState();
+      // C-26: kein `design.verschieben`-Zweig für masskette/kommentar im
+      // Kernel — Löschen+Neusetzen mit verschobenen Punkten; die ID ändert
+      // sich dabei, darum liefern die Helfer die NEUE ID für die Auswahl.
+      // Kommentar: Status «erledigt» wird explizit nachgezogen
+      // (`design.kommentarSetzen` legt zwingend «offen» an).
+      const verschiebeMasskette = (mk: MassKette): string | null => {
+        runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
+        const r = runCommand('design.massKetteSetzen', {
+          storeyId: mk.storeyId,
+          punkte: mk.punkte.map((q) => ({ x: q.x + dx, y: q.y + dy })),
+        });
+        return neuePatchId(r.patches);
+      };
+      const verschiebeKommentar = (km: Kommentar): string | null => {
+        runCommand('design.kommentarLoeschen', { kommentarId: km.id });
+        const r = runCommand('design.kommentarSetzen', {
+          text: km.text,
+          autor: km.autor,
+          at: { x: km.at.x + dx, y: km.at.y + dy },
+          ...(km.storeyId !== undefined ? { storeyId: km.storeyId } : {}),
+          erstelltAm: km.erstelltAm,
+        });
+        const neueId = neuePatchId(r.patches);
+        if (neueId && km.status === 'erledigt' && km.erledigtAm) {
+          runCommand('design.kommentarStatusSetzen', {
+            kommentarId: neueId,
+            status: 'erledigt',
+            erledigtAm: km.erledigtAm,
+          });
+        }
+        return neueId;
+      };
+      const neueAuswahl: string[] = [];
+      history.beginGroup();
+      try {
+        for (const id of gruppe) {
+          const e = doc.get(id);
+          if (!e) continue;
+          try {
+            if (e.kind === 'masskette') neueAuswahl.push(verschiebeMasskette(e as MassKette) ?? id);
+            else if (e.kind === 'kommentar') neueAuswahl.push(verschiebeKommentar(e as Kommentar) ?? id);
+            else {
+              runCommand('design.verschieben', { entityId: id, dx, dy });
+              neueAuswahl.push(id);
+            }
+          } catch (err) {
+            meldeFehler(err);
+            neueAuswahl.push(id);
+          }
+        }
+      } finally {
+        history.endGroup();
+      }
+      select(neueAuswahl);
     },
     moveOffset:
       dragEntity && dragCursor
         ? (() => {
             const ziel = snap(dragCursor, magnet);
-            return { id: dragEntity.id, dx: ziel.x - dragEntity.start.x, dy: ziel.y - dragEntity.start.y };
+            return {
+              id: dragEntity.id,
+              dx: ziel.x - dragEntity.start.x,
+              dy: ziel.y - dragEntity.start.y,
+              ...(dragEntity.gruppe ? { ids: dragEntity.gruppe } : {}),
+            };
           })()
         : null,
     onGroundDoubleClick: (e) => {

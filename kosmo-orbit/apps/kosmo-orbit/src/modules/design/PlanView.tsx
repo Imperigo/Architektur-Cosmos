@@ -574,8 +574,49 @@ export function PlanView({
     }
     return pickEntityAt(doc, activeStoreyId, p);
   };
+  // E1 (v0.8.5 PA1): Vollständigkeits-Regel für das Rubber-Band — ein
+  // Element zählt, wenn ALLE seine charakteristischen Punkte im Rechteck
+  // liegen (vorhersagbar, in `docs/V085-SPEZ.md` E1 fixiert). Dieselbe
+  // Sichtbarkeits-Regel wie `pickAt`: ausgeblendete Kommentare zählen nicht.
+  const idsImRechteck = (a: Pt, b: Pt): string[] => {
+    if (!activeStoreyId) return [];
+    const minX = Math.min(a.x, b.x);
+    const maxX = Math.max(a.x, b.x);
+    const minY = Math.min(a.y, b.y);
+    const maxY = Math.max(a.y, b.y);
+    const drin = (q: Pt) => q.x >= minX && q.x <= maxX && q.y >= minY && q.y <= maxY;
+    const ids: string[] = [];
+    if (kommentareSichtbar) {
+      for (const k of doc.byKind<Kommentar>('kommentar')) {
+        if (k.storeyId && k.storeyId !== activeStoreyId) continue;
+        if (drin(k.at)) ids.push(k.id);
+      }
+    }
+    for (const mk of doc.byKind<MassKette>('masskette')) {
+      if (mk.storeyId !== activeStoreyId) continue;
+      if (mk.punkte.length > 0 && mk.punkte.every(drin)) ids.push(mk.id);
+    }
+    // Spiegel von `VERSCHIEBBAR` (plan-hit-test.ts) als typisierte Liste —
+    // `doc.byKind` verlangt Kind-Literale, das Set trägt nur `string`.
+    const rechteckKinds = ['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'freemesh'] as const;
+    for (const kind of rechteckKinds) {
+      for (const e of doc.byKind(kind)) {
+        if ((e as { storeyId?: string }).storeyId !== activeStoreyId) continue;
+        const outline = outlineOf(doc, e.id);
+        if (outline && outline.length >= 2 && outline.every(drin)) ids.push(e.id);
+      }
+    }
+    return ids;
+  };
   // Ziehen im Plan: EIN design.verschieben bei pointerup, kein Patch pro Move
   const moveActive = useRef(false);
+  // E1 (v0.8.5 PA1): Rubber-Band — Start auf LEERER Fläche im Auswahl-
+  // Werkzeug (NodeCanvas-Marquee-Vorbild, `NodeCanvas.tsx`). Der Startpunkt
+  // trägt die Client-Koordinaten mit, damit ein Klick ohne echten Zug
+  // (< 4px Bildschirm) unten weiterhin als normaler Pick durchfällt —
+  // Leerklick leert die Auswahl wie bisher (E1-Sanktion 4).
+  const marqueeStart = useRef<{ a: Pt; shift: boolean; cx: number; cy: number } | null>(null);
+  const [marquee, setMarquee] = useState<{ a: Pt; b: Pt } | null>(null);
   const selection = useProject((s) => s.selection);
   const select = useProject((s) => s.select);
   // Filter aus → eine evtl. gewählte, jetzt verborgene Kommentar-Auswahl
@@ -908,8 +949,18 @@ export function PlanView({
             // Zieh-Geste (Klick ohne Bewegung = reine Auswahl, dx/dy bleiben 0).
             const p = toWorld(e.clientX, e.clientY);
             const hit = pickAt(p); // C-26 (PB5): inkl. Masskette/Kommentar
-            if (hit && handlers.current.onMoveStart?.(hit, p)) {
+            // E1 (v0.8.5 PA1): Shift-Klick auf ein Element ist ein
+            // Auswahl-TOGGLE, kein Zieh-Start — er fällt bis zum
+            // `onPick(…, {toggle:true})` bei pointerup durch (sonst würde
+            // `onMoveStart` die Auswahl sofort ersetzen).
+            if (hit && !e.shiftKey && handlers.current.onMoveStart?.(hit, p)) {
               moveActive.current = true;
+              (e.target as Element).setPointerCapture(e.pointerId);
+            } else if (!hit) {
+              // E1 (v0.8.5 PA1): leere Fläche im Auswahl-Werkzeug startet das
+              // Rubber-Band — ob es ein Zug oder nur ein Leerklick war,
+              // entscheidet erst pointerup (4px-Schwelle dort).
+              marqueeStart.current = { a: p, shift: e.shiftKey, cx: e.clientX, cy: e.clientY };
               (e.target as Element).setPointerCapture(e.pointerId);
             }
           }
@@ -950,6 +1001,9 @@ export function PlanView({
             const dy = (e.clientY - panning.current.y) / view.scale;
             setViewGeklemmt((v) => ({ ...v, cx: panning.current!.cx - dx, cy: panning.current!.cy + dy }));
             flingRef.current!.sample(performance.now(), e.clientX, e.clientY); // §5: Fling-Fenster (Maus-Drag-Pan)
+          } else if (marqueeStart.current) {
+            // E1 (v0.8.5 PA1): Rubber-Band-Vorschau live nachziehen.
+            setMarquee({ a: marqueeStart.current.a, b: toWorld(e.clientX, e.clientY) });
           } else if (moveActive.current) {
             handlers.current?.onMoveDrag?.(toWorld(e.clientX, e.clientY));
           } else if (!gestureAktiv.current && !spaceGedrueckt) {
@@ -1028,10 +1082,24 @@ export function PlanView({
             handlers.current?.onMoveEnd?.(toWorld(e.clientX, e.clientY));
             return;
           }
+          // E1 (v0.8.5 PA1): Rubber-Band beenden — echter Zug (≥4px
+          // Bildschirm) setzt die Menge (`onMarqueeAuswahl`), ein blosser
+          // Leerklick fällt unverändert in den Pick-Pfad darunter durch
+          // (Leerklick leert, Shift-Leerklick lässt die Auswahl stehen).
+          if (marqueeStart.current) {
+            const start = marqueeStart.current;
+            marqueeStart.current = null;
+            setMarquee(null);
+            if (Math.hypot(e.clientX - start.cx, e.clientY - start.cy) >= 4) {
+              const b = toWorld(e.clientX, e.clientY);
+              handlers.current?.onMarqueeAuswahl?.(idsImRechteck(start.a, b), { additiv: start.shift });
+              return;
+            }
+          }
           if (e.button !== 0) return;
           const p = toWorld(e.clientX, e.clientY);
           if (handlers.current?.pickMode) {
-            handlers.current.onPick?.(pickAt(p));
+            handlers.current.onPick?.(pickAt(p), { toggle: e.shiftKey });
             return;
           }
           handlers.current?.onGroundClick?.({ p, shiftKey: e.shiftKey });
@@ -1692,7 +1760,9 @@ export function PlanView({
             // gleiches Kern+Glow-Muster (28/48, Ziehen 38/60) wie unten.
             const e = doc.get(id);
             const off = handlers.current?.moveOffset;
-            const ziehend = off && off.id === id;
+            // E1 (v0.8.5 PA1): beim Gruppen-Zug (`off.ids`) wandern ALLE
+            // gelisteten Elemente live mit — nicht nur das angefasste.
+            const ziehend = !!off && (off.id === id || !!off.ids?.includes(id));
             if (e && e.kind === 'masskette') {
               const mk = e as MassKette;
               const pts = ziehend ? mk.punkte.map((q) => ({ x: q.x + off.dx, y: q.y + off.dy })) : mk.punkte;
@@ -1783,6 +1853,25 @@ export function PlanView({
               </g>
             );
           })}
+
+          {/* E1 (v0.8.5 PA1): Rubber-Band-Vorschau — Welt-Koordinaten (y
+              negiert wie überall in dieser Gruppe), Strichstärke/Dash
+              screen-konstant über `/view.scale` (Kommentar-Halo-Konvention). */}
+          {marquee && (
+            <rect
+              data-testid="plan-marquee"
+              x={Math.min(marquee.a.x, marquee.b.x)}
+              y={Math.min(-marquee.a.y, -marquee.b.y)}
+              width={Math.abs(marquee.b.x - marquee.a.x)}
+              height={Math.abs(marquee.b.y - marquee.a.y)}
+              fill="var(--k-accent-wash)"
+              fillOpacity={0.3}
+              stroke="var(--k-accent)"
+              strokeWidth={1.5 / view.scale}
+              strokeDasharray={`${6 / view.scale} ${4 / view.scale}`}
+              pointerEvents="none"
+            />
+          )}
 
           {/* T3-Zeichenhilfen: Fluchtlinien an bestehenden Punkten — durchlaufend
               über den ganzen sichtbaren Plan, damit die Ausrichtung sofort

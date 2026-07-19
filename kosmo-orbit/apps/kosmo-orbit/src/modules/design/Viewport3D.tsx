@@ -178,7 +178,14 @@ export interface ViewportHandlers {
   }) => void;
   /** Auswahl-Werkzeug: Klick pickt Element statt zu zeichnen. */
   pickMode?: boolean;
-  onPick?: (entityId: string | null) => void;
+  /** E1 (v0.8.5 PA1): `toggle` = Shift-Klick — toggelt das Element in der
+   *  Mehrfach-Auswahl statt sie zu ersetzen; ohne opts bleibt das
+   *  Bestandsverhalten (ersetzen) byte-gleich. */
+  onPick?: (entityId: string | null, opts?: { toggle?: boolean }) => void;
+  /** E1 (v0.8.5 PA1): Rubber-Band-Ergebnis — `ids` sind die vollständig im
+   *  Rechteck liegenden Elemente; `additiv` = Shift gehalten (Vereinigung
+   *  statt Ersetzen). */
+  onMarqueeAuswahl?: (ids: string[], opts: { additiv: boolean }) => void;
   /** C-11 (PE3-Matrix v0.8.4): Kontextmenü «Eigenschaften» — wählt aus UND
    *  öffnet im Island-Modus den schwebenden Inspector (im manuell-Modus
    *  zeigt der gedockte Inspector die Auswahl ohnehin). */
@@ -188,7 +195,9 @@ export interface ViewportHandlers {
   onMoveDrag?: (p: Pt) => void;
   onMoveEnd?: (p: Pt) => void;
   /** Lebende Zieh-Vorschau (Kern-mm), während `onMoveStart…onMoveEnd` läuft. */
-  moveOffset?: { id: string; dx: number; dy: number } | null;
+  /** E1 (v0.8.5 PA1): `ids` gesetzt = Gruppen-Zug — ALLE gelisteten Elemente
+   *  wandern live mit demselben Offset (Highlight-Vorschau in PlanView). */
+  moveOffset?: { id: string; dx: number; dy: number; ids?: string[] } | null;
   /** T3-Zeichenhilfen: sichtbare Fluchtlinien (Ausrichtung an bestehenden Punkten) — nur 2D-Overlay (PlanView). */
   fluchtlinien?: Fluchtlinie[];
   /** F4 (v0.6.4): getroffener Element-Fangpunkt — PlanView malt den sichtbaren
