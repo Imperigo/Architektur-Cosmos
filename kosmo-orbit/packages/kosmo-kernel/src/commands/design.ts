@@ -3833,3 +3833,53 @@ export const setStandortAdresse = registerCommand({
     },
   ],
 });
+
+/**
+ * v0.8.7 PB1 (`docs/V087-SPEZ.md` E6/D7/C-11/C-12) — persistiert das
+ * Ergebnis der ÖREB-light-Kette (GetEGRID → Extract → Themen-Betroffenheits-
+ * liste, App-seitig in `DesignWorkspace.tsx` `StandortSuche`/`oerebAbrufen`)
+ * als eigenes Doc-Setting `oerebAuszug`. Reiner SettingsPatch-Command wie
+ * `design.standortAdresseSetzen`/`design.schnittSetzen` — Undo/Yjs-Sync/
+ * `.kosmo`-Export gelten automatisch mit. `auszug: null` löscht den
+ * gespeicherten Auszug wieder (z.B. bei einer neuen Standortsuche, deren
+ * ÖREB-Abruf fehlschlägt — kein veralteter Auszug soll stehen bleiben).
+ * grep-Beleg 19.07.: `oerebAuszug`/`oereb` kommt im Code nirgends vor —
+ * Setting-Name UND Kommando-Kennung sind frei (kein registerCommand-Konflikt).
+ */
+export const setOerebAuszug = registerCommand({
+  id: 'design.oerebAuszugSetzen',
+  title: 'ÖREB-Auszug (light) setzen',
+  description:
+    'Speichert das Ergebnis der ÖREB-light-Kette (GetEGRID + Extract, reduziert auf die reine Themencode-Betroffenheitsliste) als Doc-Setting `oerebAuszug` — läuft wie jede DocSettings-Änderung über Undo/Yjs-Sync/`.kosmo`-Export (SettingsPatch-Weg). `auszug: null` entfernt den gespeicherten Auszug wieder. KEIN rechtsgültiger ÖREB-Auszug — nur ein Arbeits-Abbild; der Pflicht-Hinweis dazu lebt im UI.',
+  params: z.object({
+    auszug: z
+      .object({
+        egrid: z.string().min(1),
+        abgerufenAm: z.string().min(1),
+        quelle: z.literal('oereb-bund'),
+        themen: z.array(
+          z.object({
+            code: z.string().min(1),
+            titel: z.string().min(1),
+            betroffen: z.boolean(),
+          }),
+        ),
+      })
+      .nullable(),
+  }),
+  summarize: (p) => {
+    if (!p.auszug) return 'ÖREB-Auszug entfernt';
+    const betroffen = p.auszug.themen.filter((t) => t.betroffen).length;
+    return `ÖREB-Auszug ${p.auszug.egrid} — ${betroffen} von ${p.auszug.themen.length} Themen betroffen`;
+  },
+  run: (doc, p) => [
+    {
+      settings: true as const,
+      // Schmales Patch (nur `oerebAuszug`), Muster `design.standortAdresseSetzen`:
+      // `?? null` macht «vorher» explizit statt den Schlüssel wegzulassen —
+      // ein Objekt-Spread löscht auf Undo sonst keine fehlenden Keys.
+      before: { oerebAuszug: doc.settings.oerebAuszug ?? null },
+      after: { oerebAuszug: p.auszug },
+    },
+  ],
+});

@@ -4781,6 +4781,10 @@ export function StandortSuche() {
   // (Reload-Beweis) UND (b) Undo den Block sofort synchron nachzieht (kein
   // veralteter lokaler Snapshot).
   const standortAdresse = useProject((s) => s.doc.settings.standortAdresse);
+  // v0.8.7 PB1 (V087-SPEZ E6/D7/C-11/C-12): derselbe reaktive Doc-Selektor
+  // wie standortAdresse oben — der ÖREB-Auszug überlebt Reload/Undo ohne
+  // eigenen Sync-Effekt.
+  const oerebAuszug = useProject((s) => s.doc.settings.oerebAuszug);
   const [text, setText] = useState('');
   const [treffer, setTreffer] = useState<{ label: string; lat: number; lon: number; e: number; n: number }[]>([]);
   const [meldung, setMeldung] = useState<string | null>(null);
@@ -4789,6 +4793,11 @@ export function StandortSuche() {
   // persistiert, ein Parzellen-Import in DERSELBEN Sitzung ist nötig, bevor
   // «Nachbarn übernehmen» aktiv wird.
   const [parzellenZentrum, setParzellenZentrum] = useState<{ e: number; n: number } | null>(null);
+  // v0.8.7 PB1 — ÖREB-light-Ladezustand/Fehlerzone, eigener State (der Abruf
+  // ist NACHGELAGERT zum Standort-Treffer-Klick, kein Teil der history-Gruppe
+  // von design.standortSetzen/standortAdresseSetzen, s. Kommentar unten).
+  const [oerebLade, setOerebLade] = useState(false);
+  const [oerebFehler, setOerebFehler] = useState<string | null>(null);
 
   const suchen = async () => {
     if (text.trim().length < 3) return;
@@ -4809,6 +4818,73 @@ export function StandortSuche() {
       if (liste.length === 0) setMeldung('Nichts gefunden.');
     } catch {
       setMeldung('Kein Netz — Standortsuche nicht verfügbar (Rest der App unberührt).');
+    }
+  };
+
+  /**
+   * ÖREB light (v0.8.7 PB1, V087-SPEZ E6/D7/C-11/C-12): LV95 (aus dem
+   * gerade gewählten Treffer) → GetEGRID → ÖREB-Extract →
+   * `design.oerebAuszugSetzen`. Läuft NACHGELAGERT zum Treffer-Klick (eigener
+   * Undo-Schritt, s. Kommentar bei `onClick` unten) — bewusst NICHT Teil der
+   * history-Gruppe von standortSetzen/standortAdresseSetzen, weil der Abruf
+   * asynchron ist und die Gruppe längst geschlossen sein kann, bis die
+   * Antwort da ist.
+   *
+   * Fixture-Vertrag (Fixture-first, `e2e/oereb-light.spec.ts` definiert ihn):
+   * (a) GetEGRID über den von D7 genannten `ech`-SearchServer-Weg,
+   * `searchText=<e>,<n>&type=locations&origins=parcel&sr=2056`, Ergebnis
+   * trägt `attrs.egrid` — dieselbe SearchServer-Form wie die Adresssuche
+   * oben, nur mit Koordinaten statt Text (öffentlich dokumentiert:
+   * https://api3.geo.admin.ch/services/sdiservices.html, eCH-Suche liefert
+   * EGRID für den Origin `parcel`). (b) Extract: das Pfadmuster
+   * `oereb/extract/json/<egrid>` ist NICHT live gegen swisstopo verifiziert
+   * (kantonale ÖREB-Webservices sind föderiert, s. Recherche-Notiz im
+   * Bericht) — die Antwortform `ConcernedTheme`/`NotConcernedTheme` mit
+   * `Code`+mehrsprachigem `Text` STAMMT dagegen aus der öffentlich
+   * dokumentierten ÖREB-Transferstruktur und ist hier bewusst 1:1
+   * übernommen, weil sie ohnehin schon die reine Themencode-
+   * Betroffenheitsliste ist (kein Reissleinen-Abbau nötig). Beide
+   * Endpunkte liegen unter der freigegebenen CSP-Domain `api.geo.admin.ch`
+   * (Sanktion 7).
+   */
+  const oerebAbrufen = async (e: number, n: number) => {
+    setOerebFehler(null);
+    setOerebLade(true);
+    try {
+      const egridRes = await fetch(
+        `https://api.geo.admin.ch/rest/services/ech/SearchServer?searchText=${e},${n}&type=locations&origins=parcel&sr=2056`,
+      );
+      if (!egridRes.ok) throw new Error(`GetEGRID HTTP ${egridRes.status}`);
+      const egridJson = (await egridRes.json()) as { results?: { attrs?: { egrid?: string } }[] };
+      const egrid = egridJson.results?.[0]?.attrs?.egrid;
+      if (!egrid) {
+        setOerebFehler('Kein EGRID an diesem Standort gefunden — ÖREB-Auszug (light) nicht möglich.');
+        return;
+      }
+      const extractRes = await fetch(`https://api.geo.admin.ch/rest/services/oereb/extract/json/${egrid}?sr=2056`);
+      if (!extractRes.ok) throw new Error(`ÖREB-Extract HTTP ${extractRes.status}`);
+      const extractJson = (await extractRes.json()) as {
+        GetExtractByIdResponse?: {
+          extract?: {
+            ConcernedTheme?: { Code: string; Text?: { Language: string; Text: string }[] }[];
+            NotConcernedTheme?: { Code: string; Text?: { Language: string; Text: string }[] }[];
+          };
+        };
+      };
+      const extract = extractJson.GetExtractByIdResponse?.extract;
+      const titelVon = (t: { Code: string; Text?: { Language: string; Text: string }[] }) =>
+        t.Text?.find((x) => x.Language === 'de')?.Text ?? t.Code;
+      const themen = [
+        ...(extract?.ConcernedTheme ?? []).map((t) => ({ code: t.Code, titel: titelVon(t), betroffen: true })),
+        ...(extract?.NotConcernedTheme ?? []).map((t) => ({ code: t.Code, titel: titelVon(t), betroffen: false })),
+      ];
+      runCommand('design.oerebAuszugSetzen', {
+        auszug: { egrid, abgerufenAm: new Date().toISOString(), quelle: 'oereb-bund', themen },
+      });
+    } catch {
+      setOerebFehler('Kein Netz — ÖREB-Auszug (light) nicht verfügbar.');
+    } finally {
+      setOerebLade(false);
     }
   };
 
@@ -4954,6 +5030,12 @@ export function StandortSuche() {
                     history.endGroup();
                   }
                   setTreffer([]);
+                  // v0.8.7 PB1 (V087-SPEZ E6/D7/C-11/C-12): ÖREB-light-Abruf
+                  // NACH der history-Gruppe angestossen — bewusst asynchron
+                  // nachgelagert (die Gruppe oben bleibt ZWEI Commands, s.
+                  // Kommentar dort), schreibt sein eigenes Setting als
+                  // eigenen dritten Undo-Schritt, sobald die Antwort da ist.
+                  void oerebAbrufen(t.e, t.n);
                 }}
               >
                 {t.label}
@@ -4966,6 +5048,41 @@ export function StandortSuche() {
       {standortAdresse && (
         <span className="dw-faint-klein" data-testid="standort-adresse-aktuell">
           Standort: {standortAdresse.adresse} (LV95 {Math.round(standortAdresse.lv95.e)}/{Math.round(standortAdresse.lv95.n)})
+        </span>
+      )}
+      {/* v0.8.7 PB1 (V087-SPEZ E6/D7/C-11/C-12): ÖREB light — Lade-Zustand
+          BENANNT (kein Spinner-Silence), ehrliche Fehlerzone (Muster
+          `standort-meldung`), sonst die Themencode-Betroffenheitsliste +
+          der Sanktion-7-Pflicht-Hinweis. */}
+      {oerebLade && (
+        <span className="dw-standort-meldung" data-testid="oereb-lade">
+          ÖREB-Auszug (light) wird abgerufen …
+        </span>
+      )}
+      {oerebFehler && (
+        <span className="dw-standort-meldung" data-testid="oereb-fehler">
+          {oerebFehler}
+        </span>
+      )}
+      {oerebAuszug && !oerebLade && (
+        <span className="dw-standort-stack" data-testid="oereb-block">
+          <span className="dw-faint-klein">
+            ÖREB: {oerebAuszug.themen.filter((t) => t.betroffen).length} von {oerebAuszug.themen.length} Themen betroffen · EGRID{' '}
+            {oerebAuszug.egrid}
+          </span>
+          <span className="dw-zuweisung-liste" data-testid="oereb-themenliste">
+            {oerebAuszug.themen.map((t) => (
+              <span key={t.code} className="dw-row-s2-klein" data-testid={`oereb-thema-${t.code}`}>
+                <span className={t.betroffen ? 'dw-soft' : 'dw-faint'}>{t.betroffen ? '● betroffen' : '○ nicht betroffen'}</span>
+                <span>
+                  {t.titel} ({t.code})
+                </span>
+              </span>
+            ))}
+          </span>
+          <span className="dw-faint-klein" data-testid="oereb-hinweis">
+            Auszug light — kein rechtsgültiger ÖREB-Auszug.
+          </span>
         </span>
       )}
       {parzellenZentrum && (

@@ -447,6 +447,13 @@ export interface DocSettings {
    * gesetzt» (Golden-Guard, Muster `schnitt?: SchnittSpec | null`). Nur über
    * `design.standortAdresseSetzen` gesetzt. */
   standortAdresse?: StandortAdresse | null;
+  /** ÖREB-Auszug light (v0.8.7 PB1, `docs/V087-SPEZ.md` E6/D7/C-11/C-12) — s.
+   * `OerebAuszug`-Kommentar unten. Fehlend ODER `null` = «kein Auszug
+   * abgerufen» (Golden-Guard, Muster `standortAdresse?: … | null`). Nur über
+   * `design.oerebAuszugSetzen` gesetzt. KEIN rechtsgültiger ÖREB-Auszug —
+   * der Pflicht-Hinweis dazu lebt im UI (StandortSuche, DesignWorkspace.tsx),
+   * nicht im Modell. */
+  oerebAuszug?: OerebAuszug | null;
 }
 
 /** Auflösung von `darstellung3d: 'auto'` (v0.7.0 E3) — pure Funktion, testbar
@@ -575,6 +582,29 @@ export interface StandortAdresse {
   quelle: 'geoadmin';
   /** ISO-Zeitstempel des Abrufs (App-seitig erzeugt, s. Kommentar im Command). */
   abgerufenAm: string;
+}
+
+/**
+ * ÖREB-Auszug light (v0.8.7 PB1, `docs/V087-SPEZ.md` E6/D7/C-11/C-12): das
+ * Ergebnis der Kette LV95 (aus `standortAdresse`) → GetEGRID →
+ * ÖREB-Extract, reduziert auf die reine Themencode-Betroffenheitsliste
+ * (Thema betroffen ja/nein, OHNE Detailwerte — die Spez erlaubt diese
+ * Reduktion ausdrücklich als Reissleine, hier bewusst als Normalform
+ * gewählt: der öffentlich dokumentierte ÖREB-Transferstruktur-Extract trennt
+ * `ConcernedTheme`/`NotConcernedTheme` ohnehin nur nach Code+Titel, s.
+ * Fixture-Vertrag in `DesignWorkspace.tsx` `StandortSuche`/`oerebAbrufen`).
+ * BEWUSST kein rechtsgültiger Auszug — nur ein «light»-Abbild fürs Projekt;
+ * der Pflicht-Hinweis dazu lebt im UI, nicht im Modell (Sanktion 7).
+ * Additiv wie `standortAdresse`, fliesst NICHT in `derive/*` ein
+ * (Golden-Guard). Nur über `design.oerebAuszugSetzen` gesetzt. */
+export interface OerebAuszug {
+  /** Eidgenössischer Grundstücksidentifikator (GetEGRID-Ergebnis). */
+  egrid: string;
+  /** ISO-Zeitstempel des Abrufs (App-seitig erzeugt). */
+  abgerufenAm: string;
+  quelle: 'oereb-bund';
+  /** Reine Themencode-Betroffenheitsliste — kein Detailwert je Thema. */
+  themen: { code: string; titel: string; betroffen: boolean }[];
 }
 
 /** Zonen-Vorlage (V2-F7): Zonen relativ zur BBox-Ecke, Grösse fürs Strecken. */

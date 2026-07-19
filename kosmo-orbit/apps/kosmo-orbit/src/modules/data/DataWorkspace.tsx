@@ -1847,6 +1847,10 @@ const sammlungHue: Record<KosmoDataSammlung, string> = {
  */
 export function KosmoDataProjektStandort() {
   const standort = useProject((s) => s.doc.settings.standortAdresse);
+  // v0.8.7 PB1 (`docs/V087-SPEZ.md` E6/D7/C-11/C-12): ÖREB-Auszug (light) —
+  // gleicher reaktiver Selektor, gleiche Karte, eigene Zeile (testid
+  // `data-projekt-oereb`). Reiner Anzeige-Konsument, kein eigener State.
+  const oereb = useProject((s) => s.doc.settings.oerebAuszug);
   if (!standort) {
     return (
       <div data-testid="data-projekt-standort-leer" className="kd-panel kd-p-s3-s4 kd-c-faint">
@@ -1855,6 +1859,13 @@ export function KosmoDataProjektStandort() {
     );
   }
   const abgerufenAmText = new Date(standort.abgerufenAm).toLocaleDateString('de-CH');
+  const oerebWert = oereb
+    ? (() => {
+        const betroffen = oereb.themen.filter((t) => t.betroffen).length;
+        const oerebAbgerufenAmText = new Date(oereb.abgerufenAm).toLocaleDateString('de-CH');
+        return `${betroffen} von ${oereb.themen.length} Themen betroffen · EGRID ${oereb.egrid} · ${oerebAbgerufenAmText}`;
+      })()
+    : 'Kein ÖREB-Auszug (light) abgerufen';
   return (
     <div data-testid="data-projekt-standort" className="kd-panel kd-grid kd-g2 kd-p-s3-s4">
       <Badge hue={moduleHue.data}>Projekt-Standort</Badge>
@@ -1863,6 +1874,7 @@ export function KosmoDataProjektStandort() {
           { key: 'Adresse', wert: standort.adresse },
           { key: 'LV95', wert: `${Math.round(standort.lv95.e)} / ${Math.round(standort.lv95.n)}` },
           { key: 'Abgerufen', wert: `${abgerufenAmText} · ${standort.quelle}` },
+          { key: 'ÖREB', wert: oerebWert, testid: 'data-projekt-oereb' },
         ]}
       />
     </div>
