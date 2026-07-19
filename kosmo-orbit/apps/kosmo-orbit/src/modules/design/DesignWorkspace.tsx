@@ -21,6 +21,10 @@ import {
   moduleAlsCsv,
   magnetFang,
   phaseLabel,
+  // v0.8.7 PA4 (docs/V087-SPEZ.md §3 E2): Öffnungs-Griff-Clamp kommt jetzt
+  // aus dem Kernel (`geometry/plan-projektion.ts`) — EINE Formel statt der
+  // bisherigen byte-identischen Kopie hier (ROADMAP 491, D4).
+  projiziereOeffnungCenter,
   siaPhaseLabel,
   UMBAU_LABEL,
   type Assembly,
@@ -229,26 +233,6 @@ function snap(p: Pt, magnet?: FangKandidaten): Pt {
     if (treffer) return treffer;
   }
   return { x: Math.round(p.x / SNAP) * SNAP, y: Math.round(p.y / SNAP) * SNAP };
-}
-
-/**
- * E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff»): projiziert einen
- * Weltpunkt auf die Achse der Wirtswand und clampt gegen
- * `width/2 … wandLaenge−width/2` — dieselben Grenzen wie
- * `planeOeffnungsBilanz` im Kernel (`commands/design.ts`, E1) bzw. die
- * gleichnamige Funktion in `PlanView.tsx` (dort für die Live-Vorschau,
- * hier für den Commit). D6: `design.eigenschaftSetzen('center')` prüft
- * NICHT gegen die Wandlänge — der App-seitige Clamp ist Pflicht.
- */
-function projiziereOeffnungCenter(wall: { a: Pt; b: Pt }, width: number, p: Pt): number {
-  const dx = wall.b.x - wall.a.x;
-  const dy = wall.b.y - wall.a.y;
-  const len = Math.hypot(dx, dy);
-  const halbeBreite = width / 2;
-  if (len === 0) return halbeBreite;
-  const roh = ((p.x - wall.a.x) * dx + (p.y - wall.a.y) * dy) / len;
-  const obereGrenze = Math.max(halbeBreite, len - halbeBreite);
-  return Math.round(Math.min(Math.max(roh, halbeBreite), obereGrenze));
 }
 
 /**

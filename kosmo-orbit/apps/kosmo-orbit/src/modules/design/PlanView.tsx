@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Wall, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -45,37 +45,6 @@ function federGefuehl(t: number): number {
   const c3 = c1 + 1;
   const p = t - 1;
   return 1 + c3 * p * p * p + c1 * p * p;
-}
-
-/**
- * E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff»): projiziert einen
- * Weltpunkt auf die Achse einer Wand und clampt das Ergebnis gegen
- * `width/2 … wandLaenge−width/2` — dieselben Grenzen wie
- * `planeOeffnungsBilanz` im Kernel (`commands/design.ts`, E1). D6: der
- * Kernel prüft `design.eigenschaftSetzen('center')` NICHT gegen die
- * Wandlänge — der App-seitige Clamp ist Pflicht, hier für die Live-Vorschau
- * UND (identisch in DesignWorkspace.tsx) für den Commit.
- */
-function projiziereOeffnungCenter(wall: { a: Pt; b: Pt }, width: number, p: Pt): number {
-  const dx = wall.b.x - wall.a.x;
-  const dy = wall.b.y - wall.a.y;
-  const len = Math.hypot(dx, dy);
-  const halbeBreite = width / 2;
-  if (len === 0) return halbeBreite;
-  const roh = ((p.x - wall.a.x) * dx + (p.y - wall.a.y) * dy) / len;
-  const obereGrenze = Math.max(halbeBreite, len - halbeBreite);
-  return Math.round(Math.min(Math.max(roh, halbeBreite), obereGrenze));
-}
-
-/** Weltpunkt auf der Wandachse a→b für ein gegebenes `center` (mm ab a) —
- *  dieselbe Formel wie `oeffnungWeltpos` in `plan-hit-test.ts`, hier
- *  parametrisiert nutzbar (Live-Vorschau mit einem NOCH nicht gespeicherten
- *  Center-Wert, statt `o.center` aus dem Doc). */
-function wandAchsenPunkt(wall: { a: Pt; b: Pt }, center: number): Pt {
-  const dx = wall.b.x - wall.a.x;
-  const dy = wall.b.y - wall.a.y;
-  const len = Math.hypot(dx, dy) || 1;
-  return { x: wall.a.x + (dx / len) * center, y: wall.a.y + (dy / len) * center };
 }
 
 /**
@@ -182,13 +151,13 @@ const UNTERNEHMERPLAN_OVERLAY_FARBE = 'var(--k-diagnose)';
 // Verletzte-Zone-Warnstufe NEBEN `--k-warning` (Fehlerfall bleibt
 // `var(--k-danger)` am Verbraucher).
 const ZONE_VERLETZT_WARN_FARBE = 'var(--k-warning-2)';
-// Raumgraph-Kanten/-Knoten (Diagnose-Overlay). `#2455a4` ist zufällig
-// identisch mit `--k-accent` unter `[data-akzent='blau']`
-// (`aura.css:150`) — NICHT als `var(--k-accent)` ersetzt, weil das den
-// Diagnose-Ton am gewählten UI-Akzent hängen liesse (Default-Akzent ist
-// Teal `#3e96a2`, das wäre eine sichtbare Änderung). Kandidat für aura.css
-// (W5-Bericht): ein theme-invarianter Diagnose-/Graph-Farbton.
-const RAUMGRAPH_FARBE = '#2455a4';
+// Raumgraph-Kanten/-Knoten (Diagnose-Overlay). Seit v0.8.7 (PA4,
+// docs/V087-SPEZ.md §2 D5) das kanonische `--k-graph`-Token aus aura.css —
+// theme-invariant und byte-gleich zum bisherigen `#2455a4`; bewusst NICHT
+// `var(--k-accent)` (hinge am UI-Akzent, Teal-Default wäre eine sichtbare
+// Änderung) und NICHT `var(--k-diagnose)` (das Durchpaus-Blau `#1a6fb5`
+// ist ein anderer Ton).
+const RAUMGRAPH_FARBE = 'var(--k-graph)';
 
 export function PlanView({
   handlers,

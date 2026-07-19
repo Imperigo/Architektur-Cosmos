@@ -324,12 +324,16 @@
   --k-warning-2: #c68622;
   /* `--k-diagnose`: Durchpaus-/Diagnose-Blau, theme-invariant unabhängig
      vom gewählten UI-Akzent (PlanView-Kandidat
-     `UNTERNEHMERPLAN_OVERLAY_FARBE`, ROADMAP 471) — `RAUMGRAPH_FARBE`
-     (`#2455a4`) bleibt bewusst AUSSERHALB dieser Kanonisierung (PB6-Urteil:
-     zufällig identisch mit `--k-accent` NUR unter `data-akzent='blau'`,
-     ein Mapping wäre unter dem Teal-Default eine sichtbare Regression —
-     V085-SPEZ §3 E7). */
+     `UNTERNEHMERPLAN_OVERLAY_FARBE`, ROADMAP 471). */
   --k-diagnose: #1a6fb5;
+  /* `--k-graph`: Raumgraph-/Analyse-Ton, theme-invariant und byte-gleich
+     zum historischen `RAUMGRAPH_FARBE`-Hex — seit v0.8.7 (PA4, V087-SPEZ
+     §2 D5) das kanonische Token dafür. Bewusst ein EIGENES Token neben
+     `--k-diagnose` (#1a6fb5 ist ein anderer Ton) und bewusst NICHT an
+     `--k-accent` gebunden (zufällig identisch NUR unter
+     `data-akzent='blau'`; ein Mapping wäre unter dem Teal-Default eine
+     sichtbare Regression — PB6-Urteil V085-SPEZ §3 E7). */
+  --k-graph: #2455a4;
 }
 
 /* Alte Engines ohne linear()-Easing (Konzept §2): --k-feder zeigt dann die
