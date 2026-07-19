@@ -541,7 +541,7 @@ export const moveEntity = registerCommand({
   id: 'design.verschieben',
   title: 'Element verschieben',
   description:
-    'Verschiebt ein Element um dx/dy in mm (Wände, Decken, Volumen, Zonen, Stützen, Treppen, Dächer).',
+    'Verschiebt ein Element um dx/dy in mm (Wände, Decken, Volumen, Zonen, Stützen, Treppen, Dächer, Baugrenzen, Unterzüge, Möbel, Kommentare, Etiketten, Massketten).',
   params: z.object({
     entityId: z.string(),
     dx: z.number().int(),
@@ -566,6 +566,7 @@ export const moveEntity = registerCommand({
       case 'mass':
       case 'zone':
       case 'roof':
+      case 'boundary':
         after = { ...e, outline: shift(e.outline) };
         break;
       case 'freemesh': {
@@ -586,6 +587,27 @@ export const moveEntity = registerCommand({
           b: shiftPt(e.b),
           ...(e.ecke ? { ecke: shiftPt(e.ecke) } : {}),
         };
+        break;
+      // E1 (V088-SPEZ §3, PA1-088): additive Zweige — alle in-place per
+      // Objekt-Spread der reinen Punktfelder, Identität und jedes
+      // Nicht-Punkt-Feld bleiben unverändert (Sanktion 2).
+      case 'beam':
+        after = { ...e, a: shiftPt(e.a), b: shiftPt(e.b) };
+        break;
+      case 'furniture':
+        // rotationGrad bleibt unberührt — nur `at` wird verschoben.
+        after = { ...e, at: shiftPt(e.at) };
+        break;
+      case 'kommentar':
+        after = { ...e, at: shiftPt(e.at) };
+        break;
+      case 'etikett':
+        // targetId bleibt exakt erhalten (Sanktion 2) — der Spread rührt nur
+        // `at` an, targetId/inhalt/keynote/storeyId bleiben unangetastet.
+        after = { ...e, at: shiftPt(e.at) };
+        break;
+      case 'masskette':
+        after = { ...e, punkte: shift(e.punkte) };
         break;
       default:
         throw new CommandError(`«${e.kind}» kann nicht verschoben werden`);
@@ -720,15 +742,40 @@ const editableFields = [
   'text',
   'status',
   'erledigtAm',
+  // E2 (V088-SPEZ §3, PA1-088): additive Werte — Zone.number/raumTyp,
+  // Furniture.rotationGrad, Column.material/b/t/rotationGrad,
+  // Beam.breite/hoehe/material, Opening-Detailfelder (nur string|number).
+  'number',
+  'raumTyp',
+  'rotationGrad',
+  'material',
+  'b',
+  't',
+  'breite',
+  'hoehe',
+  'typeId',
+  'fensterTyp',
+  'rahmenbreite',
+  'band',
+  'griffseite',
 ] as const;
 
 const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
+// E2 (V088-SPEZ §3, PA1-088): dieselbe Werteliste wie design.zoneErstellen/
+// design.raumTypSetzen — additiv dupliziert, um die bestehenden Enums dort
+// byte-gleich zu lassen (kein gemeinsamer Import, um deren Zeilen nicht
+// anzufassen).
+const RAUMTYP_WERTE = [
+  'zimmer', 'wohnen', 'kueche', 'bad', 'korridor', 'treppenhaus', 'abstellraum', 'balkon', 'technik', 'gewerbe',
+] as const;
+const FENSTERTYP_WERTE = ['einfluegel', 'zweifluegel', 'fest', 'fensterband'] as const;
+const BAND_WERTE = ['links', 'rechts', 'oben', 'unten'] as const;
 
 export const setProperty = registerCommand({
   id: 'design.eigenschaftSetzen',
   title: 'Eigenschaft ändern',
   description:
-    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5). Zahlen in mm (pitch in Grad).',
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material). Zahlen in mm (pitch/rotationGrad in Grad).',
   params: z.object({
     entityId: z.string(),
     feld: z.enum(editableFields),
@@ -739,18 +786,30 @@ export const setProperty = registerCommand({
     const e = doc.get(p.entityId);
     if (!e) throw new CommandError(`Element «${p.entityId}» existiert nicht`);
     const allowed: Record<string, readonly string[]> = {
-      zone: ['name', 'sia', 'program'],
+      zone: ['name', 'sia', 'program', 'number', 'raumTyp'],
       roof: ['pitch', 'overhang'],
       mass: ['height', 'program'],
       slab: ['thickness'],
       wall: ['assemblyId', 'alignment', 'height'],
-      opening: ['center', 'width', 'height', 'sill', 'swing', 'openingType', 'anschlag', 'fluegelTyp'],
+      opening: [
+        'center', 'width', 'height', 'sill', 'swing', 'openingType', 'anschlag', 'fluegelTyp',
+        // E2 (V088-SPEZ §3, PA1-088): NUR string|number-Felder — teilung
+        // ({n,m}, Objekt), oeffnetNachAussen/antrieb/absturzsicherung
+        // (boolean) und beschlaege (string[]) bleiben bewusst aussen vor
+        // (Sanktion 3, siehe Abschlussbericht).
+        'typeId', 'fensterTyp', 'rahmenbreite', 'band', 'griffseite',
+      ],
       storey: ['name', 'height'],
       assembly: ['name'],
       freemesh: ['name'],
       // v0.8.3 E1 (§1.3, docs/V083-SPEZ.md): additive Zeile, kein bestehender
       // Eintrag verändert.
       kommentar: ['text', 'status', 'erledigtAm'],
+      // E2 (V088-SPEZ §3, PA1-088): additive Zeilen — bisher komplett ohne
+      // Setzweg (D2).
+      furniture: ['rotationGrad'],
+      column: ['material', 'b', 't', 'rotationGrad'],
+      beam: ['breite', 'hoehe', 'material'],
     };
     const fields = allowed[e.kind] ?? [];
     if (!fields.includes(p.feld)) {
@@ -758,18 +817,81 @@ export const setProperty = registerCommand({
         `«${p.feld}» ist bei ${e.kind} nicht änderbar (möglich: ${fields.join(', ') || 'nichts'})`,
       );
     }
-    const numeric = ['pitch', 'overhang', 'height', 'thickness', 'center', 'width', 'sill', 'anschlag'];
+    const numeric = [
+      'pitch', 'overhang', 'height', 'thickness', 'center', 'width', 'sill', 'anschlag',
+      // E2: b/t/breite/hoehe/rahmenbreite sind wie die bestehenden mm-Felder
+      // ganzzahlig und nicht-negativ — die engeren Bestands-Bereiche (aus den
+      // Erstellen-Commands) prüfen die dedizierten Blöcke unten.
+      'b', 't', 'breite', 'hoehe', 'rahmenbreite',
+    ];
     let wert: string | number = p.wert;
     if (numeric.includes(p.feld)) {
       wert = typeof p.wert === 'number' ? p.wert : Number(p.wert);
       if (!Number.isFinite(wert) || wert < 0) throw new CommandError(`«${p.wert}» ist keine gültige Zahl`);
       if (p.feld !== 'pitch') wert = Math.round(wert);
     }
+    if (p.feld === 'rotationGrad') {
+      const n = typeof p.wert === 'number' ? p.wert : Number(p.wert);
+      if (!Number.isFinite(n)) throw new CommandError(`«${p.wert}» ist keine gültige Zahl`);
+      // Kein Bestands-Bereich gefunden: design.stuetzeSetzen (rotationGrad:
+      // z.number().optional()) und design.moebelSetzen (z.number().default(0))
+      // nehmen jeden endlichen Wert unbeschränkt an. Entscheid: normalisieren
+      // statt werfen, nach dem vorhandenen Mod-360-Muster in
+      // design.vorlageSetzen (`(360 - m.rotationGrad) % 360` beim Spiegeln,
+      // design.ts) — Rotation ist im Kernel bereits ein Mod-360-Raum, kein
+      // Falschwert-Fall wie bei `sia`/`raumTyp`.
+      wert = ((n % 360) + 360) % 360;
+    }
+    if ((p.feld === 'b' || p.feld === 't') && e.kind === 'column' && (Number(wert) < 80 || Number(wert) > 2000)) {
+      // Bestands-Bereich aus design.stuetzeSetzen (b/t: min 80, max 2000 mm) —
+      // eigenschaftSetzen darf keinen Wert zulassen, den das Erstellen-Command
+      // ablehnen würde.
+      throw new CommandError(`«${p.feld}» muss zwischen 80 und 2000 mm liegen (Bestands-Bereich design.stuetzeSetzen)`);
+    }
+    if (p.feld === 'breite' && e.kind === 'beam' && (Number(wert) < 80 || Number(wert) > 2000)) {
+      // Bestands-Bereich aus design.unterzugZeichnen.
+      throw new CommandError('breite muss zwischen 80 und 2000 mm liegen (Bestands-Bereich design.unterzugZeichnen)');
+    }
+    if (p.feld === 'hoehe' && e.kind === 'beam' && (Number(wert) < 100 || Number(wert) > 3000)) {
+      // Bestands-Bereich aus design.unterzugZeichnen.
+      throw new CommandError('hoehe muss zwischen 100 und 3000 mm liegen (Bestands-Bereich design.unterzugZeichnen)');
+    }
+    if (p.feld === 'rahmenbreite' && Number(wert) <= 0) {
+      throw new CommandError('rahmenbreite muss grösser als 0 sein');
+    }
+    if (p.feld === 'material') {
+      // Column.material/Beam.material sind freie Katalogschlüssel (kein Enum
+      // im Kernel, s. entities.ts) — number als String erlaubt, wie `number`
+      // unten; einzige Validierung ist «nicht leer».
+      wert = String(wert);
+      if (wert.trim().length === 0) throw new CommandError('material darf nicht leer sein');
+    }
+    if (p.feld === 'number') {
+      // Zone.number (Raumnummer, D2) ist freier Text — number als String
+      // erlaubt (V088-SPEZ §3 E2), keine weitere Formvorgabe.
+      wert = String(wert);
+    }
+    if (p.feld === 'typeId') {
+      wert = String(wert);
+      if (wert.trim().length === 0) throw new CommandError('typeId darf nicht leer sein');
+    }
     if (p.feld === 'sia' && !['HNF', 'NNF', 'VF', 'FF', 'KF'].includes(String(wert))) {
       throw new CommandError('sia muss HNF, NNF, VF, FF oder KF sein');
     }
+    if (p.feld === 'raumTyp' && !RAUMTYP_WERTE.includes(String(wert) as (typeof RAUMTYP_WERTE)[number])) {
+      throw new CommandError(`raumTyp muss eines von ${RAUMTYP_WERTE.join(', ')} sein`);
+    }
     if (p.feld === 'fluegelTyp' && !FLUEGELTYP_WERTE.includes(String(wert) as (typeof FLUEGELTYP_WERTE)[number])) {
       throw new CommandError(`fluegelTyp muss eines von ${FLUEGELTYP_WERTE.join(', ')} sein`);
+    }
+    if (p.feld === 'fensterTyp' && !FENSTERTYP_WERTE.includes(String(wert) as (typeof FENSTERTYP_WERTE)[number])) {
+      throw new CommandError(`fensterTyp muss eines von ${FENSTERTYP_WERTE.join(', ')} sein`);
+    }
+    if (p.feld === 'band' && !BAND_WERTE.includes(String(wert) as (typeof BAND_WERTE)[number])) {
+      throw new CommandError(`band muss eines von ${BAND_WERTE.join(', ')} sein`);
+    }
+    if (p.feld === 'griffseite' && !['links', 'rechts'].includes(String(wert))) {
+      throw new CommandError('griffseite muss links oder rechts sein');
     }
     if (p.feld === 'status' && e.kind === 'kommentar' && !['offen', 'erledigt'].includes(String(wert))) {
       throw new CommandError('status muss offen oder erledigt sein');
