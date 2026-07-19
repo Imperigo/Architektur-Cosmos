@@ -43,10 +43,12 @@ test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, manuell)', () => {
     await expect(port).toBeVisible();
 
     const vorher = await port.evaluate((el) => getComputedStyle(el).fill);
-    // Sanity: die Sonde-Farbe ist nicht zufällig schon der Default-Wert
-    // (--k-port-prompt = #1e6b47 = rgb(30, 107, 71) in BEIDEN Themes, s.
-    // aura.css-Kommentar «theme-invariant»).
-    expect(vorher).toBe('rgb(30, 107, 71)');
+    // Sanity: die Sonde-Farbe ist nicht zufällig schon der Default-Wert.
+    // Seit v0.8.9 E6 (Owner-Wahl «K2 Ausgewogen») ist --k-port-prompt
+    // theme-abhängig: der E2E-Default ist das orbit-Theme → #278c5d =
+    // rgb(39, 140, 93) (aura.css `[data-theme='orbit']`-Override; Papier
+    // behält #1e6b47, s. Theme-Flip-Test unten).
+    expect(vorher).toBe('rgb(39, 140, 93)');
 
     await page.evaluate(() => {
       document.documentElement.style.setProperty('--k-port-prompt', '#ff00ff');
@@ -71,12 +73,39 @@ test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, manuell)', () => {
     await expect(punkt).toBeVisible();
 
     const vorher = await punkt.evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(vorher).toBe('rgb(30, 107, 71)');
+    // orbit-Default seit v0.8.9 E6, s. Kommentar im Test oben.
+    expect(vorher).toBe('rgb(39, 140, 93)');
 
     await page.evaluate(() => document.documentElement.style.setProperty('--k-port-prompt', '#ff00ff'));
     const nachher = await punkt.evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(nachher).toBe('rgb(255, 0, 255)');
     expect(nachher).not.toBe(vorher);
+  });
+
+  // v0.8.9 E6 (Owner-Wahl «K2 Ausgewogen», 19.07.2026): die Port-Tokens
+  // sind NICHT mehr theme-invariant — orbit hebt fünf der sechs Werte auf
+  // ein ≥4.6:1-Kontrastband, Papier behält die Basiswerte. Dieser Test
+  // MISST den Flip am gerenderten Port (kein reiner Token-Read): dasselbe
+  // `data-theme`-Attribut, das App.tsx setzt, wird direkt umgeschaltet —
+  // die SVG-fill folgt ohne Reload, weil der `var()`-Kanal (D7) den
+  // aktuellen Kaskadenwert liest.
+  test('Theme-Flip orbit→paper wechselt die Portfarbe auf den Basiswert (E6-Override)', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+    await page.click('[data-testid="module-vis"]');
+    await page.click('[data-testid="graph-neu"]');
+    await waehleOption(page, 'node-hinzu', 'prompt');
+    const port = page.locator('[data-testid="vis-node-prompt"]').locator('[data-testid="port-out-prompt"]');
+    await expect(port).toBeVisible();
+
+    // orbit (E2E-Default): K2-Override #278c5d.
+    expect(await port.evaluate((el) => getComputedStyle(el).fill)).toBe('rgb(39, 140, 93)');
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = 'paper';
+    });
+    // paper: Basiswert #1e6b47 bleibt der Bestand (E6: «Papier behält die
+    // Bestandswerte»).
+    expect(await port.evaluate((el) => getComputedStyle(el).fill)).toBe('rgb(30, 107, 71)');
   });
 });
 

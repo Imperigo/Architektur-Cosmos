@@ -93,9 +93,12 @@ const MINIMAP_KNOTEN_MIN = 5;
  * (`style={{ '--_farbe': PORT_FARBE[t] }}`, konsumiert in `aura.css`/
  * `vis-visual.css` via `var(--_farbe)`) — ein `var()`-String als Wert einer
  * weitergereichten Custom-Property löst CSS ganz normal verschachtelt auf,
- * kein Sonderfall nötig. Ein Theme-/Akzent-Wechsel ändert `--k-port-*` nie
- * (theme-invariant), macht aber den fixen Kanal auf den Custom-Property-
- * Mechanismus sichtbar: Redraw/Reflow lesen den aktuellen Wert immer neu.
+ * kein Sonderfall nötig. Seit v0.8.9 E6 (Owner-Entscheid «K2 Ausgewogen»,
+ * 19.07.2026) sind die Tokens NICHT mehr theme-invariant: das dunkle Theme
+ * überschreibt fünf der sechs Werte auf ein ≥4.6:1-Kontrastband gegen
+ * `--k-field` (s. `aura.css` `[data-theme='orbit']`-Block) — genau dafür
+ * zahlt sich der `var()`-Kanal aus: ein Theme-Wechsel färbt Ports und
+ * Legende ohne Redraw-Sonderweg um (Beweis: `e2e/vis-token.spec.ts`).
  */
 const PORT_FARBE: Record<VisPortTyp, string> = {
   szene: 'var(--k-port-szene)',

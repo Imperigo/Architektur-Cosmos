@@ -336,12 +336,15 @@
   --k-graph: #2455a4;
   /* v0.8.8 / PA4 (Token-Brücke Vis, `docs/V088-SPEZ.md` §2 D7/§3 E-Zeile
      C-10) — sechs Port-Typ-Farben, byte-gleich aus dem historischen
-     `NodeCanvas.tsx` `PORT_FARBE`-Katalog übernommen (theme-invariant, wie
-     `--k-graph` oben: der Node-Editor bleibt in beiden Themes/allen
-     Akzenten optisch gleich lesbar, die Typkodierung ist kein
-     Theme-Signal). `--k-port-szene` ist zufällig byte-identisch zu
-     `--k-graph` (#2455a4) UND zu `--k-accent` unter `data-akzent='blau'` —
-     bewusst NICHT darauf verwiesen (dasselbe Argument wie beim `--k-graph`-
+     `NodeCanvas.tsx` `PORT_FARBE`-Katalog übernommen. Seit v0.8.9 E6
+     (Owner-Entscheid 19.07.2026, Kandidat «K2 Ausgewogen» am
+     Screenshot-Vergleich) sind diese Basiswerte die PAPIER-Werte; das
+     dunkle Theme setzt eigene Overrides (s. `[data-theme='orbit']`-Block) —
+     die frühere Theme-Invarianz ist bewusst aufgehoben, weil `szene` auf
+     `--k-field` #0b0d12 nur 2.69:1 erreichte (D8-Befund V089-SPEZ, Ziel
+     ≥3:1). `--k-port-szene` ist zufällig byte-identisch zu `--k-graph`
+     (#2455a4) UND zu `--k-accent` unter `data-akzent='blau'` — bewusst
+     NICHT darauf verwiesen (dasselbe Argument wie beim `--k-graph`-
      Kommentar oben: eine spätere, unabhängige Änderung eines der drei Werte
      darf die anderen zwei nicht mitreissen). */
   --k-port-szene: #2455a4;
@@ -523,6 +526,21 @@
   --k-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.46);
   --k-shadow-xl: 0 32px 80px rgba(0, 0, 0, 0.55);
   --k-inset-top: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  /* v0.8.9 / E6 (docs/V089-SPEZ.md, Owner-Entscheid 19.07.2026 «K2
+     Ausgewogen» nach Screenshot-Vergleich dreier gerechneter Kandidaten) —
+     Port-Typ-Farben fürs dunkle Theme: alle sechs auf ein einheitliches
+     WCAG-Kontrastband ≥4.6:1 gegen `--k-field` #0b0d12 gehoben (Basiswerte
+     oben blieben mit 2.69–4.65:1 teils unter dem 3:1-Ziel, D8-Befund;
+     Papier behält die Basiswerte, dort sind alle ≥3.7:1). Hue je Port
+     unverändert, nur Helligkeit angehoben; `kameras` erreichte das Band
+     schon im Bestand und wird darum NICHT überschrieben (fällt auf den
+     Basiswert #2b8a7a zurück, 4.65:1). Die Blau-Entkopplung von
+     `--k-graph`/`--k-accent` bleibt (eigener Wert, kein var()-Verweis). */
+  --k-port-szene: #427ad5;
+  --k-port-bild: #c95a33;
+  --k-port-prompt: #278c5d;
+  --k-port-zahl: #8b70ab;
+  --k-port-material: #967740;
   color-scheme: dark;
 }
 
