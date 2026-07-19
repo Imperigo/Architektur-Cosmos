@@ -19,6 +19,26 @@ import { create } from 'zustand';
  * trägt nur den AUSLÖSER aus einem Island-Popup (`island/inhalte/
  * darstellung.tsx`) herein. `nonce` erzwingt IMMER einen neuen Effekt-Lauf,
  * auch bei zweimal demselben Typ hintereinander.
+ *
+ * `zeigeBemassung`/`zeigeZonen` (PB3, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) —
+ * die zwei echten Blatt-Darstellungs-Toggles der DARSTELLUNG-Insel
+ * (`island/inhalte/darstellung.tsx`s `SichtbarkeitStufe2`). STRIKT
+ * app-seitig: `derive/plansvg.ts` bleibt UNANGEFASST (Golden-Sanktion) — die
+ * beiden Felder steuern nur eine CSS-Modifier-Klasse auf dem gerenderten
+ * SVG-Wrapper (`BlattCanvas.tsx`s `k-publish-blatt-svg`), die per
+ * Attribut-Selektor (`publish.css`) exakt die schon vorhandenen, eindeutig
+ * identifizierbaren SVG-Fragmente ausblendet: die Bemassungs-Gruppen je
+ * Masskette (`derive/plansvg.ts:403`, einzige Stelle im Kernel mit der
+ * Attribut-Kombination `stroke="#111" fill="#111"` auf einem `<g>`) bzw. die
+ * Parzellen-/Nachbarkontext-Pfade der `Zone.zonenArt`-Zweige (`derive/
+ * plansvg.ts:149-162`). Bewusst HIER (Laufzeit-Store) statt `doc.settings`:
+ * dieselbe «Laufzeit ≠ Modell»-Begründung wie `aktiverSheetId`/
+ * `selectedPlacementId` oben — eine reine Anzeige-Präferenz, kein Doc-/
+ * Undo-/Yjs-Feld, überlebt aber (als Modul-Singleton) das Schliessen der
+ * Insel (E5-Test «Zustand überlebt Insel-Schliessen»). Default `true` an
+ * beiden Feldern erhält den heutigen Anzeige-Zustand byte-/pixel-gleich, bis
+ * die Insel aktiv ausgeschaltet wird (Bestandsschutz für jede Bestands-Spec,
+ * die ein Blatt screenshottet).
  */
 export type PublishCanvasBefehlTyp = 'zoom-in' | 'zoom-out' | 'zoom-fit';
 
@@ -35,6 +55,15 @@ interface PublishRuntime {
   setSelectedPlacementId: (id: string | null) => void;
   canvasBefehl: { typ: PublishCanvasBefehlTyp; nonce: number } | null;
   sendeCanvasBefehl: (typ: PublishCanvasBefehlTyp) => void;
+  /** DARSTELLUNG-Insel «Sichtbarkeit» (C-19): zeigt/versteckt die
+   *  assoziative Bemassung platzierter Grundriss-Ansichten auf dem Blatt. */
+  zeigeBemassung: boolean;
+  setZeigeBemassung: (v: boolean) => void;
+  /** DARSTELLUNG-Insel «Sichtbarkeit» (C-19): zeigt/versteckt die
+   *  Parzellen-/Nachbarkontext-Zonenflächen (`Zone.zonenArt`) platzierter
+   *  Ansichten auf dem Blatt. */
+  zeigeZonen: boolean;
+  setZeigeZonen: (v: boolean) => void;
 }
 
 export const usePublishRuntime = create<PublishRuntime>((set) => ({
@@ -44,4 +73,8 @@ export const usePublishRuntime = create<PublishRuntime>((set) => ({
   setSelectedPlacementId: (id) => set({ selectedPlacementId: id }),
   canvasBefehl: null,
   sendeCanvasBefehl: (typ) => set((s) => ({ canvasBefehl: { typ, nonce: (s.canvasBefehl?.nonce ?? 0) + 1 } })),
+  zeigeBemassung: true,
+  setZeigeBemassung: (v) => set({ zeigeBemassung: v }),
+  zeigeZonen: true,
+  setZeigeZonen: (v) => set({ zeigeZonen: v }),
 }));

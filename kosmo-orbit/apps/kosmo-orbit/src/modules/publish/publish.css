@@ -320,6 +320,30 @@
   inset: 0;
 }
 
+/* PB3 (v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) — Bemassungs-/Zonen-
+   Toggles der DARSTELLUNG-Insel (`island/inhalte/darstellung.tsx`s
+   `SichtbarkeitStufe2`, Zustand `publish-runtime.ts`s `zeigeBemassung`/
+   `zeigeZonen`). STRIKT app-seitig/golden-still: `derive/plansvg.ts` bleibt
+   unangetastet — diese zwei Regeln blenden nur die schon vorhandenen,
+   eindeutig identifizierbaren SVG-Fragmente per Attribut-Selektor aus:
+   - Bemassung: die Masskette-`<g stroke="#111" fill="#111">`-Gruppen
+     (`derive/plansvg.ts:403` — GRAU.geschnitten `#111`, `derive/stilblatt.
+     ts:68`, ist die EINZIGE Stelle im Kernel, die ein `<g>` mit exakt dieser
+     stroke+fill-Kombination erzeugt).
+   - Zonen: die Parzellen-/Nachbarkontext-Pfade der `Zone.zonenArt`-Zweige
+     (`derive/plansvg.ts:149-162`) — Parzelle rendert `fill="none"
+     stroke="#111"` MIT `stroke-dasharray` (sonst erzeugt kein anderer Pfad
+     im Grundriss diese Kombination, s. Kopfkommentar `publish-runtime.ts`),
+     Nachbar rendert mit `stroke="#8a8a8a"` (GRAU.kontext, `derive/stilblatt.
+     ts:76` — im Grundriss-Renderpfad ebenfalls einzigartig). */
+.k-publish-blatt-svg--ohne-bemassung svg g[stroke='#111'][fill='#111'] {
+  display: none;
+}
+.k-publish-blatt-svg--ohne-zonen svg path[fill='none'][stroke='#111'][stroke-dasharray],
+.k-publish-blatt-svg--ohne-zonen svg path[stroke='#8a8a8a'] {
+  display: none;
+}
+
 .k-publish-overlay {
   position: absolute;
   cursor: move;

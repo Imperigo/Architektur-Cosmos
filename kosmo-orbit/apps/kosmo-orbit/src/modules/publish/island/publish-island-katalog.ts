@@ -71,6 +71,10 @@ const DARSTELLUNG: readonly IslandWerkzeug[] = [
   werkzeug('zoom', 'Zoom', 'darstellung', icon('zoom'), true),
   werkzeug('massstab', 'Massstab', 'darstellung', icon('massstab'), true),
   werkzeug('plankopf-presets', 'Plankopf-Presets', 'darstellung', icon('plankopf-presets'), true),
+  // PB3 (v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) — echte Blatt-
+  // Darstellungs-Toggles («Bemassung»/«Zonen»), s. `inhalte/darstellung.
+  // tsx`s `SichtbarkeitStufe2` + `publish-runtime.ts`s Kopfkommentar.
+  werkzeug('sichtbarkeit', 'Sichtbarkeit', 'darstellung', icon('sichtbarkeit'), true),
 ];
 
 const PROJEKT: readonly IslandWerkzeug[] = [
@@ -87,7 +91,7 @@ const AUSTAUSCH: readonly IslandWerkzeug[] = [
   werkzeug('manuell', 'Manuell', 'austausch', icon('manuell'), false),
 ];
 
-/** Gesamtkatalog, 12 Werkzeuge über 4 Inseln. */
+/** Gesamtkatalog, 13 Werkzeuge über 4 Inseln (PB3, v0.8.5: `sichtbarkeit` neu). */
 export const PUBLISH_WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [...BLATT, ...DARSTELLUNG, ...PROJEKT, ...AUSTAUSCH];
 
 const PUBLISH_RAND_KLASSE: Readonly<Record<PublishIslandId, string>> = {

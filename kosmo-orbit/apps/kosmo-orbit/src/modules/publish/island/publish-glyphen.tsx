@@ -5,6 +5,8 @@ import type { ComponentType, ReactNode } from 'react';
  * echte SVG-Icons für den kompletten `publish-island-katalog.ts`-Werkzeugsatz
  * (BLATT 3 / DARSTELLUNG 3 / PROJEKT 2 / AUSTAUSCH 4), bisher reine
  * Zwei-Buchstaben-Text-Kürzel (`'BL'`, `'PL'`, …).
+ * PB3 (v0.8.5, §3 E5 + §7 C-19) ergänzt ein 13. Icon (`sichtbarkeit`,
+ * DARSTELLUNG-Insel «Bemassung»/«Zonen»-Toggles) nach derselben Bauvorschrift.
  *
  * **Bauvorschrift (BINDEND, identisch zu `design/werkzeug-icons.tsx:1-31` +
  * `design/island/island-glyphen.tsx` — dieselbe 24er-Norm, hier für den
@@ -170,7 +172,20 @@ const manuell = glyphe(
   </>,
 );
 
-/** Die 12 Publish-Werkzeug-Icons, geschlüsselt nach `publish-island-katalog.ts`s `IslandWerkzeug.id`. */
+/** Sichtbarkeit (PB3, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) — zwei
+ * Schalter-Pillen übereinander (Bemassung/Zonen), obere «an» (Knopf rechts),
+ * untere «aus» (Knopf links) — Akzent am «an»-Knopf. */
+const sichtbarkeit = glyphe(
+  <>
+    <rect x="3" y="4" width="18" height="7" rx="3.5" />
+    <circle cx="15" cy="7.5" r="2.1" />
+    <rect x="3" y="13" width="18" height="7" rx="3.5" />
+    <circle cx="9" cy="16.5" r="2.1" />
+    {akzent(15, 7.5)}
+  </>,
+);
+
+/** Die 13 Publish-Werkzeug-Icons, geschlüsselt nach `publish-island-katalog.ts`s `IslandWerkzeug.id`. */
 export const PUBLISH_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   blatt,
   platzieren,
@@ -178,6 +193,7 @@ export const PUBLISH_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   zoom,
   massstab,
   'plankopf-presets': plankopfPresets,
+  sichtbarkeit,
   dossier,
   plankopf,
   'export-pdf': exportPdf,

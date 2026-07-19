@@ -13,6 +13,8 @@ beforeEach(() => {
     aktiverSheetId: null,
     selectedPlacementId: null,
     canvasBefehl: null,
+    zeigeBemassung: true,
+    zeigeZonen: true,
   });
 });
 
@@ -50,5 +52,41 @@ describe('publish-runtime — PC3 Island-UI-Felder', () => {
     expect(usePublishRuntime.getState().canvasBefehl?.typ).toBe('zoom-fit');
     usePublishRuntime.getState().sendeCanvasBefehl('zoom-out');
     expect(usePublishRuntime.getState().canvasBefehl?.typ).toBe('zoom-out');
+  });
+});
+
+/**
+ * PB3 (v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) — die zwei echten
+ * Blatt-Darstellungs-Toggles («Bemassung»/«Zonen», DARSTELLUNG-Insel
+ * `SichtbarkeitStufe2`). Default `true` erhält den heutigen Anzeige-Zustand
+ * (Bestandsschutz) — s. `publish-runtime.ts`-Kopfkommentar für die volle
+ * Begründung (Laufzeit-Store statt `doc.settings`, CSS-Filterung statt
+ * Kernel-Änderung).
+ */
+describe('publish-runtime — PB3 Sichtbarkeits-Toggles (C-19)', () => {
+  it('zeigeBemassung: Default true (Bestandsschutz — heutige Anzeige unverändert, bis aktiv ausgeschaltet)', () => {
+    expect(usePublishRuntime.getState().zeigeBemassung).toBe(true);
+    usePublishRuntime.getState().setZeigeBemassung(false);
+    expect(usePublishRuntime.getState().zeigeBemassung).toBe(false);
+    usePublishRuntime.getState().setZeigeBemassung(true);
+    expect(usePublishRuntime.getState().zeigeBemassung).toBe(true);
+  });
+
+  it('zeigeZonen: Default true, unabhängig von zeigeBemassung setzbar', () => {
+    expect(usePublishRuntime.getState().zeigeZonen).toBe(true);
+    usePublishRuntime.getState().setZeigeZonen(false);
+    expect(usePublishRuntime.getState().zeigeZonen).toBe(false);
+    // Bemassung bleibt vom Zonen-Toggle unberührt — zwei unabhängige Felder.
+    expect(usePublishRuntime.getState().zeigeBemassung).toBe(true);
+  });
+
+  it('beide Felder überleben einen Store-Zugriff, der KEIN neues `usePublishRuntime.setState()` auslöst (Modul-Singleton, «Zustand überlebt Insel-Schliessen»)', () => {
+    usePublishRuntime.getState().setZeigeBemassung(false);
+    usePublishRuntime.getState().setZeigeZonen(false);
+    // Ein simulierter Insel-Schliessen/-Öffnen-Zyklus liest denselben
+    // Modul-Singleton neu aus (kein Reset, anders als eine lokale
+    // Komponenten-`useState`, s. `BlattCanvas.tsx`-Kopfkommentar).
+    expect(usePublishRuntime.getState().zeigeBemassung).toBe(false);
+    expect(usePublishRuntime.getState().zeigeZonen).toBe(false);
   });
 });

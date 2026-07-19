@@ -1,4 +1,4 @@
-import { KButton, KIcon } from '@kosmo/ui';
+import { KButton, KIcon, KSwitch } from '@kosmo/ui';
 import type { Sheet } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { usePublishRuntime } from '../../publish-runtime';
@@ -8,8 +8,10 @@ import '../publish-island.css';
 
 /**
  * DARSTELLUNG-Insel (PC3, `docs/V084-SPEZ.md` §5 W3, C-19) — Zoom ±/Fit
- * (NEU, C-19), Massstab (die bisherige «Auswahl»-Massstab-Auswahl) und
- * Plankopf-Presets (`PlankopfPanel`, unverändert wiederverwendet).
+ * (NEU, C-19), Massstab (die bisherige «Auswahl»-Massstab-Auswahl),
+ * Plankopf-Presets (`PlankopfPanel`, unverändert wiederverwendet) und
+ * Sichtbarkeit (PB3, v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19 — echte
+ * Bemassungs-/Zonen-Toggles, s. `SichtbarkeitStufe2` unten).
  *
  * **Zoom** ist ein reiner Fernauslöser (`sendeCanvasBefehl`) — die
  * eigentliche Rechnung bleibt in `island/BlattZoomBuehne.tsx` (Muster
@@ -93,6 +95,43 @@ function PlankopfPresetsStufe3() {
   return <PlankopfPanel sheetId={sheet.id} selectedPlacementId={selectedPlacementId} onClose={() => {}} />;
 }
 
+/**
+ * PB3 (v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) — «Sichtbarkeit»: zwei
+ * ECHTE Blatt-Darstellungs-Toggles («Bemassung»/«Zonen»), Zustand aus
+ * `publish-runtime.ts` (Kopfkommentar dort begründet Store-Wahl + Mechanik).
+ * Muster identisch zum bisherigen Manuell-Modus-Vorschau-Paar
+ * (`PublishWorkspace.tsx`s `KToolGruppe label="Vorschau (nur Anzeige)"`,
+ * `KSwitch` statt nackter Checkbox) — hier aber ECHTE Wirkung auf dem Blatt
+ * (BlattCanvas.tsx), nicht nur Papierrand-Dekoration.
+ */
+function SichtbarkeitStufe2() {
+  const zeigeBemassung = usePublishRuntime((s) => s.zeigeBemassung);
+  const setZeigeBemassung = usePublishRuntime((s) => s.setZeigeBemassung);
+  const zeigeZonen = usePublishRuntime((s) => s.zeigeZonen);
+  const setZeigeZonen = usePublishRuntime((s) => s.setZeigeZonen);
+  return (
+    <div className="pubisl-stufe2" data-testid="island-sichtbarkeit-stufe2" onClick={(e) => e.stopPropagation()}>
+      <div className="pubisl-reihe">
+        <KSwitch
+          data-testid="island-sichtbarkeit-bemassung"
+          checked={zeigeBemassung}
+          onChange={(e) => setZeigeBemassung(e.target.checked)}
+          label="Bemassung"
+          title="Assoziative Bemassung platzierter Grundriss-Ansichten auf dem Blatt zeigen/ausblenden"
+        />
+        <KSwitch
+          data-testid="island-sichtbarkeit-zonen"
+          checked={zeigeZonen}
+          onChange={(e) => setZeigeZonen(e.target.checked)}
+          label="Zonen"
+          title="Parzellen-/Nachbarkontext-Zonenflächen platzierter Ansichten auf dem Blatt zeigen/ausblenden"
+        />
+      </div>
+    </div>
+  );
+}
+
 publishInhaltsRegistry.registriere('zoom', { Stufe2: ZoomStufe2, Stufe3: ZoomStufe2 });
 publishInhaltsRegistry.registriere('massstab', { Stufe2: MassstabStufe2, Stufe3: MassstabStufe2 });
 publishInhaltsRegistry.registriere('plankopf-presets', { Stufe2: PlankopfPresetsStufe3, Stufe3: PlankopfPresetsStufe3 });
+publishInhaltsRegistry.registriere('sichtbarkeit', { Stufe2: SichtbarkeitStufe2, Stufe3: SichtbarkeitStufe2 });

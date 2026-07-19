@@ -29,10 +29,10 @@ describe('publish-island-katalog — Aufbau', () => {
     expect(austausch.randKlasse).toBe('isl-rand-unten');
   });
 
-  it('12 Werkzeuge total, jedes genau einer Insel zugeordnet', () => {
-    expect(PUBLISH_WERKZEUG_KATALOG).toHaveLength(12);
+  it('13 Werkzeuge total, jedes genau einer Insel zugeordnet (PB3 v0.8.5: «sichtbarkeit» neu)', () => {
+    expect(PUBLISH_WERKZEUG_KATALOG).toHaveLength(13);
     const summe = PUBLISH_INSELN.reduce((n, k) => n + k.werkzeuge.length, 0);
-    expect(summe).toBe(12);
+    expect(summe).toBe(13);
   });
 
   it('BLATT: Blatt anlegen/wechseln, Ansicht platzieren, Auto-Pack (Bauauftrag)', () => {
@@ -40,9 +40,9 @@ describe('publish-island-katalog — Aufbau', () => {
     expect(ids).toEqual(['blatt', 'platzieren', 'auto-pack']);
   });
 
-  it('DARSTELLUNG: Zoom, Massstab, Plankopf-Presets (Bauauftrag, C-19 Zoom NEU)', () => {
+  it('DARSTELLUNG: Zoom, Massstab, Plankopf-Presets, Sichtbarkeit (Bauauftrag, C-19 Zoom+Sichtbarkeit NEU)', () => {
     const ids = PUBLISH_INSELN.find((k) => k.id === 'darstellung')!.werkzeuge.map((w) => w.id);
-    expect(ids).toEqual(['zoom', 'massstab', 'plankopf-presets']);
+    expect(ids).toEqual(['zoom', 'massstab', 'plankopf-presets', 'sichtbarkeit']);
   });
 
   it('PROJEKT: Dossier, Plankopf (Plancode/Phase, Bauauftrag)', () => {

@@ -2,6 +2,7 @@ import { useRef, type CSSProperties } from 'react';
 import { imagePaperBounds, placementPaperBounds, type Sheet } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
+import { usePublishRuntime } from './publish-runtime';
 
 /**
  * PC3 (`docs/V084-SPEZ.md` §5 W3, C-19) — Extraktion des bisher INLINE in
@@ -23,6 +24,19 @@ import { findePlankopfHitbox, findeRahmenRect } from './plankopf-overlay';
  * `svgHostRef`/`toPaper()` bleiben INTERN (waren zuvor `PublishWorkspace.
  * tsx`-lokal, aber nirgends sonst gebraucht) — kein Prop-Zuwachs ausserhalb
  * dessen, was diese Komponente wirklich von aussen braucht.
+ *
+ * **PB3 (v0.8.5, `docs/V085-SPEZ.md` §3 E5 + §7 C-19) — Bemassungs-/Zonen-
+ * Toggles:** `zeigeBemassung`/`zeigeZonen` kommen bewusst NICHT als Prop
+ * (anders als `zonenVorschau`/`aussenbemassungVorschau` oben, die reine
+ * Manuell-Modus-`useState` sind), sondern direkt aus `publish-runtime.ts`
+ * (Modul-Singleton) — dieselbe Anzeige gilt darum in JEDEM Aufrufer
+ * (Manuell-`PublishWorkspace.tsx` UND `island/BlattZoomBuehne.tsx`), ohne
+ * dass beide Aufrufer den Zustand einzeln durchreichen müssten, und der Wert
+ * überlebt das Schliessen der Insel (E5-Beweispflicht). Die eigentliche
+ * Wirkung ist eine reine CSS-Modifier-Klasse auf `.k-publish-blatt-svg`
+ * (`publish.css`) — `svgMarkup` selbst (das echte, golden-geprüfte
+ * `sheetToSvg()`-Ergebnis) bleibt STRING-IDENTISCH, nur die Bildschirm-
+ * Darstellung filtert per Attribut-Selektor.
  */
 export interface BlattCanvasProps {
   sheet: Sheet;
@@ -74,6 +88,8 @@ export function BlattCanvas({
   const runCommand = useProject((s) => s.runCommand);
   const { doc } = useProject.getState();
   const svgHostRef = useRef<HTMLDivElement>(null);
+  const zeigeBemassung = usePublishRuntime((s) => s.zeigeBemassung);
+  const zeigeZonen = usePublishRuntime((s) => s.zeigeZonen);
 
   /** Bildschirm-px → Papier-mm im Vorschau-SVG. */
   function toPaper(e: React.PointerEvent): { x: number; y: number } | null {
@@ -147,7 +163,13 @@ export function BlattCanvas({
       }}
     >
       <div
-        className="k-publish-blatt-svg"
+        className={`k-publish-blatt-svg${zeigeBemassung ? '' : ' k-publish-blatt-svg--ohne-bemassung'}${zeigeZonen ? '' : ' k-publish-blatt-svg--ohne-zonen'}`}
+        // C-19 (PB3): reiner Bildschirm-Beweis für die Toggle-Mechanik
+        // (e2e/publish-toggles.spec.ts) — `svgMarkup` (unten) bleibt
+        // unangetastet, nur diese zwei Attribute + die Modifier-Klasse oben
+        // steuern die CSS-Filterung.
+        data-bemassung={zeigeBemassung ? 'an' : 'aus'}
+        data-zonen={zeigeZonen ? 'an' : 'aus'}
         // Vorschau = echtes Druck-SVG aus dem Kern
         dangerouslySetInnerHTML={{ __html: svgMarkup.replace('<svg ', '<svg style="width:100%;height:100%" ') }}
       />

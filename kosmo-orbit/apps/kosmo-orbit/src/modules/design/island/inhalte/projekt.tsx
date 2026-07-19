@@ -10,7 +10,7 @@ import {
   type SiaPhase,
   type Zone,
 } from '@kosmo/kernel';
-import { KButton, KInput, KSelect, meldeFehler } from '@kosmo/ui';
+import { KButton, KSelect } from '@kosmo/ui';
 import { useProject } from '../../../../state/project-store';
 import { useUiZustand } from '../../../../state/ui-zustand';
 import { empfohlenePlanPhaseFuer } from '../../phasen-presets';
@@ -19,6 +19,7 @@ import { SubmissionsCheckPanel } from '../../SubmissionsCheckPanel';
 import { VariantenPanel } from '../../VariantenPanel';
 import { BerechnungslistePanel } from '../../BerechnungslistePanel';
 import { registriereInhalt } from './registry';
+import { KommentarFormular } from './kommentar-formular';
 import './pd3b-inhalte.css';
 
 /**
@@ -311,14 +312,18 @@ function ListeStufe3() {
  * blosser Klick nicht liefern kann. `KommentarErfassen` zeigt das
  * Formular erst, sobald ein Punkt gesetzt ist, und committet
  * `design.kommentarSetzen` erst beim Absenden.
+ *
+ * PB3 (v0.8.5, `docs/V085-SPEZ.md` §2 D11 + §7 C-20): das eigentliche
+ * Formular (Text/Autor-Felder, Validierung, `design.kommentarSetzen`-
+ * Aufruf) ist nach `kommentar-formular.tsx`s `KommentarFormular` extrahiert
+ * — WORTGLEICHE Testids/DOM/Verhalten (reine Bewegung, kein zweiter
+ * Formular-Bau), jetzt auch vom neuen Manuell-Modus-Zugang
+ * (`KommentarErfassenAmPunkt`, D11/C-20) wiederverwendet.
  */
 function KommentarErfassen() {
-  const runCommand = useProject((s) => s.runCommand);
   const activeStoreyId = useProject((s) => s.activeStoreyId);
   const kommentarPunkt = useUiZustand((s) => s.kommentarPunkt);
   const setKommentarPunkt = useUiZustand((s) => s.setKommentarPunkt);
-  const [text, setText] = useState('');
-  const [autor, setAutor] = useState('');
 
   if (!kommentarPunkt) {
     return (
@@ -329,38 +334,13 @@ function KommentarErfassen() {
     );
   }
 
-  const gueltig = text.trim().length > 0 && autor.trim().length > 0;
-  const absenden = () => {
-    if (!gueltig) return;
-    try {
-      runCommand('design.kommentarSetzen', {
-        text: text.trim(),
-        autor: autor.trim(),
-        at: kommentarPunkt,
-        ...(activeStoreyId ? { storeyId: activeStoreyId } : {}),
-        erstelltAm: new Date().toLocaleDateString('de-CH'),
-      });
-      setText('');
-      setKommentarPunkt(null);
-    } catch (err) {
-      meldeFehler(err);
-    }
-  };
-
   return (
-    <div className="pd3b-block" data-testid="island-kommentar-erfassen" onClick={(e) => e.stopPropagation()}>
-      <label className="pd3b-feld">
-        <span>Text</span>
-        <KInput size="sm" data-testid="island-kommentar-text" value={text} onChange={(e) => setText(e.target.value)} />
-      </label>
-      <label className="pd3b-feld">
-        <span>Autor</span>
-        <KInput size="sm" data-testid="island-kommentar-autor" value={autor} onChange={(e) => setAutor(e.target.value)} />
-      </label>
-      <KButton size="sm" data-testid="island-kommentar-setzen" disabled={!gueltig} onClick={absenden}>
-        Kommentar setzen
-      </KButton>
-    </div>
+    <KommentarFormular
+      punkt={kommentarPunkt}
+      storeyId={activeStoreyId}
+      onFertig={() => setKommentarPunkt(null)}
+      testIdPraefix="island"
+    />
   );
 }
 

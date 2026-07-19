@@ -20,7 +20,7 @@ describe('publish-island — Registry (eigener Namensraum "publish")', () => {
     }
   });
 
-  it('registrierteIds() deckt exakt die 11 hatPopup:true-Werkzeuge (keine Karteileiche, kein Fehlender)', () => {
+  it('registrierteIds() deckt exakt die hatPopup:true-Werkzeuge (keine Karteileiche, kein Fehlender; PB3 v0.8.5: 12 seit «sichtbarkeit»)', () => {
     const erwartete = PUBLISH_WERKZEUG_KATALOG.filter((x) => x.hatPopup)
       .map((w) => w.id)
       .sort();

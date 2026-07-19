@@ -900,7 +900,19 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
                   · {set.sheetIds.length} Blätter
                 </span>
               </span>
-              <KButton size="sm" tone="quiet" data-testid="pubset-pdf" onClick={() => void exportSheetSetPdf(set)}>
+              {/* PB3-Härtungs-Nachzug (v0.8.5, `docs/V085-SPEZ.md` §3
+                  «PDF-Härtungs-Nachzug»): dieser Aufruf hatte KEIN `.catch()`
+                  (anders als `exportBlattPdf()` unten, Zeile ~480) — schlug
+                  `svg2pdf`/ein Font-Fetch/`pdf.save()` fehl, verschwand der
+                  Fehler als unbehandelte Promise-Ablehnung in der
+                  Browser-Konsole, der Nutzer sah nichts. Jetzt derselbe
+                  ehrliche Fehlerpfad wie überall sonst im Modul. */}
+              <KButton
+                size="sm"
+                tone="quiet"
+                data-testid="pubset-pdf"
+                onClick={() => void exportSheetSetPdf(set).catch((err) => meldeFehler(err))}
+              >
                 PDF
               </KButton>
               <KButton size="sm" tone="ghost" data-testid="pubset-svg" onClick={() => exportSetSvgs(set)}>
@@ -969,7 +981,15 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
             nur «Plansatz PDF» akzentuiert — die EINE gefüllte Signal-Fläche
             der ganzen Station, Gesetz 1). */}
         <div className="k-publish-export-gruppe">
-          <KButton size="sm" tone="accent" onClick={() => void exportSheetSetPdf()} data-testid="export-set">
+          {/* PB3-Härtungs-Nachzug (v0.8.5, s. `pubset-pdf`-Knopf oben) —
+              genau derselbe stumme Fehlerpfad, hier sogar an der EINEN
+              gefüllten Signal-Fläche der ganzen Station (Gesetz 1). */}
+          <KButton
+            size="sm"
+            tone="accent"
+            onClick={() => void exportSheetSetPdf().catch((err) => meldeFehler(err))}
+            data-testid="export-set"
+          >
             <KIcon name="export" size={14} /> Plansatz PDF
           </KButton>
           <KButton

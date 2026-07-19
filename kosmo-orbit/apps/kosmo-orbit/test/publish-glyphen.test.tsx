@@ -6,7 +6,7 @@ import { PUBLISH_WERKZEUG_KATALOG } from '../src/modules/publish/island/publish-
 
 /**
  * `publish-glyphen.tsx` — Regressionsschutz (PA4, `docs/V085-SPEZ.md` §3 E6
- * + §7 C-13): rendert alle 12 Publish-Werkzeug-Icons, prüft leeren
+ * + §7 C-13): rendert alle 13 Publish-Werkzeug-Icons, prüft leeren
  * `textContent`, GENAU EINEN Akzentpunkt je Icon, `currentColor`-Striche
  * (keine hartkodierte Farbe ausser dem Akzent-Token) und die vollständige
  * Abdeckung von `PUBLISH_WERKZEUG_KATALOG` — kein Katalog-Werkzeug trägt
@@ -24,19 +24,19 @@ function zaehleAkzentpunkte(html: string): number {
   return (html.match(/r="1\.13"/g) ?? []).length;
 }
 
-describe('publish-glyphen: 12 Werkzeug-Icons decken den kompletten Publish-Katalog ab', () => {
-  it('PUBLISH_WERKZEUG_KATALOG hat 12 Einträge (Fundament unverändert)', () => {
-    expect(PUBLISH_WERKZEUG_KATALOG).toHaveLength(12);
+describe('publish-glyphen: 13 Werkzeug-Icons decken den kompletten Publish-Katalog ab', () => {
+  it('PUBLISH_WERKZEUG_KATALOG hat 13 Einträge (Fundament unverändert)', () => {
+    expect(PUBLISH_WERKZEUG_KATALOG).toHaveLength(13);
   });
 
-  it('PUBLISH_GLYPHEN deckt exakt die 12 Katalog-Ids ab', () => {
+  it('PUBLISH_GLYPHEN deckt exakt die 13 Katalog-Ids ab', () => {
     const erwartet = PUBLISH_WERKZEUG_KATALOG.map((w) => w.id).sort();
     const tatsaechlich = Object.keys(PUBLISH_GLYPHEN).sort();
     expect(tatsaechlich).toEqual(erwartet);
-    expect(tatsaechlich).toHaveLength(12);
+    expect(tatsaechlich).toHaveLength(13);
   });
 
-  it('kein Publish-Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 12 sind ComponentType)', () => {
+  it('kein Publish-Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 13 sind ComponentType)', () => {
     for (const w of PUBLISH_WERKZEUG_KATALOG) {
       expect(typeof w.glyphe, w.id).not.toBe('string');
     }
@@ -97,7 +97,7 @@ describe('publish-glyphen: Bauvorschrift je Icon (werkzeug-icons.tsx:1-31, 24er-
     expect(html).toContain('viewBox="0 0 24 24"');
   });
 
-  it('die 12 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
+  it('die 13 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
     const markup = NAMEN.map((name) => renderToStaticMarkup(PUBLISH_GLYPHEN[name]!({})));
     expect(new Set(markup).size).toBe(NAMEN.length);
   });
