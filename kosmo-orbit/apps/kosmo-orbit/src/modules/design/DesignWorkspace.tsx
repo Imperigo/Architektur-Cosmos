@@ -33,16 +33,13 @@ import {
   type ErkannteDecke,
   type ErkannteWand,
   type FangKandidaten,
-  // v0.8.4 PB5 (§7 D8/C-26): Masskette/Kommentar-Verschieben (s.
-  // `onMoveEnd` unten) braucht die vollen Entity-Typen — der Kernel kennt
-  // `design.verschieben` für diese zwei Kinds NICHT (`moveEntity`s Switch in
-  // `packages/kosmo-kernel/src/commands/design.ts` hat keinen `masskette`-/
-  // `kommentar`-Zweig — ein Spez-Widerspruch zu §7 D8, s. Bericht), darum
-  // löst PB5 «Verschieben» hier bewusst über die bestehenden generischen
-  // Loeschen+Setzen-Commands als EINE `history`-Gruppe, statt den
-  // gesperrten Kernel zu erweitern.
+  // Seit v0.8.8 PA1 (E1, docs/V088-SPEZ.md) kennt `design.verschieben`
+  // ALLE ziehbaren Kinds — der historische PB5-Workaround (Löschen+
+  // Neusetzen für masskette/kommentar, C-26) ist in `onMoveEnd` gefallen.
+  // `MassKette` bleibt für den GRIFF-Einzelpunkt-Zug nötig (der ist kein
+  // verschieben und läuft weiter über Löschen+Neusetzen, benannter
+  // Aufschub C-3).
   type AnyPatch,
-  type Kommentar,
   type MassKette,
   // E3 (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-15/C-16): Griff-Ziehen (Eck-Griffe
   // Zone/Volumen/Dach) braucht die vollen Entity-Typen für dasselbe
@@ -1146,60 +1143,26 @@ export function DesignWorkspace({
         return;
       }
       const { history } = useProject.getState();
-      // C-26: kein `design.verschieben`-Zweig für masskette/kommentar im
-      // Kernel — Löschen+Neusetzen mit verschobenen Punkten; die ID ändert
-      // sich dabei, darum liefern die Helfer die NEUE ID für die Auswahl.
-      // Kommentar: Status «erledigt» wird explizit nachgezogen
-      // (`design.kommentarSetzen` legt zwingend «offen» an).
-      const verschiebeMasskette = (mk: MassKette): string | null => {
-        runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
-        const r = runCommand('design.massKetteSetzen', {
-          storeyId: mk.storeyId,
-          punkte: mk.punkte.map((q) => ({ x: q.x + dx, y: q.y + dy })),
-        });
-        return neuePatchId(r.patches);
-      };
-      const verschiebeKommentar = (km: Kommentar): string | null => {
-        runCommand('design.kommentarLoeschen', { kommentarId: km.id });
-        const r = runCommand('design.kommentarSetzen', {
-          text: km.text,
-          autor: km.autor,
-          at: { x: km.at.x + dx, y: km.at.y + dy },
-          ...(km.storeyId !== undefined ? { storeyId: km.storeyId } : {}),
-          erstelltAm: km.erstelltAm,
-        });
-        const neueId = neuePatchId(r.patches);
-        if (neueId && km.status === 'erledigt' && km.erledigtAm) {
-          runCommand('design.kommentarStatusSetzen', {
-            kommentarId: neueId,
-            status: 'erledigt',
-            erledigtAm: km.erledigtAm,
-          });
-        }
-        return neueId;
-      };
-      const neueAuswahl: string[] = [];
+      // E1 (v0.8.8 PA1, docs/V088-SPEZ.md): `design.verschieben` kennt jetzt
+      // ALLE hier ziehbaren Kinds (masskette/kommentar/furniture/beam/
+      // boundary/etikett inklusive) — der frühere C-26-Workaround
+      // (Löschen+Neusetzen mit NEUEN IDs, Status-Nachzug beim Kommentar)
+      // ist ersatzlos gefallen: EIN Command je Element, Identität bleibt,
+      // die Auswahl muss keiner neuen ID mehr nachlaufen.
       history.beginGroup();
       try {
         for (const id of gruppe) {
-          const e = doc.get(id);
-          if (!e) continue;
+          if (!doc.get(id)) continue;
           try {
-            if (e.kind === 'masskette') neueAuswahl.push(verschiebeMasskette(e as MassKette) ?? id);
-            else if (e.kind === 'kommentar') neueAuswahl.push(verschiebeKommentar(e as Kommentar) ?? id);
-            else {
-              runCommand('design.verschieben', { entityId: id, dx, dy });
-              neueAuswahl.push(id);
-            }
+            runCommand('design.verschieben', { entityId: id, dx, dy });
           } catch (err) {
             meldeFehler(err);
-            neueAuswahl.push(id);
           }
         }
       } finally {
         history.endGroup();
       }
-      select(neueAuswahl);
+      select([...gruppe]);
     },
     moveOffset:
       dragEntity && dragCursor
