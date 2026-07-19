@@ -270,6 +270,46 @@ Blender-Worker bleibt der Job `kein-blender-worker` — eine erfundene Zahl
 sähe aus wie ein Analyseergebnis und könnte eine Bau-Entscheidung
 verseuchen.
 
+#### Blender-Worker-Runner (Fake-Referenzimplementierung, v0.8.10 / E1)
+
+`kosmo_bridge/blender_worker.py` ist ein eigenständiger, **`bpy`-freier**
+Dateisystem-Poller, der den `--store`-Ordner GENAU nach dem 4-Schritt-
+Protokoll oben bearbeitet — als Prozess ausserhalb der Bridge, nicht als
+Teil von `main.py`. Er ist die GERÄTE-Vorlage für das, was ein künftiger
+echter Blender-Worker auf der HomeStation (5090) tun wird; im Repo steckt
+dahinter ausschliesslich ein `FakeBerechner` (Pluggables
+`Berechner`-Protokoll, `typing.Protocol`): `vis-`-Jobs bekommen ein
+markiertes FAKE-Bild als `render-result.json` inkl. gespiegeltem
+`requested_style`, `bake-`/`bsim-`-Jobs werden NIE gerechnet und landen
+SOFORT auf `kein-blender-worker` (nie `running`/`done`, keine
+Ergebnisdatei) — dieselbe Ehrlichkeitsgrenze wie überall in diesem Kapitel.
+
+Aufruf gegen einen Test-Store (ein Pass, für Cron/Tests statt Dauerbetrieb):
+
+```bash
+python3 kosmo_bridge/blender_worker.py /tmp/kosmo-jobs --fake-worker --einmal
+```
+
+Ohne Angabe von `--einmal` pollt der Runner im Dauerbetrieb (`--intervall`,
+Default 1.0 s) — geeignet als Vorlage für einen künftigen `systemd`-Dienst
+auf der HomeStation.
+
+**Exklusivitätsregel (verbindlich):** dieser Runner läuft NIE gleichzeitig
+gegen eine Bridge, die selbst mit `--fake-worker` gestartet wurde. Der
+interne Fake-Worker der Bridge (`main.py`, `_fake_worker_step`) und dieser
+externe Runner sind **wechselseitig exklusiv** — beide würden sich denselben
+Job-Store streitig machen (Doppel-Claims, gegenseitig überschriebene
+`running`-Zustände). Für einen Store gilt also entweder
+`kosmo-bridge --fake-worker` **oder** `blender_worker.py --fake-worker`,
+nie beides zusammen.
+
+Ein echter `bpy`-Berechner (headless Blender auf der HomeStation) entsteht
+künftig als eigene Implementierung des `Berechner`-Protokolls — der Poller
+selbst bleibt dabei unverändert. Dieses Repo bleibt weiterhin vollständig
+`bpy`-frei (ROADMAP 179, hier nur präzisiert: der Runner *ruft* keinen
+`bpy`-Code auf, er *definiert nur die Schnittstelle*, gegen die ein echter
+Worker am Gerät später programmiert wird).
+
 ### Dev-Worker andocken (Auftragsbuch → Ausführung)
 
 V2-Technik Block 2 (`docs/V2-TECHNIK-BLOCK2-BUILDPLAN.md`, Entscheid E3):
