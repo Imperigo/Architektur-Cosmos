@@ -2307,6 +2307,44 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               Abbrechen
             </KButton>
           </div>
+          {
+            /**
+             * v0.8.8 PA5 «Autopilot-Fortsetzung» (`docs/V088-SPEZ.md` §3 E4,
+             * §6 Sanktion 4, C-6) — «Ab Schritt N fortsetzen»/«Schritt N
+             * wiederholen» NUR im Fehler-/Abbruch-Zustand, NIE in
+             * 'laeuft'/'fertig'/'offen' (Sanktion 4: «Autopilot-Fortsetzung
+             * … aus Nicht-Fehler-Zustand = ungültig»). N = erster
+             * nicht-'ok'-Schritt (1-basiert für die Anzeige, `lauf-runtime`
+             * erhält den 0-basierten Index). Beide Knöpfe delegieren an die
+             * neuen Store-Aktionen — die eigentliche Zulässigkeitsprüfung
+             * sitzt im `LaufRunner` selbst (zweite Verteidigungslinie).
+             */
+            (laufStatus === 'fehler' || laufStatus === 'abgebrochen') &&
+              (() => {
+                const ersterOffenerIndex = laufSchritte.findIndex((s) => s.status !== 'ok');
+                if (ersterOffenerIndex === -1) return null;
+                return (
+                  <div className="kp-knopf-reihe">
+                    <KButton
+                      size="sm"
+                      tone="accent"
+                      data-testid="lauf-fortsetzen"
+                      onClick={() => useLaufRuntime.getState().fortsetzen()}
+                    >
+                      Ab Schritt {ersterOffenerIndex + 1} fortsetzen
+                    </KButton>
+                    <KButton
+                      size="sm"
+                      tone="ghost"
+                      data-testid="lauf-wiederholen"
+                      onClick={() => useLaufRuntime.getState().wiederholen(ersterOffenerIndex)}
+                    >
+                      Schritt {ersterOffenerIndex + 1} wiederholen
+                    </KButton>
+                  </div>
+                );
+              })()
+          }
           <ul className="lauf-anzeige-liste">
             {laufPlan.schritte.map((schritt, i) => {
               const zustand = laufSchritte[i] ?? { status: 'offen' as const };

@@ -80,12 +80,32 @@ export class LaufRunner {
     return this.laeuftGerade;
   }
 
-  /** Verdichteter Gesamtstatus für die UI (z.B. Panel-Badge/Titelzeile). */
+  /**
+   * Verdichteter Gesamtstatus für die UI (z.B. Panel-Badge/Titelzeile,
+   * KosmoPanel-Fortsetzen-/Wiederholen-Knöpfe).
+   *
+   * v0.8.8 PA5 (E4-Zustandslücke, dokumentierter Entscheid): `wiederholeSchritt`
+   * kann einen `'fehler'`-Schritt gezielt auf `'ok'` heben, während SPÄTERE
+   * Schritte weiterhin `'offen'` bleiben (sie liefen ja nie) — ohne die
+   * letzte Zeile unten (`some(status === 'ok')`) würde das Array dann WEDER
+   * `'fehler'` noch `'jeder ok'` zeigen, `laeuftGerade`/`abgebrochenFlag`
+   * sind ebenfalls beide falsch → der Fall würde ohne diese Zeile fälschlich
+   * auf `'offen'` fallen, als hätte der Lauf NIE begonnen. Das ist der
+   * EINZIGE Weg, wie «ein Teil ok, ein Teil offen, kein Fehler, nicht am
+   * Laufen, nie explizit abgebrochen» entstehen kann (`fortsetzenAb` läuft
+   * immer bis zum Ende/Fehler/Abbruch durch, kann also KEINE derartige
+   * Lücke hinterlassen). Entscheid: dieser Zwischenzustand zählt als
+   * `'abgebrochen'` (nicht als neuer fünfter Wert) — «angehalten, mit
+   * bereits erledigten Schritten, wartet auf die nächste explizite
+   * Nutzeraktion» ist exakt die Semantik, die C-6 den Fortsetzen-/
+   * Wiederholen-Knöpfen ohnehin schon für `'abgebrochen'` zuweist.
+   */
   get gesamtStatus(): LaufGesamtStatus {
     if (this.zustaende.some((z) => z.status === 'fehler')) return 'fehler';
     if (this.zustaende.every((z) => z.status === 'ok')) return 'fertig';
     if (this.laeuftGerade) return 'laeuft';
     if (this.abgebrochenFlag) return 'abgebrochen';
+    if (this.zustaende.some((z) => z.status === 'ok')) return 'abgebrochen';
     return 'offen';
   }
 
@@ -117,9 +137,105 @@ export class LaufRunner {
   async starte(): Promise<void> {
     if (this.gestartet) return;
     this.gestartet = true;
+    await this.fuehreSchritteAus(0);
+  }
+
+  /**
+   * v0.8.8 PA5 «Autopilot-Fortsetzung» (`docs/V088-SPEZ.md` §3 E4, C-6) —
+   * führt den Plan ab `index` fort, mit DERSELBEN Macrotask-Yield+Abbruch-
+   * Mechanik wie `starte()` (jeder Schritt bleibt unterbrechbar, EIN
+   * Undo je Schritt über denselben `fuehreAus`-Callback).
+   *
+   * ZULÄSSIGKEITS-VERTRAG (E4-Sanktion v0.8.5 gilt fort, V088-SPEZ §6
+   * Sanktion 4): NUR zulässig, wenn der Runner GERADE in `gesamtStatus`
+   * `'fehler'` oder `'abgebrochen'` steht — also NIEMALS während `starte()`
+   * noch läuft und NIEMALS auf einen frischen/bereits fertigen Lauf.
+   * Entscheid (dokumentiert statt still zu schlucken): ein Verstoss WIRFT
+   * einen `Error` mit dem aktuellen Zustand in der Meldung — kein
+   * begründungsloses No-Op, das der Aufrufer stillschweigend übersehen
+   * könnte. Die App (`lauf-runtime.ts#fortsetzen`) prüft den Zustand VOR
+   * dem Aufruf zusätzlich selbst (No-Op-Schicht für die UI) — dieser Wurf
+   * ist die zweite, unabhängige Verteidigungslinie direkt im Runner.
+   *
+   * Ein vorheriger `abbrechen()`-Aufruf gilt für den fortgesetzten Lauf
+   * NICHT mehr automatisch als aktiver Abbruchwunsch (sonst würde die
+   * Schleife sofort wieder am ersten Check `abgebrochenFlag` scheitern) —
+   * die Flagge wird hier zurückgesetzt. Ein NEUER `abbrechen()`-Aufruf
+   * WÄHREND des fortgesetzten Laufs wirkt wieder ganz normal (derselbe
+   * Vertrag wie bei `starte()`).
+   */
+  async fortsetzenAb(index: number): Promise<void> {
+    this.pruefeFortsetzbar('fortsetzenAb');
+    this.abgebrochenFlag = false;
+    await this.fuehreSchritteAus(index);
+  }
+
+  /**
+   * v0.8.8 PA5 — führt GENAU EINEN Schritt erneut aus (derselbe
+   * Zulässigkeits-Vertrag wie `fortsetzenAb`, s.o.: nur aus `'fehler'`/
+   * `'abgebrochen'`, sonst Wurf). Zusätzlich muss der Schritt selbst gerade
+   * `'fehler'` ODER `'offen'` sein (ein bereits `'ok'`/`'laeuft'`-Schritt
+   * erneut auszuführen wäre ein stiller Doppel-Vollzug — Sanktion 4 zieht
+   * das ausdrücklich in Betracht: «kein Doppel-Vollzug»). Bei Erfolg wird
+   * der Schritt-Zustand auf `ok` gesetzt, der Gesamtzustand ergibt sich
+   * unverändert aus `gesamtStatus` (neu ermittelt anhand des aktualisierten
+   * `zustaende`-Arrays — keine separate Buchführung nötig).
+   *
+   * Auch hier derselbe Macrotask-Yield wie `starte()`/`fortsetzenAb` VOR
+   * der Ausführung (Konsistenz der Mechanik, V088-SPEZ §3 E4) — bewusst
+   * OHNE einen erneuten Abbruch-Check danach: `wiederholeSchritt` ist ein
+   * einzelner, expliziter Nutzerklick auf GENAU einen Schritt, keine
+   * Schleife, die unterbrochen werden müsste. Ein `abbrechen()`-Aufruf
+   * während dieses einzelnen Schritts wirkt nur auf einen SPÄTEREN
+   * `fortsetzenAb`, nicht auf den bereits angestossenen Wiederholungs-
+   * Versuch (derselbe Vertrag wie ein `starte()`-Schritt, der schon
+   * `fuehreAus` betreten hat — der läuft auch ehrlich zu Ende).
+   */
+  async wiederholeSchritt(index: number): Promise<void> {
+    this.pruefeFortsetzbar('wiederholeSchritt');
+    const bisherig = this.zustaende[index];
+    if (!bisherig || (bisherig.status !== 'fehler' && bisherig.status !== 'offen')) {
+      throw new Error(
+        `wiederholeSchritt(${index}) ist nur für einen Schritt im Zustand 'fehler' oder 'offen' zulässig ` +
+          `(Schritt ${index} steht aktuell auf '${bisherig?.status ?? 'unbekannt'}').`,
+      );
+    }
     this.laeuftGerade = true;
     try {
-      for (let i = 0; i < this.plan.schritte.length; i++) {
+      await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      const schritt = this.plan.schritte[index]!;
+      this.setStatus(index, { status: 'laeuft' });
+      try {
+        const ergebnis = await this.fuehreAus(schritt.commandId, schritt.params);
+        this.setStatus(index, { status: 'ok', ergebnis });
+      } catch (err) {
+        const meldung = err instanceof Error ? err.message : String(err);
+        this.setStatus(index, { status: 'fehler', fehler: meldung });
+      }
+    } finally {
+      this.laeuftGerade = false;
+    }
+  }
+
+  /** Gemeinsamer Zulässigkeits-Check für `fortsetzenAb`/`wiederholeSchritt`. */
+  private pruefeFortsetzbar(methode: 'fortsetzenAb' | 'wiederholeSchritt'): void {
+    if (this.laeuftGerade) {
+      throw new Error(`${methode}() kann nicht aufgerufen werden, während der Lauf noch läuft.`);
+    }
+    const status = this.gesamtStatus;
+    if (status !== 'fehler' && status !== 'abgebrochen') {
+      throw new Error(
+        `${methode}() ist nur aus dem Zustand 'fehler' oder 'abgebrochen' zulässig (aktuell: '${status}').`,
+      );
+    }
+  }
+
+  /** Gemeinsame Schrittschleife für `starte()`/`fortsetzenAb()` — identische
+   * Yield+Abbruch-Mechanik (C-11), nur der Startindex unterscheidet sich. */
+  private async fuehreSchritteAus(vonIndex: number): Promise<void> {
+    this.laeuftGerade = true;
+    try {
+      for (let i = vonIndex; i < this.plan.schritte.length; i++) {
         if (this.abgebrochenFlag) return;
         // C-11-Matrix-Fund (v0.8.6-C): ein Macrotask-Yield VOR jedem Schritt.
         // Ohne ihn lief die Schleife über rein synchrone Kernel-Commands in

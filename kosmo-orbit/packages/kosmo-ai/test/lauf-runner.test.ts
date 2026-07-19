@@ -273,3 +273,196 @@ describe('LaufRunner — Einmaligkeit / kein Auto-Start', () => {
     expect(runner.schritte[0]?.status).toBe('ok');
   });
 });
+
+describe('LaufRunner — fortsetzenAb (v0.8.8 PA5, V088-SPEZ §3 E4, §6 Sanktion 4)', () => {
+  it('führt NUR die verbleibenden Schritte ab dem angegebenen Index aus, Rest bis dorthin bleibt unberührt', async () => {
+    const plan = planMit(5);
+    const fuehreAus = vi.fn(async (id: string) => {
+      if (id === 'design.schritt2') throw new Error('kaputt');
+      return `erledigt: ${id}`;
+    });
+    const runner = new LaufRunner(plan, fuehreAus);
+    await runner.starte();
+    expect(runner.gesamtStatus).toBe('fehler');
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'ok', 'fehler', 'offen', 'offen']);
+    fuehreAus.mockClear();
+
+    // "Reparatur" simulieren: derselbe Fake läuft ab jetzt fehlerfrei durch.
+    fuehreAus.mockImplementation(async (id: string) => `repariert: ${id}`);
+    await runner.fortsetzenAb(2);
+
+    expect(runner.gesamtStatus).toBe('fertig');
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'ok', 'ok', 'ok', 'ok']);
+    // Schritt 0/1 liefen NIE erneut — nur die drei verbleibenden (Index 2-4).
+    expect(fuehreAus).toHaveBeenCalledTimes(3);
+    expect(fuehreAus).toHaveBeenNthCalledWith(1, 'design.schritt2', { index: 2 });
+  });
+
+  it('nach einem Abbruch führt fortsetzenAb NUR die noch offenen Schritte aus (kein Doppel-Vollzug)', async () => {
+    const plan = planMit(4);
+    const gelaufen: string[] = [];
+    const runner = new LaufRunner(plan, (id) => {
+      gelaufen.push(id);
+      return 'ok';
+    });
+    const lauf = runner.starte();
+    await new Promise((r) => setTimeout(r, 0)); // Schritt 0 läuft
+    runner.abbrechen();
+    await lauf;
+    expect(runner.gesamtStatus).toBe('abgebrochen');
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'offen', 'offen', 'offen']);
+    gelaufen.length = 0;
+
+    await runner.fortsetzenAb(1);
+
+    expect(runner.gesamtStatus).toBe('fertig');
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'ok', 'ok', 'ok']);
+    // GENAU die drei offen gebliebenen Schritte liefen — kein Doppel-Vollzug von Schritt 0.
+    expect(gelaufen).toEqual(['design.schritt1', 'design.schritt2', 'design.schritt3']);
+  });
+
+  it('bleibt weiterhin unterbrechbar (dieselbe Yield+Abbruch-Mechanik wie starte())', async () => {
+    const plan = planMit(5);
+    const fuehreAus = vi.fn((id: string) => (id === 'design.schritt1' ? Promise.reject(new Error('x')) : 'ok'));
+    const runner = new LaufRunner(plan, fuehreAus);
+    await runner.starte();
+    expect(runner.gesamtStatus).toBe('fehler');
+    fuehreAus.mockClear();
+    fuehreAus.mockImplementation(() => 'ok');
+
+    const fortsetzung = runner.fortsetzenAb(1);
+    await new Promise((r) => setTimeout(r, 0)); // Schritt 1 (Index 1) läuft jetzt
+    runner.abbrechen();
+    await fortsetzung;
+
+    expect(runner.gesamtStatus).toBe('abgebrochen');
+    const stati = runner.schritte.map((s) => s.status);
+    expect(stati[0]).toBe('ok'); // vor dem ursprünglichen Fehler, unberührt
+    expect(stati[1]).toBe('ok'); // lief ehrlich zu Ende, bevor der Abbruch griff
+    expect(stati.slice(2)).toContain('offen'); // der Rest blieb stehen
+  });
+
+  it('wirft, wenn der Runner NICHT in Fehler/Abbruch steht (frisch, noch nie gestartet)', async () => {
+    const runner = new LaufRunner(planMit(2), async () => 'ok');
+    await expect(runner.fortsetzenAb(0)).rejects.toThrow(/fehler.*abgebrochen|abgebrochen.*fehler/i);
+  });
+
+  it('wirft, wenn der Runner bereits fertig ist', async () => {
+    const runner = new LaufRunner(planMit(1), async () => 'ok');
+    await runner.starte();
+    expect(runner.gesamtStatus).toBe('fertig');
+    await expect(runner.fortsetzenAb(0)).rejects.toThrow(/fertig/);
+  });
+
+  it('wirft, wenn der Runner gerade läuft', async () => {
+    const d = deferred<string>();
+    const plan = planMit(2);
+    const runner = new LaufRunner(plan, () => d.promise);
+    const lauf = runner.starte();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(runner.gesamtStatus).toBe('laeuft');
+    await expect(runner.fortsetzenAb(0)).rejects.toThrow();
+    d.resolve('fertig');
+    await lauf;
+  });
+});
+
+describe('LaufRunner — wiederholeSchritt (v0.8.8 PA5, V088-SPEZ §3 E4, §6 Sanktion 4)', () => {
+  it('wiederholt GENAU einen fehlgeschlagenen Schritt; bei Erfolg wird nur dieser eine Schritt ok', async () => {
+    const plan = planMit(3);
+    const fuehreAus = vi.fn(async (id: string) => {
+      if (id === 'design.schritt1') throw new Error('kaputt');
+      return `erledigt: ${id}`;
+    });
+    const runner = new LaufRunner(plan, fuehreAus);
+    await runner.starte();
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'fehler', 'offen']);
+    fuehreAus.mockClear();
+    fuehreAus.mockImplementation(async (id: string) => `repariert: ${id}`);
+
+    await runner.wiederholeSchritt(1);
+
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'ok', 'offen']);
+    // Schritt 2 blieb unangetastet — GENAU EIN Schritt lief erneut.
+    expect(fuehreAus).toHaveBeenCalledTimes(1);
+    expect(fuehreAus).toHaveBeenCalledWith('design.schritt1', { index: 1 });
+    // Gesamtzustand neu ermittelt: kein 'fehler' mehr im Array, aber Schritt 2
+    // noch offen — «angehalten mit Teilergebnis», dieselbe Semantik wie ein
+    // regulärer Abbruch (dokumentierter Entscheid, `gesamtStatus`-Kommentar
+    // in `lauf-runner.ts`), NICHT 'offen' (das würde «nie begonnen» heissen).
+    expect(runner.gesamtStatus).toBe('abgebrochen');
+  });
+
+  it('wiederholt einen offen gebliebenen Schritt nach einem Abbruch', async () => {
+    const plan = planMit(3);
+    const gelaufen: string[] = [];
+    const runner = new LaufRunner(plan, (id) => {
+      gelaufen.push(id);
+      return 'ok';
+    });
+    const lauf = runner.starte();
+    await new Promise((r) => setTimeout(r, 0));
+    runner.abbrechen();
+    await lauf;
+    expect(runner.schritte.map((s) => s.status)).toEqual(['ok', 'offen', 'offen']);
+    gelaufen.length = 0;
+
+    await runner.wiederholeSchritt(1);
+
+    expect(runner.schritte[1]?.status).toBe('ok');
+    expect(runner.schritte[2]?.status).toBe('offen'); // NUR Schritt 1 lief
+    expect(gelaufen).toEqual(['design.schritt1']);
+  });
+
+  it('bleibt bei erneutem Scheitern ehrlich fehler — kein stiller Erfolg vorgetäuscht', async () => {
+    const plan = planMit(2);
+    const runner = new LaufRunner(plan, () => {
+      throw new Error('immer noch kaputt');
+    });
+    await runner.starte();
+    expect(runner.schritte[0]).toEqual({ status: 'fehler', fehler: 'immer noch kaputt' });
+
+    await runner.wiederholeSchritt(0);
+    expect(runner.schritte[0]).toEqual({ status: 'fehler', fehler: 'immer noch kaputt' });
+    expect(runner.gesamtStatus).toBe('fehler');
+  });
+
+  it('wirft für einen Index, der bereits ok ist (kein Doppel-Vollzug)', async () => {
+    const plan = planMit(2);
+    const fuehreAus = vi.fn(async (id: string) => {
+      if (id === 'design.schritt1') throw new Error('kaputt');
+      return 'ok';
+    });
+    const runner = new LaufRunner(plan, fuehreAus);
+    await runner.starte();
+    expect(runner.schritte[0]?.status).toBe('ok');
+    fuehreAus.mockClear();
+
+    await expect(runner.wiederholeSchritt(0)).rejects.toThrow(/ok/);
+    expect(fuehreAus).not.toHaveBeenCalled(); // der bereits erledigte Schritt 0 lief NICHT erneut
+  });
+
+  it('wirft, wenn der Runner NICHT in Fehler/Abbruch steht', async () => {
+    const runner = new LaufRunner(planMit(2), async () => 'ok');
+    await expect(runner.wiederholeSchritt(0)).rejects.toThrow();
+  });
+
+  it('nutzt dieselbe Macrotask-Yield-Mechanik wie starte() — der Schritt ist erst NACH dem Yield "laeuft"', async () => {
+    const plan = planMit(1);
+    let anzahl = 0;
+    const runner = new LaufRunner(plan, () => {
+      anzahl++;
+      if (anzahl === 1) throw new Error('erst kaputt');
+      return 'repariert';
+    });
+    await runner.starte();
+    expect(runner.gesamtStatus).toBe('fehler');
+
+    const wiederholung = runner.wiederholeSchritt(0);
+    // Direkt nach dem Aufruf (noch VOR dem Macrotask-Yield) ist der Schritt
+    // noch NICHT auf 'laeuft' — derselbe Vertrag wie starte()s erster Schritt.
+    expect(runner.schritte[0]?.status).toBe('fehler');
+    await wiederholung;
+    expect(runner.schritte[0]?.status).toBe('ok');
+  });
+});
