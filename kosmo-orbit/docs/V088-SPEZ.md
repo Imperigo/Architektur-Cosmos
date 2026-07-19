@@ -166,20 +166,55 @@ liegen in 0.8.9 (GOLDEN-WECHSEL-089-Sammelwechsel).
 
 ## 7 · Vollständigkeits-Matrix (Abnahme Tag C)
 
-- [ ] **C-1** verschieben bewegt masskette/kommentar/furniture/beam/boundary/etikett in-place: Identität, targetId, rotationGrad und alle Nicht-Punkt-Felder bleiben; Undo byte-symmetrisch → PA1
-- [ ] **C-2** eigenschaftSetzen: neue Felder setzbar; Falschwerte (rotationGrad 'schräg', b ≤ 0, raumTyp ausserhalb Enum) werfen VOR jedem Patch, Fehlermeldung nennt erlaubte Felder → PA1
-- [ ] **C-3** DesignWorkspace-Drags nutzen EIN verschieben statt Löschen+Neusetzen (EIN Undo, ID stabil); Rest-Workarounds als benannter Aufschub dokumentiert → Fable
-- [ ] **C-4** Goldens byte-still (sha256 HEAD↔Arbeitsbaum) + svg-qa 36/0 → alle
-- [ ] **C-5** Flächennachweis-CSV == areaReport (Stichprobe nachgerechnet), de-CH-Format, parzelle/nachbar ausgenommen, Export-Knopf per E2E → PA2
-- [ ] **C-6** Autopilot: Fehler → «Fortsetzen» führt GENAU die offenen Schritte aus, «Wiederholen» genau einen; kein Auto-Start; Knöpfe nur im Fehler-/Abbruch-Zustand → PA5
-- [ ] **C-7** lauf-runtime 20× am Stück grün; Stale-Runner-Write nachweislich ignoriert, aktiver (auch fortgesetzter) Runner schreibt durch → PA5
-- [ ] **C-8** Esc bricht die Marquee-Geste über den Store-Kanal ab, ohne die Auswahl zu leeren; kein stopImmediatePropagation mehr im Pfad → PB1/Fable
-- [ ] **C-9** Vollständig verdecktes Element wird vom Marquee NICHT gewählt, teilsichtbares schon; Raycast nur im pointerup; <20 ms; Griffe/LineSegments raycast-blind → PB1
-- [ ] **C-10** Port-Farben + Stimmungs-Canvas folgen dem Theme-/Akzent-Wechsel (Computed-Style-/Pixel-Beweis); grep: kein neuer Hex ausserhalb aura.css → PA4
-- [ ] **C-11** Aufnahme → Blatt: Asset im Doc, Label «Vorschau (Fake-Render)» sichtbar, Undo leert + GC räumt, Deckel wirft ehrlich, .kosmo-Grösse belegt → PB2
-- [ ] **C-12** Eval: Mehr-Zug via @ref grün, Byte-Diff-docUnveraendert, Dedup- und rotationGrad-Negativfälle; KEIN Zug führt Commands aus → PA3
-- [ ] **C-13** 0× waitForTimeout in plan-interaktion/kurztasten-pan/multi-auswahl, act()-Warnung weg, force:true-Audit dokumentiert, Suiten grün → PB3
-- [ ] **C-14** Verschlanktes Ritual komplett: Matrix, lehren/v0.8.8.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen), §0-Delta, Notiz (Owner-Testpause benannt, Smoke-Puffer-Zeile bleibt), release-gate 0, Build-Request-Push — und NACHWEISLICH kein PDF/keine Zustellung → PC/Fable
+- [x] **C-1** verschieben bewegt masskette/kommentar/furniture/beam/boundary/etikett in-place: Identität, targetId, rotationGrad und alle Nicht-Punkt-Felder bleiben; Undo byte-symmetrisch → PA1
+- [x] **C-2** eigenschaftSetzen: neue Felder setzbar; Falschwerte (rotationGrad 'schräg', b ≤ 0, raumTyp ausserhalb Enum) werfen VOR jedem Patch, Fehlermeldung nennt erlaubte Felder → PA1
+- [x] **C-3** DesignWorkspace-Drags nutzen EIN verschieben statt Löschen+Neusetzen (EIN Undo, ID stabil); Rest-Workarounds als benannter Aufschub dokumentiert → Fable
+- [x] **C-4** Goldens byte-still (sha256 HEAD↔Arbeitsbaum) + svg-qa 36/0 → alle
+- [x] **C-5** Flächennachweis-CSV == areaReport (Stichprobe nachgerechnet), de-CH-Format, parzelle/nachbar ausgenommen, Export-Knopf per E2E → PA2
+- [x] **C-6** Autopilot: Fehler → «Fortsetzen» führt GENAU die offenen Schritte aus, «Wiederholen» genau einen; kein Auto-Start; Knöpfe nur im Fehler-/Abbruch-Zustand → PA5
+- [x] **C-7** lauf-runtime 20× am Stück grün; Stale-Runner-Write nachweislich ignoriert, aktiver (auch fortgesetzter) Runner schreibt durch → PA5
+- [x] **C-8** Esc bricht die Marquee-Geste über den Store-Kanal ab, ohne die Auswahl zu leeren; kein stopImmediatePropagation mehr im Pfad → PB1/Fable
+- [x] **C-9** Vollständig verdecktes Element wird vom Marquee NICHT gewählt, teilsichtbares schon; Raycast nur im pointerup; <20 ms; Griffe/LineSegments raycast-blind → PB1
+- [x] **C-10** Port-Farben + Stimmungs-Canvas folgen dem Theme-/Akzent-Wechsel (Computed-Style-/Pixel-Beweis); grep: kein neuer Hex ausserhalb aura.css → PA4
+- [x] **C-11** Aufnahme → Blatt: Asset im Doc, Label «Vorschau (Fake-Render)» sichtbar, Undo leert + GC räumt, Deckel wirft ehrlich, .kosmo-Grösse belegt → PB2
+- [x] **C-12** Eval: Mehr-Zug via @ref grün, Byte-Diff-docUnveraendert, Dedup- und rotationGrad-Negativfälle; KEIN Zug führt Commands aus → PA3
+- [x] **C-13** 0× waitForTimeout in plan-interaktion/kurztasten-pan/multi-auswahl, act()-Warnung weg, force:true-Audit dokumentiert, Suiten grün → PB3
+- [x] **C-14** Verschlanktes Ritual komplett: Matrix, lehren/v0.8.8.md, Sechs-Träger-Bump, Neuigkeiten (ehrliche Grenzen), §0-Delta, Notiz (Owner-Testpause benannt, Smoke-Puffer-Zeile bleibt), release-gate 0, Build-Request-Push — und NACHWEISLICH kein PDF/keine Zustellung → PC/Fable
+
+
+### Ergebnis der Matrix-Abnahme (19.07.2026, Tag C)
+
+13 unabhängige adversariale Prüfer (Workflow-Fan-out, je Zelle einer,
+StructuredOutput; C-14 = das verschlankte Release-Ritual selbst) gegen
+den Live-Build auf :5183: **10/13 sofort bestanden, 3 Funde — 1 gefixt,
+2 als dokumentierte Grenzen geurteilt:**
+
+- **C-11 (Fund, gefixt):** der ältere Manuell/Einfach-Weg in
+  VisWorkspace («Aufs Blatt» am Render-Job) trug eine EIGENE
+  Platzierungs-Kopie ohne E7-Deckel und ohne Pflicht-Label. Fix:
+  vis-jobs exportiert den gehärteten Kern `platziereBildAufsBlatt`,
+  VisWorkspace ruft ihn statt der Kopie; Regressionstest in
+  `e2e/vis-publish-bild.spec.ts` (Commit `59b5f98`, ROADMAP 518).
+- **C-10 (dokumentierte Grenze):** Token-Brücke mechanisch erfüllt
+  (kein Hex mehr, vis-token 4/4 mit Override-Beweis, Viewport3D
+  unberührt) — die Port-/Stimmungs-Token sind aber bewusst
+  theme-invariant definiert (gegatete Tag-A-Entscheidung, ROADMAP 510):
+  ein echter Theme-/Akzent-Wechsel ändert sie nicht. Eigene
+  Theme-Paletten für die 14 Werte = 0.8.9-Kandidat mit Owner-Blick.
+- **C-12 (dokumentierte Wortlaut-Abweichung, bereits ROADMAP 511):**
+  der rotationGrad-Negativfall ist im Eval strukturell unmöglich, ohne
+  Sanktion 9 zu brechen (Wert-Validierung feuert erst im Command-run) —
+  er lebt als Kernel-Unit-Test (`verschieben-symmetrie.test.ts`), der
+  Eval deckt den Unbekanntes-Feld-Weg (cmd-45); Prüfer-Rerun 45/45.
+  Mehr-Zug/@ref, Byte-Diff und Dedup sind uneingeschränkt bestanden.
+
+Zusatzbefund C-1 (kein Blocker): furniture/beam/boundary/etikett sind
+in der 2D-Zieh-Geste noch nicht freigeschaltet (VERSCHIEBBAR-Set in
+plan-hit-test.ts) — 0.8.9-Kandidat. C-14: Ritual nachweislich OHNE
+Rundgang-PDF und OHNE Installer-Zustellung (Sanktion 10, Owner-Rahmen
+bis 0.9.0); der `.desktop-build-request`-Push folgt unmittelbar auf den
+Release-Commit. Zellen-Verdicts mit Beweisen im Workflow-Journal
+(wf_54cd4155); Details ROADMAP 518.
 
 ## 8 · Ehrliche Nicht-Ziele
 

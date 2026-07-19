@@ -35,6 +35,34 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.8',
+    datum: '2026-07-19',
+    punkte: [
+      {
+        text: 'Verschieben kann jetzt ALLE Elementarten: Massketten, Kommentare, Möbel, Unterzüge, Grundstücksgrenzen und Etiketten wandern als ein einziger Befehl mit — sie behalten dabei ihre Identität (kein verstecktes Löschen+Neusetzen mehr), Etiketten bleiben an ihrem Ziel verankert, und ein Undo stellt alles byte-genau wieder her. Das Eigenschaften-Setzen kennt neue Felder (Raumnummer, Raumtyp, Möbel-/Stützen-Drehung, Stützen- und Unterzug-Masse, Fenster-Details) — falsche Werte werden mit einer Meldung abgewiesen, die die erlaubten Felder nennt, bevor irgendetwas am Dokument passiert.',
+        station: 'design',
+      },
+      {
+        text: 'Das 3D-Aufziehrechteck sieht nicht mehr durch Wände: überwiegend verdeckte Elemente bleiben draussen, teilsichtbare kommen mit rein (ehrliche Grenze: was mehrheitlich hinter anderem liegt, wird ausgelassen — die Vorschau während des Aufziehens bleibt ein reines Bildschirm-Rechteck). Esc bricht dabei nur noch die Geste ab, die bestehende Auswahl bleibt stehen.',
+        station: 'design',
+      },
+      {
+        text: 'Der SIA-416-Flächennachweis lässt sich als CSV exportieren (HNF/NNF/VF/FF/KF je Geschoss, NGF-Summen, aGF-Ziel und GF-Schätzung — dieselben Zahlen wie im Kennzahlen-Panel, im Schweizer Format).',
+        station: 'publish',
+      },
+      {
+        text: 'Fake-Renderings können aufs Blatt: «Aufs Blatt legen» bringt die Vorschau-Aufnahme nach KosmoPublish — zwingend beschriftet mit «Vorschau (Fake-Render)» (auf ALLEN Wegen, auch dem älteren Manuell-Tab), mit hartem Grössen-Deckel (~1 MB, darüber kommt eine ehrliche Fehlermeldung statt eines aufgeblähten Dokuments), und ein Undo räumt Bild samt Speicher wieder weg. Echte HomeStation-Renderings bleiben ein späteres Kapitel.',
+        station: 'vis',
+      },
+      {
+        text: 'Der Autopilot ist nach Fehlern fortsetzbar: «Ab Schritt N fortsetzen» führt genau die offenen Schritte aus, «Schritt N wiederholen» genau einen — beides nur auf Klick und nur im Fehler-/Abbruch-Zustand. Die zugrunde liegende Lauf-Maschinerie ist gegen veraltete Läufe abgeriegelt (die Ursache eines seltenen Test-Flackerns, jetzt an der Wurzel behoben).',
+      },
+      {
+        text: 'Unter der Haube: die Vis-Portfarben und Stimmungs-Verläufe hängen an Design-Tokens statt an festen Hex-Werten (eigene Farbpaletten je Thema folgen später), die Zeichner-Eval prüft jetzt Mehr-Zug-Dialoge mit echtem Byte-Vergleich (45 Prüffälle, 45 bestanden), und die letzten geschätzten Wartezeiten in den UI-Tests sind echten Zustands-Prüfungen gewichen. Die Release-Matrix lief mit 13 unabhängigen Prüfern: 10 sofort bestanden, der eine echte Fund (Manuell-Weg ohne Pflicht-Label) ist gefixt, zwei sind als dokumentierte Grenzen benannt.',
+      },
+    ],
+  },
+  {
     version: '0.8.7',
     datum: '2026-07-19',
     punkte: [
