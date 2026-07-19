@@ -866,6 +866,14 @@ export function DesignWorkspace({
       if (document.querySelector('[role="dialog"]')) return; // Palette/Bestätigung/Kurzbefehle behalten die Tastatur
       const fokusImEingabefeld = istEingabefeld(document.activeElement);
       if (!e.repeat && !e.metaKey && !e.ctrlKey && !e.altKey && !fokusImEingabefeld && e.key === 'Escape') {
+        // E6-Guard (v0.8.8 Fable-Nachzug, docs/V088-SPEZ.md §3 E6, C-8):
+        // läuft in Viewport3D gerade eine Shift-Marquee-Geste, gehört DIESES
+        // Esc allein ihr (Geste abbrechen, Auswahl bleibt) — der Zustands-
+        // Kanal `marqueeAktiv` (viewport-chrome-runtime.ts, PB1-088) ersetzt
+        // das frühere `ev.stopImmediatePropagation()` im Viewport3D-onKey-
+        // Escape-Zweig (dort im selben Zug entfernt): Zustand statt
+        // Listener-Reihenfolge-Kopplung.
+        if (useViewportChromeRuntime.getState().marqueeAktiv) return;
         // D10-Fix (v0.8.5 PB1, docs/V085-SPEZ.md §7 C-18): eine laufende
         // Masskette (Werkzeug 'messen', ≥2 Punkte) soll Esc auch in REINEM
         // view-2d abschliessen statt nur verwerfen — bislang lief der

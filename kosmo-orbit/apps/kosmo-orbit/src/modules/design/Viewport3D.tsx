@@ -2099,42 +2099,21 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
           controls.enabled = true;
           setzeTouchStyles();
           invalidate();
-          // E6 (v0.8.8 PB1, docs/V088-SPEZ.md §3 E6): Esc-Ende der
-          // Marquee-Geste über den neuen Store-Kanal.
-          useViewportChromeRuntime.setState({ marqueeAktiv: false });
-          // DesignWorkspace.tsx trägt EINEN EIGENEN, unabhängigen
-          // `window`-Keydown-Listener für Escape (D10-Fix v0.8.5 PB1), der
-          // `handlersRef.current.onEscape()` bei JEDEM Escape direkt aufruft
-          // — unabhängig vom Zustand hier. Dieser Listener hier (Viewport3D)
-          // registriert sich auf demselben `window` zuerst (React committet
-          // Kind-Effekte vor Eltern-Effekten), darum verhindert
-          // `stopImmediatePropagation()` HIER zuverlässig, dass der spätere
-          // DesignWorkspace-Listener dieselbe Taste noch als «Auswahl
-          // leeren» deutet (sonst FEUERT die Marquee-Geste indirekt doch,
-          // nur über den Umweg des fremden Listeners statt über
-          // `onMarqueeAuswahl`).
-          //
-          // ÜBERGABE-PUNKT AN FABLE (E6, D6, C-8, geprüfte ENTSCHEID-Zeile
-          // dieses Pakets): `stopImmediatePropagation()` bleibt HIER bewusst
-          // STEHEN, obwohl C-8 langfristig „kein `stopImmediatePropagation`
-          // mehr im Pfad" verlangt (§7, dort ausdrücklich „→ PB1/Fable"
-          // zugeordnet, also gemeinsam). Grund: ohne einen Guard in
-          // `DesignWorkspace.tsx`, der `marqueeAktiv` VOR dem Leeren der
-          // Auswahl prüft, würde ein Entfernen dieses Aufrufs HEUTE dazu
-          // führen, dass derselbe Esc-Tastendruck ZUSÄTZLICH den
-          // unabhängigen DesignWorkspace-Escape-Handler erreicht und die
-          // GESAMTE Auswahl leert (statt nur die Marquee-Geste abzubrechen)
-          // — geprüft, nicht nur behauptet: das Entfernen dieser Zeile ohne
-          // Gegenstück lässt `e2e/viewport3d-marquee.spec.ts` C-14d
-          // („Esc bricht ab, Auswahl bleibt unverändert") rot laufen, weil
-          // `DesignWorkspace.tsx`s Escape-Zweig (TABU für dieses Paket,
-          // Betriebsregel Dateikreis) noch KEINEN `marqueeAktiv`-Guard
-          // besitzt. Der neue `marqueeAktiv`-Store-Kanal (oben gesetzt) ist
-          // exakt der vorbereitete Lese-Anker dafür — Fable entfernt
-          // `stopImmediatePropagation()` HIER zusammen mit dem neuen Guard
-          // in `DesignWorkspace.tsx` in EINEM atomaren Zug (s. `viewport-
-          // chrome-runtime.ts` `marqueeAktiv`-Kopfkommentar).
-          ev.stopImmediatePropagation();
+          // E6 (v0.8.8 PB1 + Fable-Nachzug, docs/V088-SPEZ.md §3 E6, C-8):
+          // Esc-Ende der Marquee-Geste über den Store-Kanal. Das frühere
+          // `ev.stopImmediatePropagation()` ist hier ATOMAR mit dem neuen
+          // `marqueeAktiv`-Guard im DesignWorkspace-Escape-Zweig entfernt —
+          // Zustand statt Listener-Reihenfolge-Kopplung. Der Reset läuft
+          // BEWUSST als Macrotask nachgelagert: dieser Listener ist auf
+          // demselben `window` VOR dem DesignWorkspace-Listener registriert
+          // (React committet Kind-Effekte vor Eltern-Effekten), und dessen
+          // Guard muss `marqueeAktiv` für DIESES Keydown noch als true
+          // lesen. setTimeout(0) statt queueMicrotask, weil Microtask-
+          // Checkpoints schon ZWISCHEN zwei Listener-Aufrufen desselben
+          // Events laufen — ein Macrotask erst nach dem kompletten Dispatch.
+          window.setTimeout(() => {
+            useViewportChromeRuntime.setState({ marqueeAktiv: false });
+          }, 0);
           return;
         }
         handlers.current?.onEscape?.();

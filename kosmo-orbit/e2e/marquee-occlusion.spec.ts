@@ -16,14 +16,14 @@ import { expect, test, type Page } from '@playwright/test';
  * onPointerMove-Vorschau (Overlay-Rechteck) bleibt unverändert reine
  * Bildschirm-Geometrie ohne Occlusion.
  *
- * E6: `viewport-chrome-runtime.ts` bekommt ein neues `marqueeAktiv`-Feld
- * (Brücken-Kanal für den späteren Fable-Escape-Guard in
- * `DesignWorkspace.tsx`, TABU für dieses Paket) — Test (d) beweist, dass
- * Viewport3D es bei JEDEM Gesten-Ende korrekt zurücksetzt (Commit UND Esc).
- * `stopImmediatePropagation()` im `onKey`-Escape-Zweig bleibt bewusst DRIN
- * (Übergabe-Punkt an Fable, s. Abschlussbericht + Code-Kommentar dort) —
- * hier NICHT erneut geprüft (das deckt bereits `e2e/viewport3d-marquee.spec.ts`
- * C-14d ab, das als Regression unverändert danebenläuft).
+ * E6: `viewport-chrome-runtime.ts` bekommt ein neues `marqueeAktiv`-Feld —
+ * Test (d) beweist, dass Viewport3D es bei JEDEM Gesten-Ende korrekt
+ * zurücksetzt (Commit UND Esc; der Esc-Reset läuft als Macrotask nach dem
+ * Dispatch, darum pollt (d) statt sofort zu lesen). Seit dem Fable-Nachzug
+ * (direkt nach PB1) IST der Guard in `DesignWorkspace.tsx` gebaut und
+ * `stopImmediatePropagation()` im `onKey`-Escape-Zweig entfernt — dass Esc
+ * die Auswahl währenddessen NICHT leert, deckt `e2e/viewport3d-marquee.spec.ts`
+ * C-14d ab, das als Regression unverändert danebenläuft.
  *
  * Szene/Kamera-Strategie 1:1 aus `e2e/viewport3d-marquee.spec.ts` übernommen
  * (deterministische Kamera über `__kosmoViewport.setCamera`, Klickpunkte per

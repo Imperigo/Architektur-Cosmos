@@ -72,21 +72,18 @@ export interface ViewportChromeRuntime {
   onFuerVisAufnehmen: () => void;
   onTexturToggle: () => void;
 
-  // -- v0.8.8 PB1 (E6, docs/V088-SPEZ.md §3 E6, D6) — Esc-Zustands-Kanal ----
-  /** Brücken-Feld: true, solange in Viewport3D eine Shift-Marquee-Geste
-   *  läuft (Start in `onCaptureDown`, Ende bei JEDEM Ausgang — Commit, Esc,
-   *  pointercancel, Stale-Discard, Unmount-Cleanup). Existiert, weil Esc
-   *  während einer laufenden 3D-Marquee-Geste HEUTE über
-   *  `ev.stopImmediatePropagation()` im Viewport3D-`onKey`-Escape-Zweig vor
-   *  dem unabhängigen `DesignWorkspace.tsx`-window-Escape-Listener abgefangen
-   *  wird (D6-Befund) — das bleibt in DIESEM Paket unverändert (kein
-   *  Guard-Bau in DesignWorkspace.tsx, TABU für PB1). Der Store-Kanal ist
-   *  der VORBEREITETE Lese-Anker für den Fable-Nachzug: sobald
-   *  DesignWorkspace.tsx seinen eigenen Escape-Handler auf
-   *  `useViewportChromeRuntime.getState().marqueeAktiv` prüft (statt die
-   *  Auswahl blind zu leeren), kann `stopImmediatePropagation()` dort
-   *  ATOMAR mit dem neuen Guard entfernt werden — Übergabe-Punkt, s.
-   *  Viewport3D.tsx `onKey`-Kommentar. */
+  // -- v0.8.8 PB1+Fable (E6, docs/V088-SPEZ.md §3 E6, D6) — Esc-Zustands-Kanal
+  /** true, solange in Viewport3D eine Shift-Marquee-Geste läuft (Start in
+   *  `onCaptureDown`, Ende bei JEDEM Ausgang — Commit, Esc, pointercancel,
+   *  Stale-Discard, Unmount-Cleanup). Ersetzt seit dem Fable-Nachzug das
+   *  frühere `ev.stopImmediatePropagation()` im Viewport3D-`onKey`-Escape-
+   *  Zweig (D6-Befund): der DesignWorkspace-Escape-Handler prüft dieses
+   *  Feld und lässt ein Esc, das einer laufenden Marquee-Geste gehört,
+   *  unangetastet (Geste bricht ab, Auswahl bleibt) — Zustand statt
+   *  Listener-Reihenfolge-Kopplung. Timing-Detail: der Esc-Reset auf false
+   *  läuft in Viewport3D als Macrotask NACH dem Event-Dispatch, damit der
+   *  später registrierte DesignWorkspace-Listener im selben Keydown noch
+   *  true liest (s. `onKey`-Kommentar dort). */
   marqueeAktiv: boolean;
 }
 
