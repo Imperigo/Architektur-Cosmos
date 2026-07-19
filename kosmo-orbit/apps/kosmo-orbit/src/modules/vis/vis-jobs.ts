@@ -369,13 +369,44 @@ export async function bildBlob(jobId: string, imageName: string): Promise<Blob> 
 }
 
 /**
+ * E7-Deckel (V088-SPEZ §3 E7, Sanktion 8): Base64-Text einer aufs Blatt
+ * gelegten dataURL über ~1 MiB → ehrliche Fehlerzone STATT Doc-Schreiben.
+ * Prüfung läuft VOR `useProject.getState()`/jedem `runCommand` in
+ * `platziereBildAufsBlatt` — bei Überschreitung passiert am Doc NICHTS.
+ */
+const BILD_DECKEL_BASE64_ZEICHEN = 1_048_576; // ~1 MiB Base64-Zeichen (Owner-Deckel «~1 MB»)
+
+function pruefeBildDeckel(dataUrl: string): void {
+  const komma = dataUrl.indexOf(',');
+  const b64 = komma >= 0 ? dataUrl.slice(komma + 1) : dataUrl;
+  if (b64.length > BILD_DECKEL_BASE64_ZEICHEN) {
+    throw new Error('Bild zu gross — verkleinern (Base64 über 1 MB)');
+  }
+}
+
+/**
+ * E7 (V088-SPEZ §3, Sanktion 8): JEDES Bild, das über diesen Weg aufs Blatt
+ * kommt, stammt aus dem Fake-Bridge-Betrieb dieser Version (keine echte
+ * HomeStation-Render-Strecke existiert bislang, `echte-Render-Grössenstrategie`
+ * ist ehrlicher Nicht-Ziel-Punkt) — der Slot-Titel trägt darum IMMER dieses
+ * Label, unabhängig vom aufrufer-seitigen `titel`-Argument.
+ */
+const BILD_LABEL_FAKE_RENDER = 'Vorschau (Fake-Render)';
+
+/**
  * Gemeinsamer Kern von `bildAufsBlatt`/`aufnahmeAufsBlatt` — leerer Bild-Slot
  * zuerst, sonst neuer Slot; ohne Blatt entsteht eines. Alles EIN Undo-Schritt.
  * Gibt den Blattnamen zurück. Nimmt eine FERTIGE dataURL: der Bridge-Weg
  * (`bildAufsBlatt`) holt sie erst per Fetch, der Aufnahme-Weg
  * (`aufnahmeAufsBlatt`) hat sie schon (Viewport-Screenshot, kein Bridge-Job).
+ *
+ * `titel` bleibt als Parameter erhalten (Aufrufer in KuratierFlaeche.tsx/
+ * island/inhalte/austausch.tsx ausserhalb dieses Pakets bleiben unverändert),
+ * bestimmt aber NICHT mehr das Slot-Label — E7 zwingt `BILD_LABEL_FAKE_RENDER`
+ * (Sanktion 8: Fake-Bild ohne Kennzeichnung = ungültig).
  */
-function platziereBildAufsBlatt(dataUrl: string, titel: string): string {
+function platziereBildAufsBlatt(dataUrl: string, _titel: string): string {
+  pruefeBildDeckel(dataUrl); // wirft VOR jedem Doc-Zugriff — kein Command läuft an
   const { doc, runCommand, history } = useProject.getState();
   history.beginGroup();
   try {
@@ -388,8 +419,19 @@ function platziereBildAufsBlatt(dataUrl: string, titel: string): string {
     const leer = (sheet.bilder ?? []).find((b) => !b.assetId);
     if (leer) {
       runCommand('publish.bildFuellen', { sheetId: sheet.id, bildId: leer.id, dataUrl });
+      // `bildFuellen` kennt kein `title`-Param (Kernel-Vertrag bleibt
+      // unverändert) — das Pflicht-Label kommt über den bestehenden
+      // `bildAnpassen`-Command, in DERSELBEN Undo-Gruppe.
+      runCommand('publish.bildAnpassen', { sheetId: sheet.id, bildId: leer.id, title: BILD_LABEL_FAKE_RENDER });
     } else {
-      runCommand('publish.bildPlatzieren', { sheetId: sheet.id, x: 40, y: 40, w: 160, dataUrl, title: titel });
+      runCommand('publish.bildPlatzieren', {
+        sheetId: sheet.id,
+        x: 40,
+        y: 40,
+        w: 160,
+        dataUrl,
+        title: BILD_LABEL_FAKE_RENDER,
+      });
     }
     return sheet.name;
   } finally {
