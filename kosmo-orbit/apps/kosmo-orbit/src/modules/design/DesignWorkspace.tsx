@@ -4794,21 +4794,28 @@ export function StandortSuche() {
    * Antwort da ist.
    *
    * Fixture-Vertrag (Fixture-first, `e2e/oereb-light.spec.ts` definiert ihn):
-   * (a) GetEGRID über den von D7 genannten `ech`-SearchServer-Weg,
+   * (a) GetEGRID über den `ech`-SearchServer-Weg,
    * `searchText=<e>,<n>&type=locations&origins=parcel&sr=2056`, Ergebnis
-   * trägt `attrs.egrid` — dieselbe SearchServer-Form wie die Adresssuche
-   * oben, nur mit Koordinaten statt Text (öffentlich dokumentiert:
-   * https://api3.geo.admin.ch/services/sdiservices.html, eCH-Suche liefert
-   * EGRID für den Origin `parcel`). (b) Extract: das Pfadmuster
-   * `oereb/extract/json/<egrid>` ist NICHT live gegen swisstopo verifiziert
-   * (kantonale ÖREB-Webservices sind föderiert, s. Recherche-Notiz im
-   * Bericht) — die Antwortform `ConcernedTheme`/`NotConcernedTheme` mit
-   * `Code`+mehrsprachigem `Text` STAMMT dagegen aus der öffentlich
-   * dokumentierten ÖREB-Transferstruktur und ist hier bewusst 1:1
-   * übernommen, weil sie ohnehin schon die reine Themencode-
-   * Betroffenheitsliste ist (kein Reissleinen-Abbau nötig). Beide
-   * Endpunkte liegen unter der freigegebenen CSP-Domain `api.geo.admin.ch`
-   * (Sanktion 7).
+   * trägt `attrs.egrid`; (b) Extract über
+   * `oereb/extract/json/<egrid>` mit `ConcernedTheme`/`NotConcernedTheme`
+   * (Form 1:1 aus der öffentlich dokumentierten ÖREB-Transferstruktur).
+   * Beide Endpunkte liegen unter der freigegebenen CSP-Domain
+   * `api.geo.admin.ch` (Sanktion 7).
+   *
+   * ÖREB-LIVE-BEFUND (v0.8.8 D9, per Live-GET am 19.07.2026 verifiziert —
+   * `docs/V088-SPEZ.md` §D9): Dieser Weg funktioniert NUR gegen die
+   * Fixtures, nicht gegen die echte Bundes-API. Konkret: (1) die echte
+   * `ech/SearchServer`-Antwort trägt KEIN `attrs.egrid` (der EGRID steht
+   * nur als Text in `label`/`detail`); (2) die Koordinaten-Query
+   * `searchText=<e>,<n>&origins=parcel` liefert live LEERE `results`;
+   * (3) `api.geo.admin.ch/rest/services/oereb/extract/…` antwortet 404 —
+   * der echte Gateway ist `oereb.geo.admin.ch` (eigene Domain, weder in
+   * der CSP noch in der Proxy-Allowlist). Der Fixture-Vertrag bleibt
+   * deshalb bewusst bestehen; das UI nennt den Auszug «light» und der
+   * Hinweis unten benennt die Quelle. Live-ÖREB ist 0.9.x-Kandidat mit
+   * Owner-Gate: braucht Umbau auf `oereb.geo.admin.ch` + Label-Parsing
+   * für den EGRID + CSP-Freigabe auf BEIDEN Trägern (`tauri.conf.json`
+   * UND `index.html` — Lehre v0.8.7: die CSP hat zwei Träger).
    */
   const oerebAbrufen = async (e: number, n: number) => {
     setOerebFehler(null);
