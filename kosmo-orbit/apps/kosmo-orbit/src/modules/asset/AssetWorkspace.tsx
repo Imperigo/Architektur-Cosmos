@@ -21,6 +21,8 @@ import {
   type RightsStatus,
 } from '../../state/asset-bibliothek';
 import { pruefeGlbHeader } from '../../state/glb-guard';
+import { abbrechenBakeAuftrag, holeBakeAuftrag, ladeBakeErgebnis, starteBakeAuftrag } from './bake-auftrag';
+import type { BakeJob, BakeJobStatus } from '@kosmo/contracts';
 import './asset.css';
 
 /**
@@ -97,6 +99,25 @@ const formatStatusHue: Record<AssetFormatStatus, string> = {
   missing: 'var(--k-ink-faint)',
   blocked: 'var(--k-warning)',
 };
+
+/**
+ * Bake-Rückweg (PBL4-089, `docs/V089-SPEZ.md` §9 E9/E17) — Statuslabel für
+ * den `kosmo.bake-job/v1`-Lebenszyklus. `kein-blender-worker` bekommt HIER
+ * nur einen kurzen Kopf-Titel; der ehrliche Grund kommt WORTGLEICH aus
+ * `job.message` (Bridge-Text, keine eigene Formulierung) — Sanktion 12.
+ */
+const bakeStatusLabel: Record<BakeJobStatus, string> = {
+  awaiting_approval: 'Wartet auf Freigabe',
+  queued: 'Wartet in der Warteschlange',
+  running: 'Läuft',
+  done: 'Fertig',
+  error: 'Fehler',
+  cancelled: 'Abgebrochen',
+  'kein-blender-worker': 'Kein Blender-Worker angeschlossen',
+};
+
+/** Status, in denen ein Bake-Job noch offen ist (Poll läuft, Abbrechen möglich). */
+const BAKE_STATUS_OFFEN: readonly BakeJobStatus[] = ['awaiting_approval', 'queued', 'running'];
 
 const kosmodataRefKindLabel: Record<KosmodataRefKind, string> = {
   reference_entry: 'Referenz-Eintrag',
@@ -351,6 +372,80 @@ export function AssetWorkspace() {
     });
   };
 
+  // Bake-Rückweg (PBL4-089, `docs/V089-SPEZ.md` §9 E9/E17, Sanktion 12):
+  // Smart-UV-Unwrap + AO-Bake auf der HomeStation. `bakeJob` trägt den
+  // laufenden/letzten Auftrag, `bakeAsset` NUR das Asset, das `ladeBakeErgebnis`
+  // tatsächlich gespeichert hat (also NIE bei kein-blender-worker/error/
+  // cancelled) — «Ins Modell laden» erscheint darum ausschliesslich nach
+  // einem echten `done`-Ergebnis.
+  const [bakeJob, setBakeJob] = useState<BakeJob | null>(null);
+  const [bakeAsset, setBakeAsset] = useState<KosmoAsset | null>(null);
+  const [bakeTextureSize, setBakeTextureSize] = useState('');
+  const [bakeDecimateRatio, setBakeDecimateRatio] = useState('');
+  const bakePollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const bakeOffen = bakeJob !== null && BAKE_STATUS_OFFEN.includes(bakeJob.status);
+
+  useEffect(() => {
+    if (!bakeJob || !BAKE_STATUS_OFFEN.includes(bakeJob.status)) return;
+    const jobId = bakeJob.job_id;
+    bakePollRef.current = setInterval(() => {
+      void holeBakeAuftrag(jobId)
+        .then(async (job) => {
+          setBakeJob(job);
+          if (job.status === 'done') {
+            const asset = await ladeBakeErgebnis(job);
+            if (asset) {
+              setBakeAsset(asset);
+              laden();
+              melde(`Bake-Ergebnis «${asset.title}» in der Bibliothek`, { ton: 'erfolg' });
+            }
+          }
+        })
+        .catch((err) => meldeFehler(err));
+    }, 2000);
+    return () => {
+      if (bakePollRef.current) clearInterval(bakePollRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bakeJob?.job_id, bakeJob?.status]);
+
+  const bakeAnstossen = async () => {
+    const roheTextureSize = bakeTextureSize.trim();
+    const roheDecimateRatio = bakeDecimateRatio.trim();
+    const textureSize = roheTextureSize ? Number(roheTextureSize) : undefined;
+    const decimateRatio = roheDecimateRatio ? Number(roheDecimateRatio) : undefined;
+    if (textureSize !== undefined && (!Number.isFinite(textureSize) || textureSize <= 0)) {
+      meldeFehler('Texturgrösse muss eine positive Zahl sein.');
+      return;
+    }
+    if (decimateRatio !== undefined && (!Number.isFinite(decimateRatio) || decimateRatio < 0 || decimateRatio > 1)) {
+      meldeFehler('Decimate-Verhältnis muss zwischen 0 und 1 liegen.');
+      return;
+    }
+    setBakeAsset(null);
+    try {
+      const { doc } = useProject.getState();
+      const job = await starteBakeAuftrag(doc, {
+        ...(textureSize !== undefined ? { textureSize } : {}),
+        ...(decimateRatio !== undefined ? { decimateRatio } : {}),
+      });
+      setBakeJob(job);
+      melde('Bake-Auftrag gesendet — Status folgt.', { ton: 'erfolg' });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
+  const bakeAbbrechen = async () => {
+    if (!bakeJob) return;
+    try {
+      const job = await abbrechenBakeAuftrag(bakeJob.job_id);
+      setBakeJob(job);
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
   return (
     <div className="k-einblenden asset-viewport">
       <div className="asset-scroll">
@@ -388,6 +483,73 @@ export function AssetWorkspace() {
                 kleines GLB (bis {FREEMESH_MAX_VERTICES} Vertices) ins editierbare Doc-Mesh —
                 grössere bleiben ehrlich Referenz-Kontext. Blender exportiert GLB direkt.
               </span>
+
+              {/* Bake-Rückweg (PBL4-089, `docs/V089-SPEZ.md` §9 E9/E17) — Smart-UV-
+                  Unwrap + AO-Bake auf der HomeStation; kleiner, eigenständiger
+                  Abschnitt, unabhängig von der Grid-/Detail-Auswahl darunter. */}
+              <Panel
+                pad
+                className="k-glass asset-bake"
+                data-testid="bake-panel"
+                style={{ ['--_hue' as string]: moduleHue.asset }}
+              >
+                <div className="asset-detail-label">Modell backen (HomeStation)</div>
+                <span className="asset-hinweis">
+                  Smart-UV-Unwrap + AO-Bake auf der HomeStation (Blender headless) — sendet das aktuelle Modell.
+                  Ohne angeschlossenen Blender-Worker endet der Auftrag ehrlich als «kein Blender-Worker», NIE als
+                  unverändertes Modell mit Bake-Etikett.
+                </span>
+                <div className="asset-facetten">
+                  <KInput
+                    data-testid="bake-texture-size"
+                    placeholder="Texturgrösse (px, optional)"
+                    inputMode="numeric"
+                    value={bakeTextureSize}
+                    onChange={(e) => setBakeTextureSize(e.target.value)}
+                    disabled={bakeOffen}
+                  />
+                  <KInput
+                    data-testid="bake-decimate-ratio"
+                    placeholder="Decimate-Verhältnis 0–1 (optional)"
+                    inputMode="decimal"
+                    value={bakeDecimateRatio}
+                    onChange={(e) => setBakeDecimateRatio(e.target.value)}
+                    disabled={bakeOffen}
+                  />
+                </div>
+                <div className="asset-detail-fuss">
+                  <KButton
+                    size="sm"
+                    tone="accent"
+                    data-testid="bake-anstossen"
+                    onClick={() => void bakeAnstossen()}
+                    disabled={bakeOffen}
+                  >
+                    AO-Bake anstossen
+                  </KButton>
+                  {bakeOffen && (
+                    <KButton size="sm" tone="ghost" data-testid="bake-abbrechen" onClick={() => void bakeAbbrechen()}>
+                      Abbrechen
+                    </KButton>
+                  )}
+                  {bakeAsset && (
+                    <KButton
+                      size="sm"
+                      tone="accent"
+                      data-testid="bake-ins-modell"
+                      onClick={() => insModell(bakeAsset)}
+                    >
+                      Ins Modell laden
+                    </KButton>
+                  )}
+                </div>
+                {bakeJob && (
+                  <div data-testid="bake-status" className="asset-detail-rechte">
+                    <div>Status: {bakeStatusLabel[bakeJob.status] ?? bakeJob.status}</div>
+                    {bakeJob.message && <div className="asset-detail-ref-notiz">{bakeJob.message}</div>}
+                  </div>
+                )}
+              </Panel>
 
               <KInput
                 data-testid="asset-search"
