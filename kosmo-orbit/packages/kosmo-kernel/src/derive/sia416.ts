@@ -99,6 +99,41 @@ export function areaReport(doc: KosmoDoc): AreaReport {
 }
 
 
+const SIA416_KLASSEN: Sia416Class[] = ['HNF', 'NNF', 'VF', 'FF', 'KF'];
+
+/** CSV (Semikolon, Excel-CH) — Flächennachweis SIA 416: Matrix
+ * Geschoss × Klasse (HNF/NNF/VF/FF/KF) + NGF je Geschoss, Summenzeile,
+ * aGF-Ziel/GF-Schätzung. Reine Durchreichung von `areaReport` — KEINE
+ * eigene Flächenmathematik hier (jede Zahl kommt unverändert aus dem
+ * `AreaReport`, den `areaReport()` bereits geprüft berechnet).
+ * parzelle/nachbar-Zonen (`zonenArt`) bleiben ausgenommen — das erledigt
+ * bereits `areaReport()` selbst (s. Kommentar dort, D8/H-1), diese Funktion
+ * verstärkt das nicht zusätzlich und prüft es auch nicht erneut.
+ * Quoting/Zeilenenden exakt nach `ausmassAlsCsv`-Muster (RFC-4180-artig:
+ * Semikolon/Anführungszeichen/Zeilenumbruch gequotet, `\n`-Zeilenenden).
+ * Zahlenformat `toFixed(2)` wie dort/`moduleAlsCsv` — Punkt als
+ * Dezimaltrenner entspricht de-CH (anders als de-DE-Komma), bewusst ohne
+ * Tausendertrennzeichen (Bestandsmuster, keine neue CSV-Konvention). */
+export function flaechennachweisCsv(doc: KosmoDoc, report?: AreaReport): string {
+  const r = report ?? areaReport(doc);
+  const feld = (s: string) => (/[";\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s);
+  const f2 = (v: number) => v.toFixed(2);
+  const kopf = ['Geschoss', ...SIA416_KLASSEN, 'NGF'].join(';');
+  const zeilen = r.storeys.map((s) =>
+    [feld(s.storeyName), ...SIA416_KLASSEN.map((k) => f2(s.byClass[k])), f2(s.ngf)].join(';'),
+  );
+  const totalZeile = ['Total', ...SIA416_KLASSEN.map((k) => f2(r.total[k])), f2(r.totalNgf)].join(';');
+  const kennzahlZeile = (label: string, wert: number) =>
+    [label, ...SIA416_KLASSEN.map(() => ''), f2(wert)].join(';');
+  return [
+    kopf,
+    ...zeilen,
+    totalZeile,
+    kennzahlZeile('aGF-Ziel', r.agfZiel),
+    kennzahlZeile('GF-Schätzung', r.gfSchaetzung),
+  ].join('\n');
+}
+
 /** Custom-Kennzahlen (V2-F9): Formeln gegen den AreaReport auswerten. */
 export interface KennzahlErgebnis {
   name: string;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { KButton, KIcon, KInput, melde, meldeFehler } from '@kosmo/ui';
-import { planToDxf, sheetToSvg, transmittalCsv, type Sheet, type Storey } from '@kosmo/kernel';
+import { flaechennachweisCsv, planToDxf, sheetToSvg, transmittalCsv, type Sheet, type Storey } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { usePublishRuntime } from '../../publish-runtime';
 import { exportSetSvgs, exportSheetPdf, exportSheetSetPdf } from '../../export-sheets';
@@ -162,6 +162,26 @@ function ExportHubStufe3() {
       <div className="pubisl-reihe">
         <KInput size="sm" value={neuesSetName} onChange={(e) => setNeuesSetName(e.target.value)} placeholder="Set-Name…" data-testid="island-pubset-name" />
         <KButton size="sm" tone="quiet" data-testid="island-pubset-speichern" onClick={setSpeichern}>Set speichern</KButton>
+      </div>
+      <div className="pubisl-reihe">
+        <KButton
+          size="sm"
+          tone="ghost"
+          data-testid="export-flaechennachweis"
+          onClick={() => {
+            const csv = flaechennachweisCsv(doc);
+            const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${doc.settings.projectName.replace(/\s+/g, '-')}-Flaechennachweis.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10_000);
+          }}
+        >
+          <KIcon name="export" size={14} title="Flächennachweis (SIA 416) exportieren" /> Flächennachweis (SIA 416)
+        </KButton>
       </div>
     </div>
   );
