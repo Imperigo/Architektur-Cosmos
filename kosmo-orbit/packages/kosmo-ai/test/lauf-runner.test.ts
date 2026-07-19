@@ -177,6 +177,28 @@ describe('LaufRunner — Fehler-Stopp (E4: ehrlich, kein Weiterlaufen)', () => {
 });
 
 describe('LaufRunner — Abbruch', () => {
+  it('C-11 (v0.8.6): abbrechen() im echten Zeitfenster zwischen den Schritt-Yields stoppt den Lauf', async () => {
+    const plan = planMit(5);
+    const gelaufen: string[] = [];
+    const runner = new LaufRunner(plan, (commandId) => {
+      gelaufen.push(commandId);
+      return 'ok';
+    });
+    // Start OHNE await, dann einen Macrotask später abbrechen — exakt das
+    // Fenster, das der Matrix-Fund verlangte (vorher lief die Schleife über
+    // synchrone Commands in EINEM Task durch, ein echter Klick kam nie an).
+    const laufPromise = runner.starte();
+    await new Promise((r) => setTimeout(r, 0));
+    runner.abbrechen();
+    await laufPromise;
+
+    expect(runner.gesamtStatus).toBe('abgebrochen');
+    expect(gelaufen.length).toBeLessThan(5);
+    const stati = runner.schritte.map((s) => s.status);
+    expect(stati.filter((st) => st === 'offen').length).toBeGreaterThan(0);
+    expect(stati).not.toContain('fehler');
+  });
+
   it('abbrechen() vor dem Start verhindert jeden Schritt', async () => {
     const plan = planMit(2);
     const fuehreAus = vi.fn(async () => 'ok');
@@ -196,7 +218,9 @@ describe('LaufRunner — Abbruch', () => {
     const fuehreAus = vi.fn((id: string) => (id === 'design.schritt0' ? d.promise : Promise.resolve('ok')));
     const runner = new LaufRunner(plan, fuehreAus);
     const lauf = runner.starte();
-    await Promise.resolve(); // Schritt 0 ist jetzt 'laeuft'
+    // C-11 (v0.8.6): der Runner yieldet vor jedem Schritt einen Macrotask —
+    // ein Microtask reicht nicht mehr, um Schritt 0 auf 'laeuft' zu sehen.
+    await new Promise((r) => setTimeout(r, 0)); // Schritt 0 ist jetzt 'laeuft'
 
     expect(runner.schritte[0]?.status).toBe('laeuft');
     runner.abbrechen();

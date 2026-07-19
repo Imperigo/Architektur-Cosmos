@@ -154,6 +154,10 @@ export class ChatSession {
    * schreibender Vorschlag: erst `resolveLaufGestartet`/`resolveLaufAbgelehnt`
    * leert die Karte, danach darf ein neuer Zug laufen. */
   private pendingLauf = new Map<string, LaufVorschlag>();
+
+  /** C-12 (v0.8.6-C): real existierende Command-IDs — Vorschlags-Zeit-Prüfung
+   * der `lauf_planen`-Schritte (s. Konstruktor + turn()-Zweig). */
+  private readonly bekannteCommandIds: Set<string>;
   private tools: ToolDefinition[];
   private queryTool: ReturnType<typeof modelQueryTool>;
   private laufPlanToolDef: ToolDefinition;
@@ -230,6 +234,13 @@ export class ChatSession {
     this.queryTool = modelQueryTool(doc, contextDefaults);
     this.laufPlanToolDef = laufPlanTool();
     this.readTools = new Map(extraReadTools.map((t) => [t.name, t]));
+    const kommandoTools = commandTools(toolOptionen);
+    // C-12-Matrix-Fund (v0.8.6-C): die Menge der REAL existierenden
+    // Command-IDs — `laufPlanSchema` prüft commandIds bewusst nur als
+    // nicht-leere Strings (lauf-plan.ts), aber ein Vorschlag mit erfundener
+    // ID darf gar nicht erst zur Karte werden (sonst committet ein
+    // Mehrschritt-Lauf echte Schritte, bevor der kaputte ihn stoppt).
+    this.bekannteCommandIds = new Set(kommandoTools.map((t) => commandIdFor(t.name)));
     this.tools = [
       { name: this.queryTool.name, description: this.queryTool.description, parameters: this.queryTool.parameters },
       ...extraReadTools.map((t) => ({ name: t.name, description: t.description, parameters: t.parameters })),
@@ -237,7 +248,7 @@ export class ChatSession {
       // Nicht-Command-Tool-Präzedenz (`modell_lesen`/Read-Tools), VOR den
       // Command-Tools — es ist selbst kein Kernel-Command.
       this.laufPlanToolDef,
-      ...commandTools(toolOptionen),
+      ...kommandoTools,
     ];
     if (systemPrompt) this.messages.push({ role: 'system', content: systemPrompt });
   }
@@ -385,6 +396,21 @@ export class ChatSession {
             role: 'tool',
             toolName: call.name,
             content: `FEHLER: ${validated.error}. Korrigiere den Lauf-Plan und rufe lauf_planen genau einmal erneut auf.`,
+          });
+          needsContinue = true;
+          continue;
+        }
+        // C-12 (v0.8.6-C): jede commandId muss REAL existieren, sonst keine
+        // Karte — die Ablehnung geht als Tool-Fehler an Kosmo zurück, exakt
+        // wie ein Schema-Fehler (kein halber Lauf mit erfundenen Schritten).
+        const unbekannt = validated.plan.schritte
+          .map((s) => s.commandId)
+          .filter((id) => !this.bekannteCommandIds.has(id));
+        if (unbekannt.length > 0) {
+          this.messages.push({
+            role: 'tool',
+            toolName: call.name,
+            content: `FEHLER: unbekannte commandId(s): ${[...new Set(unbekannt)].join(', ')}. Nutze nur real existierende Commands und rufe lauf_planen genau einmal erneut auf.`,
           });
           needsContinue = true;
           continue;

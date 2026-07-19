@@ -108,11 +108,10 @@ test('Abbrechen wirkt: stoppt vor dem nächsten Schritt, der bereits begonnene S
   await frischOhnePanel(page);
   await oeffnePanel(page);
 
-  // starte()+abbrechen() im SELBEN evaluate()-Aufruf — derselbe synchrone
-  // Vorlauf wie im Store-/Runner-Unit-Test (`lauf-runner.ts`-Kommentar):
-  // `runCommand` ist synchron, Schritt 0 lief also schon vollständig, bevor
-  // der Runner vor dem `await` für Schritt 1 pausiert. `abbrechen()` direkt
-  // danach garantiert, dass Schritt 1/2 NIE starten.
+  // starte()+abbrechen() im SELBEN evaluate()-Aufruf. Seit dem C-11-Fix
+  // (v0.8.6: Macrotask-Yield VOR jedem Schritt, `lauf-runner.ts`) greift
+  // dieser synchrone Abbruch schon VOR Schritt 0 — es läuft GAR KEIN
+  // Schritt mehr, das Doc bleibt unberührt.
   await page.evaluate((plan) => {
     window.__kosmoLauf.starte(plan);
     window.__kosmoLauf.abbrechen();
@@ -122,15 +121,46 @@ test('Abbrechen wirkt: stoppt vor dem nächsten Schritt, der bereits begonnene S
     .poll(async () => page.evaluate(() => window.__kosmoLauf.zustand().status), { timeout: 10_000 })
     .toBe('abgebrochen');
 
-  await expect(page.locator('[data-testid="lauf-schritt-0"]')).toHaveClass(/lauf-schritt--ok/);
+  await expect(page.locator('[data-testid="lauf-schritt-0"]')).toHaveClass(/lauf-schritt--offen/);
   await expect(page.locator('[data-testid="lauf-schritt-1"]')).toHaveClass(/lauf-schritt--offen/);
   await expect(page.locator('[data-testid="lauf-schritt-2"]')).toHaveClass(/lauf-schritt--offen/);
 
   const storeys = await page.evaluate(() => window.__kosmo.state().doc.byKind('storey').length);
-  expect(storeys).toBe(1); // nur der begonnene Schritt schrieb ins Doc
+  expect(storeys).toBe(0); // kein Schritt schrieb ins Doc
 
   // Der Abbrechen-Knopf ist jetzt deaktiviert (kein Lauf mehr aktiv).
   await expect(page.locator('[data-testid="lauf-abbrechen"]')).toBeDisabled();
+});
+
+test('C-11 (v0.8.6): Abbrechen per ECHTEM Klick — der Lauf ist für reale Eingaben unterbrechbar', async ({
+  page,
+}) => {
+  await frischOhnePanel(page);
+  await oeffnePanel(page);
+
+  // 400 Schritte + Macrotask-Yield je Schritt (C-11-Fix, lauf-runner.ts)
+  // öffnen ein reales Klick-Fenster — exakt der Matrix-Angriff, der vorher
+  // 0/400 Abbrüche schaffte, weil die Schleife in EINEM Task durchlief.
+  await page.evaluate((plan) => {
+    void window.__kosmoLauf.starte(plan);
+  }, geschossPlan(400));
+
+  const abbrechen = page.locator('[data-testid="lauf-abbrechen"]');
+  await expect(abbrechen).toBeEnabled();
+  await abbrechen.click();
+
+  await expect
+    .poll(async () => page.evaluate(() => window.__kosmoLauf.zustand().status), { timeout: 15_000 })
+    .toBe('abgebrochen');
+
+  // Es liefen echte Schritte (der Lauf war wirklich unterwegs), aber NICHT
+  // alle — und nach dem Abbruch kommt kein weiterer dazu.
+  const stand = await page.evaluate(() => window.__kosmo.state().doc.byKind('storey').length);
+  expect(stand).toBeGreaterThan(0);
+  expect(stand).toBeLessThan(401);
+  await page.waitForTimeout(400);
+  const stand2 = await page.evaluate(() => window.__kosmo.state().doc.byKind('storey').length);
+  expect(stand2).toBe(stand);
 });
 
 test('Fehler-Schritt stoppt den Lauf ehrlich — kein Weiterlaufen, Rest bleibt offen', async ({ page }) => {

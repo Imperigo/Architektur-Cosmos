@@ -161,23 +161,23 @@ E3 ist opt-in-additiv; E1/E2 berühren kein derive.
 
 ## 7 · Vollständigkeits-Matrix (Abnahme Tag 3)
 
-- [ ] **C-1** Wand-Endpunkt-Drag: Öffnung samt fensterTyp/teilung/typeId bleibt; Wand-ID und height bleiben; EIN Undo → PA1/PA2
-- [ ] **C-2** Kürzer-Wand-Regel: passt → bleibt; clampbar → geclampt; zu breit → entfernt MIT sichtbarer Meldung → PA1
-- [ ] **C-3** Null-Länge wirft VOR jedem Patch (Wand unverändert) → PA1
-- [ ] **C-4** nachbar-Zone behält `zonenArt` beim Eck-Zug → PA1/PA2
-- [ ] **C-5** Goldens byte-still (sha256-Vergleich HEAD↔Arbeitsbaum) trotz E1/E2/E3 → alle
-- [ ] **C-6** `data-raumtyp` erscheint NUR im Publish-Blatt-SVG, nie im Golden-/Design-Pfad → PA3
-- [ ] **C-7** KSwitch «Raumtypen» blendet Raumtyp-Füllungen aus, «Zonen» weiterhin Parzellen-Kontext — unabhängig schaltbar → PA3
-- [ ] **C-8** Wächter meldet fehlende Auswertung JEDER Release-Version; 0.8.6 selbst wird verlangt → PA4
-- [ ] **C-9** Eval: ≥3 LaufPlan-Erwartungs-Prompts, Prüfer vergleicht Schritt-Folge, Gesamtquote grün → PA4
-- [ ] **C-10** Kosmo-Chat «zeichne mir …» → `lauf_planen`-Vorschlagskarte mit Schrittliste + Begründungen, KEIN Command lief → PB1
-- [ ] **C-11** «Lauf starten» fährt den Lauf über runtime.starte(); Schrittliste FERTIG; EIN Undo je Schritt → PB1
-- [ ] **C-12** «Ablehnen» verwirft; ungültiger Plan (kaputte commandId/Schema) wird abgewiesen, kein halber Lauf → PB1
-- [ ] **C-13** Lauf-Bibliothek: 3 Drehbücher wählbar, @ref-Auflösung via `@kosmo/ai`-Funktion (Unit-Tests; Prüfcode nutzt dieselbe) → PB1
-- [ ] **C-14** 3D-Shift-Klick toggelt (Mehrfach-Auswahl im 3D sichtbar), Esc leert auch dort; 2D-Verhalten unverändert → PB2
-- [ ] **C-15** Öffnungs-Griff: sichtbar bei Einzel-Auswahl, Schieben per EINEM eigenschaftSetzen, App-Clamp an Wandkanten → PB3
-- [ ] **C-16** Öffnungs-Griff-Vorrang vor Wand-Hit (C-17-Muster) → PB3
-- [ ] **C-17** Standort überlebt Reload/Save-Load (`.kosmo`), Undo entfernt ihn; KosmoData zeigt LV95+Adresse bzw. ehrlichen Leer-Zustand → PC1
+- [x] **C-1** Wand-Endpunkt-Drag: Öffnung samt fensterTyp/teilung/typeId bleibt; Wand-ID und height bleiben; EIN Undo → PA1/PA2
+- [x] **C-2** Kürzer-Wand-Regel: passt → bleibt; clampbar → geclampt; zu breit → entfernt MIT sichtbarer Meldung → PA1
+- [x] **C-3** Null-Länge wirft VOR jedem Patch (Wand unverändert) → PA1
+- [x] **C-4** nachbar-Zone behält `zonenArt` beim Eck-Zug → PA1/PA2
+- [x] **C-5** Goldens byte-still (sha256-Vergleich HEAD↔Arbeitsbaum) trotz E1/E2/E3 → alle
+- [x] **C-6** `data-raumtyp` erscheint NUR im Publish-Blatt-SVG, nie im Golden-/Design-Pfad → PA3
+- [x] **C-7** KSwitch «Raumtypen» blendet Raumtyp-Füllungen aus, «Zonen» weiterhin Parzellen-Kontext — unabhängig schaltbar → PA3
+- [x] **C-8** Wächter meldet fehlende Auswertung JEDER Release-Version; 0.8.6 selbst wird verlangt → PA4
+- [x] **C-9** Eval: ≥3 LaufPlan-Erwartungs-Prompts, Prüfer vergleicht Schritt-Folge, Gesamtquote grün → PA4
+- [x] **C-10** Kosmo-Chat «zeichne mir …» → `lauf_planen`-Vorschlagskarte mit Schrittliste + Begründungen, KEIN Command lief → PB1
+- [x] **C-11** «Lauf starten» fährt den Lauf über runtime.starte(); Schrittliste FERTIG; EIN Undo je Schritt → PB1
+- [x] **C-12** «Ablehnen» verwirft; ungültiger Plan (kaputte commandId/Schema) wird abgewiesen, kein halber Lauf → PB1
+- [x] **C-13** Lauf-Bibliothek: 3 Drehbücher wählbar, @ref-Auflösung via `@kosmo/ai`-Funktion (Unit-Tests; Prüfcode nutzt dieselbe) → PB1
+- [x] **C-14** 3D-Shift-Klick toggelt (Mehrfach-Auswahl im 3D sichtbar), Esc leert auch dort; 2D-Verhalten unverändert → PB2
+- [x] **C-15** Öffnungs-Griff: sichtbar bei Einzel-Auswahl, Schieben per EINEM eigenschaftSetzen, App-Clamp an Wandkanten → PB3
+- [x] **C-16** Öffnungs-Griff-Vorrang vor Wand-Hit (C-17-Muster) → PB3
+- [x] **C-17** Standort überlebt Reload/Save-Load (`.kosmo`), Undo entfernt ihn; KosmoData zeigt LV95+Adresse bzw. ehrlichen Leer-Zustand → PC1
 - [ ] **C-18** Release: Matrix adversarial (Fan-out, PE3-Lehren), lehren/v0.8.6.md, Sechs-Träger-Bump, Neuigkeiten, §0-Delta, Release-Notiz, Rundgang-PDF gesichtet, release-gate 0, Installer+sha256+Zustellung, Owner-Smoke-Punkt → PC3
 
 ## 8 · Ehrliche Nicht-Ziele

@@ -121,6 +121,16 @@ export class LaufRunner {
     try {
       for (let i = 0; i < this.plan.schritte.length; i++) {
         if (this.abgebrochenFlag) return;
+        // C-11-Matrix-Fund (v0.8.6-C): ein Macrotask-Yield VOR jedem Schritt.
+        // Ohne ihn lief die Schleife über rein synchrone Kernel-Commands in
+        // einem einzigen Task durch — der «Abbrechen»-Knopf war für ECHTE
+        // Klicks nie erreichbar (nur der Sync-Trick der Unit-Tests kam je an)
+        // und die Schrittliste sprang von offen direkt auf fertig. Mit dem
+        // Yield verarbeitet der Browser zwischen den Schritten Eingaben und
+        // Renders; der Abbruch-Check danach fängt einen Klick aus genau
+        // diesem Fenster.
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+        if (this.abgebrochenFlag) return;
         const schritt = this.plan.schritte[i]!;
         this.setStatus(i, { status: 'laeuft' });
         try {

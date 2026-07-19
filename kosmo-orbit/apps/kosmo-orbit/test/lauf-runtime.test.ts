@@ -115,21 +115,24 @@ describe('lauf-runtime — Fehler-Stopp (E4: ehrlich, kein Weiterlaufen)', () =>
 });
 
 describe('lauf-runtime — Abbruch', () => {
-  it('abbrechen() waehrend des Laufs lässt den begonnenen Schritt zu Ende laufen, stoppt vor dem nächsten', async () => {
+  it('abbrechen() waehrend des Laufs stoppt vor dem nächsten Schritt (C-11-Yield: sync-Abbruch greift vor Schritt 0)', async () => {
     useLaufRuntime.getState().starte(geschossPlan(3));
-    // Synchron direkt danach: Schritt 0 hat bereits real ausgeführt (runCommand
-    // ist synchron), der Runner hängt aber noch VOR dem `await`-Resume für
-    // Schritt 1 (Microtask-Grenze) — siehe `lauf-runner.ts`-Kommentar.
+    // Seit dem C-11-Fix (v0.8.6, Macrotask-Yield VOR jedem Schritt in
+    // `lauf-runner.ts`) hat bei einem SYNCHRONEN Abbruch direkt nach
+    // starte() noch KEIN Schritt ausgeführt — das Doc bleibt unberührt.
+    // (Der Abbruch mitten im Lauf, nach echten Schritten, ist im
+    // Runner-Unit-Test «C-11 … echtes Zeitfenster» und im E2E-Klick-Test
+    // `autopilot-kern.spec.ts` bewiesen.)
     useLaufRuntime.getState().abbrechen();
     await warten(10);
 
     const state = useLaufRuntime.getState();
     expect(state.status).toBe('abgebrochen');
-    expect(state.schritte[0]?.status).toBe('ok');
+    expect(state.schritte[0]?.status).toBe('offen');
     expect(state.schritte[1]?.status).toBe('offen');
     expect(state.schritte[2]?.status).toBe('offen');
-    expect(useProject.getState().doc.byKind('storey')).toHaveLength(1);
-    expect(useProject.getState().history.depth).toBe(1);
+    expect(useProject.getState().doc.byKind('storey')).toHaveLength(0);
+    expect(useProject.getState().history.depth).toBe(0);
   });
 
   it('abbrechen() ohne aktiven Lauf ist ein No-Op', () => {

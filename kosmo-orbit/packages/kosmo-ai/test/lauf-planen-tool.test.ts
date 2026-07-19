@@ -151,6 +151,53 @@ describe('ChatSession — lauf_planen wird NIE ausgeführt, nur vorgeschlagen (S
     expect(text).toMatch(/scheiterte|Erledigt/);
   });
 
+  it('C-12 (v0.8.6-C): erfundene commandId wird VOR der Karte abgewiesen — kein halber Lauf möglich', async () => {
+    const { doc, storeyId } = demoDoc();
+    // Schema-gültig (nicht-leere Strings), aber der zweite Command existiert
+    // nicht — der Matrix-Fund: ohne Registry-Prüfung erschiene die Karte,
+    // der erste Schritt liefe echt, der zweite risse den Lauf halb.
+    const plan = {
+      titel: 'Halber Lauf',
+      schritte: [
+        {
+          commandId: 'design.geschossErstellen',
+          params: { name: 'EG-Falle' },
+          begruendung: 'Valider erster Schritt.',
+        },
+        {
+          commandId: 'design.dasGibtEsNicht',
+          params: { storeyId },
+          begruendung: 'Erfundener zweiter Schritt.',
+        },
+      ],
+    };
+    const skript = skriptMit({
+      antwortText: 'Ich schlage einen Lauf vor.',
+      toolCalls: [{ name: LAUF_PLANEN_TOOL_NAME, args: plan }],
+    });
+    const provider = new ScriptedProvider('lauf-skript', { 'lauf-skript': skript });
+    const laufVorschlaege: LaufVorschlag[] = [];
+    const session = new ChatSession(provider, doc, {
+      onText: () => {},
+      onProposal: () => {},
+      onLaufVorschlag: (v) => laufVorschlaege.push(v),
+      onBusy: () => {},
+      onError: (e) => {
+        throw new Error(e);
+      },
+    });
+
+    await session.send('Baue mir etwas mit einem erfundenen Schritt.');
+
+    expect(laufVorschlaege).toHaveLength(0);
+    // Das Tool-Ergebnis nennt die kaputte ID beim Namen (Kosmo kann korrigieren).
+    const toolMeldung = session.history.find(
+      (m) => m.role === 'tool' && m.content.includes('design.dasGibtEsNicht'),
+    );
+    expect(toolMeldung).toBeDefined();
+    expect(toolMeldung!.content).toContain('unbekannte commandId');
+  });
+
   it('resolveLaufGestartet/resolveLaufAbgelehnt räumen den offenen Vorschlag auf und geben den nächsten Zug frei', async () => {
     const { doc, storeyId } = demoDoc();
     const plan = {
