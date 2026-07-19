@@ -157,6 +157,91 @@ export const createWall = registerCommand({
   },
 });
 
+/**
+ * E1 (V086-SPEZ, `docs/V086-SPEZ.md` §3): Bilanz eines
+ * `design.wandGeometrieSetzen`-Laufs — welche Öffnungen unverändert bleiben,
+ * geclampt oder entfernt werden. `run()` liefert daraus die Patches; die
+ * Zähler wandern zusätzlich kurzzeitig in `wandGeometrieBilanz` (siehe dort),
+ * weil `summarize()` laut Vertrag (core.ts `execute()`) erst NACH `doc.apply()`
+ * läuft — zu diesem Zeitpunkt sind entfernte Öffnungen aus dem Doc bereits
+ * gelöscht und nicht mehr zählbar.
+ */
+function planeOeffnungsBilanz(
+  doc: KosmoDoc,
+  wallId: string,
+  neueLaenge: number,
+): { patches: AnyPatch[]; entfernt: number; geclampt: number } {
+  const patches: AnyPatch[] = [];
+  let entfernt = 0;
+  let geclampt = 0;
+  for (const o of doc.openingsOf(wallId) as Opening[]) {
+    const lo = o.center - o.width / 2;
+    const hi = o.center + o.width / 2;
+    if (lo >= 0 && hi <= neueLaenge) continue; // (1) passt unverändert — kein Patch
+    if (o.width > neueLaenge) {
+      // (3) zu breit für die neue Wand — im selben Command entfernen
+      patches.push({ id: o.id, before: o, after: null });
+      entfernt++;
+      continue;
+    }
+    // (2) clampbar — Breite bleibt, center rutscht bündig an die nähere Wandkante
+    const neuesCenter = lo < 0 ? Math.round(o.width / 2) : Math.round(neueLaenge - o.width / 2);
+    patches.push({ id: o.id, before: o, after: { ...o, center: neuesCenter } });
+    geclampt++;
+  }
+  return { patches, entfernt, geclampt };
+}
+
+/** Siehe `planeOeffnungsBilanz` — sicher als Modul-Zustand, weil `execute()`
+ * (core.ts) synchron `run()` → `doc.apply()` → `summarize()` OHNE
+ * Verschachtelung durchläuft: kein zweiter Aufruf dieses Commands kann
+ * dazwischenfunken. `summarize()` konsumiert (liest UND löscht) den Wert
+ * sofort, damit nichts über den eigenen Lauf hinaus stehen bleibt. */
+let wandGeometrieBilanz: { entfernt: number; geclampt: number } | null = null;
+
+export const setWallGeometry = registerCommand({
+  id: 'design.wandGeometrieSetzen',
+  title: 'Wand-Geometrie setzen',
+  description:
+    'Setzt Anfangs- und/oder Endpunkt (a/b) einer bestehenden Wand neu, OHNE sie zu ersetzen: Identität, height, Umbau-/Phasen-Felder (meta), assemblyId, alignment und alle gehosteten Öffnungen bleiben erhalten. Wird die Wand kürzer, gilt für jede Öffnung, in dieser Reihenfolge: (1) passt center±width/2 weiterhin in die neue Länge → unverändert; (2) sonst, wenn die Breite selbst noch in die neue Länge passt → center rutscht bündig an die nähere Wandkante (Breite bleibt); (3) sonst (Öffnung breiter als die neue Wand) → die Öffnung wird im selben Schritt entfernt und im Ergebnis genannt. Mindestens einer der Punkte a/b ist Pflicht. Alles EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    a: PtSchema.optional(),
+    b: PtSchema.optional(),
+  }),
+  summarize: (p, doc) => {
+    const wall = doc.get<Wall>(p.entityId);
+    const neueA = (p.a ?? wall?.a) as Pt | undefined;
+    const neueB = (p.b ?? wall?.b) as Pt | undefined;
+    const laenge = neueA && neueB ? Math.round(dist(neueA, neueB)) : 0;
+    const bilanz = wandGeometrieBilanz;
+    wandGeometrieBilanz = null;
+    const teile: string[] = [];
+    if (bilanz && bilanz.geclampt > 0) {
+      teile.push(`${bilanz.geclampt} Öffnung${bilanz.geclampt === 1 ? '' : 'en'} angepasst`);
+    }
+    if (bilanz && bilanz.entfernt > 0) {
+      teile.push(`${bilanz.entfernt} Öffnung${bilanz.entfernt === 1 ? '' : 'en'} entfernt`);
+    }
+    return `Wand-Geometrie ${formatLength(laenge)}${teile.length ? ' — ' + teile.join(', ') : ''}`;
+  },
+  run: (doc, p) => {
+    if (!p.a && !p.b) {
+      throw new CommandError('design.wandGeometrieSetzen braucht mindestens einen Punkt (a oder b)');
+    }
+    const wall = require<Wall>(doc, p.entityId, 'wall');
+    const neueA = (p.a ?? wall.a) as Pt;
+    const neueB = (p.b ?? wall.b) as Pt;
+    if (neueA.x === neueB.x && neueA.y === neueB.y) {
+      throw new CommandError('Wand hat Länge 0');
+    }
+    const neueLaenge = dist(neueA, neueB);
+    const { patches: oeffnungsPatches, entfernt, geclampt } = planeOeffnungsBilanz(doc, wall.id, neueLaenge);
+    wandGeometrieBilanz = { entfernt, geclampt };
+    return [{ id: wall.id, before: wall, after: { ...wall, a: neueA, b: neueB } }, ...oeffnungsPatches];
+  },
+});
+
 export const setSchnitt = registerCommand({
   id: 'design.schnittSetzen',
   title: 'Schnitt setzen',
@@ -553,10 +638,10 @@ export const createZone = registerCommand({
       .optional()
       .describe('Raumtyp für Raumgraph und Fluchtweg-Check'),
     zonenArt: z
-      .enum(['parzelle'])
+      .enum(['parzelle', 'nachbar'])
       .optional()
       .describe(
-        'Site-Marker (D8/H-1): «parzelle» kennzeichnet eine importierte Kataster-Parzelle statt eines Raums — nimmt die Zone von Raumtyp-Checks und der SIA-416-Flächensumme aus (die sia-Klasse bleibt, z.B. für die Schwarzplan-Erkennung).',
+        'Site-Marker (D8/H-1; E2 v0.8.6): «parzelle» kennzeichnet eine importierte Kataster-Parzelle, «nachbar» einen Nachbargebäude-Footprint — beide statt eines Raums; nimmt die Zone von Raumtyp-Checks und der SIA-416-Flächensumme aus (die sia-Klasse bleibt, z.B. für die Schwarzplan-Erkennung).',
       ),
   }),
   summarize: (p) => `Zone «${p.name}» (${p.sia})`,
