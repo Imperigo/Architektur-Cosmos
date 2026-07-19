@@ -79,7 +79,7 @@ Status je Zeile: **●** KosmoOrbit hat es · **◐** teilweise (ein Satz, was f
 |---|---|---|---|
 | Baustoffe (Building Materials) | Baustoff = Schraffur + Oberfläche + physikalische Werte + **Verschneidungspriorität 0–999** in einer Attribut-Karte [H-IntersectionPriority] | Materialkatalog «PBR + SIA + Lambda aus einer Quelle» (`@kosmo/data`, ROADMAP 20/105), Schraffur-Katalog nach SIA-Lesart (`derive/schraffur.ts`, ROADMAP 37), Dichtetabelle für Schallschutz (`MATERIAL_DICHTE`, ROADMAP 99) | ● — dieselbe «eine Quelle»-Idee; Prioritätszahl fehlt (nächste Zeile) |
 | Mehrschicht-Aufbauten (Composites) | Schichten mit Funktion (Kern/Dämmung/Bekleidung), tragende Schicht als Bezug [K] | `Assembly`/`AssemblyLayer` mit `LayerFunction` (tragend/daemmung/bekleidung/dichtung/hohlraum), Referenzlinien-Bezug kern-aussen/kern-innen, Rohkonstruktions-Masskette auf der tragenden Schicht (ROADMAP 93) | ● |
-| Verschneidungsprioritäten | Höhere Priorität schneidet niedrigere — **über Bauteilgrenzen hinweg** (Wand↔Wand↔Decke), Skin-genau; plus Ebenen-Verschneidungsgruppen [H-IntersectionPriority, C] | **Prioritäts-Join im Grundriss gebaut (A1, ROADMAP 113)**: `MATERIAL_PRIORITAET` 0–999 (`model/prioritaet.ts`), höhere Priorität schneidet die niedrigere beim Poché-Join (Beton stösst durch, Dämmung/KS weichen), projektweite Overrides via `design.prioritaetSetzen`; Wandknoten weiterhin geometrisch (Gehrung/T-Stoss/Mehrfachknoten, ROADMAP 15/21/35) | ◐ — Grundriss ja; Wand↔Decke im SCHNITT (Face-Ebene) folgt als nächster Schritt |
+| Verschneidungsprioritäten | Höhere Priorität schneidet niedrigere — **über Bauteilgrenzen hinweg** (Wand↔Wand↔Decke), Skin-genau; plus Ebenen-Verschneidungsgruppen [H-IntersectionPriority, C] | **Prioritäts-Join im Grundriss gebaut (A1, ROADMAP 113)**: `MATERIAL_PRIORITAET` 0–999 (`model/prioritaet.ts`), höhere Priorität schneidet die niedrigere beim Poché-Join (Beton stösst durch, Dämmung/KS weichen), projektweite Overrides via `design.prioritaetSetzen`; **im SCHNITT** (Face-Ebene, `derive/section.ts`) verallgemeinert von Wand∧Decke (ROADMAP 150) auf Wand∧Decke∧Dach (ROADMAP 294) und zuletzt auf den Wand↔Wand-Zweiwandfall (`wandWandVerschneiden`, v0.8.9 E1/PA1): T-Stoss-/Eckfall-Überlappungen, die `miterWallEnds` (scene.ts) an Degenerationsfällen (flacher Winkel, Gehrungs-Exzess, entarteter Mehrfachknoten) bewusst "stumpf" lässt, werden ebenfalls nach `materialPrioritaet` zurückgeschnitten | ◐ — Grundriss + Schnitt (Wand/Decke/Dach/Wand-Zweierfall) gebaut; **>2-Wand-Knoten im Schnitt bleibt bewusst ausgeklammert** (Parität zum Grundriss-Join, `detectEndMiters`, ROADMAP 149/315 — kein stilles Falschbild statt Vollabdeckung) |
 | Komplexe Profile (Profil-Manager) | frei gezeichnete Querschnitte für Wand/Stütze/Unterzug, Baustoff je Teilfläche [K] | — | ○ — hängt an Stütze/Unterzug (A3) |
 
 ### 2.3 Ebenen-/Stift-/Linientyp-Logik + Attribut-Verwaltung
@@ -203,7 +203,10 @@ Translator-Konfiguration, MEP; Morph/Schale sind seit V2-Technik Block 3
 statt unbegrenzter Freiheit (Buildplan §5).
 
 **Stand 04.07.2026: alle 8 Container-Lücken sind gebaut** — A1 Verschneidungs-
-prioritäten (ROADMAP 113, Grundriss; Schnitt-Faces offen), A2 Umbau-Filter je
+prioritäten (ROADMAP 113, Grundriss; Schnitt-Faces seit ROADMAP 150/294
+Wand∧Decke∧Dach, seit v0.8.9 E1/PA1 zusätzlich der Wand↔Wand-Zweiwandfall —
+>2-Wand-Knoten im Schnitt bleibt bewusst offene Grenze, Parität zum
+Grundriss), A2 Umbau-Filter je
 Blatt (111), A3 Stütze/Unterzug (112), A4 Publikations-Sets (114), A5
 Themenpläne (116), A6 Etiketten/Keynotes (117), A7 Plan-Revisionen (118),
 A8 Trace + Katalog-Transfer (115). Die verbleibenden ◐/○ in Abschnitt 2 sind

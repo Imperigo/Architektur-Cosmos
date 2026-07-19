@@ -38,9 +38,19 @@ export interface SectionFace {
  * SectionFace + Bauteil-Art — nur intern für die Wand↔Decke-Verschneidung
  * unten (A5); die Art bestimmt, welche Flächen gegeneinander geschnitten
  * werden, ohne dass sie Teil der öffentlichen SectionFace-Form wird.
+ *
+ * `entityId` (v0.8.9 E1, A1-Rest): welche Entität (Wand/Decke/Dach) die
+ * Fläche erzeugt hat — für `wandWandVerschneiden` unten die einzige sichere
+ * Grundlage, um bei einer Überlapp-Gruppe die Zahl der BETEILIGTEN WÄNDE zu
+ * zählen (nicht die Zahl der Faces: eine Wand liefert bei mehrschichtigem
+ * Aufbau mehrere Faces, die sich untereinander per Konstruktion nie
+ * überlappen — `wallLayerFaces` teilt sie in disjunkte s-Bänder). Ohne diese
+ * ID liesse sich ein Mehrschicht-Zweiwand-Stoss nicht von einem echten
+ * >2-Wand-Knoten unterscheiden (Sanktion 5 verlangt genau diese Trennschärfe).
  */
 interface RawFace extends SectionFace {
   entityKind: 'wall' | 'slab' | 'roof' | 'other';
+  entityId: string;
 }
 
 export interface SectionGraphic {
@@ -145,9 +155,17 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
           assembly?.kind === 'assembly' &&
           assembly.layers.length > 0
         ) {
-          for (const f of wallLayerFaces(wall, assembly, loops, spec.a, d)) rawFaces.push({ ...f, entityKind });
+          for (const f of wallLayerFaces(wall, assembly, loops, spec.a, d)) {
+            rawFaces.push({ ...f, entityKind, entityId: wall.id });
+          }
         } else {
-          rawFaces.push({ loops, material: artifact.materialKey, classes: ['cut-face', artifact.materialKey], entityKind });
+          rawFaces.push({
+            loops,
+            material: artifact.materialKey,
+            classes: ['cut-face', artifact.materialKey],
+            entityKind,
+            entityId: artifact.entityId,
+          });
         }
       }
     }
@@ -203,10 +221,19 @@ export function deriveSection(doc: KosmoDoc, spec: SectionSpec): SectionGraphic 
     if (artSegs.length === 0) continue;
     const loops = stitchLoops(artSegs);
     if (loops.length) {
-      rawFaces.push({ loops, material: 'dach', classes: ['cut-face', 'dach'], entityKind: 'roof' });
+      rawFaces.push({ loops, material: 'dach', classes: ['cut-face', 'dach'], entityKind: 'roof', entityId: roof.id });
     }
   }
 
+  // E1 (v0.8.9, A1-Rest): Wand↔Wand VOR Wand↔Decke/Dach — löst zuerst die
+  // gruppen-INTERNEN Wand-Konflikte (degenerierte miterWallEnds-Fälle in
+  // scene.ts: flacher T-Stoss-Winkel, Gehrungs-Exzess, entarteter
+  // Mehrfachknoten — dort bewusst "stumpf" belassen), damit
+  // wandDeckeVerschneiden im Anschluss mit der bereits bereinigten
+  // Wandform gegen Decke/Dach schneidet. Mutiert die betroffenen
+  // RawFace.loops in place (wie schneideZurueck unten) — dieselben
+  // RawFace-Objekte stecken in `rawFaces`, die Änderung ist dort sichtbar.
+  wandWandVerschneiden(doc, rawFaces.filter((f) => f.entityKind === 'wall'));
   const faces = wandDeckeVerschneiden(doc, rawFaces);
 
   const segments = clipEdges(edges, tris, {
@@ -620,4 +647,126 @@ function wandDeckeVerschneiden(doc: KosmoDoc, rawFaces: RawFace[]): SectionFace[
     });
   }
   return faces;
+}
+
+// ---------------------------------------------------------------------------
+// Wand↔Wand-Verschneidung im Schnitt (v0.8.9 E1, A1-Rest)
+//
+// `miterWallEnds` (derive/scene.ts) gehrt die meisten Wandenden bereits
+// korrekt: Winkelhalbierende bei genau zwei Wandenden, Fugenecken-Rückzug bei
+// Mehrfachknoten (3+), T-Stoss bündig an die fremde Achse. Mehrere
+// Degenerationsfälle bleiben dort AUSDRÜCKLICH "stumpf" (keine Retraktion,
+// Kommentare dort: «streifender Winkel — stumpf lassen», «fast kolinear —
+// keine Gehrung», «spitzer Winkel — Gehrungs-Exzess vermeiden», entarteter
+// Mehrfachknoten mit oCcw≈oCw): der T-Stoss-Guard bei flachem Winkel
+// (|dm|<0.3), der Fast-180°-Guard (|bl|<1e-6), der Gehrungs-Exzess-Guard
+// (|k|>3) und `knotenEcken`, das bei singulärer Geometrie `null` liefert.
+// In all diesen Fällen bleibt die Wand-Stirnfläche auf ihrer rohen
+// Achsenkoordinate stehen — die 3D-Volumen zweier verschiedener Wände können
+// sich dort durchdringen, und ihre Schnittflächen (RawFace, entityKind
+// 'wall') überlappen echt im (s,z)-Bild. Das ist der ArchiCAD-A1-Rest für
+// Wand↔Wand (Grundriss hat die Parität längst über `detectEndMiters`,
+// ROADMAP 149/315).
+//
+// Löst wie `wandDeckeVerschneiden` oben nach `materialPrioritaet`: die höher
+// priorisierte Wand bleibt unverändert (UNGESCHNITTENE Ausgangsform als
+// Schnittpartner — Reihenfolge-Unabhängigkeit), die niedriger priorisierte
+// weicht im Überlapp zurück. Dieselbe Fugen-Schwelle SZ_FUGE_FLAECHE_MM2
+// (reines Berühren an der gemeinsamen Fuge bleibt byte-still). Zwei
+// verschiedene Schichten DERSELBEN Wand überlappen sich per Konstruktion nie
+// (`wallLayerFaces` teilt eine Wand in disjunkte s-Bänder) — jede über der
+// Schwelle liegende Überlappung ist darum automatisch ein Zwei- (oder Mehr-)
+// Wand-Fall, nie ein Selbst-Treffer (siehe entityId-Filter unten).
+//
+// Tie-Break-Entscheid (dokumentiert, wie verlangt): GLEICHE Priorität bleibt
+// bewusst ungeschnitten — keine Wand gewinnt, keine weicht. Das ist exakt
+// der Tie-Break, den `wandDeckeVerschneiden` bereits für Wand/Decke/Dach
+// benutzt (strikt `>`, nicht `>=`) und den der Grundriss-Poché-Join für
+// gleiche Priorität ebenso anwendet — hier bewusst NICHT neu erfunden:
+// ein zweiter, abweichender Tie-Break im selben Modell wäre ein stiller
+// Bruch der A1-Semantik-Parität zwischen Grundriss und Schnitt, ohne
+// erkennbaren fachlichen Gewinn (byte-stiller Bestand ist im Zweifel die
+// sicherere Wahl als ein erfundenes Gewinnkriterium wie ID- oder
+// Erstellungsreihenfolge).
+//
+// Sanktion 5 (>2-Wand-Knoten kontrolliert auslassen, nie still falsch
+// verschneiden): Faces bilden über die "echte Überlappung"-Relation
+// Zusammenhangsgruppen (Transitivität — A überlappt B, B überlappt C ⇒ eine
+// Gruppe). Zählt eine Gruppe MEHR als zwei verschiedene `entityId`s
+// (Wand-Identität, nicht Face-Zahl — eine mehrschichtige Wand darf beide
+// Nachbarn stellen), bleibt die GESAMTE Gruppe unangetastet: kein Face darin
+// wird geschnitten, auch nicht die Paare, die isoliert betrachtet einen
+// gültigen Zwei-Wand-Fall wären — sonst würde bei einem >2-Knoten ein
+// willkürliches Teilpaar "gewinnen", je nach Bearbeitungsreihenfolge, und
+// genau das verbietet Sanktion 5 ("kein stilles Falschbild").
+function wandWandVerschneiden(doc: KosmoDoc, wallFaces: RawFace[]): void {
+  if (wallFaces.length < 2) return;
+  // Ungeschnittene Ausgangsform je Face sichern — jede Verschneidung im
+  // Verlauf dieser Funktion schneidet gegen diesen Schnappschuss, nie gegen
+  // eine bereits zurückgeschnittene Nachbarform (Reihenfolge-Unabhängigkeit,
+  // wie in wandDeckeVerschneiden/schneideZurueck oben).
+  const orig = wallFaces.map((f) => loopsToXY(f.loops));
+
+  // Paarweise ECHTE Überlappung zwischen Faces verschiedener Wände einsammeln
+  // (Fugen-Schwelle, keine blosse Berührung) — Grundlage für die
+  // Zusammenhangsgruppen unten.
+  const nachbarn = new Map<number, Set<number>>();
+  const verbinde = (i: number, j: number): void => {
+    if (!nachbarn.has(i)) nachbarn.set(i, new Set());
+    if (!nachbarn.has(j)) nachbarn.set(j, new Set());
+    nachbarn.get(i)!.add(j);
+    nachbarn.get(j)!.add(i);
+  };
+  for (let i = 0; i < wallFaces.length; i++) {
+    for (let j = i + 1; j < wallFaces.length; j++) {
+      if (wallFaces[i]!.entityId === wallFaces[j]!.entityId) continue; // eigene Wand nie gegen sich selbst
+      const ueberlapp = intersect(orig[i]!, orig[j]!);
+      const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
+      if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
+      verbinde(i, j);
+    }
+  }
+  if (nachbarn.size === 0) return;
+
+  // Zusammenhangskomponenten über die Überlapp-Relation (BFS — die
+  // Gruppengrössen sind winzig, ein eigener Union-Find wäre Overkill).
+  const besucht = new Set<number>();
+  for (const start of nachbarn.keys()) {
+    if (besucht.has(start)) continue;
+    const gruppe: number[] = [];
+    const stack = [start];
+    besucht.add(start);
+    while (stack.length > 0) {
+      const cur = stack.pop()!;
+      gruppe.push(cur);
+      for (const n of nachbarn.get(cur) ?? []) {
+        if (!besucht.has(n)) {
+          besucht.add(n);
+          stack.push(n);
+        }
+      }
+    }
+
+    const wandIds = new Set(gruppe.map((i) => wallFaces[i]!.entityId));
+    if (wandIds.size > 2) continue; // Sanktion 5 — kontrolliert auslassen, nie raten
+
+    // Genau zwei Wände: jedes Face gegen die ORIGINAL-Faces der jeweils
+    // ANDEREN Wand mit STRIKT höherer Priorität zurückschneiden (strikt `>`
+    // — der dokumentierte Tie-Break oben).
+    for (const i of gruppe) {
+      const f = wallFaces[i]!;
+      const prio = materialPrioritaet(doc, f.material);
+      const hoeher: Pt[][] = [];
+      for (const j of gruppe) {
+        if (wallFaces[j]!.entityId === f.entityId) continue;
+        if (materialPrioritaet(doc, wallFaces[j]!.material) > prio) hoeher.push(...orig[j]!);
+      }
+      if (hoeher.length === 0) continue;
+      const polys = loopsToXY(f.loops);
+      const ueberlapp = intersect(polys, hoeher);
+      const flaeche = ueberlapp.reduce((a, p) => a + Math.abs(polygonArea(p)), 0);
+      if (flaeche < SZ_FUGE_FLAECHE_MM2) continue;
+      f.loops = xyToLoops(difference(polys, hoeher));
+    }
+  }
 }
