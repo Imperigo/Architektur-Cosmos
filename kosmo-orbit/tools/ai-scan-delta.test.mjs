@@ -17,6 +17,9 @@ import {
   pruefeAuswertung,
   GERUEST_MARKER,
   kosmoOrbitRoot,
+  listeReleaseVersionen,
+  pruefeAlleVersionen,
+  HISTORISCHE_LUECKEN,
 } from './ai-scan-delta.mjs';
 
 const failures = [];
@@ -98,6 +101,81 @@ check('baueGeruest enthält den Marker', baueGeruest('1.2.3').includes(GERUEST_M
   check(
     'Echtes Repo: die 0.6.3-Auswertung ist kein Gerüst',
     !readFileSync(ersteAuswertung, 'utf8').includes(GERUEST_MARKER),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 4) E7 «Wächter rückwärts» (v0.8.6/PA4, D8) — listeReleaseVersionen()/
+//    pruefeAlleVersionen() gegen eine Fixture-ROADMAP.md mit BEIDEN im
+//    echten Repo vorkommenden 🚀-Schreibweisen + einer fehlenden NEUEN
+//    Version (simuliert einen künftigen, nicht-historischen Release-Fund).
+// ---------------------------------------------------------------------------
+
+{
+  const tmpRoot2 = mkdtempSync(path.join(tmpdir(), 'kosmo-ai-scan-delta-rueckwaerts-'));
+  try {
+    mkdirSync(path.join(tmpRoot2, 'docs'), { recursive: true });
+    writeFileSync(
+      path.join(tmpRoot2, 'ROADMAP.md'),
+      [
+        '381. **🚀 Release v0.8.0 «KosmoPublish»** *(15.07.2026)*',
+        '435. **🚀 Release v0.8.2 «Selbstverbesserung»** *(17.07.2026)*',
+        '474. 🚀 **Release v0.8.4 «Ein Guss» (18.07.2026).** Text …',
+        '485. **🚀 Release v0.8.5 «Greifbar»** *(19.07.2026)*',
+        '500. **🚀 Release v0.8.6 «Verlässlich»** *(20.07.2026)* — NEUE Version, absichtlich ohne Auswertungsdatei.',
+        '999. **v0.7.4 «Einlösen & Feinschliff»** — altes Muster OHNE 🚀, darf NICHT erfasst werden.',
+      ].join('\n\n'),
+      'utf8',
+    );
+    // 0.8.0/0.8.2/0.8.4 bekommen KEINE Datei (historisch → dürfen trotzdem grün sein).
+    // 0.8.5 bekommt eine ECHTE (nicht-Gerüst-)Auswertung.
+    writeFileSync(path.join(tmpRoot2, 'docs', 'AI-SCAN-AUSWERTUNG-0.8.5.md'), '# Auswertung 0.8.5\n\nEcht.\n');
+    // 0.8.6 (NICHT historisch) bekommt bewusst KEINE Datei — muss als Lücke auffallen.
+
+    const versionen = listeReleaseVersionen(tmpRoot2);
+    check(
+      'listeReleaseVersionen erfasst beide 🚀-Schreibweisen + dedupliziert + sortiert, ohne das alte v0.7.4-Muster',
+      JSON.stringify(versionen) === JSON.stringify(['0.8.0', '0.8.2', '0.8.4', '0.8.5', '0.8.6']),
+    );
+
+    const alle = pruefeAlleVersionen({ root: tmpRoot2 });
+    check('pruefeAlleVersionen: Gesamtergebnis nicht ok (0.8.6 fehlt, ist NICHT historisch)', alle.ok === false);
+    check(
+      'pruefeAlleVersionen: genau EINE nicht-historische Lücke — v0.8.6',
+      alle.luecken.length === 1 && alle.luecken[0]?.version === '0.8.6',
+    );
+    check(
+      '0.8.0/0.8.2/0.8.4 sind als historisch markiert, zählen NICHT als Lücke',
+      ['0.8.0', '0.8.2', '0.8.4'].every((v) => alle.ergebnisse.find((e) => e.version === v)?.historisch === true),
+    );
+    check(
+      '0.8.5 ist vorhanden und NICHT historisch (reguläre, erfüllte Version)',
+      alle.ergebnisse.find((e) => e.version === '0.8.5')?.vorhanden === true &&
+        alle.ergebnisse.find((e) => e.version === '0.8.5')?.historisch === false,
+    );
+    check('pruefeAlleVersionen legt NIE eine Datei an', !existsSync(auswertungsPfad('0.8.6', tmpRoot2)));
+
+    // Lücke geschlossen (Auswertung nachgereicht) → Gesamtergebnis wird grün.
+    writeFileSync(path.join(tmpRoot2, 'docs', 'AI-SCAN-AUSWERTUNG-0.8.6.md'), '# Auswertung 0.8.6\n\nEcht.\n');
+    const alleNachtrag = pruefeAlleVersionen({ root: tmpRoot2 });
+    check('Nach Nachtrag der 0.8.6-Auswertung: keine Lücken mehr', alleNachtrag.ok === true && alleNachtrag.luecken.length === 0);
+  } finally {
+    rmSync(tmpRoot2, { recursive: true, force: true });
+  }
+}
+
+// Echtes Repo: die heute bekannten historischen Lücken (0.8.0–0.8.4) sind
+// alle in der Ausnahmeliste, die aktuelle Version fällt NICHT hinein.
+{
+  const echtAlle = pruefeAlleVersionen({ root: kosmoOrbitRoot });
+  check('Echtes Repo: pruefeAlleVersionen findet mindestens die bekannten 0.8.x-Releases', echtAlle.ergebnisse.length >= 5);
+  check(
+    'Echtes Repo: alle HISTORISCHE_LUECKEN-Einträge tauchen tatsächlich als Release-Version auf',
+    [...HISTORISCHE_LUECKEN].every((v) => echtAlle.ergebnisse.some((e) => e.version === v)),
+  );
+  check(
+    'Echtes Repo: die aktuelle package.json-Version ist NICHT Teil der historischen Ausnahmeliste',
+    !HISTORISCHE_LUECKEN.has(liesVersion(kosmoOrbitRoot)),
   );
 }
 

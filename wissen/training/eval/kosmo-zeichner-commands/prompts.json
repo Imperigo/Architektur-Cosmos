@@ -1,9 +1,10 @@
 {
   "adapter": "kosmo-zeichner-commands",
-  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12). 35 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge. Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) nur diesen Weg kennt; Details s. README.md-Nachtrag.",
+  "beschreibung": "Feste Eval-Suite (v0.8.4/PD2, docs/V084-SPEZ.md D14/C-23; erweitert v0.8.5/PB2, docs/V085-SPEZ.md §3 E4/C-12; erweitert v0.8.6/PA4, docs/V086-SPEZ.md E8/D9). 38 feste deutsche Zeichner-Aufträge quer über die Command-Klassen Geschoss/Aufbau/Wand/Zone/Öffnung/Masskette/Kommentar/vis.*/publish.* plus vier Ablehn-Fälle plus drei LaufPlan-Fälle. ANDERS als die Schwester-Suite kosmo-zeichner-grundriss (die einen echten Kernel-GENERATOR referenzprüft): hier gibt es noch KEIN trainiertes Modell UND keinen deterministischen Referenz-Algorithmus für 'Nutzerwunsch → Tool-Call' — das Skript IST die Referenz (von Hand gegen die echten Command-Beschreibungen/Titel aus packages/kosmo-kernel/src/commands/*.ts formuliert). Was pruefe-eval.mts wirklich beweist: (1) jede erwartete commandId existiert noch in commandTools() (Schema-Drift/Umbenennung fällt sofort auf), (2) die erwarteten Parameter bestehen die ECHTE, aktuelle zod-Validierung des Commands (validateToolCall), (3) der volle ChatSession-Zugweg (Systemprompt/Persona/Defaults/Diff-Karten-Gate) läuft für jeden Fall fehlerfrei durch ein via ScriptedProvider abgespieltes, deterministisches Skript, (4) ein Ablehn-Fall (kein Tool-Aufruf im Skript) erzeugt tatsächlich NULL Diff-Karten-Vorschläge, (5) PA4-Nachtrag: ein LaufPlan-Fall (mehrere Tool-Aufrufe IM SELBEN Zug, ein Paket/eine Diff-Karten-Kette) erzeugt genau so viele onProposal-Aufrufe wie erwartete Schritte, in Sequenz, mit den genannten Kernparametern. Das ist ein Plumbing-/Integrations-Beweis gegen den DATENSATZ-Weg mit einem Mock-Provider — KEIN Modell-Eval, s. README.md. PB2-Nachtrag (cmd-26..cmd-35): je EIN Einzelschritt aus den drei neuen Kosmo-Lauf-Drehbüchern (`../kosmo-laufplaene/`) — bewusst weiterhin im `erwartung.typ:\"command\"`-Ein-Zug-Format der ersten 25, weil dieser Prüfer (ausserhalb des PB2-Dateikreises) damals nur diesen Weg kannte. PA4-Nachtrag (cmd-36..cmd-38, E8): NEU `erwartung.typ:\"laufplan\"` — die Erwartung nennt eine ganze Schritt-Folge statt eines Einzelschritts; Details s. README.md-Nachtrag und der Kopfkommentar von pruefe-eval.mts (inkl. der bewussten Abgrenzung zum `lauf_planen`-Tool aus E4, das noch nicht existiert).",
   "kriterien_legende": {
     "command": "erwartete commandId ist ein reales, aktuelles Kosmo-Werkzeug (commandTools()) UND die erwarteten Parameter bestehen validateToolCall() gegen das ECHTE zod-Schema UND ChatSession meldet genau EINEN onProposal mit exakt dieser commandId/diesen Parametern",
-    "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug"
+    "ablehnung": "das Skript enthält für diesen Zug KEINEN Tool-Aufruf (Kosmo würde nachfragen/ablehnen statt zu raten) — ChatSession meldet NULL onProposal-Aufrufe für den Zug",
+    "laufplan": "PA4-Nachtrag (v0.8.6, E8): die Erwartung nennt eine ganze Schritt-Folge [{commandId, params?}] statt eines einzelnen Tool-Aufrufs — alle erwarteten commandIds sind reale, aktuelle Kosmo-Werkzeuge UND die genannten Schritt-Parameter bestehen validateToolCall() je Schritt UND ChatSession meldet in EINEM Zug genau so viele onProposal-Aufrufe wie Schritte, in derselben Reihenfolge/commandId-Sequenz, mit den genannten Kernparametern als Teilmenge, gemeldet als EINE Aktionskette (paket-Metadatum)"
   },
   "prompts": [
     {
@@ -479,6 +480,88 @@
         "typ": "command",
         "commandId": "publish.ansichtPlatzieren",
         "params": { "sheetId": "blatt-kontroll01", "view": "axo", "scale": 100, "x": 100, "y": 80, "title": "Übersicht Axo" }
+      }
+    },
+    {
+      "id": "cmd-36-laufplan-drei-geschosse",
+      "kategorie": "laufplan",
+      "nutzerwunsch": "Leg für mich gleich alle drei Geschosse an: EG auf Kote 0 mit 3.0 m Geschosshöhe, dann 1. und 2. Obergeschoss direkt aufeinander mit je 2.8 m.",
+      "kosmoText": "Ich plane drei Schritte: EG (0 mm, 3000 mm hoch), 1.OG (3000 mm, 2800 mm hoch), 2.OG (5800 mm, 2800 mm hoch) — als eine Kette, ein Undo.",
+      "erwartung": {
+        "typ": "laufplan",
+        "schritte": [
+          { "commandId": "design.geschossErstellen", "params": { "name": "EG", "index": 0, "elevation": 0, "height": 3000 } },
+          { "commandId": "design.geschossErstellen", "params": { "name": "1.OG", "index": 1, "elevation": 3000, "height": 2800 } },
+          { "commandId": "design.geschossErstellen", "params": { "name": "2.OG", "index": 2, "elevation": 5800, "height": 2800 } }
+        ]
+      }
+    },
+    {
+      "id": "cmd-37-laufplan-rechteck-vier-waende",
+      "kategorie": "laufplan",
+      "nutzerwunsch": "Zeichne im EG ein geschlossenes 8×6 m Aussenwand-Rechteck aus vier Wänden ab der Ecke (0/0), Aufbau AW Beton 36.",
+      "kosmoText": "Ich plane vier Wände im Uhrzeigersinn ab (0/0): Süd 8 m, Ost 6 m, Nord 8 m, West 6 m — das Rechteck schliesst sich zur Ausgangsecke.",
+      "erwartung": {
+        "typ": "laufplan",
+        "schritte": [
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 0, "y": 0 },
+              "b": { "x": 8000, "y": 0 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            }
+          },
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 8000, "y": 0 },
+              "b": { "x": 8000, "y": 6000 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            }
+          },
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 8000, "y": 6000 },
+              "b": { "x": 0, "y": 6000 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            }
+          },
+          {
+            "commandId": "design.wandZeichnen",
+            "params": {
+              "storeyId": "geschoss-eg01",
+              "a": { "x": 0, "y": 6000 },
+              "b": { "x": 0, "y": 0 },
+              "assemblyId": "aufbau-awbeton01",
+              "alignment": "zentrum"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cmd-38-laufplan-vis-modell-render-verbinden",
+      "kategorie": "laufplan",
+      "nutzerwunsch": "Leg im Render-Graphen graph-vis01 einen Modell-Node und einen Render-Node an und verbinde ihre Szene-Ports.",
+      "kosmoText": "Ich plane drei Schritte: Modell-Node bei (0/0), Render-Node bei (300/0), dann Szene→Szene verbinden.",
+      "erwartung": {
+        "typ": "laufplan",
+        "schritte": [
+          { "commandId": "vis.nodeSetzen", "params": { "graphId": "graph-vis01", "typ": "modell", "x": 0, "y": 0 } },
+          { "commandId": "vis.nodeSetzen", "params": { "graphId": "graph-vis01", "typ": "render", "x": 300, "y": 0 } },
+          {
+            "commandId": "vis.verbinden",
+            "params": { "graphId": "graph-vis01", "from": "node-modell01", "fromPort": "szene", "to": "node-render01", "toPort": "szene" }
+          }
+        ]
       }
     }
   ]

@@ -33,8 +33,32 @@
  * keine geometrische Kennzahl, gegen die sich eine externe Antwort strukturell
  * prüfen liesse, ohne selbst wieder nur das Schema zu re-implementieren.
  *
- * Exit-Code 0 nur wenn ALLE 25 Prompts bestehen, sonst 1 mit einer Tabelle
+ * Exit-Code 0 nur wenn ALLE Prompts bestehen, sonst 1 mit einer Tabelle
  * der Fehlschläge UND der Quote je Kategorie.
+ *
+ * v0.8.6/PA4 (E8 «Eval-LaufPlan-Format», D9, `docs/V086-SPEZ.md`): NEU
+ * `erwartung.typ: 'laufplan'` — die Erwartung nennt eine ganze
+ * Schritt-Folge (`[{ commandId, params? }]`) statt eines einzelnen
+ * Tool-Aufrufs. Das ist die naheliegende Erweiterung des bestehenden
+ * `'command'`-Wegs, NICHT der `lauf_planen`-Weg aus E4 (`docs/V086-SPEZ.md`
+ * §3): `lauf_planen` ist ein eigenes Nicht-Command-Tool in `packages/
+ * kosmo-ai` (PB1, Tag 2) und existiert zum Zeitpunkt dieses Pakets noch
+ * NICHT — dieser Prüfer darf `kosmo-ai` laut Auftrag nicht ändern. Der
+ * LaufPlan-Fall nutzt darum GENAU denselben ScriptedProvider/ChatSession-Weg
+ * wie die Ein-Zug-Fälle, aber mit MEHREREN `toolCalls` in EINEM Zug
+ * (`SkriptZug.toolCalls`, `scripted.ts`: "mehrere = ein Paket (eine
+ * Diff-Karten-Kette)") — `ChatSession#turn()` meldet dafür bereits heute
+ * mehrere `onProposal`s in Aufrufreihenfolge (chat.ts, `schreibend`-Schleife,
+ * `paket`-Metadatum). Der Prüfer vergleicht die resultierende
+ * Proposal-Sequenz gegen die erwartete `commandId`-Folge + die genannten
+ * Kernparameter (Teilmengen-Vergleich je Schritt, `enthaeltErwartete`, wie
+ * beim Ein-Zug-Fall). Das beweist denselben Plumbing-Weg wie beim
+ * Ein-Zug-Fall — NUR für eine ganze Schrittfolge statt eines Schritts. Was
+ * es NICHT beweist (Ehrlichkeit, s. README.md-Nachtrag): keine Ausführung
+ * gegen einen echten `KosmoDoc` (das leistet weiterhin ausschliesslich
+ * `../kosmo-laufplaene/pruefe-laufplaene.mts`), und keinen Beweis, dass ein
+ * künftiges `lauf_planen`-Tool-Ergebnis exakt in dieses Schema passt (das
+ * ist Sache von PB1/E4, sobald das Tool existiert).
  *
  * Aufruf:
  *   npx tsx wissen/training/eval/kosmo-zeichner-commands/pruefe-eval.mts
@@ -78,7 +102,25 @@ interface PromptAblehnung {
   erwartung: { typ: 'ablehnung' };
 }
 
-type Prompt = PromptCommand | PromptAblehnung;
+/** EIN erwarteter Schritt eines LaufPlans — `params` optional (ein Schritt
+ * ohne genannte Parameter gilt als bestanden, sobald die commandId + die
+ * Position in der Sequenz stimmen; Teilmengen-Vergleich wie beim Ein-Zug-Fall). */
+interface LaufPlanSchrittErwartung {
+  commandId: string;
+  params?: Record<string, unknown>;
+}
+
+/** E8 (v0.8.6/PA4, D9): eine ganze Schritt-Folge statt eines einzelnen
+ * Tool-Aufrufs — s. Kopfkommentar für die Grenze ggü. dem `lauf_planen`-Weg (E4). */
+interface PromptLaufplan {
+  id: string;
+  kategorie: 'laufplan';
+  nutzerwunsch: string;
+  kosmoText: string;
+  erwartung: { typ: 'laufplan'; schritte: LaufPlanSchrittErwartung[] };
+}
+
+type Prompt = PromptCommand | PromptAblehnung | PromptLaufplan;
 
 interface PromptsDatei {
   adapter: string;
@@ -119,12 +161,19 @@ function enthaeltErwartete(erwartet: unknown, tatsaechlich: unknown): boolean {
 
 /** Baut aus EINEM Prompt ein Ein-Zug-Skript für den ScriptedProvider —
  * `command`: genau EIN Tool-Aufruf (die erwartete commandId/Parameter);
- * `ablehnung`: KEIN Tool-Aufruf (Kosmo würde nachfragen/ehrlich absagen). */
+ * `laufplan`: MEHRERE Tool-Aufrufe IM SELBEN Zug (ein Paket/eine
+ * Diff-Karten-Kette, `scripted.ts` — `SkriptZug.toolCalls`), einer je
+ * erwartetem Schritt, in Sequenz; `ablehnung`: KEIN Tool-Aufruf (Kosmo würde
+ * nachfragen/ehrlich absagen). */
 function skriptFuer(p: Prompt): SzenarioSkript {
-  const toolCalls =
-    p.erwartung.typ === 'command'
-      ? [{ name: toolNameFor(p.erwartung.commandId), args: p.erwartung.params }]
-      : [];
+  let toolCalls: Array<{ name: string; args: Record<string, unknown> }>;
+  if (p.erwartung.typ === 'command') {
+    toolCalls = [{ name: toolNameFor(p.erwartung.commandId), args: p.erwartung.params }];
+  } else if (p.erwartung.typ === 'laufplan') {
+    toolCalls = p.erwartung.schritte.map((s) => ({ name: toolNameFor(s.commandId), args: s.params ?? {} }));
+  } else {
+    toolCalls = [];
+  }
   return {
     id: p.id,
     zuege: [{ nutzerErwartung: p.nutzerwunsch, antwortText: p.kosmoText, toolCalls }],
@@ -198,6 +247,75 @@ async function werteAus(p: Prompt): Promise<Befund> {
       kategorie: p.kategorie,
       ok: true,
       begruendung: `Treffer: ${p.erwartung.commandId} — 1 Vorschlag, zod-valide Parameter (${prop.summary})`,
+    };
+  }
+
+  if (p.erwartung.typ === 'laufplan') {
+    const unbekannt = p.erwartung.schritte.filter((s) => !TOOLNAMEN_LIVE.has(toolNameFor(s.commandId)));
+    if (unbekannt.length > 0) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `Werkzeug(e) ${unbekannt.map((s) => `«${toolNameFor(s.commandId)}»`).join(', ')} sind keine aktuellen Kosmo-Werkzeuge mehr (commandTools() kennt sie nicht — Command(s) umbenannt/entfernt?)`,
+      };
+    }
+    const { proposals, fehler } = await spieleAb(p);
+    if (fehler) {
+      return { id: p.id, kategorie: p.kategorie, ok: false, begruendung: `ChatSession meldete einen Fehler: ${fehler}` };
+    }
+    const erwarteteSchritte = p.erwartung.schritte;
+    if (proposals.length !== erwarteteSchritte.length) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `erwartet: LaufPlan mit ${erwarteteSchritte.length} Schritt(en), erhalten: ${proposals.length} Vorschlag/Vorschläge (zod-Validierung eines Schritts vermutlich fehlgeschlagen — geprüft gegen das ECHTE Schema je Command)`,
+      };
+    }
+    for (let i = 0; i < erwarteteSchritte.length; i++) {
+      const erwartet = erwarteteSchritte[i]!;
+      const prop = proposals[i]!;
+      if (prop.commandId !== erwartet.commandId) {
+        return {
+          id: p.id,
+          kategorie: p.kategorie,
+          ok: false,
+          begruendung: `Schritt ${i + 1}: erwartete commandId «${erwartet.commandId}», erhalten «${prop.commandId}» (Sequenz muss stimmen)`,
+        };
+      }
+      if (erwartet.params !== undefined && !enthaeltErwartete(erwartet.params, prop.params)) {
+        return {
+          id: p.id,
+          kategorie: p.kategorie,
+          ok: false,
+          begruendung: `Schritt ${i + 1} (${erwartet.commandId}): Parameter weichen ab — erwartet (Teilmenge): ${JSON.stringify(erwartet.params)}, erhalten: ${JSON.stringify(prop.params)}`,
+        };
+      }
+    }
+    // Ehrliche Zusatz-Kontrolle (kein separates Prüf-Kriterium, aber ein
+    // starkes Indiz für "echter Plan statt zufällig gleich vieler Einzelzüge"):
+    // `ChatSession#turn()` setzt bei >1 schreibendem Tool-Call im selben Zug
+    // ein `paket`-Metadatum mit `groesse === schreibend.length` (chat.ts) —
+    // bei genau EINEM Schritt bleibt `paket` bewusst `undefined` (kein
+    // Ein-Schritt-"Paket").
+    const paketOk =
+      proposals.length === 1
+        ? proposals[0]!.paket === undefined
+        : proposals.every((pr) => pr.paket?.groesse === proposals.length);
+    if (!paketOk) {
+      return {
+        id: p.id,
+        kategorie: p.kategorie,
+        ok: false,
+        begruendung: `LaufPlan-Schritte kamen nicht als EINE Aktionskette an (paket-Metadatum unstimmig) — erhalten: ${JSON.stringify(proposals.map((pr) => pr.paket))}`,
+      };
+    }
+    return {
+      id: p.id,
+      kategorie: p.kategorie,
+      ok: true,
+      begruendung: `Treffer: LaufPlan mit ${erwarteteSchritte.length} Schritt(en) (${erwarteteSchritte.map((s) => s.commandId).join(' → ')}), Sequenz + zod-valide Kernparameter, als EINE Aktionskette gemeldet`,
     };
   }
 
