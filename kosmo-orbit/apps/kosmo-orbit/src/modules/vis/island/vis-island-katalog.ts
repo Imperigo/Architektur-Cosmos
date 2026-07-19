@@ -1,4 +1,6 @@
+import type { ComponentType } from 'react';
 import type { IslandWerkzeug, InselKonfig } from '../../design/island/island-katalog';
+import { VIS_GLYPHEN } from './vis-glyphen';
 
 /**
  * Vis-Island-Katalog (PC1, `docs/V084-SPEZ.md` §5 W2, C-15) — der erste
@@ -26,15 +28,28 @@ import type { IslandWerkzeug, InselKonfig } from '../../design/island/island-kat
  * Aktion läuft über `onWerkzeugAktion` (`VisWorkspace.tsx`) bzw. die Stufe-2/
  * 3-Registry-Inhalte selbst (`inhalte/*.tsx`, lesen `vis-runtime.ts`/
  * `useProject` direkt, wie die design-Vorbilder).
+ *
+ * **PA4 (v0.8.5, `docs/V085-SPEZ.md` §3 E6 + §7 C-13):** `glyphe` trägt ab
+ * hier echte Icon-Components aus `vis-glyphen.tsx` statt der früheren
+ * Zwei-Buchstaben-Text-Kürzel (`'NO'`, `'AR'`, …) — der `string`-Zweig der
+ * `IslandWerkzeug.glyphe`-Signatur (design-Konvention, `island-katalog.ts`
+ * E8) bleibt ein echter, aber ab jetzt ungenutzter Typ-Fallback.
  */
 
 export type VisIslandId = 'graph' | 'ansicht' | 'stimmung' | 'austausch';
+
+/** Löst eine `vis-glyphen.tsx`-Icon-Id auf — Muster `island-katalog.ts`s `icon()`. */
+function icon(id: string): ComponentType<{ size?: number }> {
+  const c = VIS_GLYPHEN[id];
+  if (!c) throw new Error(`vis-island-katalog: kein VIS_GLYPHEN-Icon für "${id}"`);
+  return c;
+}
 
 function werkzeug(
   id: string,
   name: string,
   island: VisIslandId,
-  glyphe: string,
+  glyphe: string | ComponentType<{ size?: number }>,
   hatPopup: boolean,
 ): IslandWerkzeug {
   // Vis ist neu gebaut (kein Bestandswerkzeug-Grad wie design) — alle
@@ -44,30 +59,30 @@ function werkzeug(
 }
 
 const GRAPH: readonly IslandWerkzeug[] = [
-  werkzeug('palette', 'Node-Palette', 'graph', 'NO', true),
-  werkzeug('ausrichten', 'Ausrichten', 'graph', 'AR', true),
-  werkzeug('verbinden', 'Verbinden', 'graph', 'VB', true),
+  werkzeug('palette', 'Node-Palette', 'graph', icon('palette'), true),
+  werkzeug('ausrichten', 'Ausrichten', 'graph', icon('ausrichten'), true),
+  werkzeug('verbinden', 'Verbinden', 'graph', icon('verbinden'), true),
 ];
 
 const ANSICHT: readonly IslandWerkzeug[] = [
-  werkzeug('zoom', 'Zoom', 'ansicht', 'ZM', true),
+  werkzeug('zoom', 'Zoom', 'ansicht', icon('zoom'), true),
   // Sofort-Toggle ohne Popup — dasselbe Muster wie design's 'achsen'
   // (`island-katalog.ts` Z.136, `hatPopup:false` = Sofort-Umschaltung).
-  werkzeug('raster', 'Raster-Snap', 'ansicht', 'RS', false),
-  werkzeug('routing', 'Kanten-Routing', 'ansicht', 'RO', false),
-  werkzeug('minimap', 'Minimap', 'ansicht', 'MM', true),
+  werkzeug('raster', 'Raster-Snap', 'ansicht', icon('raster'), false),
+  werkzeug('routing', 'Kanten-Routing', 'ansicht', icon('routing'), false),
+  werkzeug('minimap', 'Minimap', 'ansicht', icon('minimap'), true),
 ];
 
-const STIMMUNG: readonly IslandWerkzeug[] = [werkzeug('stimmung', 'Stimmung', 'stimmung', 'ST', true)];
+const STIMMUNG: readonly IslandWerkzeug[] = [werkzeug('stimmung', 'Stimmung', 'stimmung', icon('stimmung'), true)];
 
 const AUSTAUSCH: readonly IslandWerkzeug[] = [
-  werkzeug('render-senden', 'Render senden', 'austausch', 'RD', true),
-  werkzeug('aufs-plakat', 'Aufs Plakat', 'austausch', 'AP', true),
+  werkzeug('render-senden', 'Render senden', 'austausch', icon('render-senden'), true),
+  werkzeug('aufs-plakat', 'Aufs Plakat', 'austausch', icon('aufs-plakat'), true),
   // Sofort-Aktion ohne Popup — Toast quittiert (wie design's `hatPopup:false`-Fälle).
-  werkzeug('kamera-vorschlagen', 'Kamera vorschlagen', 'austausch', 'KV', false),
-  werkzeug('report', 'Report', 'austausch', 'RP', false),
+  werkzeug('kamera-vorschlagen', 'Kamera vorschlagen', 'austausch', icon('kamera-vorschlagen'), false),
+  werkzeug('report', 'Report', 'austausch', icon('report'), false),
   // Rückweg 'island' → 'manuell' — Muster `island-katalog.ts` Z.174 (design).
-  werkzeug('manuell', 'Manuell', 'austausch', 'MN', false),
+  werkzeug('manuell', 'Manuell', 'austausch', icon('manuell'), false),
 ];
 
 /** Gesamtkatalog, 13 Werkzeuge über 4 Inseln. */

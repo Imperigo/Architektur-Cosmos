@@ -1,4 +1,6 @@
+import type { ComponentType } from 'react';
 import type { IslandWerkzeug, InselKonfig } from '../../design/island/island-katalog';
+import { PUBLISH_GLYPHEN } from './publish-glyphen';
 
 /**
  * Publish-Island-Katalog (PC3, `docs/V084-SPEZ.md` §5 W3, C-19) — dritter
@@ -29,15 +31,28 @@ import type { IslandWerkzeug, InselKonfig } from '../../design/island/island-kat
  * (`PublishWorkspace.tsx`) bzw. die Stufe-2/3-Registry-Inhalte selbst
  * (`inhalte/*.tsx`, lesen `publish-runtime.ts`/`useProject` direkt, wie die
  * design-/vis-Vorbilder).
+ *
+ * **PA4 (v0.8.5, `docs/V085-SPEZ.md` §3 E6 + §7 C-13):** `glyphe` trägt ab
+ * hier echte Icon-Components aus `publish-glyphen.tsx` statt der früheren
+ * Zwei-Buchstaben-Text-Kürzel (`'BL'`, `'PL'`, …) — der `string`-Zweig der
+ * `IslandWerkzeug.glyphe`-Signatur (design-Konvention, `island-katalog.ts`
+ * E8) bleibt ein echter, aber ab jetzt ungenutzter Typ-Fallback.
  */
 
 export type PublishIslandId = 'blatt' | 'darstellung' | 'projekt' | 'austausch';
+
+/** Löst eine `publish-glyphen.tsx`-Icon-Id auf — Muster `island-katalog.ts`s `icon()`. */
+function icon(id: string): ComponentType<{ size?: number }> {
+  const c = PUBLISH_GLYPHEN[id];
+  if (!c) throw new Error(`publish-island-katalog: kein PUBLISH_GLYPHEN-Icon für "${id}"`);
+  return c;
+}
 
 function werkzeug(
   id: string,
   name: string,
   island: PublishIslandId,
-  glyphe: string,
+  glyphe: string | ComponentType<{ size?: number }>,
   hatPopup: boolean,
 ): IslandWerkzeug {
   // Publish ist neu auf Islands gebaut (kein Bestandswerkzeug-Grad wie
@@ -47,29 +62,29 @@ function werkzeug(
 }
 
 const BLATT: readonly IslandWerkzeug[] = [
-  werkzeug('blatt', 'Blatt anlegen/wechseln', 'blatt', 'BL', true),
-  werkzeug('platzieren', 'Ansicht platzieren', 'blatt', 'PL', true),
-  werkzeug('auto-pack', 'Auto-Pack', 'blatt', 'AK', true),
+  werkzeug('blatt', 'Blatt anlegen/wechseln', 'blatt', icon('blatt'), true),
+  werkzeug('platzieren', 'Ansicht platzieren', 'blatt', icon('platzieren'), true),
+  werkzeug('auto-pack', 'Auto-Pack', 'blatt', icon('auto-pack'), true),
 ];
 
 const DARSTELLUNG: readonly IslandWerkzeug[] = [
-  werkzeug('zoom', 'Zoom', 'darstellung', 'ZM', true),
-  werkzeug('massstab', 'Massstab', 'darstellung', 'MS', true),
-  werkzeug('plankopf-presets', 'Plankopf-Presets', 'darstellung', 'PP', true),
+  werkzeug('zoom', 'Zoom', 'darstellung', icon('zoom'), true),
+  werkzeug('massstab', 'Massstab', 'darstellung', icon('massstab'), true),
+  werkzeug('plankopf-presets', 'Plankopf-Presets', 'darstellung', icon('plankopf-presets'), true),
 ];
 
 const PROJEKT: readonly IslandWerkzeug[] = [
-  werkzeug('dossier', 'Dossier', 'projekt', 'DO', true),
-  werkzeug('plankopf', 'Plankopf', 'projekt', 'PK', true),
+  werkzeug('dossier', 'Dossier', 'projekt', icon('dossier'), true),
+  werkzeug('plankopf', 'Plankopf', 'projekt', icon('plankopf'), true),
 ];
 
 const AUSTAUSCH: readonly IslandWerkzeug[] = [
-  werkzeug('export-pdf', 'PDF-Export', 'austausch', 'PD', true),
-  werkzeug('export-svg-dxf', 'SVG/DXF-Export', 'austausch', 'SD', true),
-  werkzeug('export-hub', 'Export-Hub', 'austausch', 'EH', true),
+  werkzeug('export-pdf', 'PDF-Export', 'austausch', icon('export-pdf'), true),
+  werkzeug('export-svg-dxf', 'SVG/DXF-Export', 'austausch', icon('export-svg-dxf'), true),
+  werkzeug('export-hub', 'Export-Hub', 'austausch', icon('export-hub'), true),
   // Rückweg 'island' → 'manuell' — Muster `vis-island-katalog.ts` Z.70/
   // `island-katalog.ts` Z.217 (design).
-  werkzeug('manuell', 'Manuell', 'austausch', 'MN', false),
+  werkzeug('manuell', 'Manuell', 'austausch', icon('manuell'), false),
 ];
 
 /** Gesamtkatalog, 12 Werkzeuge über 4 Inseln. */

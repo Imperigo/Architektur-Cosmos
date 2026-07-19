@@ -14,6 +14,9 @@ import React, { createElement } from 'react';
 const { ISLAND_GLYPHEN, ISLAND_PILL_GLYPHEN } = await import(
   '../../apps/kosmo-orbit/src/modules/design/island/island-glyphen'
 );
+const { VIS_GLYPHEN } = await import('../../apps/kosmo-orbit/src/modules/vis/island/vis-glyphen');
+const { PUBLISH_GLYPHEN } = await import('../../apps/kosmo-orbit/src/modules/publish/island/publish-glyphen');
+const { PREPARE_GLYPHEN } = await import('../../apps/kosmo-orbit/src/modules/prepare/island/prepare-glyphen');
 
 /**
  * PE2 (v0.8.4, Bauauftrag Punkt 4) — Icon-Kontaktbogen-Regenerierung.
@@ -31,6 +34,12 @@ const { ISLAND_GLYPHEN, ISLAND_PILL_GLYPHEN } = await import(
  * Rendert reines SVG-Markup (`react-dom/server`, kein App-Build/Server
  * nötig) in eine eigenständige HTML-Seite, öffnet sie über
  * `page.setContent()` und screenshotet sie als PNG.
+ *
+ * **PA4 (v0.8.5, `docs/V085-SPEZ.md` §3 E6 + §7 C-14):** additiv erweitert
+ * um die drei neuen Stations-Namensräume `vis-glyphen.tsx`/`publish-
+ * glyphen.tsx`/`prepare-glyphen.tsx` (13/12/9 Werkzeug-Icons) — dieselbe
+ * `zelle()`-Funktion, drei weitere `<h2>`-Abschnitte auf demselben Blatt.
+ * Der bestehende design-Teil (Werkzeug/Pille) bleibt unverändert.
  */
 
 const OUT = 'e2e-results/pe2-kontaktbogen.png';
@@ -55,8 +64,26 @@ const pillZellen = Object.entries(ISLAND_PILL_GLYPHEN)
   .map(([id, Icon]) => zelle('Insel-Pille', id, Icon))
   .join('\n');
 
+const visZellen = Object.entries(VIS_GLYPHEN)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([id, Icon]) => zelle('Vis', id, Icon))
+  .join('\n');
+
+const publishZellen = Object.entries(PUBLISH_GLYPHEN)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([id, Icon]) => zelle('Publish', id, Icon))
+  .join('\n');
+
+const prepareZellen = Object.entries(PREPARE_GLYPHEN)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([id, Icon]) => zelle('Prepare', id, Icon))
+  .join('\n');
+
 const werkzeugAnzahl = Object.keys(ISLAND_GLYPHEN).length;
 const pillAnzahl = Object.keys(ISLAND_PILL_GLYPHEN).length;
+const visAnzahl = Object.keys(VIS_GLYPHEN).length;
+const publishAnzahl = Object.keys(PUBLISH_GLYPHEN).length;
+const prepareAnzahl = Object.keys(PREPARE_GLYPHEN).length;
 
 const html = `<!doctype html>
 <html>
@@ -83,11 +110,17 @@ const html = `<!doctype html>
 </style>
 </head>
 <body>
-  <h1>PE2 Icon-Kontaktbogen — ${werkzeugAnzahl} Werkzeug- + ${pillAnzahl} Pill-Icons = ${werkzeugAnzahl + pillAnzahl} total (island-glyphen.tsx)</h1>
+  <h1>PE2/PA4 Icon-Kontaktbogen — ${werkzeugAnzahl} Werkzeug- + ${pillAnzahl} Pill-Icons (design) + ${visAnzahl} Vis + ${publishAnzahl} Publish + ${prepareAnzahl} Prepare = ${werkzeugAnzahl + pillAnzahl + visAnzahl + publishAnzahl + prepareAnzahl} total</h1>
   <h2>Werkzeug-Icons (ISLAND_GLYPHEN, ${werkzeugAnzahl})</h2>
   <div class="raster">${werkzeugZellen}</div>
   <h2>Insel-Pillen (ISLAND_PILL_GLYPHEN, ${pillAnzahl})</h2>
   <div class="raster">${pillZellen}</div>
+  <h2>Vis-Werkzeug-Icons (VIS_GLYPHEN, ${visAnzahl}, PA4)</h2>
+  <div class="raster">${visZellen}</div>
+  <h2>Publish-Werkzeug-Icons (PUBLISH_GLYPHEN, ${publishAnzahl}, PA4)</h2>
+  <div class="raster">${publishZellen}</div>
+  <h2>Prepare-Werkzeug-Icons (PREPARE_GLYPHEN, ${prepareAnzahl}, PA4)</h2>
+  <div class="raster">${prepareZellen}</div>
 </body>
 </html>`;
 
@@ -97,4 +130,6 @@ await page.setContent(html);
 await page.screenshot({ path: OUT, fullPage: true });
 await browser.close();
 
-console.log(`Kontaktbogen geschrieben: ${OUT} (${werkzeugAnzahl} Werkzeug- + ${pillAnzahl} Pill-Icons)`);
+console.log(
+  `Kontaktbogen geschrieben: ${OUT} (${werkzeugAnzahl} Werkzeug- + ${pillAnzahl} Pill-Icons design, ${visAnzahl} Vis, ${publishAnzahl} Publish, ${prepareAnzahl} Prepare)`,
+);

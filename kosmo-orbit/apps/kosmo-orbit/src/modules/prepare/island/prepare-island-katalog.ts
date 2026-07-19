@@ -1,4 +1,6 @@
+import type { ComponentType } from 'react';
 import type { IslandWerkzeug, InselKonfig } from '../../design/island/island-katalog';
+import { PREPARE_GLYPHEN } from './prepare-glyphen';
 
 /**
  * Prepare-Island-Katalog (PC4, `docs/V084-SPEZ.md` §5 W3, C-20) — gebaut
@@ -28,11 +30,30 @@ import type { IslandWerkzeug, InselKonfig } from '../../design/island/island-kat
  * `toolId` bleibt bei JEDEM Werkzeug leer (design-`ToolId`-Union, Prepare hat
  * keine Entsprechung) — jede Aktion läuft über die Registry-Inhalte selbst
  * (`inhalte/*.tsx`, lesen `knowledge.ts`/`onedrive.ts`/`useQuellen` direkt).
+ *
+ * **PA4 (v0.8.5, `docs/V085-SPEZ.md` §3 E6 + §7 C-13):** `glyphe` trägt ab
+ * hier echte Icon-Components aus `prepare-glyphen.tsx` statt der früheren
+ * Zwei-Buchstaben-Text-Kürzel (`'DA'`, `'OD'`, …) — der `string`-Zweig der
+ * `IslandWerkzeug.glyphe`-Signatur (design-Konvention, `island-katalog.ts`
+ * E8) bleibt ein echter, aber ab jetzt ungenutzter Typ-Fallback.
  */
 
 export type PrepareIslandId = 'aufnahme' | 'wissen' | 'bestand' | 'austausch';
 
-function werkzeug(id: string, name: string, island: PrepareIslandId, glyphe: string, hatPopup: boolean): IslandWerkzeug {
+/** Löst eine `prepare-glyphen.tsx`-Icon-Id auf — Muster `island-katalog.ts`s `icon()`. */
+function icon(id: string): ComponentType<{ size?: number }> {
+  const c = PREPARE_GLYPHEN[id];
+  if (!c) throw new Error(`prepare-island-katalog: kein PREPARE_GLYPHEN-Icon für "${id}"`);
+  return c;
+}
+
+function werkzeug(
+  id: string,
+  name: string,
+  island: PrepareIslandId,
+  glyphe: string | ComponentType<{ size?: number }>,
+  hatPopup: boolean,
+): IslandWerkzeug {
   // Prepare ist neu gebaut (kein Bestandswerkzeug-Grad wie design) — alle
   // Werkzeuge sind ehrlich 'vorhanden' (echte Aktion dahinter, s. `inhalte/`
   // -Registrierungen), keine Hinweis-Platzhalter im Katalog selbst — einzige
@@ -42,26 +63,26 @@ function werkzeug(id: string, name: string, island: PrepareIslandId, glyphe: str
 }
 
 const AUFNAHME: readonly IslandWerkzeug[] = [
-  werkzeug('dateien', 'Dateien', 'aufnahme', 'DA', true),
-  werkzeug('onedrive', 'OneDrive', 'aufnahme', 'OD', true),
+  werkzeug('dateien', 'Dateien', 'aufnahme', icon('dateien'), true),
+  werkzeug('onedrive', 'OneDrive', 'aufnahme', icon('onedrive'), true),
 ];
 
 const WISSEN: readonly IslandWerkzeug[] = [
-  werkzeug('suche', 'Suche', 'wissen', 'SU', true),
-  werkzeug('basis', 'Basis-Import', 'wissen', 'BI', true),
-  werkzeug('vektorisieren', 'Vektorisieren', 'wissen', 'VK', true),
+  werkzeug('suche', 'Suche', 'wissen', icon('suche'), true),
+  werkzeug('basis', 'Basis-Import', 'wissen', icon('basis'), true),
+  werkzeug('vektorisieren', 'Vektorisieren', 'wissen', icon('vektorisieren'), true),
 ];
 
 const BESTAND: readonly IslandWerkzeug[] = [
-  werkzeug('dokumente', 'Dokumente', 'bestand', 'DO', true),
-  werkzeug('chunk', 'Chunk-Ansicht', 'bestand', 'CH', true),
+  werkzeug('dokumente', 'Dokumente', 'bestand', icon('dokumente'), true),
+  werkzeug('chunk', 'Chunk-Ansicht', 'bestand', icon('chunk'), true),
 ];
 
 const AUSTAUSCH: readonly IslandWerkzeug[] = [
-  werkzeug('zu-kosmodata', 'Zu KosmoData', 'austausch', 'KD', true),
+  werkzeug('zu-kosmodata', 'Zu KosmoData', 'austausch', icon('zu-kosmodata'), true),
   // Rückweg 'island' → 'manuell' — Muster `island-katalog.ts` Z.174 (design)
   // bzw. `vis-island-katalog.ts` (PC1): Sofort-Umschaltung ohne Popup.
-  werkzeug('manuell', 'Manuell', 'austausch', 'MN', false),
+  werkzeug('manuell', 'Manuell', 'austausch', icon('manuell'), false),
 ];
 
 /** Gesamtkatalog, 9 Werkzeuge über 4 Inseln. */
