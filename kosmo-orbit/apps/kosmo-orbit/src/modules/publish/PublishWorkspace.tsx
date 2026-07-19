@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KSwitch, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
+  blattverzeichnisSvg,
   plankopfReserveMm,
   planToDxf,
   sheetPaperSize,
@@ -945,6 +946,34 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
                 }}
               >
                 <KIcon name="export" size={14} title="Transmittal-Liste exportieren" />
+              </KButton>
+              {/* PB3 (v0.8.9 E3, `docs/SUBSPEZ-BLATTVERZEICHNIS-089.md` §2):
+                  derselbe Download-Weg wie der Transmittal-Knopf daneben —
+                  reine Ableitung (`blattverzeichnisSvg`), Datum kommt HIER von
+                  der App (`new Date()`), NIE aus dem Kernel-derive (Golden-
+                  Determinismus, Subspez §5.4). */}
+              <KButton
+                size="sm"
+                tone="ghost"
+                data-testid="pubset-blattverzeichnis"
+                title="Blattverzeichnis (SVG): Plan-Inhaltsliste des Sets + Sammellegende"
+                aria-label="Blattverzeichnis exportieren"
+                onClick={() => {
+                  const projectDoc = useProject.getState().doc;
+                  const svg = blattverzeichnisSvg(projectDoc, set, {
+                    projectName: projectDoc.settings.projectName,
+                    datum: new Date().toLocaleDateString('de-CH'),
+                    setName: set.name,
+                  });
+                  const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${set.name.replace(/\s+/g, '-')}-Blattverzeichnis.svg`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+              >
+                <KIcon name="export" size={14} title="Blattverzeichnis exportieren" />
               </KButton>
               <button
                 aria-label={`Set ${set.name} entfernen`}

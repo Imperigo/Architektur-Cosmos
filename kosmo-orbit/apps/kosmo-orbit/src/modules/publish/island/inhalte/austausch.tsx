@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { KButton, KIcon, KInput, melde, meldeFehler } from '@kosmo/ui';
-import { flaechennachweisCsv, planToDxf, sheetToSvg, transmittalCsv, type Sheet, type Storey } from '@kosmo/kernel';
+import { blattverzeichnisSvg, flaechennachweisCsv, planToDxf, sheetToSvg, transmittalCsv, type Sheet, type Storey } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { usePublishRuntime } from '../../publish-runtime';
 import { exportSetSvgs, exportSheetPdf, exportSheetSetPdf } from '../../export-sheets';
@@ -155,6 +155,32 @@ function ExportHubStufe3() {
               }}
             >
               <KIcon name="export" size={14} title="Transmittal-Liste exportieren" />
+            </KButton>
+            {/* PB3 (v0.8.9 E3, `docs/SUBSPEZ-BLATTVERZEICHNIS-089.md` §2):
+                dieselbe Aktion wie `PublishWorkspace.tsx`s Set-Karte, hier in
+                der AUSTAUSCH-Insel — derselbe Download-Weg wie der
+                Transmittal-Knopf daneben. */}
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="island-pubset-blattverzeichnis"
+              title="Blattverzeichnis (SVG): Plan-Inhaltsliste des Sets + Sammellegende"
+              aria-label="Blattverzeichnis exportieren"
+              onClick={() => {
+                const svg = blattverzeichnisSvg(doc, set, {
+                  projectName: doc.settings.projectName,
+                  datum: new Date().toLocaleDateString('de-CH'),
+                  setName: set.name,
+                });
+                const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${set.name.replace(/\s+/g, '-')}-Blattverzeichnis.svg`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+            >
+              <KIcon name="export" size={14} title="Blattverzeichnis exportieren" />
             </KButton>
           </div>
         ))
