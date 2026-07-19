@@ -83,13 +83,27 @@ const MINIMAP_W = 160;
 const MINIMAP_H = 100;
 const MINIMAP_KNOTEN_MIN = 5;
 
+/**
+ * v0.8.8 / PA4 (`docs/V088-SPEZ.md` §2 D7/§3 E-Zeile, C-10) — Token-Brücke:
+ * die sechs Port-Typ-Farben kommen jetzt aus `aura.css` (`--k-port-*`,
+ * byte-gleiche Hex-Werte). `NodeCanvas.tsx` ist SVG (kein Canvas) — jede
+ * Verwendung unten ist entweder ein SVG-`fill`/`stroke`-Attribut (native
+ * `var()`-Unterstützung, Beweis: :1169 nutzte bereits `var(--k-accent)` in
+ * genau diesem Ternary) oder eine CSS-Custom-Prop-Durchreichung
+ * (`style={{ '--_farbe': PORT_FARBE[t] }}`, konsumiert in `aura.css`/
+ * `vis-visual.css` via `var(--_farbe)`) — ein `var()`-String als Wert einer
+ * weitergereichten Custom-Property löst CSS ganz normal verschachtelt auf,
+ * kein Sonderfall nötig. Ein Theme-/Akzent-Wechsel ändert `--k-port-*` nie
+ * (theme-invariant), macht aber den fixen Kanal auf den Custom-Property-
+ * Mechanismus sichtbar: Redraw/Reflow lesen den aktuellen Wert immer neu.
+ */
 const PORT_FARBE: Record<VisPortTyp, string> = {
-  szene: '#2455a4',
-  bild: '#a84b2b',
-  prompt: '#1e6b47',
-  zahl: '#7a5c9e',
-  material: '#8a6d3b',
-  kameras: '#2b8a7a',
+  szene: 'var(--k-port-szene)',
+  bild: 'var(--k-port-bild)',
+  prompt: 'var(--k-port-prompt)',
+  zahl: 'var(--k-port-zahl)',
+  material: 'var(--k-port-material)',
+  kameras: 'var(--k-port-kameras)',
 };
 
 /** Deutsche Kurznamen je Porttyp — für die Legende (nicht die Port-Labels,

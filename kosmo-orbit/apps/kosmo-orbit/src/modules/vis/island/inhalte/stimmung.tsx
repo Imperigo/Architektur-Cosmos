@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { KButton, meldeFehler } from '@kosmo/ui';
+import { cssVar, KButton, meldeFehler } from '@kosmo/ui';
 import { VIS_STIMMUNGEN, type VisGraph } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { useVisRuntime } from '../../vis-runtime';
@@ -32,27 +32,37 @@ import '../vis-island.css';
 const PRESETS = ['morgen', 'abend', 'weiss'] as const;
 type Preset = (typeof PRESETS)[number];
 
-/** Zeichnet die Vorschau EINMAL beim Mount (deterministisch, kein Redraw-Takt). */
+/**
+ * v0.8.8 / PA4 (`docs/V088-SPEZ.md` §2 D7/§3, Token-Brücke Vis) — die acht
+ * Gradient-Hex kommen jetzt aus `aura.css` (`--k-stimmung-<name>-a/-b/-c`,
+ * byte-gleich zu den bisherigen Inline-Hex). Echtes 2D-Canvas kann `var()`
+ * nicht auflösen (D7-Befund) — `cssVar()` (`@kosmo/ui`, Muster
+ * `Viewport3D.tsx:811`) liest den aktuell berechneten Wert vom Dokument-
+ * Wurzelelement, Fallback ist der historische Hex selbst (byte-gleich, greift
+ * nur, falls `aura.css` je nicht geladen wäre). Die Tokens sind theme-
+ * invariant (D7-Vertrag) — «EINMAL beim Mount» bleibt darum weiterhin
+ * korrekt: ein Theme-/Akzent-Wechsel ändert den gelesenen Wert nicht.
+ */
 function zeichneVorschau(ctx: CanvasRenderingContext2D, preset: Preset, w: number, h: number): void {
   ctx.clearRect(0, 0, w, h);
   let grad: CanvasGradient;
   switch (preset) {
     case 'morgen':
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, '#5c7fa8');
-      grad.addColorStop(0.55, '#e8b978');
-      grad.addColorStop(1, '#f6dfae');
+      grad.addColorStop(0, cssVar('--k-stimmung-morgen-a', '#5c7fa8'));
+      grad.addColorStop(0.55, cssVar('--k-stimmung-morgen-b', '#e8b978'));
+      grad.addColorStop(1, cssVar('--k-stimmung-morgen-c', '#f6dfae'));
       break;
     case 'abend':
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, '#2a2440');
-      grad.addColorStop(0.5, '#a2543f');
-      grad.addColorStop(1, '#e0a15c');
+      grad.addColorStop(0, cssVar('--k-stimmung-abend-a', '#2a2440'));
+      grad.addColorStop(0.5, cssVar('--k-stimmung-abend-b', '#a2543f'));
+      grad.addColorStop(1, cssVar('--k-stimmung-abend-c', '#e0a15c'));
       break;
     case 'weiss':
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, '#e9e9e9');
-      grad.addColorStop(1, '#c7c7c7');
+      grad.addColorStop(0, cssVar('--k-stimmung-weiss-a', '#e9e9e9'));
+      grad.addColorStop(1, cssVar('--k-stimmung-weiss-b', '#c7c7c7'));
       break;
   }
   ctx.fillStyle = grad;
