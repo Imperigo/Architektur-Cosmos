@@ -256,3 +256,55 @@ test('e) Cluster-B-Nachzug (v0.8.9 Fable): Canvas-Drag und Delete-Taste greifen 
   await page.mouse.up();
   await expect.poll(() => geometrie()).not.toBe(vor);
 });
+
+test('f) Matrix-C-3-Nachzug (v0.8.9 Fable): Endpunkt-GRIFF-Drag greift bei gesperrter Wand nicht (onGriffStart-Guard End-zu-Ende)', async ({
+  page,
+}) => {
+  // Test (e) deckt onMoveStart (Körper-Drag) und Delete — der dritte Guard
+  // (onGriffStart, DesignWorkspace) war bis zum Matrix-Lauf nur statisch
+  // im Quellcode belegt. Hier der End-zu-Ende-Beweis am Endpunkt-Griff.
+  await starteManuell(page);
+  const wallId = await zeichneWand(page, { x: 1000, y: 2000 }, { x: 5000, y: 2000 });
+  await page.evaluate((id) => window.__kosmo.run('design.sperren', { entityId: id, locked: true }), wallId);
+
+  const geometrie = () =>
+    page.evaluate((id) => {
+      const e = window.__kosmo.state().doc.get(id) as unknown as {
+        a?: { x: number; y: number };
+        b?: { x: number; y: number };
+      };
+      return JSON.stringify({ a: e?.a ?? null, b: e?.b ?? null });
+    }, wallId);
+  const vor = await geometrie();
+
+  // Auswahl per Testhook (der Klick-Findbarkeits-Beweis lebt in Test (e));
+  // die Griffe erscheinen auch für gesperrte Elemente (nur der ZUG ist
+  // blockiert — dieselbe Sichtbarkeits-Entscheidung wie im Inspector:
+  // gesperrt heisst sichtbar + anwählbar, nicht versteckt).
+  await waehle(page, [wallId]);
+  const griffB = page.locator('[data-testid="griff-endpunkt-b"]');
+  await expect(griffB).toBeVisible();
+
+  const box = (await griffB.boundingBox())!;
+  const von = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+  const ziel = await weltZuBildschirm(page, 5000, 5000);
+  await page.mouse.move(von.x, von.y);
+  await page.mouse.down();
+  await page.mouse.move(ziel.x, ziel.y, { steps: 5 });
+  await page.mouse.up();
+  // Der abgelehnte Griff-Start (return false) darf weder Geometrie ändern …
+  expect(await geometrie()).toBe(vor);
+  // … noch die Wand ersetzen (dieselbe Entity-Id existiert weiter).
+  expect(await wandExistiert(page, wallId)).toBe(true);
+
+  // Gegenprobe: entsperrt zieht derselbe Griff die Wand wirklich.
+  await page.evaluate((id) => window.__kosmo.run('design.sperren', { entityId: id, locked: false }), wallId);
+  await waehle(page, [wallId]);
+  await expect(griffB).toBeVisible();
+  const box2 = (await griffB.boundingBox())!;
+  await page.mouse.move(box2.x + box2.width / 2, box2.y + box2.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(ziel.x, ziel.y, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(() => geometrie()).not.toBe(vor);
+});
