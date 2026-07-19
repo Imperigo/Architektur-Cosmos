@@ -257,6 +257,39 @@ test('C-16: Dach-Eck-Griff ziehen ändert die Outline', async ({ page }) => {
   expect(daecher[0]!.pitch).toBe(35);
 });
 
+test('C-16 (Matrix-Fund W3): fehlgeschlagener Dach-Eck-Zug (nicht-konvex) verliert das Dach NICHT', async ({
+  page,
+}) => {
+  await starteManuell(page);
+  const outline = [
+    { x: 2000, y: 2000 },
+    { x: 6000, y: 2000 },
+    { x: 6000, y: 6000 },
+    { x: 2000, y: 6000 },
+  ];
+  const dachId = await erstelleDach(page, outline);
+  await waehle(page, [dachId]);
+  await expect(page.locator('[data-testid="griff-eckpunkt-2"]')).toBeVisible();
+
+  // Ecke 2 tief ins Innere ziehen (fast auf die Gegen-Ecke zu) — das
+  // Ziel-Polygon ist nicht mehr konvex, `design.dachErstellen` wirft.
+  // Erst-erstellen-dann-löschen (DesignWorkspace `onGriffEnd`) muss das
+  // Original unangetastet stehen lassen: gleiche ID, gleiche Outline,
+  // KEIN Zwischenzustand ohne Dach bis zu einem manuellen Undo.
+  const von = await griffMitte(page, 'griff-eckpunkt-2');
+  const nach = await weltZuBildschirm(page, 2500, 2500);
+  await ziehe(page, von, nach);
+
+  const daecher = await page.evaluate(
+    () => window.__kosmo.state().doc.byKind('roof') as { id: string; outline: { x: number; y: number }[] }[],
+  );
+  expect(daecher).toHaveLength(1);
+  expect(daecher[0]!.id).toBe(dachId);
+  expect(daecher[0]!.outline).toEqual(outline);
+  // `meldeFehler` zeigt den Konvex-Fehler sichtbar (kein stilles Schlucken).
+  await expect(page.locator('[data-testid="meldung-fehler"]')).toBeVisible();
+});
+
 test('Masskette-Punkt-Griff: Drag ändert den Punkt, EIN Ctrl+Z stellt die Kette wieder her', async ({ page }) => {
   await starteManuell(page);
   const punkte = [

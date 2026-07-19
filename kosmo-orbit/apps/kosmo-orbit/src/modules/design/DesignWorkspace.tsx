@@ -1242,12 +1242,18 @@ export function DesignWorkspace({
       if (!e) return;
       const { history } = useProject.getState();
       history.beginGroup();
+      // C-16-Matrix-Fund (v0.8.5-W3): ERST neu erstellen, DANN das Original
+      // löschen — wirft das Erstellen (z.B. `design.dachErstellen` bei
+      // nicht-konvexem Ziel-Umriss), ist noch nichts gelöscht und das
+      // Original bleibt unangetastet stehen (vorher: Löschen zuerst → das
+      // Element war bis zu einem manuellen Ctrl+Z verloren). Dass Neu und
+      // Alt innerhalb der Gruppe einen Moment koexistieren, stört keinen
+      // Command (keine Überlappungs-Prüfungen auf diesen Wegen).
       try {
         if (e.kind === 'wall') {
           const wall = e as Wall;
           const neuA = key === 'a' ? ziel : wall.a;
           const neuB = key === 'b' ? ziel : wall.b;
-          runCommand('design.loeschen', { entityId: wall.id });
           const r = runCommand('design.wandZeichnen', {
             storeyId: wall.storeyId,
             a: neuA,
@@ -1255,18 +1261,18 @@ export function DesignWorkspace({
             assemblyId: wall.assemblyId,
             alignment: wall.alignment,
           });
+          runCommand('design.loeschen', { entityId: wall.id });
           const neueId = neuePatchId(r.patches);
           select(neueId ? [neueId] : []);
         } else if (e.kind === 'masskette') {
           const mk = e as MassKette;
           const punkte = mk.punkte.map((q, i) => (i === key ? ziel : q));
-          runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
           const r = runCommand('design.massKetteSetzen', { storeyId: mk.storeyId, punkte });
+          runCommand('design.massKetteLoeschen', { massKetteId: mk.id });
           const neueId = neuePatchId(r.patches);
           select(neueId ? [neueId] : []);
         } else if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
           const outline = e.outline.map((q, i) => (i === key ? ziel : q));
-          runCommand('design.loeschen', { entityId: e.id });
           let r;
           if (e.kind === 'zone') {
             const zone = e as Zone;
@@ -1303,6 +1309,7 @@ export function DesignWorkspace({
               firstrichtung: roof.firstrichtung ?? 'x',
             });
           }
+          runCommand('design.loeschen', { entityId: e.id });
           const neueId = neuePatchId(r.patches);
           select(neueId ? [neueId] : []);
         }

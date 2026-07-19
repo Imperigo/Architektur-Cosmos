@@ -116,27 +116,27 @@ Kommandoform (fester cd-Ausgangspunkt, Lehren v0.8.4).
 
 ## 7 · Vollständigkeits-Matrix (Abnahme W3)
 
-- [ ] **C-1** Shift-Klick toggelt; Klick ohne Modifier ersetzt (Bestand); Esc leert → PA1
-- [ ] **C-2** Rubber-Band setzt Menge, Shift-Rubber-Band additiv; nur Auswahl-Werkzeug; Pan (Leertaste) unberührt → PA1
-- [ ] **C-3** N-Highlight je Element sichtbar (Screenshot-Beleg) → PA1
-- [ ] **C-4** Delete löscht N als EINE Undo-Gruppe; Ctrl+Z stellt ALLE wieder her (tippen!) → PA1
-- [ ] **C-5** Drag verschiebt N gemeinsam als EINE Gruppe → PA1
-- [ ] **C-6** Inspector zeigt «N Elemente» + Löschen-Aktion bei Mehrfach-Auswahl → PA1
-- [ ] **C-7** Bestands-Specs unverändert grün (plan-interaktion, pb1, pb5, pe3-matrix-fixes) → PA1
-- [ ] **C-8** LaufPlan+Runner: Schritt-Status, Abbruch, Fehler-Stopp, je Schritt Undo-Gruppe, Unit-Tests → PA3
-- [ ] **C-9** KosmoPanel zeigt laufenden Lauf (Schrittliste + Abbrechen) → PA3
-- [ ] **C-10** Kein Auto-Start: Lauf nur aus expliziter Aktion (Beweis im Spec) → PA3
-- [ ] **C-11** vis-Demolauf als LaufPlan reproduziert (gleiches Endergebnis) → PB2
-- [ ] **C-12** Mindestens 2 weitere Drehbücher (Grundriss, Publish-Blatt) + Eval-Erweiterung + TrainWorkspace-Zeile → PB2
-- [ ] **C-13** werkzeug()-Signatur ComponentType-fähig in allen 3 Stationen; ~34 SVGs nach Bauvorschrift; kein sichtbares Kürzel mehr → PA4
-- [ ] **C-14** Kontaktbogen regeneriert + gesichtet (currentColor-Regel) → PA4
-- [ ] **C-15** Wand-/Masskette-Endpunkt-Griffe: sichtbar bei Auswahl, Drag ändert Geometrie, eine Undo-Gruppe → PB1
-- [ ] **C-16** Zonen-/Volumen-/Dach-Eck-Griffe ebenso → PB1
-- [ ] **C-17** Griff-Hit-Test vor Element-Hit-Test (kein Auswahl-Klau) → PB1
-- [ ] **C-18** Esc schliesst Masskette auch in reinem view-2d ab (D10) → PB1
-- [ ] **C-19** Publish: Bemassungs-/Zonen-Toggles wirken auf dem Blatt; Goldens byte-still (sha256) → PB3
-- [ ] **C-20** Kommentar-Erfassen im manuell-Modus erreichbar (D11) → PB3
-- [ ] **C-21** Token-Nachträge aktiv, `--isl-pill-ink`-Alias ersetzt, visuelle Gleichheit bewiesen; Fetch-Mock-Leck gefixt (voller Batch 3× grün); Chevron-Probe dokumentiert → PB4
+- [x] **C-1** Shift-Klick toggelt; Klick ohne Modifier ersetzt (Bestand); Esc leert → PA1
+- [x] **C-2** Rubber-Band setzt Menge, Shift-Rubber-Band additiv; nur Auswahl-Werkzeug; Pan (Leertaste) unberührt → PA1
+- [x] **C-3** N-Highlight je Element sichtbar (Screenshot-Beleg) → PA1
+- [x] **C-4** Delete löscht N als EINE Undo-Gruppe; Ctrl+Z stellt ALLE wieder her (tippen!) → PA1
+- [x] **C-5** Drag verschiebt N gemeinsam als EINE Gruppe → PA1
+- [x] **C-6** Inspector zeigt «N Elemente» + Löschen-Aktion bei Mehrfach-Auswahl → PA1
+- [x] **C-7** Bestands-Specs unverändert grün (plan-interaktion, pb1, pb5, pe3-matrix-fixes) → PA1
+- [x] **C-8** LaufPlan+Runner: Schritt-Status, Abbruch, Fehler-Stopp, je Schritt Undo-Gruppe, Unit-Tests → PA3
+- [x] **C-9** KosmoPanel zeigt laufenden Lauf (Schrittliste + Abbrechen) → PA3
+- [x] **C-10** Kein Auto-Start: Lauf nur aus expliziter Aktion (Beweis im Spec) → PA3
+- [x] **C-11** vis-Demolauf als LaufPlan reproduziert (gleiches Endergebnis) → PB2
+- [x] **C-12** Mindestens 2 weitere Drehbücher (Grundriss, Publish-Blatt) + Eval-Erweiterung + TrainWorkspace-Zeile → PB2
+- [x] **C-13** werkzeug()-Signatur ComponentType-fähig in allen 3 Stationen; ~34 SVGs nach Bauvorschrift; kein sichtbares Kürzel mehr → PA4
+- [x] **C-14** Kontaktbogen regeneriert + gesichtet (currentColor-Regel) → PA4
+- [x] **C-15** Wand-/Masskette-Endpunkt-Griffe: sichtbar bei Auswahl, Drag ändert Geometrie, eine Undo-Gruppe → PB1
+- [x] **C-16** Zonen-/Volumen-/Dach-Eck-Griffe ebenso → PB1
+- [x] **C-17** Griff-Hit-Test vor Element-Hit-Test (kein Auswahl-Klau) → PB1
+- [x] **C-18** Esc schliesst Masskette auch in reinem view-2d ab (D10) → PB1
+- [x] **C-19** Publish: Bemassungs-/Zonen-Toggles wirken auf dem Blatt; Goldens byte-still (sha256) → PB3
+- [x] **C-20** Kommentar-Erfassen im manuell-Modus erreichbar (D11) → PB3
+- [x] **C-21** Token-Nachträge aktiv, `--isl-pill-ink`-Alias ersetzt, visuelle Gleichheit bewiesen; Fetch-Mock-Leck gefixt (voller Batch 3× grün); Chevron-Probe dokumentiert → PB4
 - [ ] **C-22** Release: Matrix adversarial (Kürzel TIPPEN, 980px-Viewport, Island-Default via leerem storageState), Lehren v0.8.5, Sechs-Träger-Bump, Neuigkeiten, Release-Notiz, Rundgang-PDF, release-gate 0, Installer + sha256 + Zustellung, Owner-Smoke-Punkt → W3
 
 ## 8 · Ehrliche Nicht-Ziele
