@@ -294,14 +294,22 @@ const BV_TABELLE_TOP = 40;
 const BV_ZEILE_H = 6; // Subspez §4: «Zeilenhöhe 6 mm»
 const BV_KOPFZEILE_H = BV_ZEILE_H;
 
-// Spalten-x-Anker in mm (Subspez §4, eingefroren) — linksbündig ausser Nr
+// Spalten-x-Anker in mm (Subspez §4) — linksbündig ausser Nr
 // (rechtsbündig, endet auf dem Blatt-Wert wie eine Stellenzahl).
 const BV_SPALTE_NR = 14;
 const BV_SPALTE_BLATT = 24;
 const BV_SPALTE_FORMAT = 80;
 const BV_SPALTE_MASSSTAB = 130;
 const BV_SPALTE_REVISION = 158;
-const BV_SPALTE_PLANCODE = 182;
+/** v0.8.10 E5 (Owner-Wahl «zweite Zeile», C-5-Befund 0.8.9): die frühere
+ * Plancode-SPALTE (x=182, nur 18 mm bis zum Rahmen) lief bei realen
+ * Plancodes (6 Teile, 20–24 Zeichen) über die Innenrahmenlinie — der
+ * Plancode steht jetzt als kleine zweite Zeile UNTER dem Blattnamen
+ * (robust gegen beliebig lange Codes, Spalten bleiben unangetastet).
+ * Diese Konstante ist die Höhe der Zusatzzeile; sie greift NUR, wenn
+ * mindestens ein Blatt einen Plancode hat (dieselbe Daten-Guard-Logik
+ * wie zuvor die Spalte). */
+const BV_PLANCODE_ZEILE_H = 3.5;
 
 // Sammellegende (Subspez §4): Zwischentitel + eine Zeile je Thema (Name +
 // Regeln als Farbkästchen/Label-Kette, Muster sheet.ts:315-347) + eine Zeile
@@ -368,7 +376,13 @@ export function blattverzeichnisSvg(
   );
 
   // ── Tabelle ──────────────────────────────────────────────────────────
-  const mitPlancodeSpalte = zeilen.some((z) => z.plancode !== undefined);
+  // v0.8.10 E5: statt einer Plancode-Spalte wächst die ZEILE — hat
+  // mindestens ein Blatt einen Plancode, bekommt jede Datenzeile die
+  // Zusatzhöhe für die zweite Zeile unter dem Blattnamen (einheitlicher
+  // Raster statt gemischter Zeilenhöhen; blattlose Codes lassen die
+  // zweite Zeile schlicht leer).
+  const mitPlancode = zeilen.some((z) => z.plancode !== undefined);
+  const zeileH = mitPlancode ? BV_ZEILE_H + BV_PLANCODE_ZEILE_H : BV_ZEILE_H;
   const kopfY = BV_TABELLE_TOP + BV_KOPFZEILE_H * 0.7;
   parts.push(`<g data-teil="blattverzeichnis-tabelle">`);
   parts.push(
@@ -378,11 +392,6 @@ export function blattverzeichnisSvg(
     `<text x="${BV_SPALTE_MASSSTAB}" y="${kopfY.toFixed(2)}" font-weight="bold" ${messbarAttr(BLATT_TYPO_MM.etikett)}>Massstab</text>`,
     `<text x="${BV_SPALTE_REVISION}" y="${kopfY.toFixed(2)}" font-weight="bold" ${messbarAttr(BLATT_TYPO_MM.etikett)}>Revision</text>`,
   );
-  if (mitPlancodeSpalte) {
-    parts.push(
-      `<text x="${BV_SPALTE_PLANCODE}" y="${kopfY.toFixed(2)}" font-weight="bold" ${messbarAttr(BLATT_TYPO_MM.etikett)}>Plancode</text>`,
-    );
-  }
   const kopfTrennY = BV_TABELLE_TOP + BV_KOPFZEILE_H;
   parts.push(
     `<line x1="${BV_INHALT_X}" y1="${kopfTrennY}" x2="${BV_SEITE_B - BV_RAND}" y2="${kopfTrennY}" stroke="${BLATT.tinte}" stroke-width="${BLATT.kastenStift}"/>`,
@@ -395,7 +404,7 @@ export function blattverzeichnisSvg(
   // erreichbar, der Boden ist reine Verteidigung.
   const untenGrenze = BV_SEITE_H - BV_RAND - 4 - legendeHoehe;
   const verfuegbareHoehe = untenGrenze - kopfTrennY;
-  const maxDatenzeilen = Math.max(1, Math.floor(verfuegbareHoehe / BV_ZEILE_H));
+  const maxDatenzeilen = Math.max(1, Math.floor(verfuegbareHoehe / zeileH));
 
   if (zeilen.length === 0) {
     const y = kopfTrennY + BV_ZEILE_H * 0.7;
@@ -404,7 +413,10 @@ export function blattverzeichnisSvg(
     const ueberlauf = zeilen.length > maxDatenzeilen;
     const echteZeilen = ueberlauf ? zeilen.slice(0, maxDatenzeilen - 1) : zeilen;
     echteZeilen.forEach((z, i) => {
-      const y = kopfTrennY + (i + 1) * BV_ZEILE_H - BV_ZEILE_H * 0.3;
+      // Erste Zeile jeder Datenzeile sitzt im 6-mm-Grundraster; die
+      // Plancode-Zusatzhöhe hängt UNTEN an (zweite Zeile), damit die
+      // Hauptwerte weiterhin bündig auf einer Linie stehen.
+      const y = kopfTrennY + i * zeileH + BV_ZEILE_H - BV_ZEILE_H * 0.3;
       parts.push(
         `<text x="${BV_SPALTE_NR}" y="${y.toFixed(2)}" text-anchor="end" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${z.nr}</text>`,
         `<text x="${BV_SPALTE_BLATT}" y="${y.toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(z.name)}</text>`,
@@ -412,15 +424,18 @@ export function blattverzeichnisSvg(
         `<text x="${BV_SPALTE_MASSSTAB}" y="${y.toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(z.massstaebe)}</text>`,
         `<text x="${BV_SPALTE_REVISION}" y="${y.toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${escapeXml(z.revision)}</text>`,
       );
-      if (mitPlancodeSpalte) {
+      if (z.plancode) {
+        // v0.8.10 E5: Plancode als kleine Sekundärzeile unter dem
+        // Blattnamen — läuft bis zur Revisions-Spalte (134 mm Platz),
+        // ein 24-Zeichen-Code braucht ~41 mm; kein Rahmen-Überlauf mehr.
         parts.push(
-          `<text x="${BV_SPALTE_PLANCODE}" y="${y.toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)}>${z.plancode ? escapeXml(z.plancode) : ''}</text>`,
+          `<text x="${BV_SPALTE_BLATT}" y="${(y + BV_PLANCODE_ZEILE_H).toFixed(2)}" ${messbarAttr(BLATT_TYPO_MM.etikett)} fill="${BLATT.textSekundaer}">${escapeXml(z.plancode)}</text>`,
         );
       }
     });
     if (ueberlauf) {
       const weitere = zeilen.length - echteZeilen.length;
-      const y = kopfTrennY + (echteZeilen.length + 1) * BV_ZEILE_H - BV_ZEILE_H * 0.3;
+      const y = kopfTrennY + echteZeilen.length * zeileH + BV_ZEILE_H - BV_ZEILE_H * 0.3;
       parts.push(
         `<text x="${BV_SPALTE_BLATT}" y="${y.toFixed(2)}" font-style="italic" ${messbarAttr(BLATT_TYPO_MM.etikett)} fill="${BLATT.textSekundaer}">… +${weitere} weitere Blätter</text>`,
       );
@@ -431,7 +446,7 @@ export function blattverzeichnisSvg(
   // ── Sammellegende (nur bei Daten, Subspez §5.3) ─────────────────────
   if (legendeHoehe > 0) {
     const zeilenGerendert = zeilen.length === 0 ? 0 : Math.min(zeilen.length, maxDatenzeilen);
-    const legendeTop = kopfTrennY + zeilenGerendert * BV_ZEILE_H + BV_LEGENDE_GAP;
+    const legendeTop = kopfTrennY + zeilenGerendert * zeileH + BV_LEGENDE_GAP;
     parts.push(`<g data-teil="sammellegende">`);
     parts.push(
       `<text x="${BV_INHALT_X}" y="${legendeTop.toFixed(2)}" ${titelAttr(BLATT_TYPO_MM.untertitel)} fill="${BLATT.tinte}">${versal('Legende')}</text>`,

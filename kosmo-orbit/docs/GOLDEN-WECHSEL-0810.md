@@ -22,6 +22,21 @@ Owner-Wahl 19.07.). Referenzbasis nach v0.8.9: **39 Dateien**
 **Jede Abweichung = Hard-Stop**, Fable klassifiziert den Diff vor jeder
 Freigabe.
 
+### Ist-Korrektur nach der Z2-Landung (20.07., ROADMAP 545)
+
+Der Z2-Mini-Wechsel bewegte **1** Datei statt der prognostizierten 2:
+`blattverzeichnis.svg` (Golden 1, ohne Plankopf-Stammdaten) blieb
+**byte-identisch**, weil die Daten-Guard-Logik unverändert griff — ohne
+Plancode gab es schon vorher weder Spaltenkopf noch Sechst-Spalte, und
+die neue Zweitzeile samt erhöhter Zeilenhöhe greift nur `mitPlancode`.
+Die Prognose hatte den Guard übersehen (Abweichung nach unten =
+stabiler als erwartet, kein Sanktions-1-Fall: bewegt wurde nur eine
+DEKLARIERTE Datei). Beweis im Z2-Gate: sha256-Vorher/Nachher-Liste —
+37 von 38 SVG identisch + `blattverzeichnis.svg` identisch, einzig
+`blattverzeichnis-legende.svg` neu (`6e5a09ae…` → `b8c65038…`),
+svg-qa 38/0. **Erwartung für Teil 2 damit: 0 neue Treffer** (der eine
+bewegte Golden ist mit Z2 committet).
+
 ## Teil 2 — gemeinsamer Lauf (Tag C, NACH allen Landungen)
 
 Noch offen — Ritual wie GOLDEN-WECHSEL-089:

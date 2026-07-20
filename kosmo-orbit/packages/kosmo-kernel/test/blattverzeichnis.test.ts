@@ -121,7 +121,7 @@ describe('blattverzeichnisZeilen', () => {
     expect(zeilen.map((z) => z.name)).toEqual(['Schnitt A-A']);
   });
 
-  it('Plancode-Spalte (Daten-Guard): erscheint nur, wenn MINDESTENS EIN Blatt einen Plancode hat', () => {
+  it('Plancode-Feld (Daten-Guard): gesetzt nur bei Blättern mit vollständigen Plankopf-Stammdaten', () => {
     const { doc, sheet1Id, set } = baueGrundfixture();
     execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
     execute(doc, 'design.projektInfoSetzen', { projektCode: 'SEE' });
@@ -275,6 +275,21 @@ describe('blattverzeichnisSvg — Guards (Subspez §5)', () => {
     expect(ohneSet).toContain('>Testprojekt · Alle Blätter</text>'); // kein erfundenes Datum-Segment
   });
 
+  it('Plancode-Zweitzeile (v0.8.10 E5): Sekundärzeile am Blatt-x-Anker nur bei Blättern MIT Plancode, Tabellenkopf bleibt 5-spaltig', () => {
+    const { doc, sheet1Id, set } = baueGrundfixture();
+    execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
+    execute(doc, 'design.projektInfoSetzen', { projektCode: 'SEE' });
+    execute(doc, 'publish.plankopfSetzen', { sheetId: sheet1Id, patch: { disziplin: 'A', geschossCode: 'EG', planNummer: '101' } });
+    const svg = blattverzeichnisSvg(doc, set, { projectName: 'T' });
+    // Kein sechster Spaltenkopf mehr — die 5 Köpfe bleiben, «Plancode» fehlt.
+    expect(svg).not.toContain('>Plancode<');
+    // Die Zweitzeile hängt am Blatt-x-Anker (24 mm, unter dem Blattnamen),
+    // nicht an einer eigenen Spalte rechts.
+    expect(svg).toMatch(/<text x="24" y="[\d.]+"[^>]*>MAA-SEE-VS-A-EG-101<\/text>/);
+    // Blatt 2 hat keine Plankopf-Stammdaten → exakt EINE Zweitzeile im SVG.
+    expect(svg.match(/MAA-SEE-VS-A-EG-101/g)).toHaveLength(1);
+  });
+
   it('Determinismus: zweimaliger Aufruf mit identischen Eingaben liefert byte-identisches SVG', () => {
     const { doc, set } = baueGrundfixture();
     const opts = { projectName: 'T', datum: '12.03.2026', setName: 'Werkplansatz' } as const;
@@ -298,7 +313,7 @@ describe('blattverzeichnisSvg — Guards (Subspez §5)', () => {
 });
 
 describe('Golden-SVG (Blattverzeichnis)', () => {
-  it('ohne Stammdaten/Themen/Keynotes: 5 Spalten (kein Plancode), «—»-Platzhalter, KEINE Legende', () => {
+  it('ohne Stammdaten/Themen/Keynotes: 5 Spalten, keine Plancode-Zweitzeile, «—»-Platzhalter, KEINE Legende', () => {
     const { doc, set } = baueGrundfixture();
     const svg = blattverzeichnisSvg(doc, set, { projectName: 'Testprojekt', datum: '12.03.2026', setName: set.name });
     expect(svg).not.toContain('Plancode');
@@ -306,7 +321,7 @@ describe('Golden-SVG (Blattverzeichnis)', () => {
     pruefeGolden(svg, new URL('./golden/blattverzeichnis.svg', import.meta.url));
   });
 
-  it('mit Büro/Projekt/Plankopf-Stammdaten + einem Thema (2 Regeln) + 2 Keynotes: 6 Spalten + Sammellegende', () => {
+  it('mit Büro/Projekt/Plankopf-Stammdaten + einem Thema (2 Regeln) + 2 Keynotes: Plancode als zweite Zeile + Sammellegende', () => {
     const { doc, storeyId, wallId, sheet1Id, set } = baueGrundfixture();
     void storeyId;
     execute(doc, 'publish.bueroSetzen', { kuerzel: 'MAA' });
@@ -327,7 +342,11 @@ describe('Golden-SVG (Blattverzeichnis)', () => {
     execute(doc, 'design.etikettSetzen', { targetId: wallId, at: { x: 2000, y: 1000 }, inhalt: 'keynote', keynote: 'K2' });
 
     const svg = blattverzeichnisSvg(doc, set, { projectName: 'Testprojekt', datum: '12.03.2026', setName: set.name });
-    expect(svg).toContain('Plancode');
+    // v0.8.10 E5 (Owner-Wahl «zweite Zeile»): der Plancode steht als kleine
+    // Sekundärzeile unter dem Blattnamen — die frühere Spalte (x=182) samt
+    // «Plancode»-Spaltenkopf ist weg.
+    expect(svg).not.toContain('>Plancode<');
+    expect(svg).toContain('MAA-SEE-VS-A-EG-101');
     expect(svg).toContain('data-teil="sammellegende"');
     pruefeGolden(svg, new URL('./golden/blattverzeichnis-legende.svg', import.meta.url));
   });
