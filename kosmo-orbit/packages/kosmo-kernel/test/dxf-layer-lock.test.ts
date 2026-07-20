@@ -91,16 +91,24 @@ describe('design.sperren', () => {
     expect(() => execute(doc, 'design.sperren', { entityId: 'nichtig', locked: true })).toThrow(CommandError);
   });
 
-  it('KEINE Sichtbarkeits-/Render-Wirkung: gesperrtes Element bleibt in derivePlan unverändert präsent', async () => {
+  it('Sperren lässt das Element selbst unverändert präsent — einzige Derive-Wirkung ist das Schloss-Symbol (v0.8.11 E5)', async () => {
     const { doc, storeyId, wall1Id } = testhaus();
     const { derivePlan } = await import('../src/derive/plan');
     const vor = derivePlan(doc, storeyId);
     execute(doc, 'design.sperren', { entityId: wall1Id, locked: true });
     const nach = derivePlan(doc, storeyId);
-    // Byte-identische Regionen-/Linienzahl — Sperre ist reine Interaktions-
-    // Metadaten, keine Derive-Wirkung (Sanktion 4, Owner-Rahmung E2).
+    // v0.8.11 E5 (docs/V0811-SPEZ.md, P-B3): die 0.8.9-Invariante «keinerlei
+    // Derive-Wirkung» ist sanktioniert PRÄZISIERT — das Element selbst
+    // (Regionen, alle Nicht-Schloss-Linien) bleibt byte-gleich, NEU kommen
+    // exakt die 7 Schloss-Segmente dazu (test/plan-schloss.test.ts trägt
+    // die Detail-Beweise inkl. Daten-Guard und Entsperren-Räumung).
     expect(nach.regions.length).toBe(vor.regions.length);
-    expect(nach.lines.length).toBe(vor.lines.length);
+    const nachOhneSchloss = nach.lines.filter((l) => !l.classes.includes('schloss'));
+    expect(nachOhneSchloss.length).toBe(vor.lines.length);
+    expect(nach.lines.length - nachOhneSchloss.length).toBe(7);
+    // Entsperren stellt die alte Welt vollständig wieder her.
+    execute(doc, 'design.sperren', { entityId: wall1Id, locked: false });
+    expect(derivePlan(doc, storeyId).lines.length).toBe(vor.lines.length);
   });
 });
 
