@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.0 / Paket PD2 («Default-Oberflächen» — Presets-UI) — Beweis für
@@ -21,7 +22,18 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
  * übernommen (eigene Kopie hier, kein Cross-Spec-Import — Konvention dieser
  * Suite, s. `dock-interaktion.spec.ts`/`dock-tour.spec.ts`, die dieselben
  * Helfer ebenfalls je eigenständig führen).
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6): die Vis-Preset-Panels sind eine Manuell-only-Funktion (kein
+ * Insel-Äquivalent, P-B1-Audit-Fund) — der globale `kosmo.ui.v1`-Seed
+ * verliert sein `visOberflaeche`-Feld (Seed-Flip), dieser Per-Spec-Kopf hält
+ * die GANZE Datei unverändert auf dem heutigen Manuell-Seed (Muster
+ * `e2e/helpers/manuell-seed.ts`s `visManuellStorageState()`-Kopfkommentar).
+ * Die Erststart-Tests unten löschen weiterhin gezielt NUR `kosmo.dock.v1`/
+ * `kosmo.dock.presetInit.v1` per `page.evaluate` — ein anderer localStorage-
+ * Schlüssel als `kosmo.ui.v1`, keine Kollision mit diesem Seed.
  */
+test.use({ storageState: visManuellStorageState() });
 
 interface Box {
   x: number;

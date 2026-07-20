@@ -1,6 +1,17 @@
 import { expect, test } from '@playwright/test';
 import * as B from './sim/bausteine';
 import { SZENARIEN } from './sim/szenarien';
+import { visManuellStorageState } from './helpers/manuell-seed';
+
+// v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+// Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+// Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): `sim/bausteine.ts`s
+// geteilter Baustein 14 (`renderUeberBridge`) klickt `[data-testid="drei-
+// stimmungen"]` — ein Manuell-only-Testid, das im Island-Default nicht
+// existiert. Ohne diesen Kopf würde der Seed-Flip diese Journey (und die
+// vier weiteren Journeys, die denselben Baustein aufrufen — sim-blockrand/
+// -efh/-hochhaus/-stadthaus) von grün auf rot kippen.
+test.use({ storageState: visManuellStorageState() });
 
 /**
  * V1-Vollsimulation Mehrfamilienhaus (Owner-QA): EIN durchgehender

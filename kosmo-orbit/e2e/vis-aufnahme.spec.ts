@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { viewportAufnahme } from './sim/bausteine';
 import { waehleOption } from './helfer/waehleOption';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.6.7 Phase 0 — Viewport-Aufnahme-Node (Typ `aufnahme`, Kategorie Quelle).
@@ -14,7 +15,15 @@ import { waehleOption } from './helfer/waehleOption';
  * vergleich verbinden funktioniert; (c) aufnahme→blatt: Bild landet auf
  * einem Blatt (sheet.bilder-Delta). Jeder Fall startet FRISCH (eigener
  * `test()`, eigener `page.goto('/')`) — reproduzierbar isoliert lauffähig.
+ *
+ * v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+ * Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+ * Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): `aufnahmeVorbereiten()`
+ * liest `[data-testid="tab-graph"]`/`graph-neu` — Manuell-only-Testids, die
+ * im Island-Default nicht existieren. Ohne diesen Kopf würde der Seed-Flip
+ * alle drei Tests dieser Datei von grün auf rot kippen.
  */
+test.use({ storageState: visManuellStorageState() });
 
 declare global {
   interface Window {

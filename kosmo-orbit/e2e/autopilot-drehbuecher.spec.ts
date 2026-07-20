@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.5 PB2 «Autopilot-Drehbücher + Eval» (`docs/V085-SPEZ.md` §3 E4,
@@ -28,7 +29,21 @@ import { resolve } from 'node:path';
  * Umbau) — exakt die Stelle, an der ein künftiger echter Kosmo-Dialog
  * ohnehin stünde (er sieht den Doc-Zustand und verfasst den nächsten
  * Teil-Plan mit bereits aufgelösten IDs).
+ *
+ * v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+ * Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+ * Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): «C-11: Drehbuch
+ * «vis-demolauf»» öffnet die vis-Station OHNE eigenen Seed und liest danach
+ * `[data-testid="render-status"]` — ein Manuell-only-Testid, das im
+ * Island-Default nicht existiert (P-B1s Migrations-Audit deckte diese Datei
+ * nicht ab, s. `docs/V0810-SPEZ.md` §2 E2 Mindestbestand). Ohne diesen Kopf
+ * würde der Seed-Flip diesen Test (und nur ihn — die anderen beiden Drehbuch-
+ * Tests hier sind design-/publish-lastig und bleiben von `visOberflaeche`
+ * unberührt) von grün auf rot kippen. `test.use` gilt datei-weit, ändert für
+ * die zwei anderen Tests aber nichts (design/publish waren schon vorher
+ * `'manuell'`, bleiben es unverändert).
  */
+test.use({ storageState: visManuellStorageState() });
 
 // `__dirname` statt `import.meta.url` — Playwright transformiert `.spec.ts`
 // hier zu CommonJS (kein `"type": "module"` in `package.json`), Muster

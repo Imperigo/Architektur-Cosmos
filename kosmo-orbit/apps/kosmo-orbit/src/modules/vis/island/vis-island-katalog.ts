@@ -92,8 +92,13 @@ const AUSTAUSCH: readonly IslandWerkzeug[] = [
   // Sofort-Aktion ohne Popup — Toast quittiert (wie design's `hatPopup:false`-Fälle).
   werkzeug('kamera-vorschlagen', 'Kamera vorschlagen', 'austausch', icon('kamera-vorschlagen'), false),
   werkzeug('report', 'Report', 'austausch', icon('report'), false),
-  // Rückweg 'island' → 'manuell' — Muster `island-katalog.ts` Z.174 (design).
-  werkzeug('manuell', 'Manuell', 'austausch', icon('manuell'), false),
+  // v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, docs/V0810-SPEZ.md §2
+  // E3): der prominente Insel-Rückweg 'island' → 'manuell' ist entfallen —
+  // Island bleibt Default/Standard, die manuelle Ansicht bleibt über einen
+  // Schalter in den Einstellungen erreichbar (`shell/Einstellungen.tsx`,
+  // testid `einstellung-vis-manuell`), nicht mehr über ein Insel-Werkzeug.
+  // Der Rückweg AUS 'manuell' (`VisIslandZurueckKnopf`, VisWorkspace.tsx)
+  // bleibt unverändert stehen.
 ];
 
 // v0.8.9 §9 E11 — die fünfte, eigenständige Insel: EIN Werkzeug, öffnet
@@ -104,7 +109,7 @@ const SONNE: readonly IslandWerkzeug[] = [
   werkzeug('sonnenstunden', 'Sonnenstunden', 'sonne', icon('sonnenstunden'), true),
 ];
 
-/** Gesamtkatalog, 14 Werkzeuge über 5 Inseln. */
+/** Gesamtkatalog, 13 Werkzeuge über 5 Inseln (v0.8.10 E3-Nachtrag: 'manuell' entfernt, 14→13). */
 export const VIS_WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [
   ...GRAPH,
   ...ANSICHT,

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { waehleOption } from './helfer/waehleOption';
 import { BRIDGE_FEHLT_HINWEIS, bridgeVerfuegbar } from './sim/bausteine';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /** KosmoPublish, KosmoPrepare, KosmoData-Katalog, Palette — Modulflüsse. */
 
@@ -583,16 +584,26 @@ test('Bild-Slots: Plakat trägt leeren Render-Slot, Bild einbetten, PDF exportie
   expect(download.suggestedFilename()).toMatch(/Plansatz\.pdf$/);
 });
 
-test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async ({ page }) => {
-  // Ehrlicher Skip ohne laufende Bridge (CI startet keine) — deterministische
-  // Bereitschaftsprüfung über den geteilten Baustein 15 (e2e/sim/bausteine.ts
-  // `bridgeVerfuegbar`, `/health`) statt einer eigenen `/jobs`-Anfrage: `/jobs`
-  // listet bis zu 50 Job-Records und kann unter Jobstore-Akkumulation selbst
-  // träge werden, was den 1500ms-Skip-Check hier fälschlich negativ machte
-  // (v0.7.7 Stream A2 — wiederverwendet statt dupliziert).
-  const bridgeLebt = await bridgeVerfuegbar();
-  test.skip(!bridgeLebt, BRIDGE_FEHLT_HINWEIS);
-  test.setTimeout(120_000);
+// v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+// Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+// Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): NUR dieser eine Test klickt
+// `[data-testid="tab-einfach"]` — ein Manuell-only-Testid, das im Island-
+// Default nicht existiert. Eigener `test.describe` mit eigenem `test.use`
+// statt eines datei-weiten Kopfs — `module.spec.ts` deckt viele Stationen
+// ab, ein globaler Seed hier wäre unnötig weitreichend.
+test.describe('v0.8.10 E3-Nachtrag: Vis-Bridge-Render braucht den Manuell-Seed', () => {
+  test.use({ storageState: visManuellStorageState() });
+
+  test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async ({ page }) => {
+    // Ehrlicher Skip ohne laufende Bridge (CI startet keine) — deterministische
+    // Bereitschaftsprüfung über den geteilten Baustein 15 (e2e/sim/bausteine.ts
+    // `bridgeVerfuegbar`, `/health`) statt einer eigenen `/jobs`-Anfrage: `/jobs`
+    // listet bis zu 50 Job-Records und kann unter Jobstore-Akkumulation selbst
+    // träge werden, was den 1500ms-Skip-Check hier fälschlich negativ machte
+    // (v0.7.7 Stream A2 — wiederverwendet statt dupliziert).
+    const bridgeLebt = await bridgeVerfuegbar();
+    test.skip(!bridgeLebt, BRIDGE_FEHLT_HINWEIS);
+    test.setTimeout(120_000);
 
   await page.goto('/');
   await page.evaluate(() => {
@@ -646,9 +657,10 @@ test('Vis → Blatt: Fake-Bridge-Render landet als Bild auf dem Plakat', async (
       assets: k.state().doc.byKind('imageasset').length,
     };
   });
-  expect(stand.blaetter).toBeGreaterThanOrEqual(1);
-  expect(stand.bilder).toBe(1);
-  expect(stand.assets).toBe(1);
+    expect(stand.blaetter).toBeGreaterThanOrEqual(1);
+    expect(stand.bilder).toBe(1);
+    expect(stand.assets).toBe(1);
+  });
 });
 
 test('Belegte Antwort: Kosmo zitiert [Q1] → Chip → Quellensprung in die Grundlagen', async ({ page }) => {
@@ -1293,37 +1305,47 @@ test('Raumprogramm-CSV (V2-V5): Import setzt Posten, %-Spalte erscheint', async 
   await expect(page.locator('[data-testid="erfuellung-marktgerecht"]')).toContainText('0');
 });
 
-test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tippen überschreibt', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('kosmo.onboarded', '1');
-    // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
-    // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
-    localStorage.setItem('kosmo.panelOffen', '1');
-    // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
-    // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
-    localStorage.setItem('kosmo.starterGuide.done', '1');
-  });
-  await page.reload();
-  await page.click('[data-testid="module-design"]');
-  await page.evaluate(() => {
-    const k = window.__kosmo;
-    const st = k.state();
-    const au = k.run('design.aufbauErstellen', {
-      name: 'AW Sichtbeton', target: 'wall',
-      layers: [{ material: 'sichtbeton', thickness: 180, function: 'tragend' }],
+// v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+// Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+// Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): NUR dieser eine Test klickt
+// `[data-testid="tab-einfach"]` — ein Manuell-only-Testid, das im Island-
+// Default nicht existiert. Eigener `test.describe` mit eigenem `test.use`,
+// Muster wie beim «Vis → Blatt»-Test oben.
+test.describe('v0.8.10 E3-Nachtrag: Render-Prompt braucht den Manuell-Seed', () => {
+  test.use({ storageState: visManuellStorageState() });
+
+  test('Render-Prompt (V2-V8): Material-Baustein erscheint im finalen Prompt, Tippen überschreibt', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      // Interner Fix (K11): Panel-Default ist jetzt zu (Symbol zuerst) —
+      // diese Suite spricht kosmo-input direkt an, ohne den Symbol-Klick.
+      localStorage.setItem('kosmo.panelOffen', '1');
+      // Block-E-Guide startet sonst automatisch und fängt Klicks unter seiner
+      // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
+      localStorage.setItem('kosmo.starterGuide.done', '1');
     });
-    k.run('design.wandZeichnen', {
-      storeyId: st.activeStoreyId, assemblyId: au.patches[0].id,
-      a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+    await page.reload();
+    await page.click('[data-testid="module-design"]');
+    await page.evaluate(() => {
+      const k = window.__kosmo;
+      const st = k.state();
+      const au = k.run('design.aufbauErstellen', {
+        name: 'AW Sichtbeton', target: 'wall',
+        layers: [{ material: 'sichtbeton', thickness: 180, function: 'tragend' }],
+      });
+      k.run('design.wandZeichnen', {
+        storeyId: st.activeStoreyId, assemblyId: au.patches[0].id,
+        a: { x: 0, y: 0 }, b: { x: 5000, y: 0 },
+      });
+      k.open('vis');
     });
-    k.open('vis');
+    await page.click('[data-testid="tab-einfach"]');
+    const feld = page.locator('[data-testid="finaler-prompt"]');
+    await expect(feld).toHaveValue(/Sichtbeton-Fassade/);
+    await feld.fill('mein eigener Prompt');
+    await expect(feld).toHaveValue('mein eigener Prompt');
   });
-  await page.click('[data-testid="tab-einfach"]');
-  const feld = page.locator('[data-testid="finaler-prompt"]');
-  await expect(feld).toHaveValue(/Sichtbeton-Fassade/);
-  await feld.fill('mein eigener Prompt');
-  await expect(feld).toHaveValue('mein eigener Prompt');
 });
 
 test('Möblierung (V2-F8): Möbel im Plan sichtbar, SIA-500-Kollision im Check', async ({ page }) => {

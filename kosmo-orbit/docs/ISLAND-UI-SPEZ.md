@@ -302,6 +302,10 @@ Erwartet **additiv/eng begrenzt**, keine Bestandsänderung ohne expliziten Verme
    `beforeEach`-Hooks, sowie `kosmo.ui.v1` bereits als Präzedenzfall für einen minimalen,
    defensiv geparsten Seed, s. `state/ui-zustand.ts:222-241`). **Kein einziger bestehender
    Test-Assert wird verändert** — nur der Startzustand wird per Seed fixiert.
+
+   **Nachtrag 20.07.2026 (v0.8.10 E3):** für die VIS-Station gilt der globale Manuell-Seed
+   nicht mehr — vis-Specs laufen im Island-Default, Manuell-Feature-Specs seeden per-Spec;
+   der Manuell-Zugang läuft über den Einstellungs-Schalter (Owner-Entscheid).
 3. **Additive `island-*`-testid-Namensschema** — jedes neue Island-DOM-Element bekommt ein
    `data-testid="island-…"`-Präfix (z. B. `island-zeichnen-pill`, `island-wand-popup`,
    `island-wand-fenster`), disjunkt von allen bestehenden `tool-*`/`view-*`/`leiste-gruppe-*`-

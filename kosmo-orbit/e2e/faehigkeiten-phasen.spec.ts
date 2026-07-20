@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { waehleOption } from './helfer/waehleOption';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * A7+A8 (Owner-Befunde K17+K18, gekoppelt, v0.6.3):
@@ -18,7 +19,17 @@ import { waehleOption } from './helfer/waehleOption';
  * «Anwenden» hebt die Fokus-Icons (Opazität 1), dämpft den Rest (0.6, KEIN
  * Entfernen aus dem DOM — feste Anker bleiben unverändert). «Nicht jetzt»
  * lässt alles unverändert.
+ *
+ * v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+ * Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+ * Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): der Test «Dock-Stationsicon
+ * «Vis» öffnet KosmoVis» springt in die vis-Station und liest danach
+ * `[data-testid="vis-auto-kamera"]` — ein Manuell-only-Testid, das im
+ * Island-Default nicht existiert. Ohne diesen Kopf würde der Seed-Flip
+ * diesen einen Test von grün auf rot kippen; die übrigen Tests dieser Datei
+ * sind design-lastig und bleiben von `visOberflaeche` unberührt.
  */
+test.use({ storageState: visManuellStorageState() });
 
 declare global {
   interface Window {

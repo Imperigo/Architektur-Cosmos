@@ -6,7 +6,10 @@ import type { ComponentType, ReactNode } from 'react';
  * (GRAPH 3 / ANSICHT 4 / STIMMUNG 1 / AUSTAUSCH 5), bisher reine
  * Zwei-Buchstaben-Text-Kürzel (`'NO'`, `'AR'`, …). v0.8.9 §9 E11 (PBL2,
  * `docs/V089-SPEZ.md`): additiv um ein 14. Icon für die neue SONNE-Insel
- * (Sonnenstunden, 1) erweitert.
+ * (Sonnenstunden, 1) erweitert. v0.8.10 E3-Nachtrag (Owner-Entscheid
+ * 20.07.2026, `docs/V0810-SPEZ.md` §2 E3): AUSTAUSCH's `manuell`-Icon
+ * wieder entfernt (der Insel-Rückweg ist entfallen, s. `vis-island-
+ * katalog.ts`) — zurück auf 13 Icons total.
  *
  * **Bauvorschrift (BINDEND, identisch zu `design/werkzeug-icons.tsx:1-31` +
  * `design/island/island-glyphen.tsx` — dieselbe 24er-Norm, hier für den
@@ -23,8 +26,7 @@ import type { ComponentType, ReactNode } from 'react';
  * Zoom (Lupe), Raster-Snap (Gitter), Kanten-Routing (Knick-Leitung), Minimap
  * (verschachtelter Rahmen), Stimmung (Sonne/Wolke), Render senden
  * (Papierflieger), Aufs Plakat (Blatt mit Reisszwecke), Kamera vorschlagen
- * (echte Kamera), Report (Dokument mit Balken), Manuell (Schalter-Pille,
- * dasselbe Rückweg-Motiv wie `design`s `manuell`).
+ * (echte Kamera), Report (Dokument mit Balken).
  */
 
 const WURZEL_ATTRIBUTE = {
@@ -174,15 +176,6 @@ const report = glyphe(
   </>,
 );
 
-/** Manuell — Schalter-Pille mit Knopf, Akzent als Bedienpunkt (Rückweg, Muster `design`s `manuell`). */
-const manuell = glyphe(
-  <>
-    <rect x="4" y="9" width="16" height="8" rx="4" />
-    <circle cx="9" cy="13" r="2.6" />
-    {akzent(9, 13)}
-  </>,
-);
-
 /**
  * Sonnenstunden — Sonnenscheibe mit acht Strahlen (Sonnenuhr-Motiv, bewusst
  * verschieden vom «Sonne-hinter-Wolke»-Motiv von `stimmung`), Akzent im
@@ -211,6 +204,5 @@ export const VIS_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   'aufs-plakat': aufsPlakat,
   'kamera-vorschlagen': kameraVorschlagen,
   report,
-  manuell,
   sonnenstunden,
 };

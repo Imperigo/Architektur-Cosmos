@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.7.8 Welle 1 / Paket P3 («Intelligente Werkzeugtabs», Herzstück) —
@@ -16,7 +17,17 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
  * `dock-flaeche.css`) braucht unter Last (SwiftShader-Software-Rendering +
  * die laufende 3D-Szene) empirisch nachgewiesen WESENTLICH länger als
  * 280ms, bis `getBoundingClientRect()` einen stabilen Endwert liefert.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6): die Vis-Dock-Panels (Palette/Minimap/Legende/Ausrichten,
+ * s. `oeffneVisMitGraph()` unten) sind eine Manuell-only-Funktion (kein
+ * Insel-Äquivalent, P-B1-Audit-Fund) — der globale `kosmo.ui.v1`-Seed
+ * verliert sein `visOberflaeche`-Feld (Seed-Flip), dieser Per-Spec-Kopf hält
+ * die GANZE Datei (auch die Design-Dock-Tests) unverändert auf dem
+ * heutigen Manuell-Seed (Muster `e2e/helpers/manuell-seed.ts`s
+ * `visManuellStorageState()`-Kopfkommentar).
  */
+test.use({ storageState: visManuellStorageState() });
 
 // v0.7.8 Welle 2 (P4): `kennzahlen` ist KEIN fixes Chrome-Element mehr — es
 // ist selbst ein Dock-Panel der rechten Spalte (`dock-stationen.ts`). Für die

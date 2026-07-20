@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { waehleOption } from './helfer/waehleOption';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * PA4-088 (`docs/V088-SPEZ.md` §2 D7/§3 E-Zeile, §7 C-10) — Token-Brücke Vis:
@@ -25,14 +26,23 @@ import { waehleOption } from './helfer/waehleOption';
  * spec.ts:49`); sie brauchen nur EINEN `prompt`-Node (GRAPH-Insel-Palette,
  * `visisl-graph-erstellen` + `island-palette-eintrag-prompt`) und prüfen
  * danach ausschliesslich die Node-Ebene (`port-out-prompt`, unverändert).
- * **ENTSCHEIDUNGSBEDARF (s. Bericht):** «Legende-Punkt» bleibt UNMIGRIERT
- * unter dem globalen Manuell-Seed — die Legende (`vis-legende`,
+ * «Legende-Punkt» bleibt UNMIGRIERT auf Manuell — die Legende (`vis-legende`,
  * DockFlaeche-Panel) ist NUR `!islandModus` gerendert (`NodeCanvas.tsx`) und
  * hat KEIN Insel-Äquivalent (`island/inhalte/ansicht.tsx` deckt nur Zoom/
  * Minimap ab, keine Legende) — das Feature ist im Island-Modus schlicht
  * nicht erreichbar, die Spec bleibt darum teilmigriert.
  * Theme-Sanity-Werte (rgb(39,140,93) orbit) bleiben gültig — Island ändert
  * das Theme nicht.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6, Matrix C-6/C-7): die Legende ist genau eine der vier Manuell-
+ * only-Funktionen ohne Insel-Äquivalent, die den Nachtrag ausgelöst haben
+ * (P-B1-Audit). Der globale `kosmo.ui.v1`-Seed verliert sein
+ * `visOberflaeche`-Feld (Seed-Flip) — NUR das Legende-`describe` unten
+ * bekommt darum einen eigenen `test.use({ storageState:
+ * visManuellStorageState() })`-Kopf (Muster `e2e/helpers/manuell-seed.ts`);
+ * die zwei Island-Setup-Tests oben und der Stimmungs-Canvas-Test unten
+ * bleiben unverändert bei ihrem je eigenen leeren Kontext.
  */
 
 declare global {
@@ -115,11 +125,13 @@ test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, Island-Bootstrap)', 
   });
 });
 
-// ENTSCHEIDUNGSBEDARF an Fable (s. Datei-Kopf): UNMIGRIERT — die Legende
-// (`vis-legende`, DockFlaeche-Panel) ist nur `!islandModus` gerendert und
-// hat kein Insel-Äquivalent. Kein `test.use`-Override hier — läuft
-// weiterhin im globalen Manuell-Seed (`playwright.config.ts`).
+// UNMIGRIERT (s. Datei-Kopf): die Legende (`vis-legende`, DockFlaeche-Panel)
+// ist nur `!islandModus` gerendert und hat kein Insel-Äquivalent. v0.8.10
+// E3-Nachtrag: eigener `test.use`-Kopf statt des entfallenen globalen
+// Manuell-Seeds (Seed-Flip, `playwright.config.ts`).
 test.describe('PA4-088 — Legende-Punkt folgt dem Token (DOM, manuell — kein Insel-Äquivalent)', () => {
+  test.use({ storageState: visManuellStorageState() });
+
   test('Legende-Punkt (--_farbe-Durchreichung) wechselt sofort nach --k-port-prompt-Override', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));

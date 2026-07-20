@@ -28,7 +28,9 @@ describe('vis-island — Registry (eigener Namensraum "vis")', () => {
   });
 
   it('hatPopup:false-Werkzeuge sind NICHT registriert (ihre Aktion läuft über onWerkzeugAktion, kein Popup)', () => {
-    for (const id of ['raster', 'routing', 'kamera-vorschlagen', 'report', 'manuell']) {
+    // v0.8.10 E3-Nachtrag: 'manuell' ist kein Katalog-Werkzeug mehr (raus aus
+    // dieser Liste) — der Zugang läuft über den Einstellungs-Schalter.
+    for (const id of ['raster', 'routing', 'kamera-vorschlagen', 'report']) {
       expect(visInhaltsRegistry.inhaltFuer(id)).toBeUndefined();
     }
   });

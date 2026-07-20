@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.1 / P8 — Abnahme-Screenshots der «Erlebnis-Reste» (Owner-Bericht).
@@ -7,7 +8,18 @@ import { expect, test, type Page } from '@playwright/test';
  * `vis-ansichten.spec.ts`/`vis-report-dossier.spec.ts`/`data-vollbild.
  * spec.ts`) — Ablage bewusst unter `test-results/` (Auftrags-Vorgabe),
  * nicht der übliche `e2e-results/`-Failure-Ordner dieser Suite.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6): die vis-lastigen Screenshots hier (`tab-ansichten`, Vis-
+ * Onboarding-Stepper, Report-Dossier) zeigen Manuell-only-Funktionen ohne
+ * Insel-Äquivalent (P-B1-Audit-Fund) — der globale `kosmo.ui.v1`-Seed
+ * verliert sein `visOberflaeche`-Feld (Seed-Flip), dieser Per-Spec-Kopf hält
+ * die GANZE Datei (auch die Companion-/Data-Screenshots ohne Vis-Bezug)
+ * unverändert auf dem heutigen Manuell-Seed (Muster `e2e/helpers/manuell-
+ * seed.ts`s `visManuellStorageState()`-Kopfkommentar).
  */
+test.use({ storageState: visManuellStorageState() });
+
 declare global {
   interface Window {
     __kosmoCompanion: { setzeVisLauf: (nodeId: string, lauf: unknown) => void };

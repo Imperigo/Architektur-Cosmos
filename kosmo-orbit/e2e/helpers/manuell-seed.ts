@@ -51,12 +51,15 @@ export const MANUELL_DESIGN_OBERFLAECHE: DesignOberflaeche = 'manuell';
 /**
  * PC1 (`docs/V084-SPEZ.md` §5 W2) — exakt dasselbe Problem wie C-35 oben, jetzt
  * für die vis-Station: `ui-zustand.ts`s `visOberflaeche`-Default ist `'island'`
- * (Owner-Auftrag). Ohne Gegenmassnahme sähe JEDE bestehende vis-lastige Spec
- * (die 7 `vis-*.spec.ts`, `render-knopf.spec.ts`, `sim-ki-imaging.spec.ts`,
- * `boden-dock.spec.ts` u.a.) plötzlich die neue Island-Oberfläche statt der
- * heutigen Werkzeugleiste/Node-Canvas-Chrome — derselbe globale Seed-Weg löst
- * das wieder für ALLE Specs auf einen Schlag, additiv neben
- * `designOberflaeche` (kein Feld hier verändert das andere).
+ * (Owner-Auftrag).
+ *
+ * **v0.8.10 E3-Nachtrag Seed-Flip (Owner-Entscheid 20.07.2026, `docs/V0810-
+ * SPEZ.md` §2 E3 Punkt 6, Matrix C-7):** dieses Feld ist NICHT mehr Teil des
+ * globalen `kosmoUiV1SeedMitManuell()`-Zwangs (s. dortigen Kommentar) — der
+ * echte Produktions-Default `visOberflaeche:'island'` gilt jetzt für JEDE
+ * Spec, die keinen eigenen Seed setzt. Die Konstante lebt weiter, weil
+ * `visManuellStorageState()` (unten) sie gezielt für die sechs Manuell-only-
+ * Feature-Specs braucht, die kein Insel-Äquivalent haben.
  */
 export const MANUELL_VIS_OBERFLAECHE: VisOberflaeche = 'manuell';
 
@@ -89,14 +92,24 @@ export const MANUELL_PREPARE_OBERFLAECHE: PrepareOberflaeche = 'manuell';
 
 /**
  * Baut den `kosmo.ui.v1`-`localStorage`-Wert mit `designOberflaeche:'manuell'`,
- * `visOberflaeche:'manuell'`, `publishOberflaeche:'manuell'` UND
- * `prepareOberflaeche:'manuell'` — additiv zum bestehenden Seed-Inhalt
- * (`modusAutomatik`/`modusFesthalten`/`phasenFokus`, s. `playwright.
- * config.ts`s Kopfkommentar zu `kosmo.ui.v1`). `basis` erlaubt Aufrufern,
- * die übrigen Felder zu überschreiben, ohne dieses Modul für jede
- * Kombination anzupassen — `designOberflaeche`/`visOberflaeche`/
+ * `publishOberflaeche:'manuell'` UND `prepareOberflaeche:'manuell'` — additiv
+ * zum bestehenden Seed-Inhalt (`modusAutomatik`/`modusFesthalten`/
+ * `phasenFokus`, s. `playwright.config.ts`s Kopfkommentar zu `kosmo.ui.v1`).
+ * `basis` erlaubt Aufrufern, die übrigen Felder zu überschreiben, ohne dieses
+ * Modul für jede Kombination anzupassen — `designOberflaeche`/
  * `publishOberflaeche`/`prepareOberflaeche` gewinnen jedoch IMMER (das ist
  * der ganze Zweck dieses Helfers).
+ *
+ * **v0.8.10 E3-Nachtrag Seed-Flip (Owner-Entscheid 20.07.2026, `docs/V0810-
+ * SPEZ.md` §2 E3 Punkt 6, Matrix C-7):** `visOberflaeche` gehört NICHT mehr
+ * zu den erzwungenen Feldern — design/publish/prepare bleiben unverändert
+ * `'manuell'` (Owner-Auftrag betraf nur KosmoVis), aber vis folgt jetzt dem
+ * echten Produktions-Default `'island'`, sofern `basis` (oder ein Aufrufer
+ * wie `visManuellStorageState()` unten) es nicht explizit setzt. Vorher
+ * stand hier zusätzlich `visOberflaeche: MANUELL_VIS_OBERFLAECHE,` im
+ * immer-gewinnt-Block — das war der globale vis-Seed, den JEDE Bestands-Spec
+ * ungefragt bekam; die sechs Manuell-only-Feature-Specs ohne Insel-
+ * Äquivalent holen sich das jetzt gezielt selbst (s. `visManuellStorageState()`).
  */
 export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): string {
   return JSON.stringify({
@@ -110,4 +123,62 @@ export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): st
     publishOberflaeche: MANUELL_PUBLISH_OBERFLAECHE,
     prepareOberflaeche: MANUELL_PREPARE_OBERFLAECHE,
   });
+}
+
+/**
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6, Matrix C-7): NACH dem Seed-Flip (`kosmoUiV1SeedMitManuell()`s
+ * globaler Aufruf in `playwright.config.ts` verliert das `visOberflaeche`-
+ * Feld, s. dortigen Kopfkommentar) sähe JEDE der sechs Manuell-only-
+ * Feature-Specs (`vis-onboarding.spec.ts`, `dock-layout.spec.ts`,
+ * `dock-presets.spec.ts`, `vis-ansichten.spec.ts`, `p8-081-screenshots.
+ * spec.ts`, `vis-token.spec.ts`s Legende-`describe`) plötzlich den echten
+ * Produktions-Default `visOberflaeche:'island'` statt der Werkzeugleiste/
+ * Dock-Panels/Legende/gespeicherten Ansichten, die sie testen — genau die
+ * vier Manuell-only-Funktionen ohne Insel-Äquivalent, die den E3-Nachtrag
+ * ausgelöst haben (P-B1-Audit-Fund).
+ *
+ * **Warum ein `test.use({ storageState: visManuellStorageState() })`-Kopf
+ * je Spec reicht:** dieser Helfer baut GENAU dasselbe `storageState`-Objekt
+ * wie `playwright.config.ts`s globaler `use.storageState` VOR dem Flip
+ * (`kosmo.ui.v1` via `kosmoUiV1SeedMitManuell({ visOberflaeche:
+ * MANUELL_VIS_OBERFLAECHE })` — `visOberflaeche` reicht er über `basis`
+ * durch, weil die Funktion selbst es seit dem Flip nicht mehr erzwingt +
+ * `kosmo.leistung.v1` + `kosmo.dock.presetInit.v1`, alle drei Einträge im
+ * selben Origin-Block) — Playwrights `test.use` innerhalb einer Spec-Datei
+ * überschreibt den globalen `use`-Wert komplett für JEDEN Test dieser Datei
+ * (Muster `e2e/blender-bridge.spec.ts:49`/`e2e/vis-island.spec.ts`, dort
+ * umgekehrt mit einem LEEREN Kontext). Die betroffenen sechs Specs sehen so
+ * nach dem Flip exakt denselben Manuell-Seed wie vorher — nur jetzt lokal
+ * deklariert statt global erzwungen. `design`/`publish`/`prepare` bleiben
+ * dabei unverändert `'manuell'` (weiterhin vom immer-gewinnt-Block in
+ * `kosmoUiV1SeedMitManuell()` erzwungen), da der Owner-Auftrag NUR die
+ * vis-Station betraf.
+ *
+ * Port-Ermittlung identisch zu `playwright.config.ts` (`KOSMO_E2E_PORT`,
+ * Default `5183`) — eine Spec, die diesen Helfer importiert, braucht keine
+ * eigene Port-Konstante.
+ */
+export function visManuellStorageState(): {
+  cookies: [];
+  origins: [{ origin: string; localStorage: { name: string; value: string }[] }];
+} {
+  const port = process.env['KOSMO_E2E_PORT'] ?? '5183';
+  const origin = new URL(`http://localhost:${port}`).origin;
+  return {
+    cookies: [],
+    origins: [
+      {
+        origin,
+        localStorage: [
+          { name: 'kosmo.ui.v1', value: kosmoUiV1SeedMitManuell({ visOberflaeche: MANUELL_VIS_OBERFLAECHE }) },
+          {
+            name: 'kosmo.leistung.v1',
+            value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+          },
+          { name: 'kosmo.dock.presetInit.v1', value: '1' },
+        ],
+      },
+    ],
+  };
 }

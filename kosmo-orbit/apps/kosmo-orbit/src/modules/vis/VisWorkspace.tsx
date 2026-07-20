@@ -171,7 +171,10 @@ export function VisWorkspace({ onEinstellungen, onKosmoOeffnen }: VisWorkspacePr
   // erreicht wird, z.B. in den Bestands-E2E-Specs unter dem globalen
   // `manuell-seed.ts`-Seed).
   const visOberflaeche = useUiZustand((s) => s.visOberflaeche);
-  const setVisOberflaeche = useUiZustand((s) => s.setVisOberflaeche);
+  // v0.8.10 E3-Nachtrag: `setVisOberflaeche` wird hier nicht mehr gebraucht
+  // (der frühere `case 'manuell'` in `aktiviereVisIslandWerkzeug` unten ist
+  // entfallen) — `VisIslandZurueckKnopf` weiter unten liest den Setter für
+  // den Rückweg eigenständig aus demselben Store.
   const aktiverGraphIdInsel = useVisRuntime((s) => s.aktiverGraphId);
   const islandGraphId = graphen.some((g) => g.id === aktiverGraphIdInsel) ? aktiverGraphIdInsel! : (graphen[0]?.id ?? '');
   const islandReportOffen = useVisRuntime((s) => s.reportOffen);
@@ -226,9 +229,12 @@ export function VisWorkspace({ onEinstellungen, onKosmoOeffnen }: VisWorkspacePr
    * Werkzeuge (Palette/Ausrichten/Verbinden/Zoom/Minimap/Stimmung/Render
    * senden/Aufs Plakat) brauchen hier nichts — ihre echte Aktion lebt in der
    * Registry (`island/inhalte/*.tsx`, liest globale Stores direkt). Die
-   * fünf `hatPopup:false`-Sofort-Aktionen (Raster/Routing/Kamera vorschlagen/
-   * Report/Manuell) schalten hier real — IslandShell zeigt danach selbst
-   * den Toast.
+   * vier `hatPopup:false`-Sofort-Aktionen (Raster/Routing/Kamera vorschlagen/
+   * Report) schalten hier real — IslandShell zeigt danach selbst den Toast.
+   * v0.8.10 E3-Nachtrag: der frühere fünfte Fall `'manuell'` (Insel-Rückweg
+   * in die manuelle Ansicht) ist entfallen — der Zugang läuft jetzt über
+   * den Einstellungs-Schalter (`shell/Einstellungen.tsx`, testid
+   * `einstellung-vis-manuell`), s. `docs/V0810-SPEZ.md` §2 E3.
    */
   const aktiviereVisIslandWerkzeug = (w: IslandWerkzeug): void => {
     switch (w.id) {
@@ -243,9 +249,6 @@ export function VisWorkspace({ onEinstellungen, onKosmoOeffnen }: VisWorkspacePr
         return;
       case 'report':
         setIslandReportOffen(true);
-        return;
-      case 'manuell':
-        setVisOberflaeche('manuell');
         return;
       default:
         return;

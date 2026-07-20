@@ -19,6 +19,20 @@ import { expect, test, type Page } from '@playwright/test';
  * (`test.use({ storageState: { cookies: [], origins: [] } })`, exakt wie
  * `island-ui.spec.ts`/`island-verdrahtung.spec.ts`) — nur ein leerer Kontext
  * beweist den echten Produktions-Default `visOberflaeche:'island'` ohne Seed.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3, Matrix C-6) — NOTWENDIGE Folgeänderung (kein deklariertes Dateikreis-
+ * Mitglied von P-B2, aber der AUSTAUSCH-Test unten prüfte direkt das jetzt
+ * entfernte Insel-Werkzeug 'manuell'; ohne Anpassung wäre er nach dem
+ * Rückbau rot): der Vorwärtsweg 'island' → 'manuell' läuft nicht mehr über
+ * ein Insel-Werkzeug, sondern über den Einstellungs-Schalter
+ * (`einstellung-vis-manuell`, `shell/Einstellungen.tsx`) — der Test unten
+ * öffnet ihn jetzt darüber. Der Rückweg (`island-zurueck`) bleibt
+ * unverändert. Der ausführliche Umschalt-Beweis (hin UND zurück, inkl.
+ * Schalter-Zustand) lebt jetzt primär in `e2e/vis-oberflaeche.spec.ts`
+ * (deklarierter Umbau, E3-Nachtrag Punkt 7) — dieser Test hier bleibt als
+ * Bestandsschutz-Beweis «Manuell zeigt exakt die heutige Werkzeugzeile»
+ * bestehen, nur der Einstiegsweg ändert sich.
  */
 
 declare global {
@@ -217,14 +231,18 @@ test.describe('PC1 — KosmoVis auf Islands (Default, kein Seed)', () => {
     await expect(page.locator('[data-testid="island-toast"]')).toContainText('REPORT AKTIV');
   });
 
-  test('AUSTAUSCH-Insel: Manuell schaltet zurück, "Island-UI"-Knopf schaltet wieder vor — Manuell bleibt heutiges Vis', async ({
+  test('Einstellungs-Schalter schaltet in die manuelle Ansicht, "Island-UI"-Knopf schaltet wieder vor — Manuell bleibt heutiges Vis', async ({
     page,
   }) => {
     await oeffneVisIsland(page);
 
-    // Vorwärtsweg 'island' → 'manuell'.
-    await oeffneInsel(page, 'austausch');
-    await page.click('[data-testid="island-werkzeug-manuell"]');
+    // Vorwärtsweg 'island' → 'manuell' (v0.8.10 E3-Nachtrag: über den
+    // Einstellungs-Schalter, s. Datei-Kopf — der frühere Insel-Werkzeug-Weg
+    // ist entfallen).
+    await page.click('[data-testid="island-einstellungen-kreis"]');
+    await expect(page.locator('[data-testid="einstellungen-panel"]')).toBeVisible();
+    await page.click('[data-testid="einstellung-vis-manuell"]');
+    await page.click('[data-testid="einstellungen-panel"] [aria-label="Schliessen"]');
     await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
     await expect(page.locator('[data-testid="island-graph-root"]')).toHaveCount(0);
     // Bestandsschutz: Manuell zeigt exakt die heutige Werkzeugzeile.

@@ -16,6 +16,10 @@ import { VIS_WERKZEUG_KATALOG } from '../src/modules/vis/island/vis-island-katal
  * neuen SONNE-Insel (`vis-island-katalog.ts`, EIN zusätzliches Werkzeug
  * `sonnenstunden`) nach — die Tests selbst bleiben inhaltlich unverändert,
  * nur die hartkodierten Fundament-Zahlen.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3, Matrix C-6): 14→13 — der Insel-Rückweg 'manuell' (AUSTAUSCH) und sein
+ * Icon sind entfallen, der Zugang läuft jetzt über den Einstellungs-Schalter.
  */
 
 function alsDom(html: string): HTMLDivElement {
@@ -28,19 +32,19 @@ function zaehleAkzentpunkte(html: string): number {
   return (html.match(/r="1\.13"/g) ?? []).length;
 }
 
-describe('vis-glyphen: 14 Werkzeug-Icons decken den kompletten Vis-Katalog ab', () => {
-  it('VIS_WERKZEUG_KATALOG hat 14 Einträge (v0.8.9 §9 E11: +1 SONNE-Insel)', () => {
-    expect(VIS_WERKZEUG_KATALOG).toHaveLength(14);
+describe('vis-glyphen: 13 Werkzeug-Icons decken den kompletten Vis-Katalog ab', () => {
+  it('VIS_WERKZEUG_KATALOG hat 13 Einträge (v0.8.10 E3-Nachtrag: -manuell)', () => {
+    expect(VIS_WERKZEUG_KATALOG).toHaveLength(13);
   });
 
-  it('VIS_GLYPHEN deckt exakt die 14 Katalog-Ids ab', () => {
+  it('VIS_GLYPHEN deckt exakt die 13 Katalog-Ids ab', () => {
     const erwartet = VIS_WERKZEUG_KATALOG.map((w) => w.id).sort();
     const tatsaechlich = Object.keys(VIS_GLYPHEN).sort();
     expect(tatsaechlich).toEqual(erwartet);
-    expect(tatsaechlich).toHaveLength(14);
+    expect(tatsaechlich).toHaveLength(13);
   });
 
-  it('kein Vis-Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 14 sind ComponentType)', () => {
+  it('kein Vis-Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 13 sind ComponentType)', () => {
     for (const w of VIS_WERKZEUG_KATALOG) {
       expect(typeof w.glyphe, w.id).not.toBe('string');
     }
@@ -101,7 +105,7 @@ describe('vis-glyphen: Bauvorschrift je Icon (werkzeug-icons.tsx:1-31, 24er-Norm
     expect(html).toContain('viewBox="0 0 24 24"');
   });
 
-  it('die 14 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
+  it('die 13 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
     const markup = NAMEN.map((name) => renderToStaticMarkup(VIS_GLYPHEN[name]!({})));
     expect(new Set(markup).size).toBe(NAMEN.length);
   });

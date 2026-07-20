@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.1 / P8 (0.7.2-Rest «Viz gespeicherte Ansichten + Review-Pins» +
@@ -7,7 +8,16 @@ import { expect, test, type Page } from '@playwright/test';
  * additiven Test-Hook `window.__kosmoVisRuntime` geseedet (Muster
  * `window.__kosmoCompanion`) — der echte Aufnahme-Knopf sitzt in
  * `Viewport3D.tsx` (anderes Paket, hier nicht Gegenstand).
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6): «Gespeicherte Ansichten» ist eine Manuell-only-Funktion (kein
+ * Insel-Äquivalent, P-B1-Audit-Fund) — der globale `kosmo.ui.v1`-Seed
+ * verliert sein `visOberflaeche`-Feld (Seed-Flip), dieser Per-Spec-Kopf hält
+ * die Suite unverändert auf `visOberflaeche:'manuell'` (Muster `e2e/helpers/
+ * manuell-seed.ts`s `visManuellStorageState()`-Kopfkommentar).
  */
+test.use({ storageState: visManuellStorageState() });
+
 declare global {
   interface Window {
     __kosmoVisRuntime: {

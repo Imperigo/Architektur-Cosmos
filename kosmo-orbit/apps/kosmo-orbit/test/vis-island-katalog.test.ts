@@ -10,6 +10,12 @@ import { VIS_INSELN, VIS_ISLAND_REIHENFOLGE, VIS_WERKZEUG_KATALOG } from '../src
  * links, EIN Werkzeug `sonnenstunden`) additiv dazugekommen — die vier
  * Bestandsinseln/-Werkzeuge bleiben unverändert, nur die Gesamtzahlen ziehen
  * nach (13→14 Werkzeuge, 4→5 Inseln).
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3, Matrix C-6): der prominente Insel-Rückweg 'manuell' (AUSTAUSCH) ist
+ * entfallen — 14→13 Werkzeuge total, AUSTAUSCH 5→4. Der Zugang läuft jetzt
+ * über den Einstellungs-Schalter (`shell/Einstellungen.tsx`, testid
+ * `einstellung-vis-manuell`).
  */
 
 describe('vis-island-katalog — Aufbau', () => {
@@ -38,10 +44,10 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(sonne.randKlasse).toBe('isl-rand-sonne');
   });
 
-  it('14 Werkzeuge total, jedes genau einer Insel zugeordnet', () => {
-    expect(VIS_WERKZEUG_KATALOG).toHaveLength(14);
+  it('13 Werkzeuge total, jedes genau einer Insel zugeordnet (v0.8.10 E3-Nachtrag: -manuell)', () => {
+    expect(VIS_WERKZEUG_KATALOG).toHaveLength(13);
     const summe = VIS_INSELN.reduce((n, k) => n + k.werkzeuge.length, 0);
-    expect(summe).toBe(14);
+    expect(summe).toBe(13);
   });
 
   it('SONNE: genau EIN Werkzeug (Sonnenstunden, v0.8.9 §9 E11)', () => {
@@ -65,16 +71,20 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(werkzeuge.map((w) => w.id)).toEqual(['stimmung']);
   });
 
-  it('AUSTAUSCH: Render senden, Aufs Plakat, Kamera vorschlagen, Report, Manuell (Owner-Auftrag §1 + Rückweg-Muster)', () => {
+  it('AUSTAUSCH: Render senden, Aufs Plakat, Kamera vorschlagen, Report (v0.8.10 E3-Nachtrag: -manuell, Owner-Auftrag §1)', () => {
     const ids = VIS_INSELN.find((k) => k.id === 'austausch')!.werkzeuge.map((w) => w.id);
-    expect(ids).toEqual(['render-senden', 'aufs-plakat', 'kamera-vorschlagen', 'report', 'manuell']);
+    expect(ids).toEqual(['render-senden', 'aufs-plakat', 'kamera-vorschlagen', 'report']);
   });
 
-  it('Raster/Routing/Kamera vorschlagen/Report/Manuell sind hatPopup:false (Sofort-Aktion, Muster design achsen/manuell)', () => {
-    for (const id of ['raster', 'routing', 'kamera-vorschlagen', 'report', 'manuell']) {
+  it('Raster/Routing/Kamera vorschlagen/Report sind hatPopup:false (Sofort-Aktion, Muster design achsen)', () => {
+    for (const id of ['raster', 'routing', 'kamera-vorschlagen', 'report']) {
       const w = VIS_WERKZEUG_KATALOG.find((x) => x.id === id)!;
       expect(w.hatPopup).toBe(false);
     }
+  });
+
+  it('"manuell" ist kein Werkzeug mehr (v0.8.10 E3-Nachtrag: Zugang über Einstellungs-Schalter)', () => {
+    expect(VIS_WERKZEUG_KATALOG.find((x) => x.id === 'manuell')).toBeUndefined();
   });
 
   it('alle übrigen Werkzeuge haben hatPopup:true', () => {

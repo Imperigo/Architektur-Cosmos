@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { waehleOption } from './helfer/waehleOption';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * W1 (v0.6.5, UI-KONZEPT-065 §5) — KosmoVis-Oberfläche: die vier neuen
@@ -11,7 +12,26 @@ import { waehleOption } from './helfer/waehleOption';
  * Port 8600 (Hauptbaum-Bridge) — hier nicht gebraucht (keine Render-Jobs
  * in dieser Suite), `kosmo.bridge` wird trotzdem gesetzt, damit ein zufälliger
  * Poll (Timeout-Wächter im NodeCanvas) nie gegen den Hauptbaum-Port 8600 läuft.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 7, Matrix C-6/C-7) — deklarierter Umbau dieser Datei:
+ * (1) alle Bestands-Tests unten (Zoom/Fit/Overlap/Palette/Kuratier/Minimap)
+ *     sind Manuell-only-Chrome (`vis-zoom-*`/`vis-palette-*`/`vis-kuratier-*`/
+ *     `vis-minimap-*` existieren im Island-Modus nicht, s. `vis-island.
+ *     spec.ts`s C-15-Beweis) — sie bleiben WÖRTLICH unverändert (kein
+ *     Assertion-Zeile angefasst), bekommen aber diesen datei-weiten
+ *     `test.use`-Kopf, weil der globale `kosmo.ui.v1`-Seed sein
+ *     `visOberflaeche`-Feld verliert (Seed-Flip, `playwright.config.ts`).
+ * (2) NEU unten: `test.describe('v0.8.10 E3-Nachtrag …')` mit eigenem
+ *     LEEREN Kontext (Muster `e2e/vis-island.spec.ts`) beweist (a) das
+ *     Werkzeug 'manuell' existiert nicht mehr in der AUSTAUSCH-Insel
+ *     (Count 0), (b) Island ist der echte Produktions-Default ohne jeden
+ *     Seed, und (c) der Einstellungs-Schalter (`einstellung-vis-manuell`)
+ *     schaltet hin UND zurück — der frühere Umschalt-Beweis lief über das
+ *     jetzt entfernte Insel-Werkzeug 'manuell' (s. `e2e/vis-island.spec.ts`s
+ *     angepasster Test), dieser Beweis lebt jetzt hier.
  */
+test.use({ storageState: visManuellStorageState() });
 
 declare global {
   interface Window {
@@ -403,4 +423,76 @@ test('Minimap-Toggle: unter 5 Nodes standardmässig aus, Klick zeigt/versteckt s
 
   await toggle.click();
   await expect(page.locator('[data-testid="vis-minimap"]')).toHaveCount(0);
+});
+
+/**
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 7, Matrix C-6) — NEU: eigener LEERER Kontext (Muster `e2e/vis-
+ * island.spec.ts`), weil beide Tests unten den echten Produktions-Default
+ * `visOberflaeche:'island'` OHNE den datei-weiten Manuell-Seed oben brauchen.
+ */
+test.describe('v0.8.10 E3-Nachtrag — Manuelle Ansicht über den Einstellungs-Schalter (Owner-Entscheid 20.07.2026)', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  /** Muster `e2e/vis-island.spec.ts`s `oeffneVisIsland`. */
+  async function oeffneVisIsland(page: import('@playwright/test').Page): Promise<void> {
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem('kosmo.starterGuide.done', '1');
+      localStorage.setItem('kosmo.bridge', 'http://localhost:8600');
+    });
+    await page.reload();
+    await page.click('[data-testid="module-vis"]');
+  }
+
+  test('(a)+(b) Island ist Default ohne jeden Seed — die AUSTAUSCH-Insel hat kein "manuell"-Werkzeug mehr (Count 0)', async ({
+    page,
+  }) => {
+    await oeffneVisIsland(page);
+    // (b) echter Produktions-Default: der Island-Modus rendert, kein Manuell-
+    // Chrome (`tab-graph` existiert dort nicht, s. `vis-island.spec.ts` C-15).
+    await expect(page.locator('[data-testid="vis-island-fuellen"]')).toBeVisible();
+    await expect(page.locator('[data-testid="tab-graph"]')).toHaveCount(0);
+
+    // (a) der frühere Insel-Rückweg 'manuell' existiert nicht mehr.
+    await page.hover('[data-testid="island-austausch-root"]');
+    await expect(page.locator('[data-testid="island-austausch-leiste"]')).toBeVisible();
+    await expect(page.locator('[data-testid="island-werkzeug-manuell"]')).toHaveCount(0);
+    await page.screenshot({ path: 'e2e-results/vis-austausch-insel-ohne-manuell.png' });
+  });
+
+  test('(c) Einstellungs-Schalter schaltet hin UND zurück: Manuell-Chrome sichtbar (island-zurueck bleibt), Rückweg schaltet den Schalter wieder aus', async ({
+    page,
+  }) => {
+    await oeffneVisIsland(page);
+    await expect(page.locator('[data-testid="vis-island-fuellen"]')).toBeVisible();
+
+    // Einstellungen öffnen (Island-Kreis oben rechts, `App.tsx`) — Schalter
+    // ist zunächst aus (Island bleibt Default).
+    await page.click('[data-testid="island-einstellungen-kreis"]');
+    await expect(page.locator('[data-testid="einstellungen-panel"]')).toBeVisible();
+    const schalter = page.locator('[data-testid="einstellung-vis-manuell"]');
+    await expect(schalter).not.toBeChecked();
+    await schalter.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: 'e2e-results/vis-einstellungen-schalter.png' });
+
+    // Hin: Schalter an → Manuell-Chrome, `island-zurueck` bleibt als Rückweg.
+    await schalter.check();
+    await expect(schalter).toBeChecked();
+    await page.click('[data-testid="einstellungen-panel"] [aria-label="Schliessen"]');
+    await expect(page.locator('[data-testid="vis-island-fuellen"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
+    const zurueck = page.locator('[data-testid="island-zurueck"]');
+    await expect(zurueck).toBeVisible();
+    await page.screenshot({ path: 'e2e-results/vis-manuell-chrome-ueber-schalter.png' });
+
+    // Zurück: `island-zurueck` führt zur Island-UI zurück UND der Schalter in
+    // den Einstellungen zeigt danach wieder aus (derselbe Store, keine
+    // Zweitlogik).
+    await zurueck.click();
+    await expect(page.locator('[data-testid="vis-island-fuellen"]')).toBeVisible();
+    await page.click('[data-testid="island-einstellungen-kreis"]');
+    await expect(page.locator('[data-testid="einstellung-vis-manuell"]')).not.toBeChecked();
+  });
 });

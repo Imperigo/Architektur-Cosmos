@@ -36,6 +36,7 @@ import { useAktiveDockStation } from '../state/dock-aktive-station';
 import { useDockTourZustand } from '../state/dock-tour-zustand';
 import { presetAnwenden } from '../state/dock-preset-anwendung';
 import { PRESET_IDS, presetFuer, type PresetId, type PresetStation } from '../state/dock-presets';
+import { useUiZustand } from '../state/ui-zustand';
 
 /**
  * Zentrales Einstellungs-Panel (Serie K / Batch A4, Owner-Befund K14, wörtlich:
@@ -173,6 +174,17 @@ export function Einstellungen({
   const presetStation: PresetStation | undefined =
     aktiveDockStationFuerPreset === 'design' || aktiveDockStationFuerPreset === 'vis' ? aktiveDockStationFuerPreset : undefined;
   const aktivesPreset = useDockZustand((s) => (presetStation ? s.aktivesPreset[presetStation] : undefined));
+
+  // v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, docs/V0810-SPEZ.md §2
+  // E3, Matrix C-6): der prominente Insel-Zugang zur manuellen KosmoVis-
+  // Ansicht ist gefallen (`vis-island-katalog.ts`) — Island bleibt Default/
+  // Standard, die manuelle Ansicht bleibt aber legitim erreichbar, jetzt
+  // über diesen Schalter statt eines Insel-Werkzeugs. Liest/schreibt
+  // denselben Store wie `VisWorkspace.tsx` (`useUiZustand`), keine
+  // Zweitlogik — KEINE `normalisiere()`-Koerzierung, `'manuell'` ist eine
+  // legitime Einstellung.
+  const visOberflaeche = useUiZustand((s) => s.visOberflaeche);
+  const setVisOberflaeche = useUiZustand((s) => s.setVisOberflaeche);
 
   // v0.7.8 Welle 3 (P8, Geführte Tour): Einstieg «Werkzeug-Dock kennenlernen»
   // — die Tour selbst (`shell/dock/DockTour.tsx`) manipuliert Dock-/UI-
@@ -438,6 +450,29 @@ export function Einstellungen({
                 Nur in KosmoDesign oder KosmoVis verfügbar — dorthin wechseln und erneut versuchen.
               </span>
             )}
+          </div>
+
+          {/* v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, docs/V0810-
+              SPEZ.md §2 E3, Matrix C-6): Rückweg zur älteren Vollflächen-
+              KosmoVis-Oberfläche — Island bleibt Default/Standard, dieser
+              Schalter ersetzt den entfallenen Insel-Zugang
+              (`vis-island-katalog.ts`). Rückweg AUS 'manuell' bleibt der
+              bestehende `island-zurueck`-Knopf im Manuell-Chrome
+              (`VisWorkspace.tsx`). */}
+          <div className="es-feld-block">
+            <label className="es-schalter-label">
+              <input
+                type="checkbox"
+                data-testid="einstellung-vis-manuell"
+                checked={visOberflaeche === 'manuell'}
+                onChange={(e) => setVisOberflaeche(e.target.checked ? 'manuell' : 'island')}
+              />
+              Manuelle Ansicht (KosmoVis)
+            </label>
+            <span className="es-feld-hinweis">
+              Ältere Vollflächen-Ansicht mit Werkzeugleiste, Dock-Panels, Legende und gespeicherten Ansichten — Island
+              bleibt der Standard.
+            </span>
           </div>
         </section>
         <Hairline />

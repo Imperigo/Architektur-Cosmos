@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.1 / P15 (Nutzungszeit-Panel, docs/V081-SPEZ.md §7(f)/§9.5 C-34) —
@@ -15,7 +16,17 @@ import { expect, test, type Page } from '@playwright/test';
  *  - eine Station OHNE Rang-Zuordnung (KosmoPackage, `STATION_ZU_TOOLID`
  *    kennt `paket` nicht) zeigt ehrlich «nicht separat erfasst» — nicht
  *    dieselbe 0 wie eine schlicht ungenutzte, aber zählbare Station.
+ *
+ * v0.8.10 E3-Nachtrag Seed-Flip — NOTWENDIGE Folgeänderung (P-B1-Audit-
+ * Lücke, kein deklariertes Dateikreis-Mitglied von P-B2, aber vom eigenen
+ * Vor-/Nach-Flip-Vollsuiten-Vergleich gefunden): der erste Test springt über
+ * `dock-vis` in die vis-Station und liest danach
+ * `[data-testid="vis-auto-kamera"]` — ein Manuell-only-Testid, das im
+ * Island-Default nicht existiert. Ohne diesen Kopf würde der Seed-Flip
+ * diesen einen Test von grün auf rot kippen; die übrigen zwei Tests dieser
+ * Datei bleiben design-lastig und von `visOberflaeche` unberührt.
  */
+test.use({ storageState: visManuellStorageState() });
 
 async function bootstrap(page: Page): Promise<void> {
   await page.goto('/');

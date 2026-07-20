@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.1 / P8 (0.7.5-Welle-2 «Vis-Onboarding-Stepper», Spec §6.2/§9.17,
@@ -12,7 +13,16 @@ import { expect, test, type Page } from '@playwright/test';
  * blockierte das Overlay 4 bestehende Vis-Specs, die den `module-vis`-Klick
  * sofort weiterklicken). Exklusiv dieser Suite (+ `p8-081-screenshots.spec.ts`)
  * vorbehalten.
+ *
+ * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
+ * E3 Punkt 6): der Vis-Onboarding-Stepper ist eine Manuell-only-Funktion
+ * (kein Insel-Äquivalent, P-B1-Audit-Fund) — der globale `kosmo.ui.v1`-Seed
+ * verliert sein `visOberflaeche`-Feld (Seed-Flip), dieser Per-Spec-Kopf hält
+ * die Suite unverändert auf `visOberflaeche:'manuell'` (Muster `e2e/helpers/
+ * manuell-seed.ts`s `visManuellStorageState()`-Kopfkommentar).
  */
+test.use({ storageState: visManuellStorageState() });
+
 async function oeffneVis(page: Page): Promise<void> {
   await page.goto('/');
   await page.evaluate(() => {
