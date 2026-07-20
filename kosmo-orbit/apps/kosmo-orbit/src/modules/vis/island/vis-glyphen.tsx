@@ -27,6 +27,13 @@ import type { ComponentType, ReactNode } from 'react';
  * (verschachtelter Rahmen), Stimmung (Sonne/Wolke), Render senden
  * (Papierflieger), Aufs Plakat (Blatt mit Reisszwecke), Kamera vorschlagen
  * (echte Kamera), Report (Dokument mit Balken).
+ *
+ * v0.8.11 P-B1/E4 (`docs/V0811-SPEZ.md` §2 E4): additiv um 2 Icons für die
+ * neuen ANSICHT-Insel-Werkzeuge «Gespeicherte Ansichten» + «Legende»
+ * erweitert — 13→15. Gespeicherte Ansichten (zwei versetzte Bild-Rahmen mit
+ * Häkchen — «gespeicherter Schnappschuss»), Legende (drei Zeilen aus
+ * Punkt+Strich — 1:1 das Listen-Motiv der echten Legende, `vis-visual.css`
+ * `.vis-legende-zeile`).
  */
 
 const WURZEL_ATTRIBUTE = {
@@ -190,6 +197,38 @@ const sonnenstunden = glyphe(
   </>,
 );
 
+/**
+ * Gespeicherte Ansichten — zwei versetzte Bild-Rahmen (Schnappschuss-Stapel,
+ * Muster Minimap-Rahmen, aber ÜBERLAPPEND statt verschachtelt), Häkchen im
+ * vorderen Rahmen («gespeichert»), Akzent an der hinteren Rahmen-Ecke. v0.8.11
+ * P-B1/E4 (`docs/V0811-SPEZ.md` §2 E4) — Insel-Äquivalent zu
+ * `GespeicherteAnsichten.tsx`.
+ */
+const ansichten = glyphe(
+  <>
+    <rect x="4" y="7" width="13" height="10" rx="1.3" />
+    <rect x="7.6" y="4" width="13" height="10" rx="1.3" />
+    <path d="M7.8 12.2 L10.4 14.8 L14.4 9.4" />
+    {akzent(20.6, 4)}
+  </>,
+);
+
+/**
+ * Legende — drei Listenzeilen aus Punkt+Strich, 1:1 das echte Legende-Motiv
+ * (`vis-visual.css` `.vis-legende-zeile`: Punkt + Text je Porttyp), Akzent
+ * auf dem ersten Punkt. v0.8.11 P-B1/E4 (`docs/V0811-SPEZ.md` §2 E4) —
+ * Insel-Äquivalent zur Porttyp-Legende (bisher NUR `NodeCanvas.tsx`).
+ */
+const legende = glyphe(
+  <>
+    <path d="M9 6 H20 M9 12 H20 M9 18 H20" />
+    <circle cx="4.5" cy="6" r="1.6" />
+    <circle cx="4.5" cy="12" r="1.6" />
+    <circle cx="4.5" cy="18" r="1.6" />
+    {akzent(4.5, 6)}
+  </>,
+);
+
 /** Die Vis-Werkzeug-Icons, geschlüsselt nach `vis-island-katalog.ts`s `IslandWerkzeug.id`. */
 export const VIS_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   palette,
@@ -205,4 +244,6 @@ export const VIS_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   'kamera-vorschlagen': kameraVorschlagen,
   report,
   sonnenstunden,
+  ansichten,
+  legende,
 };

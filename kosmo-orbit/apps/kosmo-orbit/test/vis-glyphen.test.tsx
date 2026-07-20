@@ -20,6 +20,10 @@ import { VIS_WERKZEUG_KATALOG } from '../src/modules/vis/island/vis-island-katal
  * v0.8.10 E3-Nachtrag (Owner-Entscheid 20.07.2026, `docs/V0810-SPEZ.md` §2
  * E3, Matrix C-6): 14→13 — der Insel-Rückweg 'manuell' (AUSTAUSCH) und sein
  * Icon sind entfallen, der Zugang läuft jetzt über den Einstellungs-Schalter.
+ *
+ * v0.8.11 P-B1/E4 (Owner-Wahl E-Vis, `docs/V0811-SPEZ.md` §2 E4, Matrix
+ * C-6): 13→15 — additiv 2 neue Icons für die ANSICHT-Insel-Werkzeuge
+ * 'ansichten' (Gespeicherte Ansichten) und 'legende' (Porttyp-Legende).
  */
 
 function alsDom(html: string): HTMLDivElement {
@@ -32,19 +36,19 @@ function zaehleAkzentpunkte(html: string): number {
   return (html.match(/r="1\.13"/g) ?? []).length;
 }
 
-describe('vis-glyphen: 13 Werkzeug-Icons decken den kompletten Vis-Katalog ab', () => {
-  it('VIS_WERKZEUG_KATALOG hat 13 Einträge (v0.8.10 E3-Nachtrag: -manuell)', () => {
-    expect(VIS_WERKZEUG_KATALOG).toHaveLength(13);
+describe('vis-glyphen: 15 Werkzeug-Icons decken den kompletten Vis-Katalog ab', () => {
+  it('VIS_WERKZEUG_KATALOG hat 15 Einträge (v0.8.11 P-B1/E4: +ansichten/+legende)', () => {
+    expect(VIS_WERKZEUG_KATALOG).toHaveLength(15);
   });
 
-  it('VIS_GLYPHEN deckt exakt die 13 Katalog-Ids ab', () => {
+  it('VIS_GLYPHEN deckt exakt die 15 Katalog-Ids ab', () => {
     const erwartet = VIS_WERKZEUG_KATALOG.map((w) => w.id).sort();
     const tatsaechlich = Object.keys(VIS_GLYPHEN).sort();
     expect(tatsaechlich).toEqual(erwartet);
-    expect(tatsaechlich).toHaveLength(13);
+    expect(tatsaechlich).toHaveLength(15);
   });
 
-  it('kein Vis-Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 13 sind ComponentType)', () => {
+  it('kein Vis-Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 15 sind ComponentType)', () => {
     for (const w of VIS_WERKZEUG_KATALOG) {
       expect(typeof w.glyphe, w.id).not.toBe('string');
     }
@@ -105,7 +109,7 @@ describe('vis-glyphen: Bauvorschrift je Icon (werkzeug-icons.tsx:1-31, 24er-Norm
     expect(html).toContain('viewBox="0 0 24 24"');
   });
 
-  it('die 13 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
+  it('die 15 Zeichnungen sind paarweise verschieden (kein Copy-Paste-Duplikat)', () => {
     const markup = NAMEN.map((name) => renderToStaticMarkup(VIS_GLYPHEN[name]!({})));
     expect(new Set(markup).size).toBe(NAMEN.length);
   });

@@ -16,6 +16,11 @@ import { VIS_INSELN, VIS_ISLAND_REIHENFOLGE, VIS_WERKZEUG_KATALOG } from '../src
  * entfallen — 14→13 Werkzeuge total, AUSTAUSCH 5→4. Der Zugang läuft jetzt
  * über den Einstellungs-Schalter (`shell/Einstellungen.tsx`, testid
  * `einstellung-vis-manuell`).
+ *
+ * v0.8.11 P-B1/E4 (Owner-Wahl E-Vis, `docs/V0811-SPEZ.md` §2 E4, Matrix
+ * C-6): additiv +2 — ANSICHT bekommt 'ansichten' (Gespeicherte Ansichten)
+ * und 'legende' (Porttyp-Legende), die letzten beiden P-B1-Audit-Funde ohne
+ * Insel-Äquivalent — 13→15 Werkzeuge total, ANSICHT 4→6.
  */
 
 describe('vis-island-katalog — Aufbau', () => {
@@ -44,10 +49,10 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(sonne.randKlasse).toBe('isl-rand-sonne');
   });
 
-  it('13 Werkzeuge total, jedes genau einer Insel zugeordnet (v0.8.10 E3-Nachtrag: -manuell)', () => {
-    expect(VIS_WERKZEUG_KATALOG).toHaveLength(13);
+  it('15 Werkzeuge total, jedes genau einer Insel zugeordnet (v0.8.11 P-B1/E4: +ansichten/+legende)', () => {
+    expect(VIS_WERKZEUG_KATALOG).toHaveLength(15);
     const summe = VIS_INSELN.reduce((n, k) => n + k.werkzeuge.length, 0);
-    expect(summe).toBe(13);
+    expect(summe).toBe(15);
   });
 
   it('SONNE: genau EIN Werkzeug (Sonnenstunden, v0.8.9 §9 E11)', () => {
@@ -61,9 +66,9 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(ids).toEqual(['palette', 'ausrichten', 'verbinden']);
   });
 
-  it('ANSICHT: Zoom/Fit, Raster-Snap, Ortho/Kurve, Minimap (Owner-Auftrag §1)', () => {
+  it('ANSICHT: Zoom/Fit, Raster-Snap, Ortho/Kurve, Minimap, Gespeicherte Ansichten, Legende (Owner-Auftrag §1 + v0.8.11 P-B1/E4)', () => {
     const ids = VIS_INSELN.find((k) => k.id === 'ansicht')!.werkzeuge.map((w) => w.id);
-    expect(ids).toEqual(['zoom', 'raster', 'routing', 'minimap']);
+    expect(ids).toEqual(['zoom', 'raster', 'routing', 'minimap', 'ansichten', 'legende']);
   });
 
   it('STIMMUNG: genau EIN Werkzeug (die 3 Presets als Bild-Kacheln, Owner-Auftrag §1)', () => {
@@ -98,6 +103,8 @@ describe('vis-island-katalog — Aufbau', () => {
       'render-senden',
       'aufs-plakat',
       'sonnenstunden',
+      'ansichten',
+      'legende',
     ]) {
       const w = VIS_WERKZEUG_KATALOG.find((x) => x.id === id)!;
       expect(w.hatPopup).toBe(true);

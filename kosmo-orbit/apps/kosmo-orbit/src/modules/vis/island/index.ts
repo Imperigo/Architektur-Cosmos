@@ -15,3 +15,8 @@ import './inhalte/austausch';
 // v0.8.9 §9 E11 (PBL2, `docs/V089-SPEZ.md`) — SONNE-Insel (Sonnenstunden-
 // Client), Registrierung als Import-Seiteneffekt wie die vier Bestands-Inseln.
 import './inhalte/sonne';
+// v0.8.11 P-B1/E4 (`docs/V0811-SPEZ.md` §2 E4) — die zwei neuen ANSICHT-
+// Insel-Inhalte (Gespeicherte Ansichten/Legende), Registrierung als
+// Import-Seiteneffekt wie alle übrigen `inhalte/*.tsx`-Dateien.
+import './inhalte/ansichten';
+import './inhalte/legende';

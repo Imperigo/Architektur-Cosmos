@@ -15,8 +15,16 @@ import { VIS_GLYPHEN } from './vis-glyphen';
  *   Panel), Ausrichten (`visAusrichten`), Verbinden-Modus (Hinweis auf die
  *   bestehende Drag-Geste — es gibt keinen zweiten «Modus» zu bauen).
  * - **ANSICHT** (oben, horizontal): Zoom/Fit, Raster-Snap, Ortho/Kurve,
- *   Minimap+Legende — 1:1 die bisherige `.vis-chrome-bottomright`/
- *   `-bottomleft`-Leiste + die `visLegende`/`visMinimap`-Dock-Panels.
+ *   Minimap — 1:1 die bisherige `.vis-chrome-bottomright`/`-bottomleft`-
+ *   Leiste + das `visMinimap`-Dock-Panel. v0.8.11 P-B1/E4 (Owner-Wahl E-Vis,
+ *   `docs/V0811-SPEZ.md` §2 E4): additiv um **Gespeicherte Ansichten**
+ *   (`island/inhalte/ansichten.tsx`, importiert die bestehende
+ *   `GespeicherteAnsichten`-Komponente/-Logik unverändert) und **Legende**
+ *   (`island/inhalte/legende.tsx`, NEUE Datei — die Porttyp-Legende war
+ *   bisher NUR im Manuell-`NodeCanvas.tsx` inline) erweitert — die letzten
+ *   zwei der vier P-B1-Audit-Funde (0.8.10-Planung) bekommen damit ihr
+ *   Insel-Äquivalent; VisOnboarding + die alten Dock-Panels bleiben laut
+ *   Owner-Entscheid bewusst Manuell-only (fallen 0.9.0 mit dem Codepfad).
  * - **STIMMUNG** (rechts, vertikal): die 3 Presets als prozedurale
  *   Bild-Kacheln (E5) + der bestehende «Drei Stimmungen»-Graph-Baustein.
  * - **AUSTAUSCH** (unten, horizontal): Render senden, Aufs Plakat, Kamera
@@ -82,6 +90,12 @@ const ANSICHT: readonly IslandWerkzeug[] = [
   werkzeug('raster', 'Raster-Snap', 'ansicht', icon('raster'), false),
   werkzeug('routing', 'Kanten-Routing', 'ansicht', icon('routing'), false),
   werkzeug('minimap', 'Minimap', 'ansicht', icon('minimap'), true),
+  // v0.8.11 P-B1/E4 (Owner-Wahl E-Vis, `docs/V0811-SPEZ.md` §2 E4) — additiv
+  // ans Ende: die zwei Insel-Äquivalente für die letzten beiden Manuell-only-
+  // Funde des P-B1-Audits (0.8.10-Planung). Beide `hatPopup:true` (echter
+  // Inhalt, kein Sofort-Toggle, Muster 'minimap').
+  werkzeug('ansichten', 'Gespeicherte Ansichten', 'ansicht', icon('ansichten'), true),
+  werkzeug('legende', 'Legende', 'ansicht', icon('legende'), true),
 ];
 
 const STIMMUNG: readonly IslandWerkzeug[] = [werkzeug('stimmung', 'Stimmung', 'stimmung', icon('stimmung'), true)];
@@ -109,7 +123,8 @@ const SONNE: readonly IslandWerkzeug[] = [
   werkzeug('sonnenstunden', 'Sonnenstunden', 'sonne', icon('sonnenstunden'), true),
 ];
 
-/** Gesamtkatalog, 13 Werkzeuge über 5 Inseln (v0.8.10 E3-Nachtrag: 'manuell' entfernt, 14→13). */
+/** Gesamtkatalog, 15 Werkzeuge über 5 Inseln (v0.8.10 E3-Nachtrag: 'manuell'
+ * entfernt, 14→13; v0.8.11 P-B1/E4: +'ansichten'/+'legende', 13→15). */
 export const VIS_WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [
   ...GRAPH,
   ...ANSICHT,

@@ -20,7 +20,7 @@ describe('vis-island — Registry (eigener Namensraum "vis")', () => {
     }
   });
 
-  it('registrierteIds() deckt exakt die 8 hatPopup:true-Werkzeuge (keine Karteileiche, kein Fehlender)', () => {
+  it('registrierteIds() deckt exakt die 10 hatPopup:true-Werkzeuge (v0.8.11 P-B1/E4: +ansichten/+legende, keine Karteileiche, kein Fehlender)', () => {
     const erwartete = VIS_WERKZEUG_KATALOG.filter((x) => x.hatPopup)
       .map((w) => w.id)
       .sort();
