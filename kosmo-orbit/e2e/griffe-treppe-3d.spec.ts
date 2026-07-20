@@ -11,9 +11,19 @@ import { expect, test, type Page } from '@playwright/test';
  * runCommand(...)`, NICHT über den `handlers.current`-Callback-Weg wie die
  * 2D-Griffe: `DesignWorkspace.tsx` ist im Dateikreis dieses Pakets TABU
  * (Betriebsregeln), ein neuer Handler dort war nicht verfügbar (s.
- * Kommentar bei `onPointerUp` in Viewport3D.tsx). x/y-only (kein z-Griff,
- * dokumentiertes Nicht-Ziel) — die Ziehebene liegt horizontal auf der
- * Handle-Höhe, nur x/z (Kern x/y) folgen dem Zeiger.
+ * Kommentar bei `onPointerUp` in Viewport3D.tsx). a/b/ecke sind x/y-only —
+ * die Ziehebene liegt horizontal auf der Handle-Höhe, nur x/z (Kern x/y)
+ * folgen dem Zeiger.
+ *
+ * **E7 (v0.8.11 «Inselgleich», `docs/V0811-SPEZ.md` §2 E7, Owner-Wahl):**
+ * das dokumentierte 0.8.9-Nicht-Ziel «Treppen-z-Griff» ist eingelöst — ein
+ * VIERTER Handle `'z'` sitzt an der Lauflinien-Mitte auf der
+ * Geschoss-OBERKANTE (`elevation + storey.height`) und editiert per
+ * vertikalem Zug die GESCHOSSHÖHE (Commit: bestehender
+ * `design.eigenschaftSetzen` storey/height). Dadurch zählen ALLE
+ * `stairHandleCount`-Erwartungen dieser Datei sanktioniert eins höher als
+ * in v0.8.9 (3 statt 2, 4 statt 3) — die Tests E7 (g)/(h) unten tragen die
+ * neuen Beweise (Höhen-Commit + Undo, Guard unter der Geschossunterkante).
  *
  * Helfer (Kamera/Welt→Bildschirm/Auswahl/`renderOnce`-Disziplin) 1:1 aus
  * `e2e/viewport3d-marquee.spec.ts` übernommen — dieselbe achsparallele
@@ -198,10 +208,20 @@ async function weltZuBildschirm3D(page: Page, welt: { x: number; y: number; z: n
   );
 }
 
-/** Ein Treppen-Griff (`a`/`b`/`ecke`) sitzt IMMER auf der Geschoss-Elevation
- *  (EG = 0, kein z-Griff, E4) — reiner Komfort-Wrapper um
- *  `weltZuBildschirm3D`. */
+/** Ein x/y-Treppen-Griff (`a`/`b`/`ecke`) sitzt IMMER auf der
+ *  Geschoss-Elevation (EG = 0) — reiner Komfort-Wrapper um
+ *  `weltZuBildschirm3D`. Der E7-`'z'`-Griff sitzt dagegen auf der
+ *  Geschoss-OBERKANTE — dafür `weltZuBildschirm3D` direkt mit z=Höhe. */
 const griffBildschirm = (page: Page, p: { x: number; y: number }) => weltZuBildschirm3D(page, { x: p.x, y: p.y, z: 0 });
+
+/** E7: Geschosshöhe des AKTIVEN Geschosses (EG, `bootstrapProject()` height
+ *  3000) direkt aus dem Doc — Beweis-Anker für den z-Griff-Commit. */
+const aktiveGeschossHoehe = (page: Page) =>
+  page.evaluate(() => {
+    const st = window.__kosmo.state();
+    const storeys = st.doc.byKind('storey') as { id: string; elevation?: number; height?: number }[];
+    return storeys.find((s) => s.id === st.activeStoreyId)!.height;
+  });
 
 async function ziehe(page: Page, von: { x: number; y: number }, nach: { x: number; y: number }): Promise<void> {
   await page.mouse.move(von.x, von.y);
@@ -211,14 +231,14 @@ async function ziehe(page: Page, von: { x: number; y: number }, nach: { x: numbe
   await page.mouse.up();
 }
 
-test('C-8 (a): Einzel-Auswahl einer Treppe zeigt 2 Griffe (a/b) in 3D — weg ausserhalb der Auswahl', async ({ page }) => {
+test('C-8 (a): Einzel-Auswahl einer Treppe zeigt 3 Griffe (a/b/z, E7) in 3D — weg ausserhalb der Auswahl', async ({ page }) => {
   await starteManuell3D(page);
   const t1 = await erstelleTreppe(page, { x: 2000, y: 2000 }, { x: 2000, y: 6000 });
 
   await expect.poll(() => stairHandleCountFrisch(page)).toBe(0); // keine Auswahl → keine Griffe
 
   await waehle(page, [t1]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
 
   await waehle(page, []);
   await expect.poll(() => stairHandleCountFrisch(page)).toBe(0);
@@ -231,7 +251,7 @@ test('C-8 (b): a-Handle ziehen committet EIN treppeGeometrieSetzen — a geände
   const t1 = await erstelleTreppe(page, a, b);
   await waehle(page, [t1]);
   await kameraFuerPunkte(page, [a, b]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3); // a/b/z (E7)
 
   const von = await griffBildschirm(page, a);
   const neuA = { x: 2000, y: 500 }; // Lauf wächst auf 5500 mm — weit über dem 1-m-Gate
@@ -261,7 +281,7 @@ test('C-8 (b): a-Handle ziehen committet EIN treppeGeometrieSetzen — a geände
   expect(nachUndo[0]!.b).toEqual(b);
 });
 
-test('C-8 (c, L-Form): ecke-Handle sichtbar (3 Griffe) und ziehbar, form/a/b bleiben erhalten', async ({ page }) => {
+test('C-8 (c, L-Form): ecke-Handle sichtbar (4 Griffe inkl. z, E7) und ziehbar, form/a/b bleiben erhalten', async ({ page }) => {
   await starteManuell3D(page);
   const a = { x: 2000, y: 2000 };
   const ecke = { x: 2000, y: 5000 };
@@ -269,7 +289,7 @@ test('C-8 (c, L-Form): ecke-Handle sichtbar (3 Griffe) und ziehbar, form/a/b ble
   const t1 = await erstelleTreppe(page, a, b, { form: 'l', ecke });
   await waehle(page, [t1]);
   await kameraFuerPunkte(page, [a, ecke, b]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(4);
 
   const von = await griffBildschirm(page, ecke);
   const neueEcke = { x: 2000, y: 4500 }; // Richtung a, bleibt konvex/entartungsfrei
@@ -300,7 +320,7 @@ test('C-8 (d): Esc mitten im Griff-Zug bricht ab — kein Commit, Treppe unverä
   const t1 = await erstelleTreppe(page, a, b);
   await waehle(page, [t1]);
   await kameraFuerPunkte(page, [a, b]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3); // a/b/z (E7)
 
   const vorDrag = await treppen(page);
 
@@ -330,7 +350,7 @@ test('C-8 (d): Esc mitten im Griff-Zug bricht ab — kein Commit, Treppe unverä
   // bleibt STEHEN, die Griffe bleiben sichtbar (vorher leerte die
   // ArchiCAD-Dritte-Stufe die Auswahl mitten im Zug).
   await expect.poll(() => auswahl(page)).toEqual([t1]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
   expect(await treppen(page)).toEqual(vorDrag);
 
   // Ein ZWEITES Esc (keine Geste mehr aktiv) greift wieder normal:
@@ -345,7 +365,7 @@ test('C-8 (d): Esc mitten im Griff-Zug bricht ab — kein Commit, Treppe unverä
   // Kein dauerhaft kaputter Zustand: erneute Einzel-Auswahl derselben
   // Treppe zeigt die Griffe wieder normal, an der unveränderten Geometrie.
   await waehle(page, [t1]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
   expect(await treppen(page)).toEqual(vorDrag);
 });
 
@@ -355,13 +375,13 @@ test('C-8 (e): Mehrfach-Auswahl zeigt keine Treppen-Griffe (auch mit einer zweit
   const t2 = await erstelleTreppe(page, { x: 8000, y: 2000 }, { x: 8000, y: 6000 });
 
   await waehle(page, [t1]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
 
   await waehle(page, [t1, t2]);
   await expect.poll(() => stairHandleCountFrisch(page)).toBe(0);
 
   await waehle(page, [t2]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
 });
 
 test('C-8 (f): zu-kurzer Zug (b nah an a) wirft eine sichtbare Fehlermeldung — Treppe bleibt unangetastet', async ({ page }) => {
@@ -371,7 +391,7 @@ test('C-8 (f): zu-kurzer Zug (b nah an a) wirft eine sichtbare Fehlermeldung —
   const t1 = await erstelleTreppe(page, a, b);
   await waehle(page, [t1]);
   await kameraFuerPunkte(page, [a, b]);
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3); // a/b/z (E7)
 
   // b auf 250 mm neben a ziehen — Gesamtlauf würde auf 250 mm einbrechen
   // (< 1 m), `design.treppeGeometrieSetzen` wirft VOR jedem Patch (Kernel-
@@ -390,5 +410,67 @@ test('C-8 (f): zu-kurzer Zug (b nah an a) wirft eine sichtbare Fehlermeldung —
 
   // Der Griff selbst bleibt danach normal weiter nutzbar (Handle sichtbar
   // an der WIRKLICHEN, unangetasteten Position — `stairDragZurueck`).
-  await expect.poll(() => stairHandleCountFrisch(page)).toBe(2);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
+});
+
+test('E7 (g): z-Handle vertikal ziehen committet EIN eigenschaftSetzen — Geschosshöhe neu, Treppe unangetastet, EIN Undo reicht', async ({ page }) => {
+  await starteManuell3D(page);
+  const a = { x: 2000, y: 2000 };
+  const b = { x: 2000, y: 6000 };
+  const t1 = await erstelleTreppe(page, a, b);
+  await waehle(page, [t1]);
+  await kameraFuerPunkte(page, [a, b]);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
+  expect(await aktiveGeschossHoehe(page)).toBe(3000); // EG-Bootstrap-Bestand
+
+  const vorDrag = await treppen(page);
+  const mitte = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  // Der z-Handle sitzt auf der Geschoss-OBERKANTE (EG: elevation 0 + 3000).
+  const von = await weltZuBildschirm3D(page, { x: mitte.x, y: mitte.y, z: 3000 });
+  // Zielpunkt liegt AUF der kamerazugewandten Vertikal-Ebene durch den
+  // Handle (gleiches x/y, nur z anders) — die Projektion trifft darum
+  // exakt die Zielhöhe 4200 mm ⇒ neue Geschosshöhe 4200.
+  const nach = await weltZuBildschirm3D(page, { x: mitte.x, y: mitte.y, z: 4200 });
+  await ziehe(page, von, nach);
+
+  await expect.poll(() => aktiveGeschossHoehe(page)).toBe(4200);
+  // Die Treppe selbst bleibt byte-gleich — der Commit ging aufs STOREY.
+  expect(await treppen(page)).toEqual(vorDrag);
+  // Auswahl bleibt stehen, die Griffe folgen der neuen Oberkante (Rebuild
+  // über den revision-Bump, `syncStairHandles`).
+  expect(await auswahl(page)).toEqual([t1]);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
+
+  await page.evaluate(() => window.__kosmoViewport!.renderOnce());
+  await page.screenshot({ path: 'e2e-results/e7-0811-griff-treppe-3d-z.png' });
+
+  // EIN Ctrl+Z stellt exakt die alte Geschosshöhe wieder her.
+  await page.keyboard.press('Control+z');
+  await expect.poll(() => aktiveGeschossHoehe(page)).toBe(3000);
+  expect(await treppen(page)).toEqual(vorDrag);
+});
+
+test('E7 (h): z-Handle unter die Geschossunterkante ziehen wird verworfen — Fehlermeldung, Höhe bleibt', async ({ page }) => {
+  await starteManuell3D(page);
+  const a = { x: 2000, y: 2000 };
+  const b = { x: 2000, y: 6000 };
+  const t1 = await erstelleTreppe(page, a, b);
+  await waehle(page, [t1]);
+  await kameraFuerPunkte(page, [a, b]);
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
+
+  const mitte = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  const von = await weltZuBildschirm3D(page, { x: mitte.x, y: mitte.y, z: 3000 });
+  // Ziel UNTER der Geschossunterkante (negative Höhe) — der E7-Guard in
+  // Viewport3D verwirft den Zug (Erstellen-Untergrenze height positiv,
+  // `design.geschossErstellen`), `meldeFehler` zeigt es ehrlich an.
+  const nach = await weltZuBildschirm3D(page, { x: mitte.x, y: mitte.y, z: -1000 });
+  await ziehe(page, von, nach);
+
+  await expect(page.locator('[data-testid="meldung-fehler"]')).toBeVisible();
+  expect(await aktiveGeschossHoehe(page)).toBe(3000); // unangetastet
+
+  // Der Handle springt sichtbar zurück (`stairDragZurueck`) und bleibt
+  // normal weiter nutzbar.
+  await expect.poll(() => stairHandleCountFrisch(page)).toBe(3);
 });

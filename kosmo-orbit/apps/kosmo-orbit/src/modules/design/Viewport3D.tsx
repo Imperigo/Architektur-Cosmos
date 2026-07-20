@@ -1101,10 +1101,20 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     // Austritt `b` und — bei form 'l' — `ecke`; gleicher Stil/gleiche Grösse
     // wie die Mesh-Handles: `meshHandleGeo`/`meshHandleMaterial` werden
     // bewusst WIEDERVERWENDET (kein zweites Geometrie-/Material-Paar, kein
-    // zusätzlicher Dispose-Bedarf). x/y-only (E4, dokumentiertes
-    // Nicht-Ziel «Treppen-z-Griff»): die Höhe des Handles bleibt an der
-    // Geschoss-Elevation der Treppe fix, nur x/z (Kern x/y) folgen dem
-    // Zeiger — s. die horizontale Ziehebene bei `stairDrag` unten.
+    // zusätzlicher Dispose-Bedarf). a/b/ecke bleiben x/y-only (E4): ihre
+    // Höhe sitzt fix auf der Geschoss-Elevation, nur x/z (Kern x/y) folgen
+    // dem Zeiger — s. die horizontale Ziehebene bei `stairDrag` unten.
+    //
+    // E7 (v0.8.11 «Inselgleich», docs/V0811-SPEZ.md §2 E7, Owner-Wahl
+    // Kapazitäts-Posten): das dokumentierte 0.8.9-Nicht-Ziel
+    // «Treppen-z-Griff» wird eingelöst — ein VIERTER Handle `'z'` sitzt an
+    // der Lauflinien-Mitte auf der Geschoss-OBERKANTE
+    // (`elevation + storey.height`) und editiert per vertikalem Zug die
+    // GESCHOSSHÖHE (Commit: bestehender `design.eigenschaftSetzen`
+    // storey/height — die allowed-Map `storey: ['name','height']` existiert
+    // seit jeher, KEIN neuer Kernel-Command). Ziehebene: kamerazugewandte
+    // Vertikal-Ebene durch den Handle (byte-gleiches Muster wie der
+    // Shift-Vertikal-Zug bei `meshDrag` oben), nur die Höhe folgt.
     const stairHandleGroup = new THREE.Group();
     stairHandleGroup.scale.set(MM, MM, MM);
     scene.add(stairHandleGroup);
@@ -1112,7 +1122,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
 
     interface StairDragState {
       entityId: string;
-      key: 'a' | 'b' | 'ecke';
+      /** `'z'` (E7 v0.8.11): der Geschosshöhen-Handle — vertikale Ziehebene,
+       *  Commit auf das STOREY (`design.eigenschaftSetzen height`), nicht
+       *  auf die Treppe. */
+      key: 'a' | 'b' | 'ecke' | 'z';
       /** Weltposition (Meter) des Handles BEIM Down — Basis der horizontalen
        *  Ziehebene UND des Esc-/Fehler-Rückbaus (Handle exakt zurück, kein
        *  Commit) — Muster `meshDrag.startWorld` oben. */
@@ -1167,6 +1180,16 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         handleMesh.position.set(punkt.p.x, elevation, -punkt.p.y);
         handleMesh.userData['stairHandle'] = { entityId: id, key: punkt.key };
         stairHandleGroup.add(handleMesh);
+      }
+      // E7 (v0.8.11, docs/V0811-SPEZ.md §2 E7): der Geschosshöhen-Handle
+      // `'z'` an der Lauflinien-Mitte a–b auf der Geschoss-OBERKANTE —
+      // NUR wenn das Geschoss real existiert (ohne Storey gibt es kein
+      // height-Ziel, dann bleibt es bei a/b[/ecke] wie bisher).
+      if (storey && storey.kind === 'storey') {
+        const zMesh = new THREE.Mesh(meshHandleGeo, meshHandleMaterial);
+        zMesh.position.set((stair.a.x + stair.b.x) / 2, elevation + storey.height, -(stair.a.y + stair.b.y) / 2);
+        zMesh.userData['stairHandle'] = { entityId: id, key: 'z' };
+        stairHandleGroup.add(zMesh);
       }
     }
 
@@ -1974,13 +1997,25 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       if (!handlers.current?.sketchMode && !kameraDarfSehen(ev.pointerType, ev.button, true)) {
         const stairHit = stairHandleTrefferAt(ev.clientX, ev.clientY);
         if (stairHit) {
-          const info = stairHit.object.userData['stairHandle'] as { entityId: string; key: 'a' | 'b' | 'ecke' };
+          const info = stairHit.object.userData['stairHandle'] as { entityId: string; key: 'a' | 'b' | 'ecke' | 'z' };
           const worldPos = stairHit.object.getWorldPosition(new THREE.Vector3());
+          // E7 (v0.8.11): der `'z'`-Handle zieht VERTIKAL — kamerazugewandte
+          // Vertikal-Ebene durch den Handle (byte-gleiches Normal-Muster wie
+          // der Shift-Vertikal-Zug bei `meshDrag` oben); a/b/ecke behalten
+          // ihre horizontale Ebene auf Handle-Höhe (E4, unverändert).
+          const stairNormal =
+            info.key === 'z'
+              ? (() => {
+                  const n = new THREE.Vector3(camera.position.x - worldPos.x, 0, camera.position.z - worldPos.z);
+                  if (n.lengthSq() < 1e-8) n.set(1, 0, 0);
+                  return n.normalize();
+                })()
+              : new THREE.Vector3(0, 1, 0);
           stairDrag = {
             entityId: info.entityId,
             key: info.key,
             startWorld: worldPos,
-            plane: new THREE.Plane().setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 1, 0), worldPos),
+            plane: new THREE.Plane().setFromNormalAndCoplanarPoint(stairNormal, worldPos),
             handle: stairHit.object as THREE.Mesh,
           };
           // Fable-Nachzug v0.8.9 (PA5-Übergabepunkt): Griff-Drag-Kanal.
@@ -2031,6 +2066,47 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         stairDrag = null;
         downPos = null;
         useViewportChromeRuntime.setState({ griffDragAktiv: false });
+        // E7 (v0.8.11, docs/V0811-SPEZ.md §2 E7): der `'z'`-Handle committet
+        // die GESCHOSSHÖHE des Treppen-Geschosses — derselbe direkte
+        // `runCommand`-Weg wie der x/y-Commit unten (DesignWorkspace bleibt
+        // unberührt), aber Ziel-Entity ist das STOREY, Command der
+        // BESTEHENDE `design.eigenschaftSetzen` (allowed-Map
+        // `storey: ['name','height']`, commands/design.ts — kein neuer
+        // Kernel-Command). Höhe = gerundete Handle-Höhe (mm, Gruppenraum)
+        // minus Geschoss-Elevation; keine echte Bewegung (Ziel == Bestand)
+        // heisst wie unten: kein Commit, kein spurenloser Undo-Schritt.
+        if (drag.key === 'z') {
+          const { doc, runCommand } = useProject.getState();
+          const stair = doc.get<Stair>(drag.entityId);
+          const storey = stair && stair.kind === 'stair' ? doc.get<Storey>(stair.storeyId) : null;
+          if (!storey || storey.kind !== 'storey') {
+            // Treppe/Geschoss unterdessen weg (Sync/Undo im Hintergrund) —
+            // nichts zu committen, Handle sichtbar zurück.
+            stairDragZurueck(drag);
+            return;
+          }
+          const zielHoehe = Math.round(drag.handle.position.y) - storey.elevation;
+          if (zielHoehe !== storey.height) {
+            if (zielHoehe < 1) {
+              // Unter die Geschoss-UNTERKANTE gezogen: `design.
+              // geschossErstellen` verlangt height positiv (z.positive(),
+              // commands/design.ts) — `eigenschaftSetzen` würde einen
+              // negativen Wert selbst werfen, die 0 aber historisch
+              // durchlassen; dieser Guard hält die Erstellen-Untergrenze
+              // auch am Griff ein, ohne den Bestands-Command anzufassen.
+              stairDragZurueck(drag);
+              meldeFehler('Geschosshöhe muss positiv bleiben — der Zug unter die Geschossunterkante wurde verworfen');
+              return;
+            }
+            try {
+              runCommand('design.eigenschaftSetzen', { entityId: storey.id, feld: 'height', wert: zielHoehe });
+            } catch (err) {
+              stairDragZurueck(drag);
+              meldeFehler(err);
+            }
+          }
+          return;
+        }
         const zielX = Math.round(drag.handle.position.x);
         const zielY = Math.round(-drag.handle.position.z);
         const startX = Math.round(drag.startWorld.x / MM);
@@ -2220,17 +2296,23 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         }
         return;
       }
-      // PA5 (v0.8.9 E4): der Treppen-Griff folgt lokal dem Zeiger — x/y-only
-      // (Kern x/y), die Ziehebene liegt horizontal auf der ursprünglichen
-      // Handle-Höhe (`stairDrag.plane`), die Höhe selbst bleibt fix (Kein
-      // z-Griff, E4/dokumentiertes Nicht-Ziel).
+      // PA5 (v0.8.9 E4): der Treppen-Griff folgt lokal dem Zeiger — a/b/ecke
+      // x/y-only (Kern x/y), die Ziehebene liegt horizontal auf der
+      // ursprünglichen Handle-Höhe (`stairDrag.plane`), die Höhe bleibt fix.
+      // E7 (v0.8.11): der `'z'`-Handle ist das GEGENSTÜCK — nur die Höhe
+      // (three-y) folgt dem Zeiger, x/z bleiben am Ursprung (byte-gleiches
+      // Achsen-Muster wie `meshDrag.vertical` oben).
       if (stairDrag) {
         const rect = renderer.domElement.getBoundingClientRect();
         ndc.set(((ev.clientX - rect.left) / rect.width) * 2 - 1, -((ev.clientY - rect.top) / rect.height) * 2 + 1);
         raycaster.setFromCamera(ndc, camera);
         const hit = new THREE.Vector3();
         if (raycaster.ray.intersectPlane(stairDrag.plane, hit)) {
-          stairDrag.handle.position.set(hit.x / MM, stairDrag.startWorld.y / MM, hit.z / MM);
+          if (stairDrag.key === 'z') {
+            stairDrag.handle.position.set(stairDrag.startWorld.x / MM, hit.y / MM, stairDrag.startWorld.z / MM);
+          } else {
+            stairDrag.handle.position.set(hit.x / MM, stairDrag.startWorld.y / MM, hit.z / MM);
+          }
         }
         return;
       }
@@ -2781,8 +2863,10 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       griffDragAktiv: (): boolean => useViewportChromeRuntime.getState().griffDragAktiv,
       // PA5-Beweis-Anker (v0.8.9 E4, docs/V089-SPEZ.md §3 E4, §7 C-8):
       // deterministischer Zähl-Anker wie `entityMeshCount`/`glbMeshCount`
-      // oben — 0 ausserhalb einer Einzel-Auswahl einer Treppe, sonst 2
-      // (a/b) bzw. 3 (a/b/ecke bei form 'l').
+      // oben — 0 ausserhalb einer Einzel-Auswahl einer Treppe, sonst 3
+      // (a/b/z) bzw. 4 (a/b/ecke/z bei form 'l'): seit E7 (v0.8.11,
+      // docs/V0811-SPEZ.md §2 E7) zählt der Geschosshöhen-Handle `'z'` mit
+      // (nur falls das Geschoss real existiert, s. `syncStairHandles`).
       stairHandleCount: (): number => stairHandleGroup.children.length,
     };
 
