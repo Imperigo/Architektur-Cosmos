@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { KButton, KSelect, meldeFehler } from '@kosmo/ui';
+import { useRef, useState } from 'react';
+import { KButton, KIcon, KInput, KSelect, meldeFehler } from '@kosmo/ui';
 import { plankopfReserveMm, sheetPaperSize, type Sheet, type SheetFormat } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { usePublishRuntime } from '../../publish-runtime';
@@ -17,6 +17,16 @@ import '../publish-island.css';
  * `AutoPackPanel` wird UNVERÄNDERT wiederverwendet (Bauauftrag «Islands sind
  * Zugänge, keine Nachbauten») — nur `sheetId` kommt jetzt aus dem
  * Runtime-Store statt aus `PublishWorkspace.tsx`s lokalem `sheet`.
+ *
+ * Umbenennen/Entfernen-Parität (0.8.11): die Insel konnte Blätter bisher nur
+ * wählen/anlegen — Umbenennen (Klick-zu-Edit, testid `blattisl-name-<index>`)
+ * und Entfernen (testid `blattisl-entfernen-<index>`) übernehmen dieselben
+ * Bausteine wie das Manuell-Chrome (`PublishWorkspace.tsx:824-868`): KInput
+ * autoFocus + Vorselektion, Enter/Blur committet via
+ * `design.eigenschaftSetzen` (`feld:'name'`, Kernel-Weg seit ROADMAP 547),
+ * Escape bricht per Ref-Guard gegen den Unmount-Blur ab, `publish.
+ * blattEntfernen` ohne eigene Bestätigung (identisch zum Manuell-Knopf) —
+ * Undo bleibt der normale History-Stack (Ctrl+Z).
  */
 
 const FORMATS: SheetFormat[] = ['A0', 'A1', 'A2', 'A3', 'A4', 'Rolle'];
@@ -47,6 +57,53 @@ function BlattListeStufe2() {
   const [format, setFormat] = useState<SheetFormat>('A1');
   const aktivId = sheets.some((s) => s.id === aktiverSheetIdStore) ? aktiverSheetIdStore : (sheets[0]?.id ?? null);
 
+  // Klick-zu-Edit-Namensfeld, Muster `PublishWorkspace.tsx:824-856` (s.
+  // Kopfkommentar). `blattnameAbbrechenRef` bewacht dasselbe Zeitfenster wie
+  // dort: Escape setzt `bearbeiteSheetId` zurück, der native Blur beim
+  // Unmount des Inputs darf danach NICHT mehr committen.
+  const [bearbeiteSheetId, setBearbeiteSheetId] = useState<string | null>(null);
+  const blattnameAbbrechenRef = useRef(false);
+
+  const blattnameBearbeitenStarten = (sheetId: string): void => {
+    blattnameAbbrechenRef.current = false;
+    setBearbeiteSheetId(sheetId);
+    setAktiverSheetId(sheetId);
+  };
+
+  const blattnameCommitten = (sheetId: string, roh: string): void => {
+    if (blattnameAbbrechenRef.current) {
+      blattnameAbbrechenRef.current = false;
+      return;
+    }
+    try {
+      runCommand('design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: roh });
+    } catch (err) {
+      // Sichtbare Fehlermeldung (Toast) statt eines stillen No-op — der
+      // Kernel wirft VOR jedem Patch (getrimmt, leer/Nur-Whitespace), das
+      // Doc bleibt unverändert, der Eintrag zeigt darum automatisch
+      // weiterhin den alten Namen.
+      meldeFehler(err);
+    } finally {
+      setBearbeiteSheetId(null);
+    }
+  };
+
+  // `publish.blattEntfernen` — identische Semantik zum Manuell-Knopf
+  // (`PublishWorkspace.tsx:857-868`): kein eigener Bestätigungsdialog, das
+  // ist der normale History-Stack (Ctrl+Z bringt das Blatt zurück). War das
+  // entfernte Blatt aktiv, räumt `setAktiverSheetId(null)` den Runtime-Store
+  // — der Fallback aufs erste verbleibende Blatt läuft danach über denselben
+  // Effekt wie beim ersten Insel-Öffnen (`PublishWorkspace.tsx`s
+  // `islandSheet`-Sync-Effekt).
+  const blattEntfernen = (sheetId: string): void => {
+    try {
+      runCommand('publish.blattEntfernen', { sheetId });
+      if (aktiverSheetIdStore === sheetId) setAktiverSheetId(null);
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
+
   const neuesBlatt = () => {
     try {
       const res = runCommand('publish.blattErstellen', {
@@ -67,15 +124,59 @@ function BlattListeStufe2() {
       ) : (
         <div className="pubisl-blatt-liste">
           {sheets.map((s) => (
-            <button
+            <div
               key={s.id}
-              type="button"
               className={`pubisl-blatt-eintrag${s.id === aktivId ? ' pubisl-blatt-eintrag--aktiv' : ''}`}
               data-testid={`island-blatt-eintrag-${s.index}`}
               onClick={() => setAktiverSheetId(s.id)}
             >
-              {s.name} · {s.format}
-            </button>
+              {bearbeiteSheetId === s.id ? (
+                <KInput
+                  size="sm"
+                  autoFocus
+                  defaultValue={s.name}
+                  data-testid={`blattisl-name-${s.index}`}
+                  className="pubisl-blatt-name-feld"
+                  onFocus={(e) => e.currentTarget.select()}
+                  onClick={(ev) => ev.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                    } else if (e.key === 'Escape') {
+                      e.stopPropagation();
+                      blattnameAbbrechenRef.current = true;
+                      setBearbeiteSheetId(null);
+                    }
+                  }}
+                  onBlur={(e) => blattnameCommitten(s.id, e.currentTarget.value)}
+                />
+              ) : (
+                <span
+                  className="pubisl-blatt-name"
+                  data-testid={`blattisl-name-${s.index}`}
+                  title="Blattname bearbeiten"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    blattnameBearbeitenStarten(s.id);
+                  }}
+                >
+                  {s.name} · {s.format}
+                </span>
+              )}
+              <button
+                type="button"
+                aria-label="Blatt entfernen"
+                title="Blatt entfernen"
+                data-testid={`blattisl-entfernen-${s.index}`}
+                className="pubisl-blatt-entfernen"
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  blattEntfernen(s.id);
+                }}
+              >
+                <KIcon name="schliessen" size={14} title="Blatt entfernen" />
+              </button>
+            </div>
           ))}
         </div>
       )}

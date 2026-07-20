@@ -43,6 +43,9 @@
   overflow-y: auto;
 }
 .pubisl-blatt-eintrag {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
   text-align: left;
   padding: 4px 6px;
   border-radius: var(--k-radius-sm);
@@ -57,6 +60,40 @@
 }
 .pubisl-blatt-eintrag--aktiv {
   border-color: var(--k-accent);
+}
+
+/* Umbenennen/Entfernen-Parität (0.8.11, s. `island/inhalte/blatt.tsx`-
+   Kopfkommentar): Name wächst, Entfernen-Knopf bleibt fix rechts. */
+.pubisl-blatt-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: text;
+}
+.pubisl-blatt-name-feld {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.pubisl-blatt-entfernen {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  border-radius: var(--k-radius-sm);
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.pubisl-blatt-entfernen:hover {
+  opacity: 1;
+  background: var(--k-hover);
 }
 
 /* ── Massstab-/Presets-Chips (DARSTELLUNG-Insel) ──────────────────── */
