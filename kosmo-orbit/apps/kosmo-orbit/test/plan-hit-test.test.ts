@@ -374,10 +374,16 @@ describe('outlineOf — Anzeige-Umriss für Auswahl-Highlight/Zieh-Vorschau', ()
 
 describe('VERSCHIEBBAR — Deckung mit design.verschieben (Kernel)', () => {
   it('enthält genau die vom Kernel-Command unterstützten Bauteilarten', () => {
-    for (const kind of ['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof']) {
+    // beam/furniture/boundary/etikett seit v0.8.10 Z3 (Kernel kann sie seit
+    // v0.8.8 E1 verschieben, jetzt sind sie im Plan auch greifbar).
+    for (const kind of ['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'beam', 'furniture', 'boundary', 'etikett']) {
       expect(VERSCHIEBBAR.has(kind)).toBe(true);
     }
     expect(VERSCHIEBBAR.has('storey')).toBe(false);
+    // Massketten/Kommentare bleiben bewusst draussen (eigene Trefferwege in
+    // PlanView, C-26-Erbe) — DesignWorkspace ergänzt sie separat.
+    expect(VERSCHIEBBAR.has('masskette')).toBe(false);
+    expect(VERSCHIEBBAR.has('kommentar')).toBe(false);
   });
 
   it('design.verschieben verschiebt eine Stütze und eine Treppe (Kernel-Erweiterung)', () => {
@@ -462,5 +468,114 @@ describe('istGesperrt (v0.8.9 E2, PA2 — docs/V089-SPEZ.md §3 E2)', () => {
     execute(doc, 'design.sperren', { entityId: wallId, locked: true });
     expect(pickEntityAt(doc, storeyId, { x: 3000, y: 0 })).toBe(vorher);
     expect(pickEntityAt(doc, storeyId, { x: 3000, y: 0 })).toBe(wallId);
+  });
+});
+
+describe('pickEntityAt/outlineOf — beam/furniture/boundary/etikett (v0.8.10 Z3)', () => {
+  /** Basis-Fixtur + die vier neuen Kinds, alle bewusst so platziert, dass die
+   * Prioritätsfragen (Etikett vor Wand, Möbel vor Zone, Baugrenze zuletzt und
+   * nur an der Linie) direkt am Klickpunkt prüfbar sind. */
+  function setupZ3() {
+    const base = setupDoc();
+    const { doc, storeyId, wallId } = base;
+    const beamId = (execute(doc, 'design.unterzugZeichnen', {
+      storeyId,
+      a: { x: 0, y: -3000 },
+      b: { x: 6000, y: -3000 },
+      breite: 300,
+      hoehe: 400,
+    }).patches[0] as { id: string }).id;
+    // Bett 1800×2000, Rückkante (5000,5000), rot 0 → Korpus x 4100–5900,
+    // y 5000–7000 — vollständig IN der Zone (2000–8000).
+    const moebelId = (execute(doc, 'design.moebelSetzen', {
+      storeyId,
+      typ: 'bett-doppel',
+      at: { x: 5000, y: 5000 },
+      rotationGrad: 0,
+    }).patches[0] as { id: string }).id;
+    const boundaryId = (execute(doc, 'design.baugrenzeSetzen', {
+      storeyId,
+      outline: [
+        { x: -10000, y: -10000 },
+        { x: 20000, y: -10000 },
+        { x: 20000, y: 20000 },
+        { x: -10000, y: 20000 },
+      ],
+    }).patches[0] as { id: string }).id;
+    // Anker bewusst IN der Wand-Trefferzone (|y| ≤ 220): beweist die
+    // Etikett-vor-Wand-Priorität am selben Punkt.
+    const etikettId = (execute(doc, 'design.etikettSetzen', {
+      targetId: wallId,
+      at: { x: 4500, y: -150 },
+      inhalt: 'aufbau',
+    }).patches[0] as { id: string }).id;
+    return { ...base, beamId, moebelId, boundaryId, etikettId };
+  }
+
+  it('Unterzug: Achse ± halbe Breite + Toleranz trifft, daneben nicht', () => {
+    const { doc, storeyId, beamId } = setupZ3();
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: -3000 })).toBe(beamId);
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: -2750 })).toBe(beamId); // 250 ≤ 150+120
+    expect(pickEntityAt(doc, storeyId, { x: 3000, y: -2600 })).toBeNull(); // 400 > 270, keine Zone hier
+  });
+
+  it('Möbel: Korpus gewinnt gegen die Zone darunter, die Bewegungsfläche bleibt Zone', () => {
+    const { doc, storeyId, moebelId, zoneId } = setupZ3();
+    expect(pickEntityAt(doc, storeyId, { x: 5000, y: 6000 })).toBe(moebelId); // im Korpus
+    // Bewegungsfläche (y 7000–8200) ist Prüf-Overlay, kein greifbares Symbol:
+    expect(pickEntityAt(doc, storeyId, { x: 5000, y: 7500 })).toBe(zoneId);
+  });
+
+  it('Baugrenze: nur die LINIE trifft (zuletzt), leere Parzellenfläche bleibt leer', () => {
+    const { doc, storeyId, boundaryId } = setupZ3();
+    expect(pickEntityAt(doc, storeyId, { x: 5000, y: -9950 })).toBe(boundaryId); // 50 mm neben der Kante
+    expect(pickEntityAt(doc, storeyId, { x: 15000, y: 15000 })).toBeNull(); // tief im Polygon, weit weg von allem
+    // Bestands-Priorität unangetastet: die Wand liegt im Baugrenzen-Polygon und gewinnt weiter.
+    expect(pickEntityAt(doc, storeyId, { x: 1000, y: 0 })).not.toBe(boundaryId);
+  });
+
+  it('Etikett: Anker-Klickzone gewinnt gegen die Wand am selben Punkt, ausserhalb des Radius wieder die Wand', () => {
+    const { doc, storeyId, etikettId, wallId } = setupZ3();
+    expect(pickEntityAt(doc, storeyId, { x: 4500, y: -150 })).toBe(etikettId);
+    // 500 mm daneben (Distanz 350 > 300): wieder die Wand (|y|=150 ≤ 220).
+    expect(pickEntityAt(doc, storeyId, { x: 5000, y: -150 })).toBe(wallId);
+  });
+
+  it('outlineOf liefert für alle vier einen brauchbaren Umriss (Highlight/Zieh-Vorschau)', () => {
+    const { doc, beamId, moebelId, boundaryId, etikettId } = setupZ3();
+    const beam = outlineOf(doc, beamId)!;
+    expect(beam).toHaveLength(4);
+    expect(beam[0]).toEqual({ x: 0, y: -2850 }); // a + Normale·breite/2
+    const moebel = outlineOf(doc, moebelId)!;
+    expect(moebel).toEqual([
+      { x: 4100, y: 5000 },
+      { x: 5900, y: 5000 },
+      { x: 5900, y: 7000 },
+      { x: 4100, y: 7000 },
+    ]);
+    const grenze = outlineOf(doc, boundaryId)!;
+    expect(grenze).toHaveLength(4);
+    expect(grenze[0]).toEqual({ x: -10000, y: -10000 });
+    const etikett = outlineOf(doc, etikettId)!;
+    expect(etikett).toEqual([
+      { x: 4200, y: -450 },
+      { x: 4800, y: -450 },
+      { x: 4800, y: 150 },
+      { x: 4200, y: 150 },
+    ]);
+  });
+
+  it('design.verschieben bewegt alle vier Kinds (Kernel seit v0.8.8 E1 — Smoke am App-Set)', () => {
+    const { doc, beamId, moebelId, boundaryId, etikettId } = setupZ3();
+    execute(doc, 'design.verschieben', { entityId: beamId, dx: 100, dy: 50 });
+    expect((doc.get(beamId) as { a: { x: number; y: number } }).a).toEqual({ x: 100, y: -2950 });
+    execute(doc, 'design.verschieben', { entityId: moebelId, dx: 100, dy: 50 });
+    expect((doc.get(moebelId) as { at: { x: number; y: number } }).at).toEqual({ x: 5100, y: 5050 });
+    execute(doc, 'design.verschieben', { entityId: boundaryId, dx: 100, dy: 50 });
+    expect((doc.get(boundaryId) as { outline: { x: number; y: number }[] }).outline[0]).toEqual({ x: -9900, y: -9950 });
+    execute(doc, 'design.verschieben', { entityId: etikettId, dx: 100, dy: 50 });
+    const et = doc.get(etikettId) as { at: { x: number; y: number }; targetId: string };
+    expect(et.at).toEqual({ x: 4600, y: -100 });
+    expect(et.targetId).toBeTruthy(); // Assoziation bleibt (Sanktion-2-Erbe 0.8.8)
   });
 });

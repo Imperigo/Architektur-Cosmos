@@ -588,7 +588,21 @@ export function PlanView({
     }
     // Spiegel von `VERSCHIEBBAR` (plan-hit-test.ts) als typisierte Liste —
     // `doc.byKind` verlangt Kind-Literale, das Set trägt nur `string`.
-    const rechteckKinds = ['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'freemesh'] as const;
+    // v0.8.10 Z3: + beam/furniture/boundary/etikett (outlineOf kennt alle vier).
+    const rechteckKinds = [
+      'wall',
+      'slab',
+      'mass',
+      'zone',
+      'column',
+      'stair',
+      'roof',
+      'freemesh',
+      'beam',
+      'furniture',
+      'boundary',
+      'etikett',
+    ] as const;
     for (const kind of rechteckKinds) {
       for (const e of doc.byKind(kind)) {
         if ((e as { storeyId?: string }).storeyId !== activeStoreyId) continue;

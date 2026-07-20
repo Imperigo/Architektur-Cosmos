@@ -1,10 +1,15 @@
 import {
   assemblyThickness,
   columnOutline,
+  moebelGeometrie,
   wallOutline,
   type Assembly,
   type Aussparung,
+  type Beam,
+  type Boundary,
   type Column,
+  type Etikett,
+  type Furniture,
   type KosmoDoc,
   type Opening,
   type Pt,
@@ -54,6 +59,13 @@ const AUSSPARUNG_TOLERANZ = 40;
  * darf sie quer zur Achse nur knapp über die Wanddicke hinaus verdecken,
  * sonst wäre die Wand neben dem Fenster kaum noch greifbar. */
 const OEFFNUNG_TOLERANZ = 40;
+
+/** mm Klickradius um den Etikett-Textanker — dieselbe Grössenordnung wie der
+ * Kommentar-Marker in PlanView (KOMMENTAR_TOLERANZ 300): das Etikett ist ein
+ * Punkt-Element, sein Leader/Text hängt am `at`-Anker. Bewusst VOR der Wand
+ * geprüft (v0.8.10 Z3), weil der Anker oft auf/neben seinem Bauteil sitzt und
+ * gegen die grosse Wand-Trefferzone sonst nie gewinnen würde. */
+const ETIKETT_TOLERANZ = 300;
 
 /**
  * Weltposition einer Aussparung am Wirt: Wand → Mitte auf der Achse a→b
@@ -199,6 +211,13 @@ export function pickEntityAt(doc: KosmoDoc, storeyId: string, p: Pt): string | n
     if (!wall || wall.storeyId !== storeyId) continue;
     if (oeffnungTreffer(doc, o, p)) return o.id;
   }
+  // Etiketten VOR den Wänden (v0.8.10 Z3): der Textanker sitzt oft auf/neben
+  // seinem Bauteil — hinter der grosszügigen Wand-Trefferzone wäre er nie
+  // wählbar (dasselbe Argument wie bei Aussparung/Öffnung, nur als Punktzone).
+  for (const et of doc.byKind<Etikett>('etikett')) {
+    if (et.storeyId !== storeyId) continue;
+    if (Math.hypot(p.x - et.at.x, p.y - et.at.y) <= ETIKETT_TOLERANZ) return et.id;
+  }
   for (const w of doc.byKind<Wall>('wall')) {
     if (w.storeyId !== storeyId) continue;
     const asm = doc.get<Assembly>(w.assemblyId);
@@ -213,12 +232,40 @@ export function pickEntityAt(doc: KosmoDoc, storeyId: string, p: Pt): string | n
     if (s.storeyId !== storeyId) continue;
     if (distToSegment(p, s.a, s.b) <= s.width / 2 + TOLERANZ) return s.id;
   }
+  // Unterzüge wie Treppen (v0.8.10 Z3): Achse ± halbe Breite + Toleranz —
+  // VOR den flächigen Elementen, weil ein Unterzug über der Decke liegt und
+  // als schmale Linie sonst nie gegen sie gewinnen würde.
+  for (const bm of doc.byKind<Beam>('beam')) {
+    if (bm.storeyId !== storeyId) continue;
+    if (distToSegment(p, bm.a, bm.b) <= bm.breite / 2 + TOLERANZ) return bm.id;
+  }
+  // Möbel VOR den flächigen Elementen (v0.8.10 Z3): sie stehen IN Zonen/auf
+  // Decken — Trefferzone ist der Korpus (ohne Bewegungsfläche: die ist ein
+  // Prüf-Overlay, kein greifbares Symbol). Unbekannter Katalog-Key → kein
+  // Treffer (moebelGeometrie liefert null statt zu raten).
+  for (const f of doc.byKind<Furniture>('furniture')) {
+    if (f.storeyId !== storeyId) continue;
+    const g = moebelGeometrie(f);
+    if (g && pointInPolygon(g.korpus, p)) return f.id;
+  }
   for (const e of doc.inStorey(storeyId)) {
     if (
       (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'slab') &&
       pointInPolygon(e.outline, p)
     ) {
       return e.id;
+    }
+  }
+  // Baugrenzen ZULETZT und nur an der LINIE (v0.8.10 Z3): die Baugrenze
+  // umschliesst meist das ganze Grundstück — Punkt-in-Polygon würde jeden
+  // Klick auf leerer Parzellenfläche schlucken. Getroffen ist sie nur nahe
+  // einer ihrer Kanten (inkl. Schlusskante, wie sie derivePlan zeichnet).
+  for (const g of doc.byKind<Boundary>('boundary')) {
+    if (g.storeyId !== storeyId) continue;
+    for (let i = 0; i < g.outline.length; i++) {
+      const a = g.outline[i]!;
+      const b = g.outline[(i + 1) % g.outline.length]!;
+      if (distToSegment(p, a, b) <= TOLERANZ) return g.id;
     }
   }
   return null;
@@ -268,14 +315,59 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
       const pos = oeffnungWeltpos(doc, e);
       return pos ? oeffnungRect(doc, e, pos) : null;
     }
+    // v0.8.10 Z3: Anzeige-Umrisse der vier neu klickbaren Kinds.
+    case 'beam': {
+      const dx = e.b.x - e.a.x;
+      const dy = e.b.y - e.a.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const nx = (-dy / len) * (e.breite / 2);
+      const ny = (dx / len) * (e.breite / 2);
+      return [
+        { x: e.a.x + nx, y: e.a.y + ny },
+        { x: e.b.x + nx, y: e.b.y + ny },
+        { x: e.b.x - nx, y: e.b.y - ny },
+        { x: e.a.x - nx, y: e.a.y - ny },
+      ];
+    }
+    case 'furniture': {
+      const g = moebelGeometrie(e);
+      return g ? g.korpus : null;
+    }
+    case 'boundary':
+      return e.outline;
+    case 'etikett':
+      // Punkt-Element: kleines Kästchen um den Textanker (Trefferzonen-Radius).
+      return [
+        { x: e.at.x - ETIKETT_TOLERANZ, y: e.at.y - ETIKETT_TOLERANZ },
+        { x: e.at.x + ETIKETT_TOLERANZ, y: e.at.y - ETIKETT_TOLERANZ },
+        { x: e.at.x + ETIKETT_TOLERANZ, y: e.at.y + ETIKETT_TOLERANZ },
+        { x: e.at.x - ETIKETT_TOLERANZ, y: e.at.y + ETIKETT_TOLERANZ },
+      ];
     default:
       return null;
   }
 }
 
 /** Kinds, die `design.verschieben` unterstützt (siehe packages/kosmo-kernel/src/commands/design.ts).
- * `freemesh` seit Block 3 / E3 (design.ts hat einen eigenen freemesh-Zweig). */
-export const VERSCHIEBBAR = new Set(['wall', 'slab', 'mass', 'zone', 'column', 'stair', 'roof', 'freemesh']);
+ * `freemesh` seit Block 3 / E3 (design.ts hat einen eigenen freemesh-Zweig).
+ * `beam`/`furniture`/`boundary`/`etikett` seit v0.8.10 Z3: der Kernel kann
+ * sie schon seit v0.8.8 E1 verschieben — jetzt sind sie im Plan auch
+ * klickbar (`pickEntityAt` oben) und damit greifbar. `masskette`/`kommentar`
+ * bleiben bewusst draussen (eigene Trefferwege in PlanView, C-26-Erbe). */
+export const VERSCHIEBBAR = new Set([
+  'wall',
+  'slab',
+  'mass',
+  'zone',
+  'column',
+  'stair',
+  'roof',
+  'freemesh',
+  'beam',
+  'furniture',
+  'boundary',
+  'etikett',
+]);
 
 /**
  * v0.8.9 E2 (PA2, `docs/V089-SPEZ.md` §3 E2, §7 C-3) — ist ein Element
