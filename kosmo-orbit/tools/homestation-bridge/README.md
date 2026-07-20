@@ -310,6 +310,16 @@ selbst bleibt dabei unverändert. Dieses Repo bleibt weiterhin vollständig
 `bpy`-Code auf, er *definiert nur die Schnittstelle*, gegen die ein echter
 Worker am Gerät später programmiert wird).
 
+**Andock-Paket fürs Geräte-Datum (Owner-Kompass F12):**
+`docs/HOMESTATION-ANDOCKEN.md` führt Schritt für Schritt durch Installation,
+produktiven Bridge-Start (ohne `--fake-worker`), das Andocken dieses Runners
+am Gerät und — als reine Interface-Doku ohne `bpy`-Code — was ein echter
+`Berechner` je Job-Art (`render`/`bake`/`blender_sim`) zurückgeben muss,
+inkl. einer wörtlich geprüften Lücke im heutigen Poller bei `bake`/
+`blender_sim`. `tools/homestation-bridge/verifiziere_andocken.py` prüft
+dieselbe Kette live gegen eine laufende Bridge (`--fake-worker` genauso wie
+am Ende eine echte) und unterscheidet ehrlich FAKE von echt.
+
 ### Dev-Worker andocken (Auftragsbuch → Ausführung)
 
 V2-Technik Block 2 (`docs/V2-TECHNIK-BLOCK2-BUILDPLAN.md`, Entscheid E3):
