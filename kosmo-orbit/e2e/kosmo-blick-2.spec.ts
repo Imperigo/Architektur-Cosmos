@@ -96,7 +96,18 @@ async function kosmoMitSkriptOeffnen(
     await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
-  await page.click('[data-testid="kosmo-symbol"]');
+  // Orb-Gesetz-Nachzug (v0.8.10 Fable, ROADMAP 543-Befund): seit PB4-084
+  // öffnet erst der DOPPELklick das Panel. Der ZUGANG unterscheidet sich
+  // nach Modus: im Island-Modus ist der Kosmo-Orb der einzige Zugang
+  // (`kosmo-orb-knopf`, Hausmuster pb4-orb-gesetz.spec:209), im
+  // Manuell-Modus das im BodenDock eingebettete `kosmo-symbol`
+  // (Hausmuster autopilot-dialog.spec:58) — der Helfer bedient beide.
+  const orbKnopf = page.locator('[data-testid="kosmo-orb-knopf"]');
+  if ((await orbKnopf.count()) > 0) {
+    await page.dblclick('[data-testid="kosmo-orb-knopf"]');
+  } else {
+    await page.dblclick('[data-testid="kosmo-symbol"]');
+  }
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 }
 
@@ -188,7 +199,11 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     // Zentrale (Startbildschirm) sichtbar, projektMitTkb landet aber direkt
     // in der Design-Station.
     await page.evaluate(() => window.__kosmo.open('vis'));
-    await expect(page.locator('[data-testid="station-einstellungen-vis"]')).toBeVisible();
+    // Island-Bereitschafts-Sentinel (v0.8.10 Fable): `station-einstellungen-
+    // vis` gehört zum Manuell-Chrome und existiert im Island-Modus nicht —
+    // die vis-exklusive GRAPH-Insel ist der richtige Beweis, dass die
+    // Station steht (dasselbe Muster wie der Z6-Fix, ROADMAP 539).
+    await expect(page.locator('[data-testid="island-graph-root"]')).toBeVisible();
     // NodeCanvas mountet erst mit einem aktiven Graph (VisWorkspace.tsx
     // `graphId ? <NodeCanvas ... /> : ...`) — die GRAPH-Insel legt einen
     // leeren an, bewusst OHNE «Drei Stimmungen»/Render, sonst würde der

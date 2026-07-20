@@ -47,6 +47,30 @@ describe('erkenneAktiveStation', () => {
     expect(erkenneAktiveStation()).toEqual({ id: 'prepare', titel: 'KosmoPrepare' });
   });
 
+  // v0.8.10 (Fable, «Inselrein»-Fund): die station-einstellungen-*-Anker
+  // existieren nur im Manuell-Chrome — im Island-Modus (Produktions-Default
+  // seit 0.8.2) war die Erkennung blind. Jede Island-Station trägt jetzt
+  // zusätzlich einen station-exklusiven Insel-Anker.
+  it('erkennt KosmoVis im Island-Modus am island-graph-root-Anker', () => {
+    setzeAnker('island-graph-root');
+    expect(erkenneAktiveStation()).toEqual({ id: 'vis', titel: 'KosmoVis' });
+  });
+
+  it('erkennt KosmoDesign im Island-Modus am island-zeichnen-root-Anker', () => {
+    setzeAnker('island-zeichnen-root');
+    expect(erkenneAktiveStation()).toEqual({ id: 'design', titel: 'KosmoDesign' });
+  });
+
+  it('erkennt KosmoPublish im Island-Modus am island-blatt-root-Anker', () => {
+    setzeAnker('island-blatt-root');
+    expect(erkenneAktiveStation()).toEqual({ id: 'publish', titel: 'KosmoPublish' });
+  });
+
+  it('erkennt KosmoPrepare im Island-Modus am island-aufnahme-root-Anker', () => {
+    setzeAnker('island-aufnahme-root');
+    expect(erkenneAktiveStation()).toEqual({ id: 'prepare', titel: 'KosmoPrepare' });
+  });
+
   it('ohne jeden Anker: unbekannt/Zentrale', () => {
     setzeAnker(null);
     expect(erkenneAktiveStation()).toEqual({ id: 'unbekannt', titel: 'Zentrale' });

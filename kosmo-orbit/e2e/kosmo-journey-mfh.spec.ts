@@ -177,7 +177,11 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
     await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
-  await page.click('[data-testid="kosmo-symbol"]');
+  // Orb-Gesetz-Nachzug (v0.8.10 Fable, ROADMAP 542/543-Befund): seit
+  // PB4-084 öffnet erst der DOPPELklick das Panel (Hausmuster
+  // autopilot-dialog.spec:58) — der alte Einfachklick öffnete nur die
+  // Konversationskarte und liess die Journey am kosmo-input-Timeout hängen.
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 
   await page.fill('[data-testid="kosmo-input"]', MFH_NUTZERTEXTE[0]!);
@@ -240,7 +244,9 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
     await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
-  await page.click('[data-testid="kosmo-symbol"]');
+  // Orb-Gesetz-Nachzug (v0.8.10 Fable): Doppelklick öffnet das Panel,
+  // s. Kommentar an der ersten Stelle oben.
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 
   const sendKnopfGeschoss = page.locator('[data-testid="kosmo-send"]');
@@ -415,8 +421,17 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // (role=option, data-value == Label bei den Fassaden-Bausteinen), das nur
   // offen gemountet ist: erst Trigger klicken, dann Texte lesen und wählen.
   const fassadeSelect = ersterRenderNode.locator('[data-testid="render-formular-fassade"]');
-  await fassadeSelect.click();
   const fassadePopup = ersterRenderNode.locator('[data-testid="render-formular-fassade-popup"]');
+  // v0.8.10 Fable (Island-Nachzug): im Island-Layout kann der Select-Trigger
+  // vom Insel-Chrome überlagert sein — der Maus-Klick landet dann daneben,
+  // ohne dass Playwright einen Fehler wirft. Hausmuster aus der
+  // P-B1-Migration (vis-editor, vis-kuratier-toggle): erst normaler Klick,
+  // bei geschlossenem Popup der dispatchEvent-Fallback direkt am Element.
+  await fassadeSelect.scrollIntoViewIfNeeded();
+  await fassadeSelect.click();
+  if (!(await fassadePopup.isVisible())) {
+    await fassadeSelect.dispatchEvent('click');
+  }
   await expect(fassadePopup).toBeVisible();
   const fassadenOptionen = await fassadePopup.locator('[role="option"]').allTextContents();
   expect(fassadenOptionen.some((t) => t.includes('Fensteranteil'))).toBe(true);

@@ -39,17 +39,26 @@ export interface Station {
 
 /** Reihenfolge ist Priorität: der erste im DOM gefundene Anker gewinnt. In
  * `viewMode:'quad'` (KosmoDesign) sind mehrere Anker gleichzeitig sichtbar —
- * das ist beabsichtigt kein Konflikt, es gibt dort ohnehin nur EINE Station. */
-const STATIONS: readonly { id: Exclude<StationId, 'unbekannt'>; titel: string; anker: string }[] = [
-  { id: 'design', titel: 'KosmoDesign', anker: 'station-einstellungen-design' },
-  { id: 'vis', titel: 'KosmoVis', anker: 'station-einstellungen-vis' },
-  { id: 'data', titel: 'KosmoData', anker: 'station-einstellungen-data' },
-  { id: 'publish', titel: 'KosmoPublish', anker: 'station-einstellungen-publish' },
-  { id: 'prepare', titel: 'KosmoPrepare', anker: 'prepare-werkzeugleiste' },
-  { id: 'train', titel: 'KosmoTrain', anker: 'train-werkzeugleiste' },
-  { id: 'doc', titel: 'KosmoDoc', anker: 'doc-werkzeugleiste' },
-  { id: 'dev', titel: 'KosmoDev', anker: 'dev-werkzeugleiste' },
-  { id: 'asset', titel: 'KosmoAsset', anker: 'asset-werkzeugleiste' },
+ * das ist beabsichtigt kein Konflikt, es gibt dort ohnehin nur EINE Station.
+ *
+ * v0.8.10-Fund (Fable, «Inselrein»): die `station-einstellungen-*`-Anker
+ * existieren NUR im Manuell-Chrome — im Island-Modus (seit v0.8.2 der
+ * Produktions-Default!) fand die Erkennung darum KEINE Station, Kosmo-Blick
+ * war blind und jede Nachricht ging ohne Bild-/Text-Kontext raus. Jede
+ * Station mit Island-Modus trägt jetzt ZUSÄTZLICH einen station-EXKLUSIVEN
+ * Insel-Anker (`IslandShell` generiert `island-<id>-root`; gewählt sind
+ * nur Insel-Ids, die es GENAU in dieser Station gibt — `ansicht`/`projekt`/
+ * `austausch` teilen sich mehrere Stationen und scheiden aus). */
+const STATIONS: readonly { id: Exclude<StationId, 'unbekannt'>; titel: string; anker: readonly string[] }[] = [
+  { id: 'design', titel: 'KosmoDesign', anker: ['station-einstellungen-design', 'island-zeichnen-root'] },
+  { id: 'vis', titel: 'KosmoVis', anker: ['station-einstellungen-vis', 'island-graph-root'] },
+  { id: 'data', titel: 'KosmoData', anker: ['station-einstellungen-data'] },
+  { id: 'publish', titel: 'KosmoPublish', anker: ['station-einstellungen-publish', 'island-blatt-root'] },
+  { id: 'prepare', titel: 'KosmoPrepare', anker: ['prepare-werkzeugleiste', 'island-aufnahme-root'] },
+  { id: 'train', titel: 'KosmoTrain', anker: ['train-werkzeugleiste'] },
+  { id: 'doc', titel: 'KosmoDoc', anker: ['doc-werkzeugleiste'] },
+  { id: 'dev', titel: 'KosmoDev', anker: ['dev-werkzeugleiste'] },
+  { id: 'asset', titel: 'KosmoAsset', anker: ['asset-werkzeugleiste'] },
 ];
 
 /** Welche Station ist gerade offen? `'unbekannt'` = Zentrale (kein Workspace
@@ -57,7 +66,9 @@ const STATIONS: readonly { id: Exclude<StationId, 'unbekannt'>; titel: string; a
 export function erkenneAktiveStation(): Station {
   if (typeof document === 'undefined') return { id: 'unbekannt', titel: 'Kosmo' };
   for (const s of STATIONS) {
-    if (document.querySelector(`[data-testid="${s.anker}"]`)) return { id: s.id, titel: s.titel };
+    for (const anker of s.anker) {
+      if (document.querySelector(`[data-testid="${anker}"]`)) return { id: s.id, titel: s.titel };
+    }
   }
   return { id: 'unbekannt', titel: 'Zentrale' };
 }
