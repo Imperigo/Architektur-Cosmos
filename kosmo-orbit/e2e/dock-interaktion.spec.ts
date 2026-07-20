@@ -187,6 +187,79 @@ async function stabileBox(
   return letzte!;
 }
 
+/**
+ * PB2 (v0.8.11, E6 «Flake-Härtung», `docs/V0811-SPEZ.md` §2 E6) —
+ * Vorbestehend-Beweis im Gate-Bericht dieses Pakets: Volllast-Repro auf dem
+ * UNVERÄNDERTEN Stand (KOSMO_E2E_PORT=5179, `npm run test -w
+ * @kosmo/orbit-app` als paralleler Fremdlast-Generator in Endlosschleife,
+ * `--repeat-each=15`) riss 1× — derselbe Befund wie der ursprüngliche
+ * v0.8.1-Fund («1× im 27-min-Batch gerissen, 4× isoliert grün»,
+ * `V-NAECHSTE-KANDIDATEN.md:53-56`). Screenshot + error-context des Risses
+ * (`dock-snap-schwebend` nie gefunden, 5000ms-Timeout) zeigen: der Tab
+ * bleibt UNBEWEGT an seiner alten Position — der Drag hat NIE gegriffen.
+ * Ursache: `stabileBox(tab)` unten misst einen Wert, der zwischen der
+ * Messung und dem tatsächlichen `page.mouse.down()`/`.move()` durch einen
+ * NOCH SPÄTEREN, unter dieser Fremdlast erst nach dem 300ms-Ruhefenster
+ * eintreffenden feld-getriebenen Re-Solve überholt wird — dieselbe Klasse
+ * wie die bereits dokumentierten Fälle (Kopfkommentar `warteAufSolve
+ * Stabilitaet`/`stabileBox`), nur diesmal NACH beiden bestehenden
+ * Härtungsrunden (C2 v0.8.2, PE1 v0.8.4) liegend: ein binärer
+ * Zielverfehler (Klick daneben, kein Drag startet) heilt nicht durch
+ * längeres Warten auf ein Ergebnis, das nie eintritt.
+ *
+ * Fix nach der `wartenAufUeberlappungsfreieBoxen()`-Härtungsklasse
+ * (`dock-tour.spec.ts`, PE1 v0.8.4): bis zu drei VOLLE Versuche, jeder mit
+ * einer FRISCHEN Solve-Stabilität-/Boxen-Messung — nie eine Messung aus
+ * einem vorherigen Versuch wiederverwendet. Ein missglückter Zwischen-
+ * versuch löst den Zeiger wieder (kein Seiteneffekt: der Klick hat ja
+ * nichts getroffen, reales Verhalten im Repro-Screenshot bestätigt — Panel
+ * blieb unverändert eingeklappt) und der nächste Versuch misst komplett
+ * neu. Der LETZTE Versuch nutzt den echten `expect(...).toHaveAttribute
+ * (...)` mit dem vollen, unveränderten 5000ms-Default-Timeout — KEINE
+ * Assertion wird gelockert, kein Timeout angehoben; nur die Zielkoordinate
+ * wird vor jedem Versuch ehrlich neu vermessen statt auf einem
+ * potenziell veralteten Wert zu beharren.
+ */
+async function ziehTabInSchwebendZoneMitRetry(page: Page, tab: Locator, versuche = 3): Promise<void> {
+  const zone = page.locator('[data-testid="dock-snap-schwebend"]');
+  for (let versuch = 0; versuch < versuche; versuch++) {
+    await warteAufSolveStabilitaet(page);
+    // PE1-Muster (s. Kopfkommentar Tab (c) unten): `feldBox` NACH der
+    // Solve-Stabilität messen, nicht davor.
+    const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
+    const box = await stabileBox(tab);
+    const cx = box.x + box.width / 2;
+    const cy = box.y + box.height / 2;
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    await page.mouse.move(feldBox.x + feldBox.width / 2, feldBox.y + feldBox.height / 2, { steps: 10 });
+
+    const letzterVersuch = versuch === versuche - 1;
+    if (letzterVersuch) {
+      // Echte, harte Assertion mit vollem Standard-Timeout — keine
+      // Abschwächung, kein Sonderfall für den letzten Versuch.
+      await expect(zone).toHaveAttribute('data-aktiv', 'true');
+      return;
+    }
+    const traf = await zone
+      .waitFor({ state: 'visible', timeout: 2500 })
+      .then(() => true)
+      .catch(() => false);
+    if (traf) {
+      // Fable-Nachbesser (Gate P-B2f): auch der Zwischenversuchs-Treffer
+      // läuft durch die ECHTE Original-Assertion — «sichtbar» allein wäre
+      // ein schwächerer Beweis als `data-aktiv="true"`; kein Erfolgspfad
+      // darf die harte Assertion überspringen.
+      await expect(zone).toHaveAttribute('data-aktiv', 'true');
+      return;
+    }
+    // Zielverfehler dieses Versuchs: Zeiger lösen (kein Seiteneffekt, s.
+    // Kopfkommentar) — der nächste Versuch beginnt mit frisch vermessenen
+    // Koordinaten, nicht mit den soeben widerlegten.
+    await page.mouse.up();
+  }
+}
+
 async function ziehe(page: Page, testid: string, dx: number, dy: number): Promise<Box> {
   const griff = page.locator(`[data-testid="${testid}"]`);
   const box = (await griff.boundingBox())!;
@@ -784,27 +857,13 @@ test('Tab (c): Drag in die SCHWEBEND-Zone öffnet als Float (eingeklappte Floats
   // erst ~500ms später — im 27-min-Volllast-Batch real gerissen (`stabileBox`
   // allein rastete auf dem ersten, noch nicht endgültigen Wert ein, `tab`
   // lag dann nicht mehr an der gemessenen Position, der Klick traf daneben),
-  // isoliert 4× grün (s. `warteAufSolveStabilitaet()`-Kopfkommentar). Additiv
-  // auf dasselbe deterministische Signal umgestiegen, bevor überhaupt
-  // gemessen wird — keine Assertion gelockert.
-  await warteAufSolveStabilitaet(page);
-  // PE1 (v0.8.4 W4, Flake-Härtung): `feldBox` wird JETZT — nach der
-  // Solve-Stabilität, nicht davor — gemessen. Ein vor `warteAufSolveStabilitaet`
-  // gelesenes `feldBox` bliebe potenziell auf dem Zwischenstand vor dem
-  // späten Re-Solve eingefroren; die SCHWEBEND-Zone (`DockSnapZonen.tsx`)
-  // ist die einzige der drei Zonen, deren Trefferfläche NICHT an einen
-  // Feldrand grenzt (LINKS/RECHTS haben grosszügige Randmargen, s. Tab (b)/
-  // (e) oben) — ein leicht verschobenes `feldBox` träfe hier am ehesten daneben.
-  const feldBox = (await page.locator('[data-testid="dock-flaeche"]').boundingBox())!;
-  // `stabileBox` — Reflow-Motion nach dem Einklappen abwarten (s. Tab (a)).
-  const box = await stabileBox(tab);
-  const cx = box.x + box.width / 2;
-  const cy = box.y + box.height / 2;
-  await page.mouse.move(cx, cy);
-  await page.mouse.down();
-  // Feld-Mitte — weit von beiden Rand-Zonen entfernt, trifft die SCHWEBEND-Zone.
-  await page.mouse.move(feldBox.x + feldBox.width / 2, feldBox.y + feldBox.height / 2, { steps: 10 });
-  await expect(page.locator('[data-testid="dock-snap-schwebend"]')).toHaveAttribute('data-aktiv', 'true');
+  // isoliert 4× grün (s. `warteAufSolveStabilitaet()`-Kopfkommentar).
+  // PB2 (v0.8.11, E6) — C2/PE1 reichten unter erneutem Volllast-Repro
+  // (Gate-Bericht) nicht mehr aus: `ziehTabInSchwebendZoneMitRetry()` oben
+  // kapselt jetzt Solve-Warten + Boxen-Messung + Drag-Versuch mit bis zu
+  // drei FRISCHEN Anläufen, statt einer einzigen Messung zu vertrauen —
+  // keine Assertion gelockert, s. dortiger Kopfkommentar.
+  await ziehTabInSchwebendZoneMitRetry(page, tab);
   await page.mouse.up();
 
   const panel = page.locator('[data-testid="dock-panel-kvOffen"]');
