@@ -191,7 +191,17 @@ test.describe('Line-Art (E10) — AUSTAUSCH-Insel-Schalter erzwingt vis.skip:tru
     await page.click('[data-testid="island-drei-stimmungen"]');
 
     await oeffneVisWerkzeug(page, 'austausch', 'render-senden');
-    await expect(page.locator('[data-testid="island-render-lineart"]')).toBeVisible();
+    // v0.8.11 P-A2 (docs/V0811-SPEZ.md §2 E2, ROADMAP 554): Line-Art lebt
+    // seit dem Ein-Quellen-Umbau als `node.params.lineart` PRO Render-Node
+    // — die testid ist darum `island-render-lineart-<nodeId>` statt des
+    // alten globalen `island-render-lineart` (diese Spec war der eine vom
+    // P-A2-Gate übersehene Bestands-Konsument, Voll-E2E-Fund 20.07.).
+    // Schalter und Ausführen-Knopf werden über DIESELBE Node-Id gekoppelt,
+    // sonst schaltete der Test Node A und rendert Node B.
+    const ausfuehren = page.locator('[data-testid^="island-render-ausfuehren-"]').first();
+    await expect(ausfuehren).toBeVisible();
+    const nodeId = (await ausfuehren.getAttribute('data-testid'))!.replace('island-render-ausfuehren-', '');
+    await expect(page.locator(`[data-testid="island-render-lineart-${nodeId}"]`)).toBeVisible();
     // KSwitch hält das echte <input type="checkbox"> `position:absolute;
     // opacity:0`; unter `.isl-popup` (eigener Containing Block durch dessen
     // Eintritts-`transform`) fängt der sichtbare `.k-switch-strecke`-Track
@@ -199,8 +209,8 @@ test.describe('Line-Art (E10) — AUSTAUSCH-Insel-Schalter erzwingt vis.skip:tru
     // Fall — Muster `e2e/publish-toggles.spec.ts`s `klickSchalter`,
     // identische Ursache, PB1/PC0-Hotspot ausserhalb dieses Dateikreises).
     // `force:true` klickt das <input> direkt, kein Produktcode-Fix nötig.
-    await page.locator('[data-testid="island-render-lineart"]').click({ force: true });
-    await page.locator('[data-testid^="island-render-ausfuehren-"]').first().click();
+    await page.locator(`[data-testid="island-render-lineart-${nodeId}"]`).click({ force: true });
+    await ausfuehren.click();
 
     await expect.poll(() => gesendeteSzene !== null, { timeout: 10_000, message: 'kein POST /jobs beobachtet' }).toBe(true);
     expect(gesendeteSzene!.style?.mode).toBe('lineart');
