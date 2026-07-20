@@ -1222,7 +1222,13 @@ export function DesignWorkspace({
         // PA5 (v0.8.7, docs/V087-SPEZ.md §3 E1/C-3): Treppen-Griffe — a/b,
         // bei form 'l' zusätzlich ecke (PlanView `griffe`-Zweig oben liefert
         // die passenden Einträge nur bei Einzel-Auswahl).
-        e.kind === 'stair';
+        e.kind === 'stair' ||
+        // P-A3 (v0.8.11, docs/V0811-SPEZ.md §2 E3): Decken-Ecken und
+        // Unterzug-a/b — beide committen IN PLACE (s. onGriffEnd unten),
+        // damit Aussparungen (Decke) bzw. Etiketten (Unterzug) den Zug
+        // überleben.
+        e.kind === 'slab' ||
+        e.kind === 'beam';
       if (!griffFaehig) return false;
       // v0.8.9 Fable-Nachzug (PA2-Übergabepunkt, E2): gesperrte Elemente
       // haben keine ziehbaren Griffe.
@@ -1279,6 +1285,21 @@ export function DesignWorkspace({
             entityId: e.id,
             punktIndex: key as number,
             punkt: ziel,
+          });
+        } else if (e.kind === 'slab') {
+          // P-A3 (v0.8.11): Decken-Ecke IN PLACE — Identität, holes und
+          // alle Aussparungen bleiben (design.loeschen hätte sie kaskadiert).
+          runCommand('design.deckeGeometrieSetzen', {
+            entityId: e.id,
+            punktIndex: key as number,
+            punkt: ziel,
+          });
+        } else if (e.kind === 'beam') {
+          // P-A3 (v0.8.11): Unterzug-a/b IN PLACE — Etiketten des Balkens
+          // bleiben; die 10-cm-Mindestachse wirft im Kernel (Toast unten).
+          runCommand('design.unterzugGeometrieSetzen', {
+            entityId: e.id,
+            ...(key === 'a' ? { a: ziel } : { b: ziel }),
           });
         } else if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
           const outline = e.outline.map((q, i) => (i === key ? ziel : q));

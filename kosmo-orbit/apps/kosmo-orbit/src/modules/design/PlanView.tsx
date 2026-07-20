@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Stair, type Wall, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Beam, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Slab, type Stair, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -650,6 +650,24 @@ export function PlanView({
     }
     if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
       return (e as Zone | MassBody | Roof).outline.map((p, i) => ({ id, key: i, p, kind: e.kind }));
+    }
+    // P-A3 (v0.8.11, docs/V0811-SPEZ.md §2 E3): Decken-Ecken-Griffe — exakt
+    // die zone/mass/roof-Maschine (Outline-Index als Key); die Löcher
+    // (holes) bekommen bewusst KEINE Griffe (eigene Geometrie, eigener
+    // 0.9.x-Posten). Commit läuft IN PLACE über design.deckeGeometrieSetzen
+    // (DesignWorkspace onGriffEnd) — kein Löschen+Neusetzen, sonst fielen
+    // die Aussparungen der Decke stumm mit.
+    if (e.kind === 'slab') {
+      return (e as Slab).outline.map((p, i) => ({ id, key: i, p, kind: 'slab' as const }));
+    }
+    // P-A3 (v0.8.11): Unterzug-a/b-Griffe — dieselben festen Keys wie beim
+    // Wand-/Treppen-Zweig; Commit in place über design.unterzugGeometrieSetzen.
+    if (e.kind === 'beam') {
+      const bm = e as Beam;
+      return [
+        { id, key: 'a' as const, p: bm.a, kind: 'beam' as const },
+        { id, key: 'b' as const, p: bm.b, kind: 'beam' as const },
+      ];
     }
     // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3 «Öffnungs-Griff»): EIN Griff auf
     // dem Öffnungs-Mittelpunkt in Weltkoordinaten — Achsenpunkt der
@@ -2059,7 +2077,9 @@ export function PlanView({
                       : vorschau!.p
                     : g.p;
                   const testid =
-                    g.kind === 'wall' || g.kind === 'stair'
+                    // P-A3 (v0.8.11): beam-a/b sind Endpunkte wie Wand/Treppe;
+                    // slab fällt bewusst in den eckpunkt-Zweig (wie zone).
+                    g.kind === 'wall' || g.kind === 'stair' || g.kind === 'beam'
                       ? `griff-endpunkt-${g.key}`
                       : g.kind === 'masskette'
                         ? `griff-massketten-punkt-${g.key}`

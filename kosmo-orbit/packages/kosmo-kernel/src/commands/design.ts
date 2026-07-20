@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Boundary, FreeMesh, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
+import type { Furniture, Assembly, Beam, Boundary, FreeMesh, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
@@ -3565,6 +3565,70 @@ export const massKetteGeometrieSetzen = registerCommand({
     }
     const punkte = masskette.punkte.map((q, i) => (i === p.punktIndex ? (p.punkt as Pt) : q));
     return [{ id: masskette.id, before: masskette, after: { ...masskette, punkte } }];
+  },
+});
+
+/** v0.8.11 P-A3 (docs/V0811-SPEZ.md §2 E3): In-Place-Ecken-Setter für die
+ * Decke — bewusst NICHT das Löschen+Neusetzen-Muster der zone/mass/roof-
+ * Griffe: `design.loeschen` kaskadiert die Aussparungen einer Decke mit
+ * (deleteEntity, hostId-Räumung) — ein blosser Ecken-Zug würde also stumm
+ * Durchbrüche vernichten. Dieselbe 0.8.6-E1/0.8.9-E8-Linie wie
+ * `wandGeometrieSetzen`/`massKetteGeometrieSetzen`: EIN Patch, Identität
+ * bleibt, `holes` bleiben unangetastet. */
+export const setSlabGeometry = registerCommand({
+  id: 'design.deckeGeometrieSetzen',
+  title: 'Decken-Geometrie setzen',
+  description:
+    'Setzt EINEN Umriss-Eckpunkt einer bestehenden Decke neu (punktIndex, 0-basiert), OHNE sie zu ersetzen: Identität, Dicke, Löcher (holes) und alle Aussparungen bleiben erhalten. Ein punktIndex ausserhalb des Umrisses wirft. EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    punktIndex: z.number().int().min(0),
+    punkt: PtSchema,
+  }),
+  summarize: () => 'Decken-Ecke gesetzt',
+  run: (doc, p) => {
+    const slab = require<Slab>(doc, p.entityId, 'slab');
+    if (p.punktIndex >= slab.outline.length) {
+      throw new CommandError(
+        `punktIndex ${p.punktIndex} ausserhalb des Umrisses (${slab.outline.length} Punkte)`,
+      );
+    }
+    const outline = slab.outline.map((q, i) => (i === p.punktIndex ? (p.punkt as Pt) : q));
+    return [{ id: slab.id, before: slab, after: { ...slab, outline } }];
+  },
+});
+
+/** v0.8.11 P-A3 (docs/V0811-SPEZ.md §2 E3): In-Place-a/b-Setter für den
+ * Unterzug — Löschen+Neusetzen würde die assoziativen Etiketten des Balkens
+ * mitlöschen (deleteEntity räumt Etiketten des Bauteils, A6). Muster
+ * `wandGeometrieSetzen`: a und/oder b, mindestens eines; die
+ * Mindestlängen-Regel aus `design.unterzugZeichnen` (10 cm) gilt auch hier. */
+export const setBeamGeometry = registerCommand({
+  id: 'design.unterzugGeometrieSetzen',
+  title: 'Unterzug-Geometrie setzen',
+  description:
+    'Setzt die Achse (a und/oder b) eines bestehenden Unterzugs neu, OHNE ihn zu ersetzen: Identität, breite/hoehe/material und alle Etiketten bleiben erhalten. Eine Ziel-Achse unter 10 cm wirft. EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    a: PtSchema.optional(),
+    b: PtSchema.optional(),
+  }),
+  summarize: (p, doc) => {
+    const bm = doc.get<Beam>(p.entityId);
+    if (!bm) return 'Unterzug-Achse gesetzt';
+    return `Unterzug ${formatLength(Math.round(Math.hypot(bm.b.x - bm.a.x, bm.b.y - bm.a.y)))}`;
+  },
+  run: (doc, p) => {
+    if (!p.a && !p.b) {
+      throw new CommandError('design.unterzugGeometrieSetzen braucht mindestens einen Punkt (a oder b)');
+    }
+    const beam = require<Beam>(doc, p.entityId, 'beam');
+    const a = (p.a as Pt | undefined) ?? beam.a;
+    const b = (p.b as Pt | undefined) ?? beam.b;
+    if (Math.hypot(b.x - a.x, b.y - a.y) < 100) {
+      throw new CommandError('Unterzug braucht eine Achse von mindestens 10 cm');
+    }
+    return [{ id: beam.id, before: beam, after: { ...beam, a, b } }];
   },
 });
 
