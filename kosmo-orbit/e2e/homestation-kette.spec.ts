@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { existsSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -53,6 +53,19 @@ function starteBridge(): Promise<boolean> {
 }
 
 test.describe.serial('HomeStation-Kette (HS3)', () => {
+  // v0.8.10 / P-B1b (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — beide
+  // Tests berühren AUSSCHLIESSLICH die vis-Station (kein Design/Publish/
+  // Prepare-Kontakt) — voll leerer `storageState` ist darum sicher (Muster
+  // `e2e/blender-bridge.spec.ts:49`).
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  /** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+  async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+    await page.hover(`[data-testid="island-${island}-root"]`);
+    await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+    await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+  }
+
   test.beforeAll(async () => {
     bridgeBereit = await starteBridge();
   });
@@ -74,7 +87,8 @@ test.describe.serial('HomeStation-Kette (HS3)', () => {
     });
     await page.goto('/');
     await page.click('[data-testid="module-vis"]');
-    await page.click('[data-testid="drei-stimmungen"]');
+    await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+    await page.click('[data-testid="island-drei-stimmungen"]');
     await expect(page.locator('[data-testid="vis-node-render"]').first()).toBeVisible();
 
     const status = page.locator('[data-testid="render-status"]').first();
@@ -108,7 +122,8 @@ test.describe.serial('HomeStation-Kette (HS3)', () => {
     });
     await page.goto('/');
     await page.click('[data-testid="module-vis"]');
-    await page.click('[data-testid="drei-stimmungen"]');
+    await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+    await page.click('[data-testid="island-drei-stimmungen"]');
     await expect(page.locator('[data-testid="vis-node-render"]').first()).toBeVisible();
 
     await page.locator('[data-testid="render-ausfuehren"]').first().click();

@@ -18,6 +18,28 @@ import type { SzenarioSkript } from '@kosmo/ai';
  * mehr `image/png`. Der Render-Lauf-Pfad (Test 3, `quelle:'vis-render'`) holt
  * das Bild dagegen unverändert als PNG von der Bridge (kein Canvas-Downscale
  * dort vorgesehen, s. V071-KONZEPT.md E1/2A) — dessen Assertion bleibt PNG.
+ *
+ * v0.8.10 / P-B1b (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — NUR die
+ * beiden vis-kreuzenden Tests («NodeCanvas»/«Render-Lauf») wechseln auf
+ * Island-Bootstrap (TEIL-Seed: design/publish/prepare bleiben 'manuell',
+ * `visOberflaeche` fehlt bewusst, Muster `e2e/vis-editor.spec.ts`s H-36) —
+ * `projektMitTkb` prüft `kennzahlen`/`station-einstellungen-design`, Design
+ * bleibt darum unangetastet (Sanktion 6). `graph-neu`/`drei-stimmungen`
+ * werden durch die GRAPH-/STIMMUNG-Insel ersetzt.
+ *
+ * **VORBESTAND-BEFUND (nicht P-B1b, ausserhalb des Dateikreises):** ALLE
+ * FÜNF Tests dieser Datei sind bereits auf HEAD `0084a29` rot (Gegenprobe
+ * am unveränderten Original geführt) — `kosmoMitSkriptOeffnen` hängt an
+ * `page.click('[data-testid="kosmo-symbol"]')` → `kosmo-input` sofort
+ * sichtbar: `KosmoSymbol.tsx`s PB4-„Orb-Gesetz" (Einfachklick öffnet seither
+ * nur noch eine Konversationskarte, Doppelklick das Panel) wurde hier nie
+ * nachgezogen. Derselbe Befund wie in `kosmo-journey-mfh.spec.ts` (P-B1-
+ * Bericht) — diesmal betrifft er die GESAMTE Datei, auch den reinen
+ * Design-Test («Grundriss-Ansicht»), der vis nie berührt. Die Migration
+ * unten ist strukturell korrekt (identisches Muster zu den bewiesen grünen
+ * P-B1-Specs), aber END-TO-END NICHT verifizierbar, solange dieser
+ * Vorbestand-Bug steht (ausserhalb P-B1b, `KosmoSymbol.tsx` nicht im
+ * Dateikreis).
  */
 
 // Dieselbe Signatur wie `kosmo-blick.spec.ts` (`bild?: unknown`) — bewusst
@@ -117,6 +139,48 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     expect(bild.dataBase64.length).toBeGreaterThan(MIN_BASE64_LAENGE);
   });
 
+  // v0.8.10 / P-B1b: TEIL-Seed (design/publish/prepare bleiben 'manuell',
+  // `visOberflaeche` fehlt bewusst) — `projektMitTkb` braucht Design weiterhin
+  // im Manuell-Chrome (`kennzahlen`/`station-einstellungen-design`).
+  test.describe('vis-kreuzende Tests (Island-Bootstrap für vis)', () => {
+    const PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+    test.use({
+      storageState: {
+        cookies: [],
+        origins: [
+          {
+            origin: `http://localhost:${PORT}`,
+            localStorage: [
+              {
+                name: 'kosmo.ui.v1',
+                value: JSON.stringify({
+                  version: 1,
+                  modusAutomatik: false,
+                  modusFesthalten: false,
+                  phasenFokus: null,
+                  designOberflaeche: 'manuell',
+                  publishOberflaeche: 'manuell',
+                  prepareOberflaeche: 'manuell',
+                }),
+              },
+              {
+                name: 'kosmo.leistung.v1',
+                value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+              },
+              { name: 'kosmo.dock.presetInit.v1', value: '1' },
+            ],
+          },
+        ],
+      },
+    });
+
+    /** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+    async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+      await page.hover(`[data-testid="island-${island}-root"]`);
+      await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+      await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+    }
+
   test('KosmoVis NodeCanvas: Blick liefert ein echtes gerastertes JPEG (quelle:node-canvas)', async ({ page }) => {
     await projektMitTkb(page);
     // Stationswechsel über den bestehenden Test-Hook (App.tsx __kosmo.open,
@@ -126,10 +190,12 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     await page.evaluate(() => window.__kosmo.open('vis'));
     await expect(page.locator('[data-testid="station-einstellungen-vis"]')).toBeVisible();
     // NodeCanvas mountet erst mit einem aktiven Graph (VisWorkspace.tsx
-    // `graphId ? <NodeCanvas ... /> : ...`) — «+ Graph» legt einen leeren an,
-    // bewusst OHNE «Drei Stimmungen»/Render, sonst würde der Render-Lauf-Pfad
-    // (Test unten) zuerst greifen statt des Node-Canvas-Rasters selbst.
-    await page.click('[data-testid="graph-neu"]');
+    // `graphId ? <NodeCanvas ... /> : ...`) — die GRAPH-Insel legt einen
+    // leeren an, bewusst OHNE «Drei Stimmungen»/Render, sonst würde der
+    // Render-Lauf-Pfad (Test unten) zuerst greifen statt des Node-Canvas-
+    // Rasters selbst.
+    await oeffneVisWerkzeug(page, 'graph', 'palette');
+    await page.click('[data-testid="visisl-graph-erstellen"]');
     await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 
     const skript: SzenarioSkript = {
@@ -155,7 +221,8 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     await projektMitTkb(page);
     // Stationswechsel via Test-Hook — siehe Begründung im vorigen Test.
     await page.evaluate(() => window.__kosmo.open('vis'));
-    await page.click('[data-testid="drei-stimmungen"]');
+    await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+    await page.click('[data-testid="island-drei-stimmungen"]');
     await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
 
     // Fake-Render-Lauf anstossen (Bridge :8600 --fake, Muster visgraph.spec.ts).
@@ -180,6 +247,7 @@ test.describe('Kosmo-Blick — SVG- und Vis-Pfade end-to-end', () => {
     expect(bild.quelle).toBe('vis-render');
     expect(bild.dataBase64.length).toBeGreaterThan(MIN_BASE64_LAENGE);
   });
+  }); // Ende 'vis-kreuzende Tests (Island-Bootstrap für vis)'
 });
 
 test.describe('Kosmo-Blick — Chip klickbar + Ringpuffer-Anzeige (v0.6.9 Stream D)', () => {

@@ -4,8 +4,20 @@ import { expect, test, type Page } from '@playwright/test';
  * v0.8.1 / P8 (0.7.5-Welle-2 «Report-Dossier/Print», Spec §6.2/§9.17,
  * B-103/B-104 «Papier ist Papier») — eigenständig von `modules/publish/
  * DossierPanel.tsx` (Unternehmerplan-Bericht, anderes Paket/-Dateikreis).
+ *
+ * v0.8.10 / P-B1b (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — Bootstrap
+ * auf die Island-UI umgestellt: `test.use({ storageState: { cookies: [],
+ * origins: [] } })` (Muster `e2e/blender-bridge.spec.ts:49`), kein
+ * Design/Publish/Prepare-Kontakt in dieser Spec. Das alte `tab-ansichten` +
+ * `vis-report-oeffnen` (GespeicherteAnsichten-Tab, nur `!islandModus`)
+ * entfällt zugunsten der AUSTAUSCH-Insel `report`-Sofort-Aktion
+ * (`VisWorkspace.tsx`s `aktiviereVisIslandWerkzeug`: `case 'report':
+ * setIslandReportOffen(true)` — dieselbe State-Variable, dasselbe
+ * `VisReportDossier`, nur ein anderer Bedienweg). Die Kern-Assertions
+ * (`vis-report-dossier`/`-kachel-*`/`-governance`/`-schliessen`) bleiben
+ * unverändert (dieselbe Komponente in beiden Modi).
  */
-async function oeffneVisAnsichten(page: Page): Promise<void> {
+async function oeffneVisAustausch(page: Page): Promise<void> {
   await page.goto('/');
   await page.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
@@ -15,14 +27,17 @@ async function oeffneVisAnsichten(page: Page): Promise<void> {
   });
   await page.reload();
   await page.click('[data-testid="module-vis"]');
-  await page.click('[data-testid="tab-ansichten"]');
 }
+
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Report-Dossier zeigt Kopf, drei Ansichten-Kacheln und eine Governance-Box — schliesst wieder', async ({
   page,
 }) => {
-  await oeffneVisAnsichten(page);
-  await page.click('[data-testid="vis-report-oeffnen"]');
+  await oeffneVisAustausch(page);
+  await page.hover('[data-testid="island-austausch-root"]');
+  await expect(page.locator('[data-testid="island-werkzeug-report"]')).toBeVisible();
+  await page.click('[data-testid="island-werkzeug-report"]');
 
   const dossier = page.locator('[data-testid="vis-report-dossier"]');
   await expect(dossier).toBeVisible();

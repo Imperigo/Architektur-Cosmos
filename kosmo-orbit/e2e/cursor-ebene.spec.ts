@@ -169,16 +169,33 @@ test.describe('Zustands-Matrix: Zonen-Formen aus computed-cursor (v0.8.4 PA1, D1
     await page.evaluate(() => (window as unknown as { __kosmoCursor: { aktivieren: () => void } }).__kosmoCursor.aktivieren());
   }
 
-  test('vis-canvas: Node-Port-Hitkreis (crosshair) zeigt die Fadenkreuz-Form, Ebene bleibt sichtbar', async ({
-    page,
-  }) => {
-    await geladen(page);
-    await aktiviert(page);
-    await page.click('[data-testid="module-vis"]');
-    await page.click('[data-testid="graph-neu"]');
-    // Direkter Kernel-Weg (Muster `e2e/vis-editor.spec.ts` `knotenSetzen`) —
-    // ein Node mit Ports ist die kürzeste, deterministische Route zu einer
-    // ECHTEN `cursor: crosshair`-Zone (`.vis-node-port-hit`).
+  // v0.8.10 / P-B1b (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — NUR dieser
+  // Test kreuzt vis, alle anderen Tests im Block bleiben design-lastig (`load-
+  // tkb`/Dock) und unangetastet unter dem globalen Manuell-Seed. Eigenes
+  // `test.describe` mit leerem `storageState` (Muster `e2e/blender-bridge.
+  // spec.ts:49`) — dieser Test berührt Design/Publish/Prepare nie, ein voll
+  // leerer Kontext ist darum sicher (kein TEIL-Seed nötig).
+  test.describe('vis-canvas (Island-Bootstrap)', () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    /** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+    async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+      await page.hover(`[data-testid="island-${island}-root"]`);
+      await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+      await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+    }
+
+    test('vis-canvas: Node-Port-Hitkreis (crosshair) zeigt die Fadenkreuz-Form, Ebene bleibt sichtbar', async ({
+      page,
+    }) => {
+      await geladen(page);
+      await aktiviert(page);
+      await page.click('[data-testid="module-vis"]');
+      await oeffneVisWerkzeug(page, 'graph', 'palette');
+      await page.click('[data-testid="visisl-graph-erstellen"]');
+      // Direkter Kernel-Weg (Muster `e2e/vis-editor.spec.ts` `knotenSetzen`) —
+      // ein Node mit Ports ist die kürzeste, deterministische Route zu einer
+      // ECHTEN `cursor: crosshair`-Zone (`.vis-node-port-hit`).
     await page.evaluate(() => {
       const k = (
         window as unknown as {
@@ -206,7 +223,8 @@ test.describe('Zustands-Matrix: Zonen-Formen aus computed-cursor (v0.8.4 PA1, D1
     const wrapper = page.locator('[data-testid="cursor-ebene"]');
     await expect(wrapper).not.toHaveClass(/cursor-ebene--versteckt/);
     await page.screenshot({ path: 'e2e-results/pa1-084-fadenkreuz.png' });
-  });
+    });
+  }); // Ende 'vis-canvas (Island-Bootstrap)'
 
   test('dock-splitter: Spalten-Splitter (col-resize) zeigt die Spalte-Form, Ebene bleibt sichtbar', async ({
     page,
