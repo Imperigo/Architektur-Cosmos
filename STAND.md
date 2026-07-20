@@ -1,12 +1,12 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.9 «Geordnet»** (Stand 19.07.2026, ROADMAP 537).
+**Aktuelle Version: v0.8.10 «Inselrein»** (Stand 20.07.2026, ROADMAP 551).
 **Alle Versionen davor (≤ v0.8.8) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 > **Versions-Hinweis:** Der Bump hat FÜNF Träger — `package.json` (Root + App),
 > `Cargo.toml`, `tauri.conf.json` und das `APP_VERSION`-Literal in
 > `apps/kosmo-orbit/vite.config.ts` (speist den App-Kopf; beim v0.8.2-Bump
-> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.9**, dazu der
+> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.10**, dazu der
 > `kosmo-orbit`-Eintrag in `Cargo.lock`. Der `__APP_VERSION__`-Entkopplungs-
 > Mechanismus bleibt für künftige Teil-Release-Buchstaben-Ausnahmen bestehen.
 

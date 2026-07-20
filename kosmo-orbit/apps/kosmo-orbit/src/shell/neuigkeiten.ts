@@ -35,6 +35,34 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.10',
+    datum: '2026-07-20',
+    punkte: [
+      {
+        text: 'KosmoVis bekennt sich zur Insel-Bedienung: das «Manuell»-Werkzeug in der AUSTAUSCH-Insel ist weg, und die komplette Vis-Testsuite läuft jetzt gegen genau den Insel-Standard, den du wirklich siehst — was hier grün ist, ist der echte Auslieferungszustand. Wer die klassische, vollständige Oberfläche lieber mag, findet sie weiterhin unter Einstellungen → «Manuelle Ansicht (KosmoVis)»: ein bewusster Schalter statt eines Zufallsfunds, kein Funktionsverlust.',
+        station: 'vis',
+      },
+      {
+        text: 'Ein stiller Fehler ist behoben, der seit der Island-Umstellung (v0.8.2) bestand: Kosmo bekam im Standard-Modus bei jeder Nachricht weder ein Bild noch den Text-Kontext der gerade aktiven Werkstation mit — die Stationserkennung suchte nach Ankern der alten Werkzeugleiste, die es im Insel-Modus gar nicht mehr gibt. Betroffen waren alle vier Stationen gleichermassen; Kosmo sieht jetzt wieder, was auf dem Bildschirm passiert, wenn du ihn fragst.',
+      },
+      {
+        text: 'Das Blattverzeichnis zeigt lange Plancodes jetzt sauber: statt einer engen Spalte, die bei sechsteiligen Codes über den Blattrahmen lief, steht der Plancode als kleine zweite Zeile unter dem Blattnamen — beliebig lang, ohne den Rahmen zu sprengen. Und Blätter lassen sich in der Blattliste endlich direkt umbenennen (Klick auf den Namen, Enter bestätigt, Escape bricht ab) — vorher ging das nur über Löschen und Neuanlegen.',
+        station: 'publish',
+      },
+      {
+        text: 'Der Inspector kann jetzt mehr Bauteile wirklich bearbeiten: Stützen (Material, Breite, Tiefe, Drehung), Unterzüge (Breite, Höhe, Material) und die Drehung von Möbeln sind neu editierbar, dazu fehlende Felder bei Zonen (Nutzung, Raumnummer, Raumtyp), Volumen, Wänden und Freiform-Netzen — überall mit derselben Wurf-Sicherung wie der Rest: ein ungültiger Wert kommt gar nicht erst ins Dokument.',
+        station: 'design',
+      },
+      {
+        text: 'Möbel, Unterzüge, Grundstücksgrenzen und Etiketten lassen sich jetzt direkt im Plan anklicken und verschieben — bisher liess das Verschieben-Werkzeug diese vier Arten technisch schon zu, im 2D-Plan waren sie aber gar nicht erst anwählbar. Jede Art bekommt dabei die passende Trefferzone (Etikett am Anker, Unterzug an der Achse, Möbel am Korpus, Grundstücksgrenze nur an der Linie, nicht in der Fläche) — Gruppieren, Sperren und Undo funktionieren wie bei jedem anderen Bauteil.',
+        station: 'design',
+      },
+      {
+        text: 'Ehrlich als Gerätevorlage: ein eigenständiger Python-Worker-Runner kann jetzt ausserhalb der App an einer HomeStation laufen und Render-Aufträge abholen — im Repository steckt bewusst kein Blender-Python-Code (bpy) und keine echte Physik. Ohne den Fake-Modus startet der Runner gar nicht erst; sein einziger eingebauter Rechner liefert markierte Vorschau-Bilder, nie erfundene Zahlen oder ein als «gebackt» ausgegebenes unverändertes Modell.',
+      },
+    ],
+  },
+  {
     version: '0.8.9',
     datum: '2026-07-19',
     punkte: [
