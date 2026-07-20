@@ -54,6 +54,20 @@ export default defineConfig({
     // Werkzeugleiste/Dock-Fläche/Geschossleiste), ohne dass eine einzelne
     // Spec-Datei angefasst werden muss. Ausführliche Begründung («warum EIN
     // Ort reicht»): `e2e/helpers/manuell-seed.ts`-Kopfkommentar.
+    //
+    // v0.8.10 E3-Nachtrag Seed-Flip (Owner-Entscheid 20.07.2026, `docs/
+    // V0810-SPEZ.md` §2 E3 Punkt 6, Matrix C-7): `kosmoUiV1SeedMitManuell()`
+    // erzwingt `visOberflaeche` NICHT mehr — design/publish/prepare bleiben
+    // wie oben beschrieben unverändert `'manuell'`, aber die vis-Station
+    // sieht ab hier für JEDE Spec ohne eigenen Seed den echten Produktions-
+    // Default `'island'`. Die sechs Manuell-only-Feature-Specs ohne Insel-
+    // Äquivalent (`vis-onboarding.spec.ts`, `dock-layout.spec.ts`,
+    // `dock-presets.spec.ts`, `vis-ansichten.spec.ts`, `p8-081-screenshots.
+    // spec.ts`, `vis-token.spec.ts`s Legende-`describe`) setzen dafür je
+    // einen eigenen `test.use({ storageState: visManuellStorageState() })`-
+    // Kopf (`e2e/helpers/manuell-seed.ts`). Der Manuell-Zugang für KosmoVis
+    // lebt ab jetzt im Einstellungs-Schalter (`einstellung-vis-manuell`,
+    // `shell/Einstellungen.tsx`) statt eines prominenten Insel-Werkzeugs.
     // v0.6.6 Welle 2 / Stream D (V-M1 Commit 2): `kosmo.leistung.v1` mit
     // `renderBeiBedarf: false` vorbelegt — der neue on-demand-Renderloop
     // (Viewport3D.tsx, state/leistung.ts) ist für echte Nutzer:innen ohne

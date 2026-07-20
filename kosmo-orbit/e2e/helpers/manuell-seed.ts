@@ -119,7 +119,6 @@ export function kosmoUiV1SeedMitManuell(basis: Record<string, unknown> = {}): st
     phasenFokus: null,
     ...basis,
     designOberflaeche: MANUELL_DESIGN_OBERFLAECHE,
-    visOberflaeche: MANUELL_VIS_OBERFLAECHE,
     publishOberflaeche: MANUELL_PUBLISH_OBERFLAECHE,
     prepareOberflaeche: MANUELL_PREPARE_OBERFLAECHE,
   });
