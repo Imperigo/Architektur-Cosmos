@@ -24,7 +24,26 @@ Freigabe. Die Prognose ist gegen die Daten-Guards geprüft (Lehre 545:
 der Schloss-Zweig greift NUR bei meta.locked — kein Bestands-Golden hat
 locked-Daten, grep-geprüft).
 
-## Teil 2 — gemeinsamer Lauf (Tag C, NACH allen Landungen)
+## Teil 2 — gemeinsamer Lauf (Tag C, 20.07.2026, NACH allen Landungen)
 
-Noch offen — Ritual wie GOLDEN-WECHSEL-0810 Teil 2 (vierstufig, mit
-sha-Beweis und svg-qa).
+**Ist == Prognose, exakt. Kein Hard-Stop.** Alle 7 Pakete gelandet
+(P-A1 553 · P-A2 554 · P-A3 557 · P-B1 558 · P-B3 559 · E7 560 ·
+P-B2 561); Prüf-HEAD `1f40ea2` gegen die Release-Basis `0dff918`
+(v0.8.10 «Inselrein»).
+
+1. **git-Beweis (definitiv):** `git diff --name-status 0dff918..HEAD --
+   kosmo-orbit/packages/kosmo-kernel/test/golden/` zeigt GENAU eine
+   Zeile: `A …/plan-schloss.svg` — kein `M`, kein `D`. 0 bewegte
+   Bestands-Goldens, +1 neuer, **40 Dateien** total (39 SVG + 1 IFC).
+2. **sha-Beweis:** aggregierte sha256 der 38 Bestands-SVG
+   (`ls *.svg | grep -v plan-schloss | sort | xargs sha256sum |
+   sha256sum` im golden/-Verzeichnis) = `c8b634aceba1d2fc…` — auf
+   `0dff918` und `1f40ea2` identisch (folgt aus 1., die Methode ist hier
+   festgehalten, damit Teil 2 künftiger Versionen denselben Befehl
+   nutzt; der in ROADMAP 559 notierte P-B3-Zwischenwert `67cee224…`
+   entstand mit anderer Aggregation und ist NICHT vergleichbar).
+3. **svg-qa:** `npm run svg-qa` → **39 Goldens geprüft, 0 harte Fehler**,
+   4 bekannte Text-Overlap-Warnungen (Baseline-Bestand, bewusst lange
+   Musterwerte) — 38→39 gezählte SVG, wie prognostiziert.
+4. **Suiten-Rerun am Prüf-HEAD:** Kernel 1180/1180 (enthält alle
+   40 Golden-Byte-Vergleiche inkl. plan-schloss.test.ts), App 1728/1728.

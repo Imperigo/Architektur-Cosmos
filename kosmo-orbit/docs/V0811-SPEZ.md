@@ -259,3 +259,65 @@ Alle am 20.07. gegen HEAD `7fbf849` verifiziert (Explorer-Protokoll):
    (:14): offenes Record, keine Whitelist → `lineart` heute zulässig.
 10. Golden-Basis: 39 Dateien (38 SVG + 1 IFC), svg-qa dynamisch
     (`pruefe-goldens.mts:356-361`).
+
+## §9 Ergebnis (Release-Stand, 20.07.2026)
+
+Alle sieben Pakete sind gelandet — inklusive des Kapazitäts-Postens E7,
+der NICHT ersatzlos fallen musste. Die adversariale Matrix lief als
+8-Prüfer-Fan-out (C-1…C-8, je mit Datei:Zeile-Pflicht und eigenen
+Testläufen auf HEAD): **alle GRÜN**, C-9 (GOLDEN-WECHSEL Teil 1 `14e0eec`
+vor den Landungen, Teil 2 Ist==Prognose) und C-10 (dieses verschlankte
+Release) von Fable direkt. GOLDEN-WECHSEL-0811 Teil 2: **0 bewegte
+Bestands-Goldens, exakt +1 neu (plan-schloss.svg), 40 Dateien,
+svg-qa 39/0** — die strengste Form hat gehalten (Protokoll in
+`docs/GOLDEN-WECHSEL-0811.md`). release-gate Exit 0 (Typecheck 8
+Workspaces, 3447 Tests grün, svg-qa, secrets, SFT, Website-Sync).
+
+- **E1 Publish-Insel-Parität (P-A1)** — erfüllt (553): Blatt umbenennen +
+  entfernen island-only, Kernel-Diff leer, Blattverzeichnis-Byte-Beweis.
+- **E2 Line-Art als Node-Parameter (P-A2)** — erfüllt (554): Ein-Quellen-
+  Entscheid eingelöst, `node.params.lineart` via vis.nodeParametrieren,
+  useState weg (grep 0), transienter Pfad ersatzlos, Persistenz/Undo/
+  Bridge-Beweis.
+- **E3 Plan-Griffe Runde 2 (P-A3, Fable/Cluster B)** — erfüllt (557):
+  slab-Ecken + beam-a/b IN PLACE über zwei neue additive Kernel-Setter;
+  Aussparungen/Etiketten überleben, EIN Undo.
+- **E4 Vis-Insel-Äquivalente (P-B1)** — erfüllt (558): Ansichten + Legende
+  als neue Insel-Inhalte, Katalog 13→15, Manuell-Zweige byte-still
+  (git-diff-Beweis).
+- **E5 Schloss-Symbol (P-B3, Fable-solo)** — erfüllt (559): der EINE
+  Golden-Zug in strengster Form; Invarianten-Konflikt mit dxf-layer-lock
+  PRÄZISIERT statt abgeschwächt (Gate-Ehrlichkeits-Lehre).
+- **E6 Flake-Härtung (P-B2)** — erfüllt (561): dock-tour OHNE Fix (stale
+  Kandidat, 43/43-Beweis, Kandidatenliste bereinigt), dock-interaktion
+  Tab (c) mit reproduziertem Vorbestand + Retry-Kapsel ohne
+  Assertion-Abschwächung + Fable-Nachbesser (harte Assertion auf jedem
+  Erfolgspfad).
+- **E7 Treppen-z-Griff (Fable, Kapazitäts-Posten)** — erfüllt (560):
+  vierter 3D-Handle editiert die Geschosshöhe, 0 Kernel-Zeilen,
+  sanktionierte stairHandleCount-Anpassung mit Beleg.
+
+## Ehrliche Abweichungen und Randnotizen (Matrix-Funde, kein Muss-Fix)
+
+1. **P-B3-Gate-Panne (grep-Exit-Falle):** Commit 96bc702 ging mit 1 rotem
+   Kernel-Test durch, weil der Suiten-Exit hinter einer grep-Pipe hing —
+   aufgearbeitet in ROADMAP 559, Regel in `lehren/v0.8.11.md`.
+2. **C-2:** der Entfernen-E2E deckt den «aktives Blatt entfernen»-Zweig
+   (blatt.tsx:101) nicht ab; keine explizite Anti-Dialog-Assertion
+   (implizit über Playwright-dismiss bewiesen) — Testlücken-Notiz.
+3. **C-6:** legende.tsx dupliziert PORT_FARBE/PORT_TYP_NAME bewusst
+   (NodeCanvas TABU) — Drift-Risiko bis zur 0.9.0-Manuell-Löschung;
+   «registry.ts»-Wortlaut wurde als 0-Zeilen-Lösung über index.ts erfüllt.
+4. **C-7:** der Vorbestehend-Beweis lebt als Kommentar-Zusammenfassung in
+   der Retry-Funktion (nicht im Datei-Kopf); die Agent-Läufe (85/85, 23/23
+   unter Last) sind in ROADMAP 561 protokolliert, nicht maschinenlesbar im
+   Repo; theoretischer Randfall «Treffer nach Probe-Fenster → up über der
+   Zone» notiert.
+5. **C-8:** der dxf-layer-lock-Kommentar sagt «byte-gleich», die Assertion
+   prüft Zähl-Invarianten — die Byte-Gleichheit wurde vom Prüfer unabhängig
+   per Deep-Equal nachgemessen (hält); Kommentar-Präzisierung als
+   Kosmetik-Kandidat.
+6. **E7-Zusatz:** der Unter-die-Unterkante-Guard hält die
+   geschossErstellen-Untergrenze am Griff ein, weil eigenschaftSetzen
+   historisch 0 durchliesse — der Bestands-Command blieb unangetastet
+   (Kandidat: Kernel-seitige Angleichung in 0.9.0).

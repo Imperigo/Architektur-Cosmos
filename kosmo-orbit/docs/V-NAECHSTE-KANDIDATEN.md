@@ -101,10 +101,16 @@
 - [ ] **B-135 Linien-Skala:** formell geschlossen OHNE Bauauftrag — nur wieder
   öffnen, wenn ein echter Konsument entsteht. *(393)* — unverändert, in
   v0.8.1 nicht wieder aufgegriffen.
-- [ ] **dock-tour «7 Schritte»-Flake** (NEU, erstmals in v0.8.1 gefunden):
+- [x] ~~**dock-tour «7 Schritte»-Flake** (NEU, erstmals in v0.8.1 gefunden):
   fällt identisch auf sauberem HEAD, Worktree-bewiesen vorbestehend — vom
   Prüfagenten selbst als «neuer Kandidaten-Punkt» notiert.
-  *(v0.8.1/P1, ROADMAP 398)*
+  *(v0.8.1/P1, ROADMAP 398)*~~ — **stale, ohne Fix geschlossen (v0.8.11/P-B2,
+  ROADMAP 561):** 43/43 grün über drei eskalierende Repro-Stufen (isoliert
+  8×, Fremdlast-Endlosschleife 15×, Volllast 20×) — die Härtungsrunden
+  `warteAufSolveStabilitaet` (C1/v0.8.2) und `wartenAufUeberlappungsfreie
+  Boxen` (PE1/v0.8.4) hatten den Fund längst gelöst; der Eintrag war nie
+  nachgeführt. Spec bewusst unangetastet (Sanktion 5: kein Fix ohne
+  frischen Vorbestehend-Beweis).
 - [x] ~~**Statusleisten-2-Zeilen-Wrap × NavLeiste** (NEU, erstmals in v0.8.1
   gefunden): bei 1400×900 mit vollem Chip-Satz kann die zweizeilig
   umbrechende Statusleiste die NavLeiste geometrisch überlappen

@@ -35,6 +35,36 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.11',
+    datum: '2026-07-20',
+    punkte: [
+      {
+        text: 'Die Blatt-Insel in KosmoPublish kann jetzt, was bisher nur die manuelle Ansicht konnte: Blätter direkt in der Insel umbenennen (Klick auf den Namen, Enter bestätigt, Escape bricht ab) und entfernen — das Blattverzeichnis zieht sofort nach. Die Insel-Bedienung ist damit für die Blattverwaltung vollwertig, kein Umweg mehr über die manuelle Ansicht.',
+        station: 'publish',
+      },
+      {
+        text: 'Die Line-Art-Einstellung fürs Rendern lebt jetzt am Render-Node selbst statt in einem flüchtigen Schalter: sie überlebt Neuladen und Projektwechsel, lässt sich mit Rückgängig zurücknehmen, und Insel-Schalter wie Node-Ansicht zeigen immer denselben Stand — eine Quelle statt zwei, die auseinanderlaufen konnten.',
+        station: 'vis',
+      },
+      {
+        text: 'Die Vis-Insel bekommt zwei neue Werkzeuge, die bisher nur in der manuellen Ansicht existierten: gespeicherte Ansichten (Kamerastandpunkte sichern und wieder anfahren) und die Legende der Node-Farben — beides direkt in der Insel-Werkzeugwahl, die manuelle Ansicht bleibt unverändert.',
+        station: 'vis',
+      },
+      {
+        text: 'Decken und Unterzüge lassen sich jetzt im 2D-Plan an Griffen ziehen: Decken an ihren Ecken, Unterzüge an beiden Enden — in einem Zug, ohne Löschen und Neuzeichnen. Aussparungen in der Decke und Etiketten am Unterzug bleiben dabei erhalten, und ein einziges Rückgängig stellt den alten Stand wieder her.',
+        station: 'design',
+      },
+      {
+        text: 'Gesperrte Bauteile zeigen im Plan jetzt ein kleines Vorhängeschloss am Element — bisher war eine Sperre unsichtbar und fiel erst auf, wenn ein Klick nichts bewegte. Entsperren räumt das Symbol wieder weg; alle bestehenden Pläne bleiben byte-identisch, das Symbol erscheint nur bei tatsächlich gesperrten Elementen.',
+        station: 'design',
+      },
+      {
+        text: 'Die Geschosshöhe lässt sich jetzt direkt im 3D-Viewport einstellen: wer eine Treppe auswählt, sieht neu einen vierten Griff auf der Geschoss-Oberkante und zieht die Höhe einfach vertikal — die Treppe rechnet ihre Steigungen live nach, und ein Zug unter die Geschossunterkante wird mit einer ehrlichen Fehlermeldung verworfen statt still geschluckt.',
+        station: 'design',
+      },
+    ],
+  },
+  {
     version: '0.8.10',
     datum: '2026-07-20',
     punkte: [

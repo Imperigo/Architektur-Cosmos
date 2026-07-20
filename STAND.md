@@ -1,12 +1,16 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.10 «Inselrein»** (Stand 20.07.2026, ROADMAP 551).
-**Alle Versionen davor (≤ v0.8.8) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.8.11 «Inselgleich»** (Stand 20.07.2026, ROADMAP 562).
+**Alle Versionen davor (≤ v0.8.9) sind ARCHIV.** Nie mehr darauf aufbauen.
+
+> **Kurswechsel Release-Takt (Owner-Kompass 20.07., F8):** v0.8.11 war der
+> **letzte Kleintakt** — ab jetzt grössere Versionssprünge Richtung 0.9.0
+> (vier F9-Stränge) und 1.0 (= Demobeweis, `docs/OWNER-KOMPASS-2026-07-20.md`).
 
 > **Versions-Hinweis:** Der Bump hat FÜNF Träger — `package.json` (Root + App),
 > `Cargo.toml`, `tauri.conf.json` und das `APP_VERSION`-Literal in
 > `apps/kosmo-orbit/vite.config.ts` (speist den App-Kopf; beim v0.8.2-Bump
-> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.10**, dazu der
+> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.11**, dazu der
 > `kosmo-orbit`-Eintrag in `Cargo.lock`. Der `__APP_VERSION__`-Entkopplungs-
 > Mechanismus bleibt für künftige Teil-Release-Buchstaben-Ausnahmen bestehen.
 
