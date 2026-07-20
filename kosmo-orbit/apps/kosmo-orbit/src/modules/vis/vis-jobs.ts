@@ -151,6 +151,11 @@ export async function postRenderJob(params: {
    * Schritt.» Darum HART erzwungen (nicht optional/überschreibbar durch
    * `nurCycles`): eine Strichzeichnung ist Cycles/Freestyle-Rendering, kein
    * KI-Stil-Transfer, egal was `nurCycles` sagt.
+   *
+   * v0.8.11 Z4: `sendeGraphRenderAuftrag` leitet diesen Wert seither aus dem
+   * persistenten `node.params.lineart` ab (statt einem transienten
+   * `opts.mode`) — dieser Parameter hier bleibt unverändert die einzige Naht
+   * zur Bridge, nur die Quelle beim EINEN Aufrufer hat sich verschoben.
    */
   mode?: 'none' | 'lineart';
 }): Promise<JobRecord> {
@@ -205,6 +210,16 @@ export async function postRenderJob(params: {
  * Aufrufer (`NodeCanvas.tsx`s Ausführen-Knopf, `island/inhalte/
  * austausch.tsx`) lassen `opts` weg — der Job bleibt für sie byte-identisch
  * zum bisherigen Stand.
+ *
+ * Line-Art (v0.8.11, `docs/V0810-SPEZ.md` §5 Z4, Ein-Quellen-Entscheid): KEIN
+ * `opts.mode`-Feld mehr — der frühere transiente Weg (Insel-`useState`,
+ * gefallen mit `island/inhalte/austausch.tsx`) ist ersatzlos weg. `mode`
+ * kommt jetzt AUSSCHLIESSLICH aus dem PERSISTENTEN Render-Node-Parameter
+ * `node.params.lineart` (boolean, gesetzt über `vis.nodeParametrieren` —
+ * NodeCanvas-Checkbox UND der AUSTAUSCH-Insel-Switch schreiben beide
+ * dorthin). Damit ist Line-Art undo-bar, überlebt Insel-Remounts und hat
+ * genau EINE Quelle der Wahrheit, egal über welchen Weg der Job ausgelöst
+ * wird (Knopf am Node, Insel-Knopf, `vis.render`-Kosmo-Tool).
  */
 export function sendeGraphRenderAuftrag(
   graphId: string,
@@ -214,10 +229,6 @@ export function sendeGraphRenderAuftrag(
     kameraWahl?: 'auto' | 'saved';
     backbone?: 'qwen' | 'flux2-klein' | 'flux-krea' | 'sdxl';
     aufloesung?: readonly [number, number];
-    /** v0.8.9 §9 E10 — spiegelt `postRenderJob`s `mode`, s. dortigen
-     *  Kommentar (vis.skip wird hart miterzwungen). Weggelassen = 'none',
-     *  byte-identisch zum bisherigen Stand. */
-    mode?: 'none' | 'lineart';
   },
 ): void {
   const { doc } = useProject.getState();
@@ -233,6 +244,9 @@ export function sendeGraphRenderAuftrag(
   const node = graph.nodes.find((n) => n.id === nodeId);
   const zusatz = formularZusatz(node?.params ?? {});
   const auftrag = { ...roh, prompt: kombiniertePrompt(roh.prompt, zusatz) };
+  // v0.8.11 Z4: Line-Art liest DIREKT den persistenten Node-Parameter — EIN
+  // Quellen-Ort, s. Kommentar oben.
+  const mode: 'none' | 'lineart' = node?.params?.['lineart'] === true ? 'lineart' : 'none';
   const key = memoKey(auftrag);
   const { setzeLauf, patchLauf } = useVisRuntime.getState();
   setzeLauf(nodeId, { status: 'gesendet', memoKey: key, gestartetUm: Date.now() });
@@ -244,7 +258,7 @@ export function sendeGraphRenderAuftrag(
     // `aufloesung` spiegelt denselben Job-Parameter wie das bestehende
     // `resolution` (K20/A10-Presets nutzen ihn schon) — kein Zweitfeld.
     ...(opts?.aufloesung !== undefined ? { resolution: opts.aufloesung } : {}),
-    ...(opts?.mode !== undefined ? { mode: opts.mode } : {}),
+    mode,
   })
     .then((j) =>
       patchLauf(nodeId, {

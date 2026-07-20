@@ -2130,6 +2130,19 @@ function NodeKoerper({
             />
             nur Cycles (keine KI-Veredelung)
           </label>
+          {/* v0.8.11 Z4 (`docs/V0810-SPEZ.md` §5, Ein-Quellen-Entscheid): Line-Art
+              ist jetzt der PERSISTENTE Node-Parameter `lineart` (Muster
+              `nurCycles` oben) — `vis-jobs.ts`s `sendeGraphRenderAuftrag` liest
+              ihn direkt aus `node.params` und erzwingt `vis.skip:true` HART. */}
+          <label className="vis-node-checkbox-label">
+            <input
+              type="checkbox"
+              data-testid="render-lineart"
+              checked={params['lineart'] === true}
+              onChange={(e) => param('lineart', e.target.checked)}
+            />
+            als Strichzeichnung (Line-Art)
+          </label>
           {/* K20/A10: Cycles-Preset (Samples/Auflösung/Sonne/Komposition) — regelbasierte
               Datentabelle, kein KI-Vorschlag. Leer = bisheriger Default (128 Samples). */}
           <KSelect

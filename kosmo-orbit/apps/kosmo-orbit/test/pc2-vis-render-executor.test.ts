@@ -148,3 +148,98 @@ describe('sendeGraphRenderAuftrag — opts (kameraWahl/backbone/aufloesung) flie
     expect(szene.vis.backbone).toBe('qwen');
   });
 });
+
+/**
+ * v0.8.11 Z4 (`docs/V0810-SPEZ.md` §5, Ein-Quellen-Entscheid aus der
+ * V0810-Z4-Schuld): Line-Art ist kein transientes `opts.mode` mehr —
+ * `sendeGraphRenderAuftrag` liest es DIREKT aus dem persistenten
+ * `node.params.lineart` (gesetzt über `vis.nodeParametrieren`, EXAKT wie
+ * `nurCycles`/`preset`). Diese Suite beweist den kompletten Weg: Param im
+ * Doc → Job trägt `style.mode:'lineart'` UND `vis.skip:true` (hart
+ * erzwungen, unabhängig von `nurCycles`); ohne den Param bleibt der Job
+ * byte-identisch (`mode:'none'`, `vis.skip:false`).
+ */
+describe('sendeGraphRenderAuftrag — Line-Art aus node.params.lineart (v0.8.11 Z4)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  function graphMitRenderNode(): { graphId: string; renderNodeId: string } {
+    const { runCommand, doc } = useProject.getState();
+    const g = runCommand('vis.graphErstellen', { name: 'Z4-Executor-Test' });
+    const graphId = (g.patches[0] as { id: string }).id;
+    runCommand('vis.nodeSetzen', { graphId, typ: 'modell', x: 0, y: 0 });
+    const modellNodeId = doc.get<VisGraph>(graphId)!.nodes.at(-1)!.id;
+    runCommand('vis.nodeSetzen', { graphId, typ: 'render', x: 200, y: 0 });
+    const renderNodeId = doc.get<VisGraph>(graphId)!.nodes.at(-1)!.id;
+    runCommand('vis.verbinden', { graphId, from: modellNodeId, fromPort: 'szene', to: renderNodeId, toPort: 'szene' });
+    return { graphId, renderNodeId };
+  }
+
+  it('node.params.lineart:true → Job trägt style.mode «lineart» und vis.skip:true', async () => {
+    setzeLocalStorage({ 'kosmo.bridge': 'http://localhost:8600' });
+    const { gesehen } = stubFetchErfasseSzene();
+    const { sendeGraphRenderAuftrag } = await import('../src/modules/vis/vis-jobs');
+    const { runCommand } = useProject.getState();
+    const { graphId, renderNodeId } = graphMitRenderNode();
+
+    runCommand('vis.nodeParametrieren', { graphId, nodeId: renderNodeId, params: { lineart: true } });
+    sendeGraphRenderAuftrag(graphId, renderNodeId);
+    await vi.waitFor(() => expect(gesehen()).not.toBeNull());
+
+    const szene = gesehen() as { style: { mode: string }; vis: { skip: boolean } };
+    expect(szene.style.mode).toBe('lineart');
+    expect(szene.vis.skip).toBe(true);
+  });
+
+  it('vis.skip bleibt hart true, auch wenn nurCycles auf dem Node false ist', async () => {
+    setzeLocalStorage({ 'kosmo.bridge': 'http://localhost:8600' });
+    const { gesehen } = stubFetchErfasseSzene();
+    const { sendeGraphRenderAuftrag } = await import('../src/modules/vis/vis-jobs');
+    const { runCommand } = useProject.getState();
+    const { graphId, renderNodeId } = graphMitRenderNode();
+
+    runCommand('vis.nodeParametrieren', {
+      graphId,
+      nodeId: renderNodeId,
+      params: { lineart: true, nurCycles: false },
+    });
+    sendeGraphRenderAuftrag(graphId, renderNodeId);
+    await vi.waitFor(() => expect(gesehen()).not.toBeNull());
+
+    expect((gesehen() as { vis: { skip: boolean } }).vis.skip).toBe(true);
+  });
+
+  it('ohne lineart-Param bleibt der Job byte-identisch (mode:none, vis.skip:false)', async () => {
+    setzeLocalStorage({ 'kosmo.bridge': 'http://localhost:8600' });
+    const { gesehen } = stubFetchErfasseSzene();
+    const { sendeGraphRenderAuftrag } = await import('../src/modules/vis/vis-jobs');
+    const { graphId, renderNodeId } = graphMitRenderNode();
+
+    sendeGraphRenderAuftrag(graphId, renderNodeId);
+    await vi.waitFor(() => expect(gesehen()).not.toBeNull());
+
+    const szene = gesehen() as { style: { mode: string }; vis: { skip: boolean } };
+    expect(szene.style.mode).toBe('none');
+    expect(szene.vis.skip).toBe(false);
+  });
+
+  it('lineart:false am Node → Job bleibt style.mode «none» (Undo-Fall/expliziter Rückbau)', async () => {
+    setzeLocalStorage({ 'kosmo.bridge': 'http://localhost:8600' });
+    const { gesehen } = stubFetchErfasseSzene();
+    const { sendeGraphRenderAuftrag } = await import('../src/modules/vis/vis-jobs');
+    const { runCommand, undo } = useProject.getState();
+    const { graphId, renderNodeId } = graphMitRenderNode();
+
+    // Setzen, dann per Undo wieder zurücknehmen — beweist, dass der Param
+    // (und damit Line-Art) ein normaler, undo-barer Patch ist, kein
+    // Sonderfall (V0810-SPEZ Z4: "undo-bar" ist Teil des Auftrags).
+    runCommand('vis.nodeParametrieren', { graphId, nodeId: renderNodeId, params: { lineart: true } });
+    undo();
+
+    sendeGraphRenderAuftrag(graphId, renderNodeId);
+    await vi.waitFor(() => expect(gesehen()).not.toBeNull());
+
+    const szene = gesehen() as { style: { mode: string }; vis: { skip: boolean } };
+    expect(szene.style.mode).toBe('none');
+    expect(szene.vis.skip).toBe(false);
+  });
+});

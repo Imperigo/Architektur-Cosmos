@@ -82,6 +82,29 @@ async function seedGraphMitRenderNode(page: Page): Promise<void> {
   await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 }
 
+/**
+ * Wie `seedGraphMitRenderNode`, aber MIT einem Modell-Node, verbunden auf den
+ * `szene`-Port des Render-Nodes (Muster `apps/kosmo-orbit/test/
+ * pc2-vis-render-executor.test.ts`s `graphMitRenderNode`) — `sendeGraph-
+ * RenderAuftrag` bricht ohne `hatSzene` ab, OHNE einen Lauf-Status zu setzen
+ * (`vis-jobs.ts`), darum braucht ein Test, der wirklich einen Job SENDET und
+ * auf `render-status` pollt, diese verdrahtete Variante.
+ */
+async function seedGraphMitVerbundenemRenderNode(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const k = window.__kosmo;
+    const res = k.run('vis.graphErstellen', { name: 'Insel-Job-Test' }) as { patches: { id: string }[] };
+    const graphId = res.patches[0]!.id;
+    k.run('vis.nodeSetzen', { graphId, typ: 'modell', x: 0, y: 0 });
+    k.run('vis.nodeSetzen', { graphId, typ: 'render', x: 200, y: 0 });
+    const nodes = window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!;
+    const modellId = nodes.find((n) => n.typ === 'modell')!.id;
+    const renderId = nodes.find((n) => n.typ === 'render')!.id;
+    k.run('vis.verbinden', { graphId, from: modellId, fromPort: 'szene', to: renderId, toPort: 'szene' });
+  });
+  await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
+}
+
 test.describe('PC1 — KosmoVis auf Islands (Default, kein Seed)', () => {
   test('Default ist island — alle vier Inseln rendern als Pill, alte Chrome ist weg', async ({ page }) => {
     await oeffneVisIsland(page);
@@ -209,6 +232,149 @@ test.describe('PC1 — KosmoVis auf Islands (Default, kein Seed)', () => {
     await page.click('[data-testid="island-werkzeug-render-senden"]');
     await expect(page.locator('[data-testid="island-render-senden-stufe2"]')).toBeVisible();
     await expect(page.locator('.visisl-render-zeile')).toHaveCount(1);
+  });
+
+  /**
+   * v0.8.11 Z4 (`docs/V0810-SPEZ.md` §5, Ein-Quellen-Entscheid aus der
+   * V0810-Z4-Schuld): Line-Art war bis hierher ein flüchtiger Insel-`useState`
+   * (`austausch.tsx:32`, vor diesem Paket) — jetzt ein PERSISTENTER
+   * Render-Node-Parameter (`node.params.lineart`, `vis.nodeParametrieren`).
+   * Diese Suite beweist alle drei Owner-Auflagen END-TO-END:
+   *  - undo-bar (normaler Patch, kein Sonderfall — GENAU wie
+   *    `e2e/standort-persistenz.spec.ts`: Undo läuft VOR dem Reload, weil
+   *    `project-vault.ts#ladeJson()` beim Wiederherstellen bewusst eine
+   *    FRISCHE `History` setzt — nur der DOC-Stand persistiert, kein
+   *    Undo-Stack über eine Sitzung hinaus, s. dortigen Kopfkommentar);
+   *  - persistiert (Autosave-Reload, «1200 ms Debounce abwarten, dann
+   *    reload», dasselbe Muster);
+   *  - fliesst wirklich in den Render-Auftrag (`style.mode:'lineart'`,
+   *    separater Bridge-Beweis-Test unten, ECHTE Fake-Bridge, kein Mock).
+   */
+  test('AUSTAUSCH-Insel: Line-Art-Schalter ist ein persistenter Node-Parameter — Undo hebt ihn auf, überlebt Reload', async ({
+    page,
+  }) => {
+    await oeffneVisIsland(page);
+    await seedGraphMitRenderNode(page);
+    const renderNodeId = await page.evaluate(
+      () => window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!.find((n) => n.typ === 'render')!.id,
+    );
+    const liesLineArt = () =>
+      page.evaluate(
+        (id) =>
+          (
+            window.__kosmo.state().doc.byKind('visgraph')[0]?.nodes?.find((n) => n.id === id) as unknown as
+              | { params: Record<string, unknown> }
+              | undefined
+          )?.params['lineart'] ?? null,
+        renderNodeId,
+      );
+
+    await oeffneInsel(page, 'austausch');
+    await page.click('[data-testid="island-werkzeug-render-senden"]');
+    await expect(page.locator('[data-testid="island-render-senden-stufe2"]')).toBeVisible();
+
+    const schalter = page.locator(`[data-testid="island-render-lineart-${renderNodeId}"]`);
+    await expect(schalter).toBeVisible();
+    await expect(schalter).not.toBeChecked();
+
+    // Setzen — EIN vis.nodeParametrieren-Patch, kein lokaler React-State mehr.
+    // `force:true` (Muster `e2e/publish-toggles.spec.ts` `klickSchalter`):
+    // der `KSwitch` hält das echte `<input>` `position:absolute`, und
+    // innerhalb des Insel-Popups (`.isl-popup`, eigener Containing Block
+    // durchs Popup-`transform`, PB1/PC0-Hotspot ausserhalb dieses Dateikreises)
+    // fängt die sichtbare Track-Spanne den gemessenen Klickpunkt ab.
+    await schalter.click({ force: true });
+    await expect(schalter).toBeChecked();
+    await expect.poll(liesLineArt).toBe(true);
+
+    // Undo hebt GENAU diesen Patch auf (letzter Undo-Schritt, LIVE-Sitzung —
+    // die History lebt nur im Speicher, s. Kopfkommentar) — kein Sonderfall
+    // gegenüber jedem anderen `vis.nodeParametrieren`-Aufruf. Der app-weite
+    // Kurztasten-Listener (`App.tsx` `VerlaufKurztasten`, C-9-Fix) ignoriert
+    // Ctrl+Z bewusst auf `<input>`/`<textarea>` (natives Text-Undo bleibt
+    // unangetastet) — der `KSwitch` IST ein `<input>` und behielte sonst den
+    // Fokus vom Klick eben; explizit weg-blurren, wie ein Nutzer, der nach
+    // dem Umlegen des Schalters woandershin klickt.
+    await schalter.evaluate((el) => (el as HTMLElement).blur());
+    await page.keyboard.press('Control+z');
+    await expect.poll(liesLineArt).toBeNull();
+    await expect(schalter).not.toBeChecked();
+
+    // Redo (Muster `e2e/standort-persistenz.spec.ts`): erneut setzen — DIESER
+    // Stand ist es, der den Reload überleben muss.
+    await schalter.click({ force: true });
+    await expect(schalter).toBeChecked();
+    await expect.poll(liesLineArt).toBe(true);
+
+    // Persistenz (Autosave ist entprellt, `project-vault.ts`, 1200 ms) —
+    // abwarten, dann reload: der Parameter muss den Reload überleben. Echte
+    // Wanduhrzeit, kein Zustands-Poll möglich (Muster
+    // `e2e/standort-persistenz.spec.ts`); 2200 ms statt der dortigen 1600 ms,
+    // weil dieses Paket zusätzliche Insel-Klicks VOR dem Warten fährt.
+    await page.waitForTimeout(2200);
+    await page.reload();
+
+    await expect.poll(liesLineArt, { timeout: 10_000 }).toBe(true);
+    // Ereignishalber auch am UI nachgewiesen — Insel wieder öffnen (Reload
+    // hat KEIN Onboarding-/Modul-Gedächtnis, `oeffneVisIsland` erneut nötig).
+    await page.click('[data-testid="module-vis"]');
+    await oeffneInsel(page, 'austausch');
+    await page.click('[data-testid="island-werkzeug-render-senden"]');
+    await expect(page.locator(`[data-testid="island-render-lineart-${renderNodeId}"]`)).toBeChecked();
+  });
+
+  test('AUSTAUSCH-Insel: Line-Art-Schalter aktiv → der gesendete Render-Auftrag trägt style.mode «lineart» (Bridge-Beweis)', async ({
+    page,
+  }) => {
+    const BRIDGE = 'http://localhost:8600';
+    await expect
+      .poll(async () => {
+        try {
+          const res = await fetch(`${BRIDGE}/health`);
+          return res.ok;
+        } catch {
+          return false;
+        }
+      }, { timeout: 20_000, message: 'Fake-Bridge :8600 antwortet nicht auf /health.' })
+      .toBe(true);
+
+    await oeffneVisIsland(page);
+    await seedGraphMitVerbundenemRenderNode(page);
+    const renderNodeId = await page.evaluate(
+      () => window.__kosmo.state().doc.byKind('visgraph')[0]!.nodes!.find((n) => n.typ === 'render')!.id,
+    );
+
+    await oeffneInsel(page, 'austausch');
+    await page.click('[data-testid="island-werkzeug-render-senden"]');
+    // `force:true` — s. Kommentar am ersten Line-Art-Test oben (Insel-Popup-
+    // Containing-Block-Hotspot, PB1/PC0, ausserhalb dieses Dateikreises).
+    await page.locator(`[data-testid="island-render-lineart-${renderNodeId}"]`).click({ force: true });
+    await expect(page.locator(`[data-testid="island-render-lineart-${renderNodeId}"]`)).toBeChecked();
+
+    const vorher = Date.now();
+    await page.click(`[data-testid="island-render-ausfuehren-${renderNodeId}"]`);
+
+    // Der Node-Körper selbst (NodeCanvas.tsx, unverändert unter der Insel
+    // gerendert) zeigt den Endzustand — Muster `e2e/vis-demolauf.spec.ts`.
+    const status = page.locator('[data-testid="render-status"]').first();
+    await expect
+      .poll(async () => (await status.textContent()) ?? '', { timeout: 60_000 })
+      .toMatch(/^(fertig|fehler)$/);
+    expect(await status.textContent()).toBe('fertig');
+
+    // Ehrlicher Beweis über die ECHTE Fake-Bridge (kein page.route-Mock): der
+    // JÜNGSTE seit Klick angelegte Job trägt requested_style «lineart» —
+    // main.py spiegelt `scene.style.mode` direkt (Kopfkommentar dort, Zeile
+    // ~350) UND `vis.skip` erzwang das Cycles-only-Rendering.
+    const jobs = (await page.evaluate(async (bridge) => {
+      const res = await fetch(`${bridge}/jobs`);
+      return res.json();
+    }, BRIDGE)) as { job_id: string; created_at: string; requested_style?: string; requested_engine?: string }[];
+    const jüngster = jobs
+      .filter((j) => new Date(j.created_at).getTime() >= vorher - 5000)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+    expect(jüngster, 'kein Job seit dem Klick in der Bridge-Jobliste gefunden').toBeTruthy();
+    expect(jüngster!.requested_style).toBe('lineart');
   });
 
   test('AUSTAUSCH-Insel: Kamera vorschlagen (Sofort-Aktion) legt einen Kamera-Node an', async ({ page }) => {

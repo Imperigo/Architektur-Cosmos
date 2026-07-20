@@ -19,17 +19,28 @@ function RenderSendenStufe2() {
   const graphId = useVisRuntime((s) => s.aktiverGraphId);
   const laeufe = useVisRuntime((s) => s.laeufe);
   const renderStimmungPreset = useVisRuntime((s) => s.renderStimmungPreset);
+  const runCommand = useProject((s) => s.runCommand);
   const revision = useProject((s) => s.revision);
   void revision;
   const doc = useProject.getState().doc;
   const graph = graphId ? doc.get<VisGraph>(graphId) : undefined;
   const renderNodes = graph?.nodes.filter((n) => n.typ === 'render') ?? [];
-  // v0.8.9 §9 E10 (Line-Art, `docs/V089-SPEZ.md`): EIN Schalter für den
-  // ganzen bestehenden Render-Auslöser dieser Insel (kein zweiter, eigener
-  // Job-Typ — E10 reitet auf der vis--Render-Kette). Reicht `mode:'lineart'`
-  // an `sendeGraphRenderAuftrag` durch, das `vis.skip:true` HART erzwingt
-  // (s. `vis-jobs.ts` Kommentar an `postRenderJob`s `mode`-Param).
-  const [lineArt, setLineArt] = useState(false);
+  // v0.8.11 Z4 (`docs/V0810-SPEZ.md` §5, Ein-Quellen-Entscheid aus der
+  // V0810-Z4-Schuld): Line-Art ist jetzt der PERSISTENTE Render-Node-
+  // Parameter `params.lineart` (boolean), gesetzt über den bestehenden
+  // `vis.nodeParametrieren`-Command (Anwendungs-Muster
+  // `render-presets.ts`) — kein Insel-`useState` mehr. Der Schalter hängt
+  // jetzt AM Node (nicht mehr global über der Liste), weil der Wert pro
+  // Render-Node getrennt persistiert; `sendeGraphRenderAuftrag` liest
+  // denselben Parameter direkt aus dem Doc (`vis-jobs.ts`) — kein zweiter
+  // Übergabeweg, undo-bar, überlebt den Insel-Remount.
+  const setzeLineArt = (nodeId: string, checked: boolean) => {
+    try {
+      runCommand('vis.nodeParametrieren', { graphId: graphId!, nodeId, params: { lineart: checked } });
+    } catch (err) {
+      meldeFehler(err);
+    }
+  };
 
   if (!graph || renderNodes.length === 0) {
     return (
@@ -41,18 +52,21 @@ function RenderSendenStufe2() {
 
   return (
     <div className="visisl-stufe2" data-testid="island-render-senden-stufe2" onClick={(e) => e.stopPropagation()}>
-      <KSwitch
-        label="Als Strichzeichnung (Line-Art)"
-        data-testid="island-render-lineart"
-        checked={lineArt}
-        onChange={(e) => setLineArt(e.target.checked)}
-      />
       {renderNodes.map((n, i) => {
         const status = laeufe[n.id]?.status;
+        // Bug-T4a-defensiv (NodeCanvas.tsx-Muster): ein Node OHNE `params`
+        // (Hand-Edit/Fremd-Import/Yjs-Merge) darf hier nicht abstürzen.
+        const lineArt = (n.params ?? {})['lineart'] === true;
         return (
           <div key={n.id} className="visisl-render-zeile">
             <span className="visisl-render-titel">Render {i + 1}</span>
             <span className="visisl-hinweis-klein">{status ?? 'bereit'}</span>
+            <KSwitch
+              label="Als Strichzeichnung (Line-Art)"
+              data-testid={`island-render-lineart-${n.id}`}
+              checked={lineArt}
+              onChange={(e) => setzeLineArt(n.id, e.target.checked)}
+            />
             <KButton
               size="sm"
               tone="accent"
@@ -62,7 +76,6 @@ function RenderSendenStufe2() {
                   graphId!,
                   n.id,
                   renderStimmungPreset ? { preset: renderStimmungPreset } : undefined,
-                  lineArt ? { mode: 'lineart' } : undefined,
                 )
               }
             >
