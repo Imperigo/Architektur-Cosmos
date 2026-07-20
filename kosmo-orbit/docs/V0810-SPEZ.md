@@ -198,3 +198,114 @@ Goldens 39 Dateien (38 SVG + 1 IFC), svg-qa 38.
   Ergebnisblock, Release-Notiz mit 0.9.0-Kandidatenliste, release-gate
   Exit 0, Build-Request-Push — NACHWEISLICH kein PDF/keine Zustellung
   → Fable
+
+## 7 · Ergebnis (Release-Stand, 20.07.2026)
+
+Alle acht eingefrorenen Entscheide sind gelandet. Die adversariale
+Vollständigkeits-Matrix lief als 11-Prüfer-Fan-out: **C-1…C-11 alle GRÜN**
+(nur ehrliche Randbefunde: fehlende progress-Asserts im Runner-Test als
+Folgeposten, dokumentierte Anfahrtsweg-Änderungen, 17 statt 16 Seed-Köpfe
+gezählt — der 17. ist der dokumentierte vis-oberflaeche-Umbau).
+GOLDEN-WECHSEL-0810 Teil 2 ist vollzogen (0 neue Treffer, vierstufig
+verifiziert — s. dortiges Protokoll). Der Rotlisten-Abgleich der 33
+d169f02-Vorbestände gegen den Hauptbaum läuft als voller E2E-Lauf und wird
+als eigener ROADMAP-Nachzug dokumentiert (kosmo-blick-2 5/5 und mfh 1/1
+sind im Hauptbaum bereits als grün bewiesen, ROADMAP 544/548).
+
+- **E1 Blender-Worker-Runner** — **erfüllt** (ROADMAP 540): NEU
+  `kosmo_bridge/blender_worker.py`, bpy-freier Store-Poller nach
+  `lora_empfaenger`-Hausmuster, Pflichtflag `--fake-worker`, pluggables
+  Berechner-Interface mit ausschliesslich dem `FakeBerechner` im Repo.
+  `test_blender_worker.py` 53/53 grün, `main.py`/`test_bridge_haerte.py`
+  byte-still (git diff leer), bpy-grep 0 Treffer — C-1/C-2/C-3 der Matrix
+  erfüllt.
+- **E2 vis-Spec-Migration auf Island** — **erfüllt** (ROADMAP 542 P-B1 + 543
+  P-B1b): Audit als Gate-Artefakt zuerst, danach **11 Specs** insgesamt auf
+  Island migriert (7 in P-B1: visgraph, vis-editor, vis-publish-bild,
+  vis-token-Setup, vis-automatik, kosmo-journey-efh/mfh-Vis-Kapitel; 4 in
+  P-B1b: cursor-ebene, homestation-kette, kosmo-blick-2, vis-report-dossier)
+  — je Spec per `test.use` auf leeren storageState, Node-Ebene-Assertionen
+  unverändert. C-4/C-5 der Matrix erfüllt.
+- **E3 Manuell-Rückbau (E3-Nachtrag, P-B2)** — **erfüllt, in zwei Commits**
+  (ROADMAP **548**/**549**, wie im E3-Nachtrag als Zwei-Commit-Muster
+  vorgesehen). **548** (Teil 1, `60dd527`): Werkzeug 'manuell' fällt aus dem
+  AUSTAUSCH-Katalog (14→13), Einstellungs-Schalter «Manuelle Ansicht
+  (KosmoVis)» (testid `einstellung-vis-manuell`) ersetzt ihn, KEINE
+  `normalisiere()`-Koerzierung mehr, die vier Manuell-only-Features
+  (vis-Legende, VisOnboarding, Vis-Dock-Panels, GespeicherteAnsichten)
+  bleiben über den Schalter erreichbar, `vis-oberflaeche.spec` auf
+  «Werkzeug existiert nicht + Island ist Default + Schalter schaltet hin und
+  zurück» umgebaut (3× solo 12/12). **549** (Teil 2, `3c71f10`): der eigene
+  Seed-Flip-Commit — `kosmoUiV1SeedMitManuell()` erzwingt `visOberflaeche`
+  nicht mehr, design/publish/prepare bleiben unverändert 'manuell'. **Zwei
+  ehrliche Audit-/Beweis-Funde des Bauagenten, beide dokumentiert statt
+  verschwiegen:** (1) zehn weitere implizit vis-seed-abhängige Dateien, die
+  P-B1s Migrationsliste (542) nicht kannte, wurden erst beim Flip selbst
+  gefunden und bekamen eigene `test.use`-Köpfe; (2) eine Vorbestands-Rotliste
+  von 33 Fällen in 20 Dateien (auf Worktree-Basis `d169f02`) — beidseitig
+  (vor/nach dem Flip) identisch, Netto-Regression exakt 0, keiner im
+  P-B2-Dateikreis. C-6/C-7 der Matrix erfüllt; der Abgleich der 33 Rotfälle
+  gegen den bereits gefixten Hauptbaum-Stand ist ein eigener, noch offener
+  Tag-C-Posten (s. Nachtrag oben).
+- **E4 Blatt-Umbenennen** — **erfüllt** (ROADMAP 547): `sheet: ['name']`
+  additiv in der `design.eigenschaftSetzen`-allowed-Map, Klick-zu-Edit in
+  der Blattkarten-Liste (testid `sheet-name-<index>`), Blattverzeichnis
+  zeigt den neuen Namen. Gegenprüfungs-Fund im selben Paket behoben: die
+  neue testid kollidierte mit dem Präfix-Selektor `[data-testid^="sheet-"]`
+  in zwei fremden Specs — per `setActiveSheetId` im Edit-Klick fachlich
+  sauber gelöst. Golden-Probelauf 0 bewegt (Sanktion 1 eingehalten). C-8
+  der Matrix erfüllt.
+- **E5 Plancode als zweite Zeile** — **erfüllt, mit korrigierter Prognose**
+  (ROADMAP 545): die Plancode-Spalte des Blattverzeichnisses ist durch eine
+  Sekundärzeile unter dem Blattnamen ersetzt (`BV_PLANCODE_ZEILE_H`,
+  dynamische Zeilenhöhe, Anker x=24 statt der alten Spalte x=182). **Ehrliche
+  Abweichung:** `docs/GOLDEN-WECHSEL-0810.md` Teil 1 hatte **2** bewegte
+  Bestands-Goldens prognostiziert, gelandet ist **1**
+  (`blattverzeichnis-legende.svg`) — `blattverzeichnis.svg` blieb dank der
+  unveränderten Daten-Guard-Logik (`mitPlancode`) byte-identisch; die
+  Prognose hatte diesen Guard übersehen. Kein Sanktions-1-Fall (nur eine
+  DEKLARIERTE Datei bewegt, Abweichung nach unten). C-9 der Matrix erfüllt.
+- **E6 Inspector-Ausbau** — **erfüllt** (ROADMAP 541): neue Zweige Stütze/
+  Unterzug/Möbel-Rotation, ergänzte Felder bei zone/mass/wall/freemesh —
+  alles über den bestehenden `design.eigenschaftSetzen`-Wurf-Weg, 8/8 E2E.
+  C-10 der Matrix erfüllt.
+- **E7 GOLDEN-WECHSEL-0810** — **erfüllt.** Teil 1
+  (Erwartungsliste) wurde VOR den Landungen committet (2 bewegt nur aus E5
+  prognostiziert, 37 still, +0 neu — ROADMAP 538). Die Ist-Korrektur nach
+  der E5-Landung (1 bewegt statt 2, s. oben) ist im Wechsel-Protokoll selbst
+  dokumentiert (ROADMAP 545). Teil 2 lief am 20.07. auf HEAD `3c71f10`
+  mit allen Paketen im Baum: 0 neue Treffer, aggregierte sha256 aller 39
+  Golden-Dateien vor/nach byte-identisch, svg-qa 38/0 — **1 bewegte Datei
+  über die ganze Version.** C-11 der Matrix erfüllt.
+- **E8 Nach Kapazität (Z3 + Z6)** — **beide Teile erfüllt, über die
+  Kernversprechen-Schwelle hinaus.** Z6 (ROADMAP 539): die als „timeboxte
+  Diagnose, Fix nur wenn trivial" eingestufte Deep-Link-Rottest-Untersuchung
+  fand die Ursache (mehrdeutige `island-<id>-root`-Zählung über zwei
+  Stationen) und **behob** sie direkt (positive/negative Assertion getrennt)
+  — kein blosser Befund-Vermerk, wie die Spec als Minimalfall vorsah. Z3
+  (ROADMAP 546): obwohl explizit „nach Kapazität, kein Kernversprechen"
+  eingestuft (`docs/V0810-SPEZ.md` E8), landete die volle Klickbarkeit +
+  VERSCHIEBBAR-Erweiterung für Unterzug/Möbel/Baugrenze/Etikett vollständig
+  in `plan-hit-test.ts` — Kapazität hat gereicht, der Posten musste NICHT
+  ersatzlos auf 0.9.0 fallen.
+
+## Ehrliche Abweichungen von der eingefrorenen Prognose (Zusammenfassung)
+
+1. **Golden-Prognose 2 → 1** (E5/ROADMAP 545): der Daten-Guard wurde in der
+   Teil-1-Erwartungsliste übersehen — Abweichung nach unten, kein
+   Sanktionsfall.
+2. **Z3 kam doch noch unter** (E8/ROADMAP 546): als Kapazitäts-Posten ohne
+   Kernversprechen eingestuft, aber vollständig geliefert — keine
+   0.9.0-Vertagung nötig.
+3. **Z6 wurde tatsächlich gefixt, nicht nur diagnostiziert** (E8/ROADMAP
+   539): die Spec verlangte nur „Fix wenn trivial, sonst Befund
+   nachtragen" — der Fix erwies sich als trivial genug, um ihn direkt zu
+   liefern, der vorbestehend rote Test ist seither grün.
+4. **P-B1s Seed-Audit war unvollständig, der Flip selbst deckte den Rest
+   auf** (E3/ROADMAP 548): die testid-basierte Migrationsliste aus 542 kannte
+   zehn implizit vis-seed-abhängige Dateien nicht — erst der Vor/Nach-Flip-
+   Vergleich fand sie. Dazu eine grössere Vorbestands-Rotliste als
+   angekündigt (33 Fälle in 20 Dateien statt der 6 genannten
+   Manuell-Feature-Specs) — beidseitig identisch bewiesen (Netto-Regression
+   0), Hauptbaum-Abgleich bewusst als eigener Tag-C-Posten offen gelassen
+   statt stillschweigend mit erledigt.

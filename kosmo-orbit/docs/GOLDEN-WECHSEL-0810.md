@@ -39,12 +39,18 @@ bewegte Golden ist mit Z2 committet).
 
 ## Teil 2 — gemeinsamer Lauf (Tag C, NACH allen Landungen)
 
-Noch offen — Ritual wie GOLDEN-WECHSEL-089:
+**Vollzogen 20.07.2026 (Fable, HEAD `3c71f10` — alle Pakete 538–549 im
+Baum):** EIN gemeinsamer `GOLDEN_UPDATE=1 npx vitest run`-Lauf im Kernel
+(59 Dateien/1170 Tests grün), vierstufige Verifikation:
 
-1. Alle Pakete im Baum, Suiten grün.
-2. EIN gemeinsamer `GOLDEN_UPDATE=1 npx vitest run`-Lauf im Kernel.
-3. Vierstufige Verifikation: `git status` (nur die 2 erwarteten
-   Z2-Dateien, bereits mit Z2 committet → hier 0 neue Treffer) →
-   `git diff --stat` → sha256-Liste der übrigen 37 vor/nach identisch →
-   svg-qa 38/0.
-4. Ist ≠ Prognose → Hard-Stop, Diff-Klassifikation durch Fable.
+1. `git status` nach dem Lauf: **0 Treffer** (der eine bewegte Golden
+   war mit Z2/`75dad53` committet — Ist == korrigierte Prognose).
+2. `git diff --stat`: leer.
+3. Aggregierte sha256 ALLER 39 Golden-Dateien vor/nach dem Lauf
+   byte-identisch: `d3c2586f0d9b7e6f2b118a8918d075174b6d455b8f7e4c56…`.
+4. svg-qa: 38 Goldens geprüft, 0 harte Fehler (4 bekannte weiche
+   Text-Overlap-Warnungen).
+
+Damit ist der Mini-Wechsel dieser Version abgeschlossen: **1 bewegte
+Datei über die ganze Version** (`blattverzeichnis-legende.svg`, Z2),
+38 SVG + 1 IFC unangetastet, +0 neue.
