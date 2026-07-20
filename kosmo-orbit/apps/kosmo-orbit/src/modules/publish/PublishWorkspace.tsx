@@ -145,6 +145,52 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
   const [zonenVorschau, setZonenVorschau] = useState(false);
   const [aussenbemassungVorschau, setAussenbemassungVorschau] = useState(false);
   const bildDateiRef = useRef<HTMLInputElement>(null);
+  // E4 (V0810-SPEZ §2, C-8, Blatt-Umbenennen): Klick-zu-Edit am Blattnamen in
+  // der Blattkarten-Liste (Manuell-Chrome). Kein Bestands-«Click-to-edit»-
+  // Muster im Repo gefunden (nur «immer editierbares KInput, commit bei
+  // Blur», s. StammdatenPanel.tsx/Inspector.tsx «Zonen-Namensfeld») — dieser
+  // Bauauftrag verlangt aber explizit Klick-zum-Öffnen + Escape-Abbruch, also
+  // additiv neu, mit denselben Commit-Bausteinen (KInput, runCommand im
+  // try/catch, meldeFehler) wie der Rest der Datei.
+  const [bearbeiteSheetId, setBearbeiteSheetId] = useState<string | null>(null);
+  // Escape schliesst OHNE Commit; der native Blur beim Unmount des Inputs
+  // (Browser feuert `blur`, sobald ein fokussiertes Element entfernt wird)
+  // darf dann NICHT alsdann noch den Command auslösen — dieses Ref bewacht
+  // genau dieses Zeitfenster (auf `false` zurückgesetzt, sobald ein neuer
+  // Bearbeitungsvorgang startet).
+  const blattnameAbbrechenRef = useRef(false);
+
+  function blattnameBearbeitenStarten(sheetId: string): void {
+    blattnameAbbrechenRef.current = false;
+    setBearbeiteSheetId(sheetId);
+    // Regressions-Fund (Gegenprüfung `baugesuch.spec.ts:91`, Selektor
+    // `[data-testid^="sheet-"]:not([data-testid="sheet-canvas"])`.last()`):
+    // `sheet-name-<index>` beginnt ebenfalls mit `sheet-` und liegt im DOM
+    // NACH der eigenen Karten-`sheet-<index>`-Panel — ein Klick auf den
+    // Namen darf darum NICHT nur `ev.stopPropagation()` sein (das liesse die
+    // Karte unselektiert), sondern muss dieselbe Aktivierung wie ein
+    // Karten-Klick auslösen (fachlich ohnehin richtig: den Namen bearbeiten
+    // heisst mit DIESEM Blatt arbeiten).
+    setActiveSheetId(sheetId);
+  }
+
+  function blattnameCommitten(sheetId: string, roh: string): void {
+    if (blattnameAbbrechenRef.current) {
+      blattnameAbbrechenRef.current = false;
+      return;
+    }
+    try {
+      runCommand('design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: roh });
+    } catch (err) {
+      // Sichtbare Fehlermeldung (Toast) statt eines stillen No-op — der
+      // Kernel wirft VOR jedem Patch (getrimmt, leer/Nur-Whitespace), das
+      // Doc bleibt unverändert, der Blattname in der Karte zeigt darum
+      // automatisch weiterhin den alten Namen.
+      meldeFehler(err);
+    } finally {
+      setBearbeiteSheetId(null);
+    }
+  }
 
   // v0.8.1 P7 (docs/V081-SPEZ.md §6.1/§7(e), C-13 «Publish-Preset-Wähler +
   // Erststart-Trigger») — die seit ROADMAP 380 bestehende Preset-Registry
@@ -769,7 +815,45 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
             style={{ ['--_hue' as string]: moduleHue.publish }}
           >
             <div className="k-publish-sheet-kopf">
-              <div className="k-publish-sheet-name">{s.name}</div>
+              {/* E4 (V0810-SPEZ §2, C-8): Klick auf den Namen macht ihn zum
+                  KInput (autoFocus, Text vorselektiert); Enter/Blur
+                  committet via design.eigenschaftSetzen (feld:'name'),
+                  Escape bricht ab. `ev.stopPropagation()` verhindert, dass
+                  der Panel-Klick (Blatt auswählen) den Edit-Klick verschluckt
+                  bzw. der Edit-Klick versehentlich die Karte de-/selektiert. */}
+              {bearbeiteSheetId === s.id ? (
+                <KInput
+                  size="sm"
+                  autoFocus
+                  defaultValue={s.name}
+                  data-testid={`sheet-name-${s.index}`}
+                  className="k-publish-sheet-name-feld"
+                  onFocus={(e) => e.currentTarget.select()}
+                  onClick={(ev) => ev.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                    } else if (e.key === 'Escape') {
+                      e.stopPropagation();
+                      blattnameAbbrechenRef.current = true;
+                      setBearbeiteSheetId(null);
+                    }
+                  }}
+                  onBlur={(e) => blattnameCommitten(s.id, e.currentTarget.value)}
+                />
+              ) : (
+                <div
+                  className="k-publish-sheet-name k-publish-sheet-name--editierbar"
+                  data-testid={`sheet-name-${s.index}`}
+                  title="Blattname bearbeiten"
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    blattnameBearbeitenStarten(s.id);
+                  }}
+                >
+                  {s.name}
+                </div>
+              )}
               <button
                 aria-label="Blatt entfernen"
                 data-testid={`blatt-entfernen-${s.index}`}

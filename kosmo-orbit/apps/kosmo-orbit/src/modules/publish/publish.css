@@ -104,6 +104,20 @@
   font-size: var(--k-t-sm);
   flex: 1;
 }
+/* E4 (V0810-SPEZ §2, C-8, Blatt-Umbenennen): Klick-zu-Edit-Affordanz —
+   gepunktete Unterstreichung nur bei Hover/Focus, damit die Karte in Ruhe
+   nicht nach einem Formularfeld aussieht. */
+.k-publish-sheet-name--editierbar {
+  cursor: pointer;
+  border-bottom: 1px dotted transparent;
+}
+.k-publish-sheet-name--editierbar:hover,
+.k-publish-sheet-name--editierbar:focus-visible {
+  border-bottom-color: var(--k-ink-faint);
+}
+.k-publish-sheet-name-feld {
+  flex: 1;
+}
 .k-publish-sheet-meta {
   font-size: var(--k-t-sm);
   color: var(--k-ink-faint);

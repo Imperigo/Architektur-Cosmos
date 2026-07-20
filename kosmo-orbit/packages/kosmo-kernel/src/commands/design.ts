@@ -775,7 +775,7 @@ export const setProperty = registerCommand({
   id: 'design.eigenschaftSetzen',
   title: 'Eigenschaft ändern',
   description:
-    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material). Zahlen in mm (pitch/rotationGrad in Grad).',
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
   params: z.object({
     entityId: z.string(),
     feld: z.enum(editableFields),
@@ -802,6 +802,10 @@ export const setProperty = registerCommand({
       storey: ['name', 'height'],
       assembly: ['name'],
       freemesh: ['name'],
+      // E4 (V0810-SPEZ §2, C-8): Blatt-Umbenennen — bislang produktweit
+      // kein Setzweg für Sheet.name (0.8.9-Befund). Nur `name`, kein
+      // weiteres Feld dieses Pakets.
+      sheet: ['name'],
       // v0.8.3 E1 (§1.3, docs/V083-SPEZ.md): additive Zeile, kein bestehender
       // Eintrag verändert.
       kommentar: ['text', 'status', 'erledigtAm'],
@@ -896,9 +900,17 @@ export const setProperty = registerCommand({
     if (p.feld === 'status' && e.kind === 'kommentar' && !['offen', 'erledigt'].includes(String(wert))) {
       throw new CommandError('status muss offen oder erledigt sein');
     }
+    if (p.feld === 'name' && e.kind === 'sheet') {
+      // E4 (V0810-SPEZ §2, C-8): Blattname ist ein echtes Modellfeld
+      // (Blattverzeichnis/Transmittal/Export lesen s.name direkt) — getrimmt,
+      // Leer-/Nur-Whitespace-Wurf nach dem Bestandsmuster material/typeId
+      // (design.ts:862-877).
+      wert = String(wert).trim();
+      if (wert.length === 0) throw new CommandError('Blattname darf nicht leer sein');
+    }
     if (p.feld === 'assemblyId') require<Assembly>(doc, String(wert), 'assembly');
-    const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' ? 'meta' : p.feld]:
-      p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone'
+    const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet' ? 'meta' : p.feld]:
+      p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet'
         ? { ...e.meta, name: String(wert) }
         : wert } as typeof e;
     return [{ id: e.id, before: e, after }];

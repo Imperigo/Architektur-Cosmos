@@ -13,6 +13,7 @@ import {
   type Zone,
   type Column,
   type Opening,
+  type Sheet,
 } from '../src';
 
 /**
@@ -535,5 +536,69 @@ describe('design.eigenschaftSetzen — E2 (V088-SPEZ §3, PA1-088): neue editabl
     expect(() => execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'name', wert: 'x' })).toThrow(
       /möglich: material, b, t, rotationGrad/,
     );
+  });
+});
+
+// E4 (V0810-SPEZ §2, C-8): Blatt-Umbenennen — der 0.8.9-Befund «produktweit
+// KEIN Blatt-Umbenennen-Weg» wird geschlossen. sheet.name ist wie
+// storey/assembly/zone ein DIREKTES Modellfeld (Blattverzeichnis/Transmittal/
+// Export lesen s.name), nicht Teil von `meta` — die name→meta-Ausnahme
+// (design.ts:912-914) trägt jetzt auch `sheet`.
+describe('design.eigenschaftSetzen — E4 (V0810-SPEZ §2, C-8): sheet.name', () => {
+  function baueBlatt(name = 'Grundriss EG'): { doc: KosmoDoc; sheetId: string } {
+    const doc = new KosmoDoc();
+    const b = execute(doc, 'publish.blattErstellen', { name, format: 'A3', orientation: 'quer' });
+    const sheetId = (b.patches[0] as { id: string }).id;
+    return { doc, sheetId };
+  }
+
+  it('setzt den Blattnamen als direktes Top-Feld (nicht meta) — Blattverzeichnis/Export lesen s.name', () => {
+    const { doc, sheetId } = baueBlatt();
+    const r = execute(doc, 'design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: 'Grundriss OG' });
+    const sheet = doc.get<Sheet>(sheetId)!;
+    expect(sheet.name).toBe('Grundriss OG');
+    expect((sheet as unknown as { meta?: { name?: string } }).meta?.name).toBeUndefined();
+    expect(r.patches).toHaveLength(1);
+  });
+
+  it('Undo-Invertierung: EIN invertPatches(...) stellt den alten Blattnamen byte-genau wieder her', () => {
+    const { doc, sheetId } = baueBlatt('Grundriss EG');
+    const vorher = doc.get<Sheet>(sheetId)!;
+    const vorSnapshot = JSON.stringify(doc.toJSON());
+
+    const r = execute(doc, 'design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: 'Grundriss OG neu' });
+    expect(doc.get<Sheet>(sheetId)!.name).toBe('Grundriss OG neu');
+
+    doc.apply(invertPatches(r.patches));
+    expect(doc.get<Sheet>(sheetId)).toEqual(vorher);
+    expect(JSON.stringify(doc.toJSON())).toBe(vorSnapshot);
+  });
+
+  it('leerer/Nur-Whitespace-Name wirft VOR jedem Patch (getrimmt), Doc bleibt byte-gleich', () => {
+    const { doc, sheetId } = baueBlatt();
+    const vorSnapshot = JSON.stringify(doc.toJSON());
+
+    expect(() => execute(doc, 'design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: '' })).toThrow(
+      CommandError,
+    );
+    expect(() => execute(doc, 'design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: '   ' })).toThrow(
+      /Blattname darf nicht leer sein/,
+    );
+    expect(JSON.stringify(doc.toJSON())).toBe(vorSnapshot);
+  });
+
+  it('trimmt umgebenden Whitespace beim Setzen (kein «  Grundriss EG  »)', () => {
+    const { doc, sheetId } = baueBlatt();
+    execute(doc, 'design.eigenschaftSetzen', { entityId: sheetId, feld: 'name', wert: '  Grundriss DG  ' });
+    expect(doc.get<Sheet>(sheetId)!.name).toBe('Grundriss DG');
+  });
+
+  it('fremdes Feld für sheet wirft mit der erlaubten-Felder-Liste (Bestandsmuster :757), Doc bleibt byte-gleich', () => {
+    const { doc, sheetId } = baueBlatt();
+    const vorSnapshot = JSON.stringify(doc.toJSON());
+    expect(() =>
+      execute(doc, 'design.eigenschaftSetzen', { entityId: sheetId, feld: 'height', wert: 100 }),
+    ).toThrow(/möglich: name/);
+    expect(JSON.stringify(doc.toJSON())).toBe(vorSnapshot);
   });
 });
