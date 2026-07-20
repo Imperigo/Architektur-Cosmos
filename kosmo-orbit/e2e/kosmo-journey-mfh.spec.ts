@@ -1,8 +1,63 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { SZENARIEN } from './sim/szenarien';
 import { projektStarten, parzelleSetzen, kosmoChatSkript, viewportAufnahme } from './sim/bausteine';
 import { MFH_SKRIPT, MFH_NUTZERTEXTE } from './sim/skripte-mfh';
-import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
+import { waehleOptionInScope } from './helfer/waehleOption';
+
+/**
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — nur das
+ * VIS-Kapitel («VIS — komplett über die UI», ab `window.__kosmo.open('vis')`)
+ * wechselt auf Island-Bootstrap; der Chat-Rohbau UND der Design-Rückweg
+ * (NACHBARN-IMPORT, `window.__kosmo.open('design')` gegen Ende) bleiben
+ * unangetastet. TEIL-Seed statt eines voll leeren `storageState` (Sanktion
+ * 6 — Design bleibt 'manuell', s. `e2e/kosmo-journey-efh.spec.ts`-
+ * Kopfkommentar für die volle Begründung), `visOberflaeche` fehlt bewusst.
+ */
+const JOURNEY_PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [
+      {
+        origin: `http://localhost:${JOURNEY_PORT}`,
+        localStorage: [
+          {
+            name: 'kosmo.ui.v1',
+            value: JSON.stringify({
+              version: 1,
+              modusAutomatik: false,
+              modusFesthalten: false,
+              phasenFokus: null,
+              designOberflaeche: 'manuell',
+              publishOberflaeche: 'manuell',
+              prepareOberflaeche: 'manuell',
+            }),
+          },
+          {
+            name: 'kosmo.leistung.v1',
+            value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+          },
+          { name: 'kosmo.dock.presetInit.v1', value: '1' },
+        ],
+      },
+    ],
+  },
+});
+
+/** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+  await page.hover(`[data-testid="island-${island}-root"]`);
+  await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+  await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+}
+
+/** GRAPH-Insel Node-Palette (Ersatz für `waehleOption(page, 'node-hinzu', typ)`). */
+async function islandNodeHinzu(page: Page, typ: string): Promise<void> {
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  const eintrag = page.locator(`[data-testid="island-palette-eintrag-${typ}"]`);
+  await expect(eintrag).toBeVisible();
+  await eintrag.click();
+}
 
 /**
  * v0.6.7 Nachtkampagne — Journey B «Mehrfamilienhaus»: EINE Benutzersimulation,
@@ -347,7 +402,8 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // `renderUeberBridge`/`viewportAufnahme`, e2e/sim/bausteine.ts) ist
   // `window.__kosmo.open(screen)`.
   await page.evaluate(() => window.__kosmo.open('vis'));
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
 
   // Prompt-Assertion: die Fassade-Auswahl am ersten Render-Node zeigt die aus
@@ -398,7 +454,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // aufnehmen» → zurück zu KosmoVis.
   await viewportAufnahme(page);
 
-  await waehleOption(page, 'node-hinzu', 'aufnahme');
+  await islandNodeHinzu(page, 'aufnahme');
   await expect(page.locator('[data-testid="vis-node-aufnahme"]')).toHaveCount(1);
   const aufnahmeBild = page.locator('[data-testid="vis-node-aufnahme"] [data-testid="aufnahme-bild"]');
   await expect(aufnahmeBild).toBeVisible();
@@ -414,7 +470,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // `vergleich`-Node an (Vergleich der drei Stimmungen) — es gibt nach diesem
   // Zug also ZWEI `vergleich`-Nodes; `node-hinzu` fügt den unseren dazu, wir
   // greifen ihn über den zuletzt erzeugten (`nodes.filter(...).at(-1)`).
-  await waehleOption(page, 'node-hinzu', 'vergleich');
+  await islandNodeHinzu(page, 'vergleich');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind<{ id: string; nodes: { id: string; typ: string }[] }>('visgraph')[0]!;
@@ -434,14 +490,23 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
   // Kuratieren (Stern) — seit dem H-36-Fix (Welle V1) zeigt die Fläche neben
   // dem ausgeführten Render-Node auch den aufnahme-Node mit Viewport-Bild:
   // genau ZWEI Karten (Regressions-Anker für den geheilten Zustand).
-  await page.click('[data-testid="vis-kuratier-toggle"]');
+  // Island-Hotspot (Muster `e2e/vis-editor.spec.ts`s H-36-Fix): der Insel-
+  // Einstellungs-Kreis überdeckt den Kuratier-Knopf oben rechts.
+  const klickeKuratierToggle = async () => {
+    try {
+      await page.locator('[data-testid="vis-kuratier-toggle"]').click({ timeout: 8000 });
+    } catch {
+      await page.locator('[data-testid="vis-kuratier-toggle"]').dispatchEvent('click');
+    }
+  };
+  await klickeKuratierToggle();
   await expect(page.locator('[data-testid="vis-kuratier-flaeche"]')).toBeVisible();
   const kuratierKarten = page.locator('[data-testid="vis-kuratier-karte"]');
   await expect(kuratierKarten).toHaveCount(2);
   const stern = kuratierKarten.first().locator('[data-testid="vis-kuratier-stern"]');
   await stern.click();
   await expect(stern).toHaveAttribute('aria-pressed', 'true');
-  await page.click('[data-testid="vis-kuratier-toggle"]'); // wieder schliessen
+  await klickeKuratierToggle(); // wieder schliessen
 
   // Aufs Blatt.
   const bilderVorher = await page.evaluate(() =>
@@ -450,7 +515,7 @@ test('Journey B «Mehrfamilienhaus»: Rohbau ausschliesslich über den Kosmo-Cha
       .doc.byKind<{ bilder?: unknown[] }>('sheet')
       .reduce((s, sh) => s + (sh.bilder?.length ?? 0), 0),
   );
-  await waehleOption(page, 'node-hinzu', 'blatt');
+  await islandNodeHinzu(page, 'blatt');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind<{ id: string; nodes: { id: string; typ: string }[] }>('visgraph')[0]!;

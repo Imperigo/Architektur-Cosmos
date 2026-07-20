@@ -11,14 +11,28 @@ import { waehleOption } from './helfer/waehleOption';
  * `cssVar()`-Read beim Mount) tatsächlich ändert — Muster «temporäres
  * Setzen der CSS-Property + Neuzeichnen».
  *
- * Test 1+2 laufen im globalen Manuell-Seed (`playwright.config.ts`,
- * `e2e/helpers/manuell-seed.ts`) wie `visgraph.spec.ts` — dieselbe
- * Node-Canvas-Chrome, kein Extra-Setup. Test 3 (Stimmung-Insel) setzt den
- * globalen Seed wie `vis-island.spec.ts` bewusst ausser Kraft (leerer
- * Kontext), weil die STIMMUNG-Insel nur im Island-Modus lebt — UND setzt
- * das Token-Override über `page.addInitScript` VOR jeder Navigation (der
- * Canvas zeichnet nur EINMAL beim Mount, s. `stimmung.tsx`-Kopfkommentar —
- * ein Override NACH dem Mount würde nie sichtbar).
+ * Test 3 (Stimmung-Insel) setzt den globalen Seed wie `vis-island.spec.ts`
+ * bewusst ausser Kraft (leerer Kontext), weil die STIMMUNG-Insel nur im
+ * Island-Modus lebt — UND setzt das Token-Override über `page.addInitScript`
+ * VOR jeder Navigation (der Canvas zeichnet nur EINMAL beim Mount, s.
+ * `stimmung.tsx`-Kopfkommentar — ein Override NACH dem Mount würde nie
+ * sichtbar).
+ *
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5): NUR die zwei
+ * Setup-Tests «Port-Kreis-fill» und «Theme-Flip» wechseln auf Island-
+ * Bootstrap (`test.use({ storageState: { cookies: [], origins: [] } })`,
+ * eigenes verschachteltes `test.describe` — Muster `e2e/blender-bridge.
+ * spec.ts:49`); sie brauchen nur EINEN `prompt`-Node (GRAPH-Insel-Palette,
+ * `visisl-graph-erstellen` + `island-palette-eintrag-prompt`) und prüfen
+ * danach ausschliesslich die Node-Ebene (`port-out-prompt`, unverändert).
+ * **ENTSCHEIDUNGSBEDARF (s. Bericht):** «Legende-Punkt» bleibt UNMIGRIERT
+ * unter dem globalen Manuell-Seed — die Legende (`vis-legende`,
+ * DockFlaeche-Panel) ist NUR `!islandModus` gerendert (`NodeCanvas.tsx`) und
+ * hat KEIN Insel-Äquivalent (`island/inhalte/ansicht.tsx` deckt nur Zoom/
+ * Minimap ab, keine Legende) — das Feature ist im Island-Modus schlicht
+ * nicht erreichbar, die Spec bleibt darum teilmigriert.
+ * Theme-Sanity-Werte (rgb(39,140,93) orbit) bleiben gültig — Island ändert
+ * das Theme nicht.
  */
 
 declare global {
@@ -29,13 +43,27 @@ declare global {
   }
 }
 
-test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, manuell)', () => {
+test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, Island-Bootstrap)', () => {
+  // v0.8.10 / P-B1: nur diese zwei Setup-Tests wechseln auf Island (s.
+  // Datei-Kopf) — eigener leerer Kontext, Muster `e2e/blender-bridge.
+  // spec.ts:49`.
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  /** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+  async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+    await page.hover(`[data-testid="island-${island}-root"]`);
+    await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+    await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+  }
+
   test('Port-Kreis-fill (Ausgang) wechselt sofort nach --k-port-prompt-Override, ohne Reload', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
     await page.click('[data-testid="module-vis"]');
-    await page.click('[data-testid="graph-neu"]');
-    await waehleOption(page, 'node-hinzu', 'prompt');
+    await oeffneVisWerkzeug(page, 'graph', 'palette');
+    await page.click('[data-testid="visisl-graph-erstellen"]');
+    await oeffneVisWerkzeug(page, 'graph', 'palette');
+    await page.click('[data-testid="island-palette-eintrag-prompt"]');
 
     const promptNode = page.locator('[data-testid="vis-node-prompt"]');
     await expect(promptNode).toBeVisible();
@@ -58,6 +86,40 @@ test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, manuell)', () => {
     expect(nachher).not.toBe(vorher);
   });
 
+  // v0.8.9 E6 (Owner-Wahl «K2 Ausgewogen», 19.07.2026): die Port-Tokens
+  // sind NICHT mehr theme-invariant — orbit hebt fünf der sechs Werte auf
+  // ein ≥4.6:1-Kontrastband, Papier behält die Basiswerte. Dieser Test
+  // MISST den Flip am gerenderten Port (kein reiner Token-Read): dasselbe
+  // `data-theme`-Attribut, das App.tsx setzt, wird direkt umgeschaltet —
+  // die SVG-fill folgt ohne Reload, weil der `var()`-Kanal (D7) den
+  // aktuellen Kaskadenwert liest.
+  test('Theme-Flip orbit→paper wechselt die Portfarbe auf den Basiswert (E6-Override)', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+    await page.click('[data-testid="module-vis"]');
+    await oeffneVisWerkzeug(page, 'graph', 'palette');
+    await page.click('[data-testid="visisl-graph-erstellen"]');
+    await oeffneVisWerkzeug(page, 'graph', 'palette');
+    await page.click('[data-testid="island-palette-eintrag-prompt"]');
+    const port = page.locator('[data-testid="vis-node-prompt"]').locator('[data-testid="port-out-prompt"]');
+    await expect(port).toBeVisible();
+
+    // orbit (E2E-Default): K2-Override #278c5d.
+    expect(await port.evaluate((el) => getComputedStyle(el).fill)).toBe('rgb(39, 140, 93)');
+    await page.evaluate(() => {
+      document.documentElement.dataset.theme = 'paper';
+    });
+    // paper: Basiswert #1e6b47 bleibt der Bestand (E6: «Papier behält die
+    // Bestandswerte»).
+    expect(await port.evaluate((el) => getComputedStyle(el).fill)).toBe('rgb(30, 107, 71)');
+  });
+});
+
+// ENTSCHEIDUNGSBEDARF an Fable (s. Datei-Kopf): UNMIGRIERT — die Legende
+// (`vis-legende`, DockFlaeche-Panel) ist nur `!islandModus` gerendert und
+// hat kein Insel-Äquivalent. Kein `test.use`-Override hier — läuft
+// weiterhin im globalen Manuell-Seed (`playwright.config.ts`).
+test.describe('PA4-088 — Legende-Punkt folgt dem Token (DOM, manuell — kein Insel-Äquivalent)', () => {
   test('Legende-Punkt (--_farbe-Durchreichung) wechselt sofort nach --k-port-prompt-Override', async ({ page }) => {
     await page.goto('/');
     await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
@@ -80,32 +142,6 @@ test.describe('PA4-088 — Port-Farbe folgt dem Token (SVG, manuell)', () => {
     const nachher = await punkt.evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(nachher).toBe('rgb(255, 0, 255)');
     expect(nachher).not.toBe(vorher);
-  });
-
-  // v0.8.9 E6 (Owner-Wahl «K2 Ausgewogen», 19.07.2026): die Port-Tokens
-  // sind NICHT mehr theme-invariant — orbit hebt fünf der sechs Werte auf
-  // ein ≥4.6:1-Kontrastband, Papier behält die Basiswerte. Dieser Test
-  // MISST den Flip am gerenderten Port (kein reiner Token-Read): dasselbe
-  // `data-theme`-Attribut, das App.tsx setzt, wird direkt umgeschaltet —
-  // die SVG-fill folgt ohne Reload, weil der `var()`-Kanal (D7) den
-  // aktuellen Kaskadenwert liest.
-  test('Theme-Flip orbit→paper wechselt die Portfarbe auf den Basiswert (E6-Override)', async ({ page }) => {
-    await page.goto('/');
-    await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
-    await page.click('[data-testid="module-vis"]');
-    await page.click('[data-testid="graph-neu"]');
-    await waehleOption(page, 'node-hinzu', 'prompt');
-    const port = page.locator('[data-testid="vis-node-prompt"]').locator('[data-testid="port-out-prompt"]');
-    await expect(port).toBeVisible();
-
-    // orbit (E2E-Default): K2-Override #278c5d.
-    expect(await port.evaluate((el) => getComputedStyle(el).fill)).toBe('rgb(39, 140, 93)');
-    await page.evaluate(() => {
-      document.documentElement.dataset.theme = 'paper';
-    });
-    // paper: Basiswert #1e6b47 bleibt der Bestand (E6: «Papier behält die
-    // Bestandswerte»).
-    expect(await port.evaluate((el) => getComputedStyle(el).fill)).toBe('rgb(30, 107, 71)');
   });
 });
 

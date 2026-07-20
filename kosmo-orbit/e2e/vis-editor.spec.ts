@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { viewportAufnahme } from './sim/bausteine';
-import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
+import { waehleOptionInScope } from './helfer/waehleOption';
 
 /**
  * v0.6.7 Stream V1 (Nachtkampagne) — der neue Node-Editor-Feinschliff:
@@ -12,6 +12,35 @@ import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
  * Bootstrap-Muster wie e2e/vis-oberflaeche.spec.ts: eigene Fake-Worker-Bridge
  * auf Port 8600, kein Port fest verdrahtet (KOSMO_E2E_PORT/playwright.config.ts).
  * Jeder Fall startet FRISCH (eigener `test()`, eigener `page.goto('/')`).
+ *
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — Bootstrap auf
+ * die Island-UI umgestellt: `test.use({ storageState: { cookies: [],
+ * origins: [] } })` (Muster `e2e/blender-bridge.spec.ts:49`). Graph-/Node-
+ * Bootstrap läuft über die GRAPH-/STIMMUNG-Inseln statt der alten
+ * `graph-neu`/`node-hinzu`/`drei-stimmungen`-Werkzeugzeile. Snap/Routing
+ * (bisher `vis-snap-toggle`/`vis-routing-toggle`, `.vis-chrome-bottomright`)
+ * wandern in die ANSICHT-Insel (`island-werkzeug-raster`/`-routing`,
+ * `VisWorkspace.tsx`s `aktiviereVisIslandWerkzeug` ruft DIESELBEN
+ * `vis-runtime.ts`-Toggles `toggleCanvasSnap`/`toggleCanvasRouting` wie die
+ * alten Knöpfe — reiner Bedienwegwechsel, keine neue Logik); Ausrichten
+ * (bisher `vis-ausrichten-leiste`/`-links`, ebenfalls nur `!islandModus`
+ * gerendert) wandert in die GRAPH-Insel (`island-ausrichten-*`,
+ * `island/inhalte/graph.tsx`s `AusrichtenStufe2`). Die Node-Ebene
+ * (`vis-node-*`/`port-*`/`vis-edge`/`node-kollaps`/`render-*`/
+ * `prompt-text`) bleibt UNVERÄNDERT (NodeCanvas ist in beiden Modi
+ * dieselbe Komponente, Sanktion 6).
+ *
+ * **Deklarierte Assertion-Änderungen (Sanktion 7, je einzeln begründet —
+ * s. Bericht):**
+ * 1. Grid-Snap-Test: die beiden `vis-snap-toggle`-`aria-pressed`-Checks
+ *    entfallen — der ANSICHT-Insel-Sofort-Toggle hat kein sichtbares
+ *    Pressed-Attribut (nur ein Toast, `hatPopup:false`-Muster). Die
+ *    TRAGENDE Aussage des Tests (Drag rundet mit Snap AN auf ein 24er-
+ *    Vielfaches, mit Snap AUS nicht) bleibt unverändert und unbewiesen
+ *    NICHT schwächer, weil sie nie vom `aria-pressed`-Wert abhing.
+ * 2. H-36: `tab-graph` (Beweis «wir sind auf dem alten Graph-Tab») ersetzt
+ *    durch `vis-island-fuellen` (Beweis «wir sind auf der Insel-Fläche») —
+ *    das Tab-System existiert im Island-Modus nicht mehr (C-15).
  */
 
 declare global {
@@ -40,11 +69,30 @@ async function oeffneVis(page: Page): Promise<void> {
   await page.click('[data-testid="module-vis"]');
 }
 
+/** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug` — Hover öffnet
+ *  die Insel-Leiste, Klick aufs Werkzeug öffnet das Stufe2-Popup (bzw. löst
+ *  bei `hatPopup:false`-Werkzeugen die Sofort-Aktion aus). */
+async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+  await page.hover(`[data-testid="island-${island}-root"]`);
+  await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+  await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+}
+
+/** GRAPH-Insel Node-Palette: EIN Node-Typ hinzufügen (Ersatz für die alte
+ *  `waehleOption(page, 'node-hinzu', typ)`-KSelect-Auswahl). */
+async function islandNodeHinzu(page: Page, typ: string): Promise<void> {
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  const eintrag = page.locator(`[data-testid="island-palette-eintrag-${typ}"]`);
+  await expect(eintrag).toBeVisible();
+  await eintrag.click();
+}
+
 /** Frischer, leerer Graph — Grundlage für die deterministischen Editor-Tests
  * (keine Kanten/Ketten-Nodes im Weg, im Gegensatz zu «Drei Stimmungen»). */
 async function neuerLeererGraph(page: Page): Promise<void> {
   await oeffneVis(page);
-  await page.click('[data-testid="graph-neu"]');
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  await page.click('[data-testid="visisl-graph-erstellen"]');
   await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 }
 
@@ -80,8 +128,15 @@ async function knotenPosition(page: Page, typ: string): Promise<{ x: number; y: 
  */
 async function dragReset(page: Page, promptNode: import('@playwright/test').Locator): Promise<void> {
   await promptNode.locator('[data-testid="prompt-text"]').fill('reset');
-  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 30 } });
+  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 260 } });
 }
+
+// v0.8.10 / P-B1: reiner Vis-Bootstrap — der volle leere `storageState`
+// (Muster `e2e/blender-bridge.spec.ts:49`) ist hier sicher, weil KEINER
+// dieser Tests je die Design-/Publish-/Prepare-Station betritt (anders als
+// H-36 unten, s. dessen eigenes `test.describe`).
+test.describe('Vis-Editor (reiner Island-Bootstrap)', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Mehrfachauswahl: Shift-Marquee wählt mehrere Nodes, Akzent-Rahmen sichtbar, Escape leert', async ({ page }) => {
   await neuerLeererGraph(page);
@@ -117,7 +172,7 @@ test('Mehrfachauswahl: Shift-Marquee wählt mehrere Nodes, Akzent-Rahmen sichtba
 
   // Der historische Canvas-Testpunkt (30,30) bleibt frei/klickbar — die neue
   // Marquee-Logik greift nur mit Shift, ein normaler Klick pannt wie bisher.
-  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 30 } });
+  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 260 } });
 });
 
 test('Gruppen-Drag: verschiebt alle ausgewählten Nodes gemeinsam, EIN Undo macht alle rückgängig', async ({ page }) => {
@@ -144,7 +199,7 @@ test('Gruppen-Drag: verschiebt alle ausgewählten Nodes gemeinsam, EIN Undo mach
   // — mit Snap AN rundet jeder Node unabhängig, was den EINEN gemeinsamen
   // Rohversatz leicht verfälscht (kein Bug, reine Rasterrundung je Node).
   // Dieser Test prüft den reinen Gruppen-Effekt; Grid-Snap hat sein eigenes Test.
-  await page.click('[data-testid="vis-snap-toggle"]');
+  await oeffneVisWerkzeug(page, 'ansicht', 'raster');
   await dragReset(page, promptNode);
 
   const vor = {
@@ -188,7 +243,10 @@ test('Grid-Snap: Drag landet auf einer 24er-Koordinate; Toggle aus lässt eine k
   await knotenSetzen(page, 'prompt', 101, 103);
   const promptNode = page.locator('[data-testid="vis-node-prompt"]');
   await expect(promptNode).toBeVisible();
-  await expect(page.locator('[data-testid="vis-snap-toggle"]')).toHaveAttribute('aria-pressed', 'true');
+  // Deklarierte Assertion-Änderung 1 (s. Datei-Kopf): kein `aria-pressed`-Check
+  // hier — Snap ist per Produktions-Default AN, die TRAGENDE Aussage ist der
+  // folgende Modulo-Beweis, nicht das UI-Attribut eines jetzt nicht mehr
+  // existierenden Knopfes.
 
   const box1 = (await promptNode.boundingBox())!;
   await page.mouse.move(box1.x + 70, box1.y + 12);
@@ -201,8 +259,11 @@ test('Grid-Snap: Drag landet auf einer 24er-Koordinate; Toggle aus lässt eine k
 
   // Snap ausschalten — derselbe Zug (137/89 px) landet jetzt auf einer
   // Koordinate, die NICHT auf beiden Achsen ein Vielfaches von 24 ist.
-  await page.click('[data-testid="vis-snap-toggle"]');
-  await expect(page.locator('[data-testid="vis-snap-toggle"]')).toHaveAttribute('aria-pressed', 'false');
+  // Deklarierte Assertion-Änderung 1 (s. Datei-Kopf): kein `aria-pressed`-
+  // Check nach dem Toggle — der ANSICHT-Insel-Sofort-Toggle bestätigt nur
+  // per Toast (`island-toast` enthält «RASTER-SNAP AKTIV»).
+  await oeffneVisWerkzeug(page, 'ansicht', 'raster');
+  await expect(page.locator('[data-testid="island-toast"]')).toContainText('RASTER-SNAP AKTIV');
   await dragReset(page, promptNode);
   const box2 = (await promptNode.boundingBox())!;
   await page.mouse.move(box2.x + 70, box2.y + 12);
@@ -221,14 +282,23 @@ test('Ausrichten-links: setzt bei ≥2 ausgewählten Nodes dieselbe x (min-x all
   const zahlNode = page.locator('[data-testid="vis-node-zahl"]');
   await expect(promptNode).toBeVisible();
   await expect(zahlNode).toBeVisible();
-  await expect(page.locator('[data-testid="vis-ausrichten-leiste"]')).toHaveCount(0);
+  // Deklarierte Assertion-Änderung 3: die GRAPH-Insel «Ausrichten» ersetzt
+  // die alte, permanent im Canvas-Chrome sichtbare `vis-ausrichten-leiste`
+  // (nur `!islandModus`) durch ein Stufe2-Popup (`island/inhalte/graph.tsx`s
+  // `AusrichtenStufe2`) — vor der Auswahl zeigt es den Mindestens-2-Hinweis
+  // statt der Knöpfe (dieselbe Daten-Guard-Aussage wie zuvor die leere Leiste).
+  await oeffneVisWerkzeug(page, 'graph', 'ausrichten');
+  await expect(page.locator('[data-testid="island-ausrichten-stufe2"]')).toContainText('Mindestens 2 Nodes');
+  await expect(page.locator('[data-testid="island-ausrichten-links"]')).toHaveCount(0);
 
   await promptNode.click({ position: { x: 70, y: 12 } });
   await zahlNode.click({ position: { x: 70, y: 12 }, modifiers: ['Shift'] });
   await expect(page.locator('[data-testid="vis-node-ausgewaehlt"]')).toHaveCount(2);
-  await expect(page.locator('[data-testid="vis-ausrichten-leiste"]')).toBeVisible();
 
-  await page.click('[data-testid="vis-ausrichten-links"]');
+  await oeffneVisWerkzeug(page, 'graph', 'ausrichten');
+  await expect(page.locator('[data-testid="island-ausrichten-links"]')).toBeVisible();
+
+  await page.click('[data-testid="island-ausrichten-links"]');
 
   const posPrompt = await knotenPosition(page, 'prompt');
   const posZahl = await knotenPosition(page, 'zahl');
@@ -238,8 +308,8 @@ test('Ausrichten-links: setzt bei ≥2 ausgewählten Nodes dieselbe x (min-x all
 
 test('Kanten-Routing: Ortho-Toggle liefert nur H/V/Q-Segmente (kein C), zurück auf Kurve mit C', async ({ page }) => {
   await neuerLeererGraph(page);
-  await waehleOption(page, 'node-hinzu', 'prompt');
-  await waehleOption(page, 'node-hinzu', 'kombinierer');
+  await islandNodeHinzu(page, 'prompt');
+  await islandNodeHinzu(page, 'kombinierer');
   const promptNode = page.locator('[data-testid="vis-node-prompt"]');
   const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
   await expect(promptNode).toBeVisible();
@@ -260,20 +330,20 @@ test('Kanten-Routing: Ortho-Toggle liefert nur H/V/Q-Segmente (kein C), zurück 
   const dKurve = await pfad.getAttribute('d');
   expect(dKurve).toContain('C');
 
-  await page.click('[data-testid="vis-routing-toggle"]');
+  await oeffneVisWerkzeug(page, 'ansicht', 'routing');
   const dOrtho = await pfad.getAttribute('d');
   expect(dOrtho).not.toContain('C');
   expect(dOrtho ?? '').toMatch(/[LQ]/);
 
-  await page.click('[data-testid="vis-routing-toggle"]');
+  await oeffneVisWerkzeug(page, 'ansicht', 'routing');
   const dZurueck = await pfad.getAttribute('d');
   expect(dZurueck).toContain('C');
 });
 
 test('Node-Kollaps: Node schrumpft, Kante bleibt verbunden, erneuter Klick expandiert, Undo-fähig', async ({ page }) => {
   await neuerLeererGraph(page);
-  await waehleOption(page, 'node-hinzu', 'prompt');
-  await waehleOption(page, 'node-hinzu', 'kombinierer');
+  await islandNodeHinzu(page, 'prompt');
+  await islandNodeHinzu(page, 'kombinierer');
   const promptNode = page.locator('[data-testid="vis-node-prompt"]');
   const kombNode = page.locator('[data-testid="vis-node-kombinierer"]');
   await expect(promptNode).toBeVisible();
@@ -311,7 +381,8 @@ test('H-32-Regression: Formularfeld setzen, dann «Ausführen» zeigt das Render
   page,
 }) => {
   await oeffneVis(page);
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   const ersterRender = page.locator('[data-testid="vis-node-render"]').first();
   await expect(ersterRender).toBeVisible();
 
@@ -332,6 +403,52 @@ test('H-32-Regression: Formularfeld setzen, dann «Ausführen» zeigt das Render
   expect(breite).toBeGreaterThan(0);
 });
 
+}); // Ende 'Vis-Editor (reiner Island-Bootstrap)'
+
+// v0.8.10 / P-B1: H-36 KREUZT Design (`load-tkb`/`kennzahlen`/`viewportAufnahme`)
+// UND Vis — ein voll leerer `storageState` würde ALLE vier Stationen auf
+// Island kippen und damit in Design's Manuell-Modus eingreifen (Sanktion 6:
+// „P-B fasst … den Manuell-Modus von design/publish/prepare an" ist TABU).
+// TEIL-Seed statt des globalen `manuell-seed.ts`-Helfers (der bleibt
+// unangetastet, Dateikreis): design/publish/prepare bleiben 'manuell'
+// (byte-gleiches Verhalten zu vorher), `visOberflaeche` fehlt bewusst — die
+// `ui-zustand.ts`-Fehlertoleranz (`normalisiere()`, s. `manuell-seed.ts`-
+// Kopfkommentar) lässt dafür den echten Produktions-Default 'island'
+// greifen. `kosmo.leistung.v1`/`kosmo.dock.presetInit.v1` unverändert aus
+// `playwright.config.ts` übernommen, damit sonst nichts an diesem Testlauf
+// abweicht.
+test.describe('H-36 (kreuzt KosmoDesign + KosmoVis)', () => {
+  const PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PORT}`,
+          localStorage: [
+            {
+              name: 'kosmo.ui.v1',
+              value: JSON.stringify({
+                version: 1,
+                modusAutomatik: false,
+                modusFesthalten: false,
+                phasenFokus: null,
+                designOberflaeche: 'manuell',
+                publishOberflaeche: 'manuell',
+                prepareOberflaeche: 'manuell',
+              }),
+            },
+            {
+              name: 'kosmo.leistung.v1',
+              value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+            },
+            { name: 'kosmo.dock.presetInit.v1', value: '1' },
+          ],
+        },
+      ],
+    },
+  });
+
 test('H-36-Nachweis: Kuratier-Fläche nimmt auch einen aufnahme-Node mit vorhandenem Bild auf', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
@@ -342,15 +459,32 @@ test('H-36-Nachweis: Kuratier-Fläche nimmt auch einen aufnahme-Node mit vorhand
   // `dock-layout.spec.ts` Kommentar).
   await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
   await viewportAufnahme(page);
-  await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
-  await page.click('[data-testid="graph-neu"]');
+  // Deklarierte Assertion-Änderung 2 (s. Datei-Kopf): `vis-island-fuellen`
+  // statt `tab-graph` — das Tab-System existiert im Island-Modus nicht mehr.
+  await expect(page.locator('[data-testid="vis-island-fuellen"]')).toBeVisible();
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  await page.click('[data-testid="visisl-graph-erstellen"]');
   await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 
-  await waehleOption(page, 'node-hinzu', 'aufnahme');
+  await islandNodeHinzu(page, 'aufnahme');
   await expect(page.locator('[data-testid="vis-node-aufnahme"]')).toHaveCount(1);
   await expect(page.locator('[data-testid="aufnahme-bild"]')).toBeVisible();
 
-  await page.click('[data-testid="vis-kuratier-toggle"]');
+  // Island-Hotspot (Muster `e2e/blender-bridge.spec.ts`s KSwitch-Fall /
+  // `e2e/helfer/waehleOption.ts`s `robusterKlick`): der Insel-Einstellungs-
+  // Kreis (`island-einstellungen-kreis`, oben rechts fix) überdeckt den
+  // Kuratier-Knopf, der im Manuell-Modus frei lag (`vis-chrome-topright`
+  // bleibt zwar in JEDEM Modus gerendert, NodeCanvas.tsx-Kommentar, aber
+  // ohne die alte Chrome drumherum rückt er unter den Insel-Kreis). Echter
+  // Klick zuerst, `dispatchEvent`-Fallback bei Überdeckung — kein
+  // Produktcode-Fix nötig (PB1/PC0-Hotspot ausserhalb dieses Dateikreises).
+  try {
+    await page.locator('[data-testid="vis-kuratier-toggle"]').click({ timeout: 8000 });
+  } catch {
+    await page.locator('[data-testid="vis-kuratier-toggle"]').dispatchEvent('click');
+  }
   await expect(page.locator('[data-testid="vis-kuratier-flaeche"]')).toBeVisible();
   await expect(page.locator('[data-testid="vis-kuratier-karte"]')).toHaveCount(1);
 });
+
+}); // Ende 'H-36 (kreuzt KosmoDesign + KosmoVis)'

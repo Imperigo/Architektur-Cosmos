@@ -1,8 +1,68 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import type { SzenarioSkript } from '@kosmo/ai';
 import { kosmoChatSkript, projektStarten, viewportAufnahme } from './sim/bausteine';
 import { SZENARIEN } from './sim/szenarien';
-import { waehleOption, waehleOptionInScope } from './helfer/waehleOption';
+import { waehleOptionInScope } from './helfer/waehleOption';
+
+/**
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — nur das
+ * VIS-Kapitel (Akt 2-4, ab «Stationswechsel») wechselt auf Island-Bootstrap;
+ * Akt 1/1b/1c bleiben unangetastet auf KosmoDesign. Ein voll leerer
+ * `storageState` würde ALLE vier Stationen auf Island kippen und damit in
+ * Design's Manuell-Modus eingreifen (Sanktion 6, `view-2d`/`kosmo-panel-
+ * schliessen`/`undo` oben brauchen die heutige Design-Chrome unverändert) —
+ * TEIL-Seed (design/publish/prepare bleiben 'manuell', `visOberflaeche`
+ * fehlt bewusst → echter Produktions-Default 'island' über `ui-zustand.ts`s
+ * Fehlertoleranz) statt des globalen `manuell-seed.ts`-Helfers (bleibt
+ * unangetastet), Muster `e2e/vis-editor.spec.ts`s H-36/`e2e/vis-
+ * automatik.spec.ts`. Vis-Bootstrap läuft über die GRAPH-/STIMMUNG-Inseln;
+ * die Node-Ebene bleibt unverändert (Sanktion 6).
+ */
+const JOURNEY_PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [
+      {
+        origin: `http://localhost:${JOURNEY_PORT}`,
+        localStorage: [
+          {
+            name: 'kosmo.ui.v1',
+            value: JSON.stringify({
+              version: 1,
+              modusAutomatik: false,
+              modusFesthalten: false,
+              phasenFokus: null,
+              designOberflaeche: 'manuell',
+              publishOberflaeche: 'manuell',
+              prepareOberflaeche: 'manuell',
+            }),
+          },
+          {
+            name: 'kosmo.leistung.v1',
+            value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+          },
+          { name: 'kosmo.dock.presetInit.v1', value: '1' },
+        ],
+      },
+    ],
+  },
+});
+
+/** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+  await page.hover(`[data-testid="island-${island}-root"]`);
+  await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+  await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+}
+
+/** GRAPH-Insel Node-Palette (Ersatz für `waehleOption(page, 'node-hinzu', typ)`). */
+async function islandNodeHinzu(page: Page, typ: string): Promise<void> {
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  const eintrag = page.locator(`[data-testid="island-palette-eintrag-${typ}"]`);
+  await expect(eintrag).toBeVisible();
+  await eintrag.click();
+}
 
 /**
  * v0.6.7 Simulationsrunde 1 / Journey A — «EFH kompakt, komplett über Kosmo»
@@ -310,7 +370,8 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   // Stationswechsel aus KosmoDesign heraus: derselbe __kosmo.open()-Weg wie
   // vis-automatik.spec/module.spec (module-vis lebt nur in der Zentrale).
   await page.evaluate(() => (window.__kosmo as unknown as { open: (s: string) => void }).open('vis'));
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   const ersterRender = page.locator('[data-testid="vis-node-render"]').first();
   await expect(ersterRender).toBeVisible();
 
@@ -333,7 +394,7 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
 
   // ── Akt 3: Viewport-Aufnahme als zweite, ehrliche Bildquelle ──────────
   await viewportAufnahme(page);
-  await waehleOption(page, 'node-hinzu', 'aufnahme');
+  await islandNodeHinzu(page, 'aufnahme');
   const aufnahmeNode = page.locator('[data-testid="vis-node-aufnahme"]');
   await expect(aufnahmeNode).toBeVisible();
   const aufnahmeBild = aufnahmeNode.locator('img');
@@ -341,7 +402,13 @@ test('Journey A: EFH komplett über Kosmo-Chat bauen, dann Vis-Kette bis Kuratie
   expect(await aufnahmeBild.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
 
   // ── Akt 4: Kuratieren — Render-Bild merken ─────────────────────────────
-  await page.click('[data-testid="vis-kuratier-toggle"]');
+  // Island-Hotspot (Muster `e2e/vis-editor.spec.ts`s H-36-Fix): der Insel-
+  // Einstellungs-Kreis überdeckt den Kuratier-Knopf oben rechts.
+  try {
+    await page.locator('[data-testid="vis-kuratier-toggle"]').click({ timeout: 8000 });
+  } catch {
+    await page.locator('[data-testid="vis-kuratier-toggle"]').dispatchEvent('click');
+  }
   const kuratierFlaeche = page.locator('[data-testid="vis-kuratier-flaeche"]');
   await expect(kuratierFlaeche).toBeVisible();
   await kuratierFlaeche.locator('[data-testid="vis-kuratier-stern"]').first().click();

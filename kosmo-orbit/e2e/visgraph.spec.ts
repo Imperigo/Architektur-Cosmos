@@ -1,5 +1,4 @@
-import { expect, test } from '@playwright/test';
-import { waehleOption } from './helfer/waehleOption';
+import { expect, test, type Page } from '@playwright/test';
 
 /**
  * V1-Finish P2: KosmoVis Node-Tree — die Kette Graph bauen → Render über
@@ -11,7 +10,21 @@ import { waehleOption } from './helfer/waehleOption';
  * parallele Streams sich nicht in die Quere kommen — `kosmo.bridge` wird
  * darum explizit gesetzt, die render-scene.json-Polls zeigen auf denselben
  * Port. Reine Testumgebungs-Anpassung, keine Vertragsänderung.
+ *
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — Bootstrap auf
+ * die Island-UI umgestellt: `test.use({ storageState: { cookies: [],
+ * origins: [] } })` (Muster `e2e/blender-bridge.spec.ts:49`) beweist den
+ * echten Produktions-Default `visOberflaeche:'island'` ohne den globalen
+ * Manuell-Seed (`playwright.config.ts`/`e2e/helpers/manuell-seed.ts`, NICHT
+ * geändert — der Seed-Flip selbst ist P-B2). Graph/Node-Bootstrap läuft ab
+ * hier über die GRAPH-/STIMMUNG-Inseln (`visisl-graph-erstellen`,
+ * `island-palette-eintrag-<typ>`, `island-drei-stimmungen`) statt der alten
+ * `graph-neu`/`node-hinzu`/`drei-stimmungen`-Werkzeugzeile — die Node-Ebene
+ * (`vis-node-*`/`port-*`/`render-ausfuehren`/…) bleibt UNVERÄNDERT
+ * (NodeCanvas ist in beiden Modi dieselbe Komponente, Sanktion 6).
  */
+
+test.use({ storageState: { cookies: [], origins: [] } });
 
 declare global {
   interface Window {
@@ -30,13 +43,31 @@ declare global {
   }
 }
 
+/** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug` — Hover öffnet
+ *  die Insel-Leiste, Klick aufs Werkzeug öffnet das Stufe2-Popup. */
+async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+  await page.hover(`[data-testid="island-${island}-root"]`);
+  await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+  await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+}
+
+/** GRAPH-Insel Node-Palette: EIN Node-Typ hinzufügen (Ersatz für die alte
+ *  `waehleOption(page, 'node-hinzu', typ)`-KSelect-Auswahl). */
+async function islandNodeHinzu(page: Page, typ: string): Promise<void> {
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  const eintrag = page.locator(`[data-testid="island-palette-eintrag-${typ}"]`);
+  await expect(eintrag).toBeVisible();
+  await eintrag.click();
+}
+
 test('Node-Tree-Kette: Drei Stimmungen → Ausführen → Bild am Node → Aufs Blatt', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
 
   // Der Teilgraph steht: 3 Render-Nodes, Kombinierer zeigt den finalen Prompt LIVE
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
@@ -57,7 +88,7 @@ test('Node-Tree-Kette: Drei Stimmungen → Ausführen → Bild am Node → Aufs 
   expect(bildBreite).toBeGreaterThan(0);
 
   // Blatt-Node ansetzen und verbinden (präziser Befehl — wie Kosmo es täte)
-  await waehleOption(page, 'node-hinzu', 'blatt');
+  await islandNodeHinzu(page, 'blatt');
   await page.evaluate(() => {
     const k = window.__kosmo;
     const graph = k.state().doc.byKind('visgraph')[0]!;
@@ -82,9 +113,10 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
-  await page.click('[data-testid="graph-neu"]');
-  await waehleOption(page, 'node-hinzu', 'prompt');
-  await waehleOption(page, 'node-hinzu', 'kombinierer');
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  await page.click('[data-testid="visisl-graph-erstellen"]');
+  await islandNodeHinzu(page, 'prompt');
+  await islandNodeHinzu(page, 'kombinierer');
 
   // Erst warten, bis beide Nodes wirklich gelayoutet sind — sonst liefert
   // boundingBox() Vor-Layout-Koordinaten und der Drag verfehlt den Port (flaky).
@@ -110,7 +142,17 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
 
   // Prompt tippen → Kombinierer zeigt ihn live
   await page.locator('[data-testid="prompt-text"]').fill('Blick vom Quai');
-  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 30 } });
+  // Island-Hotspot (Muster `e2e/blender-bridge.spec.ts` Kopfkommentar zum
+  // KSwitch-Fall): der Insel-Kopf («Zur Zentrale»-Logo, `island-kopf-logo-
+  // orbit`, `island.css` `left:14px`/ein ~38px-Kreis) schwebt fix oben-links
+  // über dem Node-Canvas und überdeckt den alten Testpunkt (30,30), den es im
+  // Manuell-Modus nicht gab. `force:true` wäre hier FALSCH (es klickt das
+  // oberste Element am Punkt trotzdem real an — träfe also das Logo und
+  // navigierte zur Zentrale, gemessen im ersten Anlauf dieser Migration) —
+  // der Testpunkt wandert darum auf (30,260), klar unterhalb des Logo-Kreises,
+  // weiterhin ein echter Canvas-Hintergrund-Klick ohne Produktcode-Fix
+  // (PB1/PC0-Hotspot ausserhalb dieses Dateikreises).
+  await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 260 } });
   await expect(page.locator('[data-testid="kombinierer-prompt"]')).toContainText('Blick vom Quai');
 
   // Node-Drag: Kopfzeile ziehen — die Position landet als EIN vis.nodeSchieben im Modell
@@ -148,7 +190,8 @@ test('HS5: «Nur Cycles» bestellt vis.skip: true — beweisbar aus der render-s
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]').first()).toBeVisible();
 
   // Schalter an, dann rendern
@@ -212,7 +255,8 @@ test('F6: Pannen des Node-Trees stürzt nicht ab (Drei Stimmungen) — Maus-Pan 
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
 
   const canvas = page.locator('[data-testid="node-canvas"]');
@@ -240,7 +284,8 @@ test('F6: schnelles down→move…→up (synchrone Race) stürzt den Node-Tree n
   // W1: eigene Bridge (Begründung siehe Datei-Kopf)
   await page.evaluate(() => localStorage.setItem('kosmo.bridge', 'http://localhost:8600'));
   await page.click('[data-testid="module-vis"]');
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
 
   // Feuert down → 40× move → up als NATIVE PointerEvents, synchron in einem

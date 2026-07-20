@@ -1,7 +1,17 @@
 import { expect, test, type Page } from '@playwright/test';
-import { waehleOption } from './helfer/waehleOption';
 
 /**
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — Bootstrap auf
+ * die Island-UI umgestellt: `test.use({ storageState: { cookies: [],
+ * origins: [] } })` (Muster `e2e/blender-bridge.spec.ts:49`). Graph-/Node-
+ * Bootstrap läuft über GRAPH-/STIMMUNG-Insel statt `graph-neu`/`node-hinzu`/
+ * `drei-stimmungen`; die Node-Ebene bleibt unverändert (Sanktion 6). Der
+ * dritte Test («C-11-Matrix-Fund») prüft ABSICHTLICH den ALTEN Manuell/
+ * Einfach-Codepfad (er bleibt bis P-B2 stehen, `docs/V0810-SPEZ.md` §2 E3)
+ * — er betritt Manuell darum bewusst über den Island-Rückweg
+ * (`island-werkzeug-manuell`, Muster `e2e/vis-island.spec.ts`s «Manuell
+ * schaltet zurück»-Test), NICHT über einen Seed.
+ *
  * PB2-088 (V088-SPEZ.md §3 E7, §6 Sanktion 8, §7 C-11) — «Vis→Publish-
  * Bildkette: Fake-Aufnahme aufs Blatt». IST-Analyse (siehe Bericht): der
  * «Aufs Blatt»-Weg (NodeCanvas.tsx `case 'blatt'` → `aufnahmeAufsBlatt`/
@@ -64,6 +74,8 @@ const KLEINES_PNG =
 // `window.__kosmoVisRuntime`-Seed-Hook (Muster e2e/vis-ansichten.spec.ts).
 const UEBERGROSSES_BILD = 'data:image/png;base64,' + 'A'.repeat(1_100_000);
 
+test.use({ storageState: { cookies: [], origins: [] } });
+
 async function oeffneVisMitBridge(page: Page): Promise<void> {
   await page.addInitScript(() => {
     localStorage.setItem('kosmo.onboarded', '1');
@@ -75,9 +87,62 @@ async function oeffneVisMitBridge(page: Page): Promise<void> {
   await page.click('[data-testid="module-vis"]');
 }
 
+/** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+  await page.hover(`[data-testid="island-${island}-root"]`);
+  await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+  await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
+}
+
+/** GRAPH-Insel Node-Palette (Ersatz für `waehleOption(page, 'node-hinzu', typ)`). */
+async function islandNodeHinzu(page: Page, typ: string): Promise<void> {
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  const eintrag = page.locator(`[data-testid="island-palette-eintrag-${typ}"]`);
+  await expect(eintrag).toBeVisible();
+  await eintrag.click();
+}
+
 async function docLaenge(page: Page): Promise<number> {
   return page.evaluate(() => JSON.stringify(window.__kosmo.state().doc.toJSON()).length);
 }
+
+// v0.8.10 / P-B1: DIESER Test kreuzt Vis UND Publish (Schritt 4: Inspector-
+// Input `bild-titel`, PublishWorkspace.tsx) — ein voll leerer `storageState`
+// (wie der Datei-Default oben) würde auch Publish auf Island kippen und
+// damit in dessen Manuell-Modus eingreifen (Sanktion 6, dasselbe Muster wie
+// `e2e/vis-editor.spec.ts`s H-36/`e2e/vis-automatik.spec.ts`). TEIL-Seed:
+// design/publish/prepare bleiben 'manuell', `visOberflaeche` fehlt bewusst.
+test.describe('Happy-Path (kreuzt KosmoVis + KosmoPublish)', () => {
+  const PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+  test.use({
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PORT}`,
+          localStorage: [
+            {
+              name: 'kosmo.ui.v1',
+              value: JSON.stringify({
+                version: 1,
+                modusAutomatik: false,
+                modusFesthalten: false,
+                phasenFokus: null,
+                designOberflaeche: 'manuell',
+                publishOberflaeche: 'manuell',
+                prepareOberflaeche: 'manuell',
+              }),
+            },
+            {
+              name: 'kosmo.leistung.v1',
+              value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+            },
+            { name: 'kosmo.dock.presetInit.v1', value: '1' },
+          ],
+        },
+      ],
+    },
+  });
 
 test('Fake-Render via Bridge → Aufnahme → Aufs Blatt: Asset gesetzt, Pflicht-Label in der Publish-Ansicht sichtbar', async ({
   page,
@@ -88,14 +153,15 @@ test('Fake-Render via Bridge → Aufnahme → Aufs Blatt: Asset gesetzt, Pflicht
   // (Preset baut Modell→Render, «Ausführen» spricht die echte --fake-Bridge
   // auf :8600 an; naturalWidth-Beweis dort bereits erbracht, hier reicht
   // «sichtbar», um die Bridge-Strecke ehrlich mitzubeweisen statt zu simulieren).
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await page.locator('[data-testid="render-ausfuehren"]').first().click();
   await expect(page.locator('[data-testid="render-bild"]').first()).toBeVisible({ timeout: 25000 });
 
   // 2) Aufnahme — via Test-Hook geseedet (Bestandsmuster e2e/vis-ansichten.spec.ts:
   // der echte Aufnahme-Knopf sitzt in Viewport3D.tsx, anderes Paket/Cluster A).
-  await waehleOption(page, 'node-hinzu', 'aufnahme');
-  await waehleOption(page, 'node-hinzu', 'blatt');
+  await islandNodeHinzu(page, 'aufnahme');
+  await islandNodeHinzu(page, 'blatt');
   await page.evaluate(
     (url) =>
       window.__kosmoVisRuntime.fuegeAufnahmeHinzu({ id: 'pb2-088-happy', dataUrl: url, zeit: Date.now(), kamera: 'aktuell' }),
@@ -150,13 +216,16 @@ test('Fake-Render via Bridge → Aufnahme → Aufs Blatt: Asset gesetzt, Pflicht
   await page.screenshot({ path: 'e2e-results/vis-publish-bild-label.png' });
 });
 
+}); // Ende 'Happy-Path (kreuzt KosmoVis + KosmoPublish)'
+
 test('Undo nach Aufs Blatt leert den Slot UND räumt den Asset (GC) — window.__kosmo.state()-Beweis', async ({
   page,
 }) => {
   await oeffneVisMitBridge(page);
-  await page.click('[data-testid="graph-neu"]');
-  await waehleOption(page, 'node-hinzu', 'aufnahme');
-  await waehleOption(page, 'node-hinzu', 'blatt');
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  await page.click('[data-testid="visisl-graph-erstellen"]');
+  await islandNodeHinzu(page, 'aufnahme');
+  await islandNodeHinzu(page, 'blatt');
   await page.evaluate(
     (url) =>
       window.__kosmoVisRuntime.fuegeAufnahmeHinzu({ id: 'pb2-088-undo', dataUrl: url, zeit: Date.now(), kamera: 'aktuell' }),
@@ -226,6 +295,10 @@ test('C-11-Matrix-Fund: auch der Manuell/Einfach-Weg («Aufs Blatt» am Render-J
   // `module.spec.ts` (~:600ff, inkl. der dort begründeten Jobstore-
   // Akkumulations-Robustheit und des grosszügigen Fake-Worker-Timeouts).
   await oeffneVisMitBridge(page);
+  // Absichtlich in Manuell wechseln (s. Datei-Kopf) — dieser Test beweist
+  // GENAU den alten Codepfad, kein Bootstrap-Nebeneffekt.
+  await oeffneVisWerkzeug(page, 'austausch', 'manuell');
+  await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
   await page.click('[data-testid="tab-einfach"]');
   await page.click('[data-testid="send-render"]');
   await page
@@ -246,9 +319,10 @@ test('C-11-Matrix-Fund: auch der Manuell/Einfach-Weg («Aufs Blatt» am Render-J
 
 test('Deckel: Base64 über ~1 MB wirft eine ehrliche Fehlerzone STATT eines Doc-Schreibens', async ({ page }) => {
   await oeffneVisMitBridge(page);
-  await page.click('[data-testid="graph-neu"]');
-  await waehleOption(page, 'node-hinzu', 'aufnahme');
-  await waehleOption(page, 'node-hinzu', 'blatt');
+  await oeffneVisWerkzeug(page, 'graph', 'palette');
+  await page.click('[data-testid="visisl-graph-erstellen"]');
+  await islandNodeHinzu(page, 'aufnahme');
+  await islandNodeHinzu(page, 'blatt');
   await page.evaluate(
     (url) =>
       window.__kosmoVisRuntime.fuegeAufnahmeHinzu({ id: 'pb2-088-deckel', dataUrl: url, zeit: Date.now(), kamera: 'aktuell' }),

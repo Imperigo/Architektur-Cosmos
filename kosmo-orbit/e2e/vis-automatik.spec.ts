@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { waehleOptionInScope } from './helfer/waehleOption';
 
 /**
@@ -18,6 +18,18 @@ import { waehleOptionInScope } from './helfer/waehleOption';
  * Reine Testumgebungs-Anpassung, keine Vertragsänderung. (Die ursprüngliche
  * Koordinator-Warnung «nicht im Batch-Worktree» galt für den Fall EINES
  * geteilten Ports — mit eigenem Port pro Stream entfällt der Grund.)
+ *
+ * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — BEIDE Tests
+ * KREUZEN Design (`load-tkb`/`kennzahlen`) UND Vis, genau wie
+ * `e2e/vis-editor.spec.ts`s H-36 — ein voll leerer `storageState` würde ALLE
+ * vier Stationen auf Island kippen und damit in Design's Manuell-Modus
+ * eingreifen (Sanktion 6). TEIL-Seed (design/publish/prepare bleiben
+ * 'manuell', `visOberflaeche` fehlt bewusst → echter Produktions-Default
+ * 'island' via `ui-zustand.ts`s Fehlertoleranz) statt des globalen
+ * `manuell-seed.ts`-Helfers (bleibt unangetastet). Bootstrap auf die GRAPH-/
+ * STIMMUNG-/AUSTAUSCH-Inseln umgestellt; die Node-Ebene bleibt unverändert
+ * (Sanktion 6). **Deklarierte Assertion-Änderung:** `tab-graph` → `vis-
+ * island-fuellen` (Tab-System existiert im Island-Modus nicht mehr, C-15).
  */
 
 declare global {
@@ -32,6 +44,44 @@ declare global {
       };
     };
   }
+}
+
+const PORT = process.env['KOSMO_E2E_PORT'] ?? '5183';
+test.use({
+  storageState: {
+    cookies: [],
+    origins: [
+      {
+        origin: `http://localhost:${PORT}`,
+        localStorage: [
+          {
+            name: 'kosmo.ui.v1',
+            value: JSON.stringify({
+              version: 1,
+              modusAutomatik: false,
+              modusFesthalten: false,
+              phasenFokus: null,
+              designOberflaeche: 'manuell',
+              publishOberflaeche: 'manuell',
+              prepareOberflaeche: 'manuell',
+            }),
+          },
+          {
+            name: 'kosmo.leistung.v1',
+            value: JSON.stringify({ version: 1, zustimmungErteilt: false, override: 'auto', renderBeiBedarf: false }),
+          },
+          { name: 'kosmo.dock.presetInit.v1', value: '1' },
+        ],
+      },
+    ],
+  },
+});
+
+/** Muster `e2e/blender-bridge.spec.ts`s `oeffneVisWerkzeug`. */
+async function oeffneVisWerkzeug(page: Page, island: string, werkzeugId: string): Promise<void> {
+  await page.hover(`[data-testid="island-${island}-root"]`);
+  await expect(page.locator(`[data-testid="island-werkzeug-${werkzeugId}"]`)).toBeVisible();
+  await page.click(`[data-testid="island-werkzeug-${werkzeugId}"]`);
 }
 
 test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-Render liefert ein Bild', async ({ page }) => {
@@ -50,16 +100,21 @@ test('KosmoVis-Automatik: Auto-Kamera-Node + Cycles-Preset am Render-Node, Fake-
   // Vis öffnen (der Home-Kachelweg ist nach dem TKB-Laden nicht mehr sichtbar —
   // derselbe __kosmo.open()-Weg wie in e2e/module.spec.ts)
   await page.evaluate(() => window.__kosmo.open('vis'));
-  await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
+  // Deklarierte Assertion-Änderung (s. Datei-Kopf): `vis-island-fuellen`
+  // statt `tab-graph` — das Tab-System existiert im Island-Modus nicht mehr.
+  await expect(page.locator('[data-testid="vis-island-fuellen"]')).toBeVisible();
 
   // Drei Stimmungen legt den Basisgraphen an: 3 Render-Nodes, 15 Kanten
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
   await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(15);
 
   // Kamera vorschlagen: legt EINEN Auto-Kamera-Node an und verbindet ihn mit
-  // JEDEM Render-Node ohne bestehende Kamera-Verbindung (+3 Kanten)
-  await page.click('[data-testid="vis-auto-kamera"]');
+  // JEDEM Render-Node ohne bestehende Kamera-Verbindung (+3 Kanten) — AUSTAUSCH-
+  // Insel-Sofort-Aktion, ruft dieselbe `kameraVorschlagenAktion` wie der alte
+  // `vis-auto-kamera`-Knopf (`VisWorkspace.tsx`s `aktiviereVisIslandWerkzeug`).
+  await oeffneVisWerkzeug(page, 'austausch', 'kamera-vorschlagen');
   await expect(page.locator('[data-testid="vis-node-kamera"]')).toHaveCount(1);
   await expect(page.locator('[data-testid="vis-edge"]')).toHaveCount(18);
   // Ehrliche Anzeige am Node — reine Ableitung, keine KI-Wahl
@@ -128,11 +183,14 @@ test('F6: Pannen nach «Kamera vorschlagen» stürzt nicht ab (Maus-Pan + synchr
   // `dock-layout.spec.ts` Kommentar).
   await expect(page.locator('[data-testid="kennzahlen"]')).toBeVisible();
   await page.evaluate(() => window.__kosmo.open('vis'));
-  await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
+  // Deklarierte Assertion-Änderung (s. Datei-Kopf): `vis-island-fuellen`
+  // statt `tab-graph`.
+  await expect(page.locator('[data-testid="vis-island-fuellen"]')).toBeVisible();
 
-  await page.click('[data-testid="drei-stimmungen"]');
+  await oeffneVisWerkzeug(page, 'stimmung', 'stimmung');
+  await page.click('[data-testid="island-drei-stimmungen"]');
   await expect(page.locator('[data-testid="vis-node-render"]')).toHaveCount(3);
-  await page.click('[data-testid="vis-auto-kamera"]');
+  await oeffneVisWerkzeug(page, 'austausch', 'kamera-vorschlagen');
   await expect(page.locator('[data-testid="vis-node-kamera"]')).toHaveCount(1);
 
   const canvas = page.locator('[data-testid="node-canvas"]');
