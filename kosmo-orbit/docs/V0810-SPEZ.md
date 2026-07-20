@@ -51,22 +51,33 @@ Goldens 39 Dateien (38 SVG + 1 IFC), svg-qa 38.
   render-ausfuehren) bleibt identisch — Kern-Assertions unverändert.
   Journey-Specs zuletzt, Teilabnahme je Spec. vis-oberflaeche.spec
   bleibt in P-B1 unberührt.
-- **E3 Manuell-Rückbau** (P-B2, Sonnet, Tag B, NACH P-B1-Gate):
-  Vorwärts-Werkzeug 'manuell' aus vis-island-katalog.ts:96 + case in
-  VisWorkspace.tsx:247-249 + island-zurueck-Knopf :682-696 entfernen.
-  ui-zustand.ts `normalisiere()`: persistiertes visOberflaeche
-  'manuell' → 'island' koerzieren (Unit-Test Pflicht). **Owner-
-  Entscheid: der Manuell-Codepfad (VisWorkspace:459-603 +
-  VisTabs/EinfachAnsicht :606-1063) bleibt stehen** — nachweislich
-  unerreichbar; Entfernung = benannter 0.9.0-Posten. Globaler Seed:
-  manuell-seed.ts verliert NUR das vis-Feld (design/publish/prepare
-  bleiben 'manuell'); der Flip ist ein EIGENER Commit mit
-  Voll-Suiten-Lauf davor/danach. vis-oberflaeche.spec deklariert
-  umgebaut (Werkzeug existiert nicht mehr + Island ist Default ohne
-  Seed; Pan/Fit-Tests bleiben). ISLAND-UI-SPEZ §6 Sanktion 2 bekommt
-  einen DATIERTEN Nachtrag «gilt ab 0.8.10 nicht mehr für VIS» (kein
-  Umschreiben des Bestands) — im selben Paket (geteilte Doku = EIN
-  Paket, Lehre 0.8.9).
+- **E3 Manuell-Rückbau** (P-B2, Sonnet, Tag B, NACH P-B1b-Gate) —
+  **NACHTRAG 20.07.2026 (Owner-Entscheid nach P-B1-Audit, ersetzt die
+  ursprüngliche E3-Fassung):** Das P-B1-Audit fand vier Manuell-only-
+  Funktionen ohne Insel-Äquivalent (vis-Legende, VisOnboarding,
+  Vis-Dock-Panels, gespeicherte Ansichten). Owner-Wahl: «Insel bleibt
+  Default und UI-Standard; die andere UI (manuelle Ansicht) kann in den
+  Einstellungen geändert werden.» Konkret: (1) Vorwärts-Werkzeug
+  'manuell' aus vis-island-katalog.ts:96 + case in VisWorkspace.tsx
+  entfernen — der PROMINENTE Zugang fällt; (2) NEU ein Schalter
+  «Manuelle Ansicht (KosmoVis)» im Einstellungs-Panel
+  (shell/Einstellungen.tsx, bestehende Sektions-Muster), der
+  visOberflaeche setzt — Island bleibt Default; (3) island-zurueck-
+  Knopf im Manuell-Chrome BLEIBT (Rückweg); (4) **KEINE
+  normalisiere()-Koerzierung** — 'manuell' ist jetzt eine legitime
+  Einstellung, kein Strand-Zustand; (5) die vier Manuell-only-Features
+  bleiben damit erreichbar — kein Funktionsverlust, keine
+  0.9.0-Ersatzpflicht; (6) Globaler Seed: manuell-seed.ts verliert das
+  vis-Feld (design/publish/prepare bleiben); die Manuell-Feature-Specs
+  (vis-onboarding, dock-layout, dock-presets, vis-ansichten,
+  p8-081-screenshots, vis-token-Legende-Teil) bekommen je einen
+  PER-SPEC-Manuell-Seed (test.use), deklariert; der Flip ist ein
+  EIGENER Commit mit Voll-Suiten-Lauf davor/danach (Sanktion 7
+  unverändert); (7) vis-oberflaeche.spec wird deklariert umgebaut:
+  Umschalt-Beweis läuft neu über den Einstellungs-Schalter (hin UND
+  zurück), Pan/Fit-Tests bleiben; (8) ISLAND-UI-SPEZ-§6-Sanktion-2-
+  Nachtrag datiert wie gehabt. Der Manuell-Codepfad bleibt stehen
+  (jetzt wieder legitim erreichbar).
 - **E4 Blatt-Umbenennen** (Z1, Sonnet, Tag B): design.eigenschaftSetzen
   lernt `sheet: ['name']` (allowed-Map design.ts:788-813 + Direktfeld in
   der name→meta-Ausnahme :900-903); Kernel-Test. UI: Klick-zu-Edit am
@@ -165,9 +176,10 @@ Goldens 39 Dateien (38 SVG + 1 IFC), svg-qa 38.
   grün → P-B1
 - [ ] **C-5** Node-Ebene-Assertions unverändert (Diff zeigt nur
   Anfahrtswege); NodeCanvas.tsx byte-still → P-B1
-- [ ] **C-6** Rückbau: Werkzeug 'manuell' weg, island-zurueck weg,
-  Koerzierung 'manuell'→'island' mit Unit-Test, Bestandsnutzer-Pfad
-  bewiesen → P-B2
+- [ ] **C-6** Rückbau (E3-Nachtrag 20.07.): Werkzeug 'manuell' weg,
+  Einstellungs-Schalter «Manuelle Ansicht (KosmoVis)» schaltet hin UND
+  zurück (E2E-Beweis), island-zurueck bleibt, KEINE Koerzierung, die
+  vier Manuell-only-Features bleiben über den Schalter erreichbar → P-B2
 - [ ] **C-7** Seed-Flip als eigener Commit mit Voll-Suiten-Lauf
   davor/danach; design/publish/prepare-Seeds unangetastet;
   ISLAND-UI-SPEZ-Nachtrag datiert → P-B2
