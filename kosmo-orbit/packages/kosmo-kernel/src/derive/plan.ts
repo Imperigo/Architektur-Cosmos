@@ -697,6 +697,55 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
     }
   }
 
+  // v0.8.11 P-B3 (docs/V0811-SPEZ.md §2 E5, V089-Nicht-Ziel eingelöst):
+  // Schloss-Symbol an gesperrten Elementen (`meta.locked`, 0.8.9 E2) — die
+  // Sperre war bisher im Plan unsichtbar. HARTER Daten-Guard: ohne ein
+  // einziges gesperrtes Element im Geschoss entsteht KEINE Linie — alle 38
+  // Bestands-Goldens bleiben byte-identisch (kein Fixture trägt locked,
+  // grep-geprüft; der EINE neue Golden `plan-schloss.svg` beweist das
+  // Symbol). Kleines Vorhängeschloss in Welt-mm am Element-Anker (Wand/
+  // Unterzug: Achsen-Mitte · Stütze/Möbel: at · flächige: Umriss-Zentroid ·
+  // Treppe: Lauflinien-Mitte), leicht nach rechts oben versetzt, damit es
+  // nicht auf der Bauteilkante klebt. Klasse ['symbol','schloss'] — ein
+  // späterer Druck-Filter kann daran ansetzen, ohne die Geometrie zu kennen.
+  {
+    const schlossAnker = (e: import('../model/entities').Entity): Pt | null => {
+      if (e.kind === 'wall' || e.kind === 'stair' || e.kind === 'beam') {
+        return { x: Math.round((e.a.x + e.b.x) / 2), y: Math.round((e.a.y + e.b.y) / 2) };
+      }
+      if (e.kind === 'column' || e.kind === 'furniture') return e.at;
+      if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'slab' || e.kind === 'boundary') {
+        const o = e.outline;
+        if (!o.length) return null;
+        return {
+          x: Math.round(o.reduce((a, q) => a + q.x, 0) / o.length),
+          y: Math.round(o.reduce((a, q) => a + q.y, 0) / o.length),
+        };
+      }
+      return null;
+    };
+    for (const e of doc.inStorey(storeyId)) {
+      if (e.meta?.locked !== true) continue;
+      const anker = schlossAnker(e);
+      if (!anker) continue;
+      // Körper 280×220 + Bügel, Ursprung unten links, versetzt +150/+150.
+      const x = anker.x + 150;
+      const y = anker.y + 150;
+      const s: [Pt, Pt][] = [
+        // Körper (Rechteck)
+        [{ x, y }, { x: x + 280, y }],
+        [{ x: x + 280, y }, { x: x + 280, y: y + 220 }],
+        [{ x: x + 280, y: y + 220 }, { x, y: y + 220 }],
+        [{ x, y: y + 220 }, { x, y }],
+        // Bügel (drei Segmente über dem Körper)
+        [{ x: x + 70, y: y + 220 }, { x: x + 70, y: y + 330 }],
+        [{ x: x + 70, y: y + 330 }, { x: x + 210, y: y + 330 }],
+        [{ x: x + 210, y: y + 330 }, { x: x + 210, y: y + 220 }],
+      ];
+      for (const [a, b] of s) lines.push({ a, b, classes: ['symbol', 'schloss'] });
+    }
+  }
+
   // Stützen (A3): geschosshoch → immer geschnitten, Material-Poché wie Wände
   for (const c of doc.byKind<Column>('column')) {
     if (c.storeyId !== storeyId) continue;
