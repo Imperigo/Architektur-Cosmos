@@ -89,6 +89,19 @@
      Verbraucher: `apps/kosmo-orbit/src/modules/design/island/island.css`
      (`--f-glass`-Papier-Default). Kein bestehender Wert oben verändert. */
   --k-insel-glas-papier: rgba(255, 255, 255, 0.82);
+  /* K22 (Owner wörtlich «der graue kreis … mach den transparenter und in
+     der farbe des jeweiligen tools ganz fein (glasig)», `docs/OWNER-
+     KORREKTUREN-2026-07.md` K22; Befund `docs/BEFUNDE-KORREKTUREN-2026-07.md`
+     Abschnitt 3 «K22-Detail») — die GLAS-BASIS der Kosmo-Orb-Hülle:
+     deutlich transparenter als das 82%-Insel-Glas oben. Die fertigen
+     Rezepte `--k-orb-glas`/`--k-orb-glas-rand` (color-mix mit der
+     Stations-Tönung `--k-orb-tool`) leben BEWUSST NICHT hier, sondern auf
+     `.app-wurzel` (`apps/kosmo-orbit/src/app.css`): var()-Referenzen in
+     Custom Properties werden am DEFINITIONS-Element substituiert — ein
+     :root-Rezept würde die Stations-Variable immer nur als :root-Fallback
+     sehen, nie als den per `data-station` gesetzten Wert. Hier liegt darum
+     nur die theme-abhängige Basisfläche (Orbit-Spiegel s. orbit-Block). */
+  --k-orb-glas-basis: rgba(255, 255, 255, 0.3);
   color-scheme: light;
 
   /* Spacing-Skala (W0, UI-KONZEPT-065 §2) — ALLE gaps/paddings; rohe
@@ -169,6 +182,21 @@
   --k-mod-publish: #6f8b6a;
   --k-mod-prepare: #7d5e78;
   --k-mod-kosmo: #b06a8c;
+  /* K22 (Orb-Tool-Tönung) — die restlichen Stations-Töne, 1:1-Spiegel aus
+     `tokens.ts` `moduleHue` (dortiger Kommentar: «Module, die (noch) keine
+     eigene aura-Variable haben … dort gilt dieser TS-Wert als
+     Erstdefinition» — hiermit bekommen sie sie, additiv). Gebraucht von
+     den `data-station`-Regeln in `apps/kosmo-orbit/src/app.css`, damit
+     JEDE Station (auch doc/train/asset/dev/trust/paket) den Kosmo-Orb fein
+     in ihrer eigenen Farbe tönen kann. */
+  --k-mod-train: #8c6d3f;
+  --k-mod-doc: #5d7489;
+  --k-mod-sketch: #96604a;
+  --k-mod-speak: #4f7a7a;
+  --k-mod-asset: #7a6a55;
+  --k-mod-dev: #5e6b52;
+  --k-mod-trust: #5b5a8a;
+  --k-mod-paket: #6b7a8a;
   /* v0.7.3 D7: Lato (UI) / PT Sans Narrow (Titel) waren bis 0.7.2 ein
      orbit-Override — jetzt Grammatik THEMENÜBERGREIFEND (`:root`), der
      bisherige Stack bleibt als Fallback-Kette dahinter stehen. Fonts:
@@ -495,6 +523,10 @@
      Overlay-Sprache (Viewport-HUD, Achsenkreuz, Kuratier-Karten), NIE als
      Stationsfläche. */
   --k-glass-fill: rgba(20, 23, 31, 0.62);
+  /* K22 — dunkle Spiegelvariante der Orb-Glas-Basis (Befund Abschnitt 3,
+     wörtlich «Orbit-Theme bekommt eine dunkle Spiegelvariante (Basis
+     rgba(20,23,31,0.35))») — transparenter als `--k-glass-fill` (0.62). */
+  --k-orb-glas-basis: rgba(20, 23, 31, 0.35);
   --k-glass-stroke: rgba(255, 255, 255, 0.08);
   --k-glass-schatten: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   /* Glow als sparsames Info-Signal (Regel §0: nie Deko), z. B. aktiver Modus. */

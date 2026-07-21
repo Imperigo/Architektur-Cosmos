@@ -202,17 +202,29 @@
    definiert ist) wird die Hülle glasig-transluzent, im `paper`-Theme
    (kein Token dort) bleibt der bisherige `--k-surface`-Ton exakt
    erhalten (Fallback, 0 Optik-Änderung in Papier). NIE Gold. */
+/* K22 (Owner wörtlich «der graue kreis … transparenter und in der farbe des
+   jeweiligen tools ganz fein (glasig) … kosmo darf etwas grösser sein»,
+   Befund `docs/BEFUNDE-KORREKTUREN-2026-07.md` Abschnitt 3): Hülle 52→64px;
+   `--k-glass-fill`-Familie (im Papier-Theme UNGESETZT → fiel auf opakes
+   `--k-surface` #FBFAF6 zurück — genau der «graue Kreis») ersetzt durch das
+   app-weite Orb-Glas-Paar `--k-orb-glas`/`--k-orb-glas-rand` (app.css, EINE
+   Quelle mit `.isl-orb`) — in BEIDEN Themes transparent-glasig + fein
+   stationsgetönt, `backdrop-filter` bleibt. `--kosmo-orb-drift` lässt die
+   kleinen Punkte sichtbar über den Kreisrand hinaus driften («können auch
+   ausserhalb dieses kreis sein»). Das PB4-Gesetz «NIE Gold» (oben) gilt
+   unverändert. */
 .ks-knopf {
   margin: 0;
   cursor: pointer;
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
+  --kosmo-orb-drift: 26px;
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: var(--k-glass-fill, var(--k-surface));
+  background: var(--k-orb-glas, var(--k-glass-fill, var(--k-surface)));
   backdrop-filter: blur(16px) saturate(1.1);
   -webkit-backdrop-filter: blur(16px) saturate(1.1);
-  border: 1px solid var(--k-glass-stroke, var(--k-line-strong));
+  border: 1px solid var(--k-orb-glas-rand, var(--k-glass-stroke, var(--k-line-strong)));
   box-shadow: var(--k-shadow-overlay);
 }

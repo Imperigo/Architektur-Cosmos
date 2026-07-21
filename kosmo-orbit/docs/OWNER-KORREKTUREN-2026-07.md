@@ -238,8 +238,9 @@ die «wie weit»-Frage gehört in den nächsten Statusbericht.
 > die kleinen orbs sind ganz fein animiert und können auch ausserhalb
 > dieses kreis sein, kosmo darf etwas grösser sein. frage; sind alle
 > animationen für kosmo eingebaut gem. gestaltungskonzept?»
-**Aufwand:** M. **Status:** offen — Animations-Inventur (Soll aus
-GESTALTUNGSKONZEPT vs. Ist) als erster Schritt, beantwortet auch K50.
+**Aufwand:** M. **Status:** ERLEDIGT (ROADMAP 575 — glasige Token,
+Tool-Tönung, 40px, freie Schwarm-Orbs); Animations-Restlücken
+(Panel-Eintritt, Gemini-Rim) laufen unter K50 (Befund 570).
 
 ### K23 · S.6 — Dämmschraffur orientierungsabhängig
 > «wenn das hier dämmung sein sollte, dann stimmt die schraffur so

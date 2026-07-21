@@ -7,6 +7,57 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  /* K22 (Owner: «grauer kreis … transparenter und in der farbe des
+     jeweiligen tools ganz fein (glasig)»; Befund `docs/BEFUNDE-KORREKTUREN-
+     2026-07.md` Abschnitt 3, Token-Vorschlag) — DIE eine Quelle der
+     Orb-Glas-Rezepte. Sie leben HIER statt in aura.css' :root, weil var()-
+     Referenzen in Custom Properties am Definitions-Element substituiert
+     werden: nur auf `.app-wurzel` (wo `data-station` unten `--k-orb-tool`
+     setzt) sieht das color-mix die ECHTE Stationsfarbe; ein :root-Rezept
+     bliebe für immer beim Fallback hängen. Basisfläche `--k-orb-glas-basis`
+     (theme-abhängig) + Fallback-Tönung `--k-signal`: aura.css.
+     Verbraucher: `.isl-orb` (island.css) + `.ks-knopf` (kosmo-symbol.css). */
+  --k-orb-glas: color-mix(in srgb, var(--k-orb-tool, var(--k-signal)) 8%, var(--k-orb-glas-basis));
+  --k-orb-glas-rand: color-mix(in srgb, var(--k-orb-tool, var(--k-signal)) 35%, transparent);
+}
+/* K22 — Stations-Tönung: `App.tsx` stempelt den aktiven Screen als
+   `data-station` auf die Wurzel; jede Station tönt den Kosmo-Orb fein in
+   ihrem eigenen `--k-mod-*`-Ton (aura.css). `home` (Zentrale) bleibt
+   bewusst ohne Regel → Fallback `--k-signal` (Kosmos eigene Marken-Teal,
+   dieselbe Farbe wie Orb-Kern/Punkte). `design` deckt auch die
+   Deep-Links draw/sketch ab (ein Screen). */
+.app-wurzel[data-station='design'] {
+  --k-orb-tool: var(--k-mod-design);
+}
+.app-wurzel[data-station='data'] {
+  --k-orb-tool: var(--k-mod-data);
+}
+.app-wurzel[data-station='vis'] {
+  --k-orb-tool: var(--k-mod-vis);
+}
+.app-wurzel[data-station='publish'] {
+  --k-orb-tool: var(--k-mod-publish);
+}
+.app-wurzel[data-station='prepare'] {
+  --k-orb-tool: var(--k-mod-prepare);
+}
+.app-wurzel[data-station='doc'] {
+  --k-orb-tool: var(--k-mod-doc);
+}
+.app-wurzel[data-station='train'] {
+  --k-orb-tool: var(--k-mod-train);
+}
+.app-wurzel[data-station='asset'] {
+  --k-orb-tool: var(--k-mod-asset);
+}
+.app-wurzel[data-station='dev'] {
+  --k-orb-tool: var(--k-mod-dev);
+}
+.app-wurzel[data-station='trust'] {
+  --k-orb-tool: var(--k-mod-trust);
+}
+.app-wurzel[data-station='paket'] {
+  --k-orb-tool: var(--k-mod-paket);
 }
 
 /* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest, `--k-sunken`

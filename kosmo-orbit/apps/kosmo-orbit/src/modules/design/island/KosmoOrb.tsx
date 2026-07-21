@@ -25,8 +25,9 @@ import './island.css';
 /**
  * Kosmo-Orb (PD4 Abschluss, `docs/ISLAND-UI-SPEZ.md` §1-Tabelle/§4.3 Zeile 5;
  * PB4 `docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz») — der Orb unten rechts im
- * Island-Modus (52px, Hülle neutral-glasig `--f-glass`-Familie seit PB4 —
- * Owner wörtlich «Kosmo-Orb nicht gelb hinterlegen», `island.css`, Kern +
+ * Island-Modus (K22: 64px statt 52, Hülle transparent-glasig + fein
+ * stationsgetönt über das `--k-orb-glas`-Paar, `app.css`/`island.css`;
+ * PB4-Gesetz «nicht gelb hinterlegen» gilt unverändert, Kern +
  * Punkte bleiben stationsfarbig), Puls `--k-insel-orb-puls` 2.4s in
  * `--k-signal` statt Gold, `reduced-motion`: kein Puls. Bleibt bewusst
  * AUSSERHALB der vier Islands (§1: «Bleibt ausserhalb der vier Islands»).
@@ -177,7 +178,9 @@ export function KosmoOrb({ onKosmoOeffnen }: KosmoOrbProps) {
         onFocus={() => setZeigeMini(true)}
         onBlur={() => setZeigeMini(false)}
       >
-        <KosmoSymbolOrb zustand={zustand} size={30} />
+        {/* K22 (Owner: «kosmo darf etwas grösser sein», Befund Abschnitt 3:
+            Orb 30→40, Hülle 52→64 in `island.css` `.isl-orb`). */}
+        <KosmoSymbolOrb zustand={zustand} size={40} />
       </button>
       {offen ? (
         <div className="isl-orb-karte" data-testid="kosmo-orb-karte">

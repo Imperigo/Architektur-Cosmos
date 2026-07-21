@@ -837,10 +837,10 @@
 /* ── Kosmo-Orb (PD4, §1-Tabelle/§4.3 Zeile 5 «Kosmo-Orb-Puls»; PB4
    `docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz» — Ruhe-Zeile, Owner wörtlich
    «Kosmo-Orb nicht gelb hinterlegen») ───────────────────────────────────
-   `right:26px; bottom:24px`, Kreis 52×52px, HÜLLE jetzt neutral-glasig
-   (`--f-glass`-Familie, dieselbe Token-Gruppe wie jede andere Insel-
-   Glasfläche — `.isl-pill`/`.isl-buehnenkopf-popover`/`.isl-orb-karte`, KEINE
-   Gold-/Farb-Fläche mehr), Puls `--k-insel-orb-puls` (2.4s, `aura.css`,
+   `right:26px; bottom:24px`, Kreis 64×64px (K22: 52→64), HÜLLE seit K22
+   transparent-glasig + fein stationsgetönt (`--k-orb-glas`-Paar, `app.css`
+   — dieselbe eine Quelle wie `.ks-knopf`; vorher `--f-glass`-Familie, KEINE
+   Gold-/Farb-Fläche, das PB4-Gesetz gilt weiter), Puls `--k-insel-orb-puls` (2.4s, `aura.css`,
    additiv) läuft in `--k-signal` (Stationsfarbe des Kerns, s.
    `kosmo-feedback.css` `.kosmo-orb-kern`) statt Gold — Kern + 4 Punkte
    bleiben die einzigen Farbträger (E2-Tabelle: «Kern + 4 Punkte tragen die
@@ -866,18 +866,28 @@
   --f-blur: blur(24px) saturate(1.4);
 }
 
+/* K22 (Owner wörtlich «der graue kreis … mach den transparenter und in der
+   farbe des jeweiligen tools ganz fein (glasig) … kosmo darf etwas grösser
+   sein», Befund Abschnitt 3): Hülle 52→64px, Fläche/Rand von `--f-glass`
+   (82% deckendes Weissgrau) auf das app-weite Orb-Glas-Paar `--k-orb-glas`/
+   `--k-orb-glas-rand` (app.css, EINE Quelle mit `.ks-knopf`) — transparent-
+   glasig, fein in der Stationsfarbe getönt; `backdrop-filter` bleibt.
+   `--kosmo-orb-drift` hebt die Drift-Amplitude der kleinen Punkte
+   (kosmo-feedback.css) so an, dass sie sichtbar AUSSERHALB des Kreises
+   schweben dürfen (Owner: «können auch ausserhalb dieses kreis sein»). */
 .isl-orb {
-  width: 52px;
-  height: 52px;
-  min-width: 52px;
-  min-height: 52px;
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
+  --kosmo-orb-drift: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--f-glass);
+  background: var(--k-orb-glas, var(--f-glass));
   backdrop-filter: var(--f-blur);
   -webkit-backdrop-filter: var(--f-blur);
-  border: 1px solid var(--k-glass-stroke, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--k-orb-glas-rand, var(--k-glass-stroke, rgba(255, 255, 255, 0.08)));
   border-radius: 999px;
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
   color: var(--f-ink);
@@ -892,7 +902,8 @@
 
 /* Puls (§4.3: «weich, zyklisch», 2.4s) — ein sich ausdehnender, verblassender
    Ring statt einer Skalierung des Orbs selbst (bleibt so bei jeder Puls-
-   Phase exakt 52×52px antippbar, die Trefferfläche wandert nie). PB4: Ring
+   Phase exakt 64×64px antippbar (K22: 52→64), die Trefferfläche wandert
+   nie). PB4: Ring
    trägt `--k-signal` (Kern-Farbe) statt des entfallenen `--f-gold`. */
 @keyframes islOrbPuls {
   0% {

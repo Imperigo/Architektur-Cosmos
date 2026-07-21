@@ -643,7 +643,11 @@ export function App() {
   );
 
   return (
-    <div className="app-wurzel">
+    /* K22 (Orb-Glas, `docs/BEFUNDE-KORREKTUREN-2026-07.md` Abschnitt 3):
+       `data-station` stempelt den aktiven Screen auf die Wurzel — reine
+       CSS-Adresse für die feine Tool-Tönung des Kosmo-Orbs (`app.css`,
+       `--k-orb-tool` je Station). Kein Verhalten, kein Routing berührt. */
+    <div className="app-wurzel" data-station={screen}>
       {/* PD4 (Island-UI-Strom Abschluss, Owner-Nachtrag 17.07.2026, wörtlich:
           «der oberste Balken soll es auch nicht mehr geben…»): der komplette
           Kopfbalken (Wortmarke, Stations-Badge, Bauphasen-Pille, Sync,

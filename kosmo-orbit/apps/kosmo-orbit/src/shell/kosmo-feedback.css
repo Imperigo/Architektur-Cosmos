@@ -420,13 +420,27 @@
     opacity: 1;
   }
 }
+/* K22 (Owner wörtlich «die kleinen orbs sind ganz fein animiert und können
+   auch ausserhalb dieses kreis sein», Befund Abschnitt 3 «Drift-Amplitude
+   erhöhen»): die bisher fest verdrahteten ±8-10px-Amplituden hängen jetzt
+   am Token `--kosmo-orb-drift` (Default 10px = exakt der Vorzustand für
+   jeden Bestandskonsumenten, z.B. SchwarmOrbs/Charakter-Fenster). Die
+   grossen Orb-Hüllen setzen ihn hoch (`.isl-orb`/`.ks-knopf` 26px,
+   Boden-Dock-Slot 18px, s. dortige Kommentare) — die Punkte driften damit
+   sichtbar ÜBER den Glaskreis hinaus; kein Vorfahre klemmt sie mit
+   `overflow:hidden` (geprüft: .isl-orb/.ks-knopf/.isl-orb-wurzel/
+   .boden-dock — Buttons clippen ohne overflow-Angabe nicht). Die 0.8/0.9-
+   Faktoren erhalten die bisherigen Richtungs-Asymmetrien (8/9/10px) exakt. */
 @keyframes k-orb-drift-1 {
   0%,
   100% {
     transform: translate(-140%, -140%);
   }
   50% {
-    transform: translate(calc(-140% - 10px), calc(-140% + 8px));
+    transform: translate(
+      calc(-140% - var(--kosmo-orb-drift, 10px)),
+      calc(-140% + var(--kosmo-orb-drift, 10px) * 0.8)
+    );
   }
 }
 @keyframes k-orb-drift-2 {
@@ -435,7 +449,10 @@
     transform: translate(140%, -140%);
   }
   50% {
-    transform: translate(calc(140% + 9px), calc(-140% - 10px));
+    transform: translate(
+      calc(140% + var(--kosmo-orb-drift, 10px) * 0.9),
+      calc(-140% - var(--kosmo-orb-drift, 10px))
+    );
   }
 }
 @keyframes k-orb-drift-3 {
@@ -444,7 +461,10 @@
     transform: translate(140%, 140%);
   }
   50% {
-    transform: translate(calc(140% - 8px), calc(140% + 10px));
+    transform: translate(
+      calc(140% - var(--kosmo-orb-drift, 10px) * 0.8),
+      calc(140% + var(--kosmo-orb-drift, 10px))
+    );
   }
 }
 @keyframes k-orb-drift-4 {
@@ -453,7 +473,10 @@
     transform: translate(-140%, 140%);
   }
   50% {
-    transform: translate(calc(-140% + 10px), calc(140% - 9px));
+    transform: translate(
+      calc(-140% + var(--kosmo-orb-drift, 10px)),
+      calc(140% - var(--kosmo-orb-drift, 10px) * 0.9)
+    );
   }
 }
 .kosmo-orb[data-zustand='idle'] .kosmo-orb-kern,

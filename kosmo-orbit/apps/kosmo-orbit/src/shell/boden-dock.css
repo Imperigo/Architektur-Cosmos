@@ -150,9 +150,21 @@
    nötig, damit der `::after`-Punkt (unten) relativ zum Knopf sitzt — die
    Home-Variante ist bereits `position:fixed`-Kind eines Wrappers, nicht
    betroffen. */
+/* K22 (Owner: «kosmo darf etwas grösser sein» + Glas-Umbau, Befund
+   `docs/BEFUNDE-KORREKTUREN-2026-07.md` Abschnitt 3): 38→44px — der innere
+   Orb wächst app-weit auf 40px (`KosmoSymbol.tsx`), 38px würde ihn quetschen.
+   BEWUSST exakt `TIER_GROESSE.innen` (44px): der Dock wird dadurch NICHT
+   höher (der Top-3-Kreis war schon 44px), der Reserve-Vertrag
+   `BODEN_DOCK_RESERVE_PX = 96 + 44 + 20 = 160` (`BodenDock.tsx`) bleibt
+   wörtlich gültig. Der gestrichelte Teal-Ring (B-66-Identität) bleibt; die
+   FLÄCHE kommt jetzt glasig-stationsgetönt aus `.ks-knopf` (`--k-orb-glas`).
+   `--kosmo-orb-drift` gedrosselt (26→18px), damit die frei driftenden
+   Punkte im dichten Dock nicht bis in die Nachbarknöpfe wandern, aber
+   trotzdem sichtbar über den Kreisrand hinauskommen. */
 .boden-dock-kosmo-slot [data-testid='kosmo-symbol'] {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  --kosmo-orb-drift: 18px;
   border: 1.5px dashed var(--k-signal);
   position: relative;
 }

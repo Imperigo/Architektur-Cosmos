@@ -230,7 +230,9 @@ export function KosmoSymbol({ onOpen, eingebettet = false }: KosmoSymbolProps) {
             : 'k-kosmo-symbol k-druck ks-knopf'
         }
       >
-        <KosmoOrb zustand={zustand} size={30} />
+        {/* K22 (Owner: «kosmo darf etwas grösser sein», Befund Abschnitt 3:
+            Orb 30→40, Hülle 52→64 in `kosmo-symbol.css`/Boden-Dock-Slot). */}
+        <KosmoOrb zustand={zustand} size={40} />
       </button>
     </div>
   );
