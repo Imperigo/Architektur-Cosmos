@@ -184,6 +184,27 @@ Erststart nach dem Host → `100.88.48.73` eintragen, und in den
 Einstellungen den Bridge-Token (derselbe Wert wie KOSMO_BRIDGE_TOKEN im
 systemd-Unit; Schlüssel `kosmo.bridge.token`).
 
+## Schritt 10 — iPad: KosmoOrbit vom Home-PC-Server aus nutzen
+
+**Ehrlicher Befund 21.07.:** der iOS-CI-Workflow ist ein deklariertes
+Experiment ohne Apple-Zertifikate — er liefert NUR das Xcode-Projekt als
+Artefakt (Signieren müsste der Owner lokal am Mac). Eine installierbare
+IPA existiert nicht. Der funktionierende iPad-Weg läuft darum über den
+Home-PC als Server:
+
+1. Home-PC (einmalig pro Version):
+```bash
+cd ~/Architektur-Cosmos/kosmo-orbit
+npm run build
+cd apps/kosmo-orbit
+npx vite preview --host --port 5183
+```
+2. Falls ufw aktiv (§7): `sudo ufw allow in on tailscale0 to any port 5183 proto tcp comment 'KosmoOrbit App über VPN'`
+3. iPad: Tailscale aus dem App Store, gleiches Konto, VPN zulassen.
+4. Safari: `http://100.88.48.73:5183` öffnen → Teilen-Menü → **«Zum
+   Home-Bildschirm»** — KosmoOrbit startet dann als Vollbild-App-Icon.
+   Bridge/Sync in den Einstellungen wie in §6 auf `100.88.48.73` stellen.
+
 ## Prüfliste am Ende
 | Prüfung | Erwartung |
 |---|---|
