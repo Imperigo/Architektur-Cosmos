@@ -458,6 +458,30 @@ test.describe('K17 — einheitlicher Insel-Randabstand (Owner-Korrekturen 2026-0
     expect(anker['projekt'], 'PROJEKT right').toBe(RAND);
     expect(anker['austausch'], 'AUSTAUSCH bottom').toBe(RAND);
 
+    // Härtung (Lastflake-Fund beim K7-Gate 21.07.2026; solo grün, unter
+    // Parallellast ganzflächig +4px): NICHT die Inseln wackeln — die
+    // Stations-EINTRITTS-Animation (`k-einblenden` auf `.app-station-huelle`,
+    // transform-Slide) läuft auf langsamen Maschinen noch, während gemessen
+    // wird. Ihre transform macht die Hülle vorübergehend zum Containing
+    // Block der fixed-Inseln UND schiebt die ganze Bühne um den from-Frame-
+    // Versatz (+4px) nach unten (Diagnose-Belege im Fable-Gate-Protokoll,
+    // Ahnenketten-Dump `.k-einblenden.app-station-huelle@y4`). Statt die
+    // 3px-Toleranz aufzuweichen, wartet die Probe ALLE endlichen Animationen
+    // des Dokuments ab (`document.getAnimations()` erfasst auch Ahnen;
+    // unendliche — Orb-Drift & Co. — würden `finished` nie erfüllen und
+    // bleiben draussen) und misst erst den Ruhezustand. Die harten
+    // Assertions bleiben byte-gleich.
+    await page.evaluate(() =>
+      Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => {
+            const t = a.effect?.getTiming?.();
+            return !!t && t.iterations !== Infinity;
+          })
+          .map((a) => a.finished.catch(() => undefined)),
+      ),
+    );
     const boxen: Record<string, { x: number; y: number; width: number; height: number }> = {};
     for (const island of ['zeichnen', 'ansicht', 'projekt', 'austausch']) {
       const box = await page.locator(`[data-testid="island-${island}-root"]`).boundingBox();
