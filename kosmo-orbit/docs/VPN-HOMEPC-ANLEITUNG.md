@@ -42,9 +42,11 @@ Konto anmelden (Google/GitHub/Apple/E-Mail). Danach:
 ```bash
 tailscale ip -4
 ```
-→ notiere die Adresse, z. B. `100.87.3.2`. **Das ist ab jetzt die
-VPN-Adresse deines Home-PCs** (genau die `remoteHost`-Adresse, die das
-Firewall-Konzept meint).
+→ notiere die Adresse. **ERLEDIGT 21.07.2026: der Owner-Home-PC hat die
+Tailnet-Adresse `100.88.48.73`** — das ist ab jetzt die verbindliche
+`remoteHost`-Adresse für alle Remote-Konfigurationen (Bridge
+`http://100.88.48.73:8600`, Sync `ws://100.88.48.73:8700`, Ollama
+`http://100.88.48.73:11434`).
 
 ### Schritt 2 — Zweitgerät (Laptop und/oder iPad)
 - Laptop (Ubuntu/macOS/Windows): Tailscale installieren, **mit demselben
