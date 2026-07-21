@@ -191,3 +191,21 @@ Branches. Bis dahin sind sie im Arbeitsbaum vorhanden und lokal grün gebaut
 - [ ] ROADMAP-Eintrag + Commit + Push (bestehender Arbeitsfluss)
 - [ ] Falls Website-Dateien geändert wurden: PR auf `main` gestellt/gemerged
       (Owner-Schritt, siehe Abschnitt 6) — erst danach ist die Seite live
+
+## 7. Zustellung ab 0.8.12 — Mac + iPad IMMER synchron (Owner-Order 21.07.2026)
+
+Owner wörtlich: «wenn du die neue mac version lieferst, bitte auch die
+richtige neue ipad version, immer gerade synchron mitpushen». Seit dem
+Planwechsel 21.07. ist der Home-PC (andrins-workstation, Tailnet
+100.88.48.73) der Server; das iPad bezieht die App von dort (§10
+VPN-HOMEPC-ANLEITUNG). Darum gehört zu JEDER Release-Zustellung das Paar:
+
+- [ ] **Mac:** Remote-Edition-DMG aus dem frischen Desktop-CI-Lauf
+      (Artefakt `kosmo-orbit-remote-macos-latest`) — Link in den Chat.
+- [ ] **iPad:** Home-PC auf denselben Stand heben — auf dem Home-PC
+      `~/Architektur-Cosmos/kosmo-orbit/tools/homeserver-update.sh`
+      ausführen (holt Branch, baut, startet kosmo-app/-bridge/-sync neu).
+      Dem Owner im selben Atemzug wie der DMG-Link mitgeben; sobald der
+      Home-PC einen eigenen Claude-Worker/eine Routine hat, übernimmt der
+      diesen Schritt automatisch.
+- [ ] Beide Meldungen in EINER Nachricht — nie Mac ohne iPad.
