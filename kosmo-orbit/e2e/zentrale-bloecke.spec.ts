@@ -150,3 +150,33 @@ for (const hauptId of Object.keys(FAECHER)) {
     }
   });
 }
+
+/**
+ * iPad-Beweis (Owner-Kompass 2026-07-20: «iPad erste Klasse — Touch-Lücken
+ * sind Bugs»): dieselben K13-Blocklisten-Invarianten im iPad-Viewport mit
+ * Touch. Der Fächer öffnet auf Touch über den dokumentierten KLICK-Vertrag
+ * (OrbitStart.tsx-Kopfkommentar: Tap auf ein nicht-aktives Hauptwerkzeug
+ * öffnet NUR den Fächer) — kein Hover nötig.
+ */
+test.describe('iPad 1024×768 (Touch)', () => {
+  test.use({ viewport: { width: 1024, height: 768 }, hasTouch: true });
+
+  test('Kosmo-Fächer öffnet per Tap, alle Blöcke ≥44px und linksbündig', async ({ page }) => {
+    await zentraleLaden(page);
+    await page.locator('[data-testid="orbit-haupt-kosmo"]').tap();
+    const faecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
+    await expect(faecher).toHaveClass(/\boffen\b/);
+    await animationenAbwarten(page);
+
+    const xWerte: number[] = [];
+    for (const { testid } of FAECHER['kosmo']!) {
+      const box = await faecher.locator(`[data-testid="${testid}"]`).boundingBox();
+      expect(box, `${testid} fehlt`).not.toBeNull();
+      expect(box!.height).toBeGreaterThanOrEqual(43.5);
+      xWerte.push(box!.x);
+    }
+    for (const x of xWerte) {
+      expect(Math.abs(x - xWerte[0]!)).toBeLessThan(1);
+    }
+  });
+});

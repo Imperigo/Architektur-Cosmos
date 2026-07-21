@@ -134,3 +134,26 @@ test('(d) Bridge-offline-Ehrlichkeit: umgebogene Bridge-URL → «NICHT VERBUNDE
   await expect(page.locator('[data-testid="start-sequenz"]')).toHaveCount(0, { timeout: 10_000 });
   await expect(page.locator('[data-testid="orbit-start"]')).toBeVisible();
 });
+
+/**
+ * iPad-Beweis (Owner-Kompass 2026-07-20: «iPad erste Klasse»): die
+ * Startsequenz rendert im iPad-Viewport vollständig und der Tap-Skip
+ * (Spez E-S1 Punkt 3 «Klick/Tap/Escape beendet sofort») funktioniert
+ * mit echtem Touch-Event.
+ */
+test.describe('iPad 1024×768 (Touch)', () => {
+  test.use({ viewport: { width: 1024, height: 768 }, hasTouch: true });
+
+  test('Sequenz rendert mit allen fünf Zeilen, Tap überspringt sofort', async ({ page }) => {
+    await erzwingen(page);
+    await page.goto('/');
+    const wurzel = page.locator('[data-testid="start-sequenz"]');
+    await expect(wurzel).toBeVisible();
+    await expect(page.locator('[data-testid="start-sequenz-zeile-kern"]')).toBeVisible();
+    await expect(page.locator('[data-testid="start-sequenz-zeile-bridge"]')).toBeVisible();
+    await expect(page.locator('[data-testid="start-sequenz-zeile-stationen"]')).toBeVisible();
+    await wurzel.tap();
+    await expect(wurzel).toHaveCount(0);
+    await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+  });
+});
