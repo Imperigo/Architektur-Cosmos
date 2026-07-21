@@ -217,8 +217,12 @@ als erwartet — Diagnose gegen ältere Stände, Befund vorlegen.
 die Modell-Darstellung; Betrifft Screenshot-/Blick-Darstellung ebenso).
 **Aufwand:** S/M (Golden-neutral, aber E2E-Screens ändern sich).
 **Status:** ERLEDIGT (ROADMAP 580 — orbit-Override von `--k-viewport-sky`
-entfernt, beide Themes hell `#edeae2`; Restposten: Bodenraster-Kontrast
-auf hellem Himmel schwach, Folgeposten-Kandidat).
+entfernt, beide Themes hell `#edeae2`; Restposten: Bodenraster auf
+hellem Himmel kaum sichtbar — Fable-Diagnoseversuch 21.07. dokumentiert:
+dunklere Linienfarben UND +y-Offset gegen Z-Fighting änderten das Bild
+NICHT (Bundle-Stand + SW-Bypass verifiziert), nur das verdichtete
+Fernfeld-Band rendert; Nahbereich-Ursache unverstanden → echter
+Diagnose-Posten für 0.8.12, kein Blindfix).
 
 ### K21 · S.6 — ArchiCAD-Werkzeugtiefe für Fenster/Türen (Werkzeug-Einstellungsmenüs)
 > «grundsätzliche frage: wie weit bist du mit dem werkzeugnachbau von
