@@ -1943,4 +1943,6 @@ Container-machbar, Reihenfolge = Hebel für den Wettbewerbs-Alltag:
 
 586. **iPad-Beweise für Startsequenz und Zentrale-Blöcke (21.07.2026, Fable).** Owner-Kompass («iPad erste Klasse — Touch-Lücken sind Bugs»): beide neuen Flächen tragen jetzt einen eigenen iPad-1024×768-Touch-Describe — Startsequenz rendert vollständig und der Tap-Skip greift (echtes Touch-Event, danach Zentrale bedienbar); der Kosmo-Fächer öffnet per Tap über den Klick-Vertrag, alle Blöcke ≥44px und linksbündig. Beweis: beide Specs komplett 16/16 auf :5183.
 
+587. **W0 v0.8.12 «Zentralwerk»: Spez + Golden-Prognose (21.07.2026, Fable).** Owner-Startschuss nach vier Richtungsentscheiden (Golden-Zug gebündelt freigegeben · KosmoSpez wartet auf R5 · Phasen-Matrix zuerst · Vis-Manuell bleibt gleichwertig): `docs/V0812-SPEZ.md` (E-Z Projekt-Tableiste, E-M Phasen-Matrix, E-G Golden-Zug Fable-exklusiv, E-K5 Phase als Projekt-Eigenschaft, E-F Härtung; 6 Sanktionen, C-1…C-10) + `docs/GOLDEN-WECHSEL-0812.md` Teil 1 (Prognose: 26/40 Goldens via Tusche inkl. deklariertem parzelle-Mitzug, Schraffur/Blattrand je Commit präzisiert, sha-Methode).
+
 **Phase 3 abgeschlossen (03.07.2026):** Punkte 25–33 alle ✅ (einzige HomeStation-Reste ehrlich markiert: Render-Slots im Plakat, eigene Asset-Uploads, LoRA-Training selbst). Es folgt die grosse Härtetest-Runde übers Gesamtsystem.

@@ -1,0 +1,45 @@
+# GOLDEN-WECHSEL 0812 — Teil 1: Prognose (VOR den Landungen)
+
+**Der EINE deklarierte Golden-Zug von v0.8.12** (Owner-Freigabe 21.07.2026:
+«Ja, alle drei gebündelt»): K42-Tusche + K18/K23-Schraffur-Orientierung +
+K41-Blattrand. Ausgangsbestand: **40 Golden-Dateien** (39 SVG + 1 IFC),
+svg-qa 39/0, Stand HEAD nach ROADMAP 586.
+
+## Prognose je Zug-Teil
+
+### Teil A — Tusche (K42, `derive/stilblatt.ts:189`)
+`BLATT.tinte: 'black' → '#1A1815'`. **Deklarierter Zusatzentscheid:**
+`parzelle: 'black'` (stilblatt.ts:179) zieht MIT — dieselbe
+Werkplan-Tusche-Familie, der Owner-Wortlaut («Tusche #1A1815, nie reines
+Schwarz», GESTALTUNGSKONZEPT) deckt beide Stellen.
+**Erwartung: die 26 Bestands-SVGs mit 'black'-Strokes bewegen sich**
+(grep-belegt 21.07.: alle `grundriss-*`, `blatt-*`, `plankopf-*`,
+`schwarzplan*`, `werkplan-beschlag*`, `masskette-plan`, `plan-schloss`,
+`rolle-*` u. a.). Die übrigen 13 SVGs + 1 IFC bleiben byte-still.
+
+### Teil B — Schraffur-Orientierung (K18/K23, `derive/schraffur.ts`)
+`FUNKTION.daemmung` verliert den fixen `winkelGrad:0` — die Wellen-/
+Zickzack-Schraffur läuft entlang der Bauteilachse (Winkel vom Aufrufer).
+Beton/Stahlbeton-Diagonale (45°) bleibt UNVERÄNDERT (Owner: «bei beton …
+weniger wichtig»). **Erwartung: nur SVGs mit Dämmungs-Schraffur an
+nicht-horizontalen Bauteilen bewegen sich** — exakte Liste wird beim
+Teil-B-Commit VOR dem Refresh erhoben und hier nachgetragen; Beton-only-
+Goldens bleiben byte-still.
+
+### Teil C — Blattrand (K41, `derive/sheet.ts:212–235` + `blattlayout.ts`)
+Umsetzung NUR gemäss K41-Registertext (vor dem Commit wörtlich zu lesen).
+**Erwartung: nur `blatt-*`-/Plakat-Goldens** können sich bewegen; falls
+die Vereinheitlichung auf die bestehende Default-Geometrie hinausläuft,
+0 zusätzliche Bewegungen. Präzisierung beim Teil-C-Commit.
+
+## Methode (wie 0.8.10/0.8.11)
+Vor jedem Teil-Commit: aggregierte sha256 über alle 40 Goldens sichern;
+nach dem Refresh: Liste der bewegten Dateien == Prognose dieses Dokuments
+(Abweichung = Hard-Stop, kein Refresh); je Teil eine von Fable GESICHTETE
+PNG-Stichprobe (mind. 2 bewegte SVGs gerendert, vorher/nachher).
+Nicht-Zug-Pakete (P-Z, P-M, E-K5, E-F) müssen `git status
+packages/kosmo-kernel/test/golden` LEER halten — jede Bewegung dort ist
+Sanktion 1.
+
+## Teil 2: Ist-Nachweis (NACH den Landungen — auszufüllen)
+_(pro Teil: bewegte Dateien, sha-Summen vorher/nachher, Sichtungs-Beleg)_
