@@ -206,7 +206,11 @@ ERLEDIGT (ROADMAP 574 — Token --isl-rand-abstand 14px, E2E-Messtest).
 > «die massketten sollen default mässig verlängerungslinien haben und
 > einen gesunden abstand zur verlinkten kante oder ecke haben»
 **Bereich:** kernel derive/plan (Golden-relevant! deklarierter
-Golden-Zug nötig). **Aufwand:** M. **Status:** offen.
+Golden-Zug nötig). **Aufwand:** M. **Status:** offen — Klarstellung
+21.07.: das 0.8.12-Zug-Label «K18/K23-Schraffur» meinte fachlich nur die
+Schraffur (= K23, erledigt 593); die Massketten-Defaults hier sind ein
+EIGENER Golden-relevanter Posten (0.9.0-Kandidat, eigener deklarierter
+Zug).
 
 ### K19 · S.6 — Umrandungslinien/Texturen im Plan prüfen
 > «was ist mit den umrandungslinien passiert? und stimmen die texturen?»
@@ -271,7 +275,10 @@ Tool-Tönung, 40px, freie Schwarm-Orbs); Animations-Restlücken
 > wenn es dämmung ist, z.b bei beton ist es weniger wichtig weil dort es
 > in beide richtungen gleich ist.»
 **Bereich:** kernel derive/plan Schraffur (Golden-Zug nötig).
-**Aufwand:** M. **Status:** offen.
+**Aufwand:** M. **Status:** ERLEDIGT (ROADMAP 593 — Dämmwelle folgt der
+Bauteilachse via längster Loop-Kante, Beton bleibt 45° fix wie vom Owner
+gewichtet; Teil B des deklarierten 0.8.12-Golden-Zugs, Nachweis
+GOLDEN-WECHSEL-0812 Teil 2B).
 
 ### K24 · S.8 — Werkzeug-Vollständigkeit vs. ArchiCAD (Bewusstsein)
 > «hier haben wir noch lange nicht alle werkzeuge von archicad

@@ -62,13 +62,25 @@ Antwortet der Home-PC, steht der Tunnel.
 ### Schritt 4 — KosmoOrbit-Dienste auf dem Home-PC starten
 Im Repo-Ordner auf dem Home-PC (bzw. nach Installation der .deb für die
 App selbst — die Dienste laufen aus dem Repo):
+Neuere Ubuntu-Versionen sperren `pip install` ins System-Python
+(PEP 668, Owner-Fund 21.07.) — die Bridge-Abhängigkeiten gehören darum in
+ein virtuelles Environment im Repo-Ordner (einmalig):
 ```bash
-cd kosmo-orbit
-python3 tools/homestation-bridge/kosmo_bridge/main.py --port 8600 &   # echte Bridge (ohne --fake)
+cd ~/Architektur-Cosmos/kosmo-orbit
+python3 -m venv .venv        # falls es meckert: sudo apt install python3-venv
+.venv/bin/pip install fastapi uvicorn python-multipart httpx
+```
+Dann starten — ab jetzt immer `.venv/bin/python` statt `python3`:
+```bash
+.venv/bin/python tools/homestation-bridge/kosmo_bridge/main.py --port 8600 &  # echte Bridge (ohne --fake)
 node tools/sync-server/src/server.mjs &                                # Yjs-Sync :8700
 # optional, für Kosmo-Remote-LLM:
 ollama serve                                                           # :11434
 ```
+**Verifiziert 21.07.2026 auf dem Owner-Home-PC:** venv + Installation +
+Probelauf erfolgreich, `curl …/health` → 200. Achtung Probelauf-Hinweis
+«Bridge ist im Netz offen»: ohne Token bindet die Bridge auf 0.0.0.0 —
+für den Dauerbetrieb gilt §9 (Tailnet-Bind + KOSMO_BRIDGE_TOKEN).
 
 ### Schritt 5 — Dienste ans VPN binden lassen + lokal prüfen
 ```bash

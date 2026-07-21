@@ -16,6 +16,12 @@ export interface SchraffurSpec {
   winkelGrad: number;
   /** Flächen-Tönung (hex) oder null für weiss/offen. */
   tint: string | null;
+  /**
+   * Statt `winkelGrad` läuft das Muster entlang der Bauteilachse — dem
+   * Winkel der längsten Loop-Kante (dünne Schicht: lange Achse = Achse des
+   * Bauteils). Dämmwelle in der Wand steht, im Dach folgt sie der Neigung.
+   */
+  folgtBauteilachse?: boolean;
 }
 
 const KATALOG: Record<string, SchraffurSpec> = {
@@ -31,7 +37,7 @@ const KATALOG: Record<string, SchraffurSpec> = {
 
 const FUNKTION: Record<string, SchraffurSpec> = {
   tragend: { muster: 'diagonal', abstand: 1.8, winkelGrad: 45, tint: '#dad7d1' },
-  daemmung: { muster: 'wellen', abstand: 2.8, winkelGrad: 0, tint: null },
+  daemmung: { muster: 'wellen', abstand: 2.8, winkelGrad: 0, tint: null, folgtBauteilachse: true },
   bekleidung: { muster: 'voll', abstand: 0, winkelGrad: 0, tint: '#eceae6' },
   dichtung: { muster: 'voll', abstand: 0, winkelGrad: 0, tint: '#b9b5ae' },
   hohlraum: { muster: 'keine', abstand: 0, winkelGrad: 0, tint: null },
@@ -65,12 +71,38 @@ export interface SzPt {
  */
 export function schraffurLinien(loops: readonly (readonly SzPt[])[], spec: SchraffurSpec, scale: number): SzPt[][] {
   if (spec.muster === 'voll' || spec.muster === 'keine') return [];
-  const winkel = spec.muster === 'kreuz' ? [spec.winkelGrad, spec.winkelGrad + 90] : [spec.winkelGrad];
+  const basis = spec.folgtBauteilachse ? (bauteilachseWinkelGrad(loops) ?? spec.winkelGrad) : spec.winkelGrad;
+  const winkel = spec.muster === 'kreuz' ? [basis, basis + 90] : [basis];
   const out: SzPt[][] = [];
   for (const w of winkel) {
     out.push(...scanlines(loops, spec.abstand * scale, (w * Math.PI) / 180, spec.muster === 'wellen', scale));
   }
   return out;
+}
+
+/**
+ * Bauteilachse eines Loop-Sets: Winkel (Grad) der LÄNGSTEN Kante, normiert
+ * auf [0°, 180°). Eine exakt horizontale Kante ergibt exakt 0 — derselbe
+ * Wert wie der bisherige Fixwinkel, flache Schichten bleiben byte-still.
+ */
+function bauteilachseWinkelGrad(loops: readonly (readonly SzPt[])[]): number | null {
+  let best = 0;
+  let winkel: number | null = null;
+  for (const loop of loops) {
+    for (let i = 0; i < loop.length; i++) {
+      const p = loop[i]!;
+      const q = loop[(i + 1) % loop.length]!;
+      const ds = q.s - p.s;
+      const dz = q.z - p.z;
+      const l2 = ds * ds + dz * dz;
+      if (l2 > best) {
+        best = l2;
+        winkel = Math.atan2(dz, ds);
+      }
+    }
+  }
+  if (winkel === null) return null;
+  return ((((winkel * 180) / Math.PI) % 180) + 180) % 180;
 }
 
 function scanlines(

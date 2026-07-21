@@ -26,6 +26,18 @@ nicht-horizontalen Bauteilen bewegen sich** — exakte Liste wird beim
 Teil-B-Commit VOR dem Refresh erhoben und hier nachgetragen; Beton-only-
 Goldens bleiben byte-still.
 
+**Präzisierung VOR der Teil-B-Änderung (21.07., grep-belegt):** Schraffur-
+Polylines (`stroke="#3A3A3A"` = `GRAU_SONDER.schraffur`, einziger Renderer
+`plansvg.ts sectionInnerSvg`) tragen genau 3 der 39 SVGs:
+`blatt-autofuellung.svg` (115 Linien, ausschliesslich 2-Punkt-Diagonalen —
+kein Dämmungs-Anteil → **byte-still**), `schnitt-fenster-parametrisch.svg`
+(116 Wellen-Polylines) und `schnitt-satteldach-querschnitt.svg` (146
+Wellen-Polylines). **Prognose: exakt diese 2 Goldens bewegen sich**, die
+übrigen 37 SVG + 1 IFC bleiben byte-still. Mechanik-Zusatz: die
+Winkel-Ableitung (längste Loop-Kante, normiert auf [0°,180°)) liefert für
+exakt horizontale Schichten den Wert 0 — identischer Codepfad wie der
+bisherige Fixwinkel, darum keine Bewegung durch flache Dämmlagen allein.
+
 ### Teil C — Blattrand (K41, `derive/sheet.ts:212–235` + `blattlayout.ts`)
 Umsetzung NUR gemäss K41-Registertext (vor dem Commit wörtlich zu lesen).
 **Erwartung: nur `blatt-*`-/Plakat-Goldens** können sich bewegen; falls
@@ -76,5 +88,24 @@ Sichtung: blatt-autofuellung vorher/nachher als PNG gerendert und von
 Fable geprüft (Rahmen allseitig gleich, Inhalt unversehrt). Suiten:
 Kernel 1180/1180, svg-qa Exit 0.
 
-### Teil B — Schraffur-Orientierung (offen)
-_(beim Teil-B-Commit auszufüllen)_
+### Teil B — Schraffur-Orientierung (erledigt 21.07.2026, Fable)
+**Ist == Prognose: exakt 2 bewegte Golden-Dateien**
+(`schnitt-fenster-parametrisch.svg`, `schnitt-satteldach-querschnitt.svg`),
+die übrigen 37 SVG + 1 IFC byte-still — insbesondere `blatt-autofuellung.svg`
+(nur Beton-Diagonalen) unbewegt, Gegenprobe zur Beton-bleibt-fix-Zusage.
+Umsetzung: `SchraffurSpec.folgtBauteilachse` (nur `FUNKTION.daemmung`),
+`schraffurLinien()` leitet den Basiswinkel aus der LÄNGSTEN Loop-Kante ab
+(`bauteilachseWinkelGrad()`, atan2 normiert auf [0°,180°) — exakt
+horizontale Kanten ergeben exakt 0 und damit den alten Codepfad).
+Richtungs-Nachweis nach Refresh: ALLE Wellen-Polylines beider Goldens
+laufen jetzt 90° (in der Wand stehend, vorher 0° quer); das Satteldach
+trägt in den Dachschichten kein Dämm-Wellenmuster (Material-Diagonale
+`dach`), darum dort keine Bewegung — deckt sich mit der Sichtung.
+Sichtung: beide bewegten Goldens vorher/nachher als PNG gerendert und von
+Fable geprüft (Wandaufbau intakt, tragende Diagonale unverändert, Welle
+folgt der Bauteilachse). Aggregierte sha256 aller 40 Goldens: vorher
+`dea4ab4e22f587d8…` (nach Teil A+C), nachher `fece758e9b0a89ec…`.
+Suiten: Kernel 1180/1180, svg-qa 39 Goldens / 0 harte Fehler.
+
+**Damit ist der EINE deklarierte Golden-Zug v0.8.12 komplett: Teil A (26)
++ Teil C (2) + Teil B (2) — alle Teile Ist == Prognose.**
