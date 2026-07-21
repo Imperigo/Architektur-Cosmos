@@ -48,7 +48,17 @@ async function kosmoMitSkriptOeffnen(page: Page, skriptId: string, skript: Szena
     await page.locator('[data-testid="kosmo-panel-schliessen"]').click();
     await expect(page.locator('[data-testid="kosmo-input"]')).toBeHidden();
   }
-  await page.click('[data-testid="kosmo-symbol"]');
+  // Orb-Gesetz-Nachzug (Rotlisten-Runde 21.07.2026, Muster kosmo-blick-2
+  // .spec.ts:99-111 / ROADMAP 543-Befund): seit PB4-084 öffnet erst der
+  // DOPPELklick das Panel — der Einfachklick zeigt nur die
+  // Konversationskarte. Der Zugang ist modus-bewusst: Island-Modus über
+  // den Kosmo-Orb, Manuell-Modus über das BodenDock-Symbol.
+  const orbKnopf = page.locator('[data-testid="kosmo-orb-knopf"]');
+  if ((await orbKnopf.count()) > 0) {
+    await page.dblclick('[data-testid="kosmo-orb-knopf"]');
+  } else {
+    await page.dblclick('[data-testid="kosmo-symbol"]');
+  }
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 }
 

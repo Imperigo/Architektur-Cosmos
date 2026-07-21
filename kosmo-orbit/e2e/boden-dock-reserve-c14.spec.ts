@@ -112,7 +112,9 @@ test.describe('BodenDock-Reserve — daten/wissen/chat/pipeline (C-14)', () => {
   }) => {
     await seed(page);
     await page.click('[data-testid="module-design"]');
-    await page.click('[data-testid="kosmo-symbol"]');
+    // Orb-Gesetz-Nachzug (Rotlisten-Runde 21.07.2026): Doppelklick öffnet
+    // das Panel (PB4-084), Einfachklick nur die Konversationskarte.
+    await page.dblclick('[data-testid="kosmo-symbol"]');
     await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
     await expect(page.locator('[data-testid="boden-dock"]')).toBeVisible();
 

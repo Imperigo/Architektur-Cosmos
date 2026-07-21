@@ -51,7 +51,10 @@ test('Screenshot: Schliessen-Choreografie-Endzustand (Orb-Austritt)', async ({ p
     localStorage.setItem('kosmo.llm', JSON.stringify({ provider: 'mock' }));
   });
   await page.reload();
-  await page.click('[data-testid="kosmo-symbol"]');
+  // Orb-Gesetz-Nachzug (Rotlisten-Runde 21.07.2026, Muster
+  // kosmo-blick-2.spec.ts:99-111): seit PB4-084 öffnet erst der
+  // DOPPELklick das Panel — Einfachklick zeigt nur die Konversationskarte.
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
   await page.click('[data-testid="kosmo-panel-schliessen"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toHaveClass(/k-panel-austritt-orb/);

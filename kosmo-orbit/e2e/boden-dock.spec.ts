@@ -151,13 +151,16 @@ test('Kosmo-Orb sichtbar, Boden-Dock zeigt Rang-Kreise mit Rollenfarben', async 
   expect(await innenKreise.count()).toBe(3);
 });
 
-test('Einzel-Instanz-Invariante: Klick im Dock öffnet das Panel, Symbol verschwindet, Schliessen bringt genau eine Instanz zurück', async ({
+test('Einzel-Instanz-Invariante: Doppelklick im Dock öffnet das Panel, Symbol verschwindet, Schliessen bringt genau eine Instanz zurück', async ({
   page,
 }) => {
   await oeffneModulAnsicht(page);
 
   await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(1);
-  await page.click('[data-testid="kosmo-symbol"]');
+  // Orb-Gesetz-Nachzug (Rotlisten-Runde 21.07.2026): seit PB4-084 öffnet
+  // erst der DOPPELklick das Panel — der Öffnungsweg ist hier nur Mittel,
+  // Testgegenstand bleibt die Einzel-Instanz-Invariante.
+  await page.dblclick('[data-testid="kosmo-symbol"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
   // Panel offen → nirgends im Dock ODER app-weit ein zweites Symbol.
   await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(0);
