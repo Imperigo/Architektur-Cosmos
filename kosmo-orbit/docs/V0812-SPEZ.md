@@ -75,6 +75,40 @@ Dialog (Wettbewerb→Vorprojekt, `bestaetigen()`-Weg, bestehender
 siaPhase-Command). Bestands-Specs mit `phasen-leiste-*` migrieren
 (Grep-Rechenschaft). NEU `e2e/phasen-projekt.spec.ts`.
 
+### E-H «Ein-Klick-HomeServer» (Tag B, Sonnet, NACH E-K5-Gate — Owner-Order 21.07. ~20:45Z)
+Owner wörtlich: «ziel ist es das ich synchro auf ipad per oneklick
+aktivieren kann, dieser automatisch … onecklick ganze verbindung mit home
+pc aktiv macht». Ehrliche Grenze (in der UI offen benennen): das
+Tailscale-VPN selbst kann eine Web-App auf iOS nicht einschalten — der
+Knopf verlinkt in dem Fall auf die Tailscale-App (`tailscale://`).
+1. NEU `state/home-server.ts`: Preset aus EINER Quelle
+   (`kosmo.homeserver.host`, Default `100.88.48.73`) → Bridge
+   `http://<host>:8600`, Sync `ws://<host>:8700`, Ollama
+   `http://<host>:11434`. `verbindeHomeServer()`: setzt die BESTEHENDE
+   Betriebsart-/Remote-Konfiguration (grep betriebsart/remoteHost —
+   bestehende Wege nutzen, keinen Parallel-Zustand erfinden) in EINEM
+   Zug auf alle drei Endpunkte und führt echte Probes aus: Bridge
+   `/health` (mit `X-Kosmo-Token` aus `kosmo.bridge.token`),
+   Sync-WebSocket-Handshake, Ollama `/api/tags`; Timeout je 1.5s;
+   Rückgabe je Kanal `verbunden|nicht-verbunden`. `trenneHomeServer()`
+   stellt die lokale Betriebsart wieder her.
+2. UI in `shell/Einstellungen.tsx` (darum NACH E-K5, gleiche Datei):
+   Abschnitt «HomeServer» — EIN grosser Knopf «Mit Home-PC verbinden»
+   (testid `homeserver-verbinden`, Touch ≥44px), drei ehrliche
+   Status-Chips BRIDGE/SYNC/KOSMO-LLM (testid `homeserver-status-*`),
+   Host- und Token-Feld (Quellen oben), bei gescheiterten Probes
+   Hinweiszeile «Tailscale-VPN auf diesem Gerät einschalten» + Link
+   `tailscale://` (öffnet die App auf dem iPad). Beim App-Start: war
+   zuletzt verbunden, Probes automatisch wiederholen (die
+   Startsequenz-BRIDGE-Zeile aus 584 zeigt das Ergebnis mit).
+3. NEU `e2e/home-server.spec.ts`: Ein Klick setzt beweisbar alle drei
+   Endpunkte; gegen die laufende Fake-Bridge :8600 wird BRIDGE
+   «VERBUNDEN», Ollama ohne Server ehrlich «NICHT VERBUNDEN» (gemischtes
+   Bild = Ehrlichkeitsbeweis); Trennen stellt lokal wieder her; Neuladen
+   behält den Zustand; iPad-Describe (1024×768, hasTouch, Muster 586).
+- TABU: kernel/derive, Cluster B, project-vault.ts, OrbitStart.tsx,
+  StartSequenz-Verhalten (nur lesen).
+
 ### E-F «Härtungsrunde» (Tag B, Sonnet, klein)
 PD4-reduced-motion-Lastflake · project-io-haerte-Timeout ·
 viewport3d-auswahl C-14a — je frischer Repro VOR Fix (Stash-Beweis).
@@ -92,6 +126,8 @@ Dazu Raster-Fix aus `docs/BEFUND-RASTER-NAHBEREICH.md`:
 5. Flake-Fix ohne dokumentierten Vorbestands-Repro = ungültig.
 6. Tusche-/Schraffur-Commit ohne von Fable gesichtete Golden-Stichprobe
    = ungültig.
+7. E-H zeigt einen Kanal «VERBUNDEN» ohne echten Probe-Erfolg = ungültig
+   (Ehrlichkeits-Grundsatz; gilt auch für den Tailscale-Hinweis).
 
 ## Vollständigkeits-Matrix
 C-1 Projekt-Tableiste mit allen Alt-Funktionen + iPad → P-Z ·
@@ -102,7 +138,9 @@ C-5 Schraffur-Orientierung mit Teil-2-Nachweis → E-G ·
 C-6 K41 gemäss Registertext → E-G · C-7 Phase in Projekt-Einstellungen +
 Transformieren, Kopf ohne PhasenLeiste → E-K5 · C-8 Härtungsrunde mit
 Repro-Belegen → E-F · C-9 GOLDEN-WECHSEL Teil 1 vor Landungen, Teil 2
-Ist==Prognose → Fable · C-10 verschlanktes Release-Ritual komplett
+Ist==Prognose → Fable · C-11 Ein-Klick-HomeServer mit ehrlichen
+Kanal-Stati + gemischtem Ehrlichkeitsbeweis im E2E → E-H ·
+C-10 verschlanktes Release-Ritual komplett
 (lehren, Sechs-Träger-Bump, release-gate 0, Build-Request; kein PDF,
 keine Installer-Zustellung unaufgefordert) → Fable.
 
