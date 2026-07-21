@@ -108,6 +108,58 @@ mit einem Auth-Token vor der Bridge, und danach wieder
 `tailscale funnel off`. Standard-Empfehlung: AUS lassen; die Cloud-Session
 arbeitet weiter mit der Fake-Bridge.
 
+## Schritt 9 — Dauerbetrieb: der Home-PC als KosmoOrbit-Server (systemd)
+
+**Owner-Entscheid 21.07. (Planwechsel):** der Cloud-Worker bleibt bei
+Anthropic; der Home-PC übernimmt die Server-Rolle (Leistung/Speicher) für
+die Mac-Remote-Edition. Damit Bridge/Sync Neustarts überleben, laufen sie
+als systemd-Dienste. Voraussetzung: das Repo liegt auf dem Home-PC (einmalig
+`git clone https://github.com/Imperigo/Architektur-Cosmos.git ~/Architektur-Cosmos`
++ `cd ~/Architektur-Cosmos/kosmo-orbit && npm install`).
+
+`sudo tee /etc/systemd/system/kosmo-bridge.service`:
+```ini
+[Unit]
+Description=KosmoOrbit Bridge (:8600)
+After=network-online.target tailscaled.service
+[Service]
+User=andrin-baumann
+WorkingDirectory=/home/andrin-baumann/Architektur-Cosmos/kosmo-orbit
+ExecStart=/usr/bin/python3 tools/homestation-bridge/kosmo_bridge/main.py --port 8600
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+```
+
+`sudo tee /etc/systemd/system/kosmo-sync.service`:
+```ini
+[Unit]
+Description=KosmoOrbit Sync (:8700)
+After=network-online.target tailscaled.service
+[Service]
+User=andrin-baumann
+WorkingDirectory=/home/andrin-baumann/Architektur-Cosmos/kosmo-orbit
+ExecStart=/usr/bin/node tools/sync-server/src/server.mjs
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target
+```
+
+Aktivieren + prüfen:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now kosmo-bridge kosmo-sync
+systemctl status kosmo-bridge kosmo-sync --no-pager | head -20
+```
+Ollama (falls installiert) bringt seinen eigenen systemd-Dienst bereits
+mit (`sudo systemctl enable --now ollama`).
+
+**Mac-Seite (nach 0.8.12-Release):** Tailscale aus dem App Store /
+tailscale.com auf dem Mac, gleiches Konto → dann die
+**Remote-Edition-DMG** installieren (CI-Artefakt
+`kosmo-orbit-remote-macos-latest`); die Remote-Edition fragt beim
+Erststart nach dem Host → `100.88.48.73` eintragen, fertig.
+
 ## Prüfliste am Ende
 | Prüfung | Erwartung |
 |---|---|
