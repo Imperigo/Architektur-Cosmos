@@ -38,6 +38,17 @@ import {
 } from '../state/leistung';
 import { WerkzeugSetup } from './WerkzeugSetup';
 import { loadSettings } from './KosmoPanel';
+import {
+  BRIDGE_TOKEN_KEY,
+  homeServerHost,
+  pruefeHomeServer,
+  setHomeServerHost,
+  trenneHomeServer,
+  verbindeHomeServer,
+  warZuletztVerbunden,
+  type HomeServerProbeErgebnis,
+  type KanalStatus,
+} from '../state/home-server';
 import { istTauriDesktop } from './cloud-login';
 import { sindSoundsAn, setSoundsAn } from '../state/sounds';
 import { eigencursorAktiv, setEigencursorEingestellt } from '../state/cursor-zustand';
@@ -148,6 +159,24 @@ function setStartMaximiertEingestellt(an: boolean): void {
 }
 
 /**
+ * E-H «Ein-Klick-HomeServer» — Chip-Text/-Klasse je Kanal, IMMER aus einem
+ * echten Probe-Ergebnis (`hsStatus`) oder dem ehrlichen Zwischenzustand
+ * («prüft…»/«noch nicht geprüft»); nie ein hartkodiertes «VERBUNDEN» ohne
+ * Probe (Sanktion 7).
+ */
+function homeServerChip(
+  label: string,
+  status: KanalStatus | undefined,
+  pruefend: boolean,
+): { text: string; klasse: string } {
+  if (pruefend && !status) return { text: `${label} — PRÜFT …`, klasse: 'es-homeserver-chip--pruefend' };
+  if (!status) return { text: `${label} — NOCH NICHT GEPRÜFT`, klasse: 'es-homeserver-chip--pruefend' };
+  return status === 'verbunden'
+    ? { text: `${label} — VERBUNDEN`, klasse: 'es-homeserver-chip--verbunden' }
+    : { text: `${label} — NICHT VERBUNDEN`, klasse: 'es-homeserver-chip--nicht-verbunden' };
+}
+
+/**
  * E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4): natürliche Reihenfolge der 8
  * feinen `SiaPhase`-Teilphasen (wörtlich wie `model/doc.ts`s `SiaPhase`-
  * Deklaration und die bestehende `sia-phase-select`-Optionsliste in
@@ -183,6 +212,75 @@ export function Einstellungen({
 }: EinstellungenProps) {
   const [werkzeugSetupOffen, setWerkzeugSetupOffen] = useState(false);
   const [adaptionIstAn, setAdaptionIstAn] = useState(() => adaptionAktiv());
+
+  // E-H «Ein-Klick-HomeServer» (`docs/V0812-SPEZ.md` §E-H, Sanktion 7): Host/
+  // Token sind reine localStorage-Spiegel (Muster wie die Schalter oben);
+  // `hsStatus` kommt IMMER aus einem echten Probe-Lauf (`pruefeHomeServer`/
+  // `verbindeHomeServer` in `state/home-server.ts`) — nie ein erfundener
+  // Chip-Wert. `hsVerbunden` ist der reine Nutzer-Absichts-Merker («war
+  // zuletzt verbunden»), unabhängig vom Ausgang der einzelnen Kanäle.
+  const [hsHost, setHsHost] = useState(() => homeServerHost());
+  const [hsToken, setHsToken] = useState(() => {
+    try {
+      return localStorage.getItem(BRIDGE_TOKEN_KEY) ?? '';
+    } catch {
+      return '';
+    }
+  });
+  const [hsVerbunden, setHsVerbunden] = useState(() => warZuletztVerbunden());
+  const [hsStatus, setHsStatus] = useState<HomeServerProbeErgebnis | null>(null);
+  const [hsPruefend, setHsPruefend] = useState(false);
+
+  // Beim Öffnen der Einstellungen: war zuletzt verbunden → Probes automatisch
+  // wiederholen (Spec-Vorgabe «Beim App-Start … Probes automatisch
+  // wiederholen»; dieses Panel ist der einzige Ort, an dem der HomeServer-
+  // Zustand sichtbar ist, darum die Auto-Reprobe hier statt in App.tsx/
+  // StartSequenz.tsx, die beide für dieses Paket tabu bleiben).
+  useEffect(() => {
+    if (!warZuletztVerbunden()) return;
+    let lebendig = true;
+    setHsPruefend(true);
+    void pruefeHomeServer(homeServerHost()).then((erg) => {
+      if (!lebendig) return;
+      setHsStatus(erg);
+      setHsPruefend(false);
+    });
+    return () => {
+      lebendig = false;
+    };
+  }, []);
+
+  async function aufHomeServerVerbinden(): Promise<void> {
+    setHsPruefend(true);
+    const erg = await verbindeHomeServer(hsHost);
+    setHsStatus(erg);
+    setHsVerbunden(true);
+    setHsPruefend(false);
+  }
+
+  function aufHomeServerTrennen(): void {
+    trenneHomeServer();
+    setHsVerbunden(false);
+    setHsStatus(null);
+    setHsPruefend(false);
+  }
+
+  function aufHomeServerHostAendern(wert: string): void {
+    setHsHost(wert);
+    setHomeServerHost(wert);
+  }
+
+  function aufHomeServerTokenAendern(wert: string): void {
+    setHsToken(wert);
+    localStorage.setItem(BRIDGE_TOKEN_KEY, wert);
+  }
+
+  // Tailscale-Hinweis (ehrliche Grenze, Owner-Vorgabe §E-H): nur wenn ein
+  // NETZWERK-Kanal (Bridge/Sync) scheitert — Ollama allein NICHT gestartet
+  // zu haben (Container-Ehrlichkeitsbeweis) ist kein VPN-Problem und würde
+  // mit diesem Hinweis in die Irre führen.
+  const hsNetzProbeGescheitert =
+    !!hsStatus && (hsStatus.bridge === 'nicht-verbunden' || hsStatus.sync === 'nicht-verbunden');
 
   // v0.8.1 / P15 (Nutzungszeit-Panel, docs/V081-SPEZ.md §7(f)/§9.5 C-34):
   // EINMAL beim Öffnen des Panels aus dem echten, bereits verfallenen
@@ -433,6 +531,102 @@ export function Einstellungen({
                 {naechsteSiaPhase ? `Transformieren zu «${siaPhaseLabel(naechsteSiaPhase)}»` : 'Transformieren (letzte Phase erreicht)'}
               </KButton>
             </div>
+          </section>
+          <Hairline />
+
+          {/* E-H «Ein-Klick-HomeServer» (`docs/V0812-SPEZ.md` §E-H, Sanktion
+              7, Matrix C-11, NACH E-K5 direkt unter `einstellungen-phase`
+              eingefügt, Owner-Order 21.07. ~20:45Z). Owner wörtlich: «ziel
+              ist es das ich synchro auf ipad per oneklick aktivieren kann …
+              onecklick ganze verbindung mit home pc aktiv macht». EIN Klick
+              setzt die BESTEHENDE Remote-Betriebsart (derselbe Weg wie
+              KosmoPanel.tsx `wechsleBetriebsart('remote', host)`, s.
+              `state/home-server.ts`-Kopfkommentar) auf alle drei
+              HomeStation-Dienste UND probt sie echt — die drei Chips zeigen
+              NIE «VERBUNDEN» ohne echten Probe-Erfolg. Ehrliche Grenze: das
+              VPN selbst kann eine iOS-Web-App nicht einschalten — bei
+              gescheitertem Netz-Kanal verlinkt der Hinweis auf die
+              Tailscale-App (`tailscale://`). */}
+          <section data-testid="einstellungen-homeserver" className="orbit065-einstellungen-sektion">
+            <div className="orbit065-einstellungen-sektionstitel">HomeServer</div>
+            <div className="es-feld-hinweis">
+              Ein Klick verbindet Bridge, Sync und Kosmo-LLM mit dem Home-PC ({hsHost || homeServerHost()}). Jeder
+              Chip zeigt nur dann «VERBUNDEN», wenn der jeweilige Dienst wirklich geantwortet hat.
+            </div>
+
+            <KButton
+              size="lg"
+              tone="accent"
+              data-testid="homeserver-verbinden"
+              className="es-homeserver-knopf"
+              disabled={hsPruefend}
+              onClick={() => void aufHomeServerVerbinden()}
+            >
+              {hsPruefend ? 'Verbinde …' : 'Mit Home-PC verbinden'}
+            </KButton>
+
+            <div className="es-homeserver-chips">
+              {(
+                [
+                  ['bridge', 'BRIDGE', hsStatus?.bridge] as const,
+                  ['sync', 'SYNC', hsStatus?.sync] as const,
+                  ['llm', 'KOSMO-LLM', hsStatus?.llm] as const,
+                ]
+              ).map(([kanal, label, status]) => {
+                const chip = homeServerChip(label, status, hsPruefend);
+                return (
+                  <span
+                    key={kanal}
+                    data-testid={`homeserver-status-${kanal}`}
+                    className={`es-homeserver-chip ${chip.klasse}`}
+                  >
+                    <span className="es-homeserver-chip-punkt" aria-hidden="true" />
+                    {chip.text}
+                  </span>
+                );
+              })}
+            </div>
+
+            {hsNetzProbeGescheitert && (
+              <div className="es-homeserver-tailscale" data-testid="homeserver-tailscale-hinweis">
+                Tailscale-VPN auf diesem Gerät einschalten —{' '}
+                <a href="tailscale://" data-testid="homeserver-tailscale-link">
+                  Tailscale öffnen
+                </a>
+              </div>
+            )}
+
+            <div className="es-homeserver-felder">
+              <label className="es-feld-label">
+                Home-PC-Adresse (Tailscale-IP oder Name)
+                <input
+                  type="text"
+                  className="es-homeserver-input"
+                  data-testid="homeserver-host"
+                  value={hsHost}
+                  onChange={(e) => aufHomeServerHostAendern(e.target.value)}
+                />
+              </label>
+              <label className="es-feld-label">
+                Bridge-Token (kosmo.bridge.token)
+                <input
+                  type="password"
+                  className="es-homeserver-input"
+                  data-testid="homeserver-token"
+                  value={hsToken}
+                  onChange={(e) => aufHomeServerTokenAendern(e.target.value)}
+                  placeholder="optional — nur mit gehärteter Bridge nötig"
+                />
+              </label>
+            </div>
+
+            {hsVerbunden && (
+              <div className="es-feld-block">
+                <KButton size="sm" tone="ghost" data-testid="homeserver-trennen" onClick={aufHomeServerTrennen}>
+                  Trennen
+                </KButton>
+              </div>
+            )}
           </section>
           <Hairline />
 

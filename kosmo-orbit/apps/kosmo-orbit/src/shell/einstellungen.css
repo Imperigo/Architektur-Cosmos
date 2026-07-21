@@ -282,3 +282,87 @@
   display: block;
   margin-top: var(--k-s4);
 }
+
+/* E-H «Ein-Klick-HomeServer» (`docs/V0812-SPEZ.md` §E-H) — grosser
+   Verbinden-Knopf (Touch-Mindestfläche 44px), drei ehrliche Status-Chips,
+   Host-/Token-Felder, Tailscale-Hinweis. */
+.es-homeserver-knopf {
+  min-height: 44px;
+  width: 100%;
+  justify-content: center;
+  font-size: var(--k-t-md);
+}
+
+.es-homeserver-chips {
+  display: flex;
+  gap: var(--k-s3);
+  flex-wrap: wrap;
+  margin-top: var(--k-s3);
+}
+
+.es-homeserver-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 4px 10px;
+  border-radius: var(--k-radius-pill, 999px);
+  background: var(--k-surface);
+  color: var(--k-ink-soft);
+}
+.es-homeserver-chip-punkt {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+}
+.es-homeserver-chip--verbunden {
+  color: var(--k-success);
+}
+.es-homeserver-chip--nicht-verbunden {
+  color: var(--k-warning);
+}
+.es-homeserver-chip--pruefend {
+  color: var(--k-ink-faint);
+}
+
+.es-homeserver-felder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--k-s3);
+  margin-top: var(--k-s3);
+}
+@media (max-width: 520px) {
+  .es-homeserver-felder {
+    grid-template-columns: 1fr;
+  }
+}
+
+.es-homeserver-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  border-radius: var(--k-radius-sm, 8px);
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-surface);
+  color: var(--k-ink);
+  font-size: var(--k-t-sm);
+  font-family: var(--k-font-mono);
+}
+
+.es-homeserver-tailscale {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s2);
+  margin-top: var(--k-s3);
+  color: var(--k-warning);
+  font-size: var(--k-t-sm);
+}
+.es-homeserver-tailscale a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
