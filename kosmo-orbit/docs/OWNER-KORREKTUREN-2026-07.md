@@ -221,8 +221,11 @@ entfernt, beide Themes hell `#edeae2`; Restposten: Bodenraster auf
 hellem Himmel kaum sichtbar — Fable-Diagnoseversuch 21.07. dokumentiert:
 dunklere Linienfarben UND +y-Offset gegen Z-Fighting änderten das Bild
 NICHT (Bundle-Stand + SW-Bypass verifiziert), nur das verdichtete
-Fernfeld-Band rendert; Nahbereich-Ursache unverstanden → echter
-Diagnose-Posten für 0.8.12, kein Blindfix).
+Fernfeld-Band rendert; Nahbereich-Ursache DIAGNOSTIZIERT
+(ROADMAP 581, docs/BEFUND-RASTER-NAHBEREICH.md): SwiftShader-
+Rasterisierung verliert kameranahe Abschnitte der 200-Einheiten-
+GridHelper-Linien; Fix = segmentiertes Raster (0.8.12), Vorbehalt:
+echte GPU-Hardware evtl. gar nicht betroffen).
 
 ### K21 · S.6 — ArchiCAD-Werkzeugtiefe für Fenster/Türen (Werkzeug-Einstellungsmenüs)
 > «grundsätzliche frage: wie weit bist du mit dem werkzeugnachbau von
