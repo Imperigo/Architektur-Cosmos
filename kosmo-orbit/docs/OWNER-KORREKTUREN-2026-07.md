@@ -36,7 +36,9 @@
 **Deutung:** die obere Leisten-Insel (Phasen/Aktionen) horizontal
 zentrieren. **Bereich:** shell/OrbitStart. **Aufwand:** S.
 **Einordnung:** mit K5/K8 zusammen bauen (Zentrale-Umbau unter
-ClaudeDesign-Package-Vorrang). **Status:** offen.
+ClaudeDesign-Package-Vorrang). **Status:** PACKAGE EINGETROFFEN
+(21.07. ~12:25Z, ROADMAP 583, docs/owner-packages/2026-07-21-startsequenz/)
+— Zentrale-/Start-Umbau damit entblockt, Bau = 0.8.12-Hauptposten.
 
 ### K2 · S.2 — Willkommenstext ohne Punkte, unter dem Logo
 > «willkommenstext ohne punkte, angeordnet unter kosmoorbit logo,
@@ -244,7 +246,10 @@ echte GPU-Hardware evtl. gar nicht betroffen).
 — Teilfelder existieren seit 0.8.8 E2), je Werkzeug ein echtes
 Einstellungsmenü; Kosmo versteht die Semantik. Quellenarbeit:
 ArchiCAD-Werkzeuge + Hochbauzeichner-Lehrmittel. **Aufwand:** XL
-(eigener Strang, mehrere Versionen). **Status:** offen — Antwort auf
+(eigener Strang, mehrere Versionen). **Status:** K37c GELIEFERT+
+FREIGABE-Package eingetroffen (21.07., ROADMAP 583,
+docs/owner-packages/2026-07-21-kosmospez-k37c/ — UI-Sprache, Token,
+17 Symbole, Screens beide Farbwelten); E1-Bau weiterhin — Antwort auf
 die «wie weit»-Frage gehört in den nächsten Statusbericht.
 
 ### K22 · S.6 — Kosmo-Orb-Optik: glasig, Tool-Farbe, freie Orbs, grösser

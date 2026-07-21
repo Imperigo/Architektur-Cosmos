@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=PT+Sans+Narrow:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0B0D12;}
+a{color:#57B6C2;} a:hover{color:#7BCAD4;}
+@keyframes akdash{0%{stroke-dashoffset:84;}55%{stroke-dashoffset:0;}80%{stroke-dashoffset:0;}100%{stroke-dashoffset:84;}}
+@keyframes peakdash{0%,10%{stroke-dashoffset:37;}50%{stroke-dashoffset:0;}80%{stroke-dashoffset:0;}100%{stroke-dashoffset:37;}}
+@keyframes nodefade{0%,45%{opacity:0;}60%,80%{opacity:1;}100%{opacity:0;}}
+@keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes orbitPath{from{offset-distance:0%;}to{offset-distance:100%;}}
+@keyframes riseDemo{0%,10%{opacity:0;transform:translateY(10px);}30%,80%{opacity:1;transform:none;}100%{opacity:0;transform:translateY(10px);}}
+@keyframes ringDemo{0%,15%{transform:scale(.35);opacity:.9;}70%{transform:scale(1.6);opacity:0;}100%{transform:scale(1.6);opacity:0;}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#0B0D12;color:#F4F6FA;font-family:'Lato',-apple-system,sans-serif;display:flex;justify-content:center;background-image:radial-gradient(120% 60% at 50% -10%,rgba(87,182,194,.05),transparent 60%);">
+  <div style="width:1120px;max-width:94%;padding:72px 0 96px;display:flex;flex-direction:column;gap:56px;">
+
+    <header data-screen-label="Kopf" style="display:flex;flex-direction:column;gap:18px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:40px;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <svg viewBox="0 0 40 40" fill="none" width="44" height="44"><g transform="rotate(-24 20 20)"><ellipse cx="20" cy="20" rx="17" ry="8.5" stroke="#57B6C2" stroke-width="1.4"></ellipse></g><path d="M11 25 L20 9 L29 25" fill="none" stroke="#DCE0E8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path><circle cx="20" cy="16.5" r="2.4" fill="#57B6C2"></circle></svg>
+        <span style="font-family:'PT Sans Narrow','Arial Narrow',sans-serif;font-weight:700;font-size:22px;letter-spacing:.3em;text-transform:uppercase;">KosmoOrbit</span>
+      </div>
+      <h1 style="margin:0;font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-.01em;">Startsequenz — Gestaltungsprinzipien &amp; Animationssets</h1>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;color:#8B92A2;">V 0.8.10 «INSELREIN» · DESKTOP + IPAD · REFERENZDOKUMENT FÜR SPLASH → BOOT → ARBEITSPLATZ → ZENTRALE → PROJEKTSTART</div>
+    </header>
+
+    <section data-screen-label="Prinzipien" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:#57B6C2;">01 · PRINZIPIEN</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:17px;font-weight:700;">Ruhe vor Spektakel</div>
+          <div style="font-size:14px;line-height:1.5;color:#B6BDCB;">80% dunkler neutraler Raum, 15% feine Linien, 5% Teal-Signal. Kein Neon-Feuerwerk beim Start — Präzision ist der Auftritt.</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:17px;font-weight:700;">Ehrlicher Boot</div>
+          <div style="font-size:14px;line-height:1.5;color:#B6BDCB;">Die Ladephase zeigt, was wirklich lokal hochfährt: Kern, Kosmo-LLM, Projektgraph, Bridge, Stationen — kein anonymer Balken.</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:17px;font-weight:700;">Orbit als Motiv, nicht als UI</div>
+          <div style="font-size:14px;line-height:1.5;color:#B6BDCB;">Die Orbit-Ellipse trägt Splash, Ladeanzeige und Übergang. Die Projektauswahl selbst bleibt eine klare Tableiste — keine Spielerei.</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:17px;font-weight:700;">Der Architekt bleibt Autor</div>
+          <div style="font-size:14px;line-height:1.5;color:#B6BDCB;">Ein ruhiger Leitsatz am Ende des Boots, mono Status daneben. Keine Marketing-Floskeln, kein «Magic AI».</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:17px;font-weight:700;">Projekte zuerst, kein AI-Slop</div>
+          <div style="font-size:14px;line-height:1.5;color:#B6BDCB;">Die Zentrale begrüsst ohne Punkte-Liste und ohne «Womit beginnen wir». Tableiste enthält nur Projekte; Einstellungen, Hilfe und Sync sind präsent oben rechts.</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:17px;font-weight:700;">Skippbar &amp; abschaltbar</div>
+          <div style="font-size:14px;line-height:1.5;color:#B6BDCB;">Überspringen ist immer sichtbar. prefers-reduced-motion wird respektiert; der statische Zustand ist vollständig lesbar.</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Storyboard" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:#57B6C2;">02 · SEQUENZ — 17.5 S, JEDE PHASE SKIPPBAR</div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+        <div style="background:#101319;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#57B6C2;">0–3 S</div>
+          <div style="font-size:15px;font-weight:700;">Öffnen</div>
+          <div style="font-size:12.5px;line-height:1.45;color:#8B92A2;">Doppelklick/Tap auf das App-Symbol — Desktop oder iPad.</div>
+        </div>
+        <div style="background:#101319;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#57B6C2;">3–6 S</div>
+          <div style="font-size:15px;font-weight:700;">Splash</div>
+          <div style="font-size:12.5px;line-height:1.45;color:#8B92A2;">Fenster-Popup (wie ArchiCAD/Steam). Ellipse zeichnet sich, A-Spitze folgt, Knoten dockt, Wortmarke blendet ein.</div>
+        </div>
+        <div style="background:#101319;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#57B6C2;">6–11 S</div>
+          <div style="font-size:15px;font-weight:700;">Boot</div>
+          <div style="font-size:12.5px;line-height:1.45;color:#8B92A2;">Satellit umkreist die Ellipse als Ladeanzeige. Fünf Statuszeilen im Stagger, Fortschritts-Haarlinie füllt.</div>
+        </div>
+        <div style="background:#101319;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#57B6C2;">11–13.5 S</div>
+          <div style="font-size:15px;font-weight:700;">Bereit</div>
+          <div style="font-size:12.5px;line-height:1.45;color:#8B92A2;">Satellit dockt an, kurzer Glow. «Der Architekt bleibt Autor.» + SYSTEM BEREIT. Danach Arbeitsplatz wählen.</div>
+        </div>
+        <div style="background:#101319;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;color:#57B6C2;">13.5–17.5 S</div>
+          <div style="font-size:15px;font-weight:700;">Zentrale → Projekt</div>
+          <div style="font-size:12.5px;line-height:1.45;color:#8B92A2;">Orbit öffnet den Raum. Begrüssung, Projekt-Tableiste, Projektkarte, Stationen. PROJEKT ÖFFNEN startet KosmoDesign.</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Animationssets" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:#57B6C2;">03 · ANIMATIONSSETS — LIVE</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:120px;border-radius:10px;background:#0A0C11;border:1px solid rgba(255,255,255,.06);display:grid;place-items:center;">
+            <svg viewBox="0 0 40 40" fill="none" width="76" height="76">
+              <g transform="rotate(-24 20 20)"><ellipse cx="20" cy="20" rx="17" ry="8.5" stroke="#57B6C2" stroke-width="1.4" stroke-linecap="round" style="stroke-dasharray:84;animation:akdash 4s cubic-bezier(.16,1,.3,1) infinite;"></ellipse></g>
+              <path d="M11 25 L20 9 L29 25" fill="none" stroke="#DCE0E8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" style="stroke-dasharray:37;animation:peakdash 4s cubic-bezier(.16,1,.3,1) infinite;"></path>
+              <circle cx="20" cy="16.5" r="2.4" fill="#57B6C2" style="animation:nodefade 4s ease-out infinite;"></circle>
+            </svg>
+          </div>
+          <div style="font-size:15px;font-weight:700;">Set A · Orbit-Zeichnung</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;line-height:1.7;color:#8B92A2;">ELLIPSE DASH 84 · 1.0 S<br>A-SPITZE DASH 37 · 0.7 S<br>KNOTEN POP · 0.4 S<br>EASE (0.16, 1, 0.3, 1)</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:120px;border-radius:10px;background:#0A0C11;border:1px solid rgba(255,255,255,.06);display:grid;place-items:center;">
+            <svg viewBox="0 0 40 40" fill="none" width="76" height="76">
+              <g transform="rotate(-24 20 20)">
+                <ellipse cx="20" cy="20" rx="17" ry="8.5" stroke="#57B6C2" stroke-width="1.4" opacity=".5"></ellipse>
+                <circle r="1.6" fill="#57B6C2" style="offset-path:path('M 3 20 A 17 8.5 0 1 1 37 20 A 17 8.5 0 1 1 3 20');animation:orbitPath 2.6s linear infinite;"></circle>
+              </g>
+              <path d="M11 25 L20 9 L29 25" fill="none" stroke="#DCE0E8" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <div style="font-size:15px;font-weight:700;">Set B · Satellit als Ladeanzeige</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;line-height:1.7;color:#8B92A2;">UMLAUF 2.6 S · LINEAR<br>DOCKT BEI «BEREIT» AN<br>ERSETZT JEDEN SPINNER</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:120px;border-radius:10px;background:#0A0C11;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:center;gap:9px;padding:0 22px;">
+            <div style="display:flex;align-items:center;gap:10px;animation:riseDemo 4s ease-out infinite;"><span style="width:7px;height:7px;border-radius:50%;background:#74C2A0;"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#B6BDCB;">KERN</span><span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#74C2A0;">OK</span></div>
+            <div style="display:flex;align-items:center;gap:10px;animation:riseDemo 4s ease-out .5s infinite;"><span style="width:7px;height:7px;border-radius:50%;background:#57B6C2;animation:pulseDot 1.2s ease-in-out infinite;"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#57B6C2;">KOSMO-LLM</span><span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#57B6C2;">···</span></div>
+            <div style="display:flex;align-items:center;gap:10px;animation:riseDemo 4s ease-out 1s infinite;"><span style="width:7px;height:7px;border-radius:50%;background:#2E3440;"></span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;color:#3C414D;">PROJEKTGRAPH</span></div>
+          </div>
+          <div style="font-size:15px;font-weight:700;">Set C · Statuszeilen</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;line-height:1.7;color:#8B92A2;">STAGGER 0.85 S · FADE-UP 12 PX<br>AKTIV TEAL PULS 1.2 S<br>FERTIG SAGE «OK» · NIE NUR FARBE</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:120px;border-radius:10px;background:#0A0C11;border:1px solid rgba(255,255,255,.06);display:grid;place-items:center;overflow:hidden;">
+            <svg viewBox="0 0 40 40" fill="none" width="90" height="90" style="animation:ringDemo 3.2s cubic-bezier(.4,0,.2,1) infinite;"><g transform="rotate(-24 20 20)"><ellipse cx="20" cy="20" rx="17" ry="8.5" stroke="#57B6C2" stroke-width="1"></ellipse></g></svg>
+          </div>
+          <div style="font-size:15px;font-weight:700;">Set D · Orbit-Übergang</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;line-height:1.7;color:#8B92A2;">ELLIPSE SKALIERT 1 → 11 · 0.85 S<br>ÖFFNET ZENTRALE + PROJEKTSTART<br>EASE (0.4, 0, 0.2, 1)</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:120px;border-radius:10px;background:#0A0C11;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;">
+            <div style="font-size:15px;color:#DCE0E8;animation:riseDemo 4s ease-out infinite;">Der Architekt bleibt Autor.</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.18em;color:#57B6C2;animation:riseDemo 4s ease-out .4s infinite;">SYSTEM BEREIT</div>
+          </div>
+          <div style="font-size:15px;font-weight:700;">Set E · Leitsatz</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;line-height:1.7;color:#8B92A2;">FADE-UP 0.6 S · HALTEN ≥ 1.2 S<br>LATO REGULAR + MONO-STATUS<br>EIN SATZ · KEIN AUSRUFEZEICHEN</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+          <div style="height:120px;border-radius:10px;background:#0A0C11;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:center;gap:14px;padding:0 22px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#8B92A2;display:flex;justify-content:space-between;"><span>ENTRANCE</span><span style="color:#DCE0E8;">0.16, 1, 0.3, 1</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#8B92A2;display:flex;justify-content:space-between;"><span>STANDARD</span><span style="color:#DCE0E8;">0.4, 0, 0.2, 1</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#8B92A2;display:flex;justify-content:space-between;"><span>DAUERN</span><span style="color:#DCE0E8;">0.16 / 0.24 / 0.5 S</span></div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:#8B92A2;display:flex;justify-content:space-between;"><span>ORBIT-DRIFT</span><span style="color:#DCE0E8;">12–24 S</span></div>
+          </div>
+          <div style="font-size:15px;font-weight:700;">Motion-Token</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;line-height:1.7;color:#8B92A2;">AUS DEM DESIGN SYSTEM · GLOW NUR ALS ZUSTAND, NIE ALS DEKOR</div>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen-label="Do Dont" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:#57B6C2;">04 · DO / DON'T</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="background:#14171F;border:1px solid rgba(116,194,160,.25);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:#74C2A0;">DO</div>
+          <div style="font-size:14px;line-height:1.7;color:#B6BDCB;">Eine Ladeanzeige: der Satellit. · Statuszeilen mit echten Systemnamen. · Boot 4–8 s, immer skippbar. · Begrüssung mit Namen, ohne Punkt-Listen. · Glow nur für aktiv/bereit. · Auf iPad Trefferflächen ≥ 44 px.</div>
+        </div>
+        <div style="background:#14171F;border:1px solid rgba(205,118,112,.25);border-radius:14px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.16em;color:#CD7670;">DON'T</div>
+          <div style="font-size:14px;line-height:1.7;color:#B6BDCB;">Kein «Womit beginnen wir?» und kein «Kosmo ist bereit zum Zeichnen». · Keine Galaxie-Fotos oder Nebel. · Kein Dauer-Glow, kein Neon-Body-Text. · Keine Bauphasen-Tabs in der Zentrale. · Kein Spinner neben dem Satelliten. · Nichts, was nicht abgeschaltet werden kann.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
