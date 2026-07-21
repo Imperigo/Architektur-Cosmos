@@ -184,14 +184,15 @@ Vis-Codepfad-Löschung? Ich lese es so).
 > «hier ist das symbol weg»
 **Deutung:** auf dem Screenshot fehlt oben rechts ein Icon (leerer
 weisser Kreis) — Icon-Regression im Viewport-Chrome finden und fixen.
-**Aufwand:** S. **Status:** offen (Sofort-Batch-Kandidat).
+**Aufwand:** S. **Status:** ERLEDIGT (ROADMAP 574 — Doppelwurzel
+app-druck-reset-Override + Textzeichen statt KIcon, E2E-Beweis).
 
 ### K17 · S.5 — Insel-Randabstand uneinheitlich
 > «wieso ist diese island nicht gleicher abstand wie die anderen zum
 > rand?»
 **Deutung:** ZEICHNEN-Insel hat anderen Randabstand als die übrigen
-Inseln — Token/CSS vereinheitlichen. **Aufwand:** S. **Status:** offen
-(Sofort-Batch-Kandidat).
+Inseln — Token/CSS vereinheitlichen. **Aufwand:** S. **Status:**
+ERLEDIGT (ROADMAP 574 — Token --isl-rand-abstand 14px, E2E-Messtest).
 
 ### K18 · S.6 — Massketten: Verlängerungslinien + Abstand als Default
 > «die massketten sollen default mässig verlängerungslinien haben und
@@ -286,8 +287,11 @@ offen.
 ### K28 · S.8 — Raumstempel-Umrahmung zu massiv, Farbe prüfen
 > «raumstempel umrahmung aktuell sehr massiv, und warum diese farbe?»
 **Bereich:** PlanView/derive Zonen-Stempel. **Aufwand:** S. **Status:**
-offen (Sofort-Batch-Kandidat; orange Auswahl-Farbe war
-Selektionszustand — Befund klären, dann fixen).
+GEMILDERT (ROADMAP 574): Hypothese korrigiert — die orange Umrahmung
+ist der F3-Warn-Overlay zone-verletzt (Dauerzustand bei Raumregel-
+Befund), NICHT die Selektion (teal). CSS-Milderung gelandet (1.25px
+zoomstabil, Tönung halbiert), Warn-Semantik bleibt. Grundsatz-Umbau
+bräuchte PlanView (Cluster B) → Rückfrage R13.
 
 ### K29 · S.9 — Werkzeuge an Bauphasen binden (Analyse + Konzept)
 > «okay hier z.b gutes beispiel für ein tool das man nicht in jeder
@@ -366,8 +370,9 @@ Raumatmosphären → Kosmo übersetzt in Render-/Prompt-Massnahmen
 
 ### K35 · S.14 — Graph-Übersicht (Minimap) raus
 > «diese übersicht raus, die bringt nichts»
-**Bereich:** NodeCanvas-Minimap. **Aufwand:** S. **Status:** offen
-(Sofort-Batch-Kandidat).
+**Bereich:** NodeCanvas-Minimap. **Aufwand:** S. **Status:** ERLEDIGT
+(ROADMAP 574 — beide Modi ersatzlos entfernt, Insel-Legende lebt
+eigenständig weiter als K36-Vorleistung).
 
 ### K36 · S.14 — Node-Legende um Fähigkeits-Infos erweitern
 > «legende ist gut, erweitere sie an infos und was der jeweilige node
@@ -490,7 +495,8 @@ offen — Antwort in den nächsten Statusbericht.
 **Deutung:** (a) Data-Station auf Insel-Bedienung heben (bisher bewusst
 Nicht-Ziel «Data-Islands» — Owner dreht das jetzt), (b) redundantes
 «KosmoData»-Label neben den Tabs entfernen (S, Sofort-Batch), (c)
-UI-Ideen-Konzept. **Aufwand:** (a) L, (b) S, (c) S. **Status:** offen.
+UI-Ideen-Konzept. **Aufwand:** (a) L, (b) S — ERLEDIGT (ROADMAP 574), (c) S — Konzept geliefert
+(ROADMAP 573). **Status:** (a) offen.
 
 ### K49 · S.23 — Karten-System erweitern (AskUserQuestion-Karten u.a.)
 > «ja finde ich gut, solche karten auch weiterenwickeln fü¨r andere
@@ -539,6 +545,10 @@ Nutzung gelernt/erfasst»). **Aufwand:** M. **Status:** offen.
 - **R5 (K37d):** Für die ETH-Unterlagen (Energie-/Klimadesign 1+2)
   brauche ich Zugang: OneDrive-Freigabe-Link oder Export als ZIP-Upload
   — was ist dir lieber?
+- **R13 (K28):** Der orange Warn-Overlay für Raumregel-Befunde ist
+  jetzt dezenter — soll er grundsätzlich anders werden (z.B. nur bei
+  aktivem Prüfen-Fokus sichtbar statt dauerhaft)? Das bräuchte
+  PlanView-Änderungen (Cluster B).
 - **R6 (K40):** Wasserzeichen «STUDIE — NICHT FÜR AUSFÜHRUNG»: ganz
   weg für alle Phasen, oder nur vom Blattspiegel runter und dezent als
   Plankopf-Vermerk behalten (SIA-üblich)?
