@@ -287,11 +287,32 @@
 }
 /* Jede Kompassrichtung wächst «aus dem Knoten heraus»: im Ruhezustand ein
    6px-Versatz IN Richtung Knoten (Translation, Konzept-Vorgabe 4-8px), beim
-   Öffnen federt sie auf ihre endgültige, zentrierte Position. */
+   Öffnen federt sie auf ihre endgültige, zentrierte Position — GALT bis
+   K13 auch für `--oben` (die einzige tatsächlich genutzte Richtung, s.
+   Kopfkommentar oben «seit PA2 IMMER oben»).
+   K13-Nachtrag (docs/V0812-START-SPEZ.md E-S2): `--oben` federt NICHT mehr
+   (Ruhe- und `.offen`-Transform sind jetzt identisch, `transition` bleibt
+   nur noch für `opacity`, s. Elternregel oben) — zwei Gründe: (1) Owner-
+   Auftrag «gerade und nüchterne Blöcke» will bewusst WENIGER Bewegung,
+   nicht mehr; (2) reale Regression (live gefunden, `orbit-start.spec.ts`
+   «Fächer: paarweise Bounding-Box-Überlappung … ist 0», dichtester
+   Kosmo-Fächer): Playwright misst die 8 Blöcke SEQUENZIELL (acht einzelne
+   `boundingBox()`-Rundreisen) — lief die 6px→0-Feder-Transform der ganzen
+   Hülle währenddessen noch (in dieser Sandbox bleibt `prefers-reduced-
+   motion` nachweislich WIRKUNGSLOS, `window.matchMedia(...).matches` liefert
+   `false` trotz `reducedMotion:'reduce'`), driftete die Hülle zwischen zwei
+   Messungen leicht weiter — bei der vormals 16px grossen Kartenlücke
+   unbemerkt, bei der neuen 1px-Hairline-Blockliste genügte das, um
+   benachbarte Blöcke als sub-Pixel-überlappend zu vermessen (live
+   reproduziert und mit Debug-Instrumentierung bestätigt: OHNE Feder-
+   Transform reproduzierbar 0 Überlappungen in 8/8 Läufen, MIT Feder-
+   Transform 3/8 Fehlschläge). Die anderen drei Kompassrichtungen
+   (rechts/unten/links) sind toter Code (nicht mehr angesteuert, s.
+   Kopfkommentar dieser Datei) und bleiben unverändert stehen. */
 .orbit065-faecher-huelle--oben {
   bottom: 100%;
   left: 50%;
-  transform: translate(-50%, 6px);
+  transform: translate(-50%, 0);
   margin-bottom: var(--k-s6);
 }
 .orbit065-faecher-huelle--oben.offen {
@@ -387,18 +408,20 @@
 }
 
 /* ── Aufgabe 3 (0.6.6) — `.k-druck` vs. bestehende Eigen-Transitions ────
-   `.k-orbit-hauptknopf:hover`/`.orbit065-karte:hover` (Zoom bzw. Rotations-
-   Reset) und `.k-druck:active` (Press-Skalierung) haben gleiche
-   Spezifität (0,2,0) und treffen beim Drücken-während-Hover gleichzeitig
-   zu — ohne Auflösung würde je nach Ladereihenfolge der Hover-Transform den
-   Druck-Transform stumm verschlucken («doppelte Eigen-Transitions»). Diese
-   Regeln (zwei Klassen, 0,3,0) lösen es EXPLIZIT auf: der Druck gewinnt
-   immer. */
+   `.k-orbit-hauptknopf:hover` (Zoom) und `.k-druck:active` (Press-
+   Skalierung) haben gleiche Spezifität (0,2,0) und treffen beim Drücken-
+   während-Hover gleichzeitig zu — ohne Auflösung würde je nach
+   Ladereihenfolge der Hover-Transform den Druck-Transform stumm
+   verschlucken («doppelte Eigen-Transitions»). Diese Regeln (zwei Klassen,
+   0,3,0) lösen es EXPLIZIT auf: der Druck gewinnt immer. K13: `.orbit065-
+   karte` hat seit der Blockliste keinen eigenen Hover-Transform mehr (nur
+   noch Farbwechsel, s. dort) — die Press-Skalierung bleibt trotzdem
+   erhalten, jetzt ohne den früheren Rotations-Reset. */
 .k-orbit-hauptknopf.k-druck:active {
   transform: scale(var(--k-druck-skala));
 }
 .orbit065-karte.k-druck:active {
-  transform: scale(var(--k-druck-skala)) rotate(0deg) translateX(0);
+  transform: scale(var(--k-druck-skala));
 }
 .k-kosmo-symbol.k-druck:active {
   transform: scale(var(--k-druck-skala));
@@ -437,7 +460,21 @@
    Eigenschaften von `.k-orbit-faecher` (aura.css, Freeze); Öffnen/Schliessen
    (Opazität/Klick-Vertrag) bleibt unverändert dort geregelt (dieselbe
    `offen`-Klasse steuert beides weiter). Zwei Klassen (0,2,0) schlagen die
-   einzelne aura-Klasse (0,1,0) unabhängig von der Stylesheet-Reihenfolge. */
+   einzelne aura-Klasse (0,1,0) unabhängig von der Stylesheet-Reihenfolge.
+   K13 (Owner-Korrektur «gerade und nüchterne Blöcke», docs/V0812-START-
+   SPEZ.md E-S2): der Fächer ist jetzt EINE ruhige Blockliste statt lose
+   gestapelter, radial gestaffelter Karteikarten. Die 1px-Hairline zwischen
+   Blöcken ist ein ECHTER 1px-Grid-`gap`, dessen Hintergrund (`--k-line`)
+   durch die Lücke scheint — jeder Block selbst deckt seine Zelle voll mit
+   `--k-raised` ab (s. `.orbit065-karte` unten). Bewusst KEIN `gap: 0` mit
+   geteiltem `border-bottom`: Bestandsspec `orbit-start.spec.ts` («Fächer:
+   paarweise Bounding-Box-Überlappung … ist 0») verlangt echte, nicht nur
+   optische Trennung — bei `gap:0` lieferte `getBoundingClientRect()` unter
+   Sub-Pixel-Rundung vereinzelt eine hauchdünne (< 0.5px) Schein-Überlappung
+   benachbarter Zeilen (live reproduziert). Ein echter 1px-Gap schliesst das
+   strukturell aus, ohne die Hairline-Optik zu verlieren. `overflow: hidden`
+   lässt den geraden ersten/letzten Block sauber an der abgerundeten
+   Aussenkontur der Liste enden. */
 .orbit065-faecher-huelle .k-orbit-faecher {
   position: static;
   top: auto;
@@ -446,57 +483,82 @@
   transform: none;
   width: 100%;
   display: grid;
-  /* PA2 (V084-SPEZ §4.4 «alle Karten voll im Viewport»): kompakter als vor
-     v0.8.4 (war `--k-s6`/24px) — der Fächer öffnet jetzt aus einer schmalen
-     108px-Kachel in der unteren Reihe statt aus einem grosszügigen Kreis;
-     ein dichter Fächer (Kosmo: 8 Untertools) bleibt so auch bei generösem
-     freiem Raum über der Reihe sicher innerhalb des Viewports. NICHT enger
-     als `--k-s5` (16px, live nachgemessen): die Karten sind radial gestaffelt
-     (±2–4° Rotation, `--k-karte-rot`) — eine rotierte Bounding-Box ragt über
-     ihr eigenes Rechteck hinaus, bei `--k-s3` (8px) überlappten benachbarte
-     Karten dadurch trotz eigenem, sichtbarem Abstand (R2-N2-Regression,
-     `orbit-faecher.spec.ts`, ausserhalb des PA2-Dateikreises). */
-  gap: var(--k-s5);
-}
-
-/* Karteikarten (R2-N2): 45°-Ecke wie `.k-karte` (aura.css), aber mit den in
-   UI-KONZEPT-065 §1 verlangten Werten (--k-line-strong/--k-radius-sm statt
-   --k-technik/0) — eigene Klasse statt `.k-karte` zu ändern (Freeze).
-   Radial gestaffelt: leichte Rotation/Versatz je Karte (±2–4°, JS-Variablen
-   `--k-karte-rot`/`--k-karte-jog`, der Kreisgeometrie folgend). PA2: Padding
-   kompakter (`--k-s2 --k-s3` statt `--k-s3 --k-s4`) — derselbe Höhen-Grund
-   wie beim Fächer-Gap oben. */
-.orbit065-karte {
-  display: block;
-  position: relative; /* Anker für `.orbit065-rang-kreis` (v0.7.2 W2-C) */
-  width: 100%;
-  box-sizing: border-box;
-  padding: var(--k-s2) var(--k-s3);
+  gap: 1px;
+  background: var(--k-line);
   border: 1px solid var(--k-line-strong);
   border-radius: var(--k-radius-sm);
+  overflow: hidden;
+}
+
+/* K13-Blockliste: gerade, linksbündige Reihe (kein Rotate/Clip-Path mehr,
+   ERSETZT die frühere R2-N2-Karteikarten-Staffelung — s. Kopfkommentar
+   `UNTERTOOL_ICON` in `OrbitStart.tsx`). Jeder Block: volles KIcon-Logo
+   (Grösse 20) + Klartext-Name links ausgerichtet. Ruhige Fläche
+   (`--k-raised`) statt Neon/Glow — die 1px-Hairline zwischen Blöcken kommt
+   vom Grid-`gap` des Elternteils oben (dieser Block deckt nur seine eigene
+   Zelle ab). `height` (statt `min-height`) 44px + `overflow: hidden`
+   (Touch-Fläche, K7-Lehre): eine FESTE Höhe entkoppelt die Grid-Zeilen-
+   Geometrie bewusst von Text-Metriken — `--k-font-mono` (IBM Plex Mono)
+   lädt asynchron nach, und mit `min-height` reflowte die Zeile beim
+   Font-Swap (Fallback- vs. Web-Font-Zeilenhöhe) kurzzeitig ANDERS, bevor
+   sie sich wieder auf 44px einpendelte; live mit `orbit-start.spec.ts`
+   («Fächer: paarweise Bounding-Box-Überlappung … ist 0», dichtester
+   Kosmo-Fächer) als Sub-Pixel-Regression gefunden. Mit fester Höhe bleibt
+   die Zeilen-Geometrie unabhängig vom Font-Ladezustand exakt 44px. */
+.orbit065-karte {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s3);
+  position: relative;
+  width: 100%;
+  height: 44px;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: var(--k-s2) var(--k-s4);
+  border: none;
+  border-radius: 0;
   background: var(--k-raised);
+  text-align: left;
   cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
-  transform: rotate(var(--k-karte-rot, 0deg)) translateX(var(--k-karte-jog, 0px));
-  transition:
-    border-color var(--k-motion-fast),
-    background var(--k-motion-fast),
-    transform var(--k-motion-fast);
+  transition: background var(--k-motion-fast);
 }
 .orbit065-karte:hover,
 .orbit065-karte:focus-visible {
-  border-color: var(--k-accent);
   background: var(--k-surface);
-  transform: rotate(0deg) translateX(0);
 }
 .orbit065-karte:disabled {
   cursor: default;
   opacity: 0.65;
 }
+/* Logo-Slot: fixe 20px-Breite (KIcon-Grösse), `currentColor`-fähig — die
+   Tusche-Farbe (`--k-ink`/`--k-ink-soft`) kommt vom Text-Kontext, kein
+   eigener Akzent/Glow (Owner-Auftrag «kein Neon»). */
+.orbit065-karte-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--k-ink-soft);
+}
+.orbit065-karte:hover .orbit065-karte-icon,
+.orbit065-karte:focus-visible .orbit065-karte-icon {
+  color: var(--k-ink);
+}
+.orbit065-karte-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
 .orbit065-karte-titel {
   display: block;
+  font-family: var(--k-font-mono);
   font-weight: 650;
   font-size: var(--k-t-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   overflow-wrap: anywhere;
 }
 .orbit065-karte-kurz {
@@ -507,66 +569,10 @@
   overflow-wrap: anywhere;
   /* PA2: max. 1 Zeile (statt beliebig hoch) — derselbe Höhen-Grund wie
      `.orbit065-beschrieb` oben (schmalere Kachel-Reihe, dichtester Fächer
-     Kosmo mit 8 Karten). */
+     Kosmo mit 8 Blöcken). */
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   overflow: hidden;
-}
-@media (prefers-reduced-motion: reduce) {
-  .orbit065-karte {
-    transform: none !important;
-  }
-}
-
-/* ── Hub-Rang-Kreise (v0.7.2 W2-C, Paket 03/05 — Spec §4 «Phasen & Ordnung»)
-   Untertool-Kreise nach Rang: Top-3 innen 64px + Rollenfarben-Border/Glow,
-   Mitte 54px, aussen 46px. Bewusst top-LEFT positioniert (nicht top-right —
-   `.orbit065-karte`s 45°-Eckenschnitt, s. `clip-path` oben, sitzt rechts).
-   Grösse/Border-Farbe kommen als JS-Variablen vom Aufrufer
-   (`OrbitStart.tsx`); die Rollenfarbe ist EXAKT dieselbe Quelle wie das
-   Icon selbst (`STATION_GLYPHE`, `werkzeug-glyphen.tsx`) — keine zweite,
-   eigene Farbtabelle. FLIP (Umsortierung) bewegt die ganze Zeile
-   (`.k-orbit-untertool-zeile`, `packages/kosmo-ui/src/flip.ts`), nicht
-   diesen Kreis einzeln — er teilt die Transition seines Elternteils. */
-/* Reserviert Platz LINKS für den Kreis (grösster Fall: 64px `innen`-Tier +
-   Abstand), statt Titel/Kurzbeschrieb darunter zu verdecken — `:has()` wird
-   von der Chromium-Version dieses Repos unterstützt (s. Präzedenz
-   `.orbit065-home-rechts` oben). */
-.orbit065-karte:has(.orbit065-rang-kreis) {
-  padding-left: calc(64px + var(--k-s4) + var(--k-s2));
-}
-.orbit065-rang-kreis {
-  --k-rang-groesse: 46px;
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: var(--k-rang-groesse);
-  height: var(--k-rang-groesse);
-  border-radius: var(--k-radius-pill);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--k-surface);
-  border: 1.5px solid var(--k-line-strong);
-  flex: none;
-  pointer-events: none;
-  transition: width var(--k-motion-fast), height var(--k-motion-fast), border-color var(--k-motion-fast), box-shadow var(--k-motion-fast);
-}
-.orbit065-rang-kreis--innen {
-  --k-rang-groesse: 64px;
-  border-color: var(--k-rang-rolle, var(--k-accent));
-  box-shadow: 0 0 0 2px var(--k-rang-rolle, var(--k-accent)), 0 0 10px 1px var(--k-rang-rolle, var(--k-accent));
-}
-.orbit065-rang-kreis--mitte {
-  --k-rang-groesse: 54px;
-}
-.orbit065-rang-kreis--aussen {
-  --k-rang-groesse: 46px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .orbit065-rang-kreis {
-    transition: none;
-  }
 }
 
 /* ── Einstellungen (KDialog-Umstellung, Mass 5) ─────────────────────────

@@ -3,12 +3,11 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type CSSProperties,
   type FocusEvent as ReactFocusEvent,
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
 } from 'react';
-import { flipFirst, flipPlay, moduleHue, OrbitMark, Wordmark, type ModuleId } from '@kosmo/ui';
+import { flipFirst, flipPlay, KIcon, moduleHue, OrbitMark, Wordmark, type KIconName, type ModuleId } from '@kosmo/ui';
 import {
   ORBIT_HAUPTWERKZEUGE,
   type HauptwerkzeugId,
@@ -16,14 +15,11 @@ import {
   type OrbitUntertool,
 } from './orbit-werkzeuge';
 import { IconHauptData, IconHauptDesign, IconHauptKosmo, IconHauptOffice } from './orbit-icons';
-import { STATION_GLYPHE, WerkzeugGlyphe } from './werkzeug-glyphen';
 import type { StationModulId } from './stations-werkzeuge';
 import {
   anfangsKontingent,
   naechsteReihenfolge,
   STATION_ZU_TOOLID,
-  tierFuerPosition,
-  type RangTier,
   type ToolId,
   type UmordnungsKontingent,
 } from '../state/orbit-rang';
@@ -130,11 +126,54 @@ function kachelReihe(): OrbitHauptwerkzeug[] {
   return KACHEL_REIHENFOLGE.map((id) => ORBIT_HAUPTWERKZEUGE.find((h) => h.id === id)!);
 }
 
-/** R2-N2: leichte Rotation/Versatz je Karte (±2–4°, kleiner horizontaler
- *  Jog) — «der Kreisgeometrie folgend» statt einer geraden Blockliste.
- *  Vier Werte im Wechsel reichen (die Fächer haben 2–6 Karten). */
-const KARTEN_ROTATION_DEG = [-3, 2, -2.5, 3.5];
-const KARTEN_JOG_PX = [-4, 6, -6, 4];
+/**
+ * K13 (Owner-Korrektur, docs/OWNER-KORREKTUREN-2026-07.md: «entwerfen
+ * modeliieren, draw, prepare, vis und so bitte sauber machen, gerade und
+ * nüchterne blöcke und ganze logos bitte»; docs/V0812-START-SPEZ.md E-S2) —
+ * ERSETZT die frühere R2-N2-Staffelung (leichte Rotation/Versatz je Karte,
+ * «der Kreisgeometrie folgend»): die Fächer-Einträge sind jetzt eine gerade,
+ * linksbündige Blockliste (`.orbit065-karte` in `orbit-065.css`, kein
+ * `transform: rotate(...)`/`clip-path` mehr, 1px-Hairline zwischen Blöcken
+ * statt radial gestaffelter Karteikarten). Reine OPTIK-Änderung — Öffnen/
+ * Schliessen, Klick-Regeln, alle Testids/aria, die Hub-Rang-Reihenfolge
+ * (`useHubRang`/`mitRang` unten) bleiben unverändert (Kopfkommentar dieser
+ * Datei, Klick-Vertrag).
+ *
+ * Jedes Untertool bekommt ein VOLLSTÄNDIGES Logo aus der bestehenden
+ * KIcon-Registry (`packages/kosmo-ui/src/icons.tsx`, Grösse 20 — erlaubte
+ * KIcon-Grössen sind NUR 14/16/20, K7-Lehre). KIcon ist eine generische
+ * Utility-Registry (kein Werkzeug-Logo-Satz) — keines der Untertools hat
+ * dort ein eigenes, benanntes Logo; jede Zuordnung unten ist darum das
+ * SACHLICH PASSENDSTE vorhandene Zeichen (dokumentiert im Baubericht als
+ * Icon-Zuordnungstabelle). KEINE neuen Icons in `kosmo-ui` (eingefroren).
+ */
+const UNTERTOOL_ICON: Record<string, KIconName> = {
+  // KosmoDesign
+  draw: 'stift', // Zeichnen (Wände/Decken/Dach/Pläne) — Stift = Zeichenwerkzeug.
+  prepare: 'lupe', // Grundlagen aufnehmen/Wissenssuche — Lupe = Recherche.
+  vis: 'kamera', // Renderings/Varianten/Stimmungen — Kamera = Bild/Rendering.
+  publish: 'export', // Plansätze/Layouts/Export — wörtlich passend.
+  modellbaum: 'ebenen', // IFC-Baum/Mengen/Ausmass — Ebenen/Stapel als Baum-Sinnbild.
+  // KosmoData
+  reference: 'dokument', // Referenzen-/Bauteilkatalog, Wissen — Dokument.
+  asset: 'ordner', // Objekte/Materialien/Bauteile — Ordner als Ablage.
+  // Kosmo
+  speak: 'mikrofon', // Sprechen mit Kosmo — wörtlich passend.
+  sketch: 'hand', // Freihand → Wände (Pencil) — Hand = Freihand-Geste.
+  modell: 'fit', // FreeMesh/frei formen — Eck-Klammern als Form-/Bounding-Box-Sinnbild.
+  train: 'stern', // Lernstand/Kuration/Training — Stern = Bewertung/Kuration.
+  dev: 'zahnrad', // Auftragsbuch/Verbesserungen — Zahnrad = technische Weiterentwicklung.
+  doc: 'auge', // Diagnose/Hilfe/Berichte — Auge = Einblick/Beobachtung.
+  trust: 'schloss', // .kxp-Viewer/Freigabe-Workflow — Schloss = Vertrauen/Sicherheit.
+  paket: 'schweben', // Export-Hub (6 Formate + .kxp) — «aus dem Dock heben», bewusst
+  // anders als Publishs `export` (Abgrenzung zweier verwandter, aber
+  // unterschiedlicher Export-Konzepte).
+  // KosmoOffice (kommend)
+  lead: 'fahne', // Chefabteilung/Leitung — Fahne = Führungsmarke.
+  'buero-hr': 'haken', // Personal/Zeit/Löhne/Rechnungen — Haken = abgeschlossene Vorgänge.
+  lehre: 'pfeil-rechts', // Lern-/Aufgaben-Tool, geführte Abläufe — Pfeil = geführter Schritt.
+  bau: 'warnung', // Baustelle: Termine/Mängel/Begehungen — Warnung = Mängel-/Risikobezug.
+};
 
 /** Schliesst den Fächer NUR, wenn Fokus/Maus den ganzen Knoten (Hauptknopf +
  *  Fächer) tatsächlich verlassen hat — Wechsel innerhalb (z. B. Hauptknopf →
@@ -201,11 +240,6 @@ function mitRang(untertools: readonly OrbitUntertool[], reihenfolge: readonly To
     return naechste !== undefined ? (zuUntertool.get(naechste) ?? u) : u;
   });
 }
-
-/** Icon-Grösse (px) innerhalb des Rang-Kreises je Tier — kleiner als der
- *  Kreis selbst (`TIER_GROESSE`, `orbit-rang.ts`), damit ein sichtbarer
- *  Ring/Rand um das Icon bleibt. */
-const ICON_GROESSE: Record<RangTier, number> = { innen: 28, mitte: 24, aussen: 20 };
 
 /**
  * Rang-Reihenfolge EINES Fächers, mit Hysterese/Anti-Nerv-Kontingent über
@@ -433,32 +467,38 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                   className={`k-orbit-faecher${offen ? ' offen' : ''}`}
                   data-testid={`orbit-faecher-${h.id}`}
                 >
-                  {untertoolsFuerAnzeige.map((u, kartenIndex) => {
+                  {untertoolsFuerAnzeige.map((u) => {
                     const testid = u.kommend
                       ? `orbit-office-${u.id}`
                       : (u.testidOverride ?? (u.moduleId ? `module-${u.moduleId}` : `orbit-sub-${u.id}`));
-                    const staffel = kartenIndex % KARTEN_ROTATION_DEG.length;
-                    // Aufgabe 4 (Konzept §4, Kinder-Staffelung 24ms/max. 8):
-                    // die Klasse (und damit die Animation) wird NUR gesetzt,
-                    // solange der Fächer offen ist — die Karten bleiben laut
-                    // E2E-Vertrag permanent im DOM (siehe Kopfkommentar),
-                    // ein CSS-`animation: ... both`, das dauerhaft anläge,
-                    // liefe nur EINMAL beim Erstmount statt bei jedem
-                    // Öffnen. Der Klassenwechsel (weg/da) lässt die
-                    // Animation bei jedem `offen`-Wechsel neu anlaufen.
-                    const staggerVerzoegerung = `${Math.min(kartenIndex, 8) * 24}ms`;
-                    // Hub-Rang (Spec §4): Kreis-Grösse/-Betonung nur für
-                    // rang-fähige Untertools (s. Kopfkommentar `toolIdVon`).
+                    // Hub-Rang (Spec §4): die REIHENFOLGE der Blöcke folgt
+                    // weiterhin dem Rang (s. `mitRang` oben, unverändert) —
+                    // `rangToolId` bleibt nur für das FLIP-Ref-Tracking nötig
+                    // (Positions-Übergang beim Umsortieren). K13 (s.
+                    // Kopfkommentar `UNTERTOOL_ICON`): die frühere optische
+                    // Rang-Betonung (Glow-Ring je Tier) entfällt zugunsten
+                    // EINES einheitlichen, nüchternen Blocks je Untertool —
+                    // «gerade und nüchterne Blöcke», kein Neon, keine
+                    // Sondergrösse nach Rang mehr. Aus demselben Grund entfällt
+                    // hier die frühere Kinder-Staffelung (Aufgabe 4, `.orbit065-
+                    // sheet-kind`/`animationDelay`, 24ms-Versatz je Karte) —
+                    // die Klasse/Keyframes bleiben unverändert für ihre anderen
+                    // Verbraucher (z. B. CommandPalette.tsx) bestehen, nur DIESE
+                    // Blockliste verzichtet bewusst auf den Bounce-Einzug
+                    // («nüchtern» statt verspielt). Nebeneffekt (Sub-Pixel-
+                    // Regression live gefunden, `orbit-start.spec.ts` «Fächer:
+                    // paarweise Bounding-Box-Überlappung … ist 0»): die
+                    // gestaffelte Karten-Eintritts-Transform liess einzelne
+                    // Blöcke der neuen, eng getakteten Liste (44px + 1px statt
+                    // vormals 16px Abstand) je nach Messzeitpunkt kurzzeitig
+                    // unterschiedlich weit transformiert erscheinen — ohne
+                    // Staffelung ist die Geometrie ab dem ersten Frame endgültig.
                     const rangToolId = toolIdVon(u);
-                    const rangPosition = rangToolId ? rangReihenfolge.indexOf(rangToolId) : -1;
-                    const rangTier: RangTier | null =
-                      rangToolId && rangPosition >= 0 ? tierFuerPosition(rangPosition) : null;
-                    const rangStation = rangTier && u.moduleId ? STATION_GLYPHE[u.moduleId as StationModulId] : undefined;
+                    const iconName = UNTERTOOL_ICON[u.id] ?? 'mehr';
                     return (
                       <div
                         key={u.id}
-                        className={`k-orbit-untertool-zeile${offen ? ' orbit065-sheet-kind' : ''}`}
-                        style={offen ? ({ animationDelay: staggerVerzoegerung } as CSSProperties) : undefined}
+                        className="k-orbit-untertool-zeile"
                         ref={(el) => {
                           if (!rangToolId) return;
                           let refs = kreisRefs.current.get(h.id);
@@ -472,14 +512,10 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                       >
                         <button
                           type="button"
-                          // Aufgabe 3: `.k-druck` auf jeder Fächer-Karte.
+                          // Aufgabe 3: `.k-druck` auf jedem Fächer-Block.
+                          // K13: gerade, linksbündige Blockliste statt
+                          // rotierter Karteikarten (s. `orbit-065.css`).
                           className="k-orbit-untertool orbit065-karte k-druck"
-                          style={
-                            {
-                              '--k-karte-rot': `${KARTEN_ROTATION_DEG[staffel]}deg`,
-                              '--k-karte-jog': `${KARTEN_JOG_PX[staffel]}px`,
-                            } as CSSProperties
-                          }
                           data-testid={testid}
                           disabled={u.kommend}
                           aria-label={u.kommend ? `${u.titel} — kommend, noch nicht verfügbar` : `${u.titel} öffnen`}
@@ -488,24 +524,22 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                             onOeffnen(u.moduleId);
                           }}
                         >
-                          {rangTier && rangStation && (
-                            // Hub-Rang-Kreis (Spec §4): Top-3 innen 64px +
-                            // Rollenfarben-Border/Glow, Mitte 54, aussen 46
-                            // — Rollenfarbe AUS DERSELBEN Quelle wie das
-                            // Icon (`STATION_GLYPHE`, keine Zweitquelle).
-                            <span
-                              className={`orbit065-rang-kreis orbit065-rang-kreis--${rangTier}`}
-                              style={{ '--k-rang-rolle': `var(${rangStation.rolle})` } as CSSProperties}
-                              aria-hidden
-                            >
-                              <WerkzeugGlyphe art={rangStation.art} rolle={rangStation.rolle} size={ICON_GROESSE[rangTier]} />
-                            </span>
-                          )}
-                          <span className="orbit065-karte-titel">
-                            {u.titel}
-                            {u.kommend ? ' · kommend' : ''}
+                          {/* K13: vollständiges Logo je Block (KIcon-Registry,
+                              Grösse 20 — K7-Lehre: nur 14/16/20 erlaubt),
+                              IMMER sichtbar (kein Rang-Sonderfall mehr). Rein
+                              dekorativ (Text daneben trägt die Bedeutung),
+                              darum ohne `title`-Prop → KIcon setzt
+                              `aria-hidden` selbst. */}
+                          <span className="orbit065-karte-icon">
+                            <KIcon name={iconName} size={20} />
                           </span>
-                          <span className="orbit065-karte-kurz">{u.kurzbeschrieb}</span>
+                          <span className="orbit065-karte-info">
+                            <span className="orbit065-karte-titel">
+                              {u.titel}
+                              {u.kommend ? ' · kommend' : ''}
+                            </span>
+                            <span className="orbit065-karte-kurz">{u.kurzbeschrieb}</span>
+                          </span>
                         </button>
                         <div className="k-orbit-faehigkeit" data-testid={`orbit-faehigkeit-${u.id}`}>
                           {u.faehigkeit}

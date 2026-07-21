@@ -149,7 +149,9 @@ Daten-Rundown-Logik kann vorbereitet werden).
 > machen, gerade und nüchterne blöcke und ganze logos bitte»
 **Deutung:** die Hover-Fächer-Einträge (Draw/Prepare/Vis/Publish/
 Modellbaum) neu als saubere, gerade Blockliste mit vollständigen Logos
-statt der aktuellen kleinen Kacheln. **Aufwand:** M. **Status:** offen.
+statt der aktuellen kleinen Kacheln. **Aufwand:** M. **Status:**
+ERLEDIGT (ROADMAP 585 — Blockliste mit ganzen Logos, Vertrag byte-gleich;
+Feder-Entfernung als bewusste, revidierbare Fable-Entscheidung dokumentiert).
 
 ## Einstellungen (Seite 4)
 
