@@ -1,0 +1,154 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:53:03.107Z",
+  "status": "private_metadata_inventory_fixture_passed",
+  "policy": {
+    "metadata_only": true,
+    "reads_file_contents": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_run": 0,
+    "note": "This runner uses directory and file metadata only. It never opens source files for content extraction."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-activation-preflight-2026-07-21.json"
+  ],
+  "summary": {
+    "mode": "fixture_public_safe",
+    "activation_status": "source_root_activation_waiting_for_owner_storage_action",
+    "activation_ready": false,
+    "selected_root_path": null,
+    "scan_root": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos/examples/kosmo-references/private-metadata-inventory-fixture",
+    "root_scanned": true,
+    "scan_truncated": false,
+    "files_scanned": 6,
+    "dirs_scanned": 4,
+    "total_candidate_matches": 6,
+    "pilots": 3,
+    "max_files": 25000,
+    "max_depth": 12,
+    "max_matches_per_pilot": 60,
+    "private_output_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/sources/private-inventory",
+    "private_inventory_written": false,
+    "private_inventory_path": null,
+    "public_ready_after_run": 0
+  },
+  "pilots": [
+    {
+      "pilot_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "candidate_files": 2,
+      "extensions": {
+        ".jpg": 1,
+        ".pdf": 1
+      },
+      "largest_file_bytes": 99,
+      "match_fingerprints": [
+        {
+          "path_hash": "25828e6b66af258417de7d4d",
+          "extension": ".jpg",
+          "size_bytes": 99,
+          "mtime_day": "2026-06-14",
+          "keyword_hits": [
+            "savoye",
+            "poissy",
+            "corbusier"
+          ]
+        },
+        {
+          "path_hash": "39ca9b3cdda73e409f816d01",
+          "extension": ".pdf",
+          "size_bytes": 97,
+          "mtime_day": "2026-06-14",
+          "keyword_hits": [
+            "savoye"
+          ]
+        }
+      ],
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "candidate_files": 2,
+      "extensions": {
+        ".pdf": 1,
+        ".dxf": 1
+      },
+      "largest_file_bytes": 110,
+      "match_fingerprints": [
+        {
+          "path_hash": "2cf02649ccf46d0cbf84a98d",
+          "extension": ".pdf",
+          "size_bytes": 106,
+          "mtime_day": "2026-06-14",
+          "keyword_hits": [
+            "sogn",
+            "benedetg",
+            "timber"
+          ]
+        },
+        {
+          "path_hash": "08a7c974643a6f46ffb7b595",
+          "extension": ".dxf",
+          "size_bytes": 110,
+          "mtime_day": "2026-06-14",
+          "keyword_hits": [
+            "sogn",
+            "benedetg",
+            "sumvitg",
+            "zumthor"
+          ]
+        }
+      ],
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "candidate_files": 2,
+      "extensions": {
+        ".ifc": 1,
+        ".docx": 1
+      },
+      "largest_file_bytes": 117,
+      "match_fingerprints": [
+        {
+          "path_hash": "a0cbfdb3679a2fb4fdc1d06f",
+          "extension": ".ifc",
+          "size_bytes": 116,
+          "mtime_day": "2026-06-14",
+          "keyword_hits": [
+            "ingenbohl",
+            "boltshauser",
+            "kloster",
+            "alterszentrum"
+          ]
+        },
+        {
+          "path_hash": "37e57930821ed3f012435c44",
+          "extension": ".docx",
+          "size_bytes": 117,
+          "mtime_day": "2026-06-14",
+          "keyword_hits": [
+            "ingenbohl",
+            "ingebohl",
+            "kloster",
+            "alterszentrum"
+          ]
+        }
+      ],
+      "rights_status": "review_only",
+      "public_ready": false
+    }
+  ],
+  "blocked_reason": null,
+  "next_actions": [
+    "Run private inventory output check against the private output path before any handoff.",
+    "Keep output review-only and pilot-scoped.",
+    "Do not run OCR or content extraction from this metadata inventory."
+  ]
+}

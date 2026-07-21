@@ -1,0 +1,168 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:49:33.219Z",
+  "status": "codex_morning_routine_run_ready",
+  "policy": {
+    "morning_execution_evidence": true,
+    "fetches_git_remotes": true,
+    "pulls_or_merges_now": false,
+    "resets_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "runs_ocr_now": false,
+    "creates_embeddings_now": false,
+    "installs_or_downloads_now": false,
+    "public_ready_after_run": 0
+  },
+  "source_refs": [
+    "data/kosmo-codex-daily-loop-routine-2026-07-21.json",
+    "data/kosmo-codex-daily-loop-routine-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-apply-guard-2026-07-21.json",
+    "data/kosmo-innovation-github-watchlist-2026-07-21.json",
+    "data/kosmo-innovation-github-discovery-2026-07-21.json",
+    "data/kosmo-innovation-github-review-queue-2026-07-21.json",
+    "data/kosmo-overseer-sync-board-2026-07-21.json",
+    "data/kosmo-tomorrow-day-batch-2026-07-21.json"
+  ],
+  "summary": {
+    "repos_checked": 2,
+    "fetch_succeeded": 2,
+    "remote_behind_total": 63,
+    "dirty_repos": 2,
+    "latest_handoff": 353,
+    "latest_mirrored_handoff": 353,
+    "source_root_state": "unknown",
+    "source_root_blocked": false,
+    "private_processing_allowed": false,
+    "github_watchlist_candidates": null,
+    "github_discovery_unique_candidates": null,
+    "github_review_queue_items": null,
+    "innovation_candidates": 0,
+    "next_batch_mode": "remote_delta_review",
+    "next_batch_commands": 3,
+    "public_ready_after_run": 0
+  },
+  "repos": [
+    {
+      "id": "architecture_cosmos",
+      "path": "/mnt/data/ArchitekturKosmos/Code/ArchitectureCosmos",
+      "branch": "main",
+      "head": "3bb7c94555a027c9cf820d026f6d3500d53d20bc",
+      "origin_main": "c62a8757d331d36bb9927f0b17f96f3022096c3b",
+      "fetch_attempted": true,
+      "fetch_succeeded": true,
+      "fetch_error": null,
+      "remote_behind_count": 63,
+      "remote_ahead_count": 0,
+      "dirty_count": 1608,
+      "dirty_sample": [
+        "M .github/workflows/ci.yml",
+        "M .github/workflows/live-security.yml",
+        "M .github/workflows/weekly-update-scout.yml",
+        "M .gitignore",
+        "M .nvmrc",
+        "M AGENTS.md",
+        "M DEPLOYMENT.md",
+        "M README.md",
+        "M SECURITY.md",
+        "M app/icon.svg",
+        "M app/orbit/OrbitAuditTrail.tsx",
+        "M app/orbit/OrbitAutonomousFireState.tsx",
+        "M app/orbit/OrbitAutonomousLoopLedger.tsx",
+        "M app/orbit/OrbitAutonomyStatus.tsx",
+        "M app/orbit/OrbitCommandContract.tsx",
+        "M app/orbit/OrbitDataGovernanceContract.tsx",
+        "M app/orbit/OrbitDeleteExportRestoreDrill.tsx",
+        "M app/orbit/OrbitDemoQuestions.tsx",
+        "M app/orbit/OrbitDemoReadiness.tsx",
+        "M app/orbit/OrbitDemoReviewPath.tsx",
+        "M app/orbit/OrbitDesignHandoffPanel.tsx",
+        "M app/orbit/OrbitDesignPilotPath.tsx",
+        "M app/orbit/OrbitFireCadenceGuard.tsx",
+        "M app/orbit/OrbitGitHubImperigoGate.tsx",
+        "M app/orbit/OrbitHealthReadiness.tsx"
+      ],
+      "pulls_or_merges_now": false,
+      "resets_now": false
+    },
+    {
+      "id": "kosmo_orbit",
+      "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit",
+      "branch": "main",
+      "head": "1176c5e54ca8e47a0bc85a69eb963bf433de47c8",
+      "origin_main": "1176c5e54ca8e47a0bc85a69eb963bf433de47c8",
+      "fetch_attempted": true,
+      "fetch_succeeded": true,
+      "fetch_error": null,
+      "remote_behind_count": 0,
+      "remote_ahead_count": 0,
+      "dirty_count": 53,
+      "dirty_sample": [
+        "?? _overseer/intake/inbox/2026-06-30-claude-kosmodesign-atlas-haertung-DONE.md",
+        "?? _overseer/intake/inbox/2026-06-30-overseer-mm-einheiten-klasse-WURZEL-kosmopublish.md",
+        "?? _overseer/intake/inbox/2026-06-30-overseer-review-kosmodesign-atlas-haertung.md",
+        "?? _overseer/intake/inbox/2026-07-01-claude-kosmodraw-block3-praemisse-widerlegt-elevation-konsistenz.md",
+        "?? _overseer/intake/inbox/2026-07-01-claude-kosmopublish-tkb-rematerialisiert-to-kosmovis.md",
+        "?? _overseer/intake/inbox/2026-07-01-claude-kosmovis-tkb-massing-render-upright-to-fable.md",
+        "?? _overseer/intake/inbox/2026-07-01-claude-tkb-programm-authentisch-aufgefrischt.md",
+        "?? _overseer/intake/inbox/2026-07-01-claude-tkb-programm-treues-massenmodell-to-kosmovis.md",
+        "?? _overseer/intake/inbox/2026-07-01-claude-tkb-sia-a0-plansatz-auf-korrigierter-geometrie.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-aggregate-groupby-pivot.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-aggregate-multi-level-pivot.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-aggregate-properties.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-autotext-project-info.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-clash-detection-tragwerks-framing.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-clash-mcp-tool-to-orbit.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-clash-roofs.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-clash-stairs-ramps-landings.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-clash-walls-extension.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-derived-property-override-criterion.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-expression-defined-properties.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-expression-pow-fail-closed.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-interior-elevation-v1.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-schema-roof-skins.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-schema-walls-openings-sill-head.md",
+        "?? _overseer/intake/inbox/2026-07-02-claude-kosmodesign-section-openings-sill-head.md"
+      ],
+      "pulls_or_merges_now": false,
+      "resets_now": false
+    }
+  ],
+  "handoffs": {
+    "inboxes": [
+      {
+        "path": "/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+        "exists": true,
+        "files": 352,
+        "latest_number": 353,
+        "latest_file": "2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md"
+      },
+      {
+        "path": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+        "exists": true,
+        "files": 150,
+        "latest_number": 353,
+        "latest_file": "2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md"
+      }
+    ],
+    "latest_number": 353,
+    "latest_mirrored_number": 353,
+    "latest_mirrored_file": "2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md"
+  },
+  "next_batch": {
+    "mode": "remote_delta_review",
+    "reason": "At least one tracked repo is behind origin/main after fetch.",
+    "commands": [
+      "git status --short",
+      "git log --oneline --left-right HEAD...origin/main",
+      "Review dirty worktree before any pull or merge."
+    ]
+  },
+  "hard_stops": [
+    "Do not pull over dirty worktrees automatically.",
+    "Do not treat broad owner intent as Source Root unlock.",
+    "Do not read private architecture source content from this routine.",
+    "Do not install dependencies or download models from this routine."
+  ]
+}

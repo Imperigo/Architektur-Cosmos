@@ -1,0 +1,207 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:54:44.989Z",
+  "status": "storage_snapshot_archive_mount_visible",
+  "policy": {
+    "metadata_only": true,
+    "reads_file_contents": false,
+    "copies_private_content": false,
+    "selects_source_root": false,
+    "runs_private_diagnostic": false,
+    "public_ready_after_snapshot": 0,
+    "note": "This snapshot records mount and top-level path metadata only. It is evidence for owner/source-root decisions, not a source-root decision."
+  },
+  "summary": {
+    "data_mount_visible": true,
+    "data_mount_source": "/dev/nvme1n1",
+    "data_mount_fstype": "ext4",
+    "data_mount_total_gib": 3666.5,
+    "data_mount_available_gib": 3133.8,
+    "archive_mount_visible": true,
+    "archive_mount_source": "/dev/sda",
+    "archive_mount_fstype": "ext4",
+    "archive_mount_total_gib": 11086.8,
+    "archive_mount_available_gib": 10497.9,
+    "archive_target_exists": true,
+    "active_project_root_path": "/mnt/data/ArchitekturKosmos",
+    "archive_root_path": "/mnt/archiv",
+    "project_root_exists": true,
+    "project_root_own_mount": false,
+    "onedrive_targets_visible": 2,
+    "source_root_decision": "owner_selection_still_required",
+    "public_ready_after_snapshot": 0
+  },
+  "targets": [
+    {
+      "path": "/mnt/data",
+      "exists": true,
+      "own_mount": true,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fstype": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "filesystem": {
+        "total_gib": 3666.5,
+        "available_gib": 3133.8,
+        "used_gib": 532.6
+      },
+      "top_level": {
+        "entries": 11,
+        "directories": 11,
+        "files": 0,
+        "symlinks": 0,
+        "sample_entries": [
+          "_archive_logs",
+          "ai-models",
+          "Applikationen Andrin",
+          "ArchitekturKosmos",
+          "ComfyUI",
+          "kosmo-blender-fork",
+          "kosmo-verify",
+          "lost+found",
+          "swiss-dwellings",
+          "tools",
+          "Zum_Archivieren"
+        ]
+      }
+    },
+    {
+      "path": "/mnt/archiv",
+      "exists": true,
+      "own_mount": true,
+      "mount": {
+        "mount_point": "/mnt/archiv",
+        "fstype": "ext4",
+        "source": "/dev/sda"
+      },
+      "filesystem": {
+        "total_gib": 11086.8,
+        "available_gib": 10497.9,
+        "used_gib": 588.9
+      },
+      "top_level": {
+        "entries": 5,
+        "directories": 5,
+        "files": 0,
+        "symlinks": 0,
+        "sample_entries": [
+          "01 ArchitekturKosmos Projekt",
+          "ArchitekturKosmos",
+          "FromSSD",
+          "lost+found",
+          "repo-snapshots"
+        ]
+      }
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos",
+      "exists": true,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fstype": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "filesystem": {
+        "total_gib": 3666.5,
+        "available_gib": 3133.8,
+        "used_gib": 532.6
+      },
+      "top_level": {
+        "entries": 20,
+        "directories": 17,
+        "files": 2,
+        "symlinks": 1,
+        "sample_entries": [
+          "_autonomy",
+          "_Claude-Memory",
+          "_design-konzept",
+          "_incoming",
+          "_pilot",
+          ".obsidian",
+          ".pytest_cache",
+          "00 Inbox",
+          "04 Brain Reports",
+          "05 Decisions",
+          "09 Codex Memory",
+          "11_AI_Workflow"
+        ]
+      }
+    },
+    {
+      "path": "/mnt/data/ArchitekturKosmos/11_AI_Workflow/OneDrive_2026-06-09",
+      "exists": true,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/mnt/data",
+        "fstype": "ext4",
+        "source": "/dev/nvme1n1"
+      },
+      "filesystem": {
+        "total_gib": 3666.5,
+        "available_gib": 3133.8,
+        "used_gib": 532.6
+      },
+      "top_level": {
+        "entries": 15,
+        "directories": 8,
+        "files": 7,
+        "symlinks": 0,
+        "sample_entries": [
+          "_build_briefing_pdf.py",
+          "00 Architekturkosmos Zentrale",
+          "00 Einrichtung Home_PC",
+          "12 Architektur Cosmos",
+          "alt",
+          "Andrin-Owner-Pakete",
+          "ANLEITUNG.txt",
+          "Architecture-Cosmos_Status_2026-06-02.pdf",
+          "Architekturkosmos_Status_2026-06-02.pdf",
+          "KosmoDraw",
+          "KosmoOrbit_Status_Progress_2026-06-02.pdf",
+          "Recht"
+        ]
+      }
+    },
+    {
+      "path": "/home/andrin-baumann/ArchitekturKosmos Onedrive",
+      "exists": true,
+      "own_mount": false,
+      "mount": {
+        "mount_point": "/",
+        "fstype": "ext4",
+        "source": "/dev/nvme0n1p2"
+      },
+      "filesystem": {
+        "total_gib": 1831.7,
+        "available_gib": 1609.6,
+        "used_gib": 222.1
+      },
+      "top_level": {
+        "entries": 3,
+        "directories": 2,
+        "files": 1,
+        "symlinks": 0,
+        "sample_entries": [
+          "___All_Errors.txt",
+          "__11 AI Workflow",
+          "11 AI Workflow"
+        ]
+      }
+    }
+  ],
+  "interpretation": [
+    "/mnt/data is the active large SSD mount.",
+    "/mnt/archiv is an own mounted archive drive; owner still must select the exact source-root folder inside it or elsewhere.",
+    "/mnt/data/ArchitekturKosmos is a project/workspace root inside the SSD mount, not a separate source-library mount.",
+    "OneDrive-like roots are visible, but source-root guards still require sync repair or explicit owner confirmation.",
+    "No source root is selected by this snapshot."
+  ],
+  "next_actions": [
+    "Owner/KosmoOverseer should confirm the exact source-root folder inside /mnt/archiv or confirm a different complete root.",
+    "If OneDrive is the real library, repair sync markers before any private inventory.",
+    "After storage changes, rerun source-root locator, selection brief, decision-session check, blocker refresh and worker-boundary pack.",
+    "Do not select /mnt/data/ArchitekturKosmos as the private library root unless the owner explicitly confirms it."
+  ]
+}

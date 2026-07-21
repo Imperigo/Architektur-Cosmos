@@ -1,0 +1,58 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:50:08.822Z",
+  "inventory_path": "examples/kosmo-references/private-inventory/private-inventory-output-template-2026-07-21.json",
+  "status": "private_inventory_output_contract_passed",
+  "policy": {
+    "review_only": true,
+    "private_content_read": false,
+    "copied_private_content_allowed": false,
+    "public_ready_allowed": false,
+    "public_writes_allowed": false
+  },
+  "summary": {
+    "pilots": 3,
+    "public_ready_hits": 0,
+    "forbidden_field_hits": 0,
+    "long_string_hits": 0,
+    "failures": 0,
+    "warnings": 0
+  },
+  "pilots": [
+    {
+      "pilot_id": "villa-savoye",
+      "inventory_status": "not_started",
+      "candidate_files": 0,
+      "source_records": 0,
+      "rights_records": 0,
+      "path_fingerprints": 0,
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "inventory_status": "not_started",
+      "candidate_files": 0,
+      "source_records": 0,
+      "rights_records": 0,
+      "path_fingerprints": 0,
+      "rights_status": "review_only",
+      "public_ready": false
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "inventory_status": "not_started",
+      "candidate_files": 0,
+      "source_records": 0,
+      "rights_records": 0,
+      "path_fingerprints": 0,
+      "rights_status": "review_only",
+      "public_ready": false
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "next_actions": [
+    "Inventory output contract is safe for metadata-only handoff; provenance and rights review still required before any public promotion."
+  ]
+}

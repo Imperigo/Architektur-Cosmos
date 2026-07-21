@@ -1,0 +1,90 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:50:10.620Z",
+  "status": "local_worker_outputs_present_review_only",
+  "policy": {
+    "private_outputs_not_copied": true,
+    "metadata_only": true,
+    "note": "This review records existence, file sizes, JSON validity and high-risk term ids only. It does not copy private local worker output contents into the repository."
+  },
+  "task_pack": "data/kosmo-local-worker-task-pack-2026-07-21.json",
+  "output_root": "/mnt/data/ArchitekturKosmos/KosmoZentrale/worker_packets/kosmo-local-worker-2026-06-13",
+  "summary": {
+    "required_outputs": 9,
+    "present_outputs": 9,
+    "missing_outputs": 0,
+    "invalid_json_outputs": 0,
+    "high_risk_hits": 0,
+    "review_required": false,
+    "public_ready_allowed": false
+  },
+  "files": [
+    {
+      "filename": "doctrine-summary.private.md",
+      "status": "present",
+      "bytes": 4062,
+      "json_status": "not_json",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "reference-pilot-gap-map.private.json",
+      "status": "present",
+      "bytes": 4111,
+      "json_status": "valid",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "book-library-mount-questions.private.md",
+      "status": "present",
+      "bytes": 2884,
+      "json_status": "not_json",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "asset-seed-candidates.private.json",
+      "status": "present",
+      "bytes": 2988,
+      "json_status": "valid",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "public-source-link-synthesis.private.json",
+      "status": "present",
+      "bytes": 2070,
+      "json_status": "valid",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "human-decision-queue-triage.private.md",
+      "status": "present",
+      "bytes": 4396,
+      "json_status": "not_json",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "owner-batch-review-questions.private.md",
+      "status": "present",
+      "bytes": 4020,
+      "json_status": "not_json",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "owner-session-safe-next-tasks.private.md",
+      "status": "present",
+      "bytes": 2091,
+      "json_status": "not_json",
+      "high_risk_terms": []
+    },
+    {
+      "filename": "asset-source-candidate-triage.private.json",
+      "status": "present",
+      "bytes": 9272,
+      "json_status": "valid",
+      "high_risk_terms": []
+    }
+  ],
+  "next_actions": [
+    "Codex/Claude may review private outputs and convert only checked, metadata-safe summaries into repo artifacts.",
+    "Keep public_ready_allowed=false until owner decisions, file-level provenance and rights review pass."
+  ]
+}

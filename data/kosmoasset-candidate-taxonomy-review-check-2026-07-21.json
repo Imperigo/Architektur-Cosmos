@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:50:45.621Z",
+  "status": "kosmoasset_candidate_taxonomy_review_guard_passed",
+  "policy": {
+    "review_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmoasset-candidate-taxonomy-review-2026-07-21.json"
+  ],
+  "summary": {
+    "checks": 12,
+    "passed": 12,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready",
+      "status": "passed",
+      "evidence": "kosmoasset_candidate_taxonomy_review_ready"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_copies",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_paths_in_reviews",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "asset_use_blocked_now",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "candidate_count_matches_summary",
+      "status": "passed",
+      "evidence": "10/10"
+    },
+    {
+      "id": "owner_confirmations_present",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "lane_definitions_present",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "hard_stops_present",
+      "status": "passed",
+      "evidence": 5
+    }
+  ]
+}

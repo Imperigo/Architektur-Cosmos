@@ -1,0 +1,145 @@
+{
+  "schema_version": "0.1",
+  "package_id": "kosmo-prepare-phase1-adapter-fixture-2026-07-21",
+  "title": "KosmoPrepare Phase 1 Adapter Fixture Source Package",
+  "description": "Synthetic, review-only source package connecting the KosmoPrepare phase 1 adapter fixture to the KosmoReferences source-package contract.",
+  "created_at": "2026-07-21",
+  "updated_at": "2026-07-21",
+  "status": "adapter_contract_ready",
+  "rights_scope": "synthetic_fixture",
+  "source_kind": "synthetic_html_plus_synthetic_ifc_manifest",
+  "source_root": "examples/kosmo-prepare/phase1-adapter-fixture",
+  "public_policy": {
+    "source_files_public": false,
+    "extracted_text_public": false,
+    "derived_summary_public": false,
+    "notes": [
+      "All files are synthetic fixture artifacts, but the package remains review-only to preserve the default Kosmo public-ready=0 rule.",
+      "This package is a contract bridge only; it does not authorize private source ingestion, OCR, embeddings or training."
+    ]
+  },
+  "sources": [
+    {
+      "id": "kosmo-prepare-synthetic-html",
+      "title": "KosmoPrepare Synthetic HTML Fixture",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/source.synthetic.html",
+      "file_type": "html",
+      "source_role": "synthetic_fixture_input",
+      "rights_status": "synthetic_fixture_review_only",
+      "sha256": "ac2799e8f50b635a6a028bda5a635ea9d115f186ba077bec2b785b14183a49c8",
+      "bytes": 362,
+      "notes": "Repo-safe synthetic HTML used to validate MarkItDown and downstream source-package plumbing."
+    }
+  ],
+  "extraction_artifacts": [
+    {
+      "id": "kosmo-prepare-markitdown-md",
+      "source_id": "kosmo-prepare-synthetic-html",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/converted.markitdown.md",
+      "artifact_type": "markdown_text",
+      "tool": "markitdown 0.1.6",
+      "status": "created",
+      "sha256": "8831c3c41596fd1cb087190a85cfc838e825747ed459f3085c812da6efc57d79",
+      "bytes": 192,
+      "quality_notes": [
+        "Converted from the synthetic HTML fixture.",
+        "Maps to KosmoPrepare brief/converted-source.md slot."
+      ]
+    },
+    {
+      "id": "kosmo-prepare-ifc-entity-manifest",
+      "source_id": "kosmo-prepare-synthetic-html",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/ifcopenshell-entity-manifest.json",
+      "artifact_type": "ifc_entity_manifest",
+      "tool": "ifcopenshell 0.8.5",
+      "status": "created",
+      "sha256": "c3735a4bdb3b03f20234f612026dc545e39f99858838a58b97640eba1955acd5",
+      "bytes": 440,
+      "quality_notes": [
+        "Synthetic IfcOpenShell entity manifest for project/site/building/storey/material semantics.",
+        "Maps to KosmoDesign design/ifc-semantic-proof.generated.json slot."
+      ]
+    },
+    {
+      "id": "kosmo-prepare-adapter-report-json",
+      "source_id": "kosmo-prepare-synthetic-html",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.json",
+      "artifact_type": "adapter_report_json",
+      "tool": "kosmo-prepare-phase1-adapter-fixture",
+      "status": "created",
+      "sha256": "73e405d902454a32653c7cc844f23febc4436da341170db4a5bcfce77b9421f7",
+      "bytes": 1559,
+      "quality_notes": [
+        "Machine-readable adapter report with synthetic-only policy assertions."
+      ]
+    },
+    {
+      "id": "kosmo-prepare-adapter-report-md",
+      "source_id": "kosmo-prepare-synthetic-html",
+      "path": "examples/kosmo-prepare/phase1-adapter-fixture/prepare-phase1-adapter-report.md",
+      "artifact_type": "adapter_report_markdown",
+      "tool": "kosmo-prepare-phase1-adapter-fixture",
+      "status": "created",
+      "sha256": "637426a573213704417dd2bf0535e4164ef17122b72ed9fddda347a8b3ca3332",
+      "bytes": 1047,
+      "quality_notes": [
+        "Human-readable adapter report for Codex, Claude and KosmoOverseer handoff."
+      ]
+    }
+  ],
+  "candidate_projects": [
+    {
+      "id": "kosmo-prepare-phase1-fixture",
+      "title": "KosmoPrepare Phase 1 Synthetic Fixture",
+      "confidence": 1,
+      "promotion_status": "adapter_contract_only",
+      "evidence": [
+        "The fixture is synthetic and created inside the repo.",
+        "MarkItDown and IfcOpenShell outputs are present with recorded hashes and byte counts.",
+        "The package keeps public-ready at zero and does not unlock private source processing."
+      ]
+    }
+  ],
+  "review_gates": [
+    {
+      "id": "source_integrity",
+      "status": "pass",
+      "notes": "All source and artifact files have SHA-256 and byte counts recorded."
+    },
+    {
+      "id": "rights",
+      "status": "pass",
+      "notes": "Synthetic fixture only; still review-only by policy."
+    },
+    {
+      "id": "text_quality",
+      "status": "pass",
+      "notes": "Converted Markdown contains the intended fixture heading and material/system lines."
+    },
+    {
+      "id": "layout_quality",
+      "status": "not_applicable",
+      "notes": "HTML fixture has no scanned pages or plan layout blocks."
+    },
+    {
+      "id": "entry_mapping",
+      "status": "pass",
+      "notes": "Maps to a synthetic KosmoPrepare adapter fixture, not to a public architecture entry."
+    },
+    {
+      "id": "asset_mapping",
+      "status": "review_only",
+      "notes": "Ifc/material semantics may seed KosmoAsset fixture contracts, but no asset is public-ready."
+    },
+    {
+      "id": "public_private_split",
+      "status": "pass",
+      "notes": "No private content is read or copied; public-ready remains 0."
+    }
+  ],
+  "next_actions": [
+    "Run npm run kosmo:prepare-phase1-source-package-contract-check.",
+    "Run npm run kosmo:source-package-check -- --package examples/kosmo-references/source-packages/kosmo-prepare-phase1-adapter-fixture-2026-07-21/source-package.json --strict-artifacts.",
+    "Use this source-free contract as the bridge before private Source Root activation."
+  ]
+}

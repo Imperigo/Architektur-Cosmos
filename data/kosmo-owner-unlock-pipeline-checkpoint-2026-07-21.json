@@ -1,0 +1,385 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:55:31.768Z",
+  "status": "owner_unlock_pipeline_checkpoint_attention_required",
+  "policy": {
+    "checkpoint_only": true,
+    "records_decisions": false,
+    "writes_intake_file_now": false,
+    "mutates_session_files_now": false,
+    "executes_commands_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "public_ready_after_checkpoint": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-unlock-reply-validator-2026-07-21.json",
+    "data/kosmo-owner-unlock-reply-validator-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-reply-validator-smoke-2026-07-21.json",
+    "data/kosmo-owner-unlock-reply-validator-smoke-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-reply-intake-map-2026-07-21.json",
+    "data/kosmo-owner-unlock-reply-intake-map-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-execution-runbook-2026-07-21.json",
+    "data/kosmo-owner-unlock-execution-runbook-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-answer-dry-run-2026-07-21.json",
+    "data/kosmo-owner-unlock-answer-dry-run-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-fast-reply-card-2026-07-21.json",
+    "data/kosmo-owner-unlock-fast-reply-card-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-exact-reply-preview-2026-07-21.json",
+    "data/kosmo-owner-unlock-exact-reply-preview-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-07-21.json",
+    "data/kosmo-owner-unlock-path-a-readiness-certificate-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-patch-review-bundle-2026-07-21.json",
+    "data/kosmo-owner-unlock-patch-review-bundle-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-intake-apply-plan-2026-07-21.json",
+    "data/kosmo-owner-unlock-intake-apply-plan-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-edit-preview-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-edit-preview-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-apply-guard-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-apply-guard-check-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-07-21.json",
+    "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-21.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-2026-07-21.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-check-2026-07-21.json",
+    "data/kosmo-overseer-sync-board-2026-07-21.json"
+  ],
+  "summary": {
+    "components": 29,
+    "components_ready": 0,
+    "missing_inputs": 29,
+    "missing_input_refs": [
+      "data/kosmo-owner-unlock-reply-validator-2026-07-21.json",
+      "data/kosmo-owner-unlock-reply-validator-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-reply-validator-smoke-2026-07-21.json",
+      "data/kosmo-owner-unlock-reply-validator-smoke-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-reply-intake-map-2026-07-21.json",
+      "data/kosmo-owner-unlock-reply-intake-map-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-execution-runbook-2026-07-21.json",
+      "data/kosmo-owner-unlock-execution-runbook-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-answer-dry-run-2026-07-21.json",
+      "data/kosmo-owner-unlock-answer-dry-run-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-fast-reply-card-2026-07-21.json",
+      "data/kosmo-owner-unlock-fast-reply-card-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-exact-reply-preview-2026-07-21.json",
+      "data/kosmo-owner-unlock-exact-reply-preview-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-path-a-readiness-certificate-2026-07-21.json",
+      "data/kosmo-owner-unlock-path-a-readiness-certificate-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-patch-review-bundle-2026-07-21.json",
+      "data/kosmo-owner-unlock-patch-review-bundle-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-intake-apply-plan-2026-07-21.json",
+      "data/kosmo-owner-unlock-intake-apply-plan-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-session-edit-preview-2026-07-21.json",
+      "data/kosmo-owner-unlock-session-edit-preview-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-session-apply-guard-2026-07-21.json",
+      "data/kosmo-owner-unlock-session-apply-guard-check-2026-07-21.json",
+      "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-07-21.json",
+      "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-21.json",
+      "data/kosmo-post-source-root-metadata-readiness-pack-2026-07-21.json",
+      "data/kosmo-post-source-root-metadata-readiness-pack-check-2026-07-21.json",
+      "data/kosmo-overseer-sync-board-2026-07-21.json"
+    ],
+    "guard_checks": 0,
+    "guard_checks_passed": 0,
+    "expected_freeform_guard_failures": 0,
+    "expected_runbook_bootstrap_failures": 0,
+    "latest_handoff_min": null,
+    "latest_handoff_max": null,
+    "latest_handoff_count": 0,
+    "owner_reply_state": "pending",
+    "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
+    "path_a_ready_after_exact_owner_reply": false,
+    "selected_root_path_preview": null,
+    "selected_root_exists_preview": false,
+    "session_edit_preview_writes_now": false,
+    "session_apply_guard_status": "missing_input",
+    "session_apply_guard_mode": null,
+    "session_apply_guard_private_diagnostic_allowed": false,
+    "session_apply_guard_smoke_status": "missing_input",
+    "session_apply_guard_smoke_mode": null,
+    "session_apply_guard_smoke_private_diagnostic_allowed": false,
+    "session_apply_guard_smoke_writes_real_session": false,
+    "post_source_readiness_status": "missing_input",
+    "post_source_readiness_guard_status": "missing_input",
+    "post_source_readiness_blocked_now": null,
+    "post_source_readiness_inventory_guard_status": null,
+    "applies_decision_now": false,
+    "public_ready_after_checkpoint": 0
+  },
+  "components": [
+    {
+      "id": "reply-validator",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_reply_validator_pending_owner_reply",
+        "owner_unlock_reply_invalid"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "reply-validator-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_reply_validator_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "reply-smoke",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_reply_validator_smoke_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "reply-smoke-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_reply_validator_smoke_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "intake-map",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_reply_intake_map_pending_owner_reply"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "intake-map-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_reply_intake_map_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "execution-runbook",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_execution_runbook_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "execution-runbook-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_execution_runbook_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "answer-dry-run",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_answer_dry_run_pending_answer",
+        "owner_unlock_answer_dry_run_attention_required"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "answer-dry-run-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_answer_dry_run_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "fast-reply-card",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_fast_reply_card_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "fast-reply-card-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_fast_reply_card_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "exact-reply-preview",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_answer_dry_run_ready_for_review"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "exact-reply-preview-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_answer_dry_run_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "path-a-readiness",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_path_a_readiness_certificate_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "path-a-readiness-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_path_a_readiness_certificate_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "patch-review-bundle",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_patch_review_bundle_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "patch-review-bundle-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_patch_review_bundle_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "intake-apply-plan",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_intake_apply_plan_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "intake-apply-plan-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_intake_apply_plan_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-edit-preview",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_session_edit_preview_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-edit-preview-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_session_edit_preview_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_waiting_for_manual_apply",
+        "owner_unlock_session_apply_guard_passed_after_manual_apply"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard-check",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_check_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard-smoke",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_smoke_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "session-apply-guard-smoke-check",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "owner_unlock_session_apply_guard_smoke_check_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "post-source-root-metadata-readiness-pack",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "post_source_root_metadata_readiness_pack_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "post-source-root-metadata-readiness-pack-check",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "post_source_root_metadata_readiness_pack_guard_passed"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    },
+    {
+      "id": "overseer-sync-board",
+      "actual_status": "missing_input",
+      "expected_statuses": [
+        "overseer_sync_board_ready"
+      ],
+      "ready": false,
+      "public_ready_after_component": 0
+    }
+  ],
+  "next_actions": [
+    "Wait for explicit owner reply in the Owner Unlock Prompt format.",
+    "Run the execution runbook sequence; do not skip validator, intake map, or human review gates.",
+    "Keep private inventory blocked until source-root guards pass."
+  ],
+  "hard_stops": [
+    "Do not treat this checkpoint as owner approval.",
+    "Do not read private content from this checkpoint.",
+    "Do not run private inventory from this checkpoint.",
+    "Do not mark private-derived material public-ready."
+  ]
+}

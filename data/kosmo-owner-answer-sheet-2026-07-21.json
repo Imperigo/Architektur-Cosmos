@@ -1,0 +1,332 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:50:09.047Z",
+  "status": "owner_answer_sheet_ready",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "public_ready_after_sheet": 0,
+    "safe_default_when_unanswered": "keep existing null decisions and review-only blockers",
+    "note": "This sheet is a question and answer capture aid only. It does not modify decision sessions."
+  },
+  "source_refs": [
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-07-21.json",
+    "data/kosmo-owner-review-card-set-2026-07-21.json",
+    "examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json",
+    "data/kosmo-source-root-selection-brief-2026-07-21.json"
+  ],
+  "summary": {
+    "source_root_decision_status": "source_root_decision_session_pending",
+    "source_root_allowed_decisions": 5,
+    "source_root_options": 10,
+    "source_root_options_source": "source_root_selection_brief",
+    "owner_cards": 5,
+    "owner_card_items": 16,
+    "owner_reference_decisions": 10,
+    "public_ready_after_sheet": 0
+  },
+  "sections": [
+    {
+      "id": "source-root-decision",
+      "title": "Source-Root Decision",
+      "purpose": "Select or keep blocked the true private book/ETH/HSLU source root before any private inventory.",
+      "allowed_decisions": [
+        "keep_blocked",
+        "mount_archive_first",
+        "repair_onedrive_first",
+        "select_existing_root_for_private_diagnostic",
+        "select_root_after_mount_check"
+      ],
+      "current_selected_decision": null,
+      "current_selected_root_path": null,
+      "safe_default": "keep_blocked",
+      "blocked_until_recorded_selection": [
+        "sogn_private_source_inventory",
+        "ingenbohl_pdf_private_extraction",
+        "source_dependent_asset_authoring",
+        "public_ready_promotion_from_private_sources"
+      ],
+      "answer_fields": [
+        {
+          "field": "selected_decision",
+          "allowed_values": [
+            "keep_blocked",
+            "mount_archive_first",
+            "repair_onedrive_first",
+            "select_existing_root_for_private_diagnostic",
+            "select_root_after_mount_check"
+          ]
+        },
+        {
+          "field": "selected_root_path",
+          "allowed_values": [
+            "absolute local path or null"
+          ]
+        },
+        {
+          "field": "owner_note",
+          "allowed_values": [
+            "short free text"
+          ]
+        }
+      ],
+      "top_options": [
+        {
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+          "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+          "classification": "possible_source_root",
+          "role_guess": "asset_material_library_candidate",
+          "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+          "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+          "classification": "possible_source_root",
+          "role_guess": "asset_material_library_candidate",
+          "recommended_action": "Treat as KosmoAsset/material-library candidate; do not use as the main architecture reference root without owner confirmation.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+          "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+          "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+          "classification": "possible_source_root",
+          "role_guess": "archive_subtree_candidate",
+          "recommended_action": "Keep blocked unless owner/overseer confirms this exact path as the real source root.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC",
+          "classification": "possible_source_root",
+          "role_guess": "onedrive_mirror_candidate",
+          "recommended_action": "Treat as OneDrive mirror candidate; confirm completeness and sync health before any private metadata inventory.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+          "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/reports",
+          "classification": "possible_source_root",
+          "role_guess": "workflow_mirror_or_codex_context",
+          "recommended_action": "Treat as workflow/context mirror first; only select as source root if owner explicitly confirms it contains the complete private architecture library.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "mount_archive_or_missing_root",
+          "path": null,
+          "classification": "missing_or_unmounted_root",
+          "role_guess": "owner_storage_action",
+          "recommended_action": "Mount or expose the real archive/OneDrive library root, then rerun locator and private-library diagnostic.",
+          "safe_default": "keep_blocked"
+        },
+        {
+          "id": "repair_onedrive_first",
+          "path": null,
+          "classification": "sync_repair_first",
+          "role_guess": "onedrive_integrity_gate",
+          "recommended_action": "Resolve OneDrive sync error roots before using visible OneDrive mirrors for inventory.",
+          "safe_default": "repair_before_inventory"
+        }
+      ]
+    },
+    {
+      "id": "owner-review-cards",
+      "title": "Owner Review Cards",
+      "purpose": "Review one card at a time; unanswered cards stay at safe default.",
+      "public_ready_after_section": 0,
+      "cards": [
+        {
+          "batch_id": "batch-a-villa-savoye-image-candidates",
+          "label": "Batch A: Villa Savoye Image Candidates",
+          "question": "Soll Villa Savoye Bildmaterial nur blockiert bleiben, oder soll genau ein Bild in eine separate Quellen-/Credit-Pruefung?",
+          "items": 3,
+          "safe_default": "needs_more_source_context",
+          "options": [
+            "keep_all_blocked",
+            "open_one_source_credit_review",
+            "needs_more_context"
+          ],
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-b-villa-savoye-derived-files",
+          "label": "Batch B: Villa Savoye Derived Files",
+          "question": "Sollen alle abgeleiteten Villa-Dateien blockiert bleiben, bis Plan-/Modell-Herkunft sauber belegt ist?",
+          "items": 4,
+          "safe_default": "keep_blocked",
+          "options": [
+            "use_safe_default",
+            "open_separate_review",
+            "needs_more_context"
+          ],
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-c-model-promotion-confirmation",
+          "label": "Batch C: Model Promotion Confirmation",
+          "question": "Sollen die vorhandenen Modelle weiterhin als diagrammatische Studien blockiert bleiben, bis Modellqualitaet und Quellenbasis geprueft sind?",
+          "items": 2,
+          "safe_default": "needs_more_source_context",
+          "options": [
+            "use_safe_default",
+            "open_separate_review",
+            "needs_more_context"
+          ],
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-d-sogn-benedetg-source-gap",
+          "label": "Batch D: Sogn Benedetg Source Gap",
+          "question": "Soll Sogn Benedetg link-only bleiben, bis der echte private Bibliotheks-Root sichtbar ist?",
+          "items": 1,
+          "safe_default": "needs_more_source_context",
+          "options": [
+            "use_safe_default",
+            "open_separate_review",
+            "needs_more_context"
+          ],
+          "public_ready_after_card": 0
+        },
+        {
+          "batch_id": "batch-e-kosmoasset-human-reviews",
+          "label": "Batch E: KosmoAsset Human Reviews",
+          "question": "Welche lokalen Study-Assets sollen ein Human Review bekommen, ohne Public-Promotion zu erlauben?",
+          "items": 6,
+          "safe_default": "needs-review",
+          "options": [
+            "keep_needs_review",
+            "assign_named_human_review",
+            "block_public"
+          ],
+          "public_ready_after_card": 0
+        }
+      ]
+    },
+    {
+      "id": "reference-owner-decisions",
+      "title": "Reference Owner Decisions",
+      "purpose": "Map later owner answers to existing decision-session items without applying them here.",
+      "allowed_decisions": [
+        "approve_public_display_after_review",
+        "keep_blocked",
+        "open_separate_source_basis_review",
+        "needs_more_source_context"
+      ],
+      "public_ready_after_section": 0,
+      "decisions": [
+        {
+          "group_id": "villa-savoye-public-image-candidates",
+          "item_id": "villa-savoye-exterior-savoye-3-cc0",
+          "prompt": "Approve public display or keep blocked?",
+          "safe_default": "needs_more_source_context",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "villa-savoye-public-image-candidates",
+          "item_id": "villa-savoye-exterior-loc-full",
+          "prompt": "Approve public display with LOC/credit review or keep blocked?",
+          "safe_default": "needs_more_source_context",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "villa-savoye-public-image-candidates",
+          "item_id": "villa-savoye-interior-chaise-cc-by-sa",
+          "prompt": "Approve only if attribution and ShareAlike obligations are accepted, or keep blocked?",
+          "safe_default": "needs_more_source_context",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "villa-savoye-blocked-derived-files",
+          "item_id": "public/archive-media/villa-savoye/exterior/villa-savoye-loc-exterior-crop.jpg",
+          "prompt": "Keep blocked or open a separate source-basis review?",
+          "safe_default": "keep_blocked",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "villa-savoye-blocked-derived-files",
+          "item_id": "public/archive-media/villa-savoye/plan/villa-savoye-ground-floor-diagram.svg",
+          "prompt": "Keep blocked or open a separate plan/source-basis review?",
+          "safe_default": "keep_blocked",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "villa-savoye-blocked-derived-files",
+          "item_id": "public/archive-media/villa-savoye/section/villa-savoye-long-section-diagram.svg",
+          "prompt": "Keep blocked or open a separate section/source-basis review?",
+          "safe_default": "keep_blocked",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "villa-savoye-blocked-derived-files",
+          "item_id": "public/archive-models/villa-savoye/low.glb",
+          "prompt": "Keep blocked or open a separate model/source-basis review?",
+          "safe_default": "keep_blocked",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "model-promotion-owner-confirmation",
+          "item_id": "villa-savoye",
+          "prompt": "Confirm model promotion only after accepting diagrammatic, not-measured status?",
+          "safe_default": "needs_more_source_context",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "model-promotion-owner-confirmation",
+          "item_id": "alterszentrum-kloster-ingenbohl",
+          "prompt": "Confirm model promotion only after accepting diagrammatic, not-measured status?",
+          "safe_default": "needs_more_source_context",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        },
+        {
+          "group_id": "sogn-benedetg-source-gap",
+          "item_id": "sogn-benedetg-source-gap",
+          "prompt": "Find private library root or keep Sogn link-only with review-only study assets?",
+          "safe_default": "needs_more_source_context",
+          "current_selected_decision": null,
+          "public_ready_after_decision": false
+        }
+      ]
+    }
+  ],
+  "next_actions_after_owner_answers": [
+    "Record source-root answers in examples/kosmo-references/provenance/source-root-decision-session-2026-07-21.json only after owner confirmation.",
+    "Run npm run kosmo:source-root-decision-session-check after source-root answers are recorded.",
+    "Record reference owner answers in examples/kosmo-references/provenance/owner-review-decision-session-2026-06-13.json only after owner confirmation.",
+    "Run npm run kosmo:owner-decision-session-check after reference answers are recorded.",
+    "Keep KosmoAsset human reviews separate from reference owner decisions.",
+    "Rerun npm run kosmo:data-lane-sweep and npm run kosmo:data-lane-command-router after any recorded decision."
+  ]
+}

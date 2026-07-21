@@ -1,0 +1,84 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:55:14.380Z",
+  "status": "owner_remaining_decision_brief_ready",
+  "policy": {
+    "review_only": true,
+    "reads_private_content": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers": false,
+    "public_ready_after_brief": 0
+  },
+  "source_refs": [
+    "data/kosmo-source-independent-work-queue-2026-07-21.json",
+    "data/kosmo-source-root-owner-choice-consequence-matrix-2026-07-21.json",
+    "data/kosmo-owner-answer-sheet-2026-07-21.json",
+    "data/kosmoreferences-pilot-gap-label-review-2026-07-21.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-07-21.json"
+  ],
+  "summary": {
+    "decision_groups": 2,
+    "open_owner_actions": 2,
+    "source_root_choices": 3,
+    "unlock_choices": 1,
+    "open_review_batches": 5,
+    "open_review_items": 16,
+    "pilot_gap_owner_decisions": 7,
+    "asset_owner_confirmations": 3,
+    "failures": 0,
+    "public_ready_after_brief": 0
+  },
+  "decisions": [
+    {
+      "id": "source_root_choice",
+      "status": "owner_action_required",
+      "question": "Welche Source-Root-Option soll als naechster Zustand gelten?",
+      "recommended_default": "repair_onedrive_first_or_keep_blocked_until_complete_root_is_confirmed",
+      "choices": [
+        {
+          "id": "keep_blocked",
+          "label": "Keep source-root blocked",
+          "unlocks_private_metadata_diagnostic": false,
+          "public_ready_after_choice": 0,
+          "caution": "Owner is not ready to identify the complete private architecture library root."
+        },
+        {
+          "id": "repair_onedrive_first",
+          "label": "Repair OneDrive first",
+          "unlocks_private_metadata_diagnostic": false,
+          "public_ready_after_choice": 0,
+          "caution": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved."
+        },
+        {
+          "id": "select_exact_root_1",
+          "label": "Select visible exact root for metadata diagnostic",
+          "unlocks_private_metadata_diagnostic": true,
+          "public_ready_after_choice": 0,
+          "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics."
+        }
+      ],
+      "recorded_selection": null,
+      "safe_after_answer": "Run source-root decision checks and activation preflight before any private metadata inventory."
+    },
+    {
+      "id": "open_review_batches",
+      "status": "owner_action_required",
+      "question": "Welche offenen Reference/Asset Review-Batches duerfen als naechstes bearbeitet werden?",
+      "recommended_default": "keep_all_review_only_until_source_root_and_rights_gates_are_confirmed",
+      "open_batches": 5,
+      "open_items": 16,
+      "pilot_gap_owner_decisions": 7,
+      "asset_owner_confirmations": 3,
+      "safe_after_answer": "Record answers into owner intake/session only; keep public-ready at 0."
+    }
+  ],
+  "hard_stops": [
+    "Do not record an owner decision automatically.",
+    "Do not run private metadata inventory from this brief.",
+    "Do not read private source contents.",
+    "Do not execute local workers.",
+    "Keep public-ready at 0."
+  ],
+  "failures": []
+}

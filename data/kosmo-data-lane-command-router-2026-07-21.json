@@ -1,0 +1,117 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:51:35.877Z",
+  "status": "worker_router_guarded_review_only",
+  "source_refs": [
+    "data/kosmodata-lane-sweep-2026-07-21.json"
+  ],
+  "policy": {
+    "review_only_default": true,
+    "local_worker_public_writes_allowed": false,
+    "local_worker_git_allowed": false,
+    "private_diagnostic_allowed": false,
+    "private_inventory_allowed": false,
+    "public_ready_allowed": false
+  },
+  "summary": {
+    "data_lane_status": "kosmodata_lane_sweep_review_only_passed",
+    "data_lane_steps": "29/29",
+    "source_root_decision_status": "passed_pending_owner_input",
+    "private_diagnostic_allowed": false,
+    "private_inventory_plan_status": "private_metadata_inventory_blocked",
+    "private_inventory_allowed": false,
+    "private_inventory_output_contract": "private_inventory_output_contract_passed",
+    "output_contract_passed": true,
+    "owner_open_items": 16,
+    "asset_open_reviews": 6
+  },
+  "workers": [
+    {
+      "worker_id": "kosmo-local-llm",
+      "role": "fliessarbeit_metadata_review_only",
+      "allowed_now": [
+        "summarize existing repo reports in own words",
+        "prepare gap maps from provided JSON/Markdown",
+        "classify KosmoAsset/source-root candidates from provided review-only reports",
+        "draft metadata-only private inventory rows using the output template after owner-approved source-root flow",
+        "run no Git, cloud, public promotion or source-copy actions"
+      ],
+      "forbidden_now": [
+        "run private-library diagnostic before source-root decision passes",
+        "copy private book/PDF/plan/image content into repo outputs",
+        "set public_ready=true",
+        "push to Git or write R2/D1/cloud state"
+      ]
+    },
+    {
+      "worker_id": "codex-central-overseer",
+      "role": "architecture_reasoning_code_review_gate_owner",
+      "allowed_now": [
+        "run review-only gates",
+        "add validators, contracts and UI visibility",
+        "review local-worker outputs",
+        "prepare scoped commits and private Git pushes"
+      ],
+      "forbidden_now": [
+        "invent source-root selection",
+        "promote public assets without separate owner/provenance review",
+        "copy private source contents into Git"
+      ]
+    },
+    {
+      "worker_id": "claude-code-kosmooverseer",
+      "role": "parallel_overseer_architecture_review",
+      "allowed_now": [
+        "review Codex changes from handoff inbox",
+        "challenge provenance, rights and worker-boundary assumptions",
+        "record owner decisions when provided"
+      ],
+      "forbidden_now": [
+        "treat workflow mirrors as complete private library",
+        "bypass source-root decision session",
+        "approve public-ready from review-only reports"
+      ]
+    }
+  ],
+  "allowed_commands_now": [
+    "npm run kosmo:data-lane-sweep",
+    "npm run kosmo:private-inventory-output-template",
+    "npm run kosmo:private-inventory-output-check",
+    "npm run kosmo:human-decision-owner-batches",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-unlock-runbook",
+    "npm run kosmo:source-root-owner-action-card",
+    "npm run kosmo:asset-source-candidate-map",
+    "npm run kosmo:orbit-status-bridge",
+    "npm run kosmo:local-worker-launch-queue",
+    "npm run kosmo:local-worker-output-conversion-plan",
+    "npm run kosmo:owner-decision-session-check",
+    "npm run kosmo:owner-review-packet-check",
+    "npm run kosmo:owner-review-session-brief",
+    "npm run kosmo:owner-review-session-brief-check",
+    "npm run kosmo:overseer-sync-board",
+    "npm run kosmo:overseer-sync-board-check",
+    "npm run kosmo:worker-boundary-pack",
+    "npm run kosmo:worker-boundary-pack-check"
+  ],
+  "blocked_commands_now": [
+    {
+      "command": "npm run kosmo:private-library-diagnostic -- --roots \"<selected-root>\"",
+      "reason": "Source-root decision session has not passed with private_diagnostic_allowed=true."
+    },
+    {
+      "command": "private inventory extraction or source-dependent asset authoring",
+      "reason": "Private source inventory plan is still blocked."
+    },
+    {
+      "command": "public promotion / public_ready=true / R2-D1 public writes",
+      "reason": "Separate owner, provenance and rights reviews are still required."
+    }
+  ],
+  "next_best_actions": [
+    "Owner/Claude/KosmoOverseer records a source-root decision session with a real visible source root.",
+    "Resolve 16 owner decision queue items in batches.",
+    "Resolve 6 KosmoAsset human reviews before promotion.",
+    "Keep all three pilots review-only until source, provenance and rights gates pass."
+  ]
+}

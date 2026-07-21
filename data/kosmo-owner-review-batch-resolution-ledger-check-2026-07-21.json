@@ -1,0 +1,105 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:50:10.391Z",
+  "status": "owner_review_batch_resolution_ledger_guard_passed",
+  "policy": {
+    "validates_ledger_only": true,
+    "records_reference_item_decisions": false,
+    "records_asset_approvals": false,
+    "writes_session_files": false,
+    "reads_private_content": false,
+    "public_ready_after_guard": 0
+  },
+  "source_refs": [
+    "data/kosmo-owner-review-batch-resolution-ledger-2026-07-21.json"
+  ],
+  "summary": {
+    "checks": 16,
+    "passed": 16,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "checks": [
+    {
+      "id": "status_guarded",
+      "status": "passed",
+      "evidence": "owner_review_batch_resolution_ledger_pending_owner_input"
+    },
+    {
+      "id": "policy_review_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "no_reference_item_decisions",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_asset_approvals",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_session_writes",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_private_inventory_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "no_public_writes",
+      "status": "passed",
+      "evidence": "false/false"
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_resolved_or_owner_pending",
+      "status": "passed",
+      "evidence": "owner_pending,owner_pending,owner_pending,owner_pending,owner_pending"
+    },
+    {
+      "id": "owner_action_count_matches_unresolved",
+      "status": "passed",
+      "evidence": "5/5"
+    },
+    {
+      "id": "five_resolutions",
+      "status": "passed",
+      "evidence": 5
+    },
+    {
+      "id": "resolution_public_ready_zero",
+      "status": "passed",
+      "evidence": "0,0,0,0,0"
+    },
+    {
+      "id": "hard_stop_public_ready",
+      "status": "passed",
+      "evidence": "do not convert this ledger into public-ready approvals. do not copy private files into git. do not ocr or extract private source text from this ledger. do not run local llms on private file contents from this ledger."
+    },
+    {
+      "id": "hard_stop_no_private_copy",
+      "status": "passed",
+      "evidence": "do not convert this ledger into public-ready approvals. do not copy private files into git. do not ocr or extract private source text from this ledger. do not run local llms on private file contents from this ledger."
+    },
+    {
+      "id": "hard_stop_no_private_extraction",
+      "status": "passed",
+      "evidence": "do not convert this ledger into public-ready approvals. do not copy private files into git. do not ocr or extract private source text from this ledger. do not run local llms on private file contents from this ledger."
+    }
+  ]
+}

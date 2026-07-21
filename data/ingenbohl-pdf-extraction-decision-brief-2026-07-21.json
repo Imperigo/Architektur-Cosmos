@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-21T15:50:06.408Z",
+  "status": "ingenbohl_pdf_extraction_decision_needed",
+  "policy": {
+    "review_only": true,
+    "downloaded_pdf": false,
+    "extracted_text": false,
+    "copied_pdf_content": false,
+    "public_ready_allowed": false,
+    "note": "This brief decides whether a linked PDF may later enter private extraction. It does not download, extract, quote or republish PDF content."
+  },
+  "source_package": "examples/kosmo-references/source-packages/alterszentrum-kloster-ingenbohl-public-source-candidate-2026-06-13/source-package.json",
+  "summary": {
+    "source_package_status": "review_ready",
+    "pdf_link_count": 1,
+    "extraction_artifacts_present": 0,
+    "public_source_files_allowed": false,
+    "public_extracted_text_allowed": false,
+    "public_ready_after_brief": 0
+  },
+  "pdf_sources": [
+    {
+      "id": "ingenbohl-study-commission-report-2019",
+      "title": "Studienauftrag Kloster Ingenbohl Neubau Alterszentrum: Beurteilungsbericht 2019",
+      "source_role": "secondary_source",
+      "rights_status": "link_only",
+      "url_fingerprint_sha256": "53055ec21c5b0adf79f55aa6d7d3ce2d81a5c44b7ed52b2a47b3e8a2f710964f",
+      "copied_content": false
+    }
+  ],
+  "allowed_future_modes": [
+    {
+      "id": "keep_link_only",
+      "description": "Do not download or extract. Use the PDF link only as source trail metadata.",
+      "repo_safe": true,
+      "public_ready_after_mode": 0
+    },
+    {
+      "id": "private_metadata_only",
+      "description": "Privately record PDF filename, URL, page count and document structure if technically available, without page text.",
+      "repo_safe": "metadata_only",
+      "public_ready_after_mode": 0
+    },
+    {
+      "id": "private_toc_and_short_notes",
+      "description": "Extract table-of-contents and short own-written notes into private KosmoZentrale only after explicit owner/overseer confirmation.",
+      "repo_safe": false,
+      "public_ready_after_mode": 0
+    }
+  ],
+  "blocked_modes": [
+    "copy_pdf_pages_to_git",
+    "copy_full_pdf_text_to_git",
+    "publish_plan_or_image_extractions",
+    "derive_public_geometry_without_source_basis_review",
+    "mark_ingenbohl_assets_public_ready_from_this_brief"
+  ],
+  "next_actions": [
+    "Ask owner/overseers whether the linked study-commission PDF should stay link-only or enter private metadata-only extraction.",
+    "If private extraction is approved later, write outputs only under KosmoZentrale private source paths.",
+    "After any private extraction, convert only own-written metadata-safe summaries into repo artifacts.",
+    "Keep Ingenbohl structure/material/model claims review-only until stronger evidence and human review exist."
+  ]
+}
