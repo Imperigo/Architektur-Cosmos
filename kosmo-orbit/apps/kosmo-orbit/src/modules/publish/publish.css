@@ -326,7 +326,15 @@
 .k-publish-blatt {
   position: relative;
   flex: 0 0 auto;
-  box-shadow: var(--k-shadow, 0 8px 30px rgba(0, 0, 0, 0.12));
+  /* K42 Abweichung 3 (docs/BEFUNDE-KORREKTUREN-2026-07.md Befund 4,
+     Gestaltungskonzept «Schatten fast keine — nur der EINE flache
+     Blattschatten»): der alte 0 8px 30px-Wurf liess das Blatt wie
+     schwebendes Glas wirken statt wie Papier auf dem Tisch. Ein flacher
+     Papier-Schatten in der Tusche-Familie (26,24,21 statt Reinschwarz,
+     Werkplan-Duktus); der `--k-shadow`-Token ist nirgends definiert,
+     wirksam ist der Fallback. Abweichung 1 (Tusche im Stilblatt) bleibt
+     bewusst liegen — Golden-Zug, 0.8.12. */
+  box-shadow: var(--k-shadow, 0 1px 3px rgba(26, 24, 21, 0.1));
 }
 
 .k-publish-blatt-svg {

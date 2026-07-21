@@ -472,7 +472,10 @@ Phasen-Preset; Klärung ob generell raus oder nur dezenter.
 ### K42 · S.17 — Blattdarstellung gegen Gestaltungskonzept prüfen
 > «ist die darstellung des blattes aktuell gemäss gestaltungskonzept?»
 **Deutung:** Abgleich Blatt-Optik ↔ GESTALTUNGSKONZEPT; Befund.
-**Aufwand:** S. **Status:** offen.
+**Aufwand:** S. **Status:** BEFUND GELIEFERT (570) + Abweichung 3
+ERLEDIGT (ROADMAP 582, flacher Papier-Schatten); Abweichung 1
+(Tusche #1A1815, stilblatt.ts:189) = Golden-Zug 0.8.12; Abweichung 4
+(Passermarken) mit K41 gebündelt; Prüf-Punkt 2 (Grundschrift) offen.
 
 ### K43 · S.17 — Blatt-Module ein-/ausschaltbar: ausbauen
 > «die module wie zonen bemassungen etc. ein ausschaltbar zu machen
