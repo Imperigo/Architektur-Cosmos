@@ -1610,7 +1610,7 @@ dependencies = [
 
 [[package]]
 name = "kosmo-orbit"
-version = "0.8.11"
+version = "0.8.12"
 dependencies = [
  "serde",
  "serde_json",

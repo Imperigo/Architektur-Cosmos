@@ -1,7 +1,13 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.8.11 «Inselgleich»** (Stand 20.07.2026, ROADMAP 562).
-**Alle Versionen davor (≤ v0.8.9) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.8.12 «Zentralwerk»** (Stand 21.07.2026, ROADMAP 597).
+**Alle Versionen davor (≤ v0.8.10) sind ARCHIV.** Nie mehr darauf aufbauen.
+
+> **Betriebs-Novum seit 0.8.12:** der Owner-Home-PC (andrins-workstation,
+> Tailnet `100.88.48.73`) ist der KosmoOrbit-Server (Bridge/Sync/App/Ollama,
+> `docs/VPN-HOMEPC-ANLEITUNG.md` + `docs/HOMEPC-WORKER-PROMPT.md`); die App
+> verbindet sich per Ein-Klick-HomeServer (Einstellungen). Release-Zustellung
+> ist IMMER das Paar Mac-DMG + iPad-Serverstand (`RELEASE-ABLAUF.md` §7).
 
 > **Kurswechsel Release-Takt (Owner-Kompass 20.07., F8):** v0.8.11 war der
 > **letzte Kleintakt** — ab jetzt grössere Versionssprünge Richtung 0.9.0
@@ -10,7 +16,7 @@
 > **Versions-Hinweis:** Der Bump hat FÜNF Träger — `package.json` (Root + App),
 > `Cargo.toml`, `tauri.conf.json` und das `APP_VERSION`-Literal in
 > `apps/kosmo-orbit/vite.config.ts` (speist den App-Kopf; beim v0.8.2-Bump
-> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.11**, dazu der
+> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.12**, dazu der
 > `kosmo-orbit`-Eintrag in `Cargo.lock`. Der `__APP_VERSION__`-Entkopplungs-
 > Mechanismus bleibt für künftige Teil-Release-Buchstaben-Ausnahmen bestehen.
 

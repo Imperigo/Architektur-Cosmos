@@ -150,3 +150,25 @@ bereit) · K15-Manuell-Ausbau (Owner: eigener Posten → 0.9.0) · K25 Pencil
 (iPad-Hardware-Beweis erst am Gerät) · K27 Zoom-Text (Cluster B, L —
 0.9.0-Kandidat) · Serie H/I/J · Feder-Revision (nur falls Owner sie
 zurückverlangt).
+
+## Ergebnisblock (Release-Abnahme 21.07.2026)
+
+Alle E-Punkte gelandet: Teil 1 Start&Zentrale 584–586 · E-G Golden-Zug
+589/591/593 (Ist == Prognose in allen drei Teilen, 28 eindeutige Dateien,
+GOLDEN-WECHSEL-0812 komplett) · E-M Phasen-Matrix 590 · E-Z Tableiste 592
+· E-F Härtungsrunde 594 (2× ehrlich kein Repro, 1 echter Flake mit
+Stash-Beweis, Raster-Fix) · E-K5 Phase als Projekt-Eigenschaft 595 (inkl.
+KBestaetigung-Portal-Fund) · E-H Ein-Klick-HomeServer 596 (nachgereichte
+Owner-Order, Sanktion 7 codepfad-geprüft).
+
+**Matrix-Abnahme (drei adversariale Prüfer, 21.07.):** C-1…C-9 und C-11
+BESTANDEN mit Datei:Zeile-Belegen und eigenen Nachmessungen (u. a.
+Wellen-Richtungen 90° nachgerechnet, module.spec/kosmo-zeichnet
+sha-identisch zu Basis 587, Sanktionen 1–7 einzeln geprüft, Nicht-Ziele
+unberührt). Abnahme-Funde eingearbeitet: A∩C-Überschneidung + sha-Rezept
+im GOLDEN-WECHSEL (1e0c2ec), Betriebsart-Hinweistext in Einstellungen
+nachgeführt. Bekannte, bewusst offene Restpunkte (nicht blockierend):
+`e2e/tools/kritik-shots-072-r2.mts` de-facto-veraltet (manuelles Tool,
+läuft nicht in CI) · R-Marker in phasen-matrix.ts als Prosa statt
+Kurzform · K18 Massketten-Defaults bleibt eigener 0.9.0-Posten. C-10 =
+dieser Release-Commit selbst.

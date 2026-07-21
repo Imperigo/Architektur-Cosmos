@@ -35,6 +35,40 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.8.12',
+    datum: '2026-07-21',
+    punkte: [
+      {
+        text: 'KosmoOrbit startet mit einer ehrlichen Boot-Sequenz: fünf Zeilen (Kern, Kosmo-LLM, Projektgraph, Bridge, Stationen) binden an echte Signale — «BRIDGE — VERBUNDEN» erscheint nur, wenn die Verbindung wirklich steht. Ein Satellit umkreist das Logo als Ladeanzeige, alles ist per Klick oder Escape überspringbar.',
+      },
+      {
+        text: 'Die Zentrale zeigt Projekte jetzt als horizontale Tab-Leiste: ein Tab je Projekt, das aktive klar markiert, Wechsel per Klick, «+ Neues Projekt» als letzter Tab; Katalog sichern/laden in einer ruhigen Zeile darunter. Die Werkzeug-Fächer sind gerade, nüchterne Blöcke mit ganzen Logos.',
+      },
+      {
+        text: 'Neu in den Einstellungen: «Mit Home-PC verbinden» — EIN Knopf stellt Bridge, Projekt-Sync und Kosmo-LLM in einem Zug auf deinen Home-Server um und prüft alle drei Kanäle ehrlich (VERBUNDEN erscheint nur nach echter Antwort). Ist das Tailscale-VPN aus, sagt es die App offen und öffnet die VPN-App per Link.',
+      },
+      {
+        text: 'Die SIA-Phase ist jetzt eine Projekt-Eigenschaft: Die Phasen-Tableiste ist aus der Kopfzeile in die Projekt-Einstellungen umgezogen, dazu der neue «Transformieren»-Schritt (z. B. Wettbewerb → Vorprojekt) mit Bestätigung — per Rückgängig umkehrbar.',
+      },
+      {
+        text: 'Werkzeuge folgen der Phase: eine deklarative Phasen-Matrix blendet Werkzeuge ausserhalb ihrer SIA-Phase hart aus — im Wettbewerb siehst du Volumen- und Mesh-Werkzeuge, ab der Ausschreibung nicht mehr; ein Phasenwechsel ändert den Bestand sofort und beweisbar.',
+        station: 'design',
+      },
+      {
+        text: 'Werkplan-Tusche statt reinem Schwarz: alle Planlinien zeichnen jetzt in der Tusche #1A1815 (Gestaltungskonzept) — 26 Referenzpläne wurden dafür kontrolliert neu gezogen, reine Farbsubstitution ohne Geometrieänderung.',
+        station: 'publish',
+      },
+      {
+        text: 'Blätter tragen standardmässig den einheitlichen 10-mm-Rahmen rundum; der ISO-838-Heftrand bleibt als bewusste Option. Und die Dämmschraffur folgt jetzt der Bauteilachse: In der Wand steht die Welle, im Dach folgt sie der Neigung — Beton bleibt bei der 45°-Diagonale.',
+        station: 'publish',
+      },
+      {
+        text: 'Das 3D-Bodenraster ist im Nahbereich wieder sichtbar (segmentierte Linien statt langer Einzellinien) und ein unter Last flackernder 3D-Auswahl-Test wurde mit gemessener Ursache gehärtet — Bestätigungsdialoge liegen ausserdem jetzt immer über offenen Panels.',
+        station: 'design',
+      },
+    ],
+  },
+  {
     version: '0.8.11',
     datum: '2026-07-20',
     punkte: [

@@ -70,8 +70,11 @@ import { useUiZustand } from '../state/ui-zustand';
  * Filter-Prop (siehe die `station-einstellungen-<id>`-Zahnräder in den
  * Workspaces). Kein zweites Panel, keine zweite Logik: Darstellung (Thema/
  * Akzent) und Rundgang rufen exakt dieselben Setter/Funktionen wie die
- * Kopfleiste/der «?»-Knopf; Betriebsart/TTS/Lizenz bleiben ehrlich im
- * Kosmo-Panel (nur ein Öffnen-Knopf hierher, kein Duplikat); Werkzeuge
+ * Kopfleiste/der «?»-Knopf; TTS/Lizenz bleiben ehrlich im Kosmo-Panel
+ * (nur ein Öffnen-Knopf hierher, kein Duplikat) — die Betriebsart lebt
+ * weiterhin dort, wird aber seit E-H zusätzlich vom Ein-Klick-HomeServer
+ * unten mitgeschaltet (DIESELBE kosmo.llm-Quelle über betriebKonfig(),
+ * kein Parallel-Zustand, s. `state/home-server.ts`); Werkzeuge
  * einrichten bettet die bestehende `WerkzeugSetup`-Komponente direkt ein;
  * die Oberflächen-Anpassung (Serie J3c) ruft den stationsneutralen Adaptions-
  * Kern direkt (`oberflaeche-adaption-kern.ts`) — derselbe globale Schalter,
@@ -890,8 +893,8 @@ export function Einstellungen({
             </KButton>
           </div>
           <div className="es-system-hinweis">
-            Betriebsart, Sprachausgabe und Lizenz stehen im Kosmo-Panel selbst (⚙ dort) — kein zweiter Ort für dieselbe
-            Einstellung.
+            Sprachausgabe und Lizenz stehen im Kosmo-Panel selbst (⚙ dort). Die Betriebsart lebt ebenfalls dort — der
+            HomeServer-Knopf oben schaltet sie mit (dieselbe Einstellung, kein zweiter Zustand).
           </div>
         </section>
         <Hairline />
