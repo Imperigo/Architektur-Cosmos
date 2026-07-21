@@ -430,51 +430,127 @@
   gap: var(--k-s2);
   flex-wrap: wrap;
 }
-.app-projekt-karte {
-  padding: 8px 12px;
+
+/* Projekt-Tableiste (P-Z, docs/V0812-SPEZ.md §E-Z): ein Tab je Tresor-
+   Projekt + Schluss-Tab «+ Neues Projekt». `.orbit065-home-links` (die linke
+   Spalte, s. App.tsx Layout-Anker-Kommentar) ist schmal (~260-300px) — echte
+   Tabs NEBENEINANDER würden ab 2-3 Projekten sofort umbrechen und optisch
+   wieder zur alten vertikalen Liste werden. Darum bleibt die Zeile bewusst
+   EINZEILIG (`flex-wrap: nowrap`) und scrollt horizontal (`overflow-x: auto`)
+   statt umzubrechen — dieselbe Lösung wie Browser-Tableisten/App-Tableisten
+   in schmalen Spalten. `min-width: 0` auf Container UND Tabs verhindert, dass
+   der Flex-Inhalt die feste Spaltenbreite sprengt (bekannte Flexbox-Falle,
+   s. `aura.css`-Kommentar zu `min-height/min-width:0`). Jeder Tab/Knopf hält
+   die iPad-Touch-Mindesthöhe 44px ein (`e2e/projekt-tableiste.spec.ts`). */
+.app-projekt-tableiste {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--k-line);
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+.app-projekt-tab {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-.app-projekt-titelblock {
+  gap: 2px;
+  flex: 0 0 auto;
+  min-height: 44px;
   min-width: 0;
-  flex: 1;
+  padding-left: 12px;
+  border: 1px solid var(--k-line);
+  border-bottom: 2px solid transparent;
+  border-radius: var(--k-radius-sm) var(--k-radius-sm) 0 0;
+  background: var(--k-surface);
 }
-.app-projekt-name {
+.app-projekt-tab-aktiv {
+  border-bottom-color: var(--k-accent);
+  background: var(--k-raised);
+}
+.app-projekt-tab-inhalt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+  font: inherit;
+  color: var(--k-ink);
+  cursor: default;
+}
+button.app-projekt-tab-oeffnen {
+  cursor: pointer;
+}
+button.app-projekt-tab-oeffnen:hover {
+  color: var(--k-accent);
+}
+.app-projekt-tab-name {
   font-weight: 550;
   font-size: 13px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.app-badge-abstand {
-  margin-left: var(--k-s3);
-}
-.app-projekt-meta {
-  font-size: 11.5px;
+/* Sekundär-Aktion je Tab (Bau-Bericht-Entscheid): EIN direkter Klick statt
+   eines ⋯-Untermenüs — Begründung im Kopfkommentar der `ProjektListe`-
+   Komponente (App.tsx). Bewusst klein/still statt der früheren
+   vollen «Löschen»-Beschriftung. */
+.app-projekt-tab-loeschen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  background: transparent;
   color: var(--k-ink-faint);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: var(--k-radius-sm);
 }
-.app-projekt-neu-reihe {
-  display: flex;
-  gap: var(--k-s3);
+.app-projekt-tab-loeschen:hover {
+  color: var(--k-danger);
+  background: var(--k-hover);
+}
+.app-projekt-tab-neu {
+  gap: 8px;
+  padding-right: 8px;
 }
 .app-projekt-neu-feld {
   padding: 6px 10px;
-  border-radius: 8px;
+  border-radius: var(--k-radius-sm);
   border: 1px solid var(--k-line-strong);
   background: var(--k-raised);
   font-size: 13px;
-  width: 240px;
+  width: 200px;
+  min-height: 44px;
+}
+.app-projekt-neu-knopf {
+  min-height: 44px;
+}
+.app-projekt-sekundaer-reihe {
+  display: flex;
+  gap: var(--k-s2);
+  flex-wrap: wrap;
 }
 
 /* v0.8.1 / P15 (Orbit-Hub-Vollausbau, responsives Layout, docs/V081-SPEZ.md
-   §7(f)/§9.5 C-34) — additive Mobil-Regel: die feste `240px`-Feldbreite oben
-   plus der «+ Neues Projekt»-Knopf sprengen ohne Umbruch jeden Viewport
+   §7(f)/§9.5 C-34) — additive Mobil-Regel: die feste Feldbreite oben plus
+   der «+ Neues Projekt»-Knopf sprengen ohne Umbruch jeden Viewport
    < ca. 420px (gemessen: horizontaler Scroll bei 375px Breite, kein
-   bestehender Media-Query deckt das ab). Nur DIESE eine Zeile bekommt einen
-   schmalen Breakpoint — der Rest der Zentrale (Knopf-/Kopfzeilen) trägt
-   bereits `flex-wrap` (s. `.app-knopf-reihe-wrap`/`.app-kopf-reihe-wrap`
-   oben) und braucht keine weitere Regel. */
+   bestehender Media-Query deckt das ab). P-Z verschiebt diese Regel von der
+   früheren eigenen `.app-projekt-neu-reihe` auf den neuen Schluss-Tab
+   `.app-projekt-tab-neu` — dieselbe Absicht (Feld darf nicht überlaufen),
+   nur der Klassenname folgt der neuen Tableiste-Struktur. */
 @media (max-width: 480px) {
-  .app-projekt-neu-reihe {
+  .app-projekt-tab-neu {
     flex-wrap: wrap;
+    width: 100%;
   }
   .app-projekt-neu-feld {
     width: 100%;

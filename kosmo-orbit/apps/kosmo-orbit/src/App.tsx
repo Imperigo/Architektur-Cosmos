@@ -1481,7 +1481,30 @@ function VariantenArchiv({ onOpen }: { onOpen: () => void }) {
   );
 }
 
-/** Projektverwaltung: Autosave-Stände aus dem Tresor — öffnen, löschen, neu. */
+/**
+ * Projektverwaltung: Autosave-Stände aus dem Tresor — öffnen, löschen, neu.
+ *
+ * P-Z (`docs/V0812-SPEZ.md` §E-Z, Owner-Auftrag «Projekt-Tableiste — nur
+ * Projekte, kein AI-Slop»): vertikale Karten-Liste → horizontale Tableiste,
+ * ein Tab je Tresor-Projekt (`listeProjekte()`), aktives Projekt weiterhin
+ * über den bestehenden «aktiv»-Badge-Gedanken markiert (`aktivesProjektId()`).
+ * HARTE Verträge (Sanktion 2, Nutzer `e2e/module.spec.ts`/`kosmo-zeichnet.
+ * spec.ts`): testids `projekt-<id>`/`projekt-oeffnen-<id>`/`projekt-neu`/
+ * `projekt-neu-name`/`katalog-export`/`katalog-import` bleiben wörtlich.
+ *
+ * Sekundär-Menü-Entscheid (Bau-Bericht): Katalog-Export/-Import ziehen in
+ * eine ruhige Zeile UNTER die Tableiste (sie wirken auf das aktuell
+ * geladene Projekt, nicht auf einen einzelnen Tab). «Löschen» bleibt dagegen
+ * je Tab ein EIN-Klick-Icon-Knopf statt hinter einem ⋯-Untermenü versteckt:
+ * `module.spec.ts`s Bestätigung-Test (`karte.getByRole('button', { name:
+ * '<Name> löschen' })`) — FROSTEN, Sanktion 2 — klickt ihn ohne vorherigen
+ * Menü-öffnen-Schritt; ein zweistufiges ⋯-Dropdown würde diesen Vertrag
+ * brechen, weil der Lösch-Knopf dann erst nach einem Zusatzklick im DOM
+ * bereitstünde. Der Knopf bleibt darum ein Nachbar-Element (nicht Teil des
+ * Öffnen-Klickbereichs), nur klein/still statt der früheren vollen
+ * «Löschen»-Beschriftung — das erfüllt den «ruhig»-Auftrag, ohne den Test
+ * zu brechen.
+ */
 function ProjektListe({ onOpen }: { onOpen: () => void }) {
   const [projekte, setProjekte] = useState<Omit<VaultEintrag, 'json'>[]>([]);
   const [neuName, setNeuName] = useState('');
@@ -1496,12 +1519,92 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
           Autosave — jede Änderung landet hier. .kosmo bleibt fürs Weitergeben.
         </span>
       </div>
-      {/* Katalog-Transfer (A8): Aufbauten/Vorlagen/Module/Formeln ins nächste Projekt.
-          Eigene Zeile (statt im Kopf mitzuwrappen, wo «Katalog ↑» bei Platzmangel
-          allein umbrach und wie ein defekter Toggle neben «Katalog ↓» aussah,
-          siehe Kritik-065 p-01/i-01): zwei klar beschriftete, nebeneinander
-          stehende Aktionen — Export/Import bleiben zwei eigenständige Knöpfe. */}
-      <div className="app-knopf-reihe-wrap">
+      {projekte.length === 0 && (
+        <div className="app-hinweis-klein">
+          Noch keine gesicherten Stände — sobald du zeichnest, erscheint dein Projekt hier.
+        </div>
+      )}
+      <div className="app-projekt-tableiste" role="tablist" aria-label="Projekte">
+        {projekte.map((p) => {
+          const aktiv = p.id === aktivesProjektId();
+          return (
+            <div
+              key={p.id}
+              data-testid={`projekt-${p.id}`}
+              className={`app-projekt-tab${aktiv ? ' app-projekt-tab-aktiv' : ''}`}
+              role="tab"
+              aria-selected={aktiv}
+              title={`${p.elemente} Elemente · ${new Date(p.updatedAt).toLocaleString('de-CH')}`}
+            >
+              {aktiv ? (
+                <span className="app-projekt-tab-inhalt">
+                  <span className="app-projekt-tab-name">{p.name}</span>
+                  <Badge hue="var(--k-success)">aktiv</Badge>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  className="app-projekt-tab-inhalt app-projekt-tab-oeffnen"
+                  data-testid={`projekt-oeffnen-${p.id}`}
+                  onClick={() =>
+                    void oeffneProjekt(p.id)
+                      .then(onOpen)
+                      .catch((err) => meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`))
+                  }
+                >
+                  <span className="app-projekt-tab-name">{p.name}</span>
+                </button>
+              )}
+              <button
+                type="button"
+                className="app-projekt-tab-loeschen"
+                aria-label={`${p.name} löschen`}
+                onClick={() => {
+                  void bestaetigen({
+                    titel: `Projekt «${p.name}» löschen?`,
+                    text: 'Der Autosave-Stand wird endgültig aus dem Tresor entfernt.',
+                    bestaetigen: 'Löschen',
+                    gefaehrlich: true,
+                  }).then((ok) => ok && loescheProjekt(p.id).then(refresh));
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          );
+        })}
+        {/* «+ Neues Projekt» als letzter Tab — trägt die bestehende
+            Name-Eingabe (unverändert testid-kompatibel, s. `cursor-ebene.
+            spec.ts`/`orbit-hub-vollausbau.spec.ts`: beide erwarten das Feld
+            SOFORT sichtbar, ohne vorherigen Klick). */}
+        <div className="app-projekt-tab app-projekt-tab-neu">
+          <input
+            value={neuName}
+            data-testid="projekt-neu-name"
+            onChange={(e) => setNeuName(e.target.value)}
+            placeholder="Neues Projekt — Name"
+            className="app-projekt-neu-feld"
+          />
+          <KButton
+            size="sm"
+            tone="quiet"
+            className="app-projekt-neu-knopf"
+            data-testid="projekt-neu"
+            onClick={() => {
+              neuesProjekt(neuName.trim());
+              setNeuName('');
+              onOpen();
+            }}
+          >
+            + Neues Projekt
+          </KButton>
+        </div>
+      </div>
+      {/* Katalog-Transfer (A8) — ruhige Zeile UNTER der Tableiste (P-Z):
+          Aufbauten/Vorlagen/Module/Formeln ins nächste Projekt. Wirkt auf das
+          aktuell geladene Projekt, nicht auf einen einzelnen Tresor-Eintrag —
+          gehört darum nicht in einen Tab, sondern hierher. */}
+      <div className="app-projekt-sekundaer-reihe">
         <KButton
           size="sm"
           tone="ghost"
@@ -1544,82 +1647,6 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
           }}
         >
           Katalog laden ↑
-        </KButton>
-      </div>
-      {projekte.length === 0 && (
-        <div className="app-hinweis-klein">
-          Noch keine gesicherten Stände — sobald du zeichnest, erscheint dein Projekt hier.
-        </div>
-      )}
-      <div className="app-stapel-s2">
-        {projekte.map((p) => (
-          <Panel
-            key={p.id}
-            data-testid={`projekt-${p.id}`}
-            className="app-projekt-karte"
-          >
-            <div className="app-projekt-titelblock">
-              <span className="app-projekt-name">{p.name}</span>
-              {p.id === aktivesProjektId() && (
-                <span className="app-badge-abstand">
-                  <Badge hue="var(--k-success)">aktiv</Badge>
-                </span>
-              )}
-              <div className="app-projekt-meta">
-                {p.elemente} Elemente · {new Date(p.updatedAt).toLocaleString('de-CH')}
-              </div>
-            </div>
-            {p.id !== aktivesProjektId() && (
-              <KButton
-                size="sm"
-                tone="quiet"
-                data-testid={`projekt-oeffnen-${p.id}`}
-                onClick={() =>
-                  void oeffneProjekt(p.id)
-                    .then(onOpen)
-                    .catch((err) => meldeFehler(`Projekt konnte nicht geöffnet werden: ${err instanceof Error ? err.message : err}`))
-                }
-              >
-                Öffnen
-              </KButton>
-            )}
-            <KButton
-              size="sm"
-              tone="ghost"
-              aria-label={`${p.name} löschen`}
-              onClick={() => {
-                void bestaetigen({
-                  titel: `Projekt «${p.name}» löschen?`,
-                  text: 'Der Autosave-Stand wird endgültig aus dem Tresor entfernt.',
-                  bestaetigen: 'Löschen',
-                  gefaehrlich: true,
-                }).then((ok) => ok && loescheProjekt(p.id).then(refresh));
-              }}
-            >
-              Löschen
-            </KButton>
-          </Panel>
-        ))}
-      </div>
-      <div className="app-projekt-neu-reihe">
-        <input
-          value={neuName}
-          data-testid="projekt-neu-name"
-          onChange={(e) => setNeuName(e.target.value)}
-          placeholder="Neues Projekt — Name"
-          className="app-projekt-neu-feld"
-        />
-        <KButton
-          size="sm"
-          tone="quiet"
-          data-testid="projekt-neu"
-          onClick={() => {
-            neuesProjekt(neuName.trim());
-            setNeuName('');
-            onOpen();
-          }}
-        >
-          + Neues Projekt
         </KButton>
       </div>
     </div>
