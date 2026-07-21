@@ -93,6 +93,66 @@
   border-color: var(--k-line);
 }
 
+/* ── Legende: Node-Fähigkeits-Infos (K36, Owner-Korrekturen 2026-07 S.14
+   «erweitere sie an infos und was der jeweilige node alles kann») —
+   Akkordeon je Node-Typ in `inhalte/legende.tsx`. Kopfzeile ≥44px
+   Trefferfläche (design-`island.css` §4.2-Mass), Rest folgt der Palette
+   (`visisl-palette-eintrag`-Typografie, NUR `var(--k-*)`-Token). ──────── */
+.visisl-legende {
+  max-height: 360px;
+  overflow-y: auto;
+  min-width: 240px;
+}
+.visisl-legende-abschnitt {
+  margin: var(--k-s2) 0 0;
+  font-family: var(--k-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.visisl-legende-node-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--k-s2);
+  width: 100%;
+  min-height: 44px; /* Touch-Ziel §4.2 */
+  padding: 4px 6px;
+  border-radius: var(--k-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.visisl-legende-node-kopf:hover {
+  background: var(--k-hover);
+  border-color: var(--k-line);
+}
+.visisl-legende-node-name {
+  flex: 1;
+}
+.visisl-legende-node-pfeil {
+  font-size: 14px;
+  opacity: 0.6;
+}
+.visisl-legende-node-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+  margin: 0 0 var(--k-s2) 10px;
+  padding: 2px 0 2px 8px;
+  border-left: 2px solid var(--k-line);
+}
+.visisl-legende-info-titel {
+  margin: 0;
+  font-family: var(--k-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
 /* ── Render-Listen (AUSTAUSCH) ────────────────────────────────────── */
 .visisl-render-zeile {
   display: flex;

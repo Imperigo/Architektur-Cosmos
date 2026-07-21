@@ -380,7 +380,8 @@ eigenständig weiter als K36-Vorleistung).
 > alles kann (infos)»
 **Deutung:** die (neue Insel-)Legende zeigt je Node-Typ zusätzlich, was
 er kann — passt zur P-B1-Legende von 0.8.11. **Aufwand:** S/M.
-**Status:** offen.
+**Status:** ERLEDIGT (ROADMAP 576 — Node-Infos-Akkordeon mit Zweck/
+Ports/Parametern, alle 12 Typen invariant-gedeckt).
 
 ### K37 · S.15 — NEUES HAUPTTOOL «KosmoSpez» (Energie-/Klimadesign, Simulationen)
 > «hier habe ich eine neue idee: wir entwickeln ein neues haupttool

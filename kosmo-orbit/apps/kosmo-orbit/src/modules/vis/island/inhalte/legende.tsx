@@ -1,6 +1,8 @@
-import { VIS_NODE_KATALOG, type VisGraph, type VisPortTyp } from '@kosmo/kernel';
+import { useState } from 'react';
+import { VIS_KATEGORIE_HUE, VIS_NODE_KATALOG, type VisGraph, type VisPort, type VisPortTyp } from '@kosmo/kernel';
 import { useProject } from '../../../../state/project-store';
 import { useVisRuntime } from '../../vis-runtime';
+import { nodeParameterInfos, nodeZweck } from './legende-infos';
 import { visInhaltsRegistry } from './registry';
 import '../../vis-visual.css';
 import '../vis-island.css';
@@ -34,6 +36,18 @@ import '../vis-island.css';
  * (`vis-legende-panel`/`-zeile`/`-punkt`) kommen UNVERÄNDERT aus dem
  * gemeinsamen, nicht-TABU `vis-visual.css` — visuell identisch zum
  * Manuell-Chrome, ohne eine einzige TABU-Datei zu berühren.
+ *
+ * **K36 (Owner-Korrekturen 2026-07, S.14: «legende ist gut, erweitere sie an
+ * infos und was der jeweilige node alles kann (infos)»):** unter der
+ * Porttyp-Legende steht neu je Node-Typ des aktuellen Graphen eine
+ * aufklappbare Fähigkeits-Info (Akkordeon, ein Typ offen, Kopf ≥44px Touch —
+ * design-`island.css`-§4.2-Mass): Zweck (`hilfe`), Eingänge/Ausgänge
+ * (`inputs`/`outputs` mit Porttyp-Punkt in der Legenden-Farbe) — beides
+ * DIREKT aus `VIS_NODE_KATALOG` — plus Parameter-Sätze aus der neuen
+ * Hilfsdatei `legende-infos.ts` (am Code-Verhalten geprüft, s. dort).
+ * Datengetrieben wie die Porttyp-Legende selbst: nur Typen, die im Graphen
+ * vorkommen. Das kompakte `vis-island-legende`-Overlay unten links
+ * (NodeCanvas.tsx, K35) bleibt bewusst UNVERÄNDERT nur Porttypen.
  */
 
 const PORT_FARBE: Record<VisPortTyp, string> = {
@@ -73,6 +87,96 @@ function berechneLegendeTypen(graph: VisGraph | undefined): VisPortTyp[] {
   return legendeTypen;
 }
 
+/** Distinct Node-Typen in Graph-Reihenfolge — dieselbe Skip-Regel für
+ *  katalogfremde Typen wie `berechneLegendeTypen` (Fremd-Graph-Robustheit). */
+function berechneNodeTypen(graph: VisGraph | undefined): string[] {
+  const typen: string[] = [];
+  if (!graph) return typen;
+  const gesehen = new Set<string>();
+  for (const n of graph.nodes) {
+    if (!VIS_NODE_KATALOG[n.typ] || gesehen.has(n.typ)) continue;
+    gesehen.add(n.typ);
+    typen.push(n.typ);
+  }
+  return typen;
+}
+
+/** Ein-/Ausgangs-Liste einer Fähigkeits-Info — Porttyp-Punkt in derselben
+ *  Farbe wie die Legende darüber (`vis-legende-punkt`, `vis-visual.css`). */
+function PortListe({ titel, ports, leer }: { titel: string; ports: readonly VisPort[]; leer: string }) {
+  return (
+    <div>
+      <p className="visisl-legende-info-titel">{titel}</p>
+      {ports.length === 0 ? (
+        <p className="visisl-hinweis-klein">{leer}</p>
+      ) : (
+        ports.map((p) => (
+          <div key={p.name} className="vis-legende-zeile">
+            <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[p.typ] }} />
+            <span>
+              {p.label} · {PORT_TYP_NAME[p.typ]}
+            </span>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+/** K36 — aufklappbare Fähigkeits-Info je Node-Typ des Graphen (s. Kopfkommentar). */
+function NodeInfos({ typen }: { typen: readonly string[] }) {
+  const [offen, setOffen] = useState<string | null>(null);
+  return (
+    <div data-testid="visisl-legende-nodes">
+      <p className="visisl-legende-abschnitt">Node-Infos</p>
+      {typen.map((typ) => {
+        const k = VIS_NODE_KATALOG[typ];
+        if (!k) return null;
+        const istOffen = offen === typ;
+        const parameter = nodeParameterInfos(typ);
+        return (
+          <div key={typ} className="visisl-legende-node">
+            <button
+              type="button"
+              className="k-druck visisl-legende-node-kopf"
+              data-testid={`visisl-legende-node-${typ}`}
+              aria-expanded={istOffen}
+              onClick={() => setOffen(istOffen ? null : typ)}
+            >
+              <span
+                aria-hidden
+                className="visisl-palette-kat-strich"
+                style={{ ['--_farbe' as string]: VIS_KATEGORIE_HUE[k.kategorie] }}
+              />
+              <span className="visisl-legende-node-name">{k.label}</span>
+              <span aria-hidden className="visisl-legende-node-pfeil">
+                {istOffen ? '−' : '+'}
+              </span>
+            </button>
+            {istOffen && (
+              <div className="visisl-legende-node-info" data-testid={`visisl-legende-node-info-${typ}`}>
+                <p className="visisl-hinweis">{nodeZweck(typ)}</p>
+                <PortListe titel="Eingänge" ports={k.inputs} leer="keine — dieser Node braucht keinen Eingang" />
+                <PortListe titel="Ausgänge" ports={k.outputs} leer="keine — Endstation des Graphen" />
+                {parameter.length > 0 && (
+                  <div>
+                    <p className="visisl-legende-info-titel">Parameter</p>
+                    {parameter.map((p) => (
+                      <p key={p.name} className="visisl-hinweis-klein">
+                        <strong>{p.name}</strong> — {p.info}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function LegendeStufe2() {
   const graphId = useVisRuntime((s) => s.aktiverGraphId);
   const revision = useProject((s) => s.revision);
@@ -80,21 +184,30 @@ function LegendeStufe2() {
   const doc = useProject.getState().doc;
   const graph = graphId ? doc.get<VisGraph>(graphId) : undefined;
   const legendeTypen = berechneLegendeTypen(graph);
+  const nodeTypen = berechneNodeTypen(graph);
 
   return (
-    <div className="visisl-stufe2" data-testid="island-legende-stufe2" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="visisl-stufe2 visisl-legende"
+      data-testid="island-legende-stufe2"
+      onClick={(e) => e.stopPropagation()}
+    >
       {legendeTypen.length === 0 ? (
         <p className="visisl-hinweis">Noch kein Porttyp im Graphen — die Legende füllt sich mit dem ersten Node.</p>
       ) : (
-        <div data-testid="vis-legende" className="vis-legende-panel">
-          {legendeTypen.map((t) => (
-            <div key={t} className="vis-legende-zeile">
-              <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[t] }} />
-              <span>{PORT_TYP_NAME[t]}</span>
-            </div>
-          ))}
-        </div>
+        <>
+          <p className="visisl-legende-abschnitt">Porttypen</p>
+          <div data-testid="vis-legende" className="vis-legende-panel">
+            {legendeTypen.map((t) => (
+              <div key={t} className="vis-legende-zeile">
+                <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[t] }} />
+                <span>{PORT_TYP_NAME[t]}</span>
+              </div>
+            ))}
+          </div>
+        </>
       )}
+      {nodeTypen.length > 0 && <NodeInfos typen={nodeTypen} />}
     </div>
   );
 }

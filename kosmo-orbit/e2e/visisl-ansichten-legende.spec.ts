@@ -141,6 +141,82 @@ test.describe('P-B1/E4 — Island: Gespeicherte Ansichten + Legende (Default, ke
 
     await page.screenshot({ path: 'test-results/pb1-visisl-legende.png' });
   });
+
+  test('K36 — Legende: Node-Infos je Typ aufklappbar (Zweck/Eingänge/Ausgänge/Parameter), Overlay bleibt kompakt', async ({
+    page,
+  }) => {
+    await oeffneVisIsland(page);
+    const graphId = await page.evaluate(() => {
+      const res = window.__kosmo.run('vis.graphErstellen', { name: 'K36-Node-Infos-Test' }) as { patches: { id: string }[] };
+      return res.patches[0]!.id;
+    });
+    await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
+    // Zwei Typen im Graphen (Muster oben): Render + Zahl — die Node-Infos
+    // sind datengetrieben wie die Porttyp-Legende (nur Typen des Graphen).
+    await page.evaluate((gid) => {
+      window.__kosmo.run('vis.nodeSetzen', { graphId: gid, typ: 'render', x: 100, y: 100 });
+      window.__kosmo.run('vis.nodeSetzen', { graphId: gid, typ: 'zahl', x: 100, y: 300 });
+    }, graphId);
+
+    await oeffneInsel(page, 'ansicht');
+    await page.click('[data-testid="island-werkzeug-legende"]');
+    const stufe2 = page.locator('[data-testid="island-legende-stufe2"]');
+    await expect(stufe2).toBeVisible();
+
+    // K36 (Owner-Korrekturen 2026-07, S.14): unter der Porttyp-Legende steht
+    // der neue Node-Infos-Abschnitt — je Typ des Graphen ein Akkordeon-Kopf,
+    // zugeklappt ohne Info-Inhalt.
+    await expect(stufe2.locator('[data-testid="visisl-legende-nodes"]')).toBeVisible();
+    const renderKopf = stufe2.locator('[data-testid="visisl-legende-node-render"]');
+    const zahlKopf = stufe2.locator('[data-testid="visisl-legende-node-zahl"]');
+    await expect(renderKopf).toHaveText(/Render/);
+    await expect(zahlKopf).toHaveText(/Zahl/);
+    await expect(renderKopf).toHaveAttribute('aria-expanded', 'false');
+    await expect(stufe2.locator('[data-testid="visisl-legende-node-info-render"]')).toHaveCount(0);
+
+    // Touch-Ziel ≥44px (design-`island.css` §4.2-Mass, `vis-island.css`
+    // `.visisl-legende-node-kopf`).
+    const box = await renderKopf.boundingBox();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+
+    // Aufklappen: Zweck (Katalog-`hilfe`), Eingänge/Ausgänge (`inputs`/
+    // `outputs` je `VIS_NODE_KATALOG.render`) + die zwei ehrlichen Laufzeit-
+    // Parameter (preset/nurCycles, `evaluiereGraph`/`vis-jobs.ts`).
+    await renderKopf.click();
+    const renderInfo = stufe2.locator('[data-testid="visisl-legende-node-info-render"]');
+    await expect(renderInfo).toBeVisible();
+    await expect(renderKopf).toHaveAttribute('aria-expanded', 'true');
+    await expect(renderInfo).toContainText('Schickt Szene + Prompt an die HomeStation');
+    await expect(renderInfo).toContainText('Eingänge');
+    await expect(renderInfo).toContainText('Geometrie-Treue · Zahl');
+    await expect(renderInfo).toContainText('Kamera-Standpunkte · Kameras');
+    await expect(renderInfo).toContainText('Ausgänge');
+    await expect(renderInfo).toContainText('Bild · Bild');
+    await expect(renderInfo).toContainText('Parameter');
+    await expect(renderInfo).toContainText('nurCycles');
+
+    await page.screenshot({ path: 'test-results/k36-legende.png' });
+
+    // Akkordeon: der zweite Kopf öffnet SEINE Info und schliesst die erste
+    // (ein Typ offen — das Popup bleibt kompakt).
+    await zahlKopf.click();
+    await expect(stufe2.locator('[data-testid="visisl-legende-node-info-zahl"]')).toBeVisible();
+    await expect(renderInfo).toHaveCount(0);
+    await expect(stufe2.locator('[data-testid="visisl-legende-node-info-zahl"]')).toContainText('Regler-Wert');
+
+    // Zahl-Node: keine Eingänge — der ehrliche Leer-Satz statt einer Liste.
+    await expect(stufe2.locator('[data-testid="visisl-legende-node-info-zahl"]')).toContainText(
+      'keine — dieser Node braucht keinen Eingang',
+    );
+
+    // Das kompakte `vis-island-legende`-Overlay unten links (K35,
+    // NodeCanvas.tsx — TABU) bleibt UNVERÄNDERT nur Porttypen: kein
+    // Node-Infos-Abschnitt, keine Akkordeon-Köpfe.
+    const overlay = page.locator('[data-testid="vis-island-legende"]');
+    await expect(overlay).toBeVisible();
+    await expect(overlay.locator('.visisl-legende-node-kopf')).toHaveCount(0);
+    await expect(overlay).not.toContainText('Node-Infos');
+  });
 });
 
 test.describe('P-B1/E4 — Manuell-Weg zeigt beide Features unverändert (Bestandsschutz)', () => {
