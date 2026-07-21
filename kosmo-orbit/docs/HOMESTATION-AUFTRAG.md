@@ -1,5 +1,20 @@
 # HomeStation-Auftrag — was NUR am Home-PC geht (Stand 04.07.2026)
 
+> **Owner-Entscheid 21.07.2026 (verbindlich für alle folgenden Versionen):**
+> Die HomeStation ist keine Zukunft mehr — **andrins-workstation (Ubuntu,
+> Tailnet `100.88.48.73`) IST ab sofort der KosmoOrbit-Server.** Bridge,
+> Sync, App-Serving und Ollama laufen dort dauerhaft (systemd, Einrichtung:
+> `docs/HOMEPC-WORKER-PROMPT.md`, Betrieb: `docs/VPN-HOMEPC-ANLEITUNG.md`).
+> Owner wörtlich: «ziel sein das wir home pc immer zugreifen können … wir
+> können ab jetzt mit vollständiger hardware weiterarbeiten in den
+> folgenden versionen». Konsequenz ab 0.9.0: jede Versionsplanung darf
+> Hardware-Wege fest einplanen (echte Renders/STT/TTS/Embeddings über die
+> Bridge, Kosmo-LLM auf Ollama, Hardware-Gegenproben als fester Punkt im
+> Owner-Rundgang). Ehrliche Grenze bleibt: der CLOUD-Worker erreicht das
+> Tailnet nicht — hardwaregebundene Beweise laufen über den lokalen
+> Home-PC-Worker oder den Owner-Rundgang, die Übergabepunkte unten sind
+> dafür die Einsteck-Liste.
+
 > Diese Datei war in `wissen/README.md` versprochen und fehlte — hier ist sie.
 > Sie konsolidiert ALLES, was HomeStation- (RTX 5090, 4-TB-SSD, Büro-Netz)
 > oder Owner-gebunden ist, mit den **Übergabepunkten**: welcher Code im Repo
