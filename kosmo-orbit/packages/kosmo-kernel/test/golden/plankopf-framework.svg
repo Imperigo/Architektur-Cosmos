@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="530mm" height="140mm" viewBox="0 0 530 140" font-family="Helvetica, Arial, sans-serif">
 <rect x="0" y="0" width="530" height="140" fill="white"/>
 <g transform="translate(0, 0)"><rect x="0" y="0" width="260" height="140" fill="white"/>
-<rect x="20" y="10" width="230" height="120" fill="none" stroke="black" stroke-width="0.35"/>
+<rect x="20" y="10" width="230" height="120" fill="none" stroke="#1A1815" stroke-width="0.35"/>
 <g data-teil="wasserzeichen" opacity="0.13" transform="rotate(-26 135.00 70.00)">
 <text x="135.00" y="70.00" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="11.040000000000001" fill="#A8893F">BAUEINGABE — BEHÖRDENEXEMPLAR</text>
 </g>
 <g data-teil="plankopf">
-<rect x="70" y="75" width="180" height="55" fill="white" stroke="black" stroke-width="0.35"/>
+<rect x="70" y="75" width="180" height="55" fill="white" stroke="#1A1815" stroke-width="0.35"/>
 <rect x="70" y="75" width="180" height="1.3" fill="#A8893F"/>
-<line x1="118" y1="76.3" x2="118" y2="130" stroke="black" stroke-width="0.25"/>
-<line x1="188" y1="76.3" x2="188" y2="130" stroke="black" stroke-width="0.25"/>
-<rect x="71.5" y="77.8" width="45" height="15" fill="none" stroke="black" stroke-width="0.25" stroke-dasharray="1.5 1"/>
+<line x1="118" y1="76.3" x2="118" y2="130" stroke="#1A1815" stroke-width="0.25"/>
+<line x1="188" y1="76.3" x2="188" y2="130" stroke="#1A1815" stroke-width="0.25"/>
+<rect x="71.5" y="77.8" width="45" height="15" fill="none" stroke="#1A1815" stroke-width="0.25" stroke-dasharray="1.5 1"/>
 <text x="94.00" y="86.80" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="5.6" font-feature-settings="'tnum'" font-weight="bold" fill="#A8893F">MAA</text>
 <text x="94.00" y="91.30" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">BÜRO-LOGO</text>
 <text x="71.50" y="96.90" text-anchor="start" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="2.1">Musterbüro für Architektur und St…</text>
@@ -37,18 +37,18 @@
 <text x="194.30" y="105.90" text-anchor="start" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.7" font-feature-settings="'tnum'">14.07.2026 · Eine sehr lange Revisionstext-Beschre…</text>
 </g></g>
 <g transform="translate(270, 0)"><rect x="0" y="0" width="260" height="140" fill="white"/>
-<rect x="20" y="10" width="230" height="120" fill="none" stroke="black" stroke-width="0.35"/>
+<rect x="20" y="10" width="230" height="120" fill="none" stroke="#1A1815" stroke-width="0.35"/>
 <g data-teil="af-stempel" transform="rotate(-6 135.00 27.25)">
 <rect x="79.80" y="14.00" width="110.40" height="26.50" rx="4.00" fill="none" stroke="#2E8794" stroke-width="1.59"/>
 <text x="135.00" y="25.13" text-anchor="middle" dominant-baseline="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="5.889826302729528" font-feature-settings="'tnum'" font-weight="bold" fill="#2E8794">FREIGEGEBEN FÜR AUSFÜHRUNG</text>
 <text x="135.00" y="34.67" text-anchor="middle" dominant-baseline="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="5.2992" font-feature-settings="'tnum'" fill="#2E8794">14.07.2026</text>
 </g>
 <g data-teil="plankopf">
-<rect x="70" y="75" width="180" height="55" fill="white" stroke="black" stroke-width="0.35"/>
+<rect x="70" y="75" width="180" height="55" fill="white" stroke="#1A1815" stroke-width="0.35"/>
 <rect x="70" y="75" width="180" height="1.3" fill="#2E8794"/>
-<line x1="118" y1="76.3" x2="118" y2="130" stroke="black" stroke-width="0.25"/>
-<line x1="188" y1="76.3" x2="188" y2="130" stroke="black" stroke-width="0.25"/>
-<rect x="71.5" y="77.8" width="45" height="15" fill="none" stroke="black" stroke-width="0.25" stroke-dasharray="1.5 1"/>
+<line x1="118" y1="76.3" x2="118" y2="130" stroke="#1A1815" stroke-width="0.25"/>
+<line x1="188" y1="76.3" x2="188" y2="130" stroke="#1A1815" stroke-width="0.25"/>
+<rect x="71.5" y="77.8" width="45" height="15" fill="none" stroke="#1A1815" stroke-width="0.25" stroke-dasharray="1.5 1"/>
 <text x="94.00" y="86.80" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="5.6" font-feature-settings="'tnum'" font-weight="bold" fill="#2E8794">MAA</text>
 <text x="94.00" y="91.30" text-anchor="middle" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="1.3" font-feature-settings="'tnum'" letter-spacing="0.1em">BÜRO-LOGO</text>
 <text x="71.50" y="96.90" text-anchor="start" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="2.1">Musterbüro für Architektur und St…</text>

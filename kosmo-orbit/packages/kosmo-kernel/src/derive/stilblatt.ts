@@ -175,8 +175,11 @@ export const SCHWARZPLAN_FARBEN = {
   eigen: '#1a1a1a',
   /** Nachbar-Footprints = Kontext-Grau der Bildtiefen-Achse. */
   nachbar: GRAU.kontext,
-  /** Parzellengrenze (strichpunktiert) — bleibt volle Tinte. */
-  parzelle: 'black',
+  /** Parzellengrenze (strichpunktiert) — bleibt volle Tinte. K42
+   *  (Golden-Zug 0.8.12, docs/GOLDEN-WECHSEL-0812.md Teil A): volle Tinte
+   *  heisst seit dem Gestaltungskonzept #1A1815, nie reines Schwarz —
+   *  deklarierter Mitzug mit BLATT.tinte unten. */
+  parzelle: '#1A1815',
 } as const;
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -186,7 +189,11 @@ export const SCHWARZPLAN_FARBEN = {
 // ───────────────────────────────────────────────────────────────────────────
 
 export const BLATT = {
-  tinte: 'black',
+  /** K42 (Owner-Korrekturen S.17 + GESTALTUNGSKONZEPT «Tusche #1A1815,
+   *  nie reines Schwarz»; Golden-Zug 0.8.12 Teil A,
+   *  docs/GOLDEN-WECHSEL-0812.md): die Blatt-Tusche verlässt das rohe
+   *  'black'. */
+  tinte: '#1A1815',
   /** Sekundär-Text im Plankopf/Titel (Massstab, Datum, Revisions-Datum). */
   textSekundaer: '#444',
   rahmenStift: 0.35,

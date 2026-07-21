@@ -481,7 +481,7 @@ function erzeugeGolden(): string {
     const pk = plankopfSvg(w, h, stufe, daten);
     return [
       `<rect x="0" y="0" width="${w}" height="${h}" fill="white"/>`,
-      `<rect x="${rahmen.x}" y="${rahmen.y}" width="${rahmen.breite}" height="${rahmen.hoehe}" fill="none" stroke="black" stroke-width="0.35"/>`,
+      `<rect x="${rahmen.x}" y="${rahmen.y}" width="${rahmen.breite}" height="${rahmen.hoehe}" fill="none" stroke="#1A1815" stroke-width="0.35"/>`,
       wz ?? '',
       stempel ?? '',
       pk,

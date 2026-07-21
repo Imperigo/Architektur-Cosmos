@@ -41,5 +41,21 @@ Nicht-Zug-Pakete (P-Z, P-M, E-K5, E-F) müssen `git status
 packages/kosmo-kernel/test/golden` LEER halten — jede Bewegung dort ist
 Sanktion 1.
 
-## Teil 2: Ist-Nachweis (NACH den Landungen — auszufüllen)
-_(pro Teil: bewegte Dateien, sha-Summen vorher/nachher, Sichtungs-Beleg)_
+## Teil 2: Ist-Nachweis
+
+### Teil A — Tusche (erledigt 21.07.2026, Fable)
+**Ist == Prognose: exakt 26 bewegte Golden-Dateien**, die übrigen 13 SVG +
+1 IFC byte-still. Bewegte Dateien: blatt-autofuellung.svg, blatt-framework.svg, blattverzeichnis-legende.svg, blattverzeichnis.svg, grundriss-fenster-zweifluegel.svg, grundriss-fensterband.svg, grundriss-kipp.svg, grundriss-kontext-baueingabe.svg, grundriss-kontext-werkplan.svg, grundriss-kontext-wettbewerb.svg, grundriss-satteldach-eg-darunter.svg, grundriss-satteldach-first.svg, grundriss-testhaus-baueingabe.svg, grundriss-testhaus-wettbewerb.svg, grundriss-testhaus.svg, grundriss-walmdach-flach.svg, masskette-plan.svg, plan-schloss.svg, plankopf-framework.svg, plankopf-stammdaten.svg, rolle-leer.svg, rolle-plankopf.svg, schwarzplan-nachbarn.svg, schwarzplan.svg, werkplan-beschlag-s2.svg, werkplan-beschlag.svg.
+Zusatzfund, deklariert mitgezogen: das TEST-Gerüst `plankopf.test.ts:484`
+(Demo-Rahmen um den isolierten Plankopf-Baustein) trug ein eigenes hartes
+`stroke="black"` — auf `#1A1815` gehoben, danach enthält KEIN Golden mehr
+ein `black`. Aggregierte sha256 aller Goldens vorher
+`d0493f4e8cceaad5…` (21.07., vor Teil A). Substitutions-Beweis: Diff über
+alle 26 Dateien = 235+/235− Zeilen, nach Normalisierung black/#1A1815→X
+ist jede Zeile paarig (0 unpaarige) — reine Farb-Substitution, keine
+Geometrieänderung. Sichtung: `plankopf-framework` vorher/nachher als PNG
+gerendert und von Fable geprüft (Struktur/Typo intakt). Suiten: Kernel
+1180/1180, svg-qa Exit 0.
+
+### Teil B — Schraffur (offen) · Teil C — Blattrand (offen)
+_(je Commit auszufüllen)_
