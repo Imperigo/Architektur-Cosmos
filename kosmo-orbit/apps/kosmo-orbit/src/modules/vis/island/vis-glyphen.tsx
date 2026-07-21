@@ -23,8 +23,8 @@ import type { ComponentType, ReactNode } from 'react';
  *
  * Motive fachlich an den Vis-Werkzeugen orientiert: Node-Palette (Raster aus
  * Bausteinen), Ausrichten (Fluchtlinie), Verbinden (zwei Knoten + Leitung),
- * Zoom (Lupe), Raster-Snap (Gitter), Kanten-Routing (Knick-Leitung), Minimap
- * (verschachtelter Rahmen), Stimmung (Sonne/Wolke), Render senden
+ * Zoom (Lupe), Raster-Snap (Gitter), Kanten-Routing (Knick-Leitung),
+ * Stimmung (Sonne/Wolke), Render senden
  * (Papierflieger), Aufs Plakat (Blatt mit Reisszwecke), Kamera vorschlagen
  * (echte Kamera), Report (Dokument mit Balken).
  *
@@ -126,14 +126,8 @@ const routing = glyphe(
   </>,
 );
 
-/** Minimap — verschachtelter Rahmen (Ausschnitt in der Karte), Akzent an der Ausschnitt-Ecke. */
-const minimap = glyphe(
-  <>
-    <rect x="3" y="3" width="18" height="18" rx="1" />
-    <rect x="13" y="13" width="7" height="7" rx="1" />
-    {akzent(13, 13)}
-  </>,
-);
+/* K35 (Owner-Korrekturen 2026-07, S.14): die «Minimap»-Glyphe (verschachtelter
+   Rahmen) ist mitsamt dem Katalog-Werkzeug 'minimap' entfernt. */
 
 /** Stimmung — Sonne hinter Wolke, Akzent im Sonnenkern. */
 const stimmung = glyphe(
@@ -199,7 +193,7 @@ const sonnenstunden = glyphe(
 
 /**
  * Gespeicherte Ansichten — zwei versetzte Bild-Rahmen (Schnappschuss-Stapel,
- * Muster Minimap-Rahmen, aber ÜBERLAPPEND statt verschachtelt), Häkchen im
+ * Muster des früheren Minimap-Rahmens, aber ÜBERLAPPEND statt verschachtelt), Häkchen im
  * vorderen Rahmen («gespeichert»), Akzent an der hinteren Rahmen-Ecke. v0.8.11
  * P-B1/E4 (`docs/V0811-SPEZ.md` §2 E4) — Insel-Äquivalent zu
  * `GespeicherteAnsichten.tsx`.
@@ -237,7 +231,6 @@ export const VIS_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   zoom,
   raster,
   routing,
-  minimap,
   stimmung,
   'render-senden': renderSenden,
   'aufs-plakat': aufsPlakat,

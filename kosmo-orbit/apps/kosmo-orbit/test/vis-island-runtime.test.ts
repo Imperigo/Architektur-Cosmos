@@ -3,7 +3,7 @@ import { useVisRuntime } from '../src/modules/vis/vis-runtime';
 
 /**
  * PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — die additiven Island-UI-Felder in
- * `vis-runtime.ts` (Zoom-Fernauslöser/Snap/Routing/Minimap-Übersteuerung/
+ * `vis-runtime.ts` (Zoom-Fernauslöser/Snap/Routing/
  * aktiver Graph/Auswahlgrösse/Report/Stimmungs-Preset). Reine Store-Logik,
  * keine NodeCanvas-Abhängigkeit.
  */
@@ -13,7 +13,6 @@ beforeEach(() => {
     aktiverGraphId: null,
     canvasSnapAktiv: true,
     canvasRoutingModus: 'kurve',
-    canvasMinimapManuell: null,
     canvasAuswahlGroesse: 0,
     canvasBefehl: null,
     reportOffen: false,
@@ -44,15 +43,9 @@ describe('vis-runtime — PC1 Island-UI-Felder', () => {
     expect(useVisRuntime.getState().canvasRoutingModus).toBe('kurve');
   });
 
-  it('canvasMinimapManuell: Default null (folgt der Node-Schwelle), setzbar auf true/false/null', () => {
-    expect(useVisRuntime.getState().canvasMinimapManuell).toBeNull();
-    useVisRuntime.getState().setCanvasMinimapManuell(true);
-    expect(useVisRuntime.getState().canvasMinimapManuell).toBe(true);
-    useVisRuntime.getState().setCanvasMinimapManuell(false);
-    expect(useVisRuntime.getState().canvasMinimapManuell).toBe(false);
-    useVisRuntime.getState().setCanvasMinimapManuell(null);
-    expect(useVisRuntime.getState().canvasMinimapManuell).toBeNull();
-  });
+  // K35 (Owner-Korrekturen 2026-07, S.14): `canvasMinimapManuell` ist mitsamt
+  // der Minimap aus `vis-runtime.ts` entfernt — der frühere Testfall dazu
+  // entfällt mit dem Feld.
 
   it('canvasAuswahlGroesse: reiner Zähler, setzbar', () => {
     useVisRuntime.getState().setCanvasAuswahlGroesse(3);

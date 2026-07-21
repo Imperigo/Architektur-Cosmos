@@ -167,7 +167,7 @@ test.describe('PC1 — KosmoVis auf Islands (Default, kein Seed)', () => {
     await expect(page.locator('[data-testid="vis-node-modell"]')).toBeVisible();
   });
 
-  test('ANSICHT-Insel: Zoom-Popup, Raster-/Routing-Sofort-Toggle mit Toast, Minimap-Popup', async ({ page }) => {
+  test('ANSICHT-Insel: Zoom-Popup, Raster-/Routing-Sofort-Toggle mit Toast, kein Minimap-Werkzeug mehr (K35)', async ({ page }) => {
     await oeffneVisIsland(page);
     await page.evaluate(() => window.__kosmo.run('vis.graphErstellen', { name: 'Ansicht-Test' }));
     await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
@@ -187,9 +187,10 @@ test.describe('PC1 — KosmoVis auf Islands (Default, kein Seed)', () => {
     await page.click('[data-testid="island-werkzeug-routing"]');
     await expect(page.locator('[data-testid="island-toast"]')).toContainText('KANTEN-ROUTING AKTIV');
 
+    // K35 (Owner-Korrekturen 2026-07, S.14 «diese übersicht raus»): das
+    // frühere Minimap-Werkzeug existiert in der ANSICHT-Insel nicht mehr.
     await oeffneInsel(page, 'ansicht');
-    await page.click('[data-testid="island-werkzeug-minimap"]');
-    await expect(page.locator('[data-testid="island-minimap-stufe2"]')).toBeVisible();
+    await expect(page.locator('[data-testid="island-werkzeug-minimap"]')).toHaveCount(0);
     await page.screenshot({ path: 'test-results/pc1-vis-island-ansicht.png' });
   });
 

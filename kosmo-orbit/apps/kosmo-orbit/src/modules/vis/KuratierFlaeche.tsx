@@ -112,7 +112,7 @@ export function KuratierFlaeche({
     <div
       data-testid="vis-kuratier-flaeche"
       // zIndex 35 statt 8 (v0.7.8 Welle 3/P6): die früheren z-5-Overlays
-      // (Palette/Minimap/Legende/Ausrichten) sind jetzt Dock-Panels mit
+      // (Palette/Legende/Ausrichten; bis K35 auch Minimap) sind jetzt Dock-Panels mit
       // z-14 (gedockt) bzw. z-30 (schwebend, `DockPanel.tsx`) — die
       // Vollbild-Kuratier-Fläche muss weiterhin ÜBER ihnen liegen (wie 8
       // vorher über 5 lag). Ihr Schliessen-Knopf (`vis-kuratier-toggle`,

@@ -104,8 +104,11 @@ test.describe('P-B1/E4 — Island: Gespeicherte Ansichten + Legende (Default, ke
     await oeffneInsel(page, 'ansicht');
     await page.click('[data-testid="island-werkzeug-legende"]');
     await expect(page.locator('[data-testid="island-legende-stufe2"]')).toBeVisible();
-    // Frischer Graph ohne Nodes: noch kein Porttyp.
+    // Frischer Graph ohne Nodes: noch kein Porttyp — weder im Popup noch als
+    // Overlay unten links (K35: das Overlay zeigt die Legende datengetrieben,
+    // `vis-island-legende`, NodeCanvas.tsx).
     await expect(page.locator('[data-testid="vis-legende"]')).toHaveCount(0);
+    await expect(page.locator('[data-testid="vis-island-legende"]')).toHaveCount(0);
 
     // Ein Render-Node bringt seine Input-/Output-Ports mit (Muster
     // `e2e/vis-island.spec.ts`s `seedGraphMitRenderNode`) — die Legende zeigt
@@ -117,14 +120,24 @@ test.describe('P-B1/E4 — Island: Gespeicherte Ansichten + Legende (Default, ke
     await page.evaluate((gid) => window.__kosmo.run('vis.nodeSetzen', { graphId: gid, typ: 'render', x: 100, y: 100 }), graphId);
     await expect(page.locator('[data-testid="node-canvas"]')).toBeVisible();
 
+    // K35 (Owner-Korrekturen 2026-07, S.14/K36 «legende ist gut»): sobald der
+    // Graph Nodes mit Porttypen trägt, steht die Legende zusätzlich als
+    // eigenständiges Overlay unten links (vormals Minimap-Begleiter — die
+    // Minimap selbst ist entfernt). Die Assertions aufs Popup sind darum auf
+    // den Stufe-2-Container gescopet (zwei `vis-legende`-Instanzen sind
+    // seither gleichzeitig sichtbar).
+    await expect(page.locator('[data-testid="vis-island-legende"]')).toBeVisible();
+    await expect(page.locator('[data-testid="vis-island-legende"] .vis-legende-zeile', { hasText: 'Szene' })).toBeVisible();
+
     await oeffneInsel(page, 'ansicht');
     await page.click('[data-testid="island-werkzeug-legende"]');
-    await expect(page.locator('[data-testid="island-legende-stufe2"]')).toBeVisible();
-    await expect(page.locator('[data-testid="vis-legende"]')).toBeVisible();
-    await expect(page.locator('.vis-legende-zeile')).not.toHaveCount(0);
+    const stufe2 = page.locator('[data-testid="island-legende-stufe2"]');
+    await expect(stufe2).toBeVisible();
+    await expect(stufe2.locator('[data-testid="vis-legende"]')).toBeVisible();
+    await expect(stufe2.locator('.vis-legende-zeile')).not.toHaveCount(0);
     // «Szene» ist der Eingangsport jedes Render-Nodes (`VIS_NODE_KATALOG`) —
     // muss in der Legende auftauchen.
-    await expect(page.locator('.vis-legende-zeile', { hasText: 'Szene' })).toBeVisible();
+    await expect(stufe2.locator('.vis-legende-zeile', { hasText: 'Szene' })).toBeVisible();
 
     await page.screenshot({ path: 'test-results/pb1-visisl-legende.png' });
   });

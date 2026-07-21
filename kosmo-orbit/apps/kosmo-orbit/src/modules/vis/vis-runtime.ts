@@ -168,7 +168,9 @@ export type VisRoutingModus = 'ortho' | 'kurve';
 /**
  * PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — der Vis-Island-Katalog braucht
  * Zugriff auf einen Teil des bisher NodeCanvas-lokalen UI-Zustands (Zoom/
- * Snap/Routing/Minimap/aktiver Graph/Auswahlgrösse/Report/Stimmungs-Preset),
+ * Snap/Routing/aktiver Graph/Auswahlgrösse/Report/Stimmungs-Preset — die
+ * Minimap-Übersteuerung `canvasMinimapManuell` ist mit K35 mitsamt der
+ * Minimap entfallen),
  * weil `island/inhalte/*.tsx` (dasselbe Muster wie `design/island/inhalte/
  * *.tsx`) NUR globale Stores lesen dürfen, keine NodeCanvas-Closures. Additiv
  * neben `laeufe`/`kuration`/… — NodeCanvas.tsx liest/schreibt dieselben Felder
@@ -238,9 +240,6 @@ interface VisRuntime {
   /** V1-Welle Commit 2 — Default 'kurve', wie das bisherige NodeCanvas-lokale `useState`. */
   canvasRoutingModus: VisRoutingModus;
   toggleCanvasRouting: () => void;
-  /** Welle 3 — `null` = folgt der Node-Schwelle (Default-Verhalten unverändert). */
-  canvasMinimapManuell: boolean | null;
-  setCanvasMinimapManuell: (v: boolean | null) => void;
   /** Anzahl ausgewählter Nodes (NICHT die volle Auswahl-Menge — die bleibt
    *  NodeCanvas-lokal, hier nur der für die Ausrichten-Insel nötige Zähler). */
   canvasAuswahlGroesse: number;
@@ -333,8 +332,6 @@ export const useVisRuntime = create<VisRuntime>((set) => ({
   canvasRoutingModus: 'kurve',
   toggleCanvasRouting: () =>
     set((s) => ({ canvasRoutingModus: s.canvasRoutingModus === 'ortho' ? 'kurve' : 'ortho' })),
-  canvasMinimapManuell: null,
-  setCanvasMinimapManuell: (v) => set({ canvasMinimapManuell: v }),
   canvasAuswahlGroesse: 0,
   setCanvasAuswahlGroesse: (n) => set({ canvasAuswahlGroesse: n }),
   canvasBefehl: null,

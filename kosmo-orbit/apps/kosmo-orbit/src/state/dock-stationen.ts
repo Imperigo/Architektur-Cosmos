@@ -590,24 +590,18 @@ const DESIGN_PANELS: readonly PanelDef[] = [
  *     Geometrie nötig (Breite = Spaltenbreite `leftW`).
  *   - `visAusrichten` — die Ausrichten-Leiste, ein Daten-Guard (Sichtbarkeit
  *     = `auswahl.size >= 2`, keine Toggle-Möglichkeit).
- *   - `visMinimap`/`visLegende` — Daten-Guards (Sichtbarkeit = Graph hat
- *     Nodes, Minimap zusätzlich `minimapSichtbar`). Beide waren bisher EIN
- *     gemeinsamer Flex-Container (`NodeCanvas.tsx`, «unten links, EIN
- *     verankerter Stapel») — als Dock-Floats werden daraus ZWEI getrennte
- *     `anker:'bottom-left'`-Panels (dokumentierte Abweichung, s.
- *     Abschlussbericht P6): `placeFloats()` (`dock-kern.ts`) stapelt mehrere
- *     `bottom-left`-Floats selbst schon (letzter `bl`-Loop) — die REGISTRY-
- *     REIHENFOLGE bestimmt dabei die Stapelrichtung (das ERSTE Element im
- *     `bl`-Filter landet am NÄCHSTEN zum unteren Rand, jedes weitere darüber,
- *     s. `placeFloats()`-Kopfkommentar) — `visLegende` steht darum VOR
- *     `visMinimap` unten, damit die Minimap weiterhin ÜBER der Legende
- *     erscheint (unverändertes Bild trotz getrennter Panels).
+ *   - `visLegende` — Daten-Guard (Sichtbarkeit = Graph hat Nodes und
+ *     bekannte Porttypen), Float `anker:'bottom-left'`.
+ *     K35 (Owner-Korrekturen 2026-07, S.14 «diese übersicht raus»): das
+ *     vierte Panel `visMinimap` (zweiter `bottom-left`-Float, gestapelt
+ *     ÜBER der Legende via Registry-Reihenfolge) ist mitsamt der Minimap
+ *     ERSATZLOS entfernt — `placeFloats()`s `bl`-Stapelung trägt jetzt nur
+ *     noch die Legende.
  *
  * `fw`/`fh` sind ECHTE gerenderte Grössen (Playwright-Messung am
  * unveränderten v0.7.7-Stand, 1400×900, Graph mit allen 6 Porttypen
  * vertreten):
  *   ausrichten-leiste  gemessen 193.5×36   → fw 200 / fh 40
- *   minimap            gemessen 160×100    → fw 160 / fh 100 (= MINIMAP_W/H)
  *   legende            gemessen 70.5×120.3 (6 Zeilen, Höchstfall — alle
  *                      sechs Porttypen gleichzeitig im Graph) → fw 90 / fh 124
  */
@@ -650,20 +644,6 @@ const VIS_PANELS: readonly PanelDef[] = [
     anker: 'bottom-left',
     fw: 90,
     fh: 124,
-    start: 'zu',
-    schliessbar: false,
-    bewegbar: true,
-    floatChrome: 'schlank',
-  },
-  {
-    id: 'visMinimap',
-    titel: 'Übersichtskarte',
-    rolle: 'system',
-    wichtigkeit: 26,
-    dock: 'float',
-    anker: 'bottom-left',
-    fw: 160,
-    fh: 100,
     start: 'zu',
     schliessbar: false,
     bewegbar: true,

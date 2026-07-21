@@ -5,6 +5,7 @@ import {
   KBestaetigung,
   KButton,
   KFehlerzone,
+  KIcon,
   KMeldungen,
   KSelect,
   OrbitMark,
@@ -743,10 +744,19 @@ export function App() {
           `.isl-buehnenkopf`-Kommentar) — die frühere Owner-Überlagerung kam
           aus zwei unterschiedlichen `top`-Werten (Logos `top:14`, Bühnenkopf
           `top:22`) plus zu knappem Lücken; behoben statt kaschiert. */}
+      {/* K16 (Owner-Korrekturen 2026-07, S.5): `app-druck-reset` entfernt —
+          die Reset-Klasse (`app.css`, `background:none; border:none;
+          color:inherit`) steht im gebauten Bundle NACH der Insel-Kreis-Regel
+          (`island/island.css` PD5-Regel, gleiche Spezifität → Kaskade
+          entscheidet) und strippte diesem Kreis das dunkle Pill-Glas; die
+          helle `--isl-pill-ink`-Tinte stand damit hell-auf-hell → «leerer
+          weisser Kreis». Die PD5-Regel styled den Button vollständig
+          (Hintergrund/Rand/Padding/Font) — der Reset ist hier überflüssig,
+          `k-druck` (nur transition/hover/active) bleibt. */}
       {bodenDockAusgeblendet && (
         <button
           onClick={() => gehZu('home')}
-          className="k-druck app-druck-reset isl-kopf-logo-orbit"
+          className="k-druck isl-kopf-logo-orbit"
           aria-label="Zur Zentrale"
           data-testid="island-kopf-logo-orbit"
         >
@@ -786,12 +796,25 @@ export function App() {
       {bodenDockAusgeblendet && (
         <button
           onClick={() => oeffneEinstellungen()}
-          className="k-druck app-druck-reset isl-einstellungen-kreis"
+          className="k-druck isl-einstellungen-kreis"
           aria-label="Einstellungen öffnen"
           title="Einstellungen"
           data-testid="island-einstellungen-kreis"
         >
-          <span aria-hidden="true" style={{ fontSize: 15 }}>⚙</span>
+          {/* K16 (Owner-Korrekturen 2026-07, S.5 «hier ist das symbol weg»):
+              Wurzel war ZWEITEILIG — (a) `app-druck-reset` (jetzt entfernt,
+              s. Kommentar am KosmoOrbit-Kreis oben) strippte das dunkle
+              Pill-Glas, die helle Tinte stand hell-auf-hell → «leerer
+              weisser Kreis»; (b) das rohe ⚙-Textzeichen hing zusätzlich an
+              der System-Schriftkaskade statt an der hauseigenen
+              Tusche-Registry. Ersatz durch `KIcon name="zahnrad"`
+              (@kosmo/ui icons.tsx) — derselbe Weg, den alle anderen
+              Einstellungs-Zugänge (VisWorkspace/DataWorkspace/KosmoPanel …)
+              seit der Icon-Bibliothek gehen; die Emoji-Bedienelemente sind
+              laut Neuigkeiten-Log («⚙ … ersetzt») überall sonst schon
+              abgelöst. `title` entfällt am Icon (der Button trägt bereits
+              `aria-label`/`title`). */}
+          <KIcon name="zahnrad" size={16} />
         </button>
       )}
       {/* PB3 (`docs/V084-SPEZ.md` §8 C-24, §5 W3): Stationen-Orb + Ansichts-

@@ -14,9 +14,10 @@ import { VIS_GLYPHEN } from './vis-glyphen';
  * - **GRAPH** (links, vertikal): Node-Palette (bisheriges `visPalette`-Dock-
  *   Panel), Ausrichten (`visAusrichten`), Verbinden-Modus (Hinweis auf die
  *   bestehende Drag-Geste — es gibt keinen zweiten «Modus» zu bauen).
- * - **ANSICHT** (oben, horizontal): Zoom/Fit, Raster-Snap, Ortho/Kurve,
- *   Minimap — 1:1 die bisherige `.vis-chrome-bottomright`/`-bottomleft`-
- *   Leiste + das `visMinimap`-Dock-Panel. v0.8.11 P-B1/E4 (Owner-Wahl E-Vis,
+ * - **ANSICHT** (oben, horizontal): Zoom/Fit, Raster-Snap, Ortho/Kurve —
+ *   1:1 die bisherige `.vis-chrome-bottomright`-Leiste. Das vierte Werkzeug
+ *   «Minimap» ist mit K35 (Owner-Korrekturen 2026-07, S.14 «diese übersicht
+ *   raus») mitsamt der Minimap entfallen. v0.8.11 P-B1/E4 (Owner-Wahl E-Vis,
  *   `docs/V0811-SPEZ.md` §2 E4): additiv um **Gespeicherte Ansichten**
  *   (`island/inhalte/ansichten.tsx`, importiert die bestehende
  *   `GespeicherteAnsichten`-Komponente/-Logik unverändert) und **Legende**
@@ -89,11 +90,11 @@ const ANSICHT: readonly IslandWerkzeug[] = [
   // (`island-katalog.ts` Z.136, `hatPopup:false` = Sofort-Umschaltung).
   werkzeug('raster', 'Raster-Snap', 'ansicht', icon('raster'), false),
   werkzeug('routing', 'Kanten-Routing', 'ansicht', icon('routing'), false),
-  werkzeug('minimap', 'Minimap', 'ansicht', icon('minimap'), true),
+  // K35: das Werkzeug 'minimap' stand hier — mitsamt Minimap entfernt.
   // v0.8.11 P-B1/E4 (Owner-Wahl E-Vis, `docs/V0811-SPEZ.md` §2 E4) — additiv
   // ans Ende: die zwei Insel-Äquivalente für die letzten beiden Manuell-only-
   // Funde des P-B1-Audits (0.8.10-Planung). Beide `hatPopup:true` (echter
-  // Inhalt, kein Sofort-Toggle, Muster 'minimap').
+  // Inhalt, kein Sofort-Toggle, Muster 'zoom').
   werkzeug('ansichten', 'Gespeicherte Ansichten', 'ansicht', icon('ansichten'), true),
   werkzeug('legende', 'Legende', 'ansicht', icon('legende'), true),
 ];
@@ -123,8 +124,9 @@ const SONNE: readonly IslandWerkzeug[] = [
   werkzeug('sonnenstunden', 'Sonnenstunden', 'sonne', icon('sonnenstunden'), true),
 ];
 
-/** Gesamtkatalog, 15 Werkzeuge über 5 Inseln (v0.8.10 E3-Nachtrag: 'manuell'
- * entfernt, 14→13; v0.8.11 P-B1/E4: +'ansichten'/+'legende', 13→15). */
+/** Gesamtkatalog, 14 Werkzeuge über 5 Inseln (v0.8.10 E3-Nachtrag: 'manuell'
+ * entfernt, 14→13; v0.8.11 P-B1/E4: +'ansichten'/+'legende', 13→15;
+ * K35 Owner-Korrekturen 2026-07: −'minimap', 15→14). */
 export const VIS_WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [
   ...GRAPH,
   ...ANSICHT,

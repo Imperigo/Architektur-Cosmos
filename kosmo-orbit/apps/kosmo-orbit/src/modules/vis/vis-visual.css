@@ -151,17 +151,8 @@
   background: var(--_farbe);
 }
 
-/* ── Minimap (Dock-Panel-Inhalt) ───────────────────────────────────── */
-.vis-minimap-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  background: var(--k-raised);
-  border: 1px solid var(--k-line);
-  border-radius: var(--k-radius-sm);
-  cursor: crosshair;
-  touch-action: none;
-}
+/* K35 (Owner-Korrekturen 2026-07, S.14): der frühere Minimap-Block
+   (`.vis-minimap-svg`, Dock-Panel-Inhalt) ist mitsamt der Minimap entfernt. */
 
 /* ── Canvas-Wrapper + SVG selbst ───────────────────────────────────── */
 .vis-canvas-wrap {
@@ -244,7 +235,9 @@
   pointer-events: none;
 }
 
-/* ── Fixe Chrome-Positionen (Palette-/Kuratier-/Zoom-/Minimap-Knöpfe) ── */
+/* ── Fixe Chrome-Positionen (Palette-/Kuratier-/Zoom-Knöpfe) ─────────
+   K35: `.vis-chrome-bottomleft` (Minimap-Toggle) ist mitsamt der Minimap
+   entfallen. */
 .vis-chrome-topleft {
   position: absolute;
   left: 12px;
@@ -265,23 +258,24 @@
   display: flex;
   gap: 4px;
 }
-.vis-chrome-bottomleft {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  z-index: 32;
-}
 .vis-kuratier-zaehler {
   font-size: 10px;
   font-family: var(--k-font-mono);
 }
 
-/* PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — Minimap+Legende im Island-Modus,
-   dieselbe Randposition wie das frühere `.vis-chrome-bottomleft`, jetzt ohne
-   Toggle-Knopf (der lebt im ANSICHT-Insel-Popup) — nur die Karte selbst. */
-.vis-island-minimap-overlay {
+/* PC1 (`docs/V084-SPEZ.md` §5 W2, C-15), K35-Umbenennung — die Legende im
+   Island-Modus. Bis K35 hiess der Container `.vis-island-minimap-overlay`
+   (`left:12px`) und trug Minimap + Legende gestapelt; die Minimap ist
+   entfernt (Owner S.14), die Legende bleibt (Owner K36: «legende ist gut»).
+   `left:72px` statt 12px: die SONNE-Insel-Pill (v0.8.9 E11,
+   `.isl-rand-sonne`, `left:14px; bottom:14px`, z-40) sass schon bisher ÜBER
+   der untersten Ecke dieses Stapels — mit der Legende als einzigem,
+   niedrigem Inhalt verdeckte sie deren Zeilen komplett. 72px (= 14px Rand +
+   44px Pill-Trefferfläche + 14px Lücke) stellt die Legende sichtbar NEBEN
+   die Pill, gleiche Unterkante. */
+.vis-island-legende-overlay {
   position: absolute;
-  left: 12px;
+  left: 72px;
   bottom: 12px;
   z-index: 20;
   display: grid;

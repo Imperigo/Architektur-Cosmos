@@ -144,7 +144,8 @@ const DESIGN_HUD_FLOAT_IDS = [
 
 const DESIGN_FIXE_ELEMENTE = ['geschossleiste', 'entwurf-dock', 'statusleiste'] as const;
 
-const VIS_PANEL_IDS = ['visPalette', 'visAusrichten', 'visLegende', 'visMinimap'] as const;
+// K35 (Owner-Korrekturen 2026-07, S.14): `visMinimap` ist mitsamt der Minimap entfernt.
+const VIS_PANEL_IDS = ['visPalette', 'visAusrichten', 'visLegende'] as const;
 
 function selektorMapDesign(): Record<string, string> {
   const map: Record<string, string> = {};
@@ -260,11 +261,13 @@ for (const preset of ['fokus', 'arbeiten', 'pruefen'] as const) {
 for (const preset of ['fokus', 'arbeiten', 'pruefen'] as const) {
   test(`Vis-Station · Preset «${preset}»: anwenden über die Toolbar, Panels bleiben disjunkt`, async ({ page }) => {
     await oeffneVisMitGraph(page);
-    // Genug Nodes für Minimap-Schwelle + alle sechs Porttypen (Legende).
+    // Alle sechs Porttypen im Graphen (Legende-Daten-Guard).
     for (const typ of ['modell', 'material', 'prompt', 'zahl', 'kamera', 'render']) {
       await visNodeHinzu(page, typ);
     }
-    await expect(page.locator('[data-testid="dock-panel-visMinimap"]')).toBeVisible();
+    await expect(page.locator('[data-testid="dock-panel-visLegende"]')).toBeVisible();
+    // K35: das frühere `visMinimap`-Panel existiert nicht mehr.
+    await expect(page.locator('[data-testid="dock-panel-visMinimap"]')).toHaveCount(0);
 
     await page.click(`[data-testid="dock-preset-${preset}"]`);
     await expect(page.locator(`[data-testid="dock-preset-${preset}"]`)).toHaveAttribute('aria-pressed', 'true');

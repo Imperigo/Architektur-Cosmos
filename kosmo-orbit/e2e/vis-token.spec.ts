@@ -28,9 +28,10 @@ import { visManuellStorageState } from './helpers/manuell-seed';
  * danach ausschliesslich die Node-Ebene (`port-out-prompt`, unverändert).
  * «Legende-Punkt» bleibt UNMIGRIERT auf Manuell — die Legende (`vis-legende`,
  * DockFlaeche-Panel) ist NUR `!islandModus` gerendert (`NodeCanvas.tsx`) und
- * hat KEIN Insel-Äquivalent (`island/inhalte/ansicht.tsx` deckt nur Zoom/
- * Minimap ab, keine Legende) — das Feature ist im Island-Modus schlicht
- * nicht erreichbar, die Spec bleibt darum teilmigriert.
+ * hatte zum Migrationszeitpunkt KEIN Insel-Äquivalent — die Spec blieb
+ * darum teilmigriert. (Stand heute: v0.8.11 E4 hat der ANSICHT-Insel eine
+ * eigene Legende gegeben; K35 hat die Minimap überall entfernt — beides
+ * ändert an dieser Manuell-Spec nichts.)
  * Theme-Sanity-Werte (rgb(39,140,93) orbit) bleiben gültig — Island ändert
  * das Theme nicht.
  *

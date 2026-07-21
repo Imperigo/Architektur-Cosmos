@@ -509,16 +509,18 @@ describe('dock-stationen — plan bleibt ein endgültig leeres Array (Scope-Ents
 
 // ---------------------------------------------------------------------------
 // v0.7.8 Welle 3 (P6) — vis-Registry. Anders als bei `design` gilt HIER
-// KEINE ⊆-`PANEL_IDS`-Invariante: alle vier Panels sind Daten-Guards/lokale
+// KEINE ⊆-`PANEL_IDS`-Invariante: alle drei Panels sind Daten-Guards/lokale
 // Toggle-Booleans, die NIE in `ui-zustand.ts` (einer DESIGN-spezifischen
 // Datei) standen — s. `dock-stationen.ts`-Kopfkommentar zu `VIS_PANELS`.
+// K35 (Owner-Korrekturen 2026-07, S.14): `visMinimap` ist mitsamt der
+// Minimap entfernt — 4→3 Panels.
 // ---------------------------------------------------------------------------
 
 describe('dock-stationen — Registry-Invarianten (vis)', () => {
   const panels = stationsPanels('vis');
 
-  it('enthält genau 4 Panels', () => {
-    expect(panels.length).toBe(4);
+  it('enthält genau 3 Panels (K35: -visMinimap)', () => {
+    expect(panels.length).toBe(3);
   });
 
   it('alle IDs sind paarweise eindeutig', () => {
@@ -526,11 +528,15 @@ describe('dock-stationen — Registry-Invarianten (vis)', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('genau ein Panel ist dock:"left" (visPalette), die übrigen drei sind dock:"float"', () => {
+  it('genau ein Panel ist dock:"left" (visPalette), die übrigen zwei sind dock:"float"', () => {
     const left = panels.filter((p) => p.dock === 'left');
     const float = panels.filter((p) => p.dock === 'float');
     expect(left.map((p) => p.id)).toEqual(['visPalette']);
-    expect(float.map((p) => p.id).sort()).toEqual(['visAusrichten', 'visLegende', 'visMinimap']);
+    expect(float.map((p) => p.id).sort()).toEqual(['visAusrichten', 'visLegende']);
+  });
+
+  it('visMinimap existiert nicht mehr (K35, Owner S.14: «diese übersicht raus»)', () => {
+    expect(panels.find((p) => p.id === 'visMinimap')).toBeUndefined();
   });
 
   it('visPalette trägt min/groesse (Stack-Panel), keine Float-Geometrie', () => {
@@ -551,12 +557,7 @@ describe('dock-stationen — Registry-Invarianten (vis)', () => {
     }
   });
 
-  it('visLegende steht vor visMinimap in der Registry (Stapelreihenfolge bottom-left, s. Kopfkommentar)', () => {
-    const ids = panels.map((p) => p.id);
-    expect(ids.indexOf('visLegende')).toBeLessThan(ids.indexOf('visMinimap'));
-  });
-
-  it('keines der vier IDs steht in PANEL_IDS (alle vier sind Daten-Guards/gehobene lokale Toggles, keine ui-zustand-Flags)', () => {
+  it('keines der drei IDs steht in PANEL_IDS (alle drei sind Daten-Guards/gehobene lokale Toggles, keine ui-zustand-Flags)', () => {
     for (const p of panels) {
       expect((PANEL_IDS as readonly string[]).includes(p.id)).toBe(false);
     }
@@ -568,7 +569,7 @@ describe('dock-stationen — Registry-Invarianten (vis)', () => {
     }
   });
 
-  it('alle vier sind start:"zu" und bewegbar; nur visPalette ist schliessbar (Toggle-Button steuert sie)', () => {
+  it('alle drei sind start:"zu" und bewegbar; nur visPalette ist schliessbar (Toggle-Button steuert sie)', () => {
     for (const p of panels) {
       expect(p.start).toBe('zu');
       expect(p.bewegbar).toBe(true);

@@ -940,7 +940,12 @@ export function DataWorkspace({ onEinstellungen }: DataWorkspaceProps = {}) {
               feste-Anker-Prüfung (E2E) alle drei Adaptions-Gruppen erfasst. */}
           <div data-testid="referenzen-werkzeugleiste" className="kd-contents">
           <div className="kd-flex kd-items-center kd-g3 kd-wrap">
-            <Badge hue={moduleHue.data}>KosmoData</Badge>
+            {/* K48b (Owner-Korrekturen 2026-07, S.22 «links neben dem tab
+                steht noch kosmodata, das kann raus»): das Badge «KosmoData»
+                stand redundant links neben den Tabs — die Kopfzeile
+                (App.tsx-Modul-Badge bzw. Island-Kopf-Logo) benennt die
+                Station bereits. Ersatzlos entfernt; die Dossier-Badges
+                («Referenz»/Eintragstyp, unten) sind davon unabhängig. */}
             <span
               data-testid="leiste-gruppe-navigation"
               className={[fokusKlasse(stufeFuerGruppe('navigation')), 'kd-inline-flex kd-items-center', gruppeHatGehobenesElement('navigation') ? 'kd-gehoben' : '']

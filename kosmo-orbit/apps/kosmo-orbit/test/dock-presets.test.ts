@@ -188,7 +188,7 @@ describe('dock-presets — design/pruefen ist auf Kontrolle ausgelegt', () => {
 });
 
 describe('dock-presets — vis-Station (ehrliche Grenze: nur visPalette ist ein echter Hebel)', () => {
-  it('vis/fokus: visPalette nicht in offen (zu) — Minimap/Legende/Ausrichten bleiben datengetrieben', () => {
+  it('vis/fokus: visPalette nicht in offen (zu) — Legende/Ausrichten bleiben datengetrieben (K35: Minimap entfernt)', () => {
     expect(presetFuer('vis', 'fokus').offen).toEqual([]);
   });
 

@@ -226,7 +226,7 @@ export function VisWorkspace({ onEinstellungen, onKosmoOeffnen }: VisWorkspacePr
   /**
    * PD2-Muster (`DesignWorkspace.tsx`s `aktiviereIslandWerkzeug()`): Aktion
    * für JEDE Erst-Aktivierung eines Insel-Werkzeugs. `hatPopup:true`-
-   * Werkzeuge (Palette/Ausrichten/Verbinden/Zoom/Minimap/Stimmung/Render
+   * Werkzeuge (Palette/Ausrichten/Verbinden/Zoom/Stimmung/Render
    * senden/Aufs Plakat) brauchen hier nichts — ihre echte Aktion lebt in der
    * Registry (`island/inhalte/*.tsx`, liest globale Stores direkt). Die
    * vier `hatPopup:false`-Sofort-Aktionen (Raster/Routing/Kamera vorschlagen/

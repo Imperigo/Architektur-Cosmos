@@ -10,7 +10,9 @@
    design-`.isl-rand-*`-Ankern (`design/island/island.css`, dort NICHT
    angefasst — nur importiert/gelesen wie der Rest dieser Datei): unten-
    links, ein eigener Anker-Punkt, überlagert weder `.isl-rand-links`
-   (`left:64px; top:50%`) noch `.isl-rand-unten` (`bottom:14px; left:50%`).
+   (seit K17 `left:var(--isl-rand-abstand)`=14px, aber `top:50%` — vertikal
+   mittig, zur Ecke unten disjunkt) noch `.isl-rand-unten` (`bottom:14px;
+   left:50%`).
    `.isl-root` liefert bereits `position:fixed` (`design/island/island.css`
    Z.73) — hier nur die Koordinaten, exakt wie die vier design-Anker es tun. */
 .isl-rand-sonne {

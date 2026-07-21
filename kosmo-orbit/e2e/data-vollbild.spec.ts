@@ -36,3 +36,22 @@ test('«Vollbild»-Knopf ist da, beschriftet, klickbar — Station bleibt danach
   await page.fill('[data-testid="data-search"]', 'Pantheon');
   await expect(page.locator('[data-testid="ref-card"]')).toHaveCount(1);
 });
+
+/**
+ * K48b (Owner-Korrekturen 2026-07, S.22 «links neben dem tab steht noch
+ * kosmodata, das kann raus»): das redundante «KosmoData»-Badge links neben
+ * den Tabs ist entfernt — die Kopfzeile benennt die Station bereits. Die
+ * Tab-Leiste selbst (Navigation) bleibt vollständig; der erste Tab steht
+ * jetzt am linken Rand der Werkzeugleisten-Zeile, ohne Badge davor.
+ */
+test('K48b: kein «KosmoData»-Badge mehr links neben den Tabs', async ({ page }) => {
+  await oeffneKosmoData(page);
+  const leiste = page.locator('[data-testid="referenzen-werkzeugleiste"]');
+  await expect(page.locator('[data-testid="tab-uebersicht"]')).toBeVisible();
+  await expect(page.locator('[data-testid="tab-referenzen"]')).toBeVisible();
+  // Das Badge trug den blanken Text «KosmoData» — er darf in der ganzen
+  // Werkzeugleisten-Gruppe nicht mehr vorkommen (die Sync-Badge-Texte
+  // enthalten das Wort nicht, s. `kosmoDataSyncBadge()`).
+  await expect(leiste.getByText('KosmoData', { exact: true })).toHaveCount(0);
+  await page.screenshot({ path: 'test-results/batch-a-k48b-data-tabs.png' });
+});

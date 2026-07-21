@@ -76,12 +76,15 @@ function snap24(v: number): number {
   return Math.round(v / RASTER) * RASTER;
 }
 
-/** Minimap (Welle 3): feste Pixelgrösse (Papier-Stil, unten links neben der
- * Legende) + Schwelle, ab der sie standardmässig eingeblendet ist — kleine
- * Graphen brauchen sie nicht, die Legende reicht dort zur Orientierung. */
-const MINIMAP_W = 160;
-const MINIMAP_H = 100;
-const MINIMAP_KNOTEN_MIN = 5;
+/** K35 (Owner-Korrekturen 2026-07, S.14 «diese übersicht raus, die bringt
+ * nichts»): die Minimap (Welle 3, v0.7.8 P6 Dock-Panel + PC1 Island-Overlay)
+ * ist ERSATZLOS entfernt — Konstanten (`MINIMAP_W/H/KNOTEN_MIN`), Geometrie
+ * (`berechneMinimapAnsicht`/`minimapZuNodeRaum`), `visMinimap`-Dock-Panel,
+ * `vis-minimap-toggle`-Chrome und das Island-Overlay sind weg; der
+ * Legende-Begleiter des Island-Overlays bleibt als eigenständige
+ * Legende-Fläche unten links erhalten (Owner K36: «legende ist gut»).
+ * `LEGENDE_W` trägt die bisherige Breite des gemeinsamen Stapels weiter. */
+const LEGENDE_W = 160;
 
 /**
  * v0.8.8 / PA4 (`docs/V088-SPEZ.md` §2 D7/§3 E-Zeile, C-10) — Token-Brücke:
@@ -231,64 +234,6 @@ function berechneFit(
   return { cx: (minX + maxX) / 2, cy: (minY + maxY) / 2, scale: klemme(scale, 0.35, ZOOM_MAX) };
 }
 
-/** Minimap-Geometrie (Welle 3): bildet Node-Raum → Minimap-Pixelraum ab.
- * Die Bounds umfassen NODES **und** den aktuellen Viewport, damit der
- * Tusche-Rahmen des Viewports auch beim weit weggepannten Canvas noch in
- * der kleinen Karte liegt (ein Editor-Minimap-Grundsatz). Reine Geometrie,
- * kein State — sowohl fürs Zeichnen als auch für den Rück-Umrechnungsschritt
- * beim Klick/Drag verwendet (`minimapZuNodeRaum`, unten). */
-interface MinimapAnsicht {
-  scale: number;
-  minX: number;
-  minY: number;
-  offsetX: number;
-  offsetY: number;
-}
-
-function berechneMinimapAnsicht(
-  nodes: VisNode[],
-  view: { cx: number; cy: number; scale: number },
-  flaeche: { w: number; h: number },
-  mmW: number,
-  mmH: number,
-): MinimapAnsicht {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const n of nodes) {
-    minX = Math.min(minX, n.x);
-    minY = Math.min(minY, n.y);
-    maxX = Math.max(maxX, n.x + NODE_W);
-    maxY = Math.max(maxY, n.y + nodeHoehe(n));
-  }
-  const vw = flaeche.w / view.scale;
-  const vh = flaeche.h / view.scale;
-  minX = Math.min(minX, view.cx - vw / 2);
-  minY = Math.min(minY, view.cy - vh / 2);
-  maxX = Math.max(maxX, view.cx + vw / 2);
-  maxY = Math.max(maxY, view.cy + vh / 2);
-  const pad = 10;
-  const breite = Math.max(1, maxX - minX);
-  const hoehe = Math.max(1, maxY - minY);
-  const scale = Math.min((mmW - pad * 2) / breite, (mmH - pad * 2) / hoehe);
-  return {
-    scale,
-    minX,
-    minY,
-    offsetX: (mmW - breite * scale) / 2,
-    offsetY: (mmH - hoehe * scale) / 2,
-  };
-}
-
-/** Minimap-Pixelpunkt → Node-Raum (invertiert `berechneMinimapAnsicht`) —
- * der Klick-/Drag-Handler setzt das Ergebnis direkt als neues View-Zentrum
- * (kein Easing: erfüllt «keine animierten Sprünge» bei reduced-motion durch
- * Konstruktion, nicht durch eine Fallunterscheidung). */
-function minimapZuNodeRaum(ansicht: MinimapAnsicht, mx: number, my: number): { x: number; y: number } {
-  return {
-    x: ansicht.minX + (mx - ansicht.offsetX) / ansicht.scale,
-    y: ansicht.minY + (my - ansicht.offsetY) / ansicht.scale,
-  };
-}
-
 export type VisRoutingModus = 'kurve' | 'ortho';
 
 /** Kubische Bézier mit horizontalen Tangenten — kein Routing, ruhige Kurven
@@ -369,7 +314,7 @@ export function NodeCanvas({
    * NodeCanvas isoliert mounten) die Palette schlicht nicht sehen. */
   onNodeHinzu?: (typ: string) => void;
   /** PC1 (`docs/V084-SPEZ.md` §5 W2, C-15) — im Island-Modus verschwindet die
-   *  alte fixe Chrome (Zoom-/Snap-/Routing-Leiste, Minimap-Toggle, DockFlaeche
+   *  alte fixe Chrome (Zoom-/Snap-/Routing-Leiste, DockFlaeche
    *  + der jetzt überflüssige Palette-Toggle oben links — sein Werkzeug lebt
    *  in der GRAPH-Insel); die Kuratier-Fläche bleibt (kein Insel-Ersatz dafür,
    *  s. Abschlussbericht). Default `false` — jeder Bestands-Aufrufer (Tests,
@@ -393,14 +338,13 @@ export function NodeCanvas({
   const paletteSchliessen = useVisRuntime((s) => s.paletteSchliessen);
   const [kuratierOffen, setKuratierOffen] = useState(false);
   const [vergleichAuswahl, setVergleichAuswahl] = useState<readonly string[]>([]);
-  // PC1: Minimap-Übersteuerung + Snap + Routing lebten hier als lokaler
-  // `useState` — für die Insel-Fernsteuerung (ANSICHT-Insel liest/schreibt
-  // dieselben Felder, ohne einen Closure-Pfad zu brauchen) nach
-  // `vis-runtime.ts` gehoben (s. dortiger Kopfkommentar). Verhalten
-  // byte-gleich: gleiche Defaults (`null`/`true`/`'kurve'`), gleiche
-  // Toggle-Semantik, nur die Quelle wechselt von lokal auf den globalen Store.
-  const minimapManuell = useVisRuntime((s) => s.canvasMinimapManuell);
-  const setMinimapManuell = useVisRuntime((s) => s.setCanvasMinimapManuell);
+  // PC1: Snap + Routing lebten hier als lokaler `useState` — für die
+  // Insel-Fernsteuerung (ANSICHT-Insel liest/schreibt dieselben Felder,
+  // ohne einen Closure-Pfad zu brauchen) nach `vis-runtime.ts` gehoben
+  // (s. dortiger Kopfkommentar). Verhalten byte-gleich: gleiche Defaults
+  // (`true`/`'kurve'`), gleiche Toggle-Semantik, nur die Quelle wechselt
+  // von lokal auf den globalen Store. Die frühere Minimap-Übersteuerung
+  // (`canvasMinimapManuell`) ist mit K35 mitsamt der Minimap entfallen.
   const snapAktiv = useVisRuntime((s) => s.canvasSnapAktiv);
   const toggleSnap = useVisRuntime((s) => s.toggleCanvasSnap);
   const routingModus = useVisRuntime((s) => s.canvasRoutingModus);
@@ -797,19 +741,6 @@ export function NodeCanvas({
     }
   }
 
-  // Minimap (Welle 3): sichtbar per Default ab MINIMAP_KNOTEN_MIN Nodes,
-  // solange niemand am Toggle-Knopf war; danach gewinnt der Nutzerwille.
-  const minimapSichtbar = minimapManuell ?? graph.nodes.length >= MINIMAP_KNOTEN_MIN;
-  const minimapAnsicht = berechneMinimapAnsicht(graph.nodes, view, flaeche, MINIMAP_W, MINIMAP_H);
-  /** Klick/Drag auf die Minimap: Zielpunkt wird SOFORT das neue Viewport-
-   * Zentrum — kein Easing (erfüllt «keine animierten Sprünge» unter
-   * reduced-motion durch Konstruktion). Zoom (`view.scale`) bleibt unberührt. */
-  const minimapSpringeZu = (e: { clientX: number; clientY: number; currentTarget: SVGSVGElement }) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    const ziel = minimapZuNodeRaum(minimapAnsicht, e.clientX - r.left, e.clientY - r.top);
-    setView((v) => ({ ...v, cx: ziel.x, cy: ziel.y }));
-  };
-
   // V-H5 (Welle 3, Kuratier-Fläche) + H-36 (V1-Welle Commit 1): jeder
   // Render-Node mit einem fertigen Bild UND jeder aufnahme-Node mit einer
   // vorhandenen Viewport-Aufnahme ist eine Karte — dieselbe Kartenform, zwei
@@ -855,23 +786,20 @@ export function NodeCanvas({
       return next.length > 2 ? next.slice(next.length - 2) : next;
     });
 
-  // v0.7.8 Welle 3 (P6, Dock-Migration) — die vier dockbaren Vis-Panels
+  // v0.7.8 Welle 3 (P6, Dock-Migration) — die dockbaren Vis-Panels
   // (`state/dock-stationen.ts` `stationsPanels('vis')`) als `DockPanelEintrag[]`
   // für `DockFlaeche` (Muster `DesignWorkspace.tsx`s `designDockPanels`,
   // panels-Render-Map + Sichtbarkeits-Map). BEWUSST OHNE `useMemo` (anders als
   // dort): `designDockPanels` durfte über Panel-Toggles hinweg stabil bleiben,
   // weil Design-Panel-Sichtbarkeit selten wechselt — hier hängt der Inhalt an
-  // `view`/`flaeche` (Minimap) und `auswahl` (Ausrichten), die bei JEDEM Pan/
-  // Zoom/Klick wechseln; eine Memoisierung mit vollständigen Deps würde bei
-  // praktisch jedem Render ohnehin neu bauen, brächte also keinen Gewinn, nur
-  // eine lange Deps-Liste. Testids bleiben BYTE-GLEICH — nur der ehemalige
-  // `position:absolute`-Wrapper jedes Overlays entfällt (den liefert jetzt
-  // `DockPanel.tsx`s Rechteck). Minimap/Legende waren bisher EIN gemeinsamer
-  // Flex-Container («unten links, EIN verankerter Stapel») — als Dock-Floats
-  // sind es jetzt ZWEI getrennte Panels (dokumentierte Abweichung, s.
-  // `dock-stationen.ts`-Kopfkommentar zu `VIS_PANELS`/Abschlussbericht P6);
-  // die Registry-Reihenfolge dort hält die Minimap trotzdem optisch über der
-  // Legende.
+  // `auswahl` (Ausrichten), das bei jedem Klick wechseln kann; eine
+  // Memoisierung mit vollständigen Deps würde bei praktisch jedem Render
+  // ohnehin neu bauen, brächte also keinen Gewinn, nur eine lange Deps-Liste.
+  // Testids bleiben BYTE-GLEICH — nur der ehemalige `position:absolute`-
+  // Wrapper jedes Overlays entfällt (den liefert jetzt `DockPanel.tsx`s
+  // Rechteck). K35 (Owner-Korrekturen 2026-07, S.14): das vierte Panel
+  // (`visMinimap`) ist mitsamt der Minimap ERSATZLOS entfallen — es bleiben
+  // Palette/Ausrichten/Legende.
   const visDockPanels: DockPanelEintrag[] = [
     {
       id: 'visPalette',
@@ -951,62 +879,6 @@ export function NodeCanvas({
             </div>
           ))}
         </div>
-      ),
-    },
-    {
-      // Minimap (Welle 3) — Daten-Guard: Graph hat Nodes UND (Default-Schwelle
-      // ODER manuell eingeschaltet, `minimapSichtbar`). Der Toggle-Knopf
-      // (`vis-minimap-toggle`) bleibt fixe Chrome unten links (unten im JSX).
-      id: 'visMinimap',
-      sichtbar: graph.nodes.length > 0 && minimapSichtbar,
-      inhalt: (
-        <svg
-          data-testid="vis-minimap"
-          width={MINIMAP_W}
-          height={MINIMAP_H}
-          viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
-          className="vis-minimap-svg"
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
-            minimapSpringeZu(e);
-          }}
-          onPointerMove={(e) => {
-            // Nur bei gedrückter Haupttaste nachziehen (Drag) — reiner
-            // Hover soll den Viewport nicht verschieben.
-            if (e.buttons !== 1) return;
-            minimapSpringeZu(e);
-          }}
-        >
-          {graph.nodes.map((n) => {
-            const kat = VIS_NODE_KATALOG[n.typ];
-            if (!kat) return null;
-            const x = (n.x - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
-            const y = (n.y - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
-            const w = Math.max(2, NODE_W * minimapAnsicht.scale);
-            const h = Math.max(2, nodeHoehe(n) * minimapAnsicht.scale);
-            return <rect key={n.id} x={x} y={y} width={w} height={h} fill={VIS_KATEGORIE_HUE[kat.kategorie]} opacity={0.8} />;
-          })}
-          {(() => {
-            const vw = flaeche.w / view.scale;
-            const vh = flaeche.h / view.scale;
-            const x = (view.cx - vw / 2 - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
-            const y = (view.cy - vh / 2 - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
-            return (
-              <rect
-                data-testid="vis-minimap-viewport"
-                x={x}
-                y={y}
-                width={vw * minimapAnsicht.scale}
-                height={vh * minimapAnsicht.scale}
-                fill="none"
-                stroke="var(--k-ink)"
-                strokeWidth={1.5}
-                pointerEvents="none"
-              />
-            );
-          })()}
-        </svg>
       ),
     },
   ];
@@ -1518,7 +1390,7 @@ export function NodeCanvas({
         und fing den Klick ab.
         zIndex 32 statt 5 (P6): über den Dock-Panels (z-14 gedockt / z-30
         schwebend, `DockPanel.tsx`) — im B-Modus routet der Solver die
-        bottom-left-Floats (Minimap/Legende) in die LINKE SPALTE, deren
+        bottom-left-Floats (Legende, bis K35 auch Minimap) in die LINKE SPALTE, deren
         Panels genau diesen Knopf überdeckten (Playwright: «subtree
         intercepts pointer events»). Dasselbe «Chrome gewinnt den Klick per
         z-Ordnung»-Muster wie Boden-Dock/Kosmo-Symbol (z-108/110) über den
@@ -1602,8 +1474,7 @@ export function NodeCanvas({
     {!islandModus && (
     <div className="vis-chrome-bottomright">
       {/* V1-Welle Commit 1/2: Raster-Snap + Kanten-Routing — Werkzeug-
-          Umschalter neben der Zoom-Leiste, fern von Testpunkt (30,30) und
-          der Minimap (unten links). */}
+          Umschalter neben der Zoom-Leiste, fern vom Testpunkt (30,30). */}
       <KButton
         size="sm"
         tone="ghost"
@@ -1638,123 +1509,45 @@ export function NodeCanvas({
     </div>
     )}
 
-    {/* Minimap-Toggle (Welle 3) bleibt fixe Chrome, unten links — der
-        Kartenkörper selbst ist seit v0.7.8 Welle 3 (P6) das `visMinimap`-
-        Dock-Panel (Float, `anker:'bottom-left'`, s. `visDockPanels` oben).
-        Minimap+Legende waren bisher EIN gemeinsamer Flex-Stapel («unten
-        links, EIN verankerter Container») — jetzt ZWEI getrennte Floats
-        (dokumentierte Abweichung, s. `dock-stationen.ts`-Kopfkommentar);
-        die Registry-Reihenfolge dort hält die Minimap trotzdem optisch über
-        der Legende. zIndex 32 (P6): über den Dock-Panels, gleiche Begründung
-        wie beim Palette-Toggle oben (B-Modus-Linksspalte).
-        PC1 (V084-SPEZ C-15): NUR ausserhalb des Island-Modus — die Minimap
-        selbst wandert als Insel-Werkzeug in ANSICHT. */}
-    {!islandModus && graph.nodes.length > 0 && (
-      <div className="vis-chrome-bottomleft">
-        <KButton
-          size="sm"
-          tone="ghost"
-          data-testid="vis-minimap-toggle"
-          title="Übersichtskarte"
-          aria-label="Übersichtskarte"
-          aria-pressed={minimapSichtbar}
-          onClick={() => setMinimapManuell(!minimapSichtbar)}
-        >
-          <KIcon name="ebenen" size={16} title="Übersichtskarte" />
-        </KButton>
+    {/* K35 (Owner-Korrekturen 2026-07, S.14 «diese übersicht raus, die bringt
+        nichts»): der `vis-minimap-toggle` (fixe Chrome unten links, Welle 3)
+        und das PC1-Island-Overlay der Minimap sind ERSATZLOS entfernt.
+        Der Legende-Begleiter des früheren Overlays bleibt (Owner K36 im
+        selben Rundown: «legende ist gut») — jetzt als eigenständige
+        Legende-Fläche unten links im Island-Modus, sichtbar sobald der
+        Graph Nodes mit bekannten Porttypen trägt (der frühere Anker an die
+        Minimap-Schwelle `>= 5 Nodes` war reine Minimap-Semantik und ist mit
+        ihr entfallen). Position/Randabstand unverändert
+        (`.vis-island-legende-overlay`, vormals `.vis-island-minimap-overlay`,
+        `vis-visual.css`). */}
+    {islandModus && graph.nodes.length > 0 && legendeTypen.length > 0 && (
+      <div className="vis-island-legende-overlay" data-testid="vis-island-legende">
+        <div data-testid="vis-legende" className="vis-legende-panel" style={{ width: LEGENDE_W, height: 'auto' }}>
+          {legendeTypen.map((t) => (
+            <div key={t} className="vis-legende-zeile">
+              <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[t] }} />
+              <span>{PORT_TYP_NAME[t]}</span>
+            </div>
+          ))}
+        </div>
       </div>
     )}
 
-    {/* PC1 (`docs/V084-SPEZ.md` §5 W2, C-15): Minimap+Legende im Island-Modus
-        — die ANSICHT-Insel («Minimap»-Werkzeug, `island/inhalte/ansicht.tsx`)
-        trägt nur den TOGGLE (`canvasMinimapManuell`) + eine Kurzerklärung;
-        die eigentliche Karte bleibt HIER (sie braucht `graph`/`view`/
-        `flaeche`/`minimapAnsicht`, dieselbe Geometrie wie die bisherige
-        `visMinimap`-Dock-Panel-Fassung unten) — bewusste JSX-Verdopplung
-        statt eines riskanten Umbaus des bestehenden `visDockPanels`-Arrays
-        (das bleibt für den Nicht-Island-Modus unangetastet). Position unten
-        links, ausserhalb der GRAPH-Insel (links) und der AUSTAUSCH-Insel
-        (unten) — `12px`/`52px` hält denselben Randabstand wie die alte
-        `.vis-chrome-bottomleft`. */}
-    {islandModus && graph.nodes.length > 0 && minimapSichtbar && (
-      <div className="vis-island-minimap-overlay" data-testid="vis-island-minimap">
-        {/* `.vis-minimap-svg` setzt CSS `width/height:100%` (Dock-Panel-Fassung
-            gab die Pixelgrösse über den umschliessenden DockPanel-Rahmen vor)
-            — hier gibt es diesen Rahmen nicht, darum die feste Pixelgrösse
-            zusätzlich als Inline-Style (gewinnt gegen die 100%-Regel). */}
-        <svg
-          data-testid="vis-minimap"
-          width={MINIMAP_W}
-          height={MINIMAP_H}
-          viewBox={`0 0 ${MINIMAP_W} ${MINIMAP_H}`}
-          className="vis-minimap-svg"
-          style={{ width: MINIMAP_W, height: MINIMAP_H }}
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            (e.currentTarget as SVGSVGElement).setPointerCapture?.(e.pointerId);
-            minimapSpringeZu(e);
-          }}
-          onPointerMove={(e) => {
-            if (e.buttons !== 1) return;
-            minimapSpringeZu(e);
-          }}
-        >
-          {graph.nodes.map((n) => {
-            const kat = VIS_NODE_KATALOG[n.typ];
-            if (!kat) return null;
-            const x = (n.x - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
-            const y = (n.y - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
-            const w = Math.max(2, NODE_W * minimapAnsicht.scale);
-            const h = Math.max(2, nodeHoehe(n) * minimapAnsicht.scale);
-            return <rect key={n.id} x={x} y={y} width={w} height={h} fill={VIS_KATEGORIE_HUE[kat.kategorie]} opacity={0.8} />;
-          })}
-          {(() => {
-            const vw = flaeche.w / view.scale;
-            const vh = flaeche.h / view.scale;
-            const x = (view.cx - vw / 2 - minimapAnsicht.minX) * minimapAnsicht.scale + minimapAnsicht.offsetX;
-            const y = (view.cy - vh / 2 - minimapAnsicht.minY) * minimapAnsicht.scale + minimapAnsicht.offsetY;
-            return (
-              <rect
-                x={x}
-                y={y}
-                width={vw * minimapAnsicht.scale}
-                height={vh * minimapAnsicht.scale}
-                fill="none"
-                stroke="var(--k-ink)"
-                strokeWidth={1.5}
-                pointerEvents="none"
-              />
-            );
-          })()}
-        </svg>
-        {legendeTypen.length > 0 && (
-          <div data-testid="vis-legende" className="vis-legende-panel" style={{ width: MINIMAP_W, height: 'auto' }}>
-            {legendeTypen.map((t) => (
-              <div key={t} className="vis-legende-zeile">
-                <span aria-hidden className="vis-legende-punkt" style={{ ['--_farbe' as string]: PORT_FARBE[t] }} />
-                <span>{PORT_TYP_NAME[t]}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    )}
-
-    {/* v0.7.8 Welle 3 (P6) — die vier dockbaren Vis-Panels (Palette/
-        Ausrichten/Legende/Minimap, `visDockPanels` oben) kollisionsfrei
-        gedockt, analog zu `DesignWorkspace.tsx`s `<DockFlaeche station=
-        "design" .../>`. Rendert innerhalb DIESES `position:'relative'`-
-        Wrappers (statt in `VisWorkspace.tsx`) — die vier Panels hängen eng
-        an lokalem NodeCanvas-Zustand (Auswahl/View/Minimap-Geometrie), der
-        bei jedem Pan/Zoom/Klick wechselt; das Feld, das `DockFlaeche` misst,
+    {/* v0.7.8 Welle 3 (P6) — die dockbaren Vis-Panels (Palette/Ausrichten/
+        Legende, `visDockPanels` oben; das vierte, `visMinimap`, ist mit K35
+        entfallen) kollisionsfrei gedockt, analog zu `DesignWorkspace.tsx`s
+        `<DockFlaeche station="design" .../>`. Rendert innerhalb DIESES
+        `position:'relative'`-Wrappers (statt in `VisWorkspace.tsx`) — die
+        Panels hängen eng an lokalem NodeCanvas-Zustand (Auswahl), der bei
+        jedem Klick wechseln kann; das Feld, das `DockFlaeche` misst,
         ist ohnehin identisch (dieser Wrapper füllt exakt den Node-Canvas-
         Bereich UNTER der `VisTabs`-Werkzeugleiste, dieselbe Fläche, die ein
         Sibling in `VisWorkspace.tsx` messen würde) — s. Abschlussbericht P6
         für die volle Begründung dieser Platzierung.
         PC1 (`docs/V084-SPEZ.md` §5 W2, C-15): rendert NUR noch ausserhalb
-        des Island-Modus — die vier Panels (Palette/Ausrichten/Legende/
-        Minimap) wandern in die GRAPH-/ANSICHT-Inseln, die alte Dock-Fläche
-        verschwindet dort ersatzlos (Owner-Auftrag «alte Dock raus»). */}
+        des Island-Modus — die Panels (Palette/Ausrichten/Legende) wandern
+        in die GRAPH-/ANSICHT-Inseln, die alte Dock-Fläche verschwindet dort
+        ersatzlos (Owner-Auftrag «alte Dock raus»). */}
     {!islandModus && <DockFlaeche station="vis" panels={visDockPanels} />}
     </div>
   );

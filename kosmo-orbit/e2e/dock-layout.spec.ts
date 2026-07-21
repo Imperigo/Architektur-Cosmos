@@ -680,11 +680,11 @@ test('Einstellungen: Umschalten A↔B wirkt sofort, persistiert über Reload, A-
 });
 
 // ---------------------------------------------------------------------------
-// Vis-Station (v0.7.8 Welle 3 / P6) — die vier dockbaren Panels (Palette/
-// Ausrichten/Legende/Minimap, `state/dock-stationen.ts` `VIS_PANELS`) bleiben
-// in BEIDEN Modi disjunkt. `visLegende`/`visMinimap` waren bisher EIN
-// gemeinsamer Flex-Stapel, jetzt zwei getrennte Floats — diese Disjunktions-
-// Prüfung ist genau der Beweis, dass die Trennung nichts überlappen lässt.
+// Vis-Station (v0.7.8 Welle 3 / P6) — die dockbaren Panels (Palette/
+// Ausrichten/Legende, `state/dock-stationen.ts` `VIS_PANELS`) bleiben
+// in BEIDEN Modi disjunkt. K35 (Owner-Korrekturen 2026-07, S.14): das vierte
+// Panel `visMinimap` ist mitsamt der Minimap entfernt — die Prüfung deckt
+// zusätzlich seine Nicht-Existenz ab.
 // ---------------------------------------------------------------------------
 
 async function oeffneVisMitGraph(page: Page, modus: 'A' | 'B'): Promise<void> {
@@ -708,16 +708,16 @@ async function visNodeHinzu(page: Page, typ: string): Promise<void> {
 }
 
 for (const modus of ['A', 'B'] as const) {
-  test(`Vis-Station (Modus ${modus}): Palette + Minimap + Legende + Ausrichten disjunkt`, async ({ page }) => {
+  test(`Vis-Station (Modus ${modus}): Palette + Legende + Ausrichten disjunkt, keine Minimap (K35)`, async ({ page }) => {
     await oeffneVisMitGraph(page, modus);
 
-    // Genug Nodes für die Minimap-Schwelle (MINIMAP_KNOTEN_MIN=5) + alle
-    // sechs Porttypen für die Legende.
+    // Alle sechs Porttypen für die Legende.
     for (const typ of ['modell', 'material', 'prompt', 'zahl', 'kamera', 'render']) {
       await visNodeHinzu(page, typ);
     }
-    await expect(page.locator('[data-testid="dock-panel-visMinimap"]')).toBeVisible();
     await expect(page.locator('[data-testid="dock-panel-visLegende"]')).toBeVisible();
+    // K35: das frühere `visMinimap`-Panel existiert auch bei 6 Nodes nicht mehr.
+    await expect(page.locator('[data-testid="dock-panel-visMinimap"]')).toHaveCount(0);
 
     // Palette öffnen (Toggle bleibt fixe Chrome, unverändert in A/B).
     await page.click('[data-testid="vis-palette-toggle"]');
@@ -737,25 +737,9 @@ for (const modus of ['A', 'B'] as const) {
       visPalette: '[data-testid="dock-panel-visPalette"]',
       visAusrichten: '[data-testid="dock-panel-visAusrichten"]',
       visLegende: '[data-testid="dock-panel-visLegende"]',
-      visMinimap: '[data-testid="dock-panel-visMinimap"]',
     });
-
-    // y-Ordnung Minimap/Legende ist MODUS-abhängig (ehrlich dokumentiert,
-    // s. `dock-stationen.ts`-Kopfkommentar): im A-Modus stapelt
-    // `placeFloats()` die bottom-left-Floats von unten nach oben (erstes
-    // Registry-Element zuunterst → Minimap ÜBER der Legende, dieselbe
-    // Optik wie der frühere gemeinsame Flex-Stapel). Im B-Modus werden
-    // beide zu LINKEN Spalten-Panels, und `stack()` stapelt von OBEN nach
-    // unten in Registry-Reihenfolge — die Ordnung kehrt sich um (Legende
-    // über Minimap). Beide Ordnungen mit EINER Registry-Reihenfolge zu
-    // erfüllen ist unmöglich; A (die historische Optik) gewinnt.
-    const minimapBox = (await page.locator('[data-testid="dock-panel-visMinimap"]').boundingBox())!;
-    const legendeBox = (await page.locator('[data-testid="dock-panel-visLegende"]').boundingBox())!;
-    if (modus === 'A') {
-      expect(minimapBox.y).toBeLessThan(legendeBox.y);
-    } else {
-      expect(legendeBox.y).toBeLessThan(minimapBox.y);
-    }
+    // Die frühere modus-abhängige y-Ordnungs-Prüfung Minimap/Legende ist mit
+    // K35 gegenstandslos (nur noch EIN bottom-left-Float, die Legende).
   });
 }
 

@@ -417,3 +417,101 @@ test.describe('PD5 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl + Owner-Korre
     await expect(page.locator('[data-testid="island-einstellungen-kreis"]')).toHaveCount(0);
   });
 });
+
+test.describe('K17 — einheitlicher Insel-Randabstand (Owner-Korrekturen 2026-07, S.5/S.8)', () => {
+  /**
+   * Owner wörtlich: «wieso ist diese island nicht gleicher abstand wie die
+   * anderen zum rand?» — die ZEICHNEN-Insel sass auf `left:64px` (PD2-
+   * Ausweichmanöver vor dem EntwurfsDock), die drei anderen auf 14px. Seit
+   * PD3c rendert das EntwurfsDock nur noch im Modus 'manuell', Islands und
+   * Dock stehen nie mehr gleichzeitig auf der Bühne — der Sondersitz ist
+   * damit grundlos. K17: alle vier `.isl-rand-*`-Anker teilen sich EIN
+   * Token (`--isl-rand-abstand: 14px`, `island/island.css`). Dieser Test
+   * MISST die vier Ist-Abstände am lebenden DOM (Design-Station) und in der
+   * Vis-Station den linken Anker (GRAPH-Insel, dieselbe Randklasse).
+   */
+  const RAND = 14;
+
+  test('Design-Station: alle vier Inseln halten 14px zum jeweiligen Bildschirmrand', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+    const viewport = page.viewportSize()!;
+
+    // Gemessen wird der FIXED-Anker selbst (getComputedStyle left/top/right/
+    // bottom auf `.isl-root`), nicht die boundingBox — die Kinder tragen eine
+    // kurze Eintritts-Transform (Sub-Pixel-Versatz beim Mount), der Anker ist
+    // die vom Token gesetzte Wahrheit. Zusätzlich einmal boundingBox als
+    // Plausibilitäts-Probe mit 3px-Toleranz (Transform-/Rundungsrauschen).
+    const anker: Record<string, number> = {};
+    for (const [island, seite] of [
+      ['zeichnen', 'left'],
+      ['ansicht', 'top'],
+      ['projekt', 'right'],
+      ['austausch', 'bottom'],
+    ] as const) {
+      anker[island] = await page
+        .locator(`[data-testid="island-${island}-root"]`)
+        .evaluate((el, s) => parseFloat(getComputedStyle(el)[s as 'left']), seite);
+    }
+    expect(anker['zeichnen'], 'ZEICHNEN left').toBe(RAND);
+    expect(anker['ansicht'], 'ANSICHT top').toBe(RAND);
+    expect(anker['projekt'], 'PROJEKT right').toBe(RAND);
+    expect(anker['austausch'], 'AUSTAUSCH bottom').toBe(RAND);
+
+    const boxen: Record<string, { x: number; y: number; width: number; height: number }> = {};
+    for (const island of ['zeichnen', 'ansicht', 'projekt', 'austausch']) {
+      const box = await page.locator(`[data-testid="island-${island}-root"]`).boundingBox();
+      expect(box, `island-${island}-root fehlt`).not.toBeNull();
+      boxen[island] = box!;
+    }
+    expect(Math.abs(boxen['zeichnen']!.x - RAND)).toBeLessThanOrEqual(3);
+    expect(Math.abs(boxen['ansicht']!.y - RAND)).toBeLessThanOrEqual(3);
+    expect(Math.abs(viewport.width - (boxen['projekt']!.x + boxen['projekt']!.width) - RAND)).toBeLessThanOrEqual(3);
+    expect(Math.abs(viewport.height - (boxen['austausch']!.y + boxen['austausch']!.height) - RAND)).toBeLessThanOrEqual(3);
+
+    await page.screenshot({ path: 'test-results/batch-a-k17-inseln-14px.png' });
+  });
+
+  test('Vis-Station: GRAPH-Insel (dieselbe Randklasse links) hält denselben 14px-Abstand', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-vis"]');
+    const left = await page
+      .locator('[data-testid="island-graph-root"]')
+      .evaluate((el) => parseFloat(getComputedStyle(el).left));
+    expect(left).toBe(RAND);
+  });
+});
+
+test.describe('K16 — Einstellungs-Kreis oben rechts trägt wieder ein sichtbares Symbol (Owner-Korrekturen 2026-07, S.5)', () => {
+  /**
+   * Owner wörtlich: «hier ist das symbol weg» — der Glas-Kreis oben rechts
+   * war leer/weiss. Wurzel zweiteilig (s. App.tsx-Kommentar am Kreis):
+   * (a) `app-druck-reset` stand im Bundle NACH der PD5-Kreis-Regel und
+   * strippte das dunkle Pill-Glas (helle Tinte auf hellem Grund =
+   * unsichtbar); (b) das rohe ⚙-Textzeichen hing an der Systemschrift statt
+   * an der KIcon-Registry. Dieser Test verankert beide Fixes: echtes dunkles
+   * Pill-Glas als computed style + ein echtes SVG-Icon (KIcon `zahnrad`) im
+   * Kreis — für den Kreis oben rechts UND den KosmoOrbit-Kreis oben links
+   * (derselbe Reset sass auf beiden).
+   */
+  test('Einstellungs-Kreis + KosmoOrbit-Kreis: dunkles Pill-Glas, sichtbares SVG-Symbol', async ({ page }) => {
+    await ueberspringeOnboarding(page);
+    await page.click('[data-testid="module-design"]');
+
+    for (const testid of ['island-einstellungen-kreis', 'island-kopf-logo-orbit']) {
+      const el = page.locator(`[data-testid="${testid}"]`);
+      await expect(el).toBeVisible();
+      // Dunkles Pill-Glas (`--f-pill`-Fallback rgba(16,19,25,.92)) — vor dem
+      // Fix stand hier `rgba(0, 0, 0, 0)` (transparent, `app-druck-reset`).
+      const bg = await el.evaluate((e) => getComputedStyle(e).backgroundColor);
+      expect(bg, `${testid}: Hintergrund`).toBe('rgba(16, 19, 25, 0.92)');
+      // Echtes SVG-Symbol im Kreis (KIcon zahnrad bzw. OrbitMark).
+      await expect(el.locator('svg')).toHaveCount(1);
+    }
+
+    await page.screenshot({
+      path: 'test-results/batch-a-k16-einstellungen-kreis.png',
+      clip: { x: 1400 - 90, y: 0, width: 90, height: 70 },
+    });
+  });
+});

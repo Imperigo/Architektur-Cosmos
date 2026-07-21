@@ -64,6 +64,13 @@
   --f-r-sm: 4px;
   --f-r-md: 8px;
 
+  /* K17 (Owner-Korrekturen 2026-07, S.5/S.8 «wieso ist diese island nicht
+     gleicher abstand wie die anderen zum rand?»): EIN Token für den Abstand
+     aller vier Insel-Ränder zur Bildschirmkante — vorher trugen die vier
+     `.isl-rand-*`-Klassen den Wert je einzeln (dreimal 14px, einmal 64px,
+     s. `.isl-rand-links`-Kommentar unten). */
+  --isl-rand-abstand: 14px;
+
   /* PB4 (`docs/V084-SPEZ.md` §3 E2 «Orb-Gesetz», Owner wörtlich «Kosmo-Orb
      nicht gelb hinterlegen»): `--f-gold` ist damit ERSATZLOS entfallen — die
      Hülle nutzt jetzt dieselbe `--f-glass`-Familie wie jede andere Insel-
@@ -87,32 +94,34 @@
 }
 
 /* ── Bühnenordnung (§1/§2): vier Islands, Ränder 14px, mittig zentriert ──
-   PD2-Fund (Bericht): `EntwurfsDock` (`orbit-065.css` `.orbit065-dock`) sitzt
-   BEREITS bei `left:12px; top:50%` — exakt derselbe «links, mittig»-Platz,
-   den §2 der ZEICHNEN-Island zuweist. EntwurfsDock bleibt unangetastet
-   (§8 Frage 10 offen, Bauauftrag), darum weicht NUR die Island-Seite aus:
-   `left:64px` (statt 14px) räumt EntwurfsDocks ~12-50px-Spalte frei — sonst
-   verdeckt die aufgefächerte ZEICHNEN-Leiste (11 Werkzeuge, deutlich höher
-   als EntwurfsDocks 8-Knopf-Spalte) den gesamten Dock (z-index 40 > 3),
-   inklusive des «Sprechen»-Knopfs, den PD2 als Kosmo-Orb-Bestand-Öffner
-   voraussetzt. */
+   K17 (Owner-Korrekturen 2026-07, S.5/S.8): alle vier Ränder teilen sich
+   jetzt EIN Token (`--isl-rand-abstand`, `.isl-root` oben). Die frühere
+   PD2-Ausnahme `left:64px` der linken Insel wich dem `EntwurfsDock`
+   (`orbit-065.css` `.orbit065-dock`, `left:12px; top:50%`) aus — dieser
+   Grund ist seit PD3c ENTFALLEN: das EntwurfsDock rendert nur noch im
+   Modus 'manuell' (`DesignWorkspace.tsx`, `designOberflaeche === 'manuell'`-
+   Guard an seinem Render-Ort), Islands und Dock stehen also NIE mehr
+   gleichzeitig auf der Bühne. Die vertikale Kopf-Spalte links oben
+   (KosmoOrbit-Logo/Geschoss-Pille, `left:14px`, bis ~120px Höhe) bleibt
+   disjunkt: die ZEICHNEN-Leiste ist vertikal MITTIG verankert
+   (`top:50%`). */
 .isl-rand-links {
-  left: 64px;
+  left: var(--isl-rand-abstand);
   top: 50%;
   transform: translateY(-50%);
 }
 .isl-rand-oben {
-  top: 14px;
+  top: var(--isl-rand-abstand);
   left: 50%;
   transform: translateX(-50%);
 }
 .isl-rand-rechts {
-  right: 14px;
+  right: var(--isl-rand-abstand);
   top: 50%;
   transform: translateY(-50%);
 }
 .isl-rand-unten {
-  bottom: 14px;
+  bottom: var(--isl-rand-abstand);
   left: 50%;
   transform: translateX(-50%);
 }

@@ -98,3 +98,29 @@
   box-shadow: var(--k-shadow-overlay);
   padding: var(--k-s3);
 }
+
+/* K28 (Owner-Korrekturen 2026-07, S.8 «raumstempel umrahmung aktuell sehr
+   massiv, und warum diese farbe?») — BEFUND zuerst: die orange gestrichelte
+   Umrahmung der Raum-/Zonen-Stempel ist NICHT der Auswahl-Zustand (der ist
+   Akzent-Teal, solid — Gegenprobe test-results/batch-a-k28-selektion.png),
+   sondern der F3-Warn-Overlay «zone-verletzt» (PlanView.tsx, Daten aus
+   `pruefeGrundriss()`): ein DAUERZUSTAND, solange ein Raumregel-Befund
+   ansteht (z. B. Zimmerbreite < 2.40 m). Die Farbe ist der bewusste
+   Zonen-Warnton `--k-warning-2` (#c68622, aura.css — Fehlerfall bleibt rot
+   `--k-danger`), keine Akzent-/Deko-Farbe.
+
+   FIX (CSS-only, PlanView.tsx ist Cluster-B-TABU): die Erscheinung wird
+   entschärft, die Semantik bleibt — Warnfarbe und ⚠-Etikett unverändert.
+   `vector-effect: non-scaling-stroke` macht die CSS-`stroke-width` zur
+   BILDSCHIRM-Konstante (zoomstabil wie das bisherige Inline-`2.5/scale`,
+   nur dünner: 1.25px statt 2.5px); `fill-opacity` multipliziert die
+   Inline-Alpha der Flächentönung (0.22→~0.11 Warnung, 0.28→~0.14 Fehler),
+   `stroke-opacity` nimmt den Strichen die Wucht. Die dynamisch per
+   JS skalierte Strichelung (Inline-`stroke-dasharray`) bleibt unberührt —
+   eine statische CSS-Dash-Länge wäre nicht zoomstabil. */
+path[data-testid='zone-verletzt'] {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1.25;
+  stroke-opacity: 0.8;
+  fill-opacity: 0.5;
+}

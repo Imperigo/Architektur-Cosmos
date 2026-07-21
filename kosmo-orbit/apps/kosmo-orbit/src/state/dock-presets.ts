@@ -110,12 +110,13 @@ export interface DockPreset {
  *     datengetriebenen Panels ohne eigenes Boolean»). `PanelDef.schliessbar`
  *     ist darum für diese Station KEIN verlässliches Signal — die einzig
  *     verlässliche Quelle ist die `PANEL_IDS`-Mitgliedschaft selbst.
- *   - `'vis'`: umgekehrter Fall — KEINE der vier IDs steht in `PANEL_IDS`
- *     (alle vier sind Daten-Guards/lokale `vis-runtime.ts`-Toggles, nie
- *     `ui-zustand.ts`-Flags). Hier IST die Registry die Wahrheit:
+ *   - `'vis'`: umgekehrter Fall — KEINE der drei IDs steht in `PANEL_IDS`
+ *     (alle sind Daten-Guards/lokale `vis-runtime.ts`-Toggles, nie
+ *     `ui-zustand.ts`-Flags; K35: `visMinimap` ist mitsamt der Minimap
+ *     entfallen, 4→3 Panels). Hier IST die Registry die Wahrheit:
  *     `visPalette` ist die einzige mit `schliessbar:true` (echter Toggle
- *     `paletteOffen` in `vis-runtime.ts`), die übrigen drei sind reine
- *     Daten-Guards (Graph-/Selektions-/Minimap-Zustand) ohne einen Store,
+ *     `paletteOffen` in `vis-runtime.ts`), die übrigen zwei sind reine
+ *     Daten-Guards (Graph-/Selektions-Zustand) ohne einen Store,
  *     den ein Preset ansteuern könnte.
  *   - `'publish'` (v0.8.0 P11): wie `'vis'` — `dossier`/`plankopf` stehen
  *     NICHT in `PANEL_IDS` (lokaler `useState` in `PublishWorkspace.tsx`,
@@ -218,24 +219,18 @@ const DESIGN_PRUEFEN: DockPreset = {
 // ---------------------------------------------------------------------------
 // Vis-Station — drei Presets
 //
-// EHRLICHE GRENZE (statt Verrenkung): von den vier Vis-Panels ist NUR
+// EHRLICHE GRENZE (statt Verrenkung): von den drei Vis-Panels (K35:
+// `visMinimap` ist mitsamt der Minimap entfallen) ist NUR
 // `visPalette` `offenFaehig` (echter Toggle `paletteOffen` in
-// `vis-runtime.ts`). `visAusrichten`/`visMinimap`/`visLegende` sind reine
+// `vis-runtime.ts`). `visAusrichten`/`visLegende` sind reine
 // Daten-Guards:
 //   - `visAusrichten` — Sichtbarkeit = `auswahl.size >= 2`, kein Store-Feld.
 //   - `visLegende` — Sichtbarkeit = Graph hat Nodes, kein Store-Feld.
-//   - `visMinimap` — Sichtbarkeit = `graph.nodes.length > 0 && minimapSichtbar`
-//     (`minimapSichtbar = minimapManuell ?? nodes.length >= MINIMAP_KNOTEN_MIN`,
-//     `NodeCanvas.tsx`) — ZWAR gibt es mit `minimapManuell` einen manuellen
-//     Umschalter, der ist aber ein lokales `useState` in `NodeCanvas.tsx`
-//     (Shell-Modul, nicht Teil der Datei-Grenzen dieses Auftrags) UND wirkt
-//     ohnehin nur zusammen mit `nodes.length > 0` — kein Preset kann die
-//     Minimap bei leerem Graph erzwingen.
 // Weder `offen` (kein Store zum Setzen) noch `overrides.geschlossen` (wird
 // von `DockFlaeche.tsx` ohnehin ignoriert, s. Datei-Kopfkommentar) können
-// diese drei also sauber ansteuern — «nur Canvas» (`fokus`) und «+ minimap»
-// (`arbeiten`) sind für sie darum AUSSAGEN ÜBER DIE ABSICHT, nicht technisch
-// erzwingbare Zustände; einzig `visPalette` UND reine Geometrie-Overrides
+// diese zwei also sauber ansteuern — «nur Canvas» (`fokus`) ist für sie
+// darum eine AUSSAGE ÜBER DIE ABSICHT, kein technisch
+// erzwingbarer Zustand; einzig `visPalette` UND reine Geometrie-Overrides
 // (`fw`/`fh`/`fx`/`fy` — die WERDEN von `DockFlaeche.tsx` respektiert, nur
 // `geschlossen` nicht) sind heute wirklich von einem Preset aus steuerbar.
 // `'pruefen'` nutzt genau diesen echten Geometrie-Hebel (grössere Legende),
@@ -245,7 +240,7 @@ const DESIGN_PRUEFEN: DockPreset = {
 
 /**
  * `'fokus'` — nur der Canvas. `visPalette` zu (der einzige echte Hebel).
- * `visAusrichten`/`visMinimap`/`visLegende` bleiben Daten-Guards — sie
+ * `visAusrichten`/`visLegende` bleiben Daten-Guards — sie
  * verschwinden von selbst, sobald kein Graph/keine Mehrfachauswahl vorliegt,
  * ein Preset kann das aber nicht erzwingen (s. Blockkommentar oben).
  */
@@ -253,21 +248,21 @@ const VIS_FOKUS: DockPreset = {
   id: 'fokus',
   station: 'vis',
   titel: 'Fokus',
-  beschreibung: 'Nur der Canvas — die Node-Palette ist zu (Minimap/Legende/Ausrichten bleiben datengetrieben).',
+  beschreibung: 'Nur der Canvas — die Node-Palette ist zu (Legende/Ausrichten bleiben datengetrieben).',
   offen: [],
   overrides: {},
 };
 
 /**
  * `'arbeiten'` — der Standard beim aktiven Modellieren: `visPalette` offen
- * (Nodes einfügen), die Minimap bleibt wie immer eine Daten-Guard-Aussage
- * (s. Blockkommentar oben) statt eines erzwingbaren Zustands.
+ * (Nodes einfügen); Legende/Ausrichten bleiben Daten-Guard-Aussagen
+ * (s. Blockkommentar oben) statt erzwingbarer Zustände.
  */
 const VIS_ARBEITEN: DockPreset = {
   id: 'arbeiten',
   station: 'vis',
   titel: 'Arbeiten',
-  beschreibung: 'Node-Palette offen zum Modellieren (Minimap erscheint automatisch ab genügend Nodes).',
+  beschreibung: 'Node-Palette offen zum Modellieren (Legende/Ausrichten erscheinen datengetrieben).',
   offen: ['visPalette'],
   overrides: {},
 };

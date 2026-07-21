@@ -49,10 +49,10 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(sonne.randKlasse).toBe('isl-rand-sonne');
   });
 
-  it('15 Werkzeuge total, jedes genau einer Insel zugeordnet (v0.8.11 P-B1/E4: +ansichten/+legende)', () => {
-    expect(VIS_WERKZEUG_KATALOG).toHaveLength(15);
+  it('14 Werkzeuge total, jedes genau einer Insel zugeordnet (v0.8.11 P-B1/E4: +ansichten/+legende; K35: -minimap)', () => {
+    expect(VIS_WERKZEUG_KATALOG).toHaveLength(14);
     const summe = VIS_INSELN.reduce((n, k) => n + k.werkzeuge.length, 0);
-    expect(summe).toBe(15);
+    expect(summe).toBe(14);
   });
 
   it('SONNE: genau EIN Werkzeug (Sonnenstunden, v0.8.9 §9 E11)', () => {
@@ -66,9 +66,9 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(ids).toEqual(['palette', 'ausrichten', 'verbinden']);
   });
 
-  it('ANSICHT: Zoom/Fit, Raster-Snap, Ortho/Kurve, Minimap, Gespeicherte Ansichten, Legende (Owner-Auftrag §1 + v0.8.11 P-B1/E4)', () => {
+  it('ANSICHT: Zoom/Fit, Raster-Snap, Ortho/Kurve, Gespeicherte Ansichten, Legende (Owner-Auftrag §1 + v0.8.11 P-B1/E4; K35: -minimap)', () => {
     const ids = VIS_INSELN.find((k) => k.id === 'ansicht')!.werkzeuge.map((w) => w.id);
-    expect(ids).toEqual(['zoom', 'raster', 'routing', 'minimap', 'ansichten', 'legende']);
+    expect(ids).toEqual(['zoom', 'raster', 'routing', 'ansichten', 'legende']);
   });
 
   it('STIMMUNG: genau EIN Werkzeug (die 3 Presets als Bild-Kacheln, Owner-Auftrag §1)', () => {
@@ -92,13 +92,16 @@ describe('vis-island-katalog — Aufbau', () => {
     expect(VIS_WERKZEUG_KATALOG.find((x) => x.id === 'manuell')).toBeUndefined();
   });
 
+  it('"minimap" ist kein Werkzeug mehr (K35, Owner-Korrekturen 2026-07 S.14: «diese übersicht raus»)', () => {
+    expect(VIS_WERKZEUG_KATALOG.find((x) => x.id === 'minimap')).toBeUndefined();
+  });
+
   it('alle übrigen Werkzeuge haben hatPopup:true', () => {
     for (const id of [
       'palette',
       'ausrichten',
       'verbinden',
       'zoom',
-      'minimap',
       'stimmung',
       'render-senden',
       'aufs-plakat',
