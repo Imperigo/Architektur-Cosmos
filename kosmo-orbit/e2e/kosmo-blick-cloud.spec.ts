@@ -141,8 +141,24 @@ test.describe('Kosmo-Blick — Cloud (Anthropic), Bild-Request + ehrlicher Schl�
     await expect(page.locator('text=Ich sehe den Grundriss')).toBeVisible({ timeout: 15_000 });
 
     expect(requests.length).toBeGreaterThan(0);
-    const gesendet = requests[requests.length - 1]!;
-    const nutzerNachricht = gesendet.messages.find((m) => m.role === 'user' && Array.isArray(m.content));
+    // Rotlisten-Runde 2 (21.07.2026): NICHT blind der LETZTE Request — seit
+    // v0.8.4 PA5 feuert beim Panel-Mount mit gesetztem Schlüssel zusätzlich
+    // der Key-Validierungs-Ping (`pruefeAnthropicZugang`, anthropic.ts, Body
+    // `messages:[{role:'user',content:'Hallo'}]` mit STRING-Content) auf
+    // dieselbe URL. Je nach Timing (600ms-Debounce vs. Sendezug) landet er
+    // VOR oder NACH dem Chat-Request — der Test wählt darum gezielt den
+    // Request, der die tatsächlich gesendete Nutzerfrage trägt. Alle
+    // Assertions (Bildblock, media_type, Daten) bleiben unverändert hart.
+    const gesendet = requests.find((r) =>
+      r.messages?.some(
+        (m) =>
+          m.role === 'user' &&
+          Array.isArray(m.content) &&
+          m.content.some((c) => c.type === 'text' && c.text?.includes('Was siehst du im Grundriss?')),
+      ),
+    );
+    expect(gesendet).toBeDefined();
+    const nutzerNachricht = gesendet!.messages.find((m) => m.role === 'user' && Array.isArray(m.content));
     expect(nutzerNachricht).toBeDefined();
     const bildBlock = nutzerNachricht!.content.find((c) => c.type === 'image');
     expect(bildBlock).toBeDefined();

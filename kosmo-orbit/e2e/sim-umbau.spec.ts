@@ -170,7 +170,16 @@ test('Vollsimulation Umbau: Altbau-Sanierung Zürich-Aussersihl — Bestand mark
     (eintraege) => window.__kosmo.run('design.dossierSetzen', { eintraege }),
     szenario.gestaltung.dossier,
   );
-  await B.kosmoFragen(page, 'Was sagt das Dossier zum Umbau?', {
+  // Rotlisten-Runde 2 (21.07.2026): Begriff «Umbau» → «Hohlstrasse». Seit
+  // v0.8.3/P2 speist der GETEILTE Referenz-Index `sucheQuellen`
+  // (state/quellen.ts) — 4 Seed-Referenzen (u.a. Alterszentrum Kloster
+  // Ingenbohl) enthalten «Umbau» legitim und können den Dossier-Eintrag im
+  // BM25-Ranking überholen; der Mock-Provider zitiert NUR die erste Marke
+  // (provider.ts «erste Marke zitieren»). «Hohlstrasse» kommt in KEINER
+  // Seed-Referenz vor (geprüft gegen kosmodata-seed.json) und trifft exakt
+  // den Dossier-NO-GO — die Assertions (Chip «Dossier NO-GO», Quellensprung,
+  // «Hohlstrasse») bleiben unverändert hart.
+  await B.kosmoFragen(page, 'Was sagt das Dossier zur Hohlstrasse?', {
     modus: 'quelle',
     chipEnthaelt: 'Dossier NO-GO',
     sprungTestid: 'quelle-sprung-dossier',

@@ -1,4 +1,26 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+/**
+ * Rotlisten-Runde 2 (21.07.2026): Erststart-Zustand wie im Hausmuster
+ * `erste-start-frage.spec.ts` (`ersterStart`). Diese Suite stammt aus
+ * v0.6.4 — VOR dem Einrichtungs-Wizard (`OnboardingWizard.tsx`, seit
+ * v0.7.7): bei komplett leerem localStorage liegt heute dessen Overlay
+ * (`app-onboarding-spanne`, App.tsx) über der Zentrale, und der Klick auf
+ * `erste-start-ja` wird vom Wizard-Fuss (`ow-stepper-fuss-text`)
+ * abgefangen. Der Produkt-Fluss ist gewollt zweistufig (erst Einrichtung,
+ * dann Rundgang-Frage) — kein Produktfehler. `kosmo.onboarded` gesetzt,
+ * Rundgang-Flag bewusst NICHT gesetzt: genau der Owner-Testfall
+ * «frischer Nutzer vor dem Rundgang», alle F7-Assertions unverändert.
+ */
+async function ersterStartVorRundgang(page: Page): Promise<void> {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('kosmo.onboarded', '1');
+    localStorage.removeItem('kosmo.starterGuide.done');
+  });
+  await page.reload();
+  await page.waitForSelector('[data-testid="module-design"]');
+}
 
 /**
  * v0.6.4 / F7 (Owner-Befund, WIEDERHOLT: «Ich kann in 3D-Viewer immer noch
@@ -28,9 +50,9 @@ import { expect, test } from '@playwright/test';
 test('F7: Owner-Pfad — Rundgang aktiv, Split-Default, Dock «Skizzieren», Maus — Übergeben bleibt klickbar', async ({
   page,
 }) => {
-  await page.goto('/');
-  // Bewusst NICHTS in localStorage vorgesetzt — frischer Nutzer/frischer
-  // Installer, exakt der Owner-Testfall.
+  // Erststart-Zustand VOR dem Rundgang (Begründung: `ersterStartVorRundgang`
+  // oben — der v0.7.7-Einrichtungs-Wizard liegt sonst über der Frage).
+  await ersterStartVorRundgang(page);
   await expect(page.locator('[data-testid="erste-start-frage"]')).toBeVisible();
   await page.click('[data-testid="erste-start-ja"]');
   await page.click('[data-testid="module-design"]');
@@ -69,7 +91,7 @@ test('F7: Owner-Pfad — Rundgang aktiv, Split-Default, Dock «Skizzieren», Mau
 });
 
 test('F7: Rundgang-Karte überlappt weder NavLeiste (nav-fit) noch Entwurfs-Dock', async ({ page }) => {
-  await page.goto('/');
+  await ersterStartVorRundgang(page);
   await page.click('[data-testid="erste-start-ja"]');
   await page.click('[data-testid="module-design"]');
   await expect(page.locator('[data-testid="starter-guide"]')).toBeVisible();

@@ -124,7 +124,14 @@ test('Varianten-Panel (E5-i/iii): Start → Zähler > 20 → Top-Karte mit Score
 test('Varianten-Panel: gleicher Seed + gleiche Gewichte ⇒ gleiche Top-Variante (zwei Läufe im selben Test)', async ({
   page,
 }) => {
-  test.setTimeout(60_000);
+  // Rotlisten-Runde 2 (21.07.2026): 60s → 150s Testbudget, Poll 20s → 60s.
+  // Der Generator rechnet je requestIdleCallback-Zeitscheibe
+  // (VariantenPanel.tsx `planeZeitscheibe`) — unter Voll-Suite-Last
+  // (geteilte Container-CPU, parallele Worker) sinkt der Durchsatz ehrlich
+  // (Voll-Lauf 0811: 285/300 nach 20s; solo läuft derselbe Zähler in ~8s
+  // durch). Nur Zeitbudget angehoben; ZIEL und die Determinismus-Assertion
+  // (Score Lauf 2 == Lauf 1) bleiben unverändert hart.
+  test.setTimeout(150_000);
   await projektMitKontext(page);
 
   await page.click('[data-testid="varianten-oeffnen"]');
@@ -145,7 +152,7 @@ test('Varianten-Panel: gleicher Seed + gleiche Gewichte ⇒ gleiche Top-Variante
           const text = await page.locator('[data-testid="varianten-panel-zaehler"]').innerText();
           return Number(text.split(' ')[0]);
         },
-        { timeout: 20_000 },
+        { timeout: 60_000 },
       )
       .toBeGreaterThanOrEqual(ZIEL);
     await page.click('[data-testid="varianten-panel-stopp"]');

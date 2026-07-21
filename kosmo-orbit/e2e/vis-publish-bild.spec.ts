@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { visManuellStorageState } from './helpers/manuell-seed';
 
 /**
  * v0.8.10 / P-B1 (`docs/V0810-SPEZ.md` §2 E2, Matrix C-4/C-5) — Bootstrap auf
@@ -288,16 +289,24 @@ test('Undo nach Aufs Blatt leert den Slot UND räumt den Asset (GC) — window._
   expect(nachLaenge).toBeLessThan(zwischenLaenge);
 });
 
-test('C-11-Matrix-Fund: auch der Manuell/Einfach-Weg («Aufs Blatt» am Render-Job) trägt das Pflicht-Label', async ({ page }) => {
+// Rotlisten-Runde 2 (21.07.2026), 549-Vorbestand (Stash-Beweis ROADMAP 554):
+// der frühere Zugang über den Insel-Rückweg (`island-werkzeug-manuell` der
+// AUSTAUSCH-Insel) existiert seit dem v0.8.10-E3-Nachtrag NICHT mehr
+// (VisWorkspace.tsx: «der frühere fünfte Fall 'manuell' … ist gefallen») —
+// seit dem Seed-Flip (ROADMAP 549) lief dieser Test darum ohne jeden Weg in
+// den Manuell-Modus. Eigener Manuell-Seed-Kopf NUR für diesen Test
+// (Hausmuster `e2e/vis-oberflaeche.spec.ts:34` / `helpers/manuell-seed.ts`
+// `visManuellStorageState()`), alle Assertions unverändert.
+test.describe('C-11-Matrix-Fund (alter Manuell/Einfach-Codepfad, eigener Seed)', () => {
+  test.use({ storageState: visManuellStorageState() });
+
+  test('C-11-Matrix-Fund: auch der Manuell/Einfach-Weg («Aufs Blatt» am Render-Job) trägt das Pflicht-Label', async ({ page }) => {
   // v0.8.8-Matrix-Fund: VisWorkspace.tsx trug eine EIGENE Platzierungs-Kopie
   // ohne E7-Deckel/Label — seit dem Fable-Fix läuft der Weg über denselben
   // gehärteten Kern (`platziereBildAufsBlatt`). Ablauf-Muster 1:1 aus
   // `module.spec.ts` (~:600ff, inkl. der dort begründeten Jobstore-
   // Akkumulations-Robustheit und des grosszügigen Fake-Worker-Timeouts).
   await oeffneVisMitBridge(page);
-  // Absichtlich in Manuell wechseln (s. Datei-Kopf) — dieser Test beweist
-  // GENAU den alten Codepfad, kein Bootstrap-Nebeneffekt.
-  await oeffneVisWerkzeug(page, 'austausch', 'manuell');
   await expect(page.locator('[data-testid="tab-graph"]')).toBeVisible();
   await page.click('[data-testid="tab-einfach"]');
   await page.click('[data-testid="send-render"]');
@@ -315,6 +324,7 @@ test('C-11-Matrix-Fund: auch der Manuell/Einfach-Weg («Aufs Blatt» am Render-J
   // Kern-Beweis: der ältere Manuell-Weg erzwingt jetzt DASSELBE Label wie
   // der Node-Graph-Weg (Sanktion 8 gilt pfadunabhängig).
   expect(bild!.title).toBe(LABEL_FAKE_RENDER);
+  });
 });
 
 test('Deckel: Base64 über ~1 MB wirft eine ehrliche Fehlerzone STATT eines Doc-Schreibens', async ({ page }) => {
