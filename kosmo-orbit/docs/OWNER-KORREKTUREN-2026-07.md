@@ -76,7 +76,13 @@ Realisierung) verschwinden aus dem Kopf; die Phase lebt in den
 Projekt-Einstellungen, mit einem «Transformieren»-Schritt (Wettbewerb →
 Vorprojekt). Hängt eng mit K29 (phasengebundene Werkzeuge) zusammen.
 **Bereich:** shell/Kopfzeile + Projekt-Einstellungen + Kernel
-(Phase ist bereits Doc-Setting). **Aufwand:** M. **Status:** offen.
+(Phase ist bereits Doc-Setting). **Aufwand:** M. **Status:** ERLEDIGT
+(ROADMAP 595 — PhasenLeiste raus aus Kopf UND Zentrale-Eck, neue Sektion
+«Projekt-Phase (SIA 112)» in den Einstellungen mit «Transformieren»-
+Bestätigungsweg (Wettbewerb→Vorprojekt wie im Owner-Wortlaut, Undo-fähig
+über denselben siaPhaseSetzen-Command); Bestands-Specs migriert mit
+Grep-Rechenschaft; Zusatzfund: KBestaetigung portalt jetzt nach body —
+Dialoge über Panels wieder klickbar).
 
 ### K6 · S.2 — Speichern/Öffnen projektbezogen, Auto-Save als Default
 > «speicher öffnen ist ebenfalls nur nötig wenn projekt geöffnet ist,

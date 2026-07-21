@@ -651,7 +651,9 @@
 }
 
 /* ── PhasenLeiste (v0.7.2 W2-C, Paket 03 — Spec §4 «Phasen & Ordnung») ───
-   Segmented-Pill der 5 SIA-112-Gruppen im Header. Rund-Regel (Spec §0.1):
+   Segmented-Pill der 5 SIA-112-Gruppen — seit E-K5 (`docs/V0812-SPEZ.md`)
+   in den Projekt-Einstellungen statt im Header, s. `PhasenLeiste.tsx`-
+   Kopfkommentar. Rund-Regel (Spec §0.1):
    Aussenkontur UND jedes Segment sind Pills (`--k-radius-pill`). Aktives
    Segment: Chip-Hintergrund `var(--k-raised)` + ein kleiner Signal-Punkt
    VOR dem Label (theme-invariante Markenfarbe `--k-signal`, Spec §1). */
@@ -710,9 +712,10 @@
    «1»…«5» (volles Label bleibt als `title`, Spec §4/§12 wörtlich). NUR
    visuell (`display:none`) — der Textknoten bleibt im DOM, `textContent`
    (worauf `toContainText`/`toHaveText` bauen) ignoriert CSS-Sichtbarkeit,
-   der Bestands-Vertrag `phasen-leiste.spec.ts` bleibt darum unverändert
-   grün, auch beim Standard-E2E-Viewport (1400px, `playwright.config.ts`),
-   der unter dieser Schwelle liegt. */
+   der Bestands-Vertrag `phasen-leiste.spec.ts` (seit E-K5 in den
+   Projekt-Einstellungen geöffnet, Assertions selbst unverändert) bleibt
+   darum grün, auch beim Standard-E2E-Viewport (1400px,
+   `playwright.config.ts`), der unter dieser Schwelle liegt. */
 @media (max-width: 1500px) {
   .orbit065-phasen-rest {
     display: none;

@@ -60,7 +60,6 @@ import { useUiZustand } from './state/ui-zustand';
 import { CommandPalette } from './shell/CommandPalette';
 import { DockTour } from './shell/dock/DockTour';
 import { wendeErststartPresetFallsNoetigAn } from './state/dock-preset-anwendung';
-import { PhasenLeiste } from './shell/PhasenLeiste';
 import { registerActions } from './shell/palette';
 import { Kurzbefehle } from './shell/Kurzbefehle';
 import {
@@ -801,10 +800,15 @@ export function App() {
           {modules.find((m) => m.screen === screen)?.name ?? 'KosmoDesign'}
         </Badge>
         <Hairline vertical />
-        {/* V0.7.2 W2-C (Paket 03, Spec §4): App-weiter SIA-112-Schnellzugriff —
-            ergänzt `sia-phase-select` (fein, nur in KosmoDesign), schreibt
-            über dieselbe `design.siaPhaseSetzen`-Quelle. */}
-        <PhasenLeiste />
+        {/* E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4): die App-weite
+            SIA-112-Schnellzugriffs-Leiste (`PhasenLeiste`, vormals hier im
+            Header) ist als Projekt-Eigenschaft in die Projekt-Einstellungen
+            umgezogen (`shell/Einstellungen.tsx`, Sektion
+            `einstellungen-phase`) — dieselbe Komponente, dieselbe
+            `design.siaPhaseSetzen`-Quelle, kein Funktionsverlust. `sia-phase-
+            select` (fein, nur in KosmoDesign) bleibt unverändert an Ort und
+            Stelle. Migration der Bestands-Specs: `e2e/phasen-leiste.spec.ts`
+            (Grep-Rechenschaft im Abschlussbericht des Bauagenten). */}
         <div className="app-fuell" />
         {/* Fokus-Systematik (docs/OBERFLAECHE-FOKUS-SYSTEMATIK.md): die Stufe
             sitzt am umschliessenden Element — opacity wirkt so auf die ganze
@@ -1183,16 +1187,19 @@ export function App() {
                 rechts) — sie hält ausschliesslich Bestands-Testids am Leben,
                 die viele NICHT-PA2-Specs direkt nach dem Laden der Zentrale
                 anklicken (`sync-toggle`, `kosmo-toggle`, `starter-guide-
-                start`, `einstellungen-oeffnen`, `phasen-leiste-*`) —
-                dieselbe `kopfWerkzeuge()`-Funktion wie der Header, s.
-                Kommentar dort. K6 (docs/OWNER-KORREKTUREN-2026-07.md,
-                Beleg s. `kopfWerkzeuge()`): `save-project`/`open-project`
-                gehören NICHT mehr zu dieser Liste — die Gruppe rendert seit
-                K6 nur noch für `screen !== 'home'`, hier auf der Zentrale
-                erscheint sie nie (ProjektListe darunter ist bereits die
-                Projektverwaltung). */}
+                start`, `einstellungen-oeffnen`) — dieselbe `kopfWerkzeuge()`-
+                Funktion wie der Header, s. Kommentar dort. K6 (docs/OWNER-
+                KORREKTUREN-2026-07.md, Beleg s. `kopfWerkzeuge()`):
+                `save-project`/`open-project` gehören NICHT mehr zu dieser
+                Liste — die Gruppe rendert seit K6 nur noch für `screen !==
+                'home'`, hier auf der Zentrale erscheint sie nie (ProjektListe
+                darunter ist bereits die Projektverwaltung). E-K5 (`docs/
+                V0812-SPEZ.md`, Sanktion 4): `phasen-leiste-*` stand hier
+                früher zusätzlich in der Liste — die `PhasenLeiste` ist als
+                Projekt-Eigenschaft in die Projekt-Einstellungen umgezogen
+                (`shell/Einstellungen.tsx`, Sektion `einstellungen-phase`),
+                dieser Eck-Cluster zeigt sie darum nicht mehr. */}
             <div className="app-heim-werkzeuge" data-testid="app-heim-werkzeuge">
-              <PhasenLeiste />
               {kopfWerkzeuge()}
             </div>
             <div

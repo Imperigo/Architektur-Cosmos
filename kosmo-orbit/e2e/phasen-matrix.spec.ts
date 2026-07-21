@@ -143,9 +143,20 @@ test.describe('Phasen-Matrix — ZEICHNEN-Insel-Leiste (harte Ausblendung, kein 
 test.describe('Phasen-Matrix — Boden-Dock (8 Stations-Ids, Konzept kennt keine Stations-Zeilen)', () => {
   // Bewusst OHNE storageState-Override: der globale Manuell-Seed
   // (`playwright.config.ts`, `kosmoUiV1SeedMitManuell()`) ist hier nötig,
-  // WEIL `BodenDock`/`PhasenLeiste` im Island-Modus der design-Station gar
-  // nicht existieren (`App.tsx`s `bodenDockAusgeblendet`-Guard, s.
-  // Kopfkommentar) — exakt derselbe Default wie `boden-dock.spec.ts`.
+  // WEIL `BodenDock` im Island-Modus der design-Station gar nicht existiert
+  // (`App.tsx`s `bodenDockAusgeblendet`-Guard, s. Kopfkommentar) — exakt
+  // derselbe Default wie `boden-dock.spec.ts`.
+  //
+  // Migrations-Fund E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, Bauagenten-
+  // Rechenschaft): die `PhasenLeiste` existierte hier bisher im
+  // `app-header` (dieser Suite-Modus blendet ihn NICHT aus, anders als der
+  // Island-Modus oben) — sie klickte `phasen-leiste-4`/`-1` also wörtlich
+  // im Kopf. Seit E-K5 rendert `PhasenLeiste` NIRGENDS mehr im Header; der
+  // einzige verbleibende Schreibweg hier ist die eingebettete `PhasenLeiste`
+  // in den Projekt-Einstellungen (`shell/Einstellungen.tsx`, Sektion
+  // `einstellungen-phase`) — dieselbe Komponente/Testids, nur hinter
+  // `einstellungen-oeffnen` erreichbar. Kein Konsum-Verhalten geändert (das
+  // BodenDock bleibt ein No-op-Konsument), nur der Phasenwechsel-Weg.
   test('Boden-Dock bleibt bei jedem Phasenwechsel bei genau 8 Knöpfen (No-op-Konsum, wörtlich verdrahtet)', async ({
     page,
   }) => {
@@ -153,10 +164,16 @@ test.describe('Phasen-Matrix — Boden-Dock (8 Stations-Ids, Konzept kennt keine
     await page.click('[data-testid="module-design"]');
     await expect(page.locator('[data-testid="boden-dock"] .boden-dock-knopf')).toHaveCount(8);
 
+    await page.click('[data-testid="einstellungen-oeffnen"]');
     await page.click('[data-testid="phasen-leiste-4"]');
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-testid="einstellungen-panel"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="boden-dock"] .boden-dock-knopf')).toHaveCount(8);
 
+    await page.click('[data-testid="einstellungen-oeffnen"]');
     await page.click('[data-testid="phasen-leiste-1"]');
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-testid="einstellungen-panel"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="boden-dock"] .boden-dock-knopf')).toHaveCount(8);
   });
 });

@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it } from 'vitest';
 import { bestaetigen, KBestaetigung, KMeldungen, melde } from '../src/meldungen';
 
@@ -89,14 +88,50 @@ describe('KMeldungen: testids/aria-live bleiben, Optik wandert in CSS-Klassen', 
 });
 
 describe('KBestaetigung: testids/role/Esc-Vertrag bleiben, Box nutzt Glass-Karten-Rezept', () => {
+  // E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, 21.07.2026, Bauagenten-Fund):
+  // `KBestaetigung` portalt seit E-K5 nach `document.body` (derselbe Weg wie
+  // `Einstellungen.tsx` — sonst bleibt der Dialog im `#root`-Stacking-
+  // Context gefangen und ein aufrufendes Panel mit höherem `z-index` legt
+  // sich klickbar darüber, s. `meldungen.tsx`s Kopfkommentar an
+  // `KBestaetigung`). `renderToStaticMarkup` (reines SSR, kein echtes DOM)
+  // rendert `createPortal`-Inhalte NICHT — hier darum dasselbe
+  // `createRoot`+`document.body`-Muster wie der `KMeldungen`-Test oben.
+  let container: HTMLDivElement | null = null;
+  let root: Root | null = null;
+
+  afterEach(() => {
+    if (root) {
+      act(() => root!.unmount());
+      root = null;
+    }
+    if (container) {
+      container.remove();
+      container = null;
+    }
+  });
+
   it('rendert role=dialog + bestaetigung-ja/-nein, Box trägt k-dialog-box statt k-karte', () => {
-    void bestaetigen({ titel: 'Wirklich löschen?', bestaetigen: 'Löschen', gefaehrlich: true });
-    const html = renderToStaticMarkup(<KBestaetigung />);
-    expect(html).toContain('data-testid="bestaetigung"');
-    expect(html).toContain('role="dialog"');
-    expect(html).toContain('data-testid="bestaetigung-ja"');
-    expect(html).toContain('data-testid="bestaetigung-nein"');
-    expect(html).toContain('k-dialog-box');
-    expect(html).toContain('k-bestaetigung-box');
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => {
+      void bestaetigen({ titel: 'Wirklich löschen?', bestaetigen: 'Löschen', gefaehrlich: true });
+    });
+    act(() => {
+      root!.render(<KBestaetigung />);
+    });
+
+    // Portal nach `document.body` — die Bestätigung lebt darum NICHT im
+    // `container`, sondern direkt an `document.body`.
+    const dialog = document.body.querySelector('[data-testid="bestaetigung"]') as HTMLElement;
+    expect(dialog).not.toBeNull();
+    expect(dialog.getAttribute('role')).toBe('dialog');
+    expect(dialog.querySelector('[data-testid="bestaetigung-ja"]')).not.toBeNull();
+    expect(dialog.querySelector('[data-testid="bestaetigung-nein"]')).not.toBeNull();
+    expect(dialog.className).toContain('k-dialog-scrim');
+    const box = dialog.querySelector('.k-dialog-box') as HTMLElement;
+    expect(box).not.toBeNull();
+    expect(box.className).toContain('k-bestaetigung-box');
   });
 });

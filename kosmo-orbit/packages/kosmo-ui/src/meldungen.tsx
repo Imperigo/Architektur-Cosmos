@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import { KButton } from './components';
 
 /**
@@ -139,7 +140,30 @@ function dialogAbonniere(cb: () => void): () => void {
   return () => dialogHoerer.delete(cb);
 }
 
-/** Host — einmal in der Shell mounten. Esc = abbrechen. */
+/**
+ * Host — einmal in der Shell mounten. Esc = abbrechen.
+ *
+ * E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, 21.07.2026, Bauagenten-Fund): der
+ * neue Phasen-«Transformieren»-Weg ruft `bestaetigen()` erstmals AUS einem
+ * bereits offenen Panel heraus (Projekt-Einstellungen). Ohne `createPortal`
+ * rendert dieser Host irgendwo im normalen React-Baum (unter `App.tsx`s
+ * `.app-wurzel`) — `aura.css`s `#root { position: relative; z-index: 1; }`
+ * (dort für den Papier-Korn-Hintergrund `body::before` nötig) spannt damit
+ * einen eigenen Stacking-Context auf: JEDES `position:fixed`-Kind von
+ * `#root`, egal wie hoch sein EIGENER `z-index`, bleibt auf Rang «1»
+ * gegenüber Body-Geschwistern gefangen. `Einstellungen.tsx`s Scrim portalt
+ * dagegen direkt nach `document.body` (`z-index:250`) — gewann darum immer,
+ * `bestaetigung-nein`/`-ja` waren unklickbar («subtree intercepts pointer
+ * events»). Ein höherer `zIndex` allein (erster, unzureichender Versuch:
+ * 210→900) behebt das NICHT, weil er nur INNERHALB des `#root`-Stacking-
+ * Context zählt. Richtiger Fix: derselbe `createPortal(..., document.body)`-
+ * Weg wie `Einstellungen.tsx` — dann vergleicht der Browser die z-index-Werte
+ * wirklich auf oberster Ebene, `900` schlägt jeden heute existierenden
+ * INTERAKTIVEN Overlay (`kosmo-panel.css`s `.kp-export-scrim`/
+ * `.kp-vollbild-scrim` 500 sind die nächsthöchsten; die beiden Overlays über
+ * 900 — `kosmo-feedback.css` 2000, `cursor-ebene.css` ~2.1 Mrd. — sind
+ * `pointer-events:none` und blockieren ohnehin keinen Klick).
+ */
 export function KBestaetigung() {
   const offen = useSyncExternalStore(dialogAbonniere, () => anfrage, () => anfrage);
   if (!offen) return null;
@@ -148,7 +172,7 @@ export function KBestaetigung() {
     anfrage = null;
     dialogBenachrichtige();
   };
-  return (
+  return createPortal(
     <div
       role="dialog"
       aria-modal
@@ -156,7 +180,7 @@ export function KBestaetigung() {
       data-testid="bestaetigung"
       className="k-dialog-scrim k-bestaetigung-scrim"
       onKeyDown={(e) => e.key === 'Escape' && schliesse(false)}
-      style={{ zIndex: 210 }}
+      style={{ zIndex: 900 }}
       onClick={() => schliesse(false)}
     >
       <div
@@ -180,6 +204,7 @@ export function KBestaetigung() {
           </KButton>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

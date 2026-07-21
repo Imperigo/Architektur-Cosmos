@@ -5,12 +5,21 @@ import './orbit-065.css';
 
 /**
  * V0.7.2 W2-C (Paket 03, `docs/V072-VISUELLES-UPDATE-SPEZ.md` §4 «Phasen &
- * Ordnung») — Segmented-Pill im Header: die 5 SIA-112-Gruppen (nicht die 8
- * feineren `SiaPhase`-Teilphasen — mehrere Teilphasen teilen eine Gruppe,
- * s. `sia112Gruppe()`). Ergänzt `sia-phase-select` (fein, in KosmoDesign)
- * um einen groben, App-weiten Schnellzugriff — beide bleiben unverändert
- * funktionsfähig nebeneinander (Harter Vertrag, Spec §11): dieselbe
- * `design.siaPhaseSetzen`-Quelle, kein Zweit-Zustand.
+ * Ordnung») — Segmented-Pill der 5 SIA-112-Gruppen (nicht die 8 feineren
+ * `SiaPhase`-Teilphasen — mehrere Teilphasen teilen eine Gruppe, s.
+ * `sia112Gruppe()`). Ergänzt `sia-phase-select` (fein, in KosmoDesign) um
+ * einen groben Schnellzugriff — beide bleiben unverändert funktionsfähig
+ * nebeneinander (Harter Vertrag, Spec §11): dieselbe `design.siaPhaseSetzen`-
+ * Quelle, kein Zweit-Zustand.
+ *
+ * E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, 21.07.2026): die Phase ist eine
+ * PROJEKT-Eigenschaft, kein App-weiter Kopf-Schnellzugriff mehr — diese
+ * Komponente rendert seit E-K5 NICHT mehr im `App.tsx`-Header/`.app-heim-
+ * werkzeuge`, sondern eingebettet in den Projekt-Einstellungen
+ * (`shell/Einstellungen.tsx`, Sektion `einstellungen-phase`, dort auch der
+ * neue «Transformieren»-Bestätigungsweg). Komponente/Testids/Verhalten
+ * bleiben wörtlich gleich (kein Funktionsverlust) — nur der Mount-Ort
+ * wechselt; migrierte Bestands-Specs: `e2e/phasen-leiste.spec.ts`.
  *
  * Klick setzt IMMER die REPRÄSENTATIVE Phase der Gruppe (Spec §4) — auch
  * wenn die Gruppe wegen einer feineren Teilphase (z. B. `bewilligung` in

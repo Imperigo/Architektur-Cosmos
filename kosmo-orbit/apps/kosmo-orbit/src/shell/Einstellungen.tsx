@@ -1,9 +1,22 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Badge, Hairline, KButton, KIcon, KKeyValue, moduleHue, type ModuleId, type ThemeName } from '@kosmo/ui';
+import {
+  Badge,
+  bestaetigen,
+  Hairline,
+  KButton,
+  KIcon,
+  KKeyValue,
+  moduleHue,
+  type ModuleId,
+  type ThemeName,
+} from '@kosmo/ui';
+import { siaPhaseLabel, type SiaPhase } from '@kosmo/kernel';
 import './orbit-065.css';
 import './einstellungen.css';
 import { AKZENTE } from './akzente';
+import { PhasenLeiste } from './PhasenLeiste';
+import { useProject } from '../state/project-store';
 import { NEUIGKEITEN, neuigkeitenFuerStation } from './neuigkeiten';
 import { adaptionAktiv, adaptionZuruecksetzen, nutzungsProfil, setAdaptionAktiv } from '../state/oberflaeche-adaption-kern';
 import {
@@ -134,6 +147,28 @@ function setStartMaximiertEingestellt(an: boolean): void {
   localStorage.setItem(START_MAXIMIERT_KEY, an ? '1' : '0');
 }
 
+/**
+ * E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4): natürliche Reihenfolge der 8
+ * feinen `SiaPhase`-Teilphasen (wörtlich wie `model/doc.ts`s `SiaPhase`-
+ * Deklaration und die bestehende `sia-phase-select`-Optionsliste in
+ * `DesignWorkspace.tsx` — dort TABU/Cluster B, darum hier eine eigene,
+ * literale Kopie statt eines gemeinsamen Moduls, kein Präzedenzbruch: die
+ * beiden bestehenden Stellen teilen sich diese Liste auch nicht). Treibt
+ * NUR den «Transformieren»-Vorschlag unten (die nächste Teilphase in der
+ * natürlichen Reihenfolge) — die Segmente selbst (`PhasenLeiste`) bleiben
+ * die 5 SIA-112-Gruppen.
+ */
+const SIA_PHASE_REIHENFOLGE: readonly SiaPhase[] = [
+  'strategie',
+  'wettbewerb',
+  'vorprojekt',
+  'bauprojekt',
+  'bewilligung',
+  'ausschreibung',
+  'ausfuehrung',
+  'abnahme',
+];
+
 export function Einstellungen({
   theme,
   setTheme,
@@ -157,6 +192,36 @@ export function Einstellungen({
   const [nutzungsSnapshot] = useState(() => nutzungsProfil());
   const stationsListe = stationsNutzung(nutzungsSnapshot);
   const meistgenutzt = meistgenutzteElemente(nutzungsSnapshot);
+
+  // E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4): Muster wie `PhasenLeiste.tsx`
+  // selbst — `revision` als Reactivity-Trigger, `doc`/`runCommand` über
+  // `getState()` gelesen (mutable Store). Treibt NUR den «Transformieren»-
+  // Knopf (Zielphase + Bestätigungstext); die Anzeige/der direkte Wechsel
+  // laufen komplett über die eingebettete `<PhasenLeiste />` unten.
+  const phaseRevision = useProject((s) => s.revision);
+  const phaseRunCommand = useProject((s) => s.runCommand);
+  const aktuelleSiaPhase = useProject.getState().doc.settings.siaPhase;
+  void phaseRevision;
+  const siaPhaseIndex = SIA_PHASE_REIHENFOLGE.indexOf(aktuelleSiaPhase);
+  const naechsteSiaPhase =
+    siaPhaseIndex >= 0 && siaPhaseIndex < SIA_PHASE_REIHENFOLGE.length - 1
+      ? SIA_PHASE_REIHENFOLGE[siaPhaseIndex + 1]
+      : undefined;
+
+  /** «Transformieren»-Weg (Spec-Beispiel Wettbewerb→Vorprojekt): EIN
+   *  bestätigter Schritt zur nächsten Teilphase der natürlichen Reihenfolge
+   *  — über den bestehenden `bestaetigen()`-Weg (kein neuer Modal-
+   *  Mechanismus), schreibt danach über denselben `design.siaPhaseSetzen`-
+   *  Command wie der direkte Segment-Klick. Undo-fähig wie jeder Command. */
+  async function aufPhaseTransformieren(): Promise<void> {
+    if (!naechsteSiaPhase) return;
+    const ok = await bestaetigen({
+      titel: `Phase transformieren: ${siaPhaseLabel(aktuelleSiaPhase)} → ${siaPhaseLabel(naechsteSiaPhase)}?`,
+      text: 'Der sichtbare Werkzeugbestand richtet sich nach der neuen Phase (Phasen-Matrix). Rückgängig (Strg+Z) stellt die alte Phase wieder her.',
+      bestaetigen: 'Transformieren',
+    });
+    if (ok) phaseRunCommand('design.siaPhaseSetzen', { siaPhase: naechsteSiaPhase });
+  }
 
   // v0.7.8 Welle 3 (P6): Dock-Modus (Konzept A «Orbit-Zonen» / Konzept B
   // «Raster-Kachel») — derselbe Store, den `DockFlaeche.tsx` liest (`modus`),
@@ -332,6 +397,44 @@ export function Einstellungen({
               <Hairline />
             </section>
           )}
+
+          {/* E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, 21.07.2026): die
+              SIA-112-Phase war bisher ein App-weiter Kopf-Schnellzugriff
+              (`PhasenLeiste` im Header/`.app-heim-werkzeuge`) — jetzt eine
+              Projekt-Eigenschaft, hier verortet. `<PhasenLeiste />` ist exakt
+              dieselbe Komponente wie zuvor (Anzeige + direkter Wechsel, kein
+              Funktionsverlust); `sia-phase-select` (fein, KosmoDesign) bleibt
+              unverändert daneben bestehen. NEU: der «Transformieren»-Weg —
+              EIN bestätigter Schritt zur nächsten Teilphase (z. B. Wettbewerb
+              → Vorprojekt), über den bestehenden `bestaetigen()`-Dialog
+              (kein neuer Modal-Mechanismus), schreibt danach über denselben
+              `design.siaPhaseSetzen`-Command. */}
+          <section data-testid="einstellungen-phase" className="orbit065-einstellungen-sektion">
+            <div className="orbit065-einstellungen-sektionstitel">Projekt-Phase (SIA 112)</div>
+            <div className="es-feld-hinweis">
+              Aktuelle SIA-Teilphase: <strong>{siaPhaseLabel(aktuelleSiaPhase)}</strong>. Segment-Klick wechselt
+              sofort (bestehender <code>design.siaPhaseSetzen</code>-Weg) — der Werkzeugbestand richtet sich
+              danach nach der Phasen-Matrix.
+            </div>
+            <PhasenLeiste />
+            <div className="es-feld-block">
+              <KButton
+                size="sm"
+                tone="quiet"
+                data-testid="einstellungen-phase-transformieren"
+                disabled={!naechsteSiaPhase}
+                title={
+                  naechsteSiaPhase
+                    ? `Transformiert die Projekt-Phase bestätigt zu «${siaPhaseLabel(naechsteSiaPhase)}»`
+                    : 'Letzte Teilphase (Gebäudeabnahme) erreicht — keine weitere Transformation.'
+                }
+                onClick={() => void aufPhaseTransformieren()}
+              >
+                {naechsteSiaPhase ? `Transformieren zu «${siaPhaseLabel(naechsteSiaPhase)}»` : 'Transformieren (letzte Phase erreicht)'}
+              </KButton>
+            </div>
+          </section>
+          <Hairline />
 
           <section data-testid="einstellungen-darstellung" className="orbit065-einstellungen-sektion">
             <div className="orbit065-einstellungen-sektionstitel">Darstellung</div>

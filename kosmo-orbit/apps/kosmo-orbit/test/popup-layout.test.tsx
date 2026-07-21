@@ -1,8 +1,19 @@
-import { describe, expect, it } from 'vitest';
+// @vitest-environment jsdom
+// E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, 21.07.2026, Bauagenten-Fund): der
+// KBestaetigung-Test brauchte früher KEIN DOM (reines `renderToStaticMarkup`,
+// darum lief diese Datei bisher im schnelleren Node-Default). Seit
+// `KBestaetigung` nach `document.body` portalt (s. u.), braucht dieser eine
+// Test ein echtes `document` — Muster wie `test/stationen-orb.test.tsx` u. a.
+import { afterEach, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { act } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
 import { bestaetigen, KBestaetigung } from '@kosmo/ui';
+
+// Gleiches Muster wie `packages/kosmo-ui/test/p2-glass-optik.test.tsx`: ohne
+// dieses Flag warnt React bei jedem `act()` in dieser jsdom-Umgebung.
+(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 /**
  * T4b (Popup-Überlauf): Regressionsschutz für die zentrale Dialog-Regel in
@@ -54,23 +65,60 @@ describe('Popup-Layout (T4b): zentrale k-dialog-Regeln statt Ad-hoc-Scroll', () 
     expect(auraCss).toMatch(/\.k-dialog\s*{[^}]*max-height/);
   });
 
-  it('KBestaetigung nutzt die zentralen Klassen und trägt keinen eigenen Scroll-/Fixed-Inline-Style mehr', () => {
-    void bestaetigen({ titel: 'Lange Diagnose', text: 'Ein-sehr-langes-unteilbares-Wort-'.repeat(10) });
-    const html = renderToStaticMarkup(<KBestaetigung />);
+  describe('KBestaetigung-Rendering (DOM statt SSR)', () => {
+    // E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4, 21.07.2026, Bauagenten-Fund):
+    // `KBestaetigung` portalt seit E-K5 nach `document.body` (sonst bleibt
+    // der Dialog im `#root`-Stacking-Context von `aura.css` gefangen und ein
+    // aufrufendes Panel mit höherem `z-index` legt sich klickbar darüber —
+    // s. `meldungen.tsx`s Kopfkommentar an `KBestaetigung`). `renderToStatic
+    // Markup` (reines SSR, kein echtes DOM) rendert `createPortal`-Inhalte
+    // NICHT — hier darum dasselbe `createRoot`+`document.body`-Muster wie
+    // `packages/kosmo-ui/test/p2-glass-optik.test.tsx`.
+    let container: HTMLDivElement | null = null;
+    let root: Root | null = null;
 
-    // Testids/role bleiben erhalten (E2E hängt daran)
-    expect(html).toContain('data-testid="bestaetigung"');
-    expect(html).toContain('role="dialog"');
-    expect(html).toContain('data-testid="bestaetigung-ja"');
-    expect(html).toContain('data-testid="bestaetigung-nein"');
+    afterEach(() => {
+      if (root) {
+        act(() => root!.unmount());
+        root = null;
+      }
+      if (container) {
+        container.remove();
+        container = null;
+      }
+    });
 
-    // Zentrale Klassen statt lokaler position:fixed/overflow-Duplikate
-    expect(html).toContain('k-dialog-scrim');
-    expect(html).toMatch(/class="[^"]*\bk-dialog\b[^"]*"/);
+    it('KBestaetigung nutzt die zentralen Klassen und trägt keinen eigenen Scroll-/Fixed-Inline-Style mehr', () => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+      root = createRoot(container);
 
-    // Keine ad-hoc Scrollleiste am Popup selbst
-    expect(html).not.toMatch(/overflow(-y)?:\s*auto/i);
-    expect(html).not.toMatch(/overflow(-y)?:\s*scroll/i);
+      act(() => {
+        void bestaetigen({ titel: 'Lange Diagnose', text: 'Ein-sehr-langes-unteilbares-Wort-'.repeat(10) });
+      });
+      act(() => {
+        root!.render(<KBestaetigung />);
+      });
+
+      const dialog = document.body.querySelector('[data-testid="bestaetigung"]') as HTMLElement;
+      // Testids/role bleiben erhalten (E2E hängt daran)
+      expect(dialog).not.toBeNull();
+      expect(dialog.getAttribute('role')).toBe('dialog');
+      expect(dialog.querySelector('[data-testid="bestaetigung-ja"]')).not.toBeNull();
+      expect(dialog.querySelector('[data-testid="bestaetigung-nein"]')).not.toBeNull();
+
+      // Zentrale Klassen statt lokaler position:fixed/overflow-Duplikate
+      expect(dialog.classList.contains('k-dialog-scrim')).toBe(true);
+      const box = dialog.querySelector('.k-dialog-box');
+      expect(box).not.toBeNull();
+      expect(box!.classList.contains('k-dialog')).toBe(true);
+
+      // Keine ad-hoc Scrollleiste am Popup selbst
+      const inlineStyle = dialog.getAttribute('style') ?? '';
+      const boxInlineStyle = box?.getAttribute('style') ?? '';
+      expect(inlineStyle + boxInlineStyle).not.toMatch(/overflow(-y)?:\s*auto/i);
+      expect(inlineStyle + boxInlineStyle).not.toMatch(/overflow(-y)?:\s*scroll/i);
+    });
   });
 
   // v0.8.1 Welle 4 / Paket P5c (Zwei-Stufen-Rollout, `docs/V081-SPEZ.md`
