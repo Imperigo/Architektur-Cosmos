@@ -132,6 +132,62 @@ export function setSplatCloud(cloud: import('./splat-import').SplatCloud | null)
 CameraControls.install({ THREE });
 
 /**
+ * Ersatz für `THREE.GridHelper` (v0.8.12 E-F Härtungsrunde,
+ * `docs/BEFUND-RASTER-NAHBEREICH.md`): optisch identisch (gleiche Farben,
+ * Zentrallinie, Teilung, Transparenz/Opacity bleiben am Aufrufer unverändert
+ * wie bisher), aber jede Rasterzeile/-spalte besteht aus `divisions` kurzen
+ * Ein-Zellen-Segmenten statt einer einzigen durchgehenden `size`-Einheiten-
+ * Linie. Wurzelursache im Befund: `THREE.GridHelper` zeichnet jede Linie als
+ * EIN 200-Einheiten-`GL_LINES`-Primitiv; bei kameranaher, stark schräger
+ * Draufsicht verliert der Softwarerenderer dieser Umgebung (ANGLE/
+ * SwiftShader, kein `/dev/dri`, kein echter GPU-Treiber) den kameranahen
+ * Teil dieser langen Linien (Nahbereich blieb leer, nur ein fern-
+ * komprimiertes Band blieb sichtbar). Isoliert und pixelgenau bewiesen im
+ * Befund: dieselben Linien in 1-Einheit-Segmente zerlegt rendern Nah- UND
+ * Fernfeld vollständig. Golden-neutral (der 3D-Viewport ist nicht Teil der
+ * SVG-Golden-Kette). Hardware-Gegenprobe beim Owner-Rundgang steht noch aus
+ * (Befund-Vorbehalt: nur in dieser containerisierten SwiftShader-Umgebung
+ * verifiziert, nicht auf echter GPU-Hardware).
+ */
+function bauSegmentiertesRaster(
+  size: number,
+  divisions: number,
+  farbeZentrum: THREE.ColorRepresentation,
+  farbeRaster: THREE.ColorRepresentation,
+): THREE.LineSegments {
+  const zentrum = new THREE.Color(farbeZentrum);
+  const raster = new THREE.Color(farbeRaster);
+  const center = divisions / 2;
+  const step = size / divisions;
+  const halfSize = size / 2;
+  const vertices: number[] = [];
+  const colors: number[] = [];
+  const segment = (x0: number, z0: number, x1: number, z1: number, farbe: THREE.Color): void => {
+    vertices.push(x0, 0, z0, x1, 0, z1);
+    colors.push(farbe.r, farbe.g, farbe.b, farbe.r, farbe.g, farbe.b);
+  };
+  for (let i = 0; i <= divisions; i++) {
+    const k = -halfSize + i * step;
+    const farbe = i === center ? zentrum : raster;
+    // Zeile (festes z=k, x läuft von -halfSize bis +halfSize) UND Spalte
+    // (festes x=k, z läuft) — beide je in `divisions` kurze Ein-Zellen-
+    // Segmente zerlegt statt einer durchgehenden `size`-Einheiten-Linie
+    // (das GridHelper-Original zieht hier je EINE lange Linie).
+    for (let s = 0; s < divisions; s++) {
+      const a = -halfSize + s * step;
+      const b = a + step;
+      segment(a, k, b, k, farbe);
+      segment(k, a, k, b, farbe);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  const material = new THREE.LineBasicMaterial({ vertexColors: true, toneMapped: false });
+  return new THREE.LineSegments(geometry, material);
+}
+
+/**
  * Viewport3D — plain three.js (kein react-three-fiber): der Kern liefert
  * transferable Arrays, wir wickeln sie kopierfrei in BufferGeometry.
  * Kern-Koordinaten (x Ost, y Nord, z Höhe, mm) → three (y-up, Meter):
@@ -934,11 +990,11 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
-    const grid = new THREE.GridHelper(200, 200, 0xb9b3a4, 0xd8d3c6);
+    const grid = bauSegmentiertesRaster(200, 200, 0xb9b3a4, 0xd8d3c6);
     (grid.material as THREE.Material).transparent = true;
     (grid.material as THREE.Material).opacity = 0.5;
     scene.add(grid);
-    const gridMajor = new THREE.GridHelper(200, 20, 0xa39c8a, 0xa39c8a);
+    const gridMajor = bauSegmentiertesRaster(200, 20, 0xa39c8a, 0xa39c8a);
     (gridMajor.material as THREE.Material).transparent = true;
     (gridMajor.material as THREE.Material).opacity = 0.35;
     scene.add(gridMajor);

@@ -236,8 +236,23 @@ async function zweiWaendeMitKamera(page: Page): Promise<{
   // unten `lastRevision` auf den aktuellen Stand setzen, OHNE dass
   // `model.children` beide Meshes schon enthält, und der zweite Pick würde
   // dauerhaft ins Leere greifen (kein späteres Nachsyncen mehr).
+  // E-F-Härtung (v0.8.12, `docs/BEFUND-RASTER-NAHBEREICH.md`-Nachbar-Fall,
+  // frischer Repro VOR diesem Fix: 6/10 rot unter `--workers=4 --repeat-each=
+  // 10` auf :5180, IMMER an genau dieser Stelle, "Received: 0" nach den
+  // Default-5000ms) — Wurzelursache ist NICHT die Anwendungslogik (die
+  // beiden Wand-Meshes kommen nachweislich immer an), sondern der Playwright-
+  // Default-Poll-Timeout (5000ms, kein Override in `playwright.config.ts`)
+  // gegen den echten rAF-Tick, der `applyArtifacts()` synct (Kopfkommentar
+  // "erste Grube"): bei 4 parallelen Chromium-Instanzen auf demselben
+  // SwiftShader-Softwarerenderer (CPU-gebunden, kein GPU-Treiber) verzögert
+  // sich dieser Tick weit über 5s hinaus. Gemessen (Diagnose-Lauf, identische
+  // Last, 10 Wiederholungen): 1553-8490ms, klar über dem Default. 20s
+  // (bestehender Präzedenzfall `lehren`/ROADMAP 472, Chevron-Timeout
+  // 10s→20s "als begründetes letztes Mittel unter dokumentierter
+  // Mehrpaket-Fremdlast") deckt den gemessenen Ausreisser mit >2× Marge, ohne
+  // die Assertion selbst zu verändern (weiterhin exakt >= meshCountVorher+2).
   await expect
-    .poll(() => page.evaluate(() => window.__kosmoViewport!.entityMeshCount()))
+    .poll(() => page.evaluate(() => window.__kosmoViewport!.entityMeshCount()), { timeout: 20_000 })
     .toBeGreaterThanOrEqual(meshCountVorher + 2);
   const p1 = { x: 2000, y: 3000, z: 1300 }; // Mitte w1, halbe Wandhöhe (Standard-Geschosshöhe 2800mm)
   const p2 = { x: 8000, y: 3000, z: 1300 }; // Mitte w2

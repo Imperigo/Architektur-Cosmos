@@ -235,7 +235,10 @@ Fernfeld-Band rendert; Nahbereich-Ursache DIAGNOSTIZIERT
 (ROADMAP 581, docs/BEFUND-RASTER-NAHBEREICH.md): SwiftShader-
 Rasterisierung verliert kameranahe Abschnitte der 200-Einheiten-
 GridHelper-Linien; Fix = segmentiertes Raster (0.8.12), Vorbehalt:
-echte GPU-Hardware evtl. gar nicht betroffen).
+echte GPU-Hardware evtl. gar nicht betroffen). Raster-Fix GEBAUT
+(ROADMAP 594 — `bauSegmentiertesRaster()` ersetzt beide GridHelper,
+Nahbereich beweisbar sichtbar, Bild-Gegenüberstellung von Fable
+gesichtet; Hardware-Gegenprobe beim Owner-Rundgang steht aus).
 
 ### K21 · S.6 — ArchiCAD-Werkzeugtiefe für Fenster/Türen (Werkzeug-Einstellungsmenüs)
 > «grundsätzliche frage: wie weit bist du mit dem werkzeugnachbau von
