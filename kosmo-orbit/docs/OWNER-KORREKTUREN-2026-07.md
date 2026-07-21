@@ -208,7 +208,9 @@ Golden-Zug nötig). **Aufwand:** M. **Status:** offen.
 > «was ist mit den umrandungslinien passiert? und stimmen die texturen?»
 **Deutung:** im 2D-Plan wirken Wandkonturen/Schraffur-Texturen anders
 als erwartet — Diagnose gegen ältere Stände, Befund vorlegen.
-**Aufwand:** S (Diagnose). **Status:** offen.
+**Aufwand:** S (Diagnose). **Status:** BEFUND GELIEFERT (ROADMAP 570,
+`docs/BEFUNDE-KORREKTUREN-2026-07.md` Befund 2 — Erklärung LOD/
+Darstellungszustand je Phase; Statuszeile hier war nachhinkend).
 
 ### K20 · S.6 — 3D-Viewer-Hintergrund weiss
 > «auch bei der kosmo darstellung sollte der 3d viewer der hintergrund
