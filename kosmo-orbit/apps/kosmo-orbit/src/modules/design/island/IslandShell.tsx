@@ -11,6 +11,7 @@ import { useOverlaySchliessen } from '@kosmo/ui';
 import { bevorzugtReduzierteBewegung } from '../../../state/cursor-zustand';
 import { useProject } from '../../../state/project-store';
 import { touchUndoGesteAktiv } from '../../../state/touch-undo';
+import { werkzeugInPhaseSichtbar } from '../../../state/phasen-matrix';
 import { designInhaltsRegistry, type InhaltsRegistry } from './inhalte/registry';
 // Registrierung der Stufe-2/3-Inhalte als Import-Seiteneffekt (Fable-Naht
 // für PD3a ‖ PD3b — s. `inhalte/registry.ts`-Kopfkommentar).
@@ -324,6 +325,19 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
   const orientierung = inselKonfig.orientierung;
   const reduziert = useReduzierteBewegung();
 
+  /**
+   * V0812-SPEZ E-M (P-M) — Konsum von `PHASEN_MATRIX`/`werkzeugInPhaseSichtbar`:
+   * harte Ausblendung ausserhalb der aktiven `doc.settings.siaPhase` (kein
+   * Dimmen). `IslandShell` ist stationsübergreifend geteilte Infrastruktur
+   * (Kopfkommentar oben) — die 19er-Register-Domäne kennt heute nur die 8
+   * Stations-Ids + die 11 ZEICHNEN-Ids; `werkzeugInPhaseSichtbar()` ist für
+   * jede andere Id (ANSICHT/PROJEKT/AUSTAUSCH sowie vis-/publish-/prepare-
+   * Inseln) defensiv `true` — diese Zeile beschneidet darum NUR die
+   * ZEICHNEN-Insel-Leiste sichtbar, alle übrigen Inseln bleiben byte-gleich.
+   */
+  const siaPhase = useProject((s) => s.doc.settings.siaPhase);
+  const sichtbareWerkzeuge = werkzeuge.filter((w) => werkzeugInPhaseSichtbar(w.id, siaPhase));
+
   const [stufe, setStufe] = useState<IslandStufe>('pill');
   const [aktivesWerkzeugId, setAktivesWerkzeugId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -523,7 +537,7 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
         <div className={`isl-leiste${reduziert ? '' : ' isl-anim-islIn'}`} data-testid={`island-${island}-leiste`}>
           <div className="isl-leiste-kopf">{label}</div>
           <div className="isl-leiste-werkzeuge">
-            {werkzeuge.map((w) => (
+            {sichtbareWerkzeuge.map((w) => (
               <button
                 key={w.id}
                 type="button"

@@ -15,6 +15,7 @@ import {
   type ToolId,
   type UmordnungsKontingent,
 } from '../state/orbit-rang';
+import { werkzeugInPhaseSichtbar } from '../state/phasen-matrix';
 import { STATION_GLYPHE, WerkzeugGlyphe, type WerkzeugGlyphenArt } from './werkzeug-glyphen';
 import type { StationModulId } from './stations-werkzeuge';
 import { KosmoSymbol } from './KosmoSymbol';
@@ -285,7 +286,15 @@ export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: B
   // — derselbe Selektor-Zugriff wie `Viewport3D.tsx` (Kopfkommentar dort).
   const siaPhase = useProject((s) => s.doc.settings.siaPhase);
 
-  const reihenfolge = useBodenRang(ALLE_TOOL_IDS, siaPhase);
+  // V0812-SPEZ E-M (P-M) — Konsum von `PHASEN_MATRIX`: harte Ausblendung
+  // ausserhalb der aktiven Phase. Praktisch ein No-op HEUTE (das Konzept
+  // beschreibt keine Stations-Zeilen, `phasen-matrix.ts`s Kopfkommentar —
+  // alle 8 bleiben `sichtbar` in jeder Phase), aber die Verdrahtung ist
+  // wörtlich vorhanden, damit ein künftiger Stations-Eintrag im Register
+  // hier ohne zweiten Konsum-Ort greift.
+  const sichtbareToolIds = ALLE_TOOL_IDS.filter((id) => werkzeugInPhaseSichtbar(id, siaPhase));
+
+  const reihenfolge = useBodenRang(sichtbareToolIds, siaPhase);
 
   // FLIP bei Rang-Umsortierung (Spec §4, 240–500ms — `flipPlay`s Default
   // 320ms liegt im Fenster) — derselbe First/Invert/Play-Ablauf wie
