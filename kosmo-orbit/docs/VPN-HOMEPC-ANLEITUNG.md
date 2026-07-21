@@ -125,7 +125,12 @@ After=network-online.target tailscaled.service
 [Service]
 User=andrin-baumann
 WorkingDirectory=/home/andrin-baumann/Architektur-Cosmos/kosmo-orbit
-ExecStart=/usr/bin/python3 tools/homestation-bridge/kosmo_bridge/main.py --port 8600
+# Bind bewusst NUR auf die Tailnet-Adresse (nicht 0.0.0.0) — erreichbar
+# ausschliesslich durch den Tunnel. Nicht-lokaler Host verlangt per
+# Serie-I-Härtung einen Token (die App sendet ihn als X-Kosmo-Token,
+# Einstellung kosmo.bridge.token auf dem Mac).
+Environment=KOSMO_BRIDGE_TOKEN=HIER-EIN-LANGES-GEHEIMNIS-EINSETZEN
+ExecStart=/usr/bin/python3 tools/homestation-bridge/kosmo_bridge/main.py --host 100.88.48.73 --port 8600
 Restart=on-failure
 [Install]
 WantedBy=multi-user.target
@@ -154,11 +159,18 @@ systemctl status kosmo-bridge kosmo-sync --no-pager | head -20
 Ollama (falls installiert) bringt seinen eigenen systemd-Dienst bereits
 mit (`sudo systemctl enable --now ollama`).
 
+**Wichtig (Owner-Fund 21.07.):** «no such option: --port» kam vom ALTEN
+Codex-Starter-Binary — im frischen Clone existiert `--port` (main.py:1352).
+Immer aus `~/Architektur-Cosmos/kosmo-orbit` starten. Der Job-Store liegt
+ohne `--store` portabhängig automatisch richtig.
+
 **Mac-Seite (nach 0.8.12-Release):** Tailscale aus dem App Store /
 tailscale.com auf dem Mac, gleiches Konto → dann die
 **Remote-Edition-DMG** installieren (CI-Artefakt
 `kosmo-orbit-remote-macos-latest`); die Remote-Edition fragt beim
-Erststart nach dem Host → `100.88.48.73` eintragen, fertig.
+Erststart nach dem Host → `100.88.48.73` eintragen, und in den
+Einstellungen den Bridge-Token (derselbe Wert wie KOSMO_BRIDGE_TOKEN im
+systemd-Unit; Schlüssel `kosmo.bridge.token`).
 
 ## Prüfliste am Ende
 | Prüfung | Erwartung |
