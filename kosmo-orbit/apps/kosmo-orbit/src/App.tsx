@@ -32,6 +32,11 @@ import { KosmoPanel } from './shell/KosmoPanel';
 import { KosmoSymbol } from './shell/KosmoSymbol';
 import { KosmoTakeoverWaechter } from './shell/KosmoTakeoverWaechter';
 import { OrbitStart } from './shell/OrbitStart';
+// P-S1 (`docs/V0812-START-SPEZ.md` §E-S1): ehrlicher Boot-Bildschirm nach
+// dem App-Mount — Signal-Verdrahtung s. `projektgraphBereit`-State + die
+// `initVault()`-Zeile unten, sonst nur Import + Mount-Zeile (Dateikreis-
+// Vertrag des Pakets).
+import { StartSequenz } from './shell/StartSequenz';
 // v0.7.3 Bau-Agent S5: Boden-Dock (app-weit) — Import zwingend nötig, damit
 // die Ankerzeile `{/* v073: boden-dock */}` weiter unten kompiliert; die
 // einzige inhaltliche Änderung an App.tsx bleibt trotzdem die Ankerzeile
@@ -272,6 +277,12 @@ export function App() {
   // erfolgreichen `sichern()`-Transaktion («Auto-gesichert HH:MM»,
   // `state/project-vault.ts` `beiAutosave`).
   const [autosaveZeit, setAutosaveZeit] = useState<string | null>(null);
+  // P-S1 (`docs/V0812-START-SPEZ.md` §E-S1): PROJEKTGRAPH-Signal der neuen
+  // Startsequenz — macht das bereits unten laufende `initVault()`-Promise
+  // (Tresor-Restore, `state/project-vault.ts`, hier unangetastet) für
+  // `StartSequenz.tsx` beobachtbar. Reiner Signal-Durchreich-State, kein
+  // weiteres Verhalten dieser Komponente ändert sich.
+  const [projektgraphBereit, setProjektgraphBereit] = useState(false);
   const [onboarding, setOnboarding] = useState(localStorage.getItem('kosmo.onboarded') !== '1');
   // Serie K / A3 (K13): der Guide startet NICHT mehr automatisch — beim
   // allerersten Start fragt Kosmo in der Zentrale («Neu hier?»,
@@ -408,7 +419,9 @@ export function App() {
       setPeers(p);
       setWartend(w ?? 0);
     });
-    void initVault();
+    // P-S1: `.then()` macht das Promise für die Startsequenz beobachtbar —
+    // `initVault()` selbst (`state/project-vault.ts`) bleibt unverändert.
+    void initVault().then(() => setProjektgraphBereit(true));
     void hydriereJournal();
     // K6 (Beleg s. `autosaveZeit`-Deklaration oben): Autosave-Erzählung im
     // Kopf-Werkzeug — abonniert den Tresor-Hörer, nie eigenes Polling.
@@ -719,6 +732,11 @@ export function App() {
        CSS-Adresse für die feine Tool-Tönung des Kosmo-Orbs (`app.css`,
        `--k-orb-tool` je Station). Kein Verhalten, kein Routing berührt. */
     <div className="app-wurzel" data-station={screen}>
+      {/* P-S1 (`docs/V0812-START-SPEZ.md` §E-S1): NUR Mount-Zeile + die
+          `projektgraphBereit`-Signal-Übergabe oben — die Komponente selbst
+          entscheidet über den Webdriver-Bestandsschutz und rendert für
+          jeden bestehenden E2E-Lauf ohne `kosmo.start.erzwingen` NULL. */}
+      <StartSequenz projektgraphBereit={projektgraphBereit} />
       {/* PD4 (Island-UI-Strom Abschluss, Owner-Nachtrag 17.07.2026, wörtlich:
           «der oberste Balken soll es auch nicht mehr geben…»): der komplette
           Kopfbalken (Wortmarke, Stations-Badge, Bauphasen-Pille, Sync,

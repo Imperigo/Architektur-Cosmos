@@ -1,0 +1,216 @@
+/*
+ * Paket P-S1 («Startsequenz/Boot», `docs/V0812-START-SPEZ.md` §E-S1).
+ *
+ * Hartcodierte Hex-Werte statt Theme-`var()` (bewusst, wie schon `#splash`
+ * in `index.html`, Kopfkommentar dort): der Boot-Bildschirm ist EIN
+ * feststehender, dunkler Zustand nach der Package-Vorlage
+ * (`docs/owner-packages/2026-07-21-startsequenz/KosmoOrbit Startprinzipien.
+ * dc.html`) — unabhängig vom gewählten App-Thema (Papier/Kosmos). Motion-
+ * Token (Package «Kernentscheide»): Entrance `cubic-bezier(0.16,1,0.3,1)`
+ * (identisch mit `--k-ease-entrance`, aura.css — hier per `var()` mit
+ * hartem Fallback re-referenziert, `packages/kosmo-ui` bleibt unangetastet),
+ * Standard `cubic-bezier(0.4,0,0.2,1)` (`--k-ease-standard`), Dauern
+ * 0.16 / 0.24 / 0.5 s.
+ */
+
+.k-start-sequenz {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: #0b0d12;
+  color: #f4f6fa;
+  cursor: pointer;
+  animation: k-start-sequenz-eintritt 240ms var(--k-ease-entrance, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+.k-start-sequenz--austritt {
+  animation: k-start-sequenz-austritt 500ms var(--k-ease-standard, cubic-bezier(0.4, 0, 0.2, 1)) both;
+  cursor: default;
+  pointer-events: none;
+}
+
+@keyframes k-start-sequenz-eintritt {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes k-start-sequenz-austritt {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+}
+
+.k-start-sequenz-ueberspringen {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: #8b92a2;
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 160ms var(--k-ease-standard, cubic-bezier(0.4, 0, 0.2, 1)),
+    border-color 160ms var(--k-ease-standard, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.k-start-sequenz-ueberspringen:hover,
+.k-start-sequenz-ueberspringen:focus-visible {
+  color: #f4f6fa;
+  border-color: rgba(255, 255, 255, 0.32);
+}
+
+.k-start-sequenz-marke {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.k-start-sequenz-wort {
+  font-family: 'PT Sans Narrow', 'Arial Narrow', 'Helvetica Neue', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+/* Satellit — Ladeanzeige: ein Punkt umkreist die Ellipse, 2.6 s linear
+   (Package «Kernentscheide» §2: «ersetzt jeden Spinner»). */
+.k-start-sequenz-satellit {
+  offset-rotate: 0deg;
+  animation: k-start-sequenz-umlauf 2.6s linear infinite;
+}
+@keyframes k-start-sequenz-umlauf {
+  from {
+    offset-distance: 0%;
+  }
+  to {
+    offset-distance: 100%;
+  }
+}
+
+/* Knoten — dockt beim Fertigstellungssignal an (kurzer Glow, Package: «Glow
+   nur als Zustand, nie als Dekor»). */
+.k-start-sequenz-knoten {
+  transition: filter 240ms var(--k-ease-standard, cubic-bezier(0.4, 0, 0.2, 1));
+}
+.k-start-sequenz-knoten--angedockt {
+  filter: drop-shadow(0 0 5px rgba(87, 182, 194, 0.85));
+  animation: k-start-sequenz-andocken 240ms var(--k-ease-entrance, cubic-bezier(0.16, 1, 0.3, 1));
+}
+@keyframes k-start-sequenz-andocken {
+  from {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.k-start-sequenz-zeilen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 280px;
+}
+
+.k-start-sequenz-zeile {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6e7686;
+  text-align: center;
+  animation: k-start-sequenz-zeile-auf 320ms var(--k-ease-entrance, cubic-bezier(0.16, 1, 0.3, 1)) both;
+  animation-delay: var(--k-staffel, 0ms);
+}
+.k-start-sequenz-zeile--fertig {
+  color: #b6bdcb;
+}
+@keyframes k-start-sequenz-zeile-auf {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.k-start-sequenz-leitsatz-buehne {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: k-start-sequenz-zeile-auf 500ms var(--k-ease-entrance, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+.k-start-sequenz-leitsatz {
+  font-family: 'Lato', -apple-system, sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #dce0e8;
+}
+
+.k-start-sequenz-bereit {
+  font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: #57b6c2;
+}
+
+/* prefers-reduced-motion (Package «Skippbar & abschaltbar»): keine
+   Orbit-Animation, Zeilen erscheinen sofort, kein Eintritts-/Austritts-
+   Fade — der statische Zustand ist vollständig lesbar. */
+@media (prefers-reduced-motion: reduce) {
+  .k-start-sequenz {
+    animation: none;
+  }
+  .k-start-sequenz--austritt {
+    animation: none;
+    opacity: 0;
+  }
+  .k-start-sequenz-zeile,
+  .k-start-sequenz-leitsatz-buehne {
+    animation: none;
+  }
+  .k-start-sequenz-knoten--angedockt {
+    animation: none;
+  }
+}
+
+/* JS-Pfad (`reduziert`-State) — dieselbe Ruhe, zusätzlich robust gegen die
+   dokumentierte Playwright/Chromium-Lücke, in der `prefers-reduced-motion`
+   nicht zuverlässig auf `matchMedia`/CSS zurückgespiegelt wird (s. App.tsx
+   `gehZu()`-Kommentar). */
+.k-start-sequenz--ruhig,
+.k-start-sequenz--ruhig.k-start-sequenz--austritt {
+  animation: none;
+}
+.k-start-sequenz--ruhig .k-start-sequenz-zeile,
+.k-start-sequenz--ruhig .k-start-sequenz-leitsatz-buehne,
+.k-start-sequenz--ruhig .k-start-sequenz-knoten--angedockt {
+  animation: none;
+}
