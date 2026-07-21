@@ -568,26 +568,6 @@ export function App() {
    */
   const kopfWerkzeuge = () => (
     <>
-      <span className={`${fokusKlasse(fokusStufe('sync'))} app-inline-nowrap`}>
-        <button
-          onClick={() => setSyncOpen(!syncOpen)}
-          data-testid="sync-toggle"
-          className="k-druck app-druck-reset"
-        >
-          <Badge
-            hue={
-              syncStatus === 'live'
-                ? 'var(--k-success)'
-                : syncStatus === 'aus'
-                  ? 'var(--k-ink-faint)'
-                  : 'var(--k-warning)'
-            }
-          >
-            {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
-          </Badge>
-        </button>
-      </span>
-      <Hairline vertical />
       <span className={`${fokusKlasse(fokusStufe('speichern'))} app-inline-reihe`}>
         <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
           Speichern
@@ -608,36 +588,72 @@ export function App() {
         </button>
       </span>
       <Hairline vertical />
-      {/* V1.6 Block E: dezenter Rundgang-Knopf — jederzeit erreichbar, egal
-          ob der Erststart-Guide schon lief. `guideLauf`-Inkrement erzwingt
-          einen frischen Mount, damit «erneut» immer bei Schritt 0 beginnt. */}
-      <span className={`${fokusKlasse(fokusStufe('guide'))} app-inline`}>
-        <button
-          onClick={() => {
-            setGuideLauf((n) => n + 1);
-            setStarterGuideOffen(true);
-          }}
-          data-testid="starter-guide-start"
-          className="k-druck app-druck-reset"
-          title="Rundgang — Kosmo erklärt das Programm erneut"
-          aria-label="Rundgang erneut starten"
-        >
-          <span className="orbit065-kopfleiste-beschriftung">?</span>
-        </button>
-      </span>
-      <Hairline vertical />
-      {/* Serie K / A4 (Owner-Befund K14): zentrales Einstellungs-Panel —
-          dezent neben dem «?» (Rundgang), immer erreichbar. */}
-      <span className={`${fokusKlasse(fokusStufe('einstellungen'))} app-inline`}>
-        <button
-          onClick={() => oeffneEinstellungen()}
-          data-testid="einstellungen-oeffnen"
-          className="k-druck app-druck-reset"
-          title="Einstellungen"
-          aria-label="Einstellungen öffnen"
-        >
-          <span className="orbit065-kopfleiste-beschriftung">⚙</span>
-        </button>
+      {/* K7 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «einstellung
+          ist KosmoOrbit grundeinstellungen und fragenzeichen, die beiden
+          dürfen präsenter sein. sync aus ist daneben»): ? (Rundgang) und
+          ⚙ (Einstellungen) sind Grundfunktionen — statt 11px-Textzeichen
+          jetzt eigene 44px-Kreis-Knöpfe (`.app-kopf-grundknopf`, app.css —
+          Touch-Mindestfläche, Werkplan-Duktus: feine Linie, ruhige Fläche,
+          kein Neon). Der Sync-Status zieht aus der linken Ecke DIREKT NEBEN
+          die beiden (EINE Gruppe `.app-kopf-grundgruppe`, keine Hairline
+          innerhalb der Gruppe). Fokus-Stufe guide/einstellungen: selten →
+          sekundaer (state/fokus.ts, gleicher K7-Beleg) — nicht mehr auf 0.6
+          gedimmt. Alle Testids/Handler/aria-Label bleiben wörtlich gleich
+          (Dutzende Bestands-Specs klicken sie direkt); das rohe ⚙-Textzeichen
+          weicht `KIcon name="zahnrad"` (derselbe K16-Weg wie am
+          Insel-Einstellungs-Kreis — Tusche-Registry statt System-Kaskade). */}
+      <span className="app-kopf-grundgruppe" data-testid="kopf-grundfunktionen">
+        <span className={`${fokusKlasse(fokusStufe('sync'))} app-inline-nowrap`}>
+          <button
+            onClick={() => setSyncOpen(!syncOpen)}
+            data-testid="sync-toggle"
+            className="k-druck app-druck-reset"
+          >
+            <Badge
+              hue={
+                syncStatus === 'live'
+                  ? 'var(--k-success)'
+                  : syncStatus === 'aus'
+                    ? 'var(--k-ink-faint)'
+                    : 'var(--k-warning)'
+              }
+            >
+              {syncStatus === 'live' ? `Sync live · ${peers}` : syncStatus === 'aus' ? 'Sync aus' : syncStatus}
+            </Badge>
+          </button>
+        </span>
+        {/* V1.6 Block E: Rundgang-Knopf — jederzeit erreichbar, egal ob der
+            Erststart-Guide schon lief. `guideLauf`-Inkrement erzwingt einen
+            frischen Mount, damit «erneut» immer bei Schritt 0 beginnt. */}
+        <span className={`${fokusKlasse(fokusStufe('guide'))} app-inline`}>
+          <button
+            onClick={() => {
+              setGuideLauf((n) => n + 1);
+              setStarterGuideOffen(true);
+            }}
+            data-testid="starter-guide-start"
+            className="k-druck app-kopf-grundknopf"
+            title="Rundgang — Kosmo erklärt das Programm erneut"
+            aria-label="Rundgang erneut starten"
+          >
+            <span className="app-kopf-grundzeichen" aria-hidden="true">
+              ?
+            </span>
+          </button>
+        </span>
+        {/* Serie K / A4 (Owner-Befund K14): zentrales Einstellungs-Panel —
+            neben dem «?» (Rundgang), immer erreichbar; seit K7 präsenter. */}
+        <span className={`${fokusKlasse(fokusStufe('einstellungen'))} app-inline`}>
+          <button
+            onClick={() => oeffneEinstellungen()}
+            data-testid="einstellungen-oeffnen"
+            className="k-druck app-kopf-grundknopf"
+            title="Einstellungen"
+            aria-label="Einstellungen öffnen"
+          >
+            <KIcon name="zahnrad" size={20} />
+          </button>
+        </span>
       </span>
     </>
   );

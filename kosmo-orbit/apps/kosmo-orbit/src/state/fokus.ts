@@ -29,11 +29,15 @@ export const KOPFLEISTE_FOKUS = {
   sync: 'sekundaer',
   thema: 'selten',
   akzent: 'selten',
-  /** V1.6 Block E: der «?»-Rundgang-Knopf — selten gebraucht, immer erreichbar. */
-  guide: 'selten',
-  /** Serie K / A4 (Owner-Befund K14): das zentrale Einstellungs-Panel — dezent
-   *  neben dem «?», wie der Rundgang-Knopf selten gebraucht. */
-  einstellungen: 'selten',
+  /** V1.6 Block E → K7 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich
+   *  «…und fragenzeichen, die beiden dürfen präsenter sein»): der
+   *  «?»-Rundgang-Knopf ist Grundfunktion — sekundär statt selten, nicht
+   *  mehr auf 0.6 gedimmt. */
+  guide: 'sekundaer',
+  /** Serie K / A4 (Owner-Befund K14) → K7 (Owner wörtlich «einstellung ist
+   *  KosmoOrbit grundeinstellungen … die beiden dürfen präsenter sein»):
+   *  das zentrale Einstellungs-Panel — präsenter (sekundär), neben dem «?». */
+  einstellungen: 'sekundaer',
   /** «App deinstallieren…» — sehr selten gebraucht, aber immer auffindbar (Owner-Auftrag). */
   deinstallieren: 'selten',
 } as const satisfies Record<string, FokusStufe>;

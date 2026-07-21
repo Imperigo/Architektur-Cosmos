@@ -197,3 +197,41 @@ test.describe('Einstellungen: «Bewegung & Klang» — vier neue Schalter (W4-H)
     await expect(schalter).not.toBeChecked();
   });
 });
+
+/**
+ * K7 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «einstellung ist
+ * KosmoOrbit grundeinstellungen und fragenzeichen, die beiden dürfen
+ * präsenter sein. sync aus ist daneben»): ? (Rundgang) und ⚙ (Einstellungen)
+ * sind 44px-Kreis-Knöpfe (Touch-Mindest-Trefferfläche), der Sync-Status ist
+ * DIREKT DANEBEN in derselben Gruppe (`kopf-grundfunktionen`) gruppiert —
+ * vorher stand «Sync aus» ganz links, getrennt durch Hairlines.
+ */
+test('K7: ? und ⚙ präsenter (≥44px Trefferfläche), Sync-Status direkt daneben gruppiert', async ({
+  page,
+}) => {
+  await bootstrap(page);
+  const gruppe = page.locator('[data-testid="kopf-grundfunktionen"]');
+  await expect(gruppe).toBeVisible();
+  // «sync aus ist daneben»: der Sync-Umschalter lebt IN der Gruppe.
+  await expect(gruppe.locator('[data-testid="sync-toggle"]')).toBeVisible();
+  const sync = await gruppe.locator('[data-testid="sync-toggle"]').boundingBox();
+  const frage = await page.locator('[data-testid="starter-guide-start"]').boundingBox();
+  const zahnrad = await page.locator('[data-testid="einstellungen-oeffnen"]').boundingBox();
+  // Touch-Mindestfläche 44px für beide Grundfunktions-Knöpfe.
+  for (const box of [frage, zahnrad]) {
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+  }
+  // Reihenfolge in der Gruppe: Sync → ? → ⚙, unmittelbar nebeneinander
+  // (kleiner Gruppen-Gap, keine Hairline-Trennung mehr dazwischen).
+  expect(sync!.x + sync!.width).toBeLessThanOrEqual(frage!.x + 1);
+  expect(frage!.x + frage!.width).toBeLessThanOrEqual(zahnrad!.x + 1);
+  expect(frage!.x - (sync!.x + sync!.width)).toBeLessThan(24);
+  expect(zahnrad!.x - (frage!.x + frage!.width)).toBeLessThan(24);
+  // Beide Knöpfe funktionieren unverändert: ⚙ öffnet das zentrale Panel.
+  await page.click('[data-testid="einstellungen-oeffnen"]');
+  await expect(page.locator('[data-testid="einstellungen-panel"]')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('[data-testid="einstellungen-panel"]')).toHaveCount(0);
+});

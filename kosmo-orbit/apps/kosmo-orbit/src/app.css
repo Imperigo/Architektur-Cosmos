@@ -105,6 +105,48 @@
   align-items: center;
 }
 
+/* K7 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich «einstellung ist
+   KosmoOrbit grundeinstellungen und fragenzeichen, die beiden dürfen
+   präsenter sein. sync aus ist daneben»): Grundfunktions-Gruppe der
+   Kopfzeile — Sync-Status + «?» (Rundgang) + ⚙ (Einstellungen) sitzen als
+   EINE Gruppe beieinander (App.tsx `kopfWerkzeuge()`). Die beiden Knöpfe
+   bekommen echte 44px-Kreise (Touch-Mindest-Trefferfläche) im bestehenden
+   Werkplan-Duktus: ruhige `--k-raised`-Fläche, feine 1px-Linie
+   (`--k-line-strong`), volle Tinte statt `--k-ink-faint` — kein Neon, keine
+   neue Farbwelt. Passt in die 56px-`.app-header`-Zone (6px Luft oben/unten)
+   und in den `.app-heim-werkzeuge`-Cluster der Zentrale (wächst dort nur in
+   der Höhe mit, kein Layout-Umbau der Zentrale-Fläche — K8-Vorrang frei). */
+.app-kopf-grundgruppe {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-s3);
+}
+.app-kopf-grundknopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-raised);
+  color: var(--k-ink);
+  cursor: pointer;
+}
+.app-kopf-grundknopf:hover,
+.app-kopf-grundknopf:focus-visible {
+  background: var(--k-accent-wash);
+}
+/* Das «?» als Typografie-Zeichen: gross genug, um als Knopf-Glyphe zu lesen
+   (vorher 11px-`orbit065-kopfleiste-beschriftung`), Gewicht wie `.k-primaer`. */
+.app-kopf-grundzeichen {
+  font-size: 17px;
+  font-weight: 620;
+  line-height: 1;
+}
+
 .app-sync-leiste {
   display: flex;
   gap: var(--k-s3);

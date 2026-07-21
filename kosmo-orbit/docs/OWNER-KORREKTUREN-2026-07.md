@@ -89,7 +89,9 @@ erzählen). **Aufwand:** S/M. **Status:** offen.
 > «einstellung ist KosmoOrbit grundeinstellungen und fragenzeichen, die
 > beiden dürfen präsenter sein. sync aus ist daneben»
 **Deutung:** ⚙ und ? sind Grundfunktionen und dürfen sichtbarer sein;
-Sync-Status gruppiert daneben. **Aufwand:** S. **Status:** offen.
+Sync-Status gruppiert daneben. **Aufwand:** S. **Status:** ERLEDIGT
+(ROADMAP 577 — 44px-Kreisknöpfe im Werkplan-Duktus, Sync in der
+Grundfunktionen-Gruppe direkt daneben).
 
 ### K8 · S.2 — ClaudeDesign-Package hat VORRANG (Meta-Regel)
 > «du bekommst noch ein claudedesign package für startanimationen etc.

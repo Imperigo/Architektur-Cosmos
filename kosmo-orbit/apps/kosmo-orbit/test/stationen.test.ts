@@ -73,6 +73,12 @@ describe('Fokus-/Wichtigkeits-Systematik (T7): Element → Stufe', () => {
     expect(fokusStufe('akzent')).toBe('selten');
   });
 
+  it('K7 (docs/OWNER-KORREKTUREN-2026-07.md, «die beiden dürfen präsenter sein»): ? (Rundgang) und ⚙ (Einstellungen) sind sekundär, nicht mehr «selten»-gedimmt', async () => {
+    const { fokusStufe } = await import('../src/state/fokus');
+    expect(fokusStufe('guide')).toBe('sekundaer');
+    expect(fokusStufe('einstellungen')).toBe('sekundaer');
+  });
+
   it('fokusKlasse übersetzt jede Stufe 1:1 in ihre aura.css-Klasse', async () => {
     const { fokusKlasse } = await import('../src/state/fokus');
     expect(fokusKlasse('primaer')).toBe('k-primaer');
