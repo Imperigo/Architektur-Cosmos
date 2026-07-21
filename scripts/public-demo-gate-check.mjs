@@ -154,6 +154,22 @@ function checkRouteManifestSurfaces() {
     if (!route.path.startsWith('/')) {
       recordFailure(`route-manifest:${route.path}:absolute`, `public route path must start with /: ${route.path}`);
     }
+    if (route.path.includes('?') || route.path.includes('#')) {
+      recordFailure(
+        `route-manifest:${route.path}:fragment-or-query`,
+        `public route path must not include query strings or fragments: ${route.path}`
+      );
+    }
+    if (route.path.includes('\\')) {
+      recordFailure(`route-manifest:${route.path}:backslash`, `public route path must use forward slashes only: ${route.path}`);
+    }
+    const unsafeSegment = route.path.split('/').find((segment) => segment === '.' || segment === '..');
+    if (unsafeSegment) {
+      recordFailure(
+        `route-manifest:${route.path}:dot-segment`,
+        `public route path must not include ${unsafeSegment} path segments: ${route.path}`
+      );
+    }
     if (route.path.includes('//')) {
       recordFailure(`route-manifest:${route.path}:double-slash`, `public route path must not contain //: ${route.path}`);
     }

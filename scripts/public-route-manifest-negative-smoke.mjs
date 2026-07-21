@@ -55,6 +55,10 @@ function runSmoke() {
     'route:/private/source-root/:includes:private-pattern',
     'route:/atlas/not-in-data/:atlas-slug',
     'route:/review-missing/:source-missing',
+    'route:/assets/?debug=1:fragment-or-query',
+    'route:/assets/#debug:fragment-or-query',
+    'route:/../private/:dot-segment',
+    'route:/assets\\private/:backslash',
     'route:/bad-min/:min-body-length'
   ];
   const missingFailures = requiredFailures.filter((id) => !failedIds.has(id));
@@ -86,6 +90,10 @@ function renderSyntheticManifest() {
     "  { path: '/private/source-root/', includes: ['private source-root OCR worker logs'] },",
     "  { path: '/atlas/not-in-data/', includes: ['Synthetic missing Atlas entry'] },",
     "  { path: '/review-missing/', includes: ['Synthetic route with no app source'] },",
+    "  { path: '/assets/?debug=1', includes: ['Synthetic query route'] },",
+    "  { path: '/assets/#debug', includes: ['Synthetic fragment route'] },",
+    "  { path: '/../private/', includes: ['Synthetic dot segment route'] },",
+    "  { path: '/assets\\\\private/', includes: ['Synthetic backslash route'] },",
     "  { path: '/bad-min/', includes: ['Synthetic bad minimum'], minBodyLength: 0 },",
     '];',
     ''

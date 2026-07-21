@@ -92,6 +92,28 @@ function checkRoute(route) {
     failures.push({ id: `route:${path}:absolute`, detail: `Public route path must start with /: ${path}` });
   }
 
+  if (path.includes('?') || path.includes('#')) {
+    failures.push({
+      id: `route:${path}:fragment-or-query`,
+      detail: `Public route path must not include query strings or fragments: ${path}`
+    });
+  }
+
+  if (path.includes('\\')) {
+    failures.push({
+      id: `route:${path}:backslash`,
+      detail: `Public route path must use forward slashes only: ${path}`
+    });
+  }
+
+  const unsafeSegment = path.split('/').find((segment) => segment === '.' || segment === '..');
+  if (unsafeSegment) {
+    failures.push({
+      id: `route:${path}:dot-segment`,
+      detail: `Public route path must not include ${unsafeSegment} path segments: ${path}`
+    });
+  }
+
   if (path.includes('//')) {
     failures.push({ id: `route:${path}:double-slash`, detail: `Public route path must not contain //: ${path}` });
   }
