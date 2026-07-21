@@ -83,7 +83,9 @@ Vorprojekt). Hängt eng mit K29 (phasengebundene Werkzeuge) zusammen.
 **Deutung:** Speichern/Öffnen-Knöpfe nur im Projektkontext zeigen;
 Semantik: Projekte werden gespeichert, nicht «die Software»; Auto-Save
 je Schritt ist der Normalfall (Autosave existiert — die UI muss es so
-erzählen). **Aufwand:** S/M. **Status:** offen.
+erzählen). **Aufwand:** S/M. **Status:**
+ERLEDIGT (ROADMAP 579 — Zentrale ohne Speichern/Öffnen, «Weitergeben
+(.kosmo)»/«Projekt öffnen», Auto-Save-Indikator `autosave-status`).
 
 ### K7 · S.2 — Einstellungen + Hilfe präsenter, Sync daneben
 > «einstellung ist KosmoOrbit grundeinstellungen und fragenzeichen, die

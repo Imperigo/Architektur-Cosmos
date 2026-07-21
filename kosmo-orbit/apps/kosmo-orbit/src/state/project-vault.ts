@@ -165,6 +165,25 @@ export function aktivesProjektId(): string {
   return aktivId;
 }
 
+// K6 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «speicher öffnen
+// ist ebenfalls nur nötig wenn projekt geöffnet ist, wir speichern die
+// einzelnen projekte und nicht die ganze software. projektspeichern ist
+// default jeder schritt»): schlanker Hörer-Mechanismus, damit die UI
+// (App.tsx `kopfWerkzeuge()`) den Autosave-Zeitpunkt erzählen kann («Auto-
+// gesichert HH:MM»), ohne den Tresor selbst zu pollen. Kein neues Framework
+// — ein `Set<Callback>`, aufgerufen NACH der erfolgreich committeten
+// `tx()`-Transaktion, nie bei einem verworfenen/abgebrochenen Sicherungs-
+// Versuch (sonst würde die UI einen Erfolg erzählen, den es nicht gab).
+type AutosaveHoerer = (iso: string) => void;
+const autosaveHoerer = new Set<AutosaveHoerer>();
+
+/** Abonniert Autosave-Ereignisse; gibt eine Abmelde-Funktion zurück (React-
+ * `useEffect`-Cleanup-Muster). */
+export function beiAutosave(cb: AutosaveHoerer): () => void {
+  autosaveHoerer.add(cb);
+  return () => autosaveHoerer.delete(cb);
+}
+
 async function sichern(): Promise<void> {
   const { doc } = useProject.getState();
   const eintrag: VaultEintrag = {
@@ -176,6 +195,7 @@ async function sichern(): Promise<void> {
   };
   speicher?.setItem(AKTIV_KEY, aktivId);
   await tx('readwrite', (s) => s.put(eintrag));
+  for (const cb of autosaveHoerer) cb(eintrag.updatedAt);
 }
 
 /** Beim App-Start rufen: Autosave anhängen + letzten Stand wiederherstellen. */

@@ -60,6 +60,7 @@ import { registerActions } from './shell/palette';
 import { Kurzbefehle } from './shell/Kurzbefehle';
 import {
   aktivesProjektId,
+  beiAutosave,
   initVault,
   listeProjekte,
   loescheProjekt,
@@ -263,6 +264,14 @@ export function App() {
   };
   const [syncOpen, setSyncOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('aus');
+  // K6 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «speicher öffnen
+  // ist ebenfalls nur nötig wenn projekt geöffnet ist, wir speichern die
+  // einzelnen projekte und nicht die ganze software. projektspeichern ist
+  // default jeder schritt»): `null` vor der ersten Tresor-Sicherung dieser
+  // Sitzung («Auto-Save aktiv»), danach der ISO-Zeitstempel der letzten
+  // erfolgreichen `sichern()`-Transaktion («Auto-gesichert HH:MM»,
+  // `state/project-vault.ts` `beiAutosave`).
+  const [autosaveZeit, setAutosaveZeit] = useState<string | null>(null);
   const [onboarding, setOnboarding] = useState(localStorage.getItem('kosmo.onboarded') !== '1');
   // Serie K / A3 (K13): der Guide startet NICHT mehr automatisch — beim
   // allerersten Start fragt Kosmo in der Zentrale («Neu hier?»,
@@ -401,6 +410,9 @@ export function App() {
     });
     void initVault();
     void hydriereJournal();
+    // K6 (Beleg s. `autosaveZeit`-Deklaration oben): Autosave-Erzählung im
+    // Kopf-Werkzeug — abonniert den Tresor-Hörer, nie eigenes Polling.
+    return beiAutosave((iso) => setAutosaveZeit(iso));
   }, []);
 
   // v0.8.0 / Paket PD2 (Default-Oberflächen, Abschnitt 7.2): Erststart = Fokus
@@ -568,15 +580,58 @@ export function App() {
    */
   const kopfWerkzeuge = () => (
     <>
-      <span className={`${fokusKlasse(fokusStufe('speichern'))} app-inline-reihe`}>
-        <KButton size="sm" tone="ghost" onClick={downloadProject} data-testid="save-project">
-          Speichern
-        </KButton>
-        <KButton size="sm" tone="ghost" data-testid="open-project" onClick={oeffneProjektDatei}>
-          Öffnen
-        </KButton>
-      </span>
-      <Hairline vertical />
+      {/* K6 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «speicher
+          öffnen ist ebenfalls nur nötig wenn projekt geöffnet ist, wir
+          speichern die einzelnen projekte und nicht die ganze software.
+          projektspeichern ist default jeder schritt»): die Speichern/
+          Öffnen-Gruppe rendert NUR NOCH ausserhalb der Zentrale — auf
+          `screen === 'home'` ist die ProjektListe (Autosave-Erzählung
+          «.kosmo bleibt fürs Weitergeben») bereits die Projektverwaltung,
+          die Knöpfe wären dort ein zweites, projektloses Angebot ohne
+          Owner-Deckung. Jede andere Station (Kopfbalken ODER
+          `.app-heim-werkzeuge`-Zweig unten sieht diesen Guard nie, weil er
+          nur bei `screen==='home'` greift) behält beide Knöpfe unverändert.
+          Sprache seit K6 projektbezogen statt software-bezogen (Einklang
+          mit der Palette `Projekt speichern (.kosmo)`/`Projekt öffnen
+          (.kosmo)`, s. oben): «Speichern» → «Weitergeben (.kosmo)» macht
+          den echten .kosmo-Export ehrlich, statt den Eindruck zu erwecken,
+          hier passiere DAS Speichern — das übernimmt Auto-Save (Tresor,
+          `state/project-vault.ts`) ohnehin bei jedem Schritt, erzählt jetzt
+          per `autosave-status` daneben. testids/Handler/aria bleiben
+          wörtlich gleich (Dutzende Specs klicken sie). */}
+      {screen !== 'home' && (
+        <>
+          <span className={`${fokusKlasse(fokusStufe('speichern'))} app-inline-reihe`}>
+            <KButton
+              size="sm"
+              tone="ghost"
+              onClick={downloadProject}
+              data-testid="save-project"
+              title="Projekt als .kosmo-Datei exportieren — Auto-Save sichert ohnehin jeden Schritt im Tresor"
+            >
+              Weitergeben (.kosmo)
+            </KButton>
+            <KButton
+              size="sm"
+              tone="ghost"
+              data-testid="open-project"
+              onClick={oeffneProjektDatei}
+              title="Ein zuvor exportiertes .kosmo-Projekt laden"
+            >
+              Projekt öffnen
+            </KButton>
+            <span className="app-hinweis-klein" data-testid="autosave-status">
+              {autosaveZeit === null
+                ? 'Auto-Save aktiv'
+                : `Auto-gesichert ${new Date(autosaveZeit).toLocaleTimeString('de-CH', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}`}
+            </span>
+          </span>
+          <Hairline vertical />
+        </>
+      )}
       <span className={`${fokusKlasse(fokusStufe('kosmo'))} app-inline-nowrap`}>
         <button
           onClick={() => setKosmoOpen(!kosmoOpen)}
@@ -686,15 +741,21 @@ export function App() {
           `orbit-start.spec.ts`). Ersatz: `OrbitStart.tsx` rendert die
           zentrierte Wortmarke (`orbit-wortmarke`) + Versionszeile
           (`orbit-version`) selbst. Die übrigen Kopfleisten-Funktionen
-          (Sync/Speichern/Öffnen/Kosmo/Rundgang/Einstellungen) bleiben
-          erreichbar — Dutzende Bestands-Specs (`load-tkb`, `rolle-select`,
-          `einstellungen-oeffnen`, `starter-guide-start`, `kosmo-toggle` u. a.)
-          klicken sie direkt nach dem Laden der Zentrale, ausserhalb des
-          PA2-Auftrags. Sie ziehen darum NICHT mit in den ausgeblendeten
-          Balken, sondern in eine kleine, nicht-balkenförmige Eck-Werkzeug-
-          leiste oben rechts (`.app-heim-werkzeuge`, s. unten) — kein
-          Balken, aber jede bestehende Testid bleibt real klickbar. Jede
-          ANDERE Station bleibt byte-gleich (der Guard ist dort `false`). */}
+          (Sync/Kosmo/Rundgang/Einstellungen) bleiben erreichbar — Dutzende
+          Bestands-Specs (`load-tkb`, `rolle-select`, `einstellungen-oeffnen`,
+          `starter-guide-start`, `kosmo-toggle` u. a.) klicken sie direkt
+          nach dem Laden der Zentrale, ausserhalb des PA2-Auftrags. Sie
+          ziehen darum NICHT mit in den ausgeblendeten Balken, sondern in
+          eine kleine, nicht-balkenförmige Eck-Werkzeugleiste oben rechts
+          (`.app-heim-werkzeuge`, s. unten) — kein Balken, aber jede
+          bestehende Testid bleibt real klickbar. Jede ANDERE Station bleibt
+          byte-gleich (der Guard ist dort `false`).
+
+          K6 (docs/OWNER-KORREKTUREN-2026-07.md, Beleg s. `kopfWerkzeuge()`
+          oben): Speichern/Öffnen sind aus dieser Liste ausgezogen — seit K6
+          rendert `kopfWerkzeuge()` die Gruppe NUR NOCH für `screen !==
+          'home'`, die Zentrale zeigt sie nie mehr (ProjektListe ist dort
+          bereits die Projektverwaltung). */}
       {!bodenDockAusgeblendet && screen !== 'home' && (
       /* v0.8.0B / W3 (Spez §4 B-48) — Shell-Header-Zone: 56px fest,
           `--k-sunken` (statt `--k-surface`) + subtile Trennlinie
@@ -1103,10 +1164,15 @@ export function App() {
                 volle-Breite-Streifen, nur ein kleiner, glasiger Cluster oben
                 rechts) — sie hält ausschliesslich Bestands-Testids am Leben,
                 die viele NICHT-PA2-Specs direkt nach dem Laden der Zentrale
-                anklicken (`sync-toggle`, `save-project`/`open-project`,
-                `kosmo-toggle`, `starter-guide-start`, `einstellungen-
-                oeffnen`, `phasen-leiste-*`) — dieselbe `kopfWerkzeuge()`-
-                Funktion wie der Header, s. Kommentar dort. */}
+                anklicken (`sync-toggle`, `kosmo-toggle`, `starter-guide-
+                start`, `einstellungen-oeffnen`, `phasen-leiste-*`) —
+                dieselbe `kopfWerkzeuge()`-Funktion wie der Header, s.
+                Kommentar dort. K6 (docs/OWNER-KORREKTUREN-2026-07.md,
+                Beleg s. `kopfWerkzeuge()`): `save-project`/`open-project`
+                gehören NICHT mehr zu dieser Liste — die Gruppe rendert seit
+                K6 nur noch für `screen !== 'home'`, hier auf der Zentrale
+                erscheint sie nie (ProjektListe darunter ist bereits die
+                Projektverwaltung). */}
             <div className="app-heim-werkzeuge" data-testid="app-heim-werkzeuge">
               <PhasenLeiste />
               {kopfWerkzeuge()}

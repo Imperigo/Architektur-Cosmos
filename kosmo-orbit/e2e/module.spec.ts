@@ -446,7 +446,14 @@ test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async
     // Karte ab (nav-fit/Export) — Tests emulieren den erfahrenen Nutzer.
     localStorage.setItem('kosmo.starterGuide.done', '1');
   });
+  // K6 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «speicher öffnen
+  // ist ebenfalls nur nötig wenn projekt geöffnet ist…»): `open-project`
+  // rendert seit K6 nicht mehr auf der Zentrale (`screen === 'home'`,
+  // App.tsx `kopfWerkzeuge()`) — erst eine Station mit Kopfbalken öffnen.
+  // module-data ist sicher: design/prepare sind im Island-Modus
+  // kopfbalkenlos.
   await page.reload();
+  await page.click('[data-testid="module-data"]');
   const [chooser] = await Promise.all([
     page.waitForEvent('filechooser'),
     page.click('[data-testid="open-project"]'),
@@ -459,7 +466,10 @@ test('Härtetest: kaputte .kosmo-Datei → klare Meldung, UI lebt weiter', async
   // P1: statt alert() kommt der Fehler-Toast — und die UI lebt weiter
   const toast = page.locator('[data-testid="meldung-fehler"]');
   await expect(toast).toContainText('Projekt konnte nicht geöffnet werden');
-  await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
+  // K6: nicht mehr `module-design` (Zentrale-Kachel, seit K6 nicht mehr
+  // erreicht) — der weiterhin sichtbare `save-project`-Knopf im Kopfbalken
+  // der Datenstation beweist denselben Sachverhalt (Header/App lebt weiter).
+  await expect(page.locator('[data-testid="save-project"]')).toBeVisible();
 });
 
 test('Blatt-Pflege: Massstab ändern, Titel setzen, Text verschieben, Blatt löschen', async ({ page }) => {
@@ -2397,6 +2407,11 @@ test('Fehlerzone (P1): Modul-Crash zeigt Fehlerkarte statt weisser App, «Neu la
 
 test('Meldungen (P1): kaputtes .kosmo zeigt Fehler-Toast statt alert, ✕ schliesst', async ({ page }) => {
   await page.goto('/');
+  // K6 (docs/OWNER-KORREKTUREN-2026-07.md, Beleg s. «Härtetest: kaputte
+  // .kosmo-Datei» oben): `open-project` rendert seit K6 nicht mehr auf der
+  // Zentrale — erst eine Station mit Kopfbalken öffnen (module-data ist
+  // sicher, design/prepare sind im Island-Modus kopfbalkenlos).
+  await page.click('[data-testid="module-data"]');
   const [chooser] = await Promise.all([
     page.waitForEvent('filechooser'),
     page.click('[data-testid="open-project"]'),
