@@ -109,3 +109,14 @@ Suiten: Kernel 1180/1180, svg-qa 39 Goldens / 0 harte Fehler.
 
 **Damit ist der EINE deklarierte Golden-Zug v0.8.12 komplett: Teil A (26)
 + Teil C (2) + Teil B (2) — alle Teile Ist == Prognose.**
+
+**Präzisierungen nach adversarialer Abnahme (21.07., Prüfer C-4…C-9):**
+(1) Die Teilzählungen überschneiden sich: Teil C bewegte
+`blatt-autofuellung.svg` und `rolle-leer.svg`, die BEIDE schon in Teil A
+lagen (A∩C = 2, A∩B = C∩B = 0) — die eindeutige Dateimenge des ganzen
+Zugs ist darum **28**, nicht 30. (2) Verfahren der aggregierten
+Prüfsummen in diesem Dokument, damit jeder Prüfer sie nachrechnen kann:
+`cd packages/kosmo-kernel/test/golden && sha256sum *.svg *.ifc |
+sha256sum` — also der Hash über die vollständige, von `sha256sum`
+erzeugte Textliste (Einzelhashes + Dateinamen, Shell-Glob-Reihenfolge),
+nicht über konkatenierte Dateiinhalte.
