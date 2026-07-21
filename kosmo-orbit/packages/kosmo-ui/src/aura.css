@@ -466,8 +466,12 @@
    themenübergreifende Grammatik (`:root` oben) und darum HIER NICHT MEHR
    nötig; `--k-plan-paper` bleibt bewusst UNGESETZT (Invarianzregel D7 8c:
    das Planblatt fällt auf denselben `:root`/Papier-Wert `#fdfcf9` zurück,
-   identisch in beiden Themes — nur `--k-viewport-sky`, der 3D-Raum
-   HINTER dem Planblatt, bleibt themenabhängig dunkel). */
+   identisch in beiden Themes). K20-NACHTRAG (21.07.2026, `docs/OWNER-
+   KORREKTUREN-2026-07.md` S.6): der ursprünglich HIER dokumentierte Satz
+   «nur `--k-viewport-sky` … bleibt themenabhängig dunkel» gilt NICHT mehr —
+   der Owner bemängelte genau diesen schwarzen 3D-Hintergrund, der
+   `orbit`-Override ist entfernt (s. `--k-viewport-sky`-Kommentar weiter
+   unten), auch der 3D-Raum fällt jetzt auf den hellen `:root`-Wert zurück. */
 [data-theme='orbit'] {
   --k-field: #0b0d12;
   --k-surface: #14171f;
@@ -514,7 +518,15 @@
   --k-accent-wash: rgba(87, 182, 194, 0.12);
   --k-danger: #cd7670;
   --k-success: #74c2a0;
-  --k-viewport-sky: #101012;
+  /* K20 (Owner wörtlich, `docs/OWNER-KORREKTUREN-2026-07.md` S.6: «auch bei
+     der kosmo darstellung sollte der 3d viewer der hintergrund weiss sein,
+     nicht schwarz bitte») — der bisherige `orbit`-Override `#101012` ist
+     ENTFERNT, kein Ersatzwert hier: beide Themes fallen jetzt auf den
+     gemeinsamen `:root`-Wert `--k-viewport-sky: #edeae2` zurück (s. oben,
+     warmes Papier-Weiss statt hartem #fff, bleibt neben `--k-plan-paper
+     #fdfcf9` unterscheidbar). Das kippt den in v0.7.2 (Kommentar unten)
+     bewusst gegenteiligen Entscheid — Owner-Korrektur sticht Alt-Entscheid.
+     Einziger Leser: `Viewport3D.tsx` (`scene.background`). */
   /* v0.7.6 «Kosmo-Viz» §Fundament — Glass-HUD-Rezept + Glow + feinere
      Flächenstufen. Nur im dunklen `orbit`-Theme (token-spiegel bewacht orbit
      grundsätzlich nicht — Ausnahme W1, s.u.: die neuen Border-/Schatten-/

@@ -216,7 +216,9 @@ als erwartet — Diagnose gegen ältere Stände, Befund vorlegen.
 **Deutung:** heller Viewport-Hintergrund als Standard (mindestens für
 die Modell-Darstellung; Betrifft Screenshot-/Blick-Darstellung ebenso).
 **Aufwand:** S/M (Golden-neutral, aber E2E-Screens ändern sich).
-**Status:** offen.
+**Status:** ERLEDIGT (ROADMAP 580 — orbit-Override von `--k-viewport-sky`
+entfernt, beide Themes hell `#edeae2`; Restposten: Bodenraster-Kontrast
+auf hellem Himmel schwach, Folgeposten-Kandidat).
 
 ### K21 · S.6 — ArchiCAD-Werkzeugtiefe für Fenster/Türen (Werkzeug-Einstellungsmenüs)
 > «grundsätzliche frage: wie weit bist du mit dem werkzeugnachbau von
