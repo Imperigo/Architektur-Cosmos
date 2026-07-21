@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600mm" height="594mm" viewBox="0 0 1600 594" font-family="Helvetica, Arial, sans-serif">
 <rect width="1600" height="594" fill="white"/>
 <g data-teil="blattlayout">
-<rect x="20" y="10" width="1570" height="574" fill="none" stroke="#1A1815" stroke-width="0.35"/>
+<rect x="10" y="10" width="1580" height="574" fill="none" stroke="#1A1815" stroke-width="0.35"/>
 <line x1="1390" y1="0" x2="1390" y2="4" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="1390" y1="590" x2="1390" y2="594" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="1200" y1="0" x2="1200" y2="4" stroke="#1A1815" stroke-width="0.25"/>
@@ -20,8 +20,6 @@
 <line x1="60" y1="590" x2="60" y2="594" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="0" y1="297" x2="4" y2="297" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="1596" y1="297" x2="1600" y2="297" stroke="#1A1815" stroke-width="0.25"/>
-<circle cx="10" cy="257" r="3" fill="none" stroke="#1A1815" stroke-width="0.25"/>
-<circle cx="10" cy="337" r="3" fill="none" stroke="#1A1815" stroke-width="0.25"/>
 </g>
 <g data-teil="leporello">
 <line x1="1390" y1="0" x2="1390" y2="594" stroke="#1A1815" stroke-width="0.25" stroke-dasharray="6 3"/>
@@ -34,8 +32,8 @@
 <line x1="60" y1="0" x2="60" y2="594" stroke="#1A1815" stroke-width="0.25" stroke-dasharray="6 3"/>
 </g>
 <g data-teil="blattlayout">
-<g data-teil="wasserzeichen" opacity="0.13" transform="rotate(-26 805.00 297.00)">
-<text x="805.00" y="297.00" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="75.36" fill="#94704F">STUDIE — NICHT FÜR AUS…</text>
+<g data-teil="wasserzeichen" opacity="0.13" transform="rotate(-26 800.00 297.00)">
+<text x="800.00" y="297.00" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="75.84" fill="#94704F">STUDIE — NICHT FÜR AUS…</text>
 </g>
 </g>
 <g data-teil="plankopf">

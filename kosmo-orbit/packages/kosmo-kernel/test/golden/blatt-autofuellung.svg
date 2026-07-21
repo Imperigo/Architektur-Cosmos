@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="841mm" height="594mm" viewBox="0 0 841 594" font-family="Helvetica, Arial, sans-serif">
 <rect width="841" height="594" fill="white"/>
 <g data-teil="blattlayout">
-<rect x="20" y="10" width="811" height="574" fill="none" stroke="#1A1815" stroke-width="0.35"/>
+<rect x="10" y="10" width="821" height="574" fill="none" stroke="#1A1815" stroke-width="0.35"/>
 <line x1="631" y1="0" x2="631" y2="4" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="631" y1="590" x2="631" y2="594" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="441" y1="0" x2="441" y2="4" stroke="#1A1815" stroke-width="0.25"/>
@@ -12,8 +12,6 @@
 <line x1="61" y1="590" x2="61" y2="594" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="0" y1="297" x2="4" y2="297" stroke="#1A1815" stroke-width="0.25"/>
 <line x1="837" y1="297" x2="841" y2="297" stroke="#1A1815" stroke-width="0.25"/>
-<circle cx="10" cy="257" r="3" fill="none" stroke="#1A1815" stroke-width="0.25"/>
-<circle cx="10" cy="337" r="3" fill="none" stroke="#1A1815" stroke-width="0.25"/>
 </g>
 <g transform="translate(122.833, 109.000) scale(0.006666666666666667)">
 <path d="M 8125 125 L 8125 -6125 L -125 -6125 L -125 125 Z M 125 -5875 L 7875 -5875 L 7875 -125 L 125 -125 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="75"/>
@@ -253,16 +251,16 @@
 <text x="691.5" y="256.3333333333333" text-anchor="middle" font-size="3.2" fill="#666">Render folgt — HomeStation</text>
 <text x="291" y="174" font-size="4" ><tspan x="291" dy="0">Kennzahlen — Blatt Golden</tspan><tspan x="291" dy="5.40">Total GF: 144 m²</tspan></text>
 <g data-teil="blattlayout">
-<g data-teil="wasserzeichen" opacity="0.13" transform="rotate(-26 425.50 297.00)">
-<text x="425.50" y="297.00" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="38.928" fill="#94704F">STUDIE — NICHT FÜR AUSFÜHRUNG</text>
+<g data-teil="wasserzeichen" opacity="0.13" transform="rotate(-26 420.50 297.00)">
+<text x="420.50" y="297.00" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-family="'Lato', Helvetica, Arial, sans-serif" letter-spacing="0.04em" font-size="39.408" fill="#94704F">STUDIE — NICHT FÜR AUSFÜHRUNG</text>
 </g>
 </g>
 <g data-teil="blattlayout">
 <g data-teil="massstabsbalken">
-<rect x="21.50" y="520.30" width="20.00" height="2.5" fill="#1A1815" stroke="#1A1815" stroke-width="0.25"/>
-<rect x="41.50" y="520.30" width="20.00" height="2.5" fill="white" stroke="#1A1815" stroke-width="0.25"/>
-<text x="21.50" y="526.00" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">0</text>
-<text x="61.50" y="526.00" text-anchor="end" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">2 m · M 1:50</text>
+<rect x="11.50" y="520.30" width="20.00" height="2.5" fill="#1A1815" stroke="#1A1815" stroke-width="0.25"/>
+<rect x="31.50" y="520.30" width="20.00" height="2.5" fill="white" stroke="#1A1815" stroke-width="0.25"/>
+<text x="11.50" y="526.00" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">0</text>
+<text x="51.50" y="526.00" text-anchor="end" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="2" font-feature-settings="'tnum'">2 m · M 1:50</text>
 </g>
 </g>
 <g data-teil="blattlayout">

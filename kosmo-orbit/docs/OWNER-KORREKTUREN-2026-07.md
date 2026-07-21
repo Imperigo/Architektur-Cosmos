@@ -474,7 +474,8 @@ Phasen-Preset; Klärung ob generell raus oder nur dezenter.
 ### K41 · S.17 — Einheitlicher Rahmen am Blattrand
 > «einheitlicher rahmen am blattrand!»
 **Bereich:** derive/blattlayout (Golden-Zug). **Aufwand:** S/M.
-**Status:** offen.
+**Status:** ERLEDIGT (ROADMAP 591 — Default einheitlicher 10mm-Rahmen
+rundum, Heftrand als Opt-in; Golden-Zug Teil C mit Hard-Stop-Nachweis).
 
 ### K42 · S.17 — Blattdarstellung gegen Gestaltungskonzept prüfen
 > «ist die darstellung des blattes aktuell gemäss gestaltungskonzept?»

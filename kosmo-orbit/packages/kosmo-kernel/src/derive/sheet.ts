@@ -209,7 +209,14 @@ export function sheetToSvg(doc: KosmoDoc, sheetId: string, opts: SheetSvgOptions
   // keinen erreichbaren Zustand mehr, der ihn zeichnet (auch die
   // Plakat-Ausnahme braucht ihn nicht: sie erhält den vollen Plankopf, nur
   // ohne Heftrand).
-  const heftrandAn = sheet.layout?.heftrand !== false;
+  // K41 (Golden-Zug 0.8.12 Teil C, Owner wörtlich «einheitlicher rahmen am
+  // blattrand!», docs/OWNER-KORREKTUREN-2026-07.md S.17): der Default dreht
+  // vom asymmetrischen ISO-838-Heftrand (20mm links / 10mm sonst) auf den
+  // EINHEITLICHEN 10mm-Rahmen rundum — derselbe Rahmen, den Plakate schon
+  // immer hatten (kein zweiter Codepfad). Der Heftrand bleibt als bewusstes
+  // Opt-in (`layout.heftrand === true`) für Ablage-Bedarf erhalten;
+  // bestehende Blätter mit explizitem true behalten ihn.
+  const heftrandAn = sheet.layout?.heftrand === true;
   // `plankopfRect()` hängt nur von der rechten/unteren Rahmenkante ab (je
   // 10mm, unabhängig vom Heftrand) — die 180×55-Box liegt also unabhängig
   // von `layout.heftrand` immer an derselben Stelle (s. `blattlayout.ts`-

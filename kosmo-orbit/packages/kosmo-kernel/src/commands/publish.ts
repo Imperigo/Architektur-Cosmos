@@ -178,7 +178,7 @@ export const createSheet = registerCommand({
   id: 'publish.blattErstellen',
   title: 'Planblatt erstellen',
   description:
-    'Erstellt ein leeres Planblatt für den Plansatz. format: A0–A4 oder Rolle (1600×594mm Plotter-Rollenformat mit Leporello-Zickzack-Faltlinien, v0.8.1/P13, Standard A1), orientation: quer oder hoch. layout: optionale Layout-Schalter beim Erstellen (z.B. { heftrand: false } für randlose Plakate) — ohne Angabe gelten die fixierten Post-Sammelwechsel-Defaults (Heftrand/Faltmarken/Wasserzeichen/Massstabsbalken an, Nordpfeil an nur bei platziertem Grundriss/Situationsplan).',
+    'Erstellt ein leeres Planblatt für den Plansatz. format: A0–A4 oder Rolle (1600×594mm Plotter-Rollenformat mit Leporello-Zickzack-Faltlinien, v0.8.1/P13, Standard A1), orientation: quer oder hoch. layout: optionale Layout-Schalter beim Erstellen (z.B. { heftrand: false } für randlose Plakate) — ohne Angabe gelten die fixierten Defaults (EINHEITLICHER 10mm-Rahmen rundum — K41; Heftrand nur mit explizitem { heftrand: true }; Faltmarken/Wasserzeichen/Massstabsbalken an, Nordpfeil an nur bei platziertem Grundriss/Situationsplan).',
   params: z.object({
     name: z.string().describe('Blattname, z.B. «Grundrisse 1:100»'),
     format: z.enum(['A0', 'A1', 'A2', 'A3', 'A4', 'Rolle']).default('A1'),

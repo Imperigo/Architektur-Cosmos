@@ -57,5 +57,24 @@ Geometrieänderung. Sichtung: `plankopf-framework` vorher/nachher als PNG
 gerendert und von Fable geprüft (Struktur/Typo intakt). Suiten: Kernel
 1180/1180, svg-qa Exit 0.
 
-### Teil B — Schraffur (offen) · Teil C — Blattrand (offen)
-_(je Commit auszufüllen)_
+### Teil C — Blattrand K41 (erledigt 21.07.2026, Fable)
+Owner wörtlich «einheitlicher rahmen am blattrand!»: Default gedreht —
+`sheet.ts` `heftrandAn = layout?.heftrand === true` (Opt-in statt
+Opt-out), Standard ist der EINHEITLICHE 10mm-Rahmen rundum (derselbe
+Codepfad wie bisher bei Plakaten, kein neuer Zweig); ISO-838-Heftrand
+bleibt als bewusstes Opt-in erhalten.
+**Prognose-Korrektur nach Hard-Stop, VOR dem Refresh dokumentiert:**
+ursprünglich 3 erwartete Bewegungen (autofuellung + blattverzeichnis×2);
+Ist = **2 bewegte Goldens** (`blatt-autofuellung.svg`, `rolle-leer.svg`) —
+Abweichungen beide erklärt: die rolle-leer-Fixtur hat KEINEN
+Layout-Datensatz (der `heftrand:true`-Patch der Datei gehört zur
+rolle-plankopf-Fixtur, die byte-still blieb — Gegenprobe bestanden);
+blattverzeichnis/-legende rendern gar keinen Blattrahmen (eigenständige
+Tafel ohne Heftrand-Codepfad). blatt-framework byte-still (explizites
+`heftrand:true` im Test — prüft weiterhin den Heftrand-Pfad).
+Sichtung: blatt-autofuellung vorher/nachher als PNG gerendert und von
+Fable geprüft (Rahmen allseitig gleich, Inhalt unversehrt). Suiten:
+Kernel 1180/1180, svg-qa Exit 0.
+
+### Teil B — Schraffur-Orientierung (offen)
+_(beim Teil-B-Commit auszufüllen)_
