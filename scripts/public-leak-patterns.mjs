@@ -1,6 +1,10 @@
 export const publicLeakPatterns = [
   /\/mnt\//i,
   /\/home\//i,
+  /\/users\//i,
+  /\/volumes\//i,
+  /\b[a-z]:\/(?:users|mnt|home|onedrive|architekturkosmos)\//i,
+  /file:\/\/\//i,
   /source-root/i,
   /private-library/i,
   /onedrive/i,

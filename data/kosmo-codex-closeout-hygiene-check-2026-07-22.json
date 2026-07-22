@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-22T08:35:53.360Z",
+  "generated_at": "2026-07-22T09:35:41.054Z",
   "status": "codex_closeout_hygiene_check_passed",
   "policy": {
     "validates_closeout_notes_only": true,
@@ -12,8 +12,8 @@
     "public_ready_after_check": 0
   },
   "source_refs": [
-    "../../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-closeout-negative-smoke-hardening.md",
-    "../../09 Codex Memory/2026-07-22 Closeout Negative Smoke Hardening.md"
+    "../../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-public-leak-local-path-expansion.md",
+    "../../09 Codex Memory/2026-07-22 Public Leak Local Path Expansion.md"
   ],
   "summary": {
     "documents_checked": 2,
@@ -26,12 +26,12 @@
     {
       "id": "handoff:non_empty",
       "status": "passed",
-      "evidence": "2502 bytes"
+      "evidence": "2698 bytes"
     },
     {
       "id": "handoff:has_status",
       "status": "passed",
-      "evidence": "# Codex Closeout Negative Smoke Hardening ## Status - Source-free queue checked on 2026-07-22: `source_independent_work_queue_ready`, Codex executable now `0`, owner actions `2`, public-ready remains `0`."
+      "evidence": "Local Path Expansion Generated: 2026-07-22 11:32 CEST ## Status - Source-free queue reported `source_independent_work_queue_ready` with Codex executable now `0`; fallback selected: public privacy gate hardening. - Ow"
     },
     {
       "id": "handoff:mentions_source_free_queue",
@@ -41,17 +41,17 @@
     {
       "id": "handoff:mentions_owner_or_source_root_block",
       "status": "passed",
-      "evidence": "ce_independent_work_queue_ready`, Codex executable now `0`, owner actions `2`, public-ready remains `0`. - Owner/source-root gate remains blocked; no source-root activation, no private inventory execution and no private/"
+      "evidence": "ow `0`; fallback selected: public privacy gate hardening. - Owner unlock remains `owner_unlock_pipeline_checkpoint_attention_required`; source-root and private inventory stay blocked until explicit owner reply and green"
     },
     {
       "id": "handoff:public_ready_zero",
       "status": "passed",
-      "evidence": "_queue_ready`, Codex executable now `0`, owner actions `2`, public-ready remains `0`. - Owner/source-root gate remains blocked; no source-root activation, no private inventory execution and no private/source content read"
+      "evidence": "reen guards. - Data lane sweep stayed review-only passed. - Public-ready remains `0`. ## Completed - Extended `scripts/public-leak-patterns.mjs` so public text-surface scans also flag: - macOS `/Users/...` paths, -"
     },
     {
       "id": "handoff:privacy_hard_stops",
       "status": "passed",
-      "evidence": "ce-root gate remains blocked; no source-root activation, no private inventory execution and no private/source content reads happened in this block. - Fallback task completed: hardened the Codex closeout hygiene negative"
+      "evidence": "ck_pipeline_checkpoint_attention_required`; source-root and private inventory stay blocked until explicit owner reply and green guards. - Data lane sweep stayed review-only passed. - Public-ready remains `0`. ## Complet"
     },
     {
       "id": "handoff:no_public_promotion",
@@ -76,12 +76,12 @@
     {
       "id": "memory:non_empty",
       "status": "passed",
-      "evidence": "1534 bytes"
+      "evidence": "1539 bytes"
     },
     {
       "id": "memory:has_status",
       "status": "passed",
-      "evidence": "# 2026-07-22 Closeout Negative Smoke Hardening ## Status - Source-free queue remained at `source_independent_work_queue_ready` with Codex executable now `0`, owner actions `2`, public-ready `0`. - Owner/source"
+      "evidence": "# 2026-07-22 Public Leak Local Path Expansion ## Status - Source-free queue stayed at Codex executable `0`; fallback work used public privacy gate hardening. - Owner/source-root and private inventory remain b"
     },
     {
       "id": "memory:mentions_source_free_queue",
@@ -91,17 +91,17 @@
     {
       "id": "memory:mentions_owner_or_source_root_block",
       "status": "passed",
-      "evidence": "ndependent_work_queue_ready` with Codex executable now `0`, owner actions `2`, public-ready `0`. - Owner/source-root remains blocked; no private inventory, source-root activation, private PDF/OCR/scan/OneDrive read, work"
+      "evidence": "le `0`; fallback work used public privacy gate hardening. - Owner/source-root and private inventory remain blocked. - Public-ready remains `0`. ## Ergebnis - Expanded `publicLeakMatches()` coverage for local path leaks"
     },
     {
       "id": "memory:public_ready_zero",
       "status": "passed",
-      "evidence": "ue_ready` with Codex executable now `0`, owner actions `2`, public-ready `0`. - Owner/source-root remains blocked; no private inventory, source-root activation, private PDF/OCR/scan/OneDrive read, worker output read or p"
+      "evidence": "- Owner/source-root and private inventory remain blocked. - Public-ready remains `0`. ## Ergebnis - Expanded `publicLeakMatches()` coverage for local path leaks beyond Linux paths: `/Users/`, `/Volumes/`, normalized Wi"
     },
     {
       "id": "memory:privacy_hard_stops",
       "status": "passed",
-      "evidence": ", public-ready `0`. - Owner/source-root remains blocked; no private inventory, source-root activation, private PDF/OCR/scan/OneDrive read, worker output read or public promotion occurred. - Completed a safe fallback by s"
+      "evidence": "used public privacy gate hardening. - Owner/source-root and private inventory remain blocked. - Public-ready remains `0`. ## Ergebnis - Expanded `publicLeakMatches()` coverage for local path leaks beyond Linux paths: `"
     },
     {
       "id": "memory:no_public_promotion",
@@ -126,42 +126,42 @@
     {
       "id": "handoff:has_checks_section",
       "status": "passed",
-      "evidence": "c temporary bad closeout notes and generated guard output. ## Checks - `node --check scripts/kosmo-codex-closeout-hygiene-negative-smoke.mjs`: passed. - `npm run kosmo:codex-closeout-hygiene-negative-smoke`: passed. -"
+      "evidence": ", `public_display_allowed`, or public-ready flags changed. ## Checks - `npm run public:leak-pattern-negative-smoke`: passed, 30/30 cases. - `npx eslint scripts/public-leak-patterns.mjs scripts/public-leak-pattern-negat"
     },
     {
       "id": "handoff:has_exact_staging_section",
       "status": "passed",
-      "evidence": "- No public promotion happened; public-ready remains `0`. ## Exact Staging - In `ArchitectureCosmos`, stage only: - `package.json` - `scripts/kosmo-codex-closeout-hygiene-check.mjs` - `scripts/kosmo-codex-closeo"
+      "evidence": "n. - Do not stage unrelated files. Do not run `git add .`. ## Exact Staging - `scripts/public-leak-patterns.mjs` - `scripts/public-leak-pattern-negative-smoke.mjs` - `data/kosmo-codex-closeout-hygiene-check-2026-07-22."
     },
     {
       "id": "handoff:blocks_broad_stage",
       "status": "passed",
-      "evidence": "y were written outside the `ArchitectureCosmos` git repo. - Do not stage unrelated dirty files. - Do not run `git add .`. - No push while `main` remains divergent (`ahead 23, behind 63`) unless an owner/overseer merge de"
+      "evidence": "ed; push should wait for remote-delta review/integration. - Do not stage unrelated files. Do not run `git add .`. ## Exact Staging - `scripts/public-leak-patterns.mjs` - `scripts/public-leak-pattern-negative-smoke.mjs`"
     },
     {
       "id": "handoff:mentions_no_push_when_divergent_or_dirty",
       "status": "passed",
-      "evidence": "stage unrelated dirty files. - Do not run `git add .`. - No push while `main` remains divergent (`ahead 23, behind 63`) unless an owner/overseer merge decision is made. ## Next - Continue vacation-safe fallback work wh"
+      "evidence": "tarted. - `public_ready_after_check` remains `0`. ## Git / Push - Local commit created in `ArchitectureCosmos`: `Expand public leak local path guard`. - Branch is divergent (`main` ahead and behind `origin/main`) and t"
     },
     {
       "id": "memory:has_completed_or_status_section",
       "status": "passed",
-      "evidence": "# 2026-07-22 Closeout Negative Smoke Hardening ## Status - Source-free queue remained at `source_independent_work_queue_ready` with Codex executable now `0`, owner actions `2`, public-ready `0`. - Owner/sou"
+      "evidence": "# 2026-07-22 Public Leak Local Path Expansion ## Status - Source-free queue stayed at Codex executable `0`; fallback work used public privacy gate hardening. - Owner/source-root and private inventory remai"
     },
     {
       "id": "memory:records_checks",
       "status": "passed",
-      "evidence": "rary directory; the smoke removes them after execution. ## Checks - `node --check scripts/kosmo-codex-closeout-hygiene-negative-smoke.mjs`: passed. - `npm run kosmo:codex-closeout-hygiene-negative-smoke`: passed. - `np"
+      "evidence": "- No public content or review-only status was promoted. ## Checks - `npm run public:leak-pattern-negative-smoke`: passed. - `npx eslint scripts/public-leak-patterns.mjs scripts/public-leak-pattern-negative-smoke.mjs`:"
     },
     {
       "id": "memory:records_next_state",
       "status": "passed",
-      "evidence": "le now `0`, public-ready `0`. - `npm run lint`: passed. ## Next - Keep public-ready at `0` until explicit owner approval and green guards. - Continue with vacation-safe fallback tasks: guard coverage, public route smok"
+      "evidence": "t-hygiene-check -- --handoff ... --memory ...`: passed. ## Next - Local commit in `ArchitectureCosmos`: `Expand public leak local path guard`. - Owner unlock still needs explicit owner reply. - Branch remains divergent"
     },
     {
       "id": "cross:distinct_files",
       "status": "passed",
-      "evidence": "../../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-closeout-negative-smoke-hardening.md / ../../09 Codex Memory/2026-07-22 Closeout Negative Smoke Hardening.md"
+      "evidence": "../../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-public-leak-local-path-expansion.md / ../../09 Codex Memory/2026-07-22 Public Leak Local Path Expansion.md"
     },
     {
       "id": "cross:handoff_and_memory_public_ready_zero",

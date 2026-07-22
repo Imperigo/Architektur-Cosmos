@@ -5,6 +5,10 @@ import { publicLeakMatches } from './public-leak-patterns.mjs';
 const cases = [
   ['/mnt/data/ArchitekturKosmos/Assets/private.pdf', '/\\/mnt\\//i'],
   ['/home/andrin-baumann/.codex/state.json', '/\\/home\\//i'],
+  ['/Users/andrin-baumann/ArchitectureCosmos/private.pdf', '/\\/users\\//i'],
+  ['/Volumes/Archive/ArchitectureCosmos/private.pdf', '/\\/volumes\\//i'],
+  ['C:\\Users\\andrin-baumann\\ArchitectureCosmos\\private.pdf', '/\\b[a-z]:\\/(?:users|mnt|home|onedrive|architekturkosmos)\\//i'],
+  ['file:///Users/andrin-baumann/ArchitectureCosmos/private.pdf', '/file:\\/\\/\\//i'],
   ['source-root decision payload', '/source-root/i'],
   ['private-library source note', '/private-library/i'],
   ['OneDrive/11 AI Workflow/internal.pdf', '/onedrive/i'],
@@ -26,6 +30,7 @@ const cases = [
   ['OneDrive%2F11%20AI%20Workflow%2Finternal.pdf', '/onedrive/i'],
   ['worker%2Doutputs%2Fraw-response.json', '/worker[-_\\s]?outputs?/i'],
   ['&#47;home&#47;andrin-baumann&#47;.codex&#47;state.json', '/\\/home\\//i'],
+  ['file&#58;&#47;&#47;&#47;Users&#47;andrin-baumann&#47;ArchitectureCosmos&#47;private.pdf', '/\\/users\\//i'],
   ['archive&#45;intake&#47;out&#47;raw.json', '/archive-intake/i'],
   ['C:\\mnt\\data\\ArchitekturKosmos\\Assets\\private.pdf', '/\\/mnt\\//i']
 ];
