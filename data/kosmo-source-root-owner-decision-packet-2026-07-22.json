@@ -1,0 +1,162 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T08:13:29.145Z",
+  "status": "source_root_owner_decision_packet_ready",
+  "policy": {
+    "owner_prompt_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_packet": 0,
+    "note": "This packet gives owner/overseer decision templates only. It does not apply a decision or inspect private source contents."
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-action-card-2026-07-22.json",
+    "data/kosmo-source-root-decision-session-refresh-2026-07-22.json",
+    "data/kosmo-source-root-candidate-integrity-check-2026-07-22.json",
+    "data/kosmo-source-root-decision-session-check-2026-07-22.json",
+    "examples/kosmo-references/provenance/source-root-decision-session-2026-07-22.json"
+  ],
+  "summary": {
+    "owner_action_required": true,
+    "recommended_decision": "mount_archive_first_or_confirm_non_archive_root",
+    "decision_refresh_status": "source_root_decision_session_refresh_not_needed",
+    "decision_refresh_options": 10,
+    "candidate_integrity_status": "source_root_candidate_integrity_owner_review_ready",
+    "visible_path_options": 8,
+    "owner_confirmable_exact_roots": 1,
+    "workflow_mirror_options": 3,
+    "asset_candidate_options": 2,
+    "selected_decision": null,
+    "selected_root_path": null,
+    "private_diagnostic_allowed": false,
+    "decision_templates": 3,
+    "failures": 0,
+    "public_ready_after_packet": 0
+  },
+  "owner_question": {
+    "id": "source_root_decision_now",
+    "prompt": "Which exact source-root decision should be recorded now?",
+    "allowed_answer_shape": {
+      "selected_decision": [
+        "keep_blocked",
+        "mount_archive_first",
+        "repair_onedrive_first",
+        "select_existing_root_for_private_diagnostic",
+        "select_root_after_mount_check"
+      ],
+      "selected_root_path": "absolute path only when selected_decision is select_existing_root_for_private_diagnostic or select_root_after_mount_check"
+    },
+    "safe_default": "keep_blocked"
+  },
+  "decision_templates": [
+    {
+      "id": "keep_blocked",
+      "label": "Keep source-root blocked",
+      "when_to_use": "Owner is not ready to identify the complete private architecture library root.",
+      "session_fields": {
+        "status": "source_root_decision_session_recorded",
+        "selected_decision": "keep_blocked",
+        "selected_root_path": null
+      },
+      "unlocks_private_metadata_diagnostic": false
+    },
+    {
+      "id": "repair_onedrive_first",
+      "label": "Repair OneDrive first",
+      "when_to_use": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved.",
+      "session_fields": {
+        "status": "source_root_decision_session_recorded",
+        "selected_decision": "repair_onedrive_first",
+        "selected_root_path": null
+      },
+      "unlocks_private_metadata_diagnostic": false
+    },
+    {
+      "id": "select_exact_root_1",
+      "label": "Select visible exact root for metadata diagnostic",
+      "when_to_use": "Owner/KosmoOverseer explicitly confirms this exact path is the complete private source root for metadata-only diagnostics.",
+      "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics.",
+      "session_fields": {
+        "status": "source_root_decision_session_recorded",
+        "selected_decision": "select_existing_root_for_private_diagnostic",
+        "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets"
+      },
+      "unlocks_private_metadata_diagnostic": true
+    }
+  ],
+  "option_groups": {
+    "owner_confirmable_exact_roots": [
+      {
+        "id": "possible-source-root-mnt-archiv-architekturkosmos-assets",
+        "path": "/mnt/archiv/ArchitekturKosmos/Assets",
+        "guard_class": "owner_confirmable_exact_root",
+        "score": 52,
+        "reason": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics.",
+        "activation_allowed_now": false
+      }
+    ],
+    "workflow_mirrors_keep_blocked": [
+      {
+        "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+        "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite",
+        "guard_class": "workflow_mirror_or_codex_context",
+        "score": 70,
+        "reason": "Visible but looks like workflow/repo context, not the complete private architecture library.",
+        "activation_allowed_now": false
+      },
+      {
+        "id": "possible-source-root-mnt-archiv-01-architekturkosmos-projekt-00-einrichtung-home-pc-kosmow",
+        "path": "/mnt/archiv/01 ArchitekturKosmos Projekt/00 Einrichtung Home_PC/KosmoWebsite",
+        "guard_class": "workflow_mirror_or_codex_context",
+        "score": 52,
+        "reason": "Visible but looks like workflow/repo context, not the complete private architecture library.",
+        "activation_allowed_now": false
+      },
+      {
+        "id": "possible-source-root-mnt-archiv-fromssd-onedrive-2026-06-08-00-einrichtung-home-pc-kosmowe",
+        "path": "/mnt/archiv/FromSSD/OneDrive_2026-06-08/00 Einrichtung Home_PC/KosmoWebsite/repo-context",
+        "guard_class": "workflow_mirror_or_codex_context",
+        "score": 48,
+        "reason": "Visible but looks like workflow/repo context, not the complete private architecture library.",
+        "activation_allowed_now": false
+      }
+    ],
+    "asset_sources_for_kosmoasset_review_only": [
+      {
+        "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-abgabe-tkb-bibl",
+        "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/abgabe/TKB_Bibliothek_Live-Final-Test_Abgabe",
+        "guard_class": "asset_material_library_candidate",
+        "score": 60,
+        "reason": "Visible but better treated as KosmoAsset/material source, not main KosmoReferences source root.",
+        "activation_allowed_now": false
+      },
+      {
+        "id": "possible-source-root-mnt-archiv-architekturkosmos-assets-claude-to-blender-ai-architektur-",
+        "path": "/mnt/archiv/ArchitekturKosmos/Assets/Claude to Blender/Ai Architektur Workflow/PBR Library + HDRI",
+        "guard_class": "asset_material_library_candidate",
+        "score": 60,
+        "reason": "Visible but better treated as KosmoAsset/material source, not main KosmoReferences source root.",
+        "activation_allowed_now": false
+      }
+    ]
+  },
+  "forbidden_until_after_recorded_owner_decision": [
+    "private metadata inventory against any selected root",
+    "private OCR or PDF/book text extraction",
+    "copying private scans, plans, images or lecture material into Git",
+    "public-ready promotion for private-source-derived references or assets"
+  ],
+  "exact_next_commands_after_recorded_owner_decision": [
+    "npm run kosmo:source-root-decision-session-check",
+    "npm run kosmo:source-root-blocker-refresh",
+    "npm run kosmo:source-root-activation-preflight",
+    "npm run kosmo:private-metadata-inventory",
+    "npm run kosmo:private-metadata-inventory-check",
+    "npm run kosmo:day-batch-loop"
+  ],
+  "failures": []
+}

@@ -1,0 +1,264 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T08:15:35.576Z",
+  "status": "overseer_sync_board_guard_passed",
+  "policy": {
+    "records_decisions": false,
+    "writes_session_files": false,
+    "applies_decisions": false,
+    "writes_public_files": false,
+    "writes_public_manifest": false,
+    "public_ready_after_guard": 0,
+    "note": "This guard validates overseer coordination state. It does not record owner answers or change data-lane decisions."
+  },
+  "source_refs": [
+    "data/kosmo-overseer-sync-board-2026-07-22.json"
+  ],
+  "summary": {
+    "board_status": "overseer_sync_board_ready",
+    "data_lane_steps": "29/29",
+    "latest_handoffs": 8,
+    "latest_handoff_mirror_missing_files": 0,
+    "local_worker_outputs": "9/9",
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_guard": 0
+  },
+  "findings": [
+    {
+      "id": "board_ready",
+      "severity": "passed",
+      "message": "Overseer sync board must be ready."
+    },
+    {
+      "id": "records_decisions_false",
+      "severity": "passed",
+      "message": "Board must not record decisions."
+    },
+    {
+      "id": "writes_session_files_false",
+      "severity": "passed",
+      "message": "Board must not write session files."
+    },
+    {
+      "id": "applies_decisions_false",
+      "severity": "passed",
+      "message": "Board must not apply decisions."
+    },
+    {
+      "id": "writes_public_files_false",
+      "severity": "passed",
+      "message": "Board must not write public files."
+    },
+    {
+      "id": "writes_public_manifest_false",
+      "severity": "passed",
+      "message": "Board must not write public manifests."
+    },
+    {
+      "id": "public_ready_after_board_zero",
+      "severity": "passed",
+      "message": "Board policy must keep public-ready after board at 0."
+    },
+    {
+      "id": "data_lane_passed",
+      "severity": "passed",
+      "message": "Data lane must be review-only passed."
+    },
+    {
+      "id": "data_lane_steps_complete",
+      "severity": "passed",
+      "message": "Data lane must report all steps passed."
+    },
+    {
+      "id": "router_guarded",
+      "severity": "passed",
+      "message": "Router must remain guarded review-only or metadata-diagnostic ready."
+    },
+    {
+      "id": "checkpoint_guarded",
+      "severity": "passed",
+      "message": "Night-loop checkpoint must remain guarded ready."
+    },
+    {
+      "id": "session_brief_guard_passed",
+      "severity": "passed",
+      "message": "Session brief guard must pass."
+    },
+    {
+      "id": "session_brief_failures_zero",
+      "severity": "passed",
+      "message": "Session brief guard failures must be 0."
+    },
+    {
+      "id": "local_worker_review_only",
+      "severity": "passed",
+      "message": "Local worker review must be review-only present."
+    },
+    {
+      "id": "local_worker_outputs_complete",
+      "severity": "passed",
+      "message": "Local worker outputs must report all required outputs present."
+    },
+    {
+      "id": "local_worker_risk_zero",
+      "severity": "passed",
+      "message": "Local worker high-risk hits must be 0."
+    },
+    {
+      "id": "latest_handoff_count",
+      "severity": "passed",
+      "message": "Board must track eight latest handoffs."
+    },
+    {
+      "id": "latest_mirror_missing_zero",
+      "severity": "passed",
+      "message": "Latest handoffs must have 0 mirror-missing files."
+    },
+    {
+      "id": "summary_public_ready_zero",
+      "severity": "passed",
+      "message": "Board summary must keep public-ready at 0."
+    },
+    {
+      "id": "two_handoff_inboxes",
+      "severity": "passed",
+      "message": "Board must track two handoff inboxes."
+    },
+    {
+      "id": "inbox_exists:/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+      "severity": "passed",
+      "message": "Handoff inbox must exist: /mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox"
+    },
+    {
+      "id": "inbox_has_files:/mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox",
+      "severity": "passed",
+      "message": "Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/Code/KosmoOrbit/_overseer/intake/inbox"
+    },
+    {
+      "id": "inbox_exists:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+      "severity": "passed",
+      "message": "Handoff inbox must exist: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox"
+    },
+    {
+      "id": "inbox_has_files:/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox",
+      "severity": "passed",
+      "message": "Handoff inbox must contain files: /mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox"
+    },
+    {
+      "id": "latest_handoffs_array_count",
+      "severity": "passed",
+      "message": "Latest handoff array must contain eight items."
+    },
+    {
+      "id": "latest_handoff_includes_115",
+      "severity": "passed",
+      "message": "Latest handoffs must include synergiebericht 115 or newer."
+    },
+    {
+      "id": "handoff_mirrored:2026-07-22-codex-synergiebericht-354-owner-unlock-blocked-safety-check.md",
+      "severity": "passed",
+      "message": "2026-07-22-codex-synergiebericht-354-owner-unlock-blocked-safety-check.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-07-22-codex-synergiebericht-354-owner-unlock-blocked-safety-check.md",
+      "severity": "passed",
+      "message": "2026-07-22-codex-synergiebericht-354-owner-unlock-blocked-safety-check.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md",
+      "severity": "passed",
+      "message": "2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md",
+      "severity": "passed",
+      "message": "2026-07-01-codex-synergiebericht-353-owner-unlock-checkpoint-missing-input-hardening.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-352-standard-kosmodraw-public-gate.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-17-codex-synergiebericht-351-intake-review-check.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-351-intake-review-check.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-17-codex-synergiebericht-351-intake-review-check.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-351-intake-review-check.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-17-codex-synergiebericht-350-bundle-negative-smoke.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-350-bundle-negative-smoke.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-17-codex-synergiebericht-350-bundle-negative-smoke.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-350-bundle-negative-smoke.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-17-codex-synergiebericht-349-public-kosmodraw-intake-status.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-349-public-kosmodraw-intake-status.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-17-codex-synergiebericht-349-public-kosmodraw-intake-status.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-349-public-kosmodraw-intake-status.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-17-codex-synergiebericht-348-kosmodraw-bundle-intake-review-generator.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-348-kosmodraw-bundle-intake-review-generator.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-17-codex-synergiebericht-348-kosmodraw-bundle-intake-review-generator.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-348-kosmodraw-bundle-intake-review-generator.md must include a title."
+    },
+    {
+      "id": "handoff_mirrored:2026-06-17-codex-synergiebericht-347-kosmodraw-openings-bundle-contract.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-347-kosmodraw-openings-bundle-contract.md must be mirrored in both inboxes."
+    },
+    {
+      "id": "handoff_title:2026-06-17-codex-synergiebericht-347-kosmodraw-openings-bundle-contract.md",
+      "severity": "passed",
+      "message": "2026-06-17-codex-synergiebericht-347-kosmodraw-openings-bundle-contract.md must include a title."
+    },
+    {
+      "id": "source_root_blocked",
+      "severity": "passed",
+      "message": "Source-root blocker must remain blocked or metadata-only allowed."
+    },
+    {
+      "id": "private_inventory_blocked",
+      "severity": "passed",
+      "message": "Private inventory blocker must remain blocked or metadata-only allowed."
+    },
+    {
+      "id": "owner_answers_blocked",
+      "severity": "passed",
+      "message": "Owner answers blocker must remain blocked."
+    },
+    {
+      "id": "public_ready_zero_passed",
+      "severity": "passed",
+      "message": "Public-ready-zero invariant must pass."
+    }
+  ],
+  "next_actions": [
+    "Use the overseer sync board as the current Codex/Claude/KosmoOverseer coordination entry point.",
+    "Keep source-root, private inventory and owner-answer blockers in place.",
+    "Rerun board and guard after any new handoff or owner-confirmed answer."
+  ]
+}

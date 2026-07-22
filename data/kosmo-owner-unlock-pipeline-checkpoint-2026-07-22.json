@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-22T07:58:30.906Z",
+  "generated_at": "2026-07-22T08:15:01.587Z",
   "status": "owner_unlock_pipeline_checkpoint_attention_required",
   "policy": {
     "checkpoint_only": true,
@@ -45,8 +45,8 @@
   ],
   "summary": {
     "components": 29,
-    "components_ready": 2,
-    "missing_inputs": 27,
+    "components_ready": 3,
+    "missing_inputs": 26,
     "missing_input_refs": [
       "data/kosmo-owner-unlock-reply-validator-2026-07-22.json",
       "data/kosmo-owner-unlock-reply-validator-check-2026-07-22.json",
@@ -73,16 +73,15 @@
       "data/kosmo-owner-unlock-session-apply-guard-2026-07-22.json",
       "data/kosmo-owner-unlock-session-apply-guard-check-2026-07-22.json",
       "data/kosmo-owner-unlock-session-apply-guard-smoke-2026-07-22.json",
-      "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-22.json",
-      "data/kosmo-overseer-sync-board-2026-07-22.json"
+      "data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-22.json"
     ],
     "guard_checks": 42,
     "guard_checks_passed": 42,
     "expected_freeform_guard_failures": 0,
     "expected_runbook_bootstrap_failures": 0,
-    "latest_handoff_min": null,
-    "latest_handoff_max": null,
-    "latest_handoff_count": 0,
+    "latest_handoff_min": 347,
+    "latest_handoff_max": 354,
+    "latest_handoff_count": 8,
     "owner_reply_state": "pending",
     "source_root_state": "blocked_until_explicit_owner_reply_and_guards",
     "path_a_ready_after_exact_owner_reply": false,
@@ -361,11 +360,11 @@
     },
     {
       "id": "overseer-sync-board",
-      "actual_status": "missing_input",
+      "actual_status": "overseer_sync_board_ready",
       "expected_statuses": [
         "overseer_sync_board_ready"
       ],
-      "ready": false,
+      "ready": true,
       "public_ready_after_component": 0
     }
   ],

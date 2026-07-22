@@ -1,14 +1,14 @@
 # Kosmo Owner Unlock Pipeline Checkpoint
 
-Generated: 2026-07-22T07:58:30.906Z
+Generated: 2026-07-22T08:15:01.587Z
 Status: `owner_unlock_pipeline_checkpoint_attention_required`
 
 ## Summary
 
-- Components: 2/29
-- Missing inputs: 27
+- Components: 3/29
+- Missing inputs: 26
 - Guard checks: 42/42
-- Latest handoffs: null-null
+- Latest handoffs: 347-354
 - Owner reply state: pending
 - Source-root state: blocked_until_explicit_owner_reply_and_guards
 - Path A ready after exact owner reply: no
@@ -51,7 +51,7 @@ Status: `owner_unlock_pipeline_checkpoint_attention_required`
 - attention: `session-apply-guard-smoke-check` -> `missing_input`
 - ready: `post-source-root-metadata-readiness-pack` -> `post_source_root_metadata_readiness_pack_ready`
 - ready: `post-source-root-metadata-readiness-pack-check` -> `post_source_root_metadata_readiness_pack_guard_passed`
-- attention: `overseer-sync-board` -> `missing_input`
+- ready: `overseer-sync-board` -> `overseer_sync_board_ready`
 
 ## Missing Inputs
 
@@ -81,7 +81,6 @@ Status: `owner_unlock_pipeline_checkpoint_attention_required`
 - `data/kosmo-owner-unlock-session-apply-guard-check-2026-07-22.json`
 - `data/kosmo-owner-unlock-session-apply-guard-smoke-2026-07-22.json`
 - `data/kosmo-owner-unlock-session-apply-guard-smoke-check-2026-07-22.json`
-- `data/kosmo-overseer-sync-board-2026-07-22.json`
 
 ## Next Actions
 
