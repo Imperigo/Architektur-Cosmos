@@ -11,13 +11,15 @@ const cleanGateScript = [
   'npm run public:route-manifest-check',
   'node scripts/public-demo-gate-check.mjs',
   'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
+  'npm run public:entry-detail-dossier-check',
   'npm run public:gate-alignment-check'
 ].join(' && ');
 
 const cleanVacationSafeSource = [
   "command: ['node', 'scripts/public-demo-gate-check.mjs']",
   "command: ['node', 'scripts/public-route-manifest-check.mjs']",
-  "command: ['node', 'scripts/public-static-asset-surface-check.mjs']"
+  "command: ['node', 'scripts/public-static-asset-surface-check.mjs']",
+  "command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']"
 ].join('\n');
 
 const cases = [
@@ -25,21 +27,22 @@ const cases = [
     id: 'missing_route_manifest',
     gateScript: 'node scripts/public-demo-gate-check.mjs && node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
     vacationSafeSource: cleanVacationSafeSource,
-    expectedFailures: ['gate:route_manifest:missing', 'gate:demo_gate:order', 'gate:static_asset_surface:order']
+    expectedFailures: ['gate:route_manifest:missing', 'gate:demo_gate:order', 'gate:static_asset_surface:order', 'gate:entry_detail_dossier:missing']
   },
   {
     id: 'wrong_order',
     gateScript: [
       'node scripts/public-demo-gate-check.mjs',
       'npm run public:route-manifest-check',
-      'node scripts/public-static-asset-surface-check.mjs --allow-missing-out'
+      'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
+      'npm run public:entry-detail-dossier-check'
     ].join(' && '),
     vacationSafeSource: cleanVacationSafeSource,
     expectedFailures: ['gate:route_manifest:order', 'gate:demo_gate:order']
   },
   {
     id: 'missing_allow_missing_out',
-    gateScript: 'npm run public:route-manifest-check && node scripts/public-demo-gate-check.mjs && node scripts/public-static-asset-surface-check.mjs',
+    gateScript: 'npm run public:route-manifest-check && node scripts/public-demo-gate-check.mjs && node scripts/public-static-asset-surface-check.mjs && npm run public:entry-detail-dossier-check',
     vacationSafeSource: cleanVacationSafeSource,
     expectedFailures: ['gate:static_asset_surface:missing', 'gate:unexpected-command:node-scripts-public-static-asset-surface-check-mjs']
   },
@@ -52,8 +55,8 @@ const cases = [
   {
     id: 'missing_vacation_coverage',
     gateScript: cleanGateScript,
-    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-static-asset-surface-check.mjs']", ''),
-    expectedFailures: ['vacation-safe:static_asset_surface:coverage']
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']", ''),
+    expectedFailures: ['vacation-safe:entry_detail_dossier:coverage']
   }
 ];
 

@@ -235,6 +235,24 @@ const checks = [
     purpose: 'Verifies the static asset surface guard rejects synthetic PDF, archive, database and private/source text artifacts.'
   },
   {
+    id: 'public_entry_detail_dossier_check',
+    command: [
+      'node',
+      'scripts/public-entry-detail-dossier-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-entry-detail-dossier-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-entry-detail-dossier-check.generated.md'),
+      '--allow-missing-out'
+    ],
+    purpose: 'Checks exported public Atlas detail pages for dossier navigation, public cross-links, canonical metadata, JSON-LD and private/source markers.'
+  },
+  {
+    id: 'public_entry_detail_dossier_negative_smoke',
+    command: ['node', 'scripts/public-entry-detail-dossier-negative-smoke.mjs'],
+    purpose: 'Verifies the entry detail dossier guard rejects synthetic missing dossier links, private/source markers and missing JSON-LD.'
+  },
+  {
     id: 'public_static_header_check',
     command: [
       'node',

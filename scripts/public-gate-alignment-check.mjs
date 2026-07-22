@@ -23,6 +23,11 @@ const requiredGateCommands = [
     id: 'static_asset_surface',
     command: 'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
     coveredByVacationSafe: 'scripts/public-static-asset-surface-check.mjs'
+  },
+  {
+    id: 'entry_detail_dossier',
+    command: 'npm run public:entry-detail-dossier-check',
+    coveredByVacationSafe: 'scripts/public-entry-detail-dossier-check.mjs'
   }
 ];
 
