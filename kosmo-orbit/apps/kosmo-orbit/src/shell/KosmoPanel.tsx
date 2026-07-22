@@ -1299,7 +1299,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         // Anleitung erscheint unterhalb des sichtbaren Bereichs — ohne
         // sofortiges Feedback wirkt der Klick wie ein Nichts. Kurzer
         // Wegweiser-Toast ZUSÄTZLICH zur Panel-Anleitung (F1 bleibt).
-        melde('Die Anthropic-CLI (ant) fehlt auf diesem Gerät — Anleitung unten im Panel (oder API-Schlüssel eintragen).', {
+        melde('Die Anthropic-CLI (claude) fehlt auf diesem Gerät — Anleitung unten im Panel (oder API-Schlüssel eintragen).', {
           ton: 'info',
           dauerMs: 7000,
         });
@@ -1975,14 +1975,14 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                       installieren). */}
                   <div data-testid="cloud-login-ant-status" className="kp-hinweis-soft">
                     {antStatusLaeuft
-                      ? 'ant-CLI-Status wird geprüft …'
+                      ? 'Anthropic-CLI-Status wird geprüft …'
                       : antStatus === 'fehlt'
-                        ? 'ant-CLI nicht gefunden.'
+                        ? 'Anthropic-CLI (claude) nicht gefunden.'
                         : antStatus === 'nicht-eingeloggt'
-                          ? 'ant-CLI gefunden, noch nicht angemeldet — ein Klick öffnet den Anmelde-Dialog.'
+                          ? 'Anthropic-CLI (claude) gefunden, noch nicht angemeldet — ein Klick öffnet das Anmelde-Fenster im Browser.'
                           : antStatus === 'eingeloggt'
-                            ? 'ant-CLI angemeldet — ein Klick holt das Token in Kosmo.'
-                            : 'ant-CLI-Status unbekannt — «Erneut prüfen» klicken.'}
+                            ? 'Anthropic-CLI (claude) angemeldet — ein Klick holt das Token in Kosmo.'
+                            : 'CLI-Status unbekannt — «Erneut prüfen» klicken.'}
                   </div>
                   <div className="kp-knopf-reihe">
                     <KButton
@@ -2009,8 +2009,8 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                   className="kp-hinweis-soft"
                 >
                   Das Claude-Abo läuft nur in der Desktop-App über die lokale Anthropic-CLI
-                  (<code>ant</code>) — Mit-Claude-Anmeldung gibt es hier nicht. Im Browser bitte den
-                  API-Schlüssel unten nutzen.
+                  (<code>claude</code>) — Mit-Claude-Anmeldung gibt es hier nicht. Im Browser bitte
+                  den API-Schlüssel unten nutzen.
                 </div>
               )}
               {settings.cloudAuth === 'abo' && settings.anthropicOauthToken.trim() && (
@@ -2032,8 +2032,8 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
                   className="kp-anleitung-box"
                 >
                   <div>
-                    Die Anthropic-CLI (<code>ant</code>) fehlt lokal — sie ist das Werkzeug, über das
-                    die Abo-Anmeldung läuft (derselbe Weg wie bei Claude Code).
+                    Die Anthropic-CLI (<code>claude</code>) fehlt lokal — sie ist das Werkzeug, über
+                    das die Abo-Anmeldung läuft (dieselbe CLI wie bei Claude Code).
                   </div>
                   <div>
                     Installieren: <code>{ANT_INSTALL_BEFEHL}</code> (oder die Anthropic-Dokumentation

@@ -9,43 +9,80 @@ use tauri::{
 /// Cloud-Login mit Abo («Mit Claude anmelden», Owner-Auftrag T-Cloud-Login) —
 /// der Desktop-Weg zum echten OAuth-Token.
 ///
-/// KosmoOrbit nutzt dafür denselben Mechanismus wie Anthropics eigene
-/// Werkzeuge (Claude Code, das Agent-SDK, die `ant`-CLI): ein
-/// Browser-Popup-Login beim Anthropic-Konto, danach ein kurzlebiges
-/// Access-Token lokal. Dieser Command liest das Token über die lokale
-/// Anthropic-CLI `ant`:
+/// v0.9.1 Owner-Punkt 22.07.2026 («mit claude-abo anmelden geht immernoch
+/// nicht»): die lokale Anthropic-CLI heisst REAL `claude` (Paket
+/// `@anthropic-ai/claude-code`) — der bisher geprobte Binärname `ant`
+/// existiert dort nicht, darum lief jeder Klick seit v0.8.4 in «nicht
+/// gefunden», egal was installiert war. Verifizierte echte Befehle (CLI
+/// 2.1.x): `claude auth login --claudeai` öffnet den Browser-Login fürs
+/// Abo und blockiert bis zum Abschluss; `claude auth status --json`
+/// antwortet `{"loggedIn":…,"authMethod":…}`; `claude auth logout` meldet
+/// ab. Einen `print-credentials`-Befehl gibt es NICHT — das Access-Token
+/// liegt nach dem Login in `~/.claude/.credentials.json`
+/// (`claudeAiOauth.accessToken`; unter Windows `%USERPROFILE%`, auf macOS
+/// stattdessen im Schlüsselbund — dort bleibt der Weg ehrlich verschlossen
+/// und der Fehlertext sagt das).
 ///
-/// 1. Ist bereits ein Login aktiv, liefert `ant auth print-credentials
-///    --access-token` das Token direkt.
-/// 2. Sonst stösst `ant auth login` den Browser-Popup an (blockiert, bis der
-///    Nutzer sich angemeldet hat) und `print-credentials` wird erneut
-///    versucht.
-/// 3. Fehlt `ant` ganz, kommt ein klarer, ehrlicher Fehlertext zurück statt
-///    eines Absturzes — der Architekt weicht dann auf den API-Schlüssel aus.
+/// Windows-Detail: npm installiert `claude` als `.cmd`-Shim, den
+/// `CreateProcess` (also `Command::new`) nicht direkt starten kann — alle
+/// CLI-Aufrufe laufen dort über `cmd /C`, mit `CREATE_NO_WINDOW`, damit
+/// kein Konsolenfenster aufblitzt. `ant` bleibt als historischer Zweitname
+/// in der Probe (kostet einen Fehlversuch, bricht niemandem etwas).
 ///
 /// **Ehrliches Gerüst (Owner-Mandat):** dieser Pfad kompiliert und ist im
-/// echten Desktop-Build wirksam, lässt sich aber in der Container-CI/-Testumgebung
-/// nicht ausführen — hier fehlen `ant` und die Tauri-Laufzeit. Bewusst ohne
-/// zusätzliche Crates (nur `std::process::Command`), damit der Desktop-Build
-/// dadurch nicht gefährdet wird.
-///
-/// v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`): `ant_installiert`/`lese_token`
-/// wanderten aus dem Körper von `claude_login` auf Modulebene, damit
-/// `claude_login_status` (unten) denselben Probe-Code nutzt, OHNE je
-/// `ant auth login` (den Browser-Popup) auszulösen — reine Status-Erkennung.
-fn ant_installiert() -> bool {
-    Command::new("ant").arg("--version").output().is_ok()
+/// echten Desktop-Build wirksam; in der Container-CI fehlt die
+/// Tauri-Laufzeit. Keine neuen Crates (serde_json ist bereits Dependency).
+const CLI_NAMEN: [&str; 2] = ["claude", "ant"];
+
+#[cfg(windows)]
+fn cli_befehl(name: &str) -> Command {
+    use std::os::windows::process::CommandExt;
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+    let mut c = Command::new("cmd");
+    c.arg("/C").arg(name);
+    c.creation_flags(CREATE_NO_WINDOW);
+    c
 }
 
-fn lese_token() -> Option<String> {
-    let out = Command::new("ant")
-        .args(["auth", "print-credentials", "--access-token"])
-        .output()
-        .ok()?;
+#[cfg(not(windows))]
+fn cli_befehl(name: &str) -> Command {
+    Command::new(name)
+}
+
+/// Erster CLI-Name, der auf `--version` mit Exit 0 antwortet — `claude`
+/// zuerst (der echte Name), `ant` als historischer Zweitversuch.
+fn cli_name() -> Option<&'static str> {
+    CLI_NAMEN.iter().copied().find(|name| {
+        cli_befehl(name)
+            .arg("--version")
+            .output()
+            .map(|o| o.status.success())
+            .unwrap_or(false)
+    })
+}
+
+/// Offizielle Statusauskunft der CLI: `Some(true)` = eingeloggt,
+/// `Some(false)` = nicht eingeloggt, `None` = Auskunft nicht verfügbar
+/// (ältere CLI ohne `auth status` — dann entscheidet `lese_token`).
+fn cli_eingeloggt(name: &str) -> Option<bool> {
+    let out = cli_befehl(name).args(["auth", "status", "--json"]).output().ok()?;
     if !out.status.success() {
         return None;
     }
-    let token = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    let text = String::from_utf8_lossy(&out.stdout);
+    let wert: serde_json::Value = serde_json::from_str(text.trim()).ok()?;
+    wert.get("loggedIn").and_then(|v| v.as_bool())
+}
+
+/// Access-Token aus der CLI-Credentials-Datei (`~/.claude/.credentials.json`,
+/// Feld `claudeAiOauth.accessToken`). `None`, wenn die Datei fehlt (macOS:
+/// Schlüsselbund), nicht lesbar ist oder das Feld leer bleibt.
+fn lese_token() -> Option<String> {
+    let home = std::env::var_os(if cfg!(windows) { "USERPROFILE" } else { "HOME" })?;
+    let pfad = std::path::PathBuf::from(home).join(".claude").join(".credentials.json");
+    let text = std::fs::read_to_string(pfad).ok()?;
+    let wert: serde_json::Value = serde_json::from_str(&text).ok()?;
+    let token = wert.get("claudeAiOauth")?.get("accessToken")?.as_str()?.trim().to_string();
     if token.is_empty() {
         None
     } else {
@@ -55,25 +92,26 @@ fn lese_token() -> Option<String> {
 
 #[tauri::command]
 fn claude_login() -> Result<String, String> {
-    if !ant_installiert() {
+    let Some(name) = cli_name() else {
         return Err(
-            "Anthropic-CLI (`ant`) nicht gefunden — installieren oder API-Schlüssel nutzen.".to_string(),
+            "Anthropic-CLI (`claude`) nicht gefunden — installieren oder API-Schlüssel nutzen.".to_string(),
         );
+    };
+
+    if cli_eingeloggt(name) != Some(true) {
+        // Kein aktives Login: `auth login --claudeai` öffnet das
+        // Anmelde-Fenster im Browser und wartet, bis sich der Architekt beim
+        // Anthropic-Konto angemeldet hat (oder abbricht).
+        match cli_befehl(name).args(["auth", "login", "--claudeai"]).status() {
+            Ok(status) if status.success() => {}
+            Ok(_) => return Err("Claude-Anmeldung abgebrochen oder fehlgeschlagen.".to_string()),
+            Err(e) => return Err(format!("`{name} auth login` liess sich nicht starten: {e}")),
+        }
     }
 
-    if let Some(token) = lese_token() {
-        return Ok(token);
-    }
-
-    // Kein aktives Login: `ant auth login` öffnet den Browser-Popup und
-    // wartet, bis sich der Architekt beim Anthropic-Konto angemeldet hat.
-    match Command::new("ant").args(["auth", "login"]).status() {
-        Ok(status) if status.success() => {}
-        Ok(_) => return Err("Claude-Anmeldung abgebrochen oder fehlgeschlagen.".to_string()),
-        Err(e) => return Err(format!("`ant auth login` liess sich nicht starten: {e}")),
-    }
-
-    lese_token().ok_or_else(|| "Anmeldung abgeschlossen, aber kein Token lesbar.".to_string())
+    lese_token().ok_or_else(|| {
+        "Anmeldung ist aktiv, aber das Token ist nicht lesbar (auf macOS liegt es im Schlüsselbund) — bitte den API-Schlüssel-Weg unten nutzen.".to_string()
+    })
 }
 
 /// v0.8.4 PA5 (E10 §3.1, `docs/V084-SPEZ.md`, C-5 «Status-Erkennung
@@ -81,25 +119,31 @@ fn claude_login() -> Result<String, String> {
 /// `claude_login` (oben) darf das (der Architekt hat aktiv «Mit Claude-Abo
 /// anmelden» geklickt), ein Status-Check beim Öffnen der Einstellungen oder
 /// hinter «Erneut prüfen» darf es NICHT. Drei Zustände statt nur eines
-/// Fehlertexts:
-///  - `"fehlt"`: `ant` ist lokal nicht installiert.
-///  - `"nicht-eingeloggt"`: `ant` ist da, aber `print-credentials` liefert
-///    (noch) kein Token — ein Klick auf «Mit Claude-Abo anmelden» würde jetzt
-///    den Browser-Popup öffnen.
-///  - `"eingeloggt"`: `ant` ist da UND bereits angemeldet (Abo aktiv) — ein
-///    Klick auf «Mit Claude-Abo anmelden» holt das Token nur noch in Kosmo,
-///    ohne neuen Login-Dialog.
+/// Fehlertexts (seit v0.9.1 über den echten CLI-Namen `claude`, s. oben):
+///  - `"fehlt"`: keine Anthropic-CLI lokal installiert.
+///  - `"nicht-eingeloggt"`: CLI da, `auth status` meldet kein aktives Login
+///    — ein Klick auf «Mit Claude-Abo anmelden» öffnet jetzt das
+///    Anmelde-Fenster im Browser.
+///  - `"eingeloggt"`: CLI da UND angemeldet (Abo aktiv) — ein Klick holt das
+///    Token nur noch in Kosmo, ohne neuen Login-Dialog.
 /// Liefert IMMER einen der drei String-Werte (kein `Result`) — die Prüfung
 /// selbst kann nicht scheitern, sie beobachtet nur.
 #[tauri::command]
 fn claude_login_status() -> String {
-    if !ant_installiert() {
+    let Some(name) = cli_name() else {
         return "fehlt".to_string();
-    }
-    if lese_token().is_some() {
-        "eingeloggt".to_string()
-    } else {
-        "nicht-eingeloggt".to_string()
+    };
+    match cli_eingeloggt(name) {
+        Some(true) => "eingeloggt".to_string(),
+        Some(false) => "nicht-eingeloggt".to_string(),
+        // Keine Statusauskunft (ältere CLI) — lesbares Token entscheidet.
+        None => {
+            if lese_token().is_some() {
+                "eingeloggt".to_string()
+            } else {
+                "nicht-eingeloggt".to_string()
+            }
+        }
     }
 }
 

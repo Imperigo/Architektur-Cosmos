@@ -1,7 +1,9 @@
 /**
  * Cloud-Login mit Abo («Mit Claude anmelden», Owner-Auftrag) — der OAuth-Weg,
- * genau wie ihn Anthropics eigene Werkzeuge nutzen (`ant`-CLI, Claude Code,
- * Agent-SDK): Browser-Popup → Anthropic-Konto → kurzlebiges Token lokal.
+ * genau wie ihn Anthropics eigene Werkzeuge nutzen (die `claude`-CLI von
+ * Claude Code, das Agent-SDK): Browser-Popup → Anthropic-Konto → Token lokal.
+ * (v0.9.1: der CLI-Binärname ist real `claude`, nicht `ant` — Historie und
+ * Befehlslage in `src-tauri/src/lib.rs`.)
  *
  * Das ist **Desktop-only**: der lokale Anmelde-Helfer läuft über den
  * Tauri-Command `claude_login` (`src-tauri/src/lib.rs`), den die reine
@@ -55,26 +57,28 @@ export async function pruefeAntStatus(): Promise<AntStatus> {
 }
 
 /**
- * Installationsbefehl für die Anthropic-CLI (`ant`, Paket `@anthropic-ai/claude-code`)
- * — Owner-Befund F1: die bisherige Fehlermeldung («ant nicht gefunden») liess
- * den Architekten ohne Anleitung stehen. Eine Konstante, damit UI-Text und
- * Tests denselben Befehl zeigen/prüfen.
+ * Installationsbefehl für die Anthropic-CLI (`claude`, Paket
+ * `@anthropic-ai/claude-code`) — Owner-Befund F1: die bisherige Fehlermeldung
+ * («nicht gefunden») liess den Architekten ohne Anleitung stehen. Eine
+ * Konstante, damit UI-Text und Tests denselben Befehl zeigen/prüfen.
  */
 export const ANT_INSTALL_BEFEHL = 'npm i -g @anthropic-ai/claude-code';
 
 /**
  * Erkennt, ob ein Fehler aus `claudeAboAnmeldung()` daher kommt, dass die
- * Anthropic-CLI (`ant`) lokal fehlt — unterscheidet das von anderen Fehlern
+ * Anthropic-CLI lokal fehlt — unterscheidet das von anderen Fehlern
  * (Login abgebrochen, kein Token lesbar, Web/PWA-Hinweis). Reines
  * String-Matching auf die Rust-Fehlermeldung des Tauri-Commands
- * `claude_login` (`src-tauri/src/lib.rs`: *«Anthropic-CLI (`ant`) nicht
- * gefunden — installieren oder API-Schlüssel nutzen.»*) — ohne Tauri/DOM,
+ * `claude_login` (`src-tauri/src/lib.rs`, seit v0.9.1: *«Anthropic-CLI
+ * (`claude`) nicht gefunden — installieren oder API-Schlüssel nutzen.»*;
+ * der alte `ant`-Wortlaut bleibt erkannt, damit ein älterer Desktop-Build
+ * mit neuerem Web-Teil nie schlechter dasteht als vorher) — ohne Tauri/DOM,
  * deshalb ohne Desktop-Build testbar (Owner-Befund F1, Repro-Test zuerst rot
  * in `test/cloud-login.test.ts`).
  */
 export function istAntFehltFehler(fehler: unknown): boolean {
   const text = fehler instanceof Error ? fehler.message : String(fehler ?? '');
-  return /\bant\b/i.test(text) && text.toLowerCase().includes('nicht gefunden');
+  return /\b(ant|claude)\b/i.test(text) && text.toLowerCase().includes('nicht gefunden');
 }
 
 // -----------------------------------------------------------------------

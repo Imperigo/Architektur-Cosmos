@@ -35,9 +35,10 @@ test('Web-Preview: Mit-Claude-Anmeldung zeigt den ehrlichen Desktop-Hinweis, kei
   await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('Desktop-App');
   // v0.8.4 PA5 (E10 §3.2, C-5 «Browser-Abo-Grenze klar erklärt»): der Text
   // benennt jetzt explizit das «Abo» UND die lokale CLI, nicht nur den
-  // vagen Desktop-App-Verweis von vorher.
+  // vagen Desktop-App-Verweis von vorher. (v0.9.1: die CLI heisst real
+  // `claude`, nicht `ant` — s. src-tauri/src/lib.rs.)
   await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('Abo');
-  await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('ant');
+  await expect(page.locator('[data-testid="cloud-login-hinweis"]')).toContainText('claude');
   await expect(page.locator('[data-testid="cloud-login-abo"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('nicht angemeldet');
   // Die ant-CLI-Status-Anzeige und der «Erneut prüfen»-Knopf sind reine

@@ -11,26 +11,38 @@ import { ANT_INSTALL_BEFEHL, istAntFehltFehler, istTauriDesktop } from '../src/s
  * KosmoPanel (`data-testid="cloud-login-anleitung"`).
  */
 describe('istAntFehltFehler — Repro des Owner-Befunds F1', () => {
-  it('erkennt die heutige Rust-Fehlermeldung ("ant" nicht gefunden)', () => {
+  it('erkennt die heutige Rust-Fehlermeldung ("claude" nicht gefunden, v0.9.1)', () => {
     const heutigeMeldung = new Error(
-      'Anthropic-CLI (`ant`) nicht gefunden — installieren oder API-Schlüssel nutzen.',
+      'Anthropic-CLI (`claude`) nicht gefunden — installieren oder API-Schlüssel nutzen.',
     );
     expect(istAntFehltFehler(heutigeMeldung)).toBe(true);
   });
 
+  it('erkennt weiterhin den alten "ant"-Wortlaut (älterer Desktop-Build, neuerer Web-Teil)', () => {
+    expect(
+      istAntFehltFehler(new Error('Anthropic-CLI (`ant`) nicht gefunden — installieren oder API-Schlüssel nutzen.')),
+    ).toBe(true);
+  });
+
   it('erkennt die Meldung auch als blossen String (Tauri-invoke wirft z.T. keinen Error)', () => {
-    expect(istAntFehltFehler('Anthropic-CLI (`ant`) nicht gefunden — installieren oder API-Schlüssel nutzen.')).toBe(
-      true,
-    );
+    expect(
+      istAntFehltFehler('Anthropic-CLI (`claude`) nicht gefunden — installieren oder API-Schlüssel nutzen.'),
+    ).toBe(true);
   });
 
   it('verwechselt andere Fehler des selben Wegs NICHT mit "CLI fehlt"', () => {
     expect(istAntFehltFehler(new Error('Claude-Anmeldung abgebrochen oder fehlgeschlagen.'))).toBe(false);
-    expect(istAntFehltFehler(new Error('Anmeldung abgeschlossen, aber kein Token lesbar.'))).toBe(false);
+    expect(
+      istAntFehltFehler(
+        new Error(
+          'Anmeldung ist aktiv, aber das Token ist nicht lesbar (auf macOS liegt es im Schlüsselbund) — bitte den API-Schlüssel-Weg unten nutzen.',
+        ),
+      ),
+    ).toBe(false);
     expect(
       istAntFehltFehler(new Error('Mit-Claude-Anmeldung nur in der Desktop-App — im Browser bitte API-Schlüssel.')),
     ).toBe(false);
-    expect(istAntFehltFehler(new Error('`ant auth login` liess sich nicht starten: ENOENT'))).toBe(false);
+    expect(istAntFehltFehler(new Error('`claude auth login` liess sich nicht starten: ENOENT'))).toBe(false);
   });
 
   it('kommt ohne Absturz durch leere/undefinierte Eingaben', () => {

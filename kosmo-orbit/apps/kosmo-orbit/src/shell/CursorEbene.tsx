@@ -17,7 +17,8 @@ import './cursor-ebene.css';
  * `{/* v072: cursor-ebene *}/` durch `<CursorEbene />`, sonst nichts hier.
  *
  * Architektur (Spec §8, wörtlich «drei Schachteln»):
- *  Wrapper (rAF-Translate, NIE React-State pro Frame)
+ *  Wrapper (direkter translate3d-Style-Write im pointermove, NIE React-State
+ *   pro Frame; seit v0.9.1 ohne Dauer-rAF-Schleife — Owner-Punkt «laggt»)
  *   → Rotor (Struktur-Schachtel; die frühere Richtungs-Rotation ist seit
  *     v0.9.0 entfernt — Owner-Punkt 22.07.2026, s. Notiz unten — der Pfeil
  *     steht immer aufrecht, die CSS-Transition bleibt als toter, harmloser
@@ -35,9 +36,10 @@ import './cursor-ebene.css';
  * tatsächliche (ggf. auf 0.01ms gekürzte) CSS-Dauer tatsächlich braucht.
  * Das ist der "rAF prüft matchMedia selbst"-Vertrag aus Spec §0/§8: hier
  * gibt es keinen JS-Timer, der reduced-motion getrennt prüfen müsste, weil
- * keiner an der echten (ungekürzten) Dauer hängt. Die einzige echte
- * rAF-Schleife (Wrapper-Position) ist selbst keine Animation — sie schreibt
- * pro Frame die aktuelle Zeigerposition, unabhängig von reduced-motion.
+ * keiner an der echten (ungekürzten) Dauer hängt. Die Wrapper-Position ist
+ * selbst keine Animation — der pointermove-Handler schreibt sie direkt als
+ * Style (seit v0.9.1 ohne rAF-Zwischenschritt), unabhängig von
+ * reduced-motion.
  *
  * Zonen (v0.8.4 PA1, docs/V084-SPEZ.md §2 D1-Fix — ERSETZT die alte
  * Versteck-Heuristik): `data-cursor-zone="praezision"` wird NICHT von dieser
@@ -84,9 +86,9 @@ import './cursor-ebene.css';
  *    beschriebene `"none"`-Artefakt ⇒ mappt neu auf neutral/sichtbar statt
  *    auf "Layer aus".
  *
- *    `getComputedStyle` pro `pointermove` bleibt ein (kleiner) Zusatzaufwand
- *    — vertretbar für eine rein dekorative Komfort-Ebene, aber kein
- *    Free-Lunch.
+ *    `getComputedStyle` läuft seit v0.9.1 nur noch bei Ziel-Wechsel oder
+ *    nach pointerdown/-up (Owner-Punkt «laggt») — nicht mehr bei jeder
+ *    Bewegung; Details im Effect-Kommentar unten.
  *
  * Harter Vertrag (Spec §11): unter `navigator.webdriver` bleibt die Ebene
  * PER DEFAULT aus (kein `cursor:none`, kein DOM-Overlay) — die ~40 Specs,
@@ -303,10 +305,16 @@ function ZeichneForm({ zustand, tool }: { zustand: CursorZustand; tool: { art: s
   if (zustand === 'gesperrt') {
     return <GesperrtSvg />;
   }
-  // default: Pfeil (Spec §8, exakter Pfad — Spitze = Hotspot 16,4)
+  // default: Pfeil (Spec §8, exakter Pfad — Spitze = Hotspot 16,4).
+  // v0.9.1 Owner-Punkt 22.07.2026 («der mauszeiger ist nicht schräg»): der
+  // Drachen ist um FESTE 15° um den Hotspot gedreht — die vertraute
+  // Systemzeiger-Schräge (Körper läuft nach rechts unten), als statisches
+  // SVG-Attribut, NICHT als Laufzeit-Rotation (die Richtungs-Rotation bleibt
+  // entfernt, s. Kopf-Notiz v0.9.0). Hotspot (16,4) ist Drehpunkt und damit
+  // unverändert — Klickziel und Zeichnung bleiben deckungsgleich.
   return (
     <svg className="cursor-ebene-svg cursor-ebene-pfeil" width={32} height={32} viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M16 4 L25 26 Q16 21.5 7 26 Z" fill="var(--kcur-fill)" stroke="var(--k-signal)" strokeWidth={1.5} strokeLinejoin="round" />
+      <path d="M16 4 L25 26 Q16 21.5 7 26 Z" transform="rotate(15 16 4)" fill="var(--kcur-fill)" stroke="var(--k-signal)" strokeWidth={1.5} strokeLinejoin="round" />
     </svg>
   );
 }
@@ -397,14 +405,35 @@ export function CursorEbene() {
   useEffect(() => {
     if (!aktiv) return;
 
+    // v0.9.1 Owner-Punkt 22.07.2026 («er scheint zu laggen … mach die
+    // effizienter»): zwei Kostenquellen dieses Handlers sind raus —
+    //  1. Die frühere Dauer-rAF-Schleife schrieb den Transform in JEDEM
+    //     Frame (auch bei stiller Maus) und immer einen Frame NACH dem
+    //     Ereignis. Jetzt schreibt der pointermove-Handler den Transform
+    //     direkt — der Browser koalesziert pointermove ohnehin auf den
+    //     Frame-Takt (bei 120 Hz also bis 120×/s), der Zeiger folgt ohne
+    //     Zusatz-Frame Latenz, und bei stiller Maus arbeitet gar nichts.
+    //  2. `getComputedStyle` (die teuerste Zeile hier) läuft nur noch, wenn
+    //     sich das Ziel-Element geändert hat oder seit dem letzten Move ein
+    //     pointerdown/-up lag (grab→grabbing wechselt die Form auf DEMSELBEN
+    //     Element) — nicht mehr bei jeder Bewegung über demselben Element.
+    let letztesZiel: Element | null = null;
+    let zonenPruefungFaellig = true;
+
     function aufPointerBewegung(e: PointerEvent) {
       positionRef.current = { x: e.clientX, y: e.clientY };
+      if (wrapperRef.current) {
+        wrapperRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
       if (!sichtbarRef.current) {
         sichtbarRef.current = true;
         setSichtbar(true);
       }
 
       const ziel = e.target as Element | null;
+      if (ziel === letztesZiel && !zonenPruefungFaellig) return;
+      letztesZiel = ziel;
+      zonenPruefungFaellig = false;
       if (istEingabefeld(ziel)) {
         // Einzige verbleibende Versteck-Bedingung (unverändert, Spec §8
         // wörtlich) — Eingabefelder behalten IMMER den System-Text-Cursor.
@@ -447,24 +476,32 @@ export function CursorEbene() {
     }
 
     function aufKlick() {
+      zonenPruefungFaellig = true;
       setKlickPop(true);
+    }
+
+    // pointerup ändert oft die Zonen-Form auf demselben Element
+    // (grabbing→grab nach einem Drag) — nur den Prüf-Merker setzen, die
+    // nächste Bewegung liest dann frisch.
+    function aufLoslassen() {
+      zonenPruefungFaellig = true;
     }
 
     window.addEventListener('pointermove', aufPointerBewegung, { passive: true });
     window.addEventListener('pointerdown', aufKlick, { passive: true });
+    window.addEventListener('pointerup', aufLoslassen, { passive: true });
 
-    let frame = requestAnimationFrame(function schreibePosition() {
-      if (wrapperRef.current) {
-        const { x, y } = positionRef.current;
-        wrapperRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      }
-      frame = requestAnimationFrame(schreibePosition);
-    });
+    // Erstposition einmalig schreiben (Ebene gerade aktiviert, Zeiger steht
+    // evtl. schon im Fenster) — vorher erledigte das die rAF-Schleife.
+    if (wrapperRef.current) {
+      const { x, y } = positionRef.current;
+      wrapperRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    }
 
     return () => {
       window.removeEventListener('pointermove', aufPointerBewegung);
       window.removeEventListener('pointerdown', aufKlick);
-      cancelAnimationFrame(frame);
+      window.removeEventListener('pointerup', aufLoslassen);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [aktiv]);

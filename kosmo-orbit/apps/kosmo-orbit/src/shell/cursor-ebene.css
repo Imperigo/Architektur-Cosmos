@@ -69,8 +69,9 @@
   cursor: auto !important;
 }
 
-/* Wrapper — Schachtel 1: NUR das rAF-Translate (siehe CursorEbene.tsx,
-   nie React-State pro Frame). `will-change` hält den Compositor-Layer warm. */
+/* Wrapper — Schachtel 1: NUR das Translate (direkter Style-Write im
+   pointermove, seit v0.9.1 ohne Dauer-rAF — siehe CursorEbene.tsx, nie
+   React-State pro Frame). `will-change` hält den Compositor-Layer warm. */
 .cursor-ebene-wrapper {
   position: fixed;
   top: 0;
