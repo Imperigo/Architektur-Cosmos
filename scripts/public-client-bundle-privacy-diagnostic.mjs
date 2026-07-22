@@ -39,6 +39,7 @@ async function buildDiagnosticReport() {
   const bundles = bundlePaths.map(checkBundle);
   const findings = bundles.flatMap((bundle) => bundle.findings);
   const patternCounts = countBy(findings.map((finding) => finding.pattern));
+  const categoryCounts = countBy(findings.map((finding) => finding.category));
 
   return {
     schema_version: '0.1',
@@ -69,10 +70,12 @@ async function buildDiagnosticReport() {
       bundles_needing_review: bundles.filter((bundle) => bundle.status !== 'clean').length,
       finding_count: findings.length,
       pattern_count: Object.keys(patternCounts).length,
+      category_count: Object.keys(categoryCounts).length,
       truncated_bundles: bundles.filter((bundle) => bundle.truncated).length,
       public_ready_after_check: 0
     },
     pattern_counts: patternCounts,
+    category_counts: categoryCounts,
     bundles,
     findings,
     follow_up: [
@@ -111,10 +114,12 @@ function skippedMissingBundleReport() {
       bundles_needing_review: 0,
       finding_count: 0,
       pattern_count: 0,
+      category_count: 0,
       truncated_bundles: 0,
       public_ready_after_check: 0
     },
     pattern_counts: {},
+    category_counts: {},
     bundles: [],
     findings: [],
     follow_up: [
@@ -164,9 +169,20 @@ function finding(kind, exportedPath, file, pattern) {
     path: exportedPath,
     file,
     pattern,
+    category: categoryForPattern(pattern),
     severity: 'review',
     public_display_allowed: false
   };
+}
+
+function categoryForPattern(pattern) {
+  const value = String(pattern);
+  if (/api[_-]?key|token|private key|sk-/i.test(value)) return 'secret_marker';
+  if (/home|mnt|users|volumes|file|onedrive|source|private|archive|overseer|codex|claude|worker|intake/i.test(value)) {
+    return 'local_private_surface';
+  }
+  if (/pdf|ocr|scan/i.test(value)) return 'private_source_content_risk';
+  return 'privacy_review';
 }
 
 async function collectFiles(directory) {
@@ -204,6 +220,7 @@ function renderMarkdown(report) {
     `- bundles needing review: ${report.summary.bundles_needing_review}`,
     `- findings: ${report.summary.finding_count}`,
     `- matched patterns: ${report.summary.pattern_count}`,
+    `- matched categories: ${report.summary.category_count}`,
     `- truncated bundles: ${report.summary.truncated_bundles}`,
     `- public-ready after check: ${report.summary.public_ready_after_check}`,
     '',
@@ -220,6 +237,16 @@ function renderMarkdown(report) {
       .forEach(([pattern, count]) => lines.push(`- \`${pattern}\`: ${count}`));
   }
 
+  lines.push('', '## Category Counts', '');
+  const categoryEntries = Object.entries(report.category_counts || {});
+  if (categoryEntries.length === 0) {
+    lines.push('- none');
+  } else {
+    categoryEntries
+      .sort(([a], [b]) => a.localeCompare(b))
+      .forEach(([category, count]) => lines.push(`- \`${category}\`: ${count}`));
+  }
+
   lines.push('', '## Bundles', '');
   lines.push('| Path | Status | Findings | Bytes |');
   lines.push('| --- | --- | ---: | ---: |');
@@ -230,7 +257,7 @@ function renderMarkdown(report) {
   if (report.findings.length > 0) {
     lines.push('', '## Findings', '');
     report.findings.forEach((item) => {
-      lines.push(`- \`${item.path}\` ${item.kind}: \`${item.pattern}\``);
+      lines.push(`- \`${item.path}\` ${item.kind} / \`${item.category}\`: \`${item.pattern}\``);
     });
   }
 

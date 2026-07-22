@@ -24,6 +24,7 @@ function runSmoke() {
   const outRoot = resolve(tempRoot, 'out');
   writeFile(outRoot, bundlePath, [
     'self.__next_f = self.__next_f || [];',
+    'self.__next_f.push(["public ETH URL https://e-pics3.ethz.ch/de/home/ should stay unflagged"]);',
     'self.__next_f.push(["synthetic source-root marker"]);',
     'self.__next_f.push(["synthetic /home/kosmo-user/.codex/state.json marker"]);',
     ''
@@ -58,11 +59,13 @@ function runSmoke() {
 
   const report = JSON.parse(readFileSync(outputPath, 'utf8'));
   const requiredPatterns = new Set(['/source[-_\\s]?root/i', '/\\/home\\//i']);
+  const requiredCategories = new Set(['local_private_surface']);
   const findings = report.findings || [];
   const matchedRequiredPatterns = findings.filter((finding) => {
     return finding.path === bundlePath
       && finding.kind === 'content_pattern'
       && requiredPatterns.has(finding.pattern)
+      && requiredCategories.has(finding.category)
       && finding.public_display_allowed === false;
   }).map((finding) => finding.pattern);
 
@@ -72,6 +75,9 @@ function runSmoke() {
   const missingPatterns = [...requiredPatterns].filter((pattern) => !matchedRequiredPatterns.includes(pattern));
   if (missingPatterns.length > 0) {
     throw new Error(`Expected diagnostic findings for ${missingPatterns.join(', ')} in ${bundlePath}.`);
+  }
+  if (report.summary?.category_count !== 1 || report.category_counts?.local_private_surface !== findings.length) {
+    throw new Error('Expected all synthetic findings to be categorized as local_private_surface.');
   }
   if (report.summary?.public_ready_after_check !== 0) {
     throw new Error('Expected public_ready_after_check to stay 0.');
@@ -84,6 +90,7 @@ function runSmoke() {
     starts_server: false,
     expected_bundle_path: bundlePath,
     expected_patterns: [...requiredPatterns].sort(),
+    expected_categories: [...requiredCategories].sort(),
     observed_findings: findings.length,
     report_path: keepTemp ? relative(root, outputPath) : null
   }, null, 2));
