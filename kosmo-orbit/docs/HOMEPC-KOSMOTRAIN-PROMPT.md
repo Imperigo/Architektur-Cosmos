@@ -62,6 +62,27 @@ Nach jedem abgeschlossenen Lernpfad: Sammel-Update in
 erfasst/total, Auffälligkeiten). Etappenweise lokal committen (ein Commit
 je Lernpfad, deutsche Commit-Botschaft).
 
+## Teil B0 — ZUERST: bestehende OneDrive-Analyse auf der HDD suchen
+
+Andrin erinnert sich (22.07.2026), dass auf dem Server/der HDD schon einmal
+eine Analyse seines ganzen OneDrive gelaufen ist. BEVOR du in Teil B etwas
+neu analysierst: suchen und wiederverwenden.
+
+```bash
+find /mnt/data ~ -maxdepth 6 \( -iname '*onedrive*' -o -iname '*eth*master*' \
+  -o -iname '*analyse*' -o -iname '*inventar*' \) \
+  -not -path '*/node_modules/*' -not -path '*/.git/*' 2>/dev/null | head -50
+```
+
+Zusätzlich prüfen: (a) Kosmos lokale Wissensbasis in der App (PREPARE-
+Station → Wissensbasis — dort landen KosmoPrepare-OneDrive-Importe, App-
+Speicher, nicht im Dateisystem sichtbar), (b) alte Worker-/Analyse-Ordner
+unter `/mnt/data/ArchitekturKosmos/`. FUND: im Bericht dokumentieren
+(Pfad, Umfang, Datum), Brauchbares nach `wissen/training/eth-master/`
+überführen (eigene Strukturierung, Regeln von oben gelten) und in Teil B
+nur noch die Lücken neu analysieren. KEIN FUND: ehrlich vermerken, Teil B
+komplett fahren.
+
 ## Teil B — ETH-Master-Unterlagen (OneDrive)
 
 Pfad in Andrins OneDrive: `Documents/02 Geschäftlich/00 Ausbildungen/
