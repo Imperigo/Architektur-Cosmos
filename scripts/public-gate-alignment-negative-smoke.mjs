@@ -19,6 +19,7 @@ const cleanGateScript = [
 
 const cleanVacationSafeSource = [
   "command: ['node', 'scripts/public-demo-gate-check.mjs']",
+  "command: ['node', 'scripts/public-gate-alignment-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-demo-gate-static-sentinel-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-route-manifest-check.mjs']",
   "command: ['node', 'scripts/public-route-manifest-negative-smoke.mjs']",
@@ -88,6 +89,12 @@ const cases = [
     gateScript: cleanGateScript,
     vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-static-link-negative-smoke.mjs']", ''),
     expectedFailures: ['vacation-safe:static_link:negative-smoke-coverage']
+  },
+  {
+    id: 'missing_gate_alignment_negative_smoke_coverage',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-gate-alignment-negative-smoke.mjs']", ''),
+    expectedFailures: ['vacation-safe:gate_alignment_negative_smoke:coverage']
   }
 ];
 

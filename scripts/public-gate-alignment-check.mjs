@@ -51,6 +51,13 @@ const allowedExtraGateCommands = new Set([
   'npm run public:gate-alignment-check'
 ]);
 
+const requiredVacationSafeOnlyChecks = [
+  {
+    id: 'gate_alignment_negative_smoke',
+    coveredByVacationSafe: 'scripts/public-gate-alignment-negative-smoke.mjs'
+  }
+];
+
 const blockedCommandPatterns = [
   { id: 'live_check', pattern: /\bpublic:demo-live-check\b|public-demo-live-check\.mjs/ },
   { id: 'server_start', pattern: /\bnext\s+(?:dev|start)\b|\bnpm\s+run\s+(?:dev|start)\b/ },
@@ -106,6 +113,15 @@ for (const required of requiredGateCommands) {
   }
 }
 
+for (const required of requiredVacationSafeOnlyChecks) {
+  if (!vacationSafeSource.includes(required.coveredByVacationSafe)) {
+    failures.push({
+      id: `vacation-safe:${required.id}:coverage`,
+      detail: `public-vacation-safe-check.mjs must cover ${required.coveredByVacationSafe}.`
+    });
+  }
+}
+
 for (const command of gateCommands) {
   const isRequired = requiredGateCommands.some((required) => required.command === command);
   if (!isRequired && !allowedExtraGateCommands.has(command)) {
@@ -152,6 +168,7 @@ const report = {
   gate_commands: gateCommands,
   required_gate_commands: requiredGateCommands.map((item) => item.command),
   required_negative_smokes: requiredGateCommands.map((item) => item.negativeSmoke),
+  required_vacation_safe_only_checks: requiredVacationSafeOnlyChecks.map((item) => item.coveredByVacationSafe),
   failures
 };
 
