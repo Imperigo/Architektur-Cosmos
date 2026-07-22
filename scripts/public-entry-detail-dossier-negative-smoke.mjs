@@ -27,6 +27,16 @@ const cases = [
     id: 'missing_json_ld',
     mutate: (html) => html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/, ''),
     expectedFailures: ['/atlas/villa-savoye/:json_ld']
+  },
+  {
+    id: 'wrong_canonical_origin',
+    mutate: (html) => html.replace('https://architekturkosmos.ch/atlas/villa-savoye/', 'https://example.invalid/atlas/villa-savoye/'),
+    expectedFailures: ['/atlas/villa-savoye/:canonical']
+  },
+  {
+    id: 'missing_active_atlas_nav',
+    mutate: (html) => html.replace(' aria-current="page"', ''),
+    expectedFailures: ['/atlas/villa-savoye/:active_atlas_nav']
   }
 ];
 
