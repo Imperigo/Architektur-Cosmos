@@ -42,6 +42,7 @@ function synthetischerPlan(): PlanGraphic {
     arcs: [{ center: { x: 500, y: 500 }, radius: 250, startAngle: 0.3, endAngle: 1.9, classes: ['symbol', 'tuer'] }],
     axes: [],
     texte: [{ at: { x: 1234, y: 5678 }, text: 'D 300x300 UK 1200', classes: ['kote'] }],
+    massketten: [],
     bounds: null,
   };
 }

@@ -98,6 +98,7 @@ describe('planGraphicToDxf — y-Spiegelung (Norden oben)', () => {
       arcs: [],
       axes: [],
       texte: [],
+      massketten: [],
       bounds: null,
     };
     const dxf = planGraphicToDxf(plan);

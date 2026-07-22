@@ -43,5 +43,26 @@ GOLDEN_UPDATE-Refresh → PNG-Sichtung vorher/nachher durch Fable →
 Teil 2 mit Ist-Nachweis, eindeutiger Dateimenge (hier trivial: 1) und
 beiden Aggregat-Hashes → EIN Commit.
 
-## Teil 2: Ist-Nachweis
-_(beim K18-Commit auszufüllen)_
+## Teil 2: Ist-Nachweis (erledigt 22.07.2026, Fable)
+**Ist == Prognose: exakt 1 bewegte Golden-Datei** (`masskette-plan.svg`);
+Kernel-Suite VOR dem Refresh mit genau EINEM Rotfall (dem Golden-Test),
+1179/1180 grün — kein Hard-Stop nötig. Eindeutige Dateimenge des Zugs: 1
+(keine Überschneidungen möglich). Aggregat (Rezept aus Teil 1): vorher
+`fece758e9b0a89ec…`, nachher `c11f6d448327ba04…`. Umsetzung wie
+deklariert: `derive/plan.ts` liefert strukturierte `massketten`
+(Messpunkte + formatiertes Mass, Daten-Guard unverändert, Messpunkte in
+den Bounds), `derive/plansvg.ts planInnerSvg` zeichnet massstabsbewusst
+— Masslinie 8 Papier-mm von den Messpunkten abgerückt,
+Verlängerungslinien je Punkt mit 1 mm Luftspalt und 2 mm Überstand,
+Label 1.5 mm über der Masslinie; Seitenwahl feste +90°-Normale
+(revidierbarer Fable-Entscheid, im Code dokumentiert). Test-Gerüst
+deklariert mitgezogen: masskette.test.ts auf `plan.massketten` migriert,
+drei PlanGraphic-Literale in dxf-Tests um das Pflichtfeld ergänzt.
+Sichtung: masskette-plan vorher/nachher als PNG gerendert und von Fable
+geprüft (vorher nackte Linie AUF den Punkten, nachher abgerückte
+Masslinie mit Verlängerungslinien an allen drei Kettenpunkten, Masse
+über der Linie; Plankopf/Umgebung unverändert). Suiten: Kernel
+1180/1180, App 1758/1758, svg-qa Exit 0, Typecheck 0. Bekannter,
+BEWUSST offener Folgeteil: der Bildschirm-Spiegel in PlanView (zeichnet
+die Entität eigenständig, Cluster B) zieht im E-K27a-Paket nach —
+golden-neutral, kein Teil dieses Zugs.

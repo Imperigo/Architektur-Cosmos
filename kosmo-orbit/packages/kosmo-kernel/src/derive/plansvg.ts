@@ -251,7 +251,47 @@ export function planInnerSvg(
       `<path d="${regionToPath(r)}" fill-rule="evenodd" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash}${raumTypAttr}/>`,
     );
   }
-  for (const l of plan.lines) {
+  // K18 (v0.9.0, Owner-Register «default mässig verlängerungslinien …
+  // gesunden abstand zur verlinkten kante»): Massketten werden hier
+  // massstabsbewusst aufgebaut — die Masslinie rückt um einen PAPIER-
+  // Abstand von den Messpunkten ab, je Messpunkt läuft eine Verlängerungs-
+  // linie mit Luftspalt am Punkt und kleinem Überstand über die Masslinie,
+  // das Label sitzt knapp über der Masslinie. Werte in Papier-mm
+  // (× scale = Welt-mm). Die SEITENWAHL der Verschiebung ist eine feste
+  // Normale (+90° zur Zugrichtung a→b) — revidierbarer Fable-Entscheid:
+  // meldet der Owner-Rundgang Ketten auf der «falschen» Seite, wird die
+  // Seite pro MassKette-Entität wählbar (eigener kleiner Command-Posten).
+  const MK = { abstand: 8, luft: 1, ueberstand: 2, texthub: 1.5 };
+  const mkLinien: typeof plan.lines = [];
+  const mkTexte: typeof plan.texte = [];
+  for (const m of plan.massketten) {
+    const dx = m.b.x - m.a.x;
+    const dy = m.b.y - m.a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const n = { x: -dy / len, y: dx / len };
+    const dAbstand = MK.abstand * scale;
+    const dLuft = MK.luft * scale;
+    const dUeber = (MK.abstand + MK.ueberstand) * scale;
+    const av = { x: m.a.x + n.x * dAbstand, y: m.a.y + n.y * dAbstand };
+    const bv = { x: m.b.x + n.x * dAbstand, y: m.b.y + n.y * dAbstand };
+    mkLinien.push({ a: av, b: bv, classes: ['symbol', 'masskette'] });
+    for (const p of [m.a, m.b]) {
+      mkLinien.push({
+        a: { x: p.x + n.x * dLuft, y: p.y + n.y * dLuft },
+        b: { x: p.x + n.x * dUeber, y: p.y + n.y * dUeber },
+        classes: ['symbol', 'masskette'],
+      });
+    }
+    mkTexte.push({
+      at: {
+        x: (av.x + bv.x) / 2 + n.x * MK.texthub * scale,
+        y: (av.y + bv.y) / 2 + n.y * MK.texthub * scale,
+      },
+      text: m.label,
+      classes: ['symbol', 'masskette-label'],
+    });
+  }
+  for (const l of [...plan.lines, ...mkLinien]) {
     const baugrenze = l.classes.includes('baugrenze');
     const neu = l.classes.includes('renovation-neu');
     const abbruch = l.classes.includes('renovation-abbruch');
@@ -320,7 +360,7 @@ export function planInnerSvg(
   }
   // Plan-Beschriftungen (A3: Aussparungs-Koten, A6: Etiketten), feiner Text
   // mittig; zeile versetzt mehrzeilige Etiketten massstabsgerecht
-  for (const t of plan.texte) {
+  for (const t of [...plan.texte, ...mkTexte]) {
     const y = -t.at.y + (t.zeile ?? 0) * 3 * scale;
     // Beschlag-Katalog S0 (v0.7.3 §D6): Etiketten Mono 1.8mm (kleiner als die
     // Standard-Beschriftung 2.2mm — Katalog-Nebentext, keine Kote/Etikett).

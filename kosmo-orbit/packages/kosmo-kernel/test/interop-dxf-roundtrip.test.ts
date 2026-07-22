@@ -242,6 +242,7 @@ describe('planGraphicToDxf ⇄ parseDxf — synthetische Bemassungs-Klasse (Laye
       arcs: [],
       axes: [],
       texte: [],
+      massketten: [],
       bounds: null,
     };
     const dxf = planGraphicToDxf(plan);

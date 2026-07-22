@@ -208,14 +208,19 @@ describe('derivePlan — Masskette-Guard (§0.5/§2.3, Golden-Politik)', () => {
     expect(plan.texte.filter((t) => t.classes.includes('masskette-label'))).toHaveLength(0);
   });
 
-  it('MIT MassKette-Entität erscheinen genau (Punkte-1) Linien + Label je Segment', () => {
+  it('MIT MassKette-Entität erscheinen genau (Punkte-1) strukturierte Segmente mit Mass', () => {
+    // K18 (v0.9.0): derivePlan liefert die MassKette nicht mehr als rohe
+    // `lines`/`texte`, sondern strukturiert (`plan.massketten`) — die
+    // Zeichen-Geometrie (Masslinie mit Papier-Abstand, Verlängerungslinien)
+    // entsteht massstabsbewusst erst in `plansvg.ts`.
     const { doc, storeyId } = testhausMasskette();
     const plan = derivePlan(doc, storeyId);
-    const linien = plan.lines.filter((l) => l.classes.includes('masskette'));
-    const labels = plan.texte.filter((t) => t.classes.includes('masskette-label'));
     // Fixture: 3 Punkte -> 2 Segmente
-    expect(linien).toHaveLength(2);
-    expect(labels).toHaveLength(2);
+    expect(plan.massketten).toHaveLength(2);
+    for (const seg of plan.massketten) expect(seg.label.length).toBeGreaterThan(0);
+    // Die rohen lines/texte tragen KEINE masskette-Einträge mehr:
+    expect(plan.lines.filter((l) => l.classes.includes('masskette'))).toHaveLength(0);
+    expect(plan.texte.filter((t) => t.classes.includes('masskette-label'))).toHaveLength(0);
   });
 
   it('eine MassKette in einem ANDEREN Geschoss bleibt für dieses Geschoss unsichtbar (storeyId-Filter)', () => {
@@ -226,7 +231,7 @@ describe('derivePlan — Masskette-Guard (§0.5/§2.3, Golden-Politik)', () => {
     const storeyIdOg = (og.patches[0] as { id: string }).id;
     ketteSetzen(doc, storeyIdOg);
     const planEg = derivePlan(doc, storeyIdEg);
-    expect(planEg.lines.filter((l) => l.classes.includes('masskette'))).toHaveLength(0);
+    expect(planEg.massketten).toHaveLength(0);
   });
 
   it('design.bemassungSetzen bleibt vom MassKette-Pfad unberührt (eigenständiger, additiver Command)', () => {
@@ -246,6 +251,7 @@ describe('Golden: Grundriss mit gesetzter Masskette (v0.8.3 E2, 36. Golden)', ()
     const fixtures = [testhausWalmdachGrundriss()];
     for (const { doc, storeyId } of fixtures) {
       const plan = derivePlan(doc, storeyId);
+      expect(plan.massketten).toHaveLength(0);
       expect(plan.lines.some((l) => l.classes.includes('masskette'))).toBe(false);
     }
   });

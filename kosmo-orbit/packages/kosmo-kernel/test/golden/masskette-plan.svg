@@ -6,10 +6,14 @@
 <path d="M 8045 45 L 8045 -6045 L 8205 -6205 L 8205 205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
 <path d="M 8045 -6045 L -45 -6045 L -205 -6205 L 8205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
 <path d="M -45 -6045 L -45 45 L -205 205 L -205 -6205 Z" fill-rule="evenodd" fill="#efefef" stroke="#111" stroke-width="17.5"/>
-<line x1="500" y1="-500" x2="4000" y2="-3000" stroke="#111" stroke-width="12.5"/>
-<line x1="4000" y1="-3000" x2="7500" y2="-5500" stroke="#111" stroke-width="12.5"/>
-<text x="2250" y="-1750" text-anchor="middle" font-size="110.00000000000001" font-family="'IBM Plex Mono', ui-monospace, monospace">4.301 m</text>
-<text x="5750" y="-4250" text-anchor="middle" font-size="110.00000000000001" font-family="'IBM Plex Mono', ui-monospace, monospace">4.301 m</text>
+<line x1="267.5047225123614" y1="-825.493388482694" x2="3767.5047225123612" y2="-3325.493388482694" stroke="#111" stroke-width="12.5"/>
+<line x1="470.93809031404516" y1="-540.6866735603368" x2="209.38090314045178" y2="-906.8667356033675" stroke="#111" stroke-width="12.5"/>
+<line x1="3970.938090314045" y1="-3040.6866735603367" x2="3709.3809031404517" y2="-3406.8667356033675" stroke="#111" stroke-width="12.5"/>
+<line x1="3767.5047225123612" y1="-3325.493388482694" x2="7267.504722512362" y2="-5825.493388482694" stroke="#111" stroke-width="12.5"/>
+<line x1="3970.938090314045" y1="-3040.6866735603367" x2="3709.3809031404517" y2="-3406.8667356033675" stroke="#111" stroke-width="12.5"/>
+<line x1="7470.938090314045" y1="-5540.686673560337" x2="7209.380903140452" y2="-5906.8667356033675" stroke="#111" stroke-width="12.5"/>
+<text x="1973.911857983429" y="-2136.5233988231994" text-anchor="middle" font-size="110.00000000000001" font-family="'IBM Plex Mono', ui-monospace, monospace">4.301 m</text>
+<text x="5473.911857983429" y="-4636.523398823199" text-anchor="middle" font-size="110.00000000000001" font-family="'IBM Plex Mono', ui-monospace, monospace">4.301 m</text>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="8000" y2="1200" stroke-width="9"/>
 <line x1="-40" y1="1240" x2="40" y2="1160" stroke-width="18"/>

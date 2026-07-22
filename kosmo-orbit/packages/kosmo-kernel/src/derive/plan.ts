@@ -88,6 +88,19 @@ export interface PlanText {
   zeile?: number;
 }
 
+/** K18 (v0.9.0, Owner-Register): EIN Masskette-Segment in Weltkoordinaten.
+ * Die Ableitung liefert nur die MESSPUNKTE + das fertige Mass — die
+ * Zeichen-Geometrie (Masslinie mit Papier-Abstand, Verlängerungslinien)
+ * entsteht massstabsbewusst erst im Renderer (`plansvg.ts`), weil der
+ * «gesunde Abstand» ein Papiermass ist und derivePlan keinen Massstab
+ * kennt. */
+export interface PlanMasskette {
+  a: Pt;
+  b: Pt;
+  /** Fertig formatiertes Mass (mm gerundet, `formatLength`). */
+  label: string;
+}
+
 export interface PlanGraphic {
   storeyId: string;
   regions: PlanRegion[];
@@ -95,6 +108,8 @@ export interface PlanGraphic {
   arcs: PlanArc[];
   axes: PlanAxis[];
   texte: PlanText[];
+  /** K18: Masskette-Segmente (Daten-Guard: leer ohne MassKette-Entität). */
+  massketten: PlanMasskette[];
   /** Bounding-Box in mm (für viewBox). */
   bounds: { minX: number; minY: number; maxX: number; maxY: number } | null;
 }
@@ -290,8 +305,9 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   const arcs: PlanArc[] = [];
   const axes: PlanAxis[] = [];
   const texte: PlanText[] = [];
+  const massketten: PlanMasskette[] = [];
   if (!storey || storey.kind !== 'storey') {
-    return { storeyId, regions, lines, arcs, axes, texte, bounds: null };
+    return { storeyId, regions, lines, arcs, axes, texte, massketten, bounds: null };
   }
 
   const walls = doc
@@ -1071,17 +1087,14 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
   // (Daten-Guard) — keines der 35 Bestands-Fixtures hat eine `masskette`-
   // Entität, der Grundriss bleibt dort byte-identisch, unabhängig vom
   // Code-Zustand dieses Zweigs (Guard-Prinzip, CLAUDE.md «Eigenheiten»).
-  const massketten = doc.byKind<MassKette>('masskette').filter((m) => m.storeyId === storeyId);
-  for (const mk of massketten) {
+  // K18 (v0.9.0): nur noch STRUKTURIERTE Segmente (Messpunkte + Mass) —
+  // Masslinie/Verlängerungslinien zeichnet der massstabsbewusste Renderer.
+  const ketten = doc.byKind<MassKette>('masskette').filter((m) => m.storeyId === storeyId);
+  for (const mk of ketten) {
     for (let i = 1; i < mk.punkte.length; i++) {
       const a = mk.punkte[i - 1]!;
       const b = mk.punkte[i]!;
-      lines.push({ a, b, classes: ['symbol', 'masskette'] });
-      texte.push({
-        at: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
-        text: formatLength(Math.round(dist(a, b))),
-        classes: ['symbol', 'masskette-label'],
-      });
+      massketten.push({ a, b, label: formatLength(Math.round(dist(a, b))) });
     }
   }
 
@@ -1095,7 +1108,19 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       bounds.maxY = Math.max(bounds.maxY, p.y);
     }
   }
-  return { storeyId, regions, lines, arcs, axes, texte, bounds: bounds ?? axesBounds(axes) };
+  // K18: Messpunkte in die Bounds aufnehmen (vormals implizit über die
+  // masskette-`lines`) — die viewBox darf eine Randkette nicht verlieren.
+  if (bounds) {
+    for (const m of massketten) {
+      for (const p of [m.a, m.b]) {
+        bounds.minX = Math.min(bounds.minX, p.x);
+        bounds.minY = Math.min(bounds.minY, p.y);
+        bounds.maxX = Math.max(bounds.maxX, p.x);
+        bounds.maxY = Math.max(bounds.maxY, p.y);
+      }
+    }
+  }
+  return { storeyId, regions, lines, arcs, axes, texte, massketten, bounds: bounds ?? axesBounds(axes) };
 }
 
 function axesBounds(axes: PlanAxis[]) {

@@ -212,11 +212,13 @@ ERLEDIGT (ROADMAP 574 — Token --isl-rand-abstand 14px, E2E-Messtest).
 > «die massketten sollen default mässig verlängerungslinien haben und
 > einen gesunden abstand zur verlinkten kante oder ecke haben»
 **Bereich:** kernel derive/plan (Golden-relevant! deklarierter
-Golden-Zug nötig). **Aufwand:** M. **Status:** offen — Klarstellung
-21.07.: das 0.8.12-Zug-Label «K18/K23-Schraffur» meinte fachlich nur die
-Schraffur (= K23, erledigt 593); die Massketten-Defaults hier sind ein
-EIGENER Golden-relevanter Posten (0.9.0-Kandidat, eigener deklarierter
-Zug).
+Golden-Zug nötig). **Aufwand:** M. **Status:** ERLEDIGT (ROADMAP 602 —
+der EINE deklarierte Golden-Zug v0.9.0: Masslinie default 8 Papier-mm
+von der verlinkten Kante abgerückt, Verlängerungslinien je Messpunkt mit
+Luftspalt+Überstand, massstabsbewusst in plansvg; Nachweis
+GOLDEN-WECHSEL-090, Ist==Prognose exakt masskette-plan.svg. Offener
+Folgeteil: PlanView-Bildschirm-Spiegel → E-K27a/Cluster B. Historie: im
+0.8.12-Label «K18/K23» war fachlich nur K23 enthalten, Klarstellung 593).
 
 ### K19 · S.6 — Umrandungslinien/Texturen im Plan prüfen
 > «was ist mit den umrandungslinien passiert? und stimmen die texturen?»
