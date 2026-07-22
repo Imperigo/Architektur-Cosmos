@@ -15,6 +15,11 @@ const requiredGateCommands = [
     coveredByVacationSafe: 'scripts/public-route-manifest-check.mjs'
   },
   {
+    id: 'navigation_canon',
+    command: 'npm run public:navigation-canon-check',
+    coveredByVacationSafe: 'scripts/public-navigation-canon-check.mjs'
+  },
+  {
     id: 'demo_gate',
     command: 'node scripts/public-demo-gate-check.mjs',
     coveredByVacationSafe: 'scripts/public-demo-gate-check.mjs'
