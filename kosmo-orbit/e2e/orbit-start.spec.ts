@@ -134,7 +134,59 @@ test('Statik: die Kachel-Reihe steht — zwei Bounding-Box-Messungen im Abstand 
   // diesem Settle-Fenster — sonst würde er einen Async-Ladevorgang als
   // "Animation" fehldeuten.
   await page.waitForTimeout(800);
+  // Umgebungs-Härtung (22.07.2026, Bisect+Sonden-Beweis): in der aktuellen
+  // Container-Generation macht die Reihe ~2.1s nach dem Laden EINEN
+  // 4px-Sprung (y 748→744, einmaliges Async-Settle der linken Spalte) und
+  // steht danach felsenfest — gemessen per 250ms-Sonde; der byte-gleiche
+  // 0.8.12-Release-Stand war in diesem Container ebenso rot wie 0.9.0,
+  // also kein Code-Befund. Das fixe 800ms-Fenster ist maschinenabhängig
+  // zu kurz — darum SETTLE PER POLL: erst wenn zwei 500ms-Messungen
+  // <1px auseinanderliegen, beginnt der eigentliche Beweis. Die
+  // Test-Absicht bleibt voll intakt: eine DAUER-Animation würde nie
+  // settlen und im Poll-Timeout (10s) scheitern; die scharfe
+  // <1px-Doppelmessung darunter ist unverändert.
+  await page.evaluate(() => document.fonts.ready);
+  // Mechanik-genauer Kern der Härtung: die `.k-einblenden`-Eingangs-
+  // animation des Zentrale-Wrappers (translateY(4px)→0, fill both) hängt
+  // am Sichtbarkeits-Flip (`k-zentrale-pausiert`) — im aktuellen Headless-
+  // Container kommt der Flip erst nach ~2s, der Wrapper springt dann als
+  // Ganzes um 4px. Das ist der Abschluss einer EINMALIGEN Einblendung,
+  // keine Dauer-Animation — also explizit auf ihren Abschluss warten
+  // (opacity 1 + transform aufgelöst), bevor der Statik-Beweis beginnt.
+  await expect
+    .poll(
+      () =>
+        page.evaluate(() => {
+          const el = document.querySelector('.app-zentrale-inhalt');
+          if (!el) return false;
+          const cs = getComputedStyle(el);
+          return cs.opacity === '1' && (cs.transform === 'none' || cs.transform === 'matrix(1, 0, 0, 1, 0, 0)');
+        }),
+      { timeout: 15_000, intervals: [250] },
+    )
+    .toBe(true);
   const reihe = page.locator('[data-testid="zentrale-kacheln"]');
+  // Der Settle-Zeitpunkt schwankt (Sonde: mal ~1.2s, mal ~2.9s) — EIN
+  // stabiles Messpaar reicht darum nicht (der erste Versuch dieser
+  // Härtung lief genau in den Sprung). Verlangt wird Stabilität über
+  // VIER aufeinanderfolgende 500ms-Messungen (2s Ruhe); eine echte
+  // Dauer-Animation erreicht das nie und scheitert nach 15s ehrlich.
+  const verlauf: Array<{ x: number; y: number; width: number; height: number }> = [];
+  await expect
+    .poll(
+      async () => {
+        const jetzt = await reihe.boundingBox();
+        if (!jetzt) return false;
+        verlauf.push(jetzt);
+        if (verlauf.length < 4) return false;
+        const fenster = verlauf.slice(-4);
+        return (['x', 'y', 'width', 'height'] as const).every((k) =>
+          fenster.every((m) => Math.abs(m[k] - fenster[0][k]) < 1),
+        );
+      },
+      { timeout: 15_000, intervals: [500] },
+    )
+    .toBe(true);
   const messung1 = await reihe.boundingBox();
   await page.waitForTimeout(500);
   const messung2 = await reihe.boundingBox();
