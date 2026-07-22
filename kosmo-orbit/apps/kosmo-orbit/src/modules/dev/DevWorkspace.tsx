@@ -175,7 +175,7 @@ export function DevWorkspace() {
       })
       .catch((err) => {
         if (err instanceof TypeError && bridgeVermutlichCspGeblockt()) {
-          melde('Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1)', { ton: 'fehler' });
+          melde('Bridge-Adresse liegt auf einem Port, den die CSP nicht deckt (IP-Adressen nur auf 8600/8700/11434)', { ton: 'fehler' });
         } else if (err instanceof TypeError) {
           melde('Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)', { ton: 'fehler' });
         } else if (istAuthFehler(err)) {

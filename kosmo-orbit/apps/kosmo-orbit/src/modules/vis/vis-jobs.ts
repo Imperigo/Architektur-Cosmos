@@ -39,16 +39,19 @@ export function istAuthFehler(err: unknown): err is BridgeHttpError {
 
 /**
  * True, wenn die konfigurierte Bridge-URL eine LAN-IP ist, die die CSP
- * (`connect-src`) nicht deckt (KLEIN 9). Erlaubt sind nur `localhost`/
- * `127.0.0.1`; eine IPv4 wie `192.168.x.x` wird still geblockt und sieht dann
- * wie «offline» aus. Die CSP kennt keine CIDR-/Oktett-Wildcards ohne weites
- * Aufreissen — darum wird sie NICHT geschwächt, sondern der Fall benannt.
+ * (`connect-src`) nicht deckt (KLEIN 9). Seit v0.9.0 (Owner-Live-Befund
+ * 22.07.2026) sind die HomeServer-Dienst-Ports 8600/8700/11434 host-offen
+ * freigegeben (`index.html` + `tauri.conf.json`) — Tailnet-IPs wie
+ * `100.88.48.73:8600` sind damit gedeckt; geblockt bleibt eine IPv4 nur
+ * noch auf einem anderen Port. Die CSP kennt keine CIDR-Wildcards, darum
+ * Port-genau statt `http://*:*` weit aufzureissen.
  */
 export function bridgeVermutlichCspGeblockt(): boolean {
   try {
-    const host = new URL(bridgeBase()).hostname;
-    if (host === 'localhost' || host === '127.0.0.1') return false;
-    return /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+    const u = new URL(bridgeBase());
+    if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') return false;
+    if (u.port === '8600' || u.port === '8700' || u.port === '11434') return false;
+    return /^\d{1,3}(\.\d{1,3}){3}$/.test(u.hostname);
   } catch {
     return false;
   }
@@ -277,7 +280,7 @@ export function sendeGraphRenderAuftrag(
       patchLauf(nodeId, {
         status: 'fehler',
         fehler: cspGeblockt
-          ? 'Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1) — am selben Gerät über localhost ansprechen. (Offline)'
+          ? 'Bridge-Adresse liegt auf einem Port, den die CSP nicht deckt (IP-Adressen nur auf 8600/8700/11434) — Port pruefen oder localhost nutzen. (Offline)'
           : offline
             ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
             : err instanceof Error

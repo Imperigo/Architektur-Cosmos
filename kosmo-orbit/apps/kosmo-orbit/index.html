@@ -29,10 +29,19 @@
       (`packages/kosmo-data/src/modell-url.ts`, `modellUrlAusR2Key`) — ohne
       diesen Host in `connect-src` würde jeder Remote-Ladeversuch von der CSP
       selbst geblockt, bevor die App überhaupt einen Netzfehler melden könnte.
+
+      HomeServer im Tailnet (v0.9.0, Owner-Live-Befund 22.07.2026): Bridge
+      (:8600), Sync (:8700) und Ollama (:11434) laufen auf dem Home-PC und
+      werden über wechselnde Tailnet-IPs (100.x.y.z) angesprochen — CSP kann
+      keine CIDR-Wildcards, darum sind diese DREI Dienst-Ports host-offen
+      freigegeben (http://*:8600 …) statt die Liste mit http://*:* ganz
+      aufzureissen. Ohne diese Quellen blockte die App jede HomeServer-
+      Verbindung selbst, während curl/Browser daneben problemlos ankamen
+      (Chips oranger Dauerzustand trotz bewiesener Netzstrecke).
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; connect-src 'self' blob: https://api.anthropic.com https://api.geo.admin.ch https://api3.geo.admin.ch https://graph.microsoft.com https://login.microsoftonline.com http://localhost:* ws://localhost:* http://127.0.0.1:* ws://127.0.0.1:* https://architekturkosmos.ch https://archiv.architekturkosmos.ch wss://*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"
+      content="default-src 'self'; connect-src 'self' blob: https://api.anthropic.com https://api.geo.admin.ch https://api3.geo.admin.ch https://graph.microsoft.com https://login.microsoftonline.com http://localhost:* ws://localhost:* http://127.0.0.1:* ws://127.0.0.1:* http://*:8600 ws://*:8600 http://*:8700 ws://*:8700 http://*:11434 https://architekturkosmos.ch https://archiv.architekturkosmos.ch wss://*; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <meta
       name="viewport"

@@ -29,20 +29,24 @@ async function fetchWithTimeout(url: string, ms: number): Promise<Response> {
 
 /**
  * Erkennt eine Bridge-URL, die von der CSP-`connect-src`-Allowlist NICHT
- * gedeckt ist (KLEIN 9). Erlaubt sind nur `localhost` und `127.0.0.1` — eine
- * LAN-IP (z. B. `192.168.x.x` für ein iPad im Büronetz) wird still geblockt und
- * sieht dann wie «offline» aus. Die CSP kann keine CIDR-/Oktett-Wildcards, ohne
- * sie mit `http://*:*` weit aufzureissen; darum wird sie NICHT geschwächt,
- * sondern der Fall ehrlich benannt. Ein Hostname (kein reines IP-Muster) wird
+ * gedeckt ist (KLEIN 9). Seit v0.9.0 (Owner-Live-Befund 22.07.2026: Chips
+ * blieben trotz bewiesener Tailnet-Strecke orange, weil die CSP jede
+ * Nicht-localhost-Anfrage selbst blockte) sind die drei HomeServer-
+ * Dienst-Ports host-offen freigegeben — `http://*:8600`, `ws://*:8600`,
+ * `http://*:8700`, `ws://*:8700`, `http://*:11434` (`index.html` +
+ * `tauri.conf.json`). Geblockt bleibt eine IP-Adresse damit nur noch auf
+ * einem ANDEREN Port. Ein Hostname (kein reines IP-Muster) wird weiterhin
  * NICHT als geblockt gemeldet — er könnte lokal auflösbar/erlaubt sein.
  */
+const CSP_FREIE_PORTS = new Set(['8600', '8700', '11434']);
 function istWahrscheinlichCspGeblockt(bridgeUrl: string): boolean {
   try {
-    const host = new URL(bridgeUrl).hostname;
-    if (host === 'localhost' || host === '127.0.0.1') return false;
+    const u = new URL(bridgeUrl);
+    if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') return false;
+    if (CSP_FREIE_PORTS.has(u.port)) return false;
     // Nur echte IPv4-Adressen sicher als geblockt markieren (Hostnamen könnten
     // per /etc/hosts o. Ä. auf einen erlaubten Ursprung zeigen).
-    return /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+    return /^\d{1,3}(\.\d{1,3}){3}$/.test(u.hostname);
   } catch {
     return false;
   }
@@ -130,7 +134,7 @@ export async function diagnose(): Promise<Befund[]> {
     // der CSP still geblockt und sieht dann wie «offline» aus — der Hinweis
     // trennt «Firewall/Prozess tot» von «CSP deckt diese Adresse nicht».
     const cspHinweis = istWahrscheinlichCspGeblockt(bridge)
-      ? ` — Achtung: die Adresse ${bridge} ist eine LAN-IP, die die CSP (connect-src) nicht erlaubt; nur localhost/127.0.0.1 sind gedeckt. Am selben Gerät die Bridge über localhost ansprechen oder die Produktions-CSP am Hosting um diesen Ursprung erweitern.`
+      ? ` — Achtung: die Adresse ${bridge} liegt auf einem Port, den die CSP (connect-src) nicht deckt; erlaubt sind IP-Adressen nur auf den HomeServer-Ports 8600/8700/11434 (plus localhost/127.0.0.1 beliebig). Port prüfen oder die Produktions-CSP um diesen Ursprung erweitern.`
       : '';
     befunde.push({
       bereich: 'Bridge',

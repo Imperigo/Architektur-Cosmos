@@ -616,7 +616,7 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
         useVisRuntime.getState().patchLauf(VIEWPORT_RENDER_NODE_ID, {
           status: 'fehler',
           fehler: cspGeblockt
-            ? 'Bridge-Adresse ist eine LAN-IP, die die CSP nicht erlaubt (nur localhost/127.0.0.1) — am selben Gerät über localhost ansprechen. (Offline)'
+            ? 'Bridge-Adresse liegt auf einem Port, den die CSP nicht deckt (IP-Adressen nur auf 8600/8700/11434) — Port pruefen oder localhost nutzen. (Offline)'
             : offline
               ? 'Bridge nicht erreichbar — läuft die HomeStation-Bridge? (Offline)'
               : err instanceof Error

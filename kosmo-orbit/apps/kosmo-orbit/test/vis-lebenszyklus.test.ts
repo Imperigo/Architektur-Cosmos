@@ -98,11 +98,22 @@ describe('bridgeVermutlichCspGeblockt (KLEIN 9 — LAN-IP ehrlich benennen)', ()
   };
   afterEach(() => vi.unstubAllGlobals());
 
-  it('meldet eine LAN-IPv4-Bridge als (vermutlich) CSP-geblockt', () => {
+  it('meldet eine LAN-IPv4-Bridge auf einem FREMDEN Port als (vermutlich) CSP-geblockt', () => {
+    setzeBridge('http://192.168.1.20:9999');
+    expect(bridgeVermutlichCspGeblockt()).toBe(true);
+    setzeBridge('http://10.0.0.5:8601');
+    expect(bridgeVermutlichCspGeblockt()).toBe(true);
+  });
+
+  it('deckt IP-Bridges auf den HomeServer-Ports 8600/8700/11434 (v0.9.0 CSP-Freigabe, Owner-Live-Befund 22.07.2026)', () => {
+    setzeBridge('http://100.88.48.73:8600');
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
     setzeBridge('http://192.168.1.20:8600');
-    expect(bridgeVermutlichCspGeblockt()).toBe(true);
-    setzeBridge('http://10.0.0.5:8600');
-    expect(bridgeVermutlichCspGeblockt()).toBe(true);
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
+    setzeBridge('http://100.88.48.73:8700');
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
+    setzeBridge('http://100.88.48.73:11434');
+    expect(bridgeVermutlichCspGeblockt()).toBe(false);
   });
 
   it('lässt localhost/127.0.0.1 in Ruhe (die CSP deckt sie)', () => {
