@@ -158,18 +158,20 @@
   width: 32px;
   height: 32px;
 }
+/* v0.9.1 Owner-Punkt 22.07.2026 («minimale animation reaktion wenn man
+   klickt»): der frühere 400ms-Bounce (0.82 → 1.18 Überschwinger) war zu
+   viel Zeiger-Theater — jetzt ein kurzes, dezentes Eindrücken ohne
+   Überschwinger. Name und Auslöseweg (onAnimationEnd in CursorEbene.tsx)
+   bleiben unverändert. */
 .cursor-ebene-pop.cursor-ebene-pop--aktiv {
-  animation: k-cursor-klick-pop 400ms var(--k-ease-bounce);
+  animation: k-cursor-klick-pop 140ms ease-out;
 }
 @keyframes k-cursor-klick-pop {
   0% {
     transform: scale(1);
   }
-  35% {
-    transform: scale(0.82);
-  }
-  70% {
-    transform: scale(1.18);
+  40% {
+    transform: scale(0.9);
   }
   100% {
     transform: scale(1);

@@ -306,15 +306,18 @@ function ZeichneForm({ zustand, tool }: { zustand: CursorZustand; tool: { art: s
     return <GesperrtSvg />;
   }
   // default: Pfeil (Spec §8, exakter Pfad — Spitze = Hotspot 16,4).
-  // v0.9.1 Owner-Punkt 22.07.2026 («der mauszeiger ist nicht schräg»): der
-  // Drachen ist um FESTE 15° um den Hotspot gedreht — die vertraute
-  // Systemzeiger-Schräge (Körper läuft nach rechts unten), als statisches
-  // SVG-Attribut, NICHT als Laufzeit-Rotation (die Richtungs-Rotation bleibt
-  // entfernt, s. Kopf-Notiz v0.9.0). Hotspot (16,4) ist Drehpunkt und damit
-  // unverändert — Klickziel und Zeichnung bleiben deckungsgleich.
+  // v0.9.1 Owner-Punkte 22.07.2026 («nicht schräg» → Nachbestellung «gleich
+  // schräg wie windows»): FESTE Drehung um 22.25° um den Hotspot — der
+  // Drachen ist symmetrisch mit Kantenwinkel atan(9/22) = 22.25° zur
+  // Vertikalen, nach dieser Drehung steht die LINKE Kante also exakt
+  // senkrecht und die rechte bei ~44.5°: die Windows-Pfeil-Silhouette
+  // (senkrechte linke Kante, Körper nach rechts unten). Statisches
+  // SVG-Attribut, NICHT Laufzeit-Rotation (die bleibt entfernt, s.
+  // Kopf-Notiz v0.9.0). Hotspot (16,4) ist Drehpunkt und damit unverändert
+  // — Klickziel und Zeichnung bleiben deckungsgleich.
   return (
     <svg className="cursor-ebene-svg cursor-ebene-pfeil" width={32} height={32} viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M16 4 L25 26 Q16 21.5 7 26 Z" transform="rotate(15 16 4)" fill="var(--kcur-fill)" stroke="var(--k-signal)" strokeWidth={1.5} strokeLinejoin="round" />
+      <path d="M16 4 L25 26 Q16 21.5 7 26 Z" transform="rotate(22.25 16 4)" fill="var(--kcur-fill)" stroke="var(--k-signal)" strokeWidth={1.5} strokeLinejoin="round" />
     </svg>
   );
 }
