@@ -6,10 +6,12 @@ import { dirname, extname, join, relative, resolve } from 'node:path';
 
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
+const scanRoot = resolve(root, args['scan-root'] || '.');
 const outputJson = resolve(root, args.output || 'examples/kosmo-data/review/public-runtime-boundary-check.generated.json');
 const outputMd = resolve(root, args.markdown || 'examples/kosmo-data/review/public-runtime-boundary-check.generated.md');
 
-const sourceRoots = ['app', 'components', 'lib'];
+const publicSourceRootNames = ['app', 'components', 'lib'];
+const sourceRoots = publicSourceRootNames.map((sourceRoot) => resolve(scanRoot, sourceRoot));
 const sourceExtensions = new Set(['.js', '.jsx', '.mjs', '.ts', '.tsx']);
 const ignoredDirectories = new Set(['.git', '.next', 'node_modules', 'out']);
 
@@ -90,7 +92,7 @@ async function main() {
     },
     summary: {
       scanned_files: sourceFiles.length,
-      checked_roots: sourceRoots,
+      checked_roots: sourceRoots.map((sourceRoot) => displayScanPath(sourceRoot)),
       failed_findings: findings.length,
       public_ready_after_check: 0
     },
@@ -127,9 +129,9 @@ function listFiles(path) {
 
 function checkForbiddenRouteFiles(files) {
   const scannedFiles = [
-    ...files.map((file) => relative(root, file)),
+    ...files.map(displayScanPath),
     ...['middleware.js', 'middleware.jsx', 'middleware.mjs', 'middleware.ts', 'middleware.tsx']
-      .filter((file) => existsSync(resolve(root, file)))
+      .filter((file) => existsSync(resolve(scanRoot, file)))
   ];
 
   return scannedFiles
@@ -149,7 +151,7 @@ function checkForbiddenRouteFiles(files) {
 
 function checkSourceFile(file) {
   const source = readFileSync(file, 'utf8');
-  const relativeFile = relative(root, file);
+  const relativeFile = displayScanPath(file);
   return bannedSourcePatterns.flatMap((banned) => {
     const match = banned.pattern.exec(source);
     if (!match) return [];
@@ -164,7 +166,7 @@ function checkSourceFile(file) {
 }
 
 function checkNextConfig() {
-  const configPath = resolve(root, 'next.config.js');
+  const configPath = resolve(scanRoot, 'next.config.js');
   if (!existsSync(configPath)) {
     return [{
       id: 'next_config_missing',
@@ -205,6 +207,10 @@ function checkNextConfig() {
 
 function lineNumberAt(source, index) {
   return source.slice(0, index).split('\n').length;
+}
+
+function displayScanPath(file) {
+  return relative(scanRoot, file).replace(/\\/g, '/');
 }
 
 function renderMarkdown(report) {

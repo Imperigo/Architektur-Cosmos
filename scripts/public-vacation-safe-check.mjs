@@ -121,6 +121,11 @@ const checks = [
     purpose: 'Rejects Next runtime features that would break the static export contract.'
   },
   {
+    id: 'public_runtime_boundary_negative_smoke',
+    command: ['node', 'scripts/public-runtime-boundary-negative-smoke.mjs'],
+    purpose: 'Verifies the public runtime boundary guard rejects synthetic API routes, middleware, Server Actions, request runtime APIs and Next config drift.'
+  },
+  {
     id: 'public_worker_boundary',
     command: [
       'node',

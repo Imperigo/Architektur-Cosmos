@@ -1,6 +1,6 @@
 # Public Worker Boundary Check
 
-Generated: 2026-07-22T07:41:13.742Z
+Generated: 2026-07-22T09:40:13.320Z
 Status: `public_worker_boundary_check_passed`
 
 Checks the Cloudflare Worker deploy boundary for static-assets mode, read-only API routes and forbidden live bindings without starting a server or reading private content.

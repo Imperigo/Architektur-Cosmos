@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-22T07:41:13.742Z",
+  "generated_at": "2026-07-22T09:40:13.320Z",
   "generator": "public-worker-boundary-check",
   "status": "public_worker_boundary_check_passed",
   "policy": {
