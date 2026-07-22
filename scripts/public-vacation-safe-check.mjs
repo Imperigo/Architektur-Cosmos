@@ -28,6 +28,11 @@ const checks = [
     purpose: 'Verifies the public demo gate rejects a missing static export when --require-static-export is passed.'
   },
   {
+    id: 'public_demo_gate_static_sentinel_negative_smoke',
+    command: ['node', 'scripts/public-demo-gate-static-sentinel-negative-smoke.mjs'],
+    purpose: 'Verifies the public demo gate rejects exported public routes when a required content sentinel is missing.'
+  },
+  {
     id: 'public_route_gate_alignment',
     command: ['node', 'scripts/public-route-gate-alignment-check.mjs'],
     purpose: 'Keeps public gate routes aligned with route-content smoke coverage.'
