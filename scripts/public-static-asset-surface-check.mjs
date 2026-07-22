@@ -173,6 +173,7 @@ async function main() {
       allowed_assets: assets.filter((asset) => asset.status === 'passed').length,
       failed_assets: assets.filter((asset) => asset.status !== 'passed').length,
       blocked_extension_assets: assets.filter((asset) => asset.blocked_extension).length,
+      embedded_blocked_extension_assets: assets.filter((asset) => asset.embedded_blocked_extensions.length > 0).length,
       unexpected_extension_assets: assets.filter((asset) => asset.unexpected_extension).length,
       blocked_signature_assets: assets.filter((asset) => asset.blocked_signatures.length > 0).length,
       path_leak_assets: assets.filter((asset) => asset.path_leak_matches.length > 0).length,
@@ -230,6 +231,7 @@ function skippedMissingOutReport() {
       allowed_assets: 0,
       failed_assets: 0,
       blocked_extension_assets: 0,
+      embedded_blocked_extension_assets: 0,
       unexpected_extension_assets: 0,
       blocked_signature_assets: 0,
       path_leak_assets: 0,
@@ -265,6 +267,7 @@ function checkAsset(relativePath) {
   const stats = statSync(absolutePath);
   const failures = [];
   const blockedExtension = blockedExtensions.has(extension);
+  const embeddedBlockedExtensions = detectEmbeddedBlockedExtensions(relativePath, extension);
   const extensionlessAllowed = extension === '' && allowedExtensionlessFiles.has(basename);
   const unexpectedExtension = !blockedExtension && !extensionlessAllowed && !allowedExtensions.has(extension);
   const blockedSignatures = detectBlockedBinarySignatures(absolutePath);
@@ -275,6 +278,12 @@ function checkAsset(relativePath) {
     failures.push({
       id: `asset:${relativePath}:blocked-extension`,
       detail: `Static export must not contain source/archive/office/database artifact extension: ${extension}`
+    });
+  }
+  if (embeddedBlockedExtensions.length > 0) {
+    failures.push({
+      id: `asset:${relativePath}:embedded-blocked-extension`,
+      detail: `Static export asset name contains disguised source/archive/office/database extension(s): ${embeddedBlockedExtensions.join(', ')}`
     });
   }
   if (unexpectedExtension) {
@@ -309,6 +318,7 @@ function checkAsset(relativePath) {
     bytes: stats.size,
     status: failures.length === 0 ? 'passed' : 'failed',
     blocked_extension: blockedExtension,
+    embedded_blocked_extensions: embeddedBlockedExtensions,
     unexpected_extension: unexpectedExtension,
     blocked_signatures: blockedSignatures,
     path_leak_matches: [...new Set(pathLeakMatches)],
@@ -323,6 +333,18 @@ function detectBlockedBinarySignatures(absolutePath) {
   return blockedBinarySignatures
     .filter((item) => head.subarray(0, item.signature.length).equals(item.signature))
     .map((item) => item.id);
+}
+
+function detectEmbeddedBlockedExtensions(relativePath, finalExtension) {
+  const normalizedPath = relativePath.replace(/\\/g, '/').toLowerCase();
+  const extensions = [];
+
+  for (const blockedExtension of blockedExtensions) {
+    if (blockedExtension === finalExtension) continue;
+    if (normalizedPath.includes(`${blockedExtension}.`)) extensions.push(blockedExtension);
+  }
+
+  return [...new Set(extensions)].sort();
 }
 
 function scanTextContent(absolutePath, extension) {
@@ -358,6 +380,7 @@ function renderMarkdown(report) {
     `- checked assets: ${report.summary.checked_assets}`,
     `- failed assets: ${report.summary.failed_assets}`,
     `- blocked extension assets: ${report.summary.blocked_extension_assets}`,
+    `- embedded blocked extension assets: ${report.summary.embedded_blocked_extension_assets}`,
     `- unexpected extension assets: ${report.summary.unexpected_extension_assets}`,
     `- blocked signature assets: ${report.summary.blocked_signature_assets}`,
     `- path leak assets: ${report.summary.path_leak_assets}`,

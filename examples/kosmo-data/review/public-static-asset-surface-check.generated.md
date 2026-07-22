@@ -1,6 +1,6 @@
 # Public Static Asset Surface Check
 
-Generated: 2026-07-22T11:26:46.551Z
+Generated: 2026-07-22T11:40:53.249Z
 Status: `public_static_asset_surface_check_passed`
 
 Checks the built static export for public-safe asset file types, private/source path markers and small text-asset leaks without reading private source roots or promoting public-ready state.
@@ -10,6 +10,7 @@ Checks the built static export for public-safe asset file types, private/source 
 - checked assets: 317
 - failed assets: 0
 - blocked extension assets: 0
+- embedded blocked extension assets: 0
 - unexpected extension assets: 0
 - blocked signature assets: 0
 - path leak assets: 0

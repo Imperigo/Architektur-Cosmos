@@ -50,6 +50,8 @@ function runSmoke() {
   writeFile(outRoot, 'data/cache.sqlite', 'synthetic sqlite placeholder');
   writeFile(outRoot, 'cad/raw-plan.dwg', 'synthetic dwg placeholder');
   writeFile(outRoot, 'model/source-scene.blend', 'synthetic blend placeholder');
+  writeFile(outRoot, 'media/disguised-source-plan.pdf.jpg', 'synthetic renamed source artifact with public-looking final extension');
+  writeFile(outRoot, 'media/disguised-office-sheet.xlsx.txt', 'synthetic renamed office artifact with public-looking final extension');
   writeFile(outRoot, 'media/source-root-note.txt', 'Synthetic text mentions /mnt/data/ArchitekturKosmos/source-root/private-scan.pdf');
   writeFile(outRoot, 'media/spoofed-public-image.jpg', '%PDF synthetic public fixture renamed as jpg');
   writeBinaryFile(outRoot, 'scripts/spoofed-public-bundle.js', Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00]));
@@ -72,6 +74,8 @@ function runSmoke() {
     'asset:data/cache.sqlite:blocked-extension',
     'asset:cad/raw-plan.dwg:blocked-extension',
     'asset:model/source-scene.blend:blocked-extension',
+    'asset:media/disguised-source-plan.pdf.jpg:embedded-blocked-extension',
+    'asset:media/disguised-office-sheet.xlsx.txt:embedded-blocked-extension',
     'asset:media/source-root-note.txt:path-leak',
     'asset:media/source-root-note.txt:content-leak',
     'asset:media/spoofed-public-image.jpg:blocked-signature',
