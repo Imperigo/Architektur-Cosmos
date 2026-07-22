@@ -30,6 +30,7 @@
     "public:route-link-smoke": "node scripts/public-route-link-smoke.mjs",
     "public:route-link-fetch-negative-smoke": "node scripts/public-route-link-fetch-negative-smoke.mjs",
     "public:static-export-smoke": "node scripts/public-static-export-smoke.mjs",
+    "public:static-export-negative-smoke": "node scripts/public-static-export-negative-smoke.mjs",
     "public:static-link-check": "node scripts/public-static-link-check.mjs",
     "public:static-link-negative-smoke": "node scripts/public-static-link-negative-smoke.mjs",
     "public:static-header-check": "node scripts/public-static-header-check.mjs",

@@ -71,6 +71,11 @@ const checks = [
     purpose: 'Checks existing exported public routes for content sentinels, private/source markers and missing _next/static assets.'
   },
   {
+    id: 'public_static_export_negative_smoke',
+    command: ['node', 'scripts/public-static-export-negative-smoke.mjs'],
+    purpose: 'Verifies the static export smoke rejects synthetic private/source text and missing _next/static assets.'
+  },
+  {
     id: 'public_static_sitemap_check',
     command: [
       'node',
