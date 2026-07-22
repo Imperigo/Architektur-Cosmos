@@ -13,6 +13,9 @@ const blockedHref = '/_overseer/private-source.pdf';
 const missingHref = '/atlas/missing-public-route/';
 const encodedSameOriginBlockedHref = 'https://www.architekturkosmos.ch/owner-inbox/?from=static&next=/atlas/';
 const invalidHref = 'http://[::1';
+const missingImageSrc = '/_next/static/media/missing-public-demo-gate-smoke.webp';
+const cssAssetHref = '/_next/static/css/public-demo-gate-static-link-negative-smoke.css';
+const missingFontHref = '/_next/static/media/missing-public-demo-gate-smoke.woff2';
 const expectedFailures = [
   `static-route:/:href-leak:${blockedHref}`,
   `static-route:/:href-blocked-surface:${blockedHref}`,
@@ -20,7 +23,10 @@ const expectedFailures = [
   `static-route:/:href-target-missing:${missingHref}`,
   `static-route:/:href-leak:${encodedSameOriginBlockedHref}`,
   'static-route:/:href-blocked-surface:/owner-inbox/?from=static&next=/atlas/',
-  'static-route:href-invalid-url'
+  'static-route:href-invalid-url',
+  `static-route:/:asset-target-missing:${missingImageSrc}`,
+  `static-asset:${cssAssetHref}:content-leak`,
+  `static-route:${cssAssetHref}:asset-target-missing:${missingFontHref}`
 ];
 
 try {
@@ -44,6 +50,14 @@ function runSmoke() {
   for (const route of publicRouteChecks) {
     writeRoute(outRoot, route.path, renderSyntheticRoute(route, htmlRoutePaths));
   }
+  writeFile(outRoot, cssAssetHref, [
+    '/* synthetic source-root marker for public demo gate */',
+    '@font-face {',
+    '  font-family: "KosmoSynthetic";',
+    `  src: url("${missingFontHref}") format("woff2");`,
+    '}',
+    ''
+  ].join('\n'));
 
   const result = spawnSync(
     process.execPath,
@@ -85,6 +99,7 @@ function runSmoke() {
     expected_failed_checks: expectedFailures,
     checked_links: report.static_export?.checked_links ?? null,
     checked_internal_targets: report.static_export?.checked_internal_targets ?? null,
+    checked_static_assets: report.static_export?.checked_static_assets ?? null,
     observed_failure_count: report.failures?.length ?? 0,
     out_dir: keepTemp ? relative(root, outRoot) : null
   };
@@ -115,10 +130,15 @@ function renderSyntheticRoute(route, htmlRoutePaths) {
   return [
     '<!doctype html>',
     '<html lang="de">',
-    '<head><meta charset="utf-8"><title>Architecture Cosmos synthetic route</title></head>',
+    '<head>',
+    '<meta charset="utf-8">',
+    '<title>Architecture Cosmos synthetic route</title>',
+    routePath === '/' ? `<link rel="stylesheet" href="${escapeHtml(cssAssetHref)}">` : '',
+    '</head>',
     '<body>',
     ...lines,
     ...links.map((href) => `<a href="${escapeHtml(href)}">${escapeHtml(href)}</a>`),
+    routePath === '/' ? `<img src="${escapeHtml(missingImageSrc)}" alt="Synthetic missing public asset">` : '',
     `<p>${filler}</p>`,
     '</body>',
     '</html>',
@@ -133,6 +153,12 @@ function writeRoute(outRoot, routePath, body) {
   if (!existsSync(filePath)) {
     throw new Error(`Failed to write synthetic route fixture: ${relative(root, filePath)}`);
   }
+}
+
+function writeFile(outRoot, routePath, body) {
+  const filePath = routeFilePath(outRoot, routePath);
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, body, 'utf8');
 }
 
 function routeFilePath(outRoot, routePath) {

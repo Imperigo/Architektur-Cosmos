@@ -317,6 +317,8 @@ function checkStaticExportRoutes(outDir = 'out') {
   const checkedRoutes = [];
   const checkedLinks = [];
   const checkedTargets = new Set();
+  const checkedStaticAssets = new Set();
+  const visitedStaticAssets = new Set();
   const outRoot = path.resolve(outDir);
 
   if (!fs.existsSync(outRoot)) {
@@ -331,6 +333,7 @@ function checkStaticExportRoutes(outDir = 'out') {
         checked_routes: checkedRoutes,
         checked_links: checkedLinks.length,
         checked_internal_targets: checkedTargets.size,
+        checked_static_assets: checkedStaticAssets.size,
         checked_text_surface_files: 0
       };
     }
@@ -340,6 +343,7 @@ function checkStaticExportRoutes(outDir = 'out') {
       checked_routes: checkedRoutes,
       checked_links: checkedLinks.length,
       checked_internal_targets: checkedTargets.size,
+      checked_static_assets: checkedStaticAssets.size,
       checked_text_surface_files: 0
     };
   }
@@ -380,6 +384,7 @@ function checkStaticExportRoutes(outDir = 'out') {
 
     if (isHtmlRoute(route.path)) {
       checkStaticExportLinks(outRoot, route.path, body, checkedLinks, checkedTargets);
+      checkStaticExportAssetRefs(outRoot, route.path, body, checkedStaticAssets, visitedStaticAssets);
     }
   }
 
@@ -402,6 +407,7 @@ function checkStaticExportRoutes(outDir = 'out') {
     checked_routes: checkedRoutes,
     checked_links: checkedLinks.length,
     checked_internal_targets: checkedTargets.size,
+    checked_static_assets: checkedStaticAssets.size,
     checked_text_surface_files: textSurfaceFiles.length
   };
 }
@@ -444,6 +450,74 @@ function checkStaticExportLinks(outRoot, routePath, body, checkedLinks, checkedT
   }
 }
 
+function checkStaticExportAssetRefs(outRoot, routePath, body, checkedStaticAssets, visitedStaticAssets) {
+  for (const ref of extractStaticAssetRefs(body)) {
+    const refLeakMatches = publicLeakMatches(ref);
+    if (refLeakMatches.length > 0) {
+      recordFailure(
+        `static-route:${routePath}:asset-ref-leak:${ref}`,
+        `exported route asset reference contains blocked private/source patterns: ${refLeakMatches.join(', ')}`
+      );
+    }
+
+    const assetPath = normalizeStaticAssetHref(ref, routePath);
+    if (!assetPath) continue;
+    checkStaticAssetPath(outRoot, routePath, assetPath, checkedStaticAssets, visitedStaticAssets);
+  }
+}
+
+function checkStaticAssetPath(outRoot, routePath, assetPath, checkedStaticAssets, visitedStaticAssets) {
+  checkedStaticAssets.add(assetPath);
+
+  const pathLeakMatches = publicLeakMatches(assetPath);
+  if (pathLeakMatches.length > 0) {
+    recordFailure(
+      `static-route:${routePath}:asset-path-leak:${assetPath}`,
+      `exported route asset path contains blocked private/source patterns: ${pathLeakMatches.join(', ')}`
+    );
+  }
+
+  const assetFilePath = staticFilePath(outRoot, assetPath);
+  if (!fs.existsSync(assetFilePath)) {
+    recordFailure(
+      `static-route:${routePath}:asset-target-missing:${assetPath}`,
+      `exported route references a missing static asset: ${path.relative(process.cwd(), assetFilePath)}`
+    );
+    return;
+  }
+
+  if (visitedStaticAssets.has(assetPath)) return;
+  visitedStaticAssets.add(assetPath);
+
+  if (isTextStaticAsset(assetPath)) {
+    const body = fs.readFileSync(assetFilePath, 'utf8');
+    const leakMatches = publicLeakMatches(body);
+    if (leakMatches.length > 0) {
+      recordFailure(
+        `static-asset:${assetPath}:content-leak`,
+        `exported static asset contains blocked private/source patterns: ${leakMatches.join(', ')}`
+      );
+    }
+  }
+
+  if (assetPath.toLowerCase().endsWith('.css')) {
+    const css = fs.readFileSync(assetFilePath, 'utf8');
+    for (const ref of extractCssAssetRefs(css)) {
+      const refLeakMatches = publicLeakMatches(ref);
+      if (refLeakMatches.length > 0) {
+        recordFailure(
+          `static-asset:${assetPath}:css-ref-leak:${ref}`,
+          `exported CSS asset reference contains blocked private/source patterns: ${refLeakMatches.join(', ')}`
+        );
+      }
+
+      const nestedAssetPath = normalizeStaticAssetHref(ref, assetPath);
+      if (!nestedAssetPath) continue;
+      checkStaticAssetPath(outRoot, assetPath, nestedAssetPath, checkedStaticAssets, visitedStaticAssets);
+    }
+  }
+}
+
 function extractAnchorHrefs(html) {
   const hrefs = [];
   const anchorPattern = /<a\b[^>]*\bhref=(["'])(.*?)\1/gi;
@@ -452,6 +526,56 @@ function extractAnchorHrefs(html) {
     hrefs.push(decodeHtmlAttribute(match[2]));
   }
   return hrefs;
+}
+
+function extractStaticAssetRefs(html) {
+  const refs = [];
+  const tagPattern = /<(script|img|source|link|meta|video|audio)\b[^>]*>/gi;
+  let tagMatch;
+  while ((tagMatch = tagPattern.exec(String(html))) !== null) {
+    const tag = tagMatch[0];
+    const tagName = tagMatch[1].toLowerCase();
+
+    if (tagName === 'meta') {
+      const content = attrValue(tag, 'content');
+      if (content && /\.(avif|gif|ico|jpe?g|png|svg|webp)([?#]|$)/i.test(content)) refs.push(content);
+      continue;
+    }
+
+    for (const name of ['href', 'src', 'poster']) {
+      const value = attrValue(tag, name);
+      if (value) refs.push(value);
+    }
+
+    for (const name of ['imagesrcset', 'srcset']) {
+      const value = attrValue(tag, name);
+      if (value) refs.push(...splitSrcSet(value));
+    }
+  }
+  return refs;
+}
+
+function extractCssAssetRefs(css) {
+  const refs = [];
+  const pattern = /url\(\s*(["']?)(.*?)\1\s*\)/gi;
+  let match;
+  while ((match = pattern.exec(String(css))) !== null) {
+    refs.push(decodeHtmlAttribute(match[2]));
+  }
+  return refs;
+}
+
+function attrValue(tag, name) {
+  const pattern = new RegExp(`\\b${name}=("|')(.*?)\\1`, 'i');
+  const match = String(tag).match(pattern);
+  return match ? decodeHtmlAttribute(match[2]) : null;
+}
+
+function splitSrcSet(value) {
+  return String(value)
+    .split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter(Boolean);
 }
 
 function normalizeInternalHref(href) {
@@ -472,6 +596,31 @@ function normalizeInternalHref(href) {
   return routePath.startsWith('/') ? routePath : `/${routePath}`;
 }
 
+function normalizeStaticAssetHref(href, basePath = '/') {
+  const value = String(href ?? '').trim();
+  if (!value || value.startsWith('#')) return null;
+  if (/^(mailto|tel|javascript|data|blob):/i.test(value)) return null;
+
+  let parsed;
+  try {
+    parsed = new URL(value, staticAssetBaseUrl(basePath));
+  } catch {
+    recordFailure('static-route:asset-ref-invalid-url', `exported route has an invalid static asset reference: ${value}`);
+    return null;
+  }
+
+  if (!siteOrigins.has(parsed.origin)) return null;
+  if (!path.extname(parsed.pathname)) return null;
+  return parsed.pathname;
+}
+
+function staticAssetBaseUrl(routePath) {
+  const normalized = String(routePath || '/');
+  if (normalized === '/' || normalized.endsWith('/')) return `https://architekturkosmos.ch${normalized}`;
+  const directory = path.dirname(normalized).replace(/\\/g, '/');
+  return `https://architekturkosmos.ch${directory === '/' ? '/' : `${directory}/`}`;
+}
+
 function decodeHtmlAttribute(value) {
   return String(value)
     .replace(/&amp;/g, '&')
@@ -483,14 +632,27 @@ function decodeHtmlAttribute(value) {
 }
 
 function staticFilePath(outRoot, routePath) {
-  if (routePath === '/') return path.join(outRoot, 'index.html');
-  const normalized = routePath.replace(/^\/+/, '');
+  const routePathWithoutSearch = String(routePath).split('?')[0].split('#')[0];
+  if (routePathWithoutSearch === '/') return path.join(outRoot, 'index.html');
+  const normalized = decodeUrlPath(routePathWithoutSearch.replace(/^\/+/, ''));
   if (/\.[a-z0-9]+$/i.test(normalized)) return path.join(outRoot, normalized);
   return path.join(outRoot, normalized, 'index.html');
 }
 
+function decodeUrlPath(routePath) {
+  try {
+    return decodeURIComponent(routePath);
+  } catch {
+    return routePath;
+  }
+}
+
 function isHtmlRoute(routePath) {
   return !/\.(svg|txt|xml)$/i.test(routePath);
+}
+
+function isTextStaticAsset(routePath) {
+  return /\.(css|html|json|svg|txt|xml)$/i.test(String(routePath || '').split('?')[0].split('#')[0]);
 }
 
 function normalizeHtmlText(value) {
@@ -545,6 +707,7 @@ async function main() {
       out_dir: staticExport.out_dir,
       checked_links: staticExport.checked_links,
       checked_internal_targets: staticExport.checked_internal_targets,
+      checked_static_assets: staticExport.checked_static_assets,
       checked_text_surface_files: staticExport.checked_text_surface_files
     },
     failures,
