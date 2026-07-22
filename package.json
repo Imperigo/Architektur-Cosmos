@@ -30,6 +30,7 @@
     "public:static-link-check": "node scripts/public-static-link-check.mjs",
     "public:static-link-negative-smoke": "node scripts/public-static-link-negative-smoke.mjs",
     "public:static-metadata-check": "node scripts/public-static-metadata-check.mjs",
+    "public:static-metadata-negative-smoke": "node scripts/public-static-metadata-negative-smoke.mjs",
     "public:static-route-inventory-check": "node scripts/public-static-route-inventory-check.mjs",
     "public:static-sitemap-check": "node scripts/public-static-sitemap-check.mjs",
     "public:static-sitemap-negative-smoke": "node scripts/public-static-sitemap-negative-smoke.mjs",

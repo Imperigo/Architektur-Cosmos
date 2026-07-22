@@ -157,6 +157,11 @@ const checks = [
     purpose: 'Checks exported public HTML pages for title, description, canonical metadata and private/source markers.'
   },
   {
+    id: 'public_static_metadata_negative_smoke',
+    command: ['node', 'scripts/public-static-metadata-negative-smoke.mjs'],
+    purpose: 'Verifies the static metadata guard rejects synthetic missing metadata, canonical mismatches and private/source markers.'
+  },
+  {
     id: 'review_only_publication_fence',
     command: [
       'node',

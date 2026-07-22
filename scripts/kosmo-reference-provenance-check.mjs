@@ -6,7 +6,7 @@ import { dirname, relative, resolve } from 'node:path';
 
 const root = process.cwd();
 const registryPath = resolve(root, readArg('--registry') ?? 'data/kosmoreferences-registry.json');
-const outputDir = resolve(root, readArg('--out') ?? 'out/kosmo-reference-provenance');
+const outputDir = resolve(root, readArg('--out') ?? 'examples/kosmo-references/provenance/review');
 const outputJson = resolve(outputDir, 'provenance-check.generated.json');
 const outputMd = resolve(outputDir, 'provenance-check.generated.md');
 
