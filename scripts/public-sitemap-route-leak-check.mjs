@@ -50,8 +50,14 @@ async function main() {
   const sitemapUrl = `${baseUrl}/sitemap.xml`;
   const sitemapResponse = await fetchWithTimeout(sitemapUrl);
   const sitemapBody = await sitemapResponse.text();
+  const sitemapLeakMatches = publicLeakMatches(sitemapBody);
 
   check(sitemapResponse.ok, 'sitemap:status', `Expected HTTP 2xx for ${sitemapUrl}, got ${sitemapResponse.status}.`);
+  check(
+    sitemapLeakMatches.length === 0,
+    'sitemap:no_private_patterns',
+    `Blocked private/source patterns: ${sitemapLeakMatches.join(', ') || 'none'}.`
+  );
 
   const paths = [...sitemapBody.matchAll(/<loc>(.*?)<\/loc>/g)]
     .map((match) => match[1])
@@ -63,6 +69,9 @@ async function main() {
   const checkedRoutes = [];
 
   for (const path of paths) {
+    const pathLeakMatches = publicLeakMatches(path);
+    check(pathLeakMatches.length === 0, `${path}:path_no_private_patterns`, `Blocked private/source path patterns: ${pathLeakMatches.join(', ') || 'none'}.`);
+
     const url = `${baseUrl}${path}`;
     const response = await fetchWithTimeout(url);
     const body = await response.text();
@@ -81,6 +90,7 @@ async function main() {
       status: response.status,
       body_length: body.length,
       min_body_length: minBodyLength,
+      path_blocked_pattern_count: pathLeakMatches.length,
       blocked_pattern_count: blockedMatches.length
     });
   }
