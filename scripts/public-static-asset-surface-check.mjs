@@ -341,7 +341,12 @@ function detectEmbeddedBlockedExtensions(relativePath, finalExtension) {
 
   for (const blockedExtension of blockedExtensions) {
     if (blockedExtension === finalExtension) continue;
-    if (normalizedPath.includes(`${blockedExtension}.`)) extensions.push(blockedExtension);
+    if (
+      normalizedPath.includes(`${blockedExtension}.`)
+      || normalizedPath.includes(`${blockedExtension}/`)
+    ) {
+      extensions.push(blockedExtension);
+    }
   }
 
   return [...new Set(extensions)].sort();
