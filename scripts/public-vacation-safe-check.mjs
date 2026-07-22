@@ -189,6 +189,24 @@ const checks = [
     purpose: 'Verifies the static link guard rejects synthetic private/source hrefs and missing internal route targets.'
   },
   {
+    id: 'public_static_asset_surface_check',
+    command: [
+      'node',
+      'scripts/public-static-asset-surface-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-asset-surface-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-asset-surface-check.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks exported public static assets for allowed web file types, blocked source/archive/database extensions and private/source leak markers.'
+  },
+  {
+    id: 'public_static_asset_surface_negative_smoke',
+    command: ['node', 'scripts/public-static-asset-surface-negative-smoke.mjs'],
+    purpose: 'Verifies the static asset surface guard rejects synthetic PDF, archive, database and private/source text artifacts.'
+  },
+  {
     id: 'public_static_header_check',
     command: [
       'node',
