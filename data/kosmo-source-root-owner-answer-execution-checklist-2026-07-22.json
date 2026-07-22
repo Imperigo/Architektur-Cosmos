@@ -1,0 +1,138 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T06:22:12.597Z",
+  "status": "source_root_owner_answer_execution_checklist_ready",
+  "policy": {
+    "checklist_only": true,
+    "records_decisions": false,
+    "mutates_decision_session": false,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "runs_private_inventory_now": false,
+    "executes_commands": false,
+    "writes_public_files": false,
+    "public_ready_after_checklist": 0
+  },
+  "source_refs": [
+    "data/kosmo-source-root-owner-choice-consequence-matrix-2026-07-22.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-2026-07-22.json",
+    "data/kosmo-owner-remaining-decision-brief-2026-07-22.json"
+  ],
+  "summary": {
+    "branches": 3,
+    "unlock_branches": 1,
+    "executable_now": 0,
+    "owner_actions_required": 2,
+    "readiness_command_steps": 9,
+    "failures": 0,
+    "public_ready_after_checklist": 0
+  },
+  "branches": [
+    {
+      "id": "keep_blocked",
+      "label": "Keep source-root blocked",
+      "selected_decision": "keep_blocked",
+      "selected_root_path": null,
+      "owner_confirmation_required": true,
+      "unlocks_private_metadata_diagnostic": false,
+      "executable_now": false,
+      "public_ready_after_branch": 0,
+      "allowed_after_explicit_owner_answer": {
+        "record_decision": true,
+        "run_guard_sequence": true,
+        "run_private_metadata_inventory_after_guards": false,
+        "run_private_ocr_or_pdf_text_extraction": false,
+        "copy_private_files_to_git": false,
+        "set_public_ready": false,
+        "run_local_llm_on_private_file_contents": false
+      },
+      "command_order_after_recording": [
+        "npm run kosmo:source-root-decision-session-check",
+        "npm run kosmo:source-root-blocker-refresh",
+        "npm run kosmo:source-root-activation-preflight",
+        "npm run kosmo:source-root-post-owner-activation-queue",
+        "npm run kosmo:source-root-post-owner-activation-queue-check",
+        "npm run kosmo:day-batch-loop"
+      ],
+      "immediate_codex_action": "Record blocked decision, refresh blockers, and keep all source-dependent work closed.",
+      "next_human_review": "owner confirms a real complete source root or repair/mount action is complete",
+      "caution": "Owner is not ready to identify the complete private architecture library root."
+    },
+    {
+      "id": "repair_onedrive_first",
+      "label": "Repair OneDrive first",
+      "selected_decision": "repair_onedrive_first",
+      "selected_root_path": null,
+      "owner_confirmation_required": true,
+      "unlocks_private_metadata_diagnostic": false,
+      "executable_now": false,
+      "public_ready_after_branch": 0,
+      "allowed_after_explicit_owner_answer": {
+        "record_decision": true,
+        "run_guard_sequence": true,
+        "run_private_metadata_inventory_after_guards": false,
+        "run_private_ocr_or_pdf_text_extraction": false,
+        "copy_private_files_to_git": false,
+        "set_public_ready": false,
+        "run_local_llm_on_private_file_contents": false
+      },
+      "command_order_after_recording": [
+        "npm run kosmo:source-root-decision-session-check",
+        "npm run kosmo:source-root-blocker-refresh",
+        "npm run kosmo:source-root-activation-preflight",
+        "npm run kosmo:source-root-post-owner-activation-queue",
+        "npm run kosmo:source-root-post-owner-activation-queue-check",
+        "npm run kosmo:day-batch-loop"
+      ],
+      "immediate_codex_action": "Record repair-first decision, keep private work blocked, refresh blockers, and wait for OneDrive/source mount completion.",
+      "next_human_review": "owner confirms a real complete source root or repair/mount action is complete",
+      "caution": "Owner says the intended source root is a OneDrive mirror but sync markers/completeness are not resolved."
+    },
+    {
+      "id": "select_exact_root_1",
+      "label": "Select visible exact root for metadata diagnostic",
+      "selected_decision": "select_existing_root_for_private_diagnostic",
+      "selected_root_path": "/mnt/archiv/ArchitekturKosmos/Assets",
+      "owner_confirmation_required": true,
+      "unlocks_private_metadata_diagnostic": true,
+      "executable_now": false,
+      "public_ready_after_branch": 0,
+      "allowed_after_explicit_owner_answer": {
+        "record_decision": true,
+        "run_guard_sequence": true,
+        "run_private_metadata_inventory_after_guards": true,
+        "run_private_ocr_or_pdf_text_extraction": false,
+        "copy_private_files_to_git": false,
+        "set_public_ready": false,
+        "run_local_llm_on_private_file_contents": false
+      },
+      "command_order_after_recording": [
+        "npm run kosmo:source-root-decision-session-check",
+        "npm run kosmo:source-root-blocker-refresh",
+        "npm run kosmo:source-root-activation-preflight",
+        "npm run kosmo:source-root-post-owner-activation-queue",
+        "npm run kosmo:source-root-post-owner-activation-queue-check",
+        "npm run kosmo:private-metadata-inventory",
+        "npm run kosmo:private-metadata-inventory-check",
+        "npm run kosmo:day-batch-loop"
+      ],
+      "immediate_codex_action": "After explicit owner confirmation, record the exact root decision, run source-root guards, then run metadata-only private inventory if activation is ready.",
+      "next_human_review": "review private metadata inventory output contract before any extraction or local LLM content tasks",
+      "caution": "Visible archive subtree; owner/overseer may confirm this exact path before diagnostics."
+    }
+  ],
+  "required_owner_answer_format": {
+    "source_root_choice": "One of: keep_blocked, repair_onedrive_first, select_exact_root_1",
+    "exact_root_confirmation": "Required only for select_exact_root_1; must confirm the exact shown path is the complete private architecture source root.",
+    "review_batch_scope": "Optional next review batch IDs; keep review-only unless separately approved."
+  },
+  "hard_stops": [
+    "Do not infer the owner answer from this checklist.",
+    "Do not run commands from a branch until the owner answer is explicitly recorded.",
+    "Do not run private metadata inventory unless the selected branch unlocks it and all guards pass.",
+    "Do not OCR, extract PDF text, or send private file contents to local LLM workers from this checklist.",
+    "Do not copy private files, scans, OCR text, or protected assets into Git.",
+    "Do not set public-ready."
+  ],
+  "failures": []
+}

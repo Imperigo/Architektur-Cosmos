@@ -1,0 +1,432 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T06:21:52.211Z",
+  "status": "kosmoasset_reference_bridge_review_only_passed",
+  "policy": {
+    "metadata_only": true,
+    "reads_private_content": false,
+    "copies_private_content": false,
+    "starts_generation": false,
+    "uploads_allowed": false,
+    "public_ready_after_bridge": 0,
+    "note": "This bridge check validates repo-visible KosmoReferences-to-KosmoAsset metadata only. It does not generate assets, read private source roots, upload files or approve public use."
+  },
+  "source_refs": [
+    "data/kosmoreferences-registry.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/library.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-library-check.generated.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-export-plan.generated.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-full-review.generated.json",
+    "examples/kosmo-assets/kosmoreferences-pilot-seed-library-2026-06-13/review/asset-promotion-guard.generated.json",
+    "data/kosmoreferences-pilot-package-check-2026-07-22.json"
+  ],
+  "summary": {
+    "pilots": 3,
+    "complete_pilot_bridges": 3,
+    "asset_count": 6,
+    "public_ready_count": 0,
+    "open_human_review_count": 6,
+    "promotion_allowed": false,
+    "promotion_blockers": 18,
+    "checks": 34,
+    "failures": 0,
+    "public_ready_after_bridge": 0
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "status": "pilot_asset_bridge_complete_review_only",
+      "asset_count": 2,
+      "categories": [
+        "annotation",
+        "material"
+      ],
+      "asset_ids": [
+        "villa-savoye-concrete-frame-material-001",
+        "villa-savoye-five-points-diagram-001"
+      ],
+      "export_targets": [
+        "archicad",
+        "blender",
+        "layout",
+        "svg",
+        "web"
+      ],
+      "review_statuses": {
+        "planned": 2
+      },
+      "public_use_allowed": 0,
+      "checks": [
+        {
+          "id": "pilot_entry_registered:villa-savoye",
+          "status": "passed",
+          "message": "Pilot must be present in KosmoReferences registry."
+        },
+        {
+          "id": "pilot_entry_public_ready_false:villa-savoye",
+          "status": "passed",
+          "message": "Pilot registry entry must keep public_ready=false."
+        },
+        {
+          "id": "pilot_assets_minimum:villa-savoye",
+          "status": "passed",
+          "message": "Pilot must have at least two seed asset candidates."
+        },
+        {
+          "id": "pilot_asset_families:villa-savoye",
+          "status": "passed",
+          "message": "Pilot must include asset families: material, annotation."
+        },
+        {
+          "id": "pilot_assets_local_only:villa-savoye",
+          "status": "passed",
+          "message": "Pilot assets must stay local_only=true."
+        },
+        {
+          "id": "pilot_assets_public_blocked:villa-savoye",
+          "status": "passed",
+          "message": "Pilot assets must keep public_use_allowed=false."
+        },
+        {
+          "id": "pilot_assets_review_rights:villa-savoye",
+          "status": "passed",
+          "message": "Pilot assets must keep generated_needs_review rights."
+        },
+        {
+          "id": "pilot_assets_source_basis_exists:villa-savoye",
+          "status": "passed",
+          "message": "Pilot asset source_basis paths must exist."
+        },
+        {
+          "id": "pilot_assets_kosmodata_refs:villa-savoye",
+          "status": "passed",
+          "message": "Pilot assets must reference their source entry through kosmodata_refs."
+        }
+      ]
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "status": "pilot_asset_bridge_complete_review_only",
+      "asset_count": 2,
+      "categories": [
+        "material",
+        "opening"
+      ],
+      "asset_ids": [
+        "sogn-benedetg-wood-shingle-material-001",
+        "sogn-benedetg-light-band-detail-001"
+      ],
+      "export_targets": [
+        "archicad",
+        "blender",
+        "dxf",
+        "layout",
+        "svg",
+        "web"
+      ],
+      "review_statuses": {
+        "needs_source": 2
+      },
+      "public_use_allowed": 0,
+      "checks": [
+        {
+          "id": "pilot_entry_registered:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot must be present in KosmoReferences registry."
+        },
+        {
+          "id": "pilot_entry_public_ready_false:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot registry entry must keep public_ready=false."
+        },
+        {
+          "id": "pilot_assets_minimum:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot must have at least two seed asset candidates."
+        },
+        {
+          "id": "pilot_asset_families:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot must include asset families: material, opening."
+        },
+        {
+          "id": "pilot_assets_local_only:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot assets must stay local_only=true."
+        },
+        {
+          "id": "pilot_assets_public_blocked:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot assets must keep public_use_allowed=false."
+        },
+        {
+          "id": "pilot_assets_review_rights:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot assets must keep generated_needs_review rights."
+        },
+        {
+          "id": "pilot_assets_source_basis_exists:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot asset source_basis paths must exist."
+        },
+        {
+          "id": "pilot_assets_kosmodata_refs:kapelle-sogn-benedetg",
+          "status": "passed",
+          "message": "Pilot assets must reference their source entry through kosmodata_refs."
+        }
+      ]
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "status": "pilot_asset_bridge_complete_review_only",
+      "asset_count": 2,
+      "categories": [
+        "material",
+        "structure"
+      ],
+      "asset_ids": [
+        "ingenbohl-mineral-pigment-material-001",
+        "ingenbohl-concrete-core-frame-study-001"
+      ],
+      "export_targets": [
+        "archicad",
+        "blender",
+        "glb",
+        "web"
+      ],
+      "review_statuses": {
+        "planned": 1,
+        "needs_source": 1
+      },
+      "public_use_allowed": 0,
+      "checks": [
+        {
+          "id": "pilot_entry_registered:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot must be present in KosmoReferences registry."
+        },
+        {
+          "id": "pilot_entry_public_ready_false:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot registry entry must keep public_ready=false."
+        },
+        {
+          "id": "pilot_assets_minimum:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot must have at least two seed asset candidates."
+        },
+        {
+          "id": "pilot_asset_families:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot must include asset families: material, structure."
+        },
+        {
+          "id": "pilot_assets_local_only:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot assets must stay local_only=true."
+        },
+        {
+          "id": "pilot_assets_public_blocked:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot assets must keep public_use_allowed=false."
+        },
+        {
+          "id": "pilot_assets_review_rights:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot assets must keep generated_needs_review rights."
+        },
+        {
+          "id": "pilot_assets_source_basis_exists:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot asset source_basis paths must exist."
+        },
+        {
+          "id": "pilot_assets_kosmodata_refs:alterszentrum-kloster-ingenbohl",
+          "status": "passed",
+          "message": "Pilot assets must reference their source entry through kosmodata_refs."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "pilot_entry_registered:villa-savoye",
+      "status": "passed",
+      "message": "Pilot must be present in KosmoReferences registry."
+    },
+    {
+      "id": "pilot_entry_public_ready_false:villa-savoye",
+      "status": "passed",
+      "message": "Pilot registry entry must keep public_ready=false."
+    },
+    {
+      "id": "pilot_assets_minimum:villa-savoye",
+      "status": "passed",
+      "message": "Pilot must have at least two seed asset candidates."
+    },
+    {
+      "id": "pilot_asset_families:villa-savoye",
+      "status": "passed",
+      "message": "Pilot must include asset families: material, annotation."
+    },
+    {
+      "id": "pilot_assets_local_only:villa-savoye",
+      "status": "passed",
+      "message": "Pilot assets must stay local_only=true."
+    },
+    {
+      "id": "pilot_assets_public_blocked:villa-savoye",
+      "status": "passed",
+      "message": "Pilot assets must keep public_use_allowed=false."
+    },
+    {
+      "id": "pilot_assets_review_rights:villa-savoye",
+      "status": "passed",
+      "message": "Pilot assets must keep generated_needs_review rights."
+    },
+    {
+      "id": "pilot_assets_source_basis_exists:villa-savoye",
+      "status": "passed",
+      "message": "Pilot asset source_basis paths must exist."
+    },
+    {
+      "id": "pilot_assets_kosmodata_refs:villa-savoye",
+      "status": "passed",
+      "message": "Pilot assets must reference their source entry through kosmodata_refs."
+    },
+    {
+      "id": "pilot_entry_registered:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot must be present in KosmoReferences registry."
+    },
+    {
+      "id": "pilot_entry_public_ready_false:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot registry entry must keep public_ready=false."
+    },
+    {
+      "id": "pilot_assets_minimum:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot must have at least two seed asset candidates."
+    },
+    {
+      "id": "pilot_asset_families:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot must include asset families: material, opening."
+    },
+    {
+      "id": "pilot_assets_local_only:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot assets must stay local_only=true."
+    },
+    {
+      "id": "pilot_assets_public_blocked:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot assets must keep public_use_allowed=false."
+    },
+    {
+      "id": "pilot_assets_review_rights:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot assets must keep generated_needs_review rights."
+    },
+    {
+      "id": "pilot_assets_source_basis_exists:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot asset source_basis paths must exist."
+    },
+    {
+      "id": "pilot_assets_kosmodata_refs:kapelle-sogn-benedetg",
+      "status": "passed",
+      "message": "Pilot assets must reference their source entry through kosmodata_refs."
+    },
+    {
+      "id": "pilot_entry_registered:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot must be present in KosmoReferences registry."
+    },
+    {
+      "id": "pilot_entry_public_ready_false:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot registry entry must keep public_ready=false."
+    },
+    {
+      "id": "pilot_assets_minimum:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot must have at least two seed asset candidates."
+    },
+    {
+      "id": "pilot_asset_families:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot must include asset families: material, structure."
+    },
+    {
+      "id": "pilot_assets_local_only:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot assets must stay local_only=true."
+    },
+    {
+      "id": "pilot_assets_public_blocked:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot assets must keep public_use_allowed=false."
+    },
+    {
+      "id": "pilot_assets_review_rights:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot assets must keep generated_needs_review rights."
+    },
+    {
+      "id": "pilot_assets_source_basis_exists:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot asset source_basis paths must exist."
+    },
+    {
+      "id": "pilot_assets_kosmodata_refs:alterszentrum-kloster-ingenbohl",
+      "status": "passed",
+      "message": "Pilot assets must reference their source entry through kosmodata_refs."
+    },
+    {
+      "id": "library_registered",
+      "status": "passed",
+      "message": "Registry must include the KosmoReferences pilot seed library."
+    },
+    {
+      "id": "library_check_passed",
+      "status": "passed",
+      "message": "Asset library check must pass."
+    },
+    {
+      "id": "full_review_passed_steps",
+      "status": "passed",
+      "message": "Asset full review must have no failed steps."
+    },
+    {
+      "id": "promotion_guard_blocked",
+      "status": "passed",
+      "message": "Promotion guard must keep public promotion blocked."
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "message": "KosmoAsset public-ready count must remain 0."
+    },
+    {
+      "id": "uploads_blocked",
+      "status": "passed",
+      "message": "Uploads and public assets must remain disabled."
+    },
+    {
+      "id": "pilot_package_gate_complete",
+      "status": "passed",
+      "message": "Reference pilot package gate must be complete when present."
+    }
+  ],
+  "failures": [],
+  "next_actions": [
+    "Use the bridge as the KosmoAsset Day-3 review-only acceptance gate.",
+    "Keep all six asset candidates local/review-only until human review, source-root and rights gates pass.",
+    "Only after owner/source-root changes, rerun the full day batch before adding new generated files."
+  ]
+}
