@@ -77,6 +77,53 @@ const blockedExtensions = new Set([
   '.xlsx',
   '.zip'
 ]);
+const blockedBinarySignatures = [
+  {
+    id: 'pdf',
+    label: 'PDF document',
+    signature: Buffer.from('%PDF')
+  },
+  {
+    id: 'zip',
+    label: 'ZIP archive',
+    signature: Buffer.from([0x50, 0x4b, 0x03, 0x04])
+  },
+  {
+    id: 'zip-empty',
+    label: 'ZIP archive',
+    signature: Buffer.from([0x50, 0x4b, 0x05, 0x06])
+  },
+  {
+    id: 'zip-spanned',
+    label: 'ZIP archive',
+    signature: Buffer.from([0x50, 0x4b, 0x07, 0x08])
+  },
+  {
+    id: 'gzip',
+    label: 'gzip archive',
+    signature: Buffer.from([0x1f, 0x8b, 0x08])
+  },
+  {
+    id: '7z',
+    label: '7z archive',
+    signature: Buffer.from([0x37, 0x7a, 0xbc, 0xaf, 0x27, 0x1c])
+  },
+  {
+    id: 'rar',
+    label: 'RAR archive',
+    signature: Buffer.from('Rar!\x1a\x07', 'binary')
+  },
+  {
+    id: 'sqlite',
+    label: 'SQLite database',
+    signature: Buffer.from('SQLite format 3')
+  },
+  {
+    id: 'ole-compound',
+    label: 'Office compound document',
+    signature: Buffer.from([0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1])
+  }
+];
 
 main().catch((error) => {
   console.error(error instanceof Error ? error.message : String(error));
@@ -117,6 +164,7 @@ async function main() {
       failed_assets: assets.filter((asset) => asset.status !== 'passed').length,
       blocked_extension_assets: assets.filter((asset) => asset.blocked_extension).length,
       unexpected_extension_assets: assets.filter((asset) => asset.unexpected_extension).length,
+      blocked_signature_assets: assets.filter((asset) => asset.blocked_signatures.length > 0).length,
       path_leak_assets: assets.filter((asset) => asset.path_leak_matches.length > 0).length,
       content_leak_assets: assets.filter((asset) => asset.content_leak_matches.length > 0).length,
       failure_count: failures.length,
@@ -139,6 +187,7 @@ async function main() {
   console.log(`Assets: ${report.summary.allowed_assets}/${report.summary.checked_assets}`);
   console.log(`Blocked extensions: ${report.summary.blocked_extension_assets}`);
   console.log(`Unexpected extensions: ${report.summary.unexpected_extension_assets}`);
+  console.log(`Blocked signatures: ${report.summary.blocked_signature_assets}`);
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
 
   if (failures.length > 0) process.exit(1);
@@ -168,6 +217,7 @@ function checkAsset(relativePath) {
   const blockedExtension = blockedExtensions.has(extension);
   const extensionlessAllowed = extension === '' && allowedExtensionlessFiles.has(basename);
   const unexpectedExtension = !blockedExtension && !extensionlessAllowed && !allowedExtensions.has(extension);
+  const blockedSignatures = detectBlockedBinarySignatures(absolutePath);
   const pathLeakMatches = publicLeakMatches(relativePath);
   const contentLeakMatches = scanTextContent(absolutePath, extension);
 
@@ -181,6 +231,12 @@ function checkAsset(relativePath) {
     failures.push({
       id: `asset:${relativePath}:unexpected-extension`,
       detail: `Static export asset extension is not in the public allowlist: ${extension || '[none]'}`
+    });
+  }
+  if (blockedSignatures.length > 0) {
+    failures.push({
+      id: `asset:${relativePath}:blocked-signature`,
+      detail: `Static export asset content has blocked source/archive/database signature(s): ${blockedSignatures.join(', ')}`
     });
   }
   if (pathLeakMatches.length > 0) {
@@ -204,10 +260,19 @@ function checkAsset(relativePath) {
     status: failures.length === 0 ? 'passed' : 'failed',
     blocked_extension: blockedExtension,
     unexpected_extension: unexpectedExtension,
+    blocked_signatures: blockedSignatures,
     path_leak_matches: [...new Set(pathLeakMatches)],
     content_leak_matches: [...new Set(contentLeakMatches)],
     failures
   };
+}
+
+function detectBlockedBinarySignatures(absolutePath) {
+  const maxSignatureBytes = Math.max(...blockedBinarySignatures.map((item) => item.signature.length));
+  const head = readFileSync(absolutePath).subarray(0, maxSignatureBytes);
+  return blockedBinarySignatures
+    .filter((item) => head.subarray(0, item.signature.length).equals(item.signature))
+    .map((item) => item.id);
 }
 
 function scanTextContent(absolutePath, extension) {
@@ -244,6 +309,7 @@ function renderMarkdown(report) {
     `- failed assets: ${report.summary.failed_assets}`,
     `- blocked extension assets: ${report.summary.blocked_extension_assets}`,
     `- unexpected extension assets: ${report.summary.unexpected_extension_assets}`,
+    `- blocked signature assets: ${report.summary.blocked_signature_assets}`,
     `- path leak assets: ${report.summary.path_leak_assets}`,
     `- content leak assets: ${report.summary.content_leak_assets}`,
     `- public-ready after check: ${report.summary.public_ready_after_check}`,

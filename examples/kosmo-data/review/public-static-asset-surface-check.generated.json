@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-22T11:14:02.729Z",
+  "generated_at": "2026-07-22T11:20:22.756Z",
   "generator": "public-static-asset-surface-check",
   "status": "public_static_asset_surface_check_passed",
   "policy": {
@@ -20,6 +20,7 @@
     "failed_assets": 0,
     "blocked_extension_assets": 0,
     "unexpected_extension_assets": 0,
+    "blocked_signature_assets": 0,
     "path_leak_assets": 0,
     "content_leak_assets": 0,
     "failure_count": 0,
@@ -46,6 +47,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -58,6 +60,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -70,6 +73,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -82,6 +86,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -94,6 +99,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -106,6 +112,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -118,6 +125,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -130,6 +138,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -142,6 +151,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -154,6 +164,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -166,6 +177,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -178,6 +190,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -190,6 +203,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -202,6 +216,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -214,6 +229,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -226,6 +242,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -238,6 +255,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -250,6 +268,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -262,6 +281,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -274,6 +294,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -286,6 +307,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -298,6 +320,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -310,6 +333,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -322,6 +346,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -334,6 +359,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -346,6 +372,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -358,6 +385,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -370,6 +398,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -382,6 +411,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -394,6 +424,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -406,6 +437,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -418,6 +450,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -430,6 +463,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -442,30 +476,33 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
     },
     {
-      "path": "out/_next/static/pFk-VKPF4udpquNplBc3S/_buildManifest.js",
-      "relative_path": "_next/static/pFk-VKPF4udpquNplBc3S/_buildManifest.js",
+      "path": "out/_next/static/yDZvJzOo0d_DVTwgysXxq/_buildManifest.js",
+      "relative_path": "_next/static/yDZvJzOo0d_DVTwgysXxq/_buildManifest.js",
       "extension": ".js",
       "bytes": 857,
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
     },
     {
-      "path": "out/_next/static/pFk-VKPF4udpquNplBc3S/_ssgManifest.js",
-      "relative_path": "_next/static/pFk-VKPF4udpquNplBc3S/_ssgManifest.js",
+      "path": "out/_next/static/yDZvJzOo0d_DVTwgysXxq/_ssgManifest.js",
+      "relative_path": "_next/static/yDZvJzOo0d_DVTwgysXxq/_ssgManifest.js",
       "extension": ".js",
       "bytes": 105,
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -478,6 +515,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -490,6 +528,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -502,6 +541,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -514,6 +554,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -526,6 +567,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -538,6 +580,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -550,6 +593,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -562,6 +606,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -574,6 +619,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -586,6 +632,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -598,6 +645,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -610,6 +658,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -622,6 +671,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -634,6 +684,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -646,6 +697,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -658,6 +710,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -670,6 +723,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -682,6 +736,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -694,6 +749,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -706,6 +762,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -718,6 +775,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -730,6 +788,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -742,6 +801,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -754,6 +814,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -766,6 +827,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -778,6 +840,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -790,6 +853,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -802,6 +866,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -814,6 +879,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -826,6 +892,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -838,6 +905,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -850,6 +918,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -862,6 +931,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -874,6 +944,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -886,6 +957,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -898,6 +970,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -910,6 +983,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -922,6 +996,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -934,6 +1009,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -946,6 +1022,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -958,6 +1035,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -970,6 +1048,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -982,6 +1061,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -994,6 +1074,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1006,6 +1087,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1018,6 +1100,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1030,6 +1113,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1042,6 +1126,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1054,6 +1139,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1066,6 +1152,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1078,6 +1165,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1090,6 +1178,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1102,6 +1191,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1114,6 +1204,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1126,6 +1217,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1138,6 +1230,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1150,6 +1243,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1162,6 +1256,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1174,6 +1269,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1186,6 +1282,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1198,6 +1295,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1210,6 +1308,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1222,6 +1321,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1234,6 +1334,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1246,6 +1347,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1258,6 +1360,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1270,6 +1373,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1282,6 +1386,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1294,6 +1399,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1306,6 +1412,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1318,6 +1425,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1330,6 +1438,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1342,6 +1451,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1354,6 +1464,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1366,6 +1477,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1378,6 +1490,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1390,6 +1503,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1402,6 +1516,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1414,6 +1529,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1426,6 +1542,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1438,6 +1555,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1450,6 +1568,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1462,6 +1581,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1474,6 +1594,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1486,6 +1607,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1498,6 +1620,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1510,6 +1633,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1522,6 +1646,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1534,6 +1659,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1546,6 +1672,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1558,6 +1685,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1570,6 +1698,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1582,6 +1711,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1594,6 +1724,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1606,6 +1737,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1618,6 +1750,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1630,6 +1763,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1642,6 +1776,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1654,6 +1789,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1666,6 +1802,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1678,6 +1815,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1690,6 +1828,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1702,6 +1841,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1714,6 +1854,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1726,6 +1867,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1738,6 +1880,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1750,6 +1893,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1762,6 +1906,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1774,6 +1919,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1786,6 +1932,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1798,6 +1945,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1810,6 +1958,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1822,6 +1971,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1834,6 +1984,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1846,6 +1997,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1858,6 +2010,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1870,6 +2023,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1882,6 +2036,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1894,6 +2049,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1906,6 +2062,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1918,6 +2075,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1930,6 +2088,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1942,6 +2101,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1954,6 +2114,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1966,6 +2127,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1978,6 +2140,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -1990,6 +2153,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2002,6 +2166,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2014,6 +2179,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2026,6 +2192,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2038,6 +2205,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2050,6 +2218,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2062,6 +2231,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2074,6 +2244,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2086,6 +2257,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2098,6 +2270,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2110,6 +2283,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2122,6 +2296,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2134,6 +2309,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2146,6 +2322,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2158,6 +2335,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2170,6 +2348,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2182,6 +2361,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2194,6 +2374,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2206,6 +2387,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2218,6 +2400,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2230,6 +2413,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2242,6 +2426,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2254,6 +2439,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2266,6 +2452,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2278,6 +2465,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2290,6 +2478,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2302,6 +2491,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2314,6 +2504,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2326,6 +2517,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2338,6 +2530,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2350,6 +2543,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2362,6 +2556,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2374,6 +2569,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2386,6 +2582,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2398,6 +2595,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2410,6 +2608,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2422,6 +2621,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2434,6 +2634,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2446,6 +2647,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2458,6 +2660,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2470,6 +2673,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2482,6 +2686,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2494,6 +2699,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2506,6 +2712,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2518,6 +2725,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2530,6 +2738,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2542,6 +2751,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2554,6 +2764,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2566,6 +2777,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2578,6 +2790,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2590,6 +2803,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2602,6 +2816,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2614,6 +2829,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2626,6 +2842,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2638,6 +2855,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2650,6 +2868,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2662,6 +2881,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2674,6 +2894,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2686,6 +2907,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2698,6 +2920,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2710,6 +2933,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2722,6 +2946,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2734,6 +2959,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2746,6 +2972,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2758,6 +2985,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2770,6 +2998,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2782,6 +3011,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2794,6 +3024,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2806,6 +3037,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2818,6 +3050,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2830,6 +3063,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2842,6 +3076,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2854,6 +3089,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2866,6 +3102,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2878,6 +3115,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2890,6 +3128,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2902,6 +3141,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2914,6 +3154,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2926,6 +3167,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2938,6 +3180,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2950,6 +3193,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2962,6 +3206,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2974,6 +3219,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2986,6 +3232,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -2998,6 +3245,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3010,6 +3258,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3022,6 +3271,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3034,6 +3284,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3046,6 +3297,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3058,6 +3310,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3070,6 +3323,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3082,6 +3336,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3094,6 +3349,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3106,6 +3362,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3118,6 +3375,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3130,6 +3388,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3142,6 +3401,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3154,6 +3414,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3166,6 +3427,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3178,6 +3440,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3190,6 +3453,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3202,6 +3466,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3214,6 +3479,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3226,6 +3492,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3238,6 +3505,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3250,6 +3518,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3262,6 +3531,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3274,6 +3544,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3286,6 +3557,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3298,6 +3570,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3310,6 +3583,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3322,6 +3596,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3334,6 +3609,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3346,6 +3622,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3358,6 +3635,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3370,6 +3648,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3382,6 +3661,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3394,6 +3674,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3406,6 +3687,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3418,6 +3700,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3430,6 +3713,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3442,6 +3726,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3454,6 +3739,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3466,6 +3752,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3478,6 +3765,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3490,6 +3778,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3502,6 +3791,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3514,6 +3804,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3526,6 +3817,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3538,6 +3830,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3550,6 +3843,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3562,6 +3856,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3574,6 +3869,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3586,6 +3882,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3598,6 +3895,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3610,6 +3908,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3622,6 +3921,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3634,6 +3934,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3646,6 +3947,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3658,6 +3960,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3670,6 +3973,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3682,6 +3986,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3694,6 +3999,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3706,6 +4012,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3718,6 +4025,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3730,6 +4038,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3742,6 +4051,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3754,6 +4064,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3766,6 +4077,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3778,6 +4090,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3790,6 +4103,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3802,6 +4116,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3814,6 +4129,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3826,6 +4142,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []
@@ -3838,6 +4155,7 @@
       "status": "passed",
       "blocked_extension": false,
       "unexpected_extension": false,
+      "blocked_signatures": [],
       "path_leak_matches": [],
       "content_leak_matches": [],
       "failures": []

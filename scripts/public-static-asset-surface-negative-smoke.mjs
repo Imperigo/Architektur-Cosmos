@@ -38,6 +38,9 @@ function runSmoke() {
   writeFile(outRoot, 'cad/raw-plan.dwg', 'synthetic dwg placeholder');
   writeFile(outRoot, 'model/source-scene.blend', 'synthetic blend placeholder');
   writeFile(outRoot, 'media/source-root-note.txt', 'Synthetic text mentions /mnt/data/ArchitekturKosmos/source-root/private-scan.pdf');
+  writeFile(outRoot, 'media/spoofed-public-image.jpg', '%PDF synthetic public fixture renamed as jpg');
+  writeBinaryFile(outRoot, 'scripts/spoofed-public-bundle.js', Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00]));
+  writeFile(outRoot, 'data/spoofed-public-cache.json', 'SQLite format 3 synthetic fixture renamed as json');
 
   const poisoned = runSurfaceCheck(outRoot, 'poisoned');
   if (poisoned.status === 0) {
@@ -57,7 +60,10 @@ function runSmoke() {
     'asset:cad/raw-plan.dwg:blocked-extension',
     'asset:model/source-scene.blend:blocked-extension',
     'asset:media/source-root-note.txt:path-leak',
-    'asset:media/source-root-note.txt:content-leak'
+    'asset:media/source-root-note.txt:content-leak',
+    'asset:media/spoofed-public-image.jpg:blocked-signature',
+    'asset:scripts/spoofed-public-bundle.js:blocked-signature',
+    'asset:data/spoofed-public-cache.json:blocked-signature'
   ];
   const missingFailedIds = expectedFailedIds.filter((id) => !failedIds.has(id));
 
@@ -105,6 +111,12 @@ function writeFile(outRoot, relativePath, body) {
   const filePath = resolve(outRoot, relativePath);
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, `${body}\n`, 'utf8');
+}
+
+function writeBinaryFile(outRoot, relativePath, body) {
+  const filePath = resolve(outRoot, relativePath);
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, body);
 }
 
 function parseArgs(argv) {
