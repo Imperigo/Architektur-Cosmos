@@ -35,6 +35,20 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.9.0',
+    datum: '2026-07-22',
+    punkte: [
+      { text: 'Plan-Schrift bleibt beim Zoomen immer im Lesebereich (1.8–5 mm wie in ArchiCAD); zu enge Masse verdichten zu einem Punktsymbol statt sich zu überlagern; Messketten erscheinen am Bildschirm als echte Masslinien mit Hilfslinien.', station: 'design' },
+      { text: 'Massketten im Druck/Export mit Verlängerungslinien und sauberem Papier-Abstand (der eine Golden-Zug dieser Version).', station: 'design' },
+      { text: 'HomeServer-Verbindung repariert: die App blockierte Tailnet-Adressen bisher selbst (CSP) — Bridge (:8600), Sync (:8700) und Ollama (:11434) sind jetzt von jedem Gerät erreichbar.' },
+      { text: 'Ehrliche LLM-Rollen-Anzeige in den Einstellungen: Meister/Leiter/Zeichner je mit vorhanden/fehlt und deklariertem Meister→Leiter-Fallback statt Pauschalurteil.' },
+      { text: 'Die Kosmo-Maus dreht sich nicht mehr mit der Bewegungsrichtung und gilt jetzt überall — der System-Zeiger erscheint nur noch in Eingabefeldern.' },
+      { text: 'Fehlermeldeweg: App-Fehlermeldungen fliessen gebündelt an die HomeStation-Bridge und von dort ins Repo — jeder Eintrag wird vor dem nächsten Release gefixt oder benannt verschoben.' },
+      { text: 'ComfyUI-Render-Worker für den Home-PC: Claim→Render→Result mit GPU-Leerlauf-Fenster; der ehrliche «kein Render-Worker»-Status erreicht jetzt sichtbar die App.', station: 'vis' },
+      { text: 'Manuell-Oberflächen für Entwerfen/Publizieren/Vorbereiten per Schalter in den Einstellungen — ein Mechanismus, ein Speicherort.' },
+    ],
+  },
+  {
     version: '0.8.12',
     datum: '2026-07-21',
     punkte: [

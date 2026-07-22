@@ -66,3 +66,8 @@ Masslinie mit Verlängerungslinien an allen drei Kettenpunkten, Masse
 BEWUSST offener Folgeteil: der Bildschirm-Spiegel in PlanView (zeichnet
 die Entität eigenständig, Cluster B) zieht im E-K27a-Paket nach —
 golden-neutral, kein Teil dieses Zugs.
+
+**FINAL (Release 613, 22.07.2026):** Zwischen dem K18-Zug (3bb4261) und dem
+Release-Commit hat kein weiterer Commit den Golden-Ordner berührt
+(`git log 3bb4261..HEAD -- packages/kosmo-kernel/test/golden/` leer,
+vom Repo-Root geprüft). Ist == Prognose bleibt bestätigt. ✓

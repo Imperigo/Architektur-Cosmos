@@ -147,3 +147,23 @@ Repo (ROADMAP 179, Owner-bestätigt — Blender-Worker bleibt Drehbuch) ·
 K21/K24-Werkzeugtiefe-Vollausbau (XL, braucht R8–R12) · Gaussian-
 Splatting-Rendering (GPU-Forschungsposten) · HDD-Voll-Index (eigener
 Bridge-Endpunkt, Folgeversion) · Serie H/I/J.
+
+
+## Ergebnisblock (Release 22.07.2026, ROADMAP 613)
+
+- E-R ✓ (601, Worker+Runbook; Matrix-C-1-Fund `kein-render-worker`-Vertrag
+  in 610 gefixt, Live-Poll-Abbruch-Test nachgerüstet) · E-K18 ✓ (602,
+  GW-090 Ist==Prognose exakt masskette-plan.svg) · E-S ✓ (603) ·
+  E-K15 ✓ (599+604) · E-L ✓ (605) · E-K27a ✓ (607, zoom-text.spec 3/3) ·
+  Nachträge: 606 CSP-Freigabe (Owner-Live-Befund), 608 Cursor-Owner-Punkte,
+  609 Fehlermeldeweg, 611 KosmoTrain-Fundament, 612 E2E-Härtung.
+- Matrix: C-1/C-2/C-5-Funde gefixt (610+f00499d), C-3/C-4/C-6/C-7 bestanden.
+  **C-8 EHRLICH OFFEN** (Hardware-Rundgang E-V braucht Owner+Geräte; Reste:
+  4 Beweise + OLLAMA_ORIGINS + sync-Unit tsx→node + Fehlermeldeweg-Env —
+  Worker-Punkte 23.07.). C-9 = dieses Release.
+- E-KS: entfallen wie deklariert (R5/ETH-Material erst via KosmoTrain-Worker
+  unterwegs). §0b: eingang.jsonl existiert noch nicht (Scharfschaltung 23.07.).
+- Suiten beim Release: Kernel 1180 · App 1771 · KI 330 · Contracts 54 ·
+  Data 44 · Lizenz 8 · UI 111 = 3498; Voll-E2E 848 grün + 5 aufgelöst
+  (2 Umgebung/Sync-Lizenz-Build, 2 Lastflakes isoliert grün, 1 Test-Härtung
+  612); svg-qa 39/0; Goldens 40 Dateien byte-still ausser dem EINEN Zug.
