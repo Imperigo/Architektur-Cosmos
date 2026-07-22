@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Beam, Boundary, FreeMesh, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, ZonenTuer } from '../model/entities';
+import type { Furniture, Assembly, Beam, Boundary, FreeMesh, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
@@ -9,6 +9,7 @@ import { dist, formatLength, type Pt } from '../model/units';
 import { CommandError, registerCommand } from './core';
 import { isConvex } from '../geometry/skeleton';
 import { stairSpec, treppenTeile } from '../derive/treppe';
+import { rampSteigungProzent } from '../derive/rampe';
 import { REGEL_PRESETS } from '../model/regelpresets';
 import { generiereGrundriss, generiereGrundrissL, zerlegeRektilinear } from '../derive/grundrissgenerator';
 import { zonenZuWaenden } from '../derive/zonenwaende';
@@ -1431,6 +1432,68 @@ export const createStair = registerCommand({
       );
     }
     return [added(stair)];
+  },
+});
+
+/**
+ * v0.9.1 P-A2 (`docs/V091-SPEZ.md` §P-A2): Rampe von a (Fuss) nach b (Kopf).
+ * EHRLICHES Steigungs-Gate (Sanktion 4 — nie still klemmen): >6 % läuft
+ * durch, der Hinweis «nicht hindernisfrei (SIA 500: >6 %)» reist nur im
+ * `summarize`-Text mit (keine Warnung im Doc/Patch nötig — der Text erklärt
+ * dem Menschen die Lage, ohne die Geometrie zu verändern); >15 % wird HART
+ * abgelehnt (Tiefgaragen-Grenze), die Rampe entsteht dann gar nicht erst.
+ * Die Steigung selbst wird nie gespeichert — `rampSteigungProzent`
+ * (`derive/rampe.ts`) rechnet sie bei jedem Aufruf frisch aus a/b/
+ * hoehenDelta/podestLaenge.
+ */
+export const createRamp = registerCommand({
+  id: 'design.rampeZeichnen',
+  title: 'Rampe erstellen',
+  description:
+    'Erstellt eine Rampe von a (Fuss, unten) nach b (Kopf, oben) im Geschoss. hoehenDelta = zu überwindender Höhenunterschied in mm. Steigung wird IMMER aus hoehenDelta/Lauflänge abgeleitet (nie gespeichert). EHRLICHES Steigungs-Gate: >6 % läuft durch, ist aber nicht hindernisfrei (SIA 500); >15 % wird abgelehnt (Tiefgaragen-Grenze) — keine stillen Klemmungen. width = Rampenbreite in mm (Standard 1200). Optionales podestLaenge markiert ein ebenes Zwischenstück am Kopfende, das nicht zur Steigungsstrecke zählt.',
+  params: z.object({
+    storeyId: z.string(),
+    a: PtSchema,
+    b: PtSchema,
+    width: z.number().int().min(600).default(1200),
+    hoehenDelta: z.number().int().positive().describe('Zu überwindender Höhenunterschied a→b, mm'),
+    podestLaenge: z
+      .number()
+      .int()
+      .min(0)
+      .optional()
+      .describe('Optionales ebenes Podest am Kopfende, mm — zählt nicht zur Steigungsstrecke'),
+  }),
+  summarize: (p) => {
+    const laenge = dist(p.a as Pt, p.b as Pt);
+    const steigung = rampSteigungProzent(p.a as Pt, p.b as Pt, p.hoehenDelta, p.podestLaenge);
+    const basis = `Rampe ${formatLength(Math.round(laenge))} Lauf, ${steigung.toFixed(1)} % Steigung`;
+    return steigung > 6 ? `${basis} — nicht hindernisfrei (SIA 500: >6 %)` : basis;
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const laenge = dist(p.a as Pt, p.b as Pt);
+    if (laenge < 500) throw new CommandError('Rampenlauf zu kurz (< 0.5 m)');
+    const steigung = rampSteigungProzent(p.a as Pt, p.b as Pt, p.hoehenDelta, p.podestLaenge);
+    // Harte Grenze (Tiefgarage, SIA 500 Maximalwert) — läuft NICHT durch,
+    // keine stille Klemmung auf 15 % (Sanktion 4): die Rampe entsteht gar
+    // nicht erst, der Grund steht im Fehlertext.
+    if (steigung > 15) {
+      throw new CommandError(
+        `Rampensteigung ${steigung.toFixed(1)} % übersteigt die 15 %-Grenze (Tiefgarage)`,
+      );
+    }
+    const rampe: Rampe = {
+      id: newId('rampe'),
+      kind: 'ramp',
+      storeyId: p.storeyId,
+      a: p.a as Pt,
+      b: p.b as Pt,
+      width: p.width,
+      hoehenDelta: p.hoehenDelta,
+      ...(p.podestLaenge !== undefined ? { podestLaenge: p.podestLaenge } : {}),
+    };
+    return [added(rampe)];
   },
 });
 

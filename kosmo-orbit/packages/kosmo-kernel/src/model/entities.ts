@@ -304,6 +304,32 @@ export interface Stair extends Base {
   ecke?: Pt;
 }
 
+/**
+ * Rampe (v0.9.1 P-A2, `docs/V091-SPEZ.md` §P-A2) — geneigte Fläche von a
+ * (Fuss, unten) nach b (Kopf, oben), Breite. Die Steigung (hoehenDelta/
+ * Lauflänge) wird IMMER aus den Rohwerten abgeleitet (`derive/rampe.ts`),
+ * NIE gespeichert — dieselbe Regel wie bei `Stair` (Steigung dort aus der
+ * Geschosshöhe, hier direkt aus `hoehenDelta`). Das ehrliche Steigungs-Gate
+ * (>6 % Hinweis «nicht hindernisfrei (SIA 500)», >15 % harte Ablehnung,
+ * Tiefgaragen-Grenze) sitzt im Command (`design.rampeZeichnen`), nicht hier
+ * im Modell — die Entity selbst nimmt jede geometrisch gültige Steigung an.
+ */
+export interface Rampe extends Base {
+  kind: 'ramp';
+  storeyId: string;
+  /** Fusspunkt (unten, Geschossniveau). */
+  a: Pt;
+  /** Kopfpunkt (oben) — Länge a→b bestimmt zusammen mit hoehenDelta die Steigung. */
+  b: Pt;
+  width: Mm;
+  /** Zu überwindender Höhenunterschied a→b in mm, > 0. */
+  hoehenDelta: Mm;
+  /** Optionales ebenes Zwischenstück (Podest) am oberen Ende, mm — zählt
+   * nicht zur Steigungsstrecke (strengere, ehrliche Annahme statt einer
+   * geschönten Durchschnittssteigung über die Gesamtlänge). */
+  podestLaenge?: Mm;
+}
+
 /** Walm- oder Satteldach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton (Walm)
  * bzw. First-Ebenen-Teilung (Sattel). */
 export interface Roof extends Base {
@@ -694,7 +720,7 @@ export interface VisGraph extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Rampe | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

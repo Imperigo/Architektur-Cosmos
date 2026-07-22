@@ -1,8 +1,9 @@
-import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Opening, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Opening, type Rampe, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
 import { treppenTeile } from './treppe';
+import { rampenTeile } from './rampe';
 import { extrudePolygon, extrudeTerrainBand, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
 import { featureKanten, flaechenNormale } from './mesh-topo';
 import { convexSkeleton } from '../geometry/skeleton';
@@ -28,6 +29,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
   else if (e.kind === 'mass') artifact = deriveMass(doc, e);
   else if (e.kind === 'roof') artifact = deriveRoof(doc, e);
   else if (e.kind === 'stair') artifact = deriveStair(doc, e);
+  else if (e.kind === 'ramp') artifact = deriveRamp(doc, e);
   else if (e.kind === 'column') artifact = deriveColumn(doc, e);
   else if (e.kind === 'beam') artifact = deriveBeam(doc, e);
   else if (e.kind === 'freemesh') artifact = deriveFreeMesh(doc, e);
@@ -39,7 +41,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
 export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
   const out: GeometryArtifact[] = [];
   for (const e of doc.entities.values()) {
-    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'column' || e.kind === 'beam' || e.kind === 'freemesh') {
+    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'ramp' || e.kind === 'column' || e.kind === 'beam' || e.kind === 'freemesh') {
       const a = deriveEntity(doc, e.id);
       if (a) out.push(a);
     }
@@ -955,6 +957,91 @@ function deriveStair(doc: KosmoDoc, stair: Stair): GeometryArtifact | null {
 
   return {
     entityId: stair.id,
+    materialKey: 'beton',
+    positions: new Float32Array(pos),
+    normals: new Float32Array(nor),
+    indices: new Uint32Array(idx),
+    edges: new Float32Array(edges),
+  };
+}
+
+/**
+ * Rampe (v0.9.1 P-A2) — geneigte Platte, von Hand gebaut wie `deriveStair`:
+ * `extrudePolygon` kennt nur horizontale Deckel (Ober-/Unterkante dieselbe
+ * Kontur), eine geneigte Fläche geht damit nicht. Die Lauffläche steigt
+ * LINEAR von z0 (bei a, Geschossniveau) auf z1 = z0+hoehenDelta (bei b);
+ * die Unterseite bleibt eben auf Geschossniveau. `rampenTeile` liefert
+ * dieselbe Platte auch für ein künftiges Plan-Symbol (P-B3) — hier nur die
+ * 3D-Extrusion daraus.
+ */
+function deriveRamp(doc: KosmoDoc, ramp: Rampe): GeometryArtifact | null {
+  const storey = doc.get<Storey>(ramp.storeyId);
+  if (!storey || storey.kind !== 'storey') return null;
+  const laenge = dist(ramp.a, ramp.b);
+  if (laenge < 1) return null;
+  const teile = rampenTeile(ramp, storey.elevation);
+  const { a, b, width, z0, z1 } = teile.platte;
+  const d = { x: (b.x - a.x) / laenge, y: (b.y - a.y) / laenge };
+  const n = { x: -d.y, y: d.x };
+  const half = width / 2;
+
+  const pos: number[] = [];
+  const nor: number[] = [];
+  const idx: number[] = [];
+  const edges: number[] = [];
+  const P = (s: number, off: number, z: number): [number, number, number] => [
+    a.x + d.x * s + n.x * off,
+    a.y + d.y * s + n.y * off,
+    z,
+  ];
+  const quad = (
+    p0: readonly [number, number, number],
+    p1: readonly [number, number, number],
+    p2: readonly [number, number, number],
+    p3: readonly [number, number, number],
+    nx: number, ny: number, nz: number,
+  ) => {
+    const base = pos.length / 3;
+    for (const p of [p0, p1, p2, p3]) { pos.push(...p); nor.push(nx, ny, nz); }
+    idx.push(base, base + 1, base + 2, base, base + 2, base + 3);
+  };
+  const tri = (
+    p0: readonly [number, number, number],
+    p1: readonly [number, number, number],
+    p2: readonly [number, number, number],
+    nx: number, ny: number, nz: number,
+  ) => {
+    const base = pos.length / 3;
+    for (const p of [p0, p1, p2]) { pos.push(...p); nor.push(nx, ny, nz); }
+    idx.push(base, base + 1, base + 2);
+  };
+
+  // Echte Neigungsnormale der Deckfläche (kein blosses (0,0,1)).
+  const along = { x: d.x * laenge, y: d.y * laenge, z: z1 - z0 };
+  let dnx = n.y * along.z - 0 * along.y;
+  let dny = 0 * along.x - n.x * along.z;
+  let dnz = n.x * along.y - n.y * along.x;
+  const dnl = Math.hypot(dnx, dny, dnz) || 1;
+  dnx /= dnl; dny /= dnl; dnz /= dnl;
+  if (dnz < 0) { dnx = -dnx; dny = -dny; dnz = -dnz; }
+
+  // Lauffläche (Deck), geneigt von z0 (bei a) auf z1 (bei b)
+  quad(P(0, half, z0), P(laenge, half, z1), P(laenge, -half, z1), P(0, -half, z0), dnx, dny, dnz);
+  // Unterseite, eben auf Geschossniveau
+  quad(P(0, half, z0), P(0, -half, z0), P(laenge, -half, z0), P(laenge, half, z0), 0, 0, -1);
+  // Stirnseite am Kopfende (b), senkrecht
+  quad(P(laenge, half, z0), P(laenge, half, z1), P(laenge, -half, z1), P(laenge, -half, z0), d.x, d.y, 0);
+  // Wangen (Seiten) — Dreiecke: die Rampe beginnt am Fusspunkt (a) auf Bodenniveau
+  tri(P(0, half, z0), P(laenge, half, z0), P(laenge, half, z1), n.x, n.y, 0);
+  tri(P(0, -half, z0), P(laenge, -half, z1), P(laenge, -half, z0), -n.x, -n.y, 0);
+
+  // Sichtlinien: geneigte Deckkanten + Stirnkante oben
+  edges.push(...P(0, half, z0), ...P(laenge, half, z1));
+  edges.push(...P(0, -half, z0), ...P(laenge, -half, z1));
+  edges.push(...P(laenge, half, z1), ...P(laenge, -half, z1));
+
+  return {
+    entityId: ramp.id,
     materialKey: 'beton',
     positions: new Float32Array(pos),
     normals: new Float32Array(nor),
