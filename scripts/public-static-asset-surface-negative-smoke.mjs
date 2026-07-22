@@ -32,6 +32,19 @@ function runSmoke() {
     throw new Error(`Expected clean synthetic export to pass, got ${clean.status}.\n${clean.output}`);
   }
 
+  const missingOut = runSurfaceCheck(resolve(tempRoot, 'missing-out'), 'missing-out', ['--allow-missing-out']);
+  if (missingOut.status !== 0) {
+    throw new Error(`Expected --allow-missing-out to skip a missing export, got ${missingOut.status}.\n${missingOut.output}`);
+  }
+  const missingOutReport = JSON.parse(readFileSync(missingOut.outputPath, 'utf8'));
+  if (
+    missingOutReport.status !== 'public_static_asset_surface_check_skipped_missing_out'
+    || missingOutReport.summary?.failure_count !== 0
+    || missingOutReport.summary?.public_ready_after_check !== 0
+  ) {
+    throw new Error(`Unexpected --allow-missing-out report: ${JSON.stringify(missingOutReport)}`);
+  }
+
   writeFile(outRoot, 'archive-media/public-safe-name.pdf', '%PDF synthetic public fixture');
   writeFile(outRoot, 'downloads/reference-dump.zip', 'synthetic zip placeholder');
   writeFile(outRoot, 'data/cache.sqlite', 'synthetic sqlite placeholder');
@@ -76,13 +89,14 @@ function runSmoke() {
     synthetic_only: true,
     reads_private_content: false,
     starts_server: false,
+    allow_missing_out_status: missingOutReport.status,
     expected_failed_checks: expectedFailedIds,
     observed_failed_checks: [...failedIds].sort(),
     report_path: keepTemp ? relative(root, poisoned.outputPath) : null
   }, null, 2));
 }
 
-function runSurfaceCheck(outRoot, label) {
+function runSurfaceCheck(outRoot, label, extraArgs = []) {
   const outputPath = resolve(tempRoot, `${label}.json`);
   const markdownPath = resolve(tempRoot, `${label}.md`);
   const result = spawnSync(process.execPath, [
@@ -92,7 +106,8 @@ function runSurfaceCheck(outRoot, label) {
     '--output',
     outputPath,
     '--markdown',
-    markdownPath
+    markdownPath,
+    ...extraArgs
   ], {
     cwd: root,
     encoding: 'utf8',

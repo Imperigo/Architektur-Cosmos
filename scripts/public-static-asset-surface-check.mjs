@@ -132,6 +132,16 @@ main().catch((error) => {
 
 async function main() {
   if (!existsSync(outRoot)) {
+    if (args['allow-missing-out']) {
+      const report = skippedMissingOutReport();
+      await writeReport(report);
+      console.log('Public static asset surface check');
+      console.log(`Status: ${report.status}`);
+      console.log(`Assets: ${report.summary.allowed_assets}/${report.summary.checked_assets}`);
+      console.log(`Skipped: missing static export at ${report.inputs.out_dir}`);
+      console.log(`Wrote: ${relative(root, outputMdPath)}`);
+      return;
+    }
     throw new Error(`Static export not found: ${relative(root, outRoot)}. Run npm run build first.`);
   }
 
@@ -175,12 +185,7 @@ async function main() {
     failures
   };
 
-  await Promise.all([
-    mkdir(dirname(outputJsonPath), { recursive: true }),
-    mkdir(dirname(outputMdPath), { recursive: true })
-  ]);
-  await writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  await writeFile(outputMdPath, renderMarkdown(report), 'utf8');
+  await writeReport(report);
 
   console.log('Public static asset surface check');
   console.log(`Status: ${report.status}`);
@@ -191,6 +196,51 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
 
   if (failures.length > 0) process.exit(1);
+}
+
+async function writeReport(report) {
+  await Promise.all([
+    mkdir(dirname(outputJsonPath), { recursive: true }),
+    mkdir(dirname(outputMdPath), { recursive: true })
+  ]);
+  await writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  await writeFile(outputMdPath, renderMarkdown(report), 'utf8');
+}
+
+function skippedMissingOutReport() {
+  return {
+    schema_version: '0.1',
+    generated_at: new Date().toISOString(),
+    generator: 'public-static-asset-surface-check',
+    status: 'public_static_asset_surface_check_skipped_missing_out',
+    policy: {
+      source_free: true,
+      reads_private_content: false,
+      writes_public_ready: false,
+      starts_server: false,
+      scans_static_export_only: true,
+      text_scan_max_bytes: maxTextScanBytes,
+      allow_missing_out: true
+    },
+    inputs: {
+      out_dir: relative(root, outRoot)
+    },
+    summary: {
+      checked_assets: 0,
+      allowed_assets: 0,
+      failed_assets: 0,
+      blocked_extension_assets: 0,
+      unexpected_extension_assets: 0,
+      blocked_signature_assets: 0,
+      path_leak_assets: 0,
+      content_leak_assets: 0,
+      failure_count: 0,
+      public_ready_after_check: 0
+    },
+    extension_counts: {},
+    assets: [],
+    failures: []
+  };
 }
 
 async function collectFiles(directory, prefix = '') {
