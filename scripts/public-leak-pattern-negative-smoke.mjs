@@ -19,7 +19,15 @@ const cases = [
   ['raw-archive/one-off-export.json', '/(?:raw[-_\\s]?archive|archive[-_\\s]?raw)/i'],
   ['private-scan-page-001.jpg', '/(?:private|source)[-_\\s]?scans?/i'],
   ['scan transcript page text', '/(?:ocr|scan)[-_\\s]?transcripts?/i'],
-  ['OCR extracted page text', '/\\bocr\\b/i']
+  ['OCR extracted page text', '/\\bocr\\b/i'],
+  ['%2Fmnt%2Fdata%2FArchitekturKosmos%2FAssets%2Fprivate.pdf', '/\\/mnt\\//i'],
+  ['%252Fhome%252Fandrin-baumann%252F.codex%252Fstate.json', '/\\/home\\//i'],
+  ['source%2Droot%20decision%20payload', '/source-root/i'],
+  ['OneDrive%2F11%20AI%20Workflow%2Finternal.pdf', '/onedrive/i'],
+  ['worker%2Doutputs%2Fraw-response.json', '/worker[-_\\s]?outputs?/i'],
+  ['&#47;home&#47;andrin-baumann&#47;.codex&#47;state.json', '/\\/home\\//i'],
+  ['archive&#45;intake&#47;out&#47;raw.json', '/archive-intake/i'],
+  ['C:\\mnt\\data\\ArchitekturKosmos\\Assets\\private.pdf', '/\\/mnt\\//i']
 ];
 
 const findings = cases.map(([sample, expectedPattern]) => {
