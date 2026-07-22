@@ -20,3 +20,6 @@ tsconfig.tsbuildinfo
 kosmo-sync.sqlite
 *.sqlite
 test-results/
+
+# Claude-Agenten-Worktrees (Harness-intern, nie committen)
+.claude/worktrees/
