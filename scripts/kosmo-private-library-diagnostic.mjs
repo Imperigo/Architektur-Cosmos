@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { createHash } from 'node:crypto';
 import { readFile, readdir, stat, writeFile, mkdir } from 'node:fs/promises';
 import { relative, resolve } from 'node:path';
 
@@ -66,7 +67,7 @@ async function main() {
     policy: {
       read_only: true,
       copied_private_content: false,
-      note: 'This diagnostic records paths, counts and filename matches only. It does not copy book pages, lecture text, images or PDFs.'
+      note: 'This diagnostic records root-level status, counts and redacted filename-match fingerprints only. It does not copy book pages, lecture text, images, PDFs or raw private file paths.'
     },
     keywords,
     max_files_per_root: maxFilesPerRoot,
@@ -116,7 +117,11 @@ async function inspectRoot(rawPath, mounts) {
     }
     base.top_level_entries = (await readdir(resolved, { withFileTypes: true }))
       .slice(0, 50)
-      .map((entry) => ({ name: entry.name, type: entry.isDirectory() ? 'dir' : entry.isFile() ? 'file' : 'other' }));
+      .map((entry) => ({
+        name_hash: fingerprint(`${resolved}/${entry.name}`),
+        type: entry.isDirectory() ? 'dir' : entry.isFile() ? 'file' : 'other',
+        extension: entry.isFile() ? extensionOf(entry.name.toLowerCase()) || '<none>' : null
+      }));
     const scan = await scanRoot(resolved);
     base.counts = scan.counts;
     base.raw_target_filename_matches = scan.rawMatches;
@@ -172,10 +177,11 @@ async function scanRoot(start) {
       if (lower.endsWith('_error.txt')) counts.sync_error_files += 1;
       if (bookExtensions.has(ext)) counts.book_like_files += 1;
       if (textExtensions.has(ext)) counts.text_like_files += 1;
-      if (keywords.some((keyword) => lower.includes(keyword))) {
-        rawMatches.push(relative(root, child));
+      const keywordHits = keywords.filter((keyword) => lower.includes(keyword));
+      if (keywordHits.length > 0) {
+        rawMatches.push(redactedMatch(child, ext, keywordHits.length));
         if (isStrongArchitectureEvidence(lowerPath, ext)) {
-          matches.push(relative(root, child));
+          matches.push(redactedMatch(child, ext, keywordHits.length));
         } else {
           counts.ignored_keyword_matches += 1;
         }
@@ -300,17 +306,17 @@ function renderMarkdown(report) {
   lines.push('');
   lines.push('## Target Filename Matches');
   lines.push('');
-  const matches = report.roots.flatMap((item) => item.target_filename_matches.map((match) => `${item.path}: ${match}`));
+  const matches = report.roots.flatMap((item) => item.target_filename_matches.map((match) => renderMatch(item, match)));
   if (matches.length > 0) matches.forEach((match) => lines.push(`- ${match}`));
   else lines.push('- None.');
   lines.push('');
   lines.push('## Ignored Raw Keyword Matches');
   lines.push('');
   const ignoredMatches = report.roots.flatMap((item) => {
-    const strong = new Set(item.target_filename_matches);
+    const strong = new Set(item.target_filename_matches.map((match) => match.path_hash));
     return item.raw_target_filename_matches
-      .filter((match) => !strong.has(match))
-      .map((match) => `${item.path}: ${match}`);
+      .filter((match) => !strong.has(match.path_hash))
+      .map((match) => renderMatch(item, match));
   });
   if (ignoredMatches.length > 0) ignoredMatches.forEach((match) => lines.push(`- ${match}`));
   else lines.push('- None.');
@@ -346,6 +352,22 @@ function isStrongArchitectureEvidence(lowerPath, ext) {
 function extensionOf(name) {
   const index = name.lastIndexOf('.');
   return index >= 0 ? name.slice(index) : '';
+}
+
+function redactedMatch(path, extension, keywordHitCount) {
+  return {
+    path_hash: fingerprint(path),
+    extension: extension || '<none>',
+    keyword_hit_count: keywordHitCount
+  };
+}
+
+function renderMatch(rootReport, match) {
+  return `${rootReport.path}: hash ${match.path_hash}, extension ${match.extension}, keyword hits ${match.keyword_hit_count}`;
+}
+
+function fingerprint(value) {
+  return createHash('sha256').update(String(value)).digest('hex').slice(0, 16);
 }
 
 function unescapeMount(value) {
