@@ -1,0 +1,17 @@
+{
+  // E-S/V090 (docs/V090-SPEZ.md §E-S): JS-Build für den einzigen Node-only-
+  // Konsumenten (tools/sync-server über den Subpfad `@kosmo/lizenz/verify`,
+  // package.json "exports"). Nur `src/lizenz.ts` (self-contained, keine
+  // relativen Importe) — `src/index.ts` bleibt bewusst ungebaut, die App
+  // liest ihn weiterhin extensionslos über Vite/Bundler-Resolution direkt
+  // aus `src/`; ein gebautes `dist/index.js` wäre wegen des extensionslosen
+  // `export * from './lizenz'` unter purem Node-ESM ohnehin nicht lauffähig.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/lizenz.ts"]
+}

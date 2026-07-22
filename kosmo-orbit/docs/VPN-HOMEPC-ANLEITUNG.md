@@ -70,10 +70,21 @@ cd ~/Architektur-Cosmos/kosmo-orbit
 python3 -m venv .venv        # falls es meckert: sudo apt install python3-venv
 .venv/bin/pip install fastapi uvicorn python-multipart httpx
 ```
+`tools/sync-server` ist ein EIGENES npm-Projekt (nicht Teil der Root-
+Workspaces `packages/*`/`apps/*`) — sein `npm install` (Hocuspocus-Deps,
+gitignored) läuft darum separat, und `@kosmo/lizenz` braucht seinen
+JS-Build, BEVOR der Sync-Server mit purem `node` startet (E-S/V090,
+`docs/HOMESERVER-STATUS.md`; ohne Build: `ERR_UNKNOWN_FILE_EXTENSION`
+für `.ts`, weil Ubuntu-Node kein Type-Stripping kann):
+```bash
+cd ~/Architektur-Cosmos/kosmo-orbit
+npm run build -w @kosmo/lizenz    # baut dist/lizenz.js — einmalig + nach jedem Update
+cd tools/sync-server && npm install && cd ../..
+```
 Dann starten — ab jetzt immer `.venv/bin/python` statt `python3`:
 ```bash
 .venv/bin/python tools/homestation-bridge/kosmo_bridge/main.py --port 8600 &  # echte Bridge (ohne --fake)
-node tools/sync-server/src/server.mjs &                                # Yjs-Sync :8700
+node tools/sync-server/src/server.mjs &                                # Yjs-Sync :8700 — reiner node, KEIN tsx nötig
 # optional, für Kosmo-Remote-LLM:
 ollama serve                                                           # :11434
 ```
@@ -161,6 +172,25 @@ Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 ```
+**E-S/V090 (behoben ab 0.9.0, `docs/HOMESERVER-STATUS.md`):** `ExecStart`
+bleibt `/usr/bin/node` — KEIN `/usr/local/bin/tsx` mehr. Vorher scheiterte
+`node tools/sync-server/src/server.mjs` auf Ubuntu-Node 22.22 (kein
+Type-Stripping) an `@kosmo/lizenz` (TS-only-Import, `ERR_NO_TYPESCRIPT`/
+`ERR_UNKNOWN_FILE_EXTENSION`); der Server lief deshalb übergangsweise über
+global installiertes `tsx` — eine Abweichung von diesem §9. Seit E-S baut
+`@kosmo/lizenz` einen JS-`dist` (`npm run build -w @kosmo/lizenz`,
+`tsconfig.build.json`), und `tools/sync-server` lädt ihn über den Subpfad
+`@kosmo/lizenz/verify` (package.json `exports`) als reines
+`dist/lizenz.js` — läuft mit purem `node`, ohne Type-Stripping und ohne
+`tsx`. Voraussetzung ist ein aktueller Build (siehe Schritt 4/
+`tools/homeserver-update.sh`, das den Workspace-`npm run build` fährt, der
+jetzt `@kosmo/lizenz` mitbaut) UND ein einmaliges `npm install` in
+`tools/sync-server` selbst (eigenes npm-Projekt, nicht Teil der
+Root-Workspaces). **Unit-Rückbau auf dem Owner-Server:** falls die Unit
+dort noch auf `tsx` zeigt, ist das der Folge-Handgriff des nächsten
+lokalen Worker-Laufs — `ExecStart` auf `/usr/bin/node
+tools/sync-server/src/server.mjs` zurücksetzen (diese Vorlage), danach
+`sudo systemctl daemon-reload && sudo systemctl restart kosmo-sync`.
 
 Aktivieren + prüfen:
 ```bash

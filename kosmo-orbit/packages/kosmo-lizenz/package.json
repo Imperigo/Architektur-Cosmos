@@ -8,10 +8,11 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./verify": "./src/lizenz.ts"
+    "./verify": "./dist/lizenz.js"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
     "test": "vitest run"
   },
   "devDependencies": {

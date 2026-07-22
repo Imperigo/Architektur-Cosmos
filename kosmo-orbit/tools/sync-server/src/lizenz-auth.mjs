@@ -12,8 +12,13 @@
 
 import { readFileSync } from 'node:fs';
 // Subpfad `@kosmo/lizenz/verify` → self-contained `src/lizenz.ts` (keine
-// relativen Importe) — lädt unter Node-Type-Stripping direkt, ohne den
-// Index-Re-Export, der für die App extensionslos bleiben muss.
+// relativen Importe), kompiliert nach `dist/lizenz.js` (E-S/V090:
+// `npm run build -w @kosmo/lizenz`, `tsconfig.build.json`) — lädt unter
+// purem Node OHNE Type-Stripping/tsx, ohne den Index-Re-Export, der für
+// die App (Vite/Bundler-Resolution) extensionslos auf `src/index.ts`
+// bleibt. Vorher zeigte dieser Subpfad direkt auf `src/lizenz.ts` und
+// brauchte Node-Type-Stripping (auf Ubuntu-Node 22.22 nicht vorhanden,
+// docs/HOMESERVER-STATUS.md).
 import { istWiderrufen, verifiziereLizenz } from '@kosmo/lizenz/verify';
 
 /**

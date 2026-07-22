@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @kosmo/orbit-app",
-    "build": "npm run build -w @kosmo/orbit-app",
+    "build": "npm run build -w @kosmo/lizenz && npm run build -w @kosmo/orbit-app",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",

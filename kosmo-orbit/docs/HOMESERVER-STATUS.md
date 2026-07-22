@@ -9,12 +9,31 @@ Fable — Konsistenz der Beweise bestätigt, s. unten).
   Token via `/etc/kosmo/bridge.env` (root:andrin-baumann 640). Beweise:
   `/health` 200 (per Code token-frei, main.py:191), `/jobs` OHNE Token 401,
   MIT Token 200.
-- `kosmo-sync` — **Abweichung von §9:** läuft über `/usr/local/bin/tsx`,
-  weil `tools/sync-server` das TS-only-Paket `@kosmo/lizenz` importiert und
-  Ubuntu-Node 22.22 kein Type-Stripping kann (ERR_NO_TYPESCRIPT); dazu
-  `npm install` in tools/sync-server (gitignored Deps @hocuspocus/*).
-  → Repo-Posten E-S in V090-SPEZ: JS-Build für den Sync-Pfad, dann fällt
-  tsx weg.
+- `kosmo-sync` — **Abweichung von §9, behoben ab 0.9.0 (E-S,
+  Repo-Seite; Unit-Rückbau beim nächsten Server-Worker-Lauf):** lief über
+  `/usr/local/bin/tsx`, weil `tools/sync-server` das TS-only-Paket
+  `@kosmo/lizenz` importiert und Ubuntu-Node 22.22 kein Type-Stripping kann
+  (ERR_NO_TYPESCRIPT); dazu `npm install` in tools/sync-server (gitignored
+  Deps @hocuspocus/*). E-S baut `@kosmo/lizenz` jetzt einen JS-`dist`
+  (`packages/kosmo-lizenz/tsconfig.build.json`, `npm run build -w
+  @kosmo/lizenz` — im Workspace-`npm run build` mit eingeschlossen); der
+  Subpfad `@kosmo/lizenz/verify` (den nur `tools/sync-server` nutzt) zeigt
+  jetzt auf `dist/lizenz.js` statt `src/lizenz.ts` — `server.mjs` selbst
+  ist unverändert (kein Protokoll-/Verhaltens-Byte angefasst) und läuft
+  node-only bewiesen: purer `node --no-experimental-strip-types` (simuliert
+  das fehlende Type-Stripping des Ubuntu-Node-Builds; der Sandbox-Container
+  hat es serienmässig, im Unterschied zum Owner-Server) ohne `tsx` im PATH
+  antwortet 200 auf `GET /raeume`. **Offener Handgriff (Maschinenseite,
+  nicht Repo):** die LIVE-Unit auf dem Owner-Server noch auf `ExecStart=
+  /usr/bin/node tools/sync-server/src/server.mjs` zurückstellen (Vorlage
+  in `docs/VPN-HOMEPC-ANLEITUNG.md` §9 war schon korrekt — nur die
+  tatsächlich laufende Unit wich per Hand auf tsx ab), davor `npm run
+  build -w @kosmo/lizenz` sowie ein `npm install` in `tools/sync-server`
+  selbst (eigenes npm-Projekt, ausserhalb der Root-Workspaces) sicherstellen,
+  dann `sudo systemctl daemon-reload && sudo systemctl restart kosmo-sync`.
+  `tools/homeserver-update.sh` fährt bereits `npm run build` im Workspace —
+  das baut den lizenz-dist ab jetzt automatisch mit; nur das `ExecStart`
+  der schon laufenden Unit ändert sich dadurch nicht von selbst.
 - `kosmo-app` — `npx vite preview --host --port 5183` (iPad-Quelle).
 - `ollama` — Bestandsinstallation `/mnt/data/tools/ollama` (73 GB Modelle),
   Systemunit mit `OLLAMA_HOST=0.0.0.0`; Alt-Konflikt (User-Unit
@@ -53,7 +72,10 @@ Mac vorhanden: macbook-pro-von-andrin = 100.117.120.59 (Ende-zu-Ende-Test
 steht aus — E-V-Rundgang).
 
 ## Offene Posten aus dem Bericht
-1. E-S (0.9.0): Sync-Server ohne tsx lauffähig machen (JS-Build-Weg).
+1. E-S (0.9.0): Repo-Seite behoben (JS-Build-Weg, `@kosmo/lizenz/dist`,
+   node-only-Beweis erbracht) — offen bleibt nur der Maschinen-Handgriff:
+   die LIVE-`kosmo-sync`-Unit auf dem Owner-Server von `tsx` zurück auf
+   `/usr/bin/node` stellen (nächster Server-Worker-Lauf, s. o.).
 2. E-V: Mac-Ende-zu-Ende (Ein-Klick-HomeServer + Token) — erster echter
    Remote-Traffic durch die tailscale0-Regeln.
 3. TLS/Caddy: erst wenn die App-Seite `remoteTls` trägt (Folgeposten;
