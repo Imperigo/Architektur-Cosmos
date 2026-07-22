@@ -5,17 +5,49 @@ import { publicRouteChecks as routes } from './public-route-manifest.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$/, '');
+const timeoutMs = Number(args['timeout-ms'] || 5000);
 
 const findings = [];
 
-main();
+main().catch((error) => {
+  console.log(JSON.stringify({
+    status: 'failed',
+    base_url: baseUrl,
+    checkedRoutes: [],
+    failed_findings: [
+      {
+        id: 'runtime:unexpected_error',
+        passed: false,
+        message: error instanceof Error ? error.message : String(error)
+      }
+    ],
+    error: serializeError(error)
+  }, null, 2));
+  process.exit(1);
+});
 
 async function main() {
   const checkedRoutes = [];
 
   for (const route of routes) {
     const url = `${baseUrl}${route.path}`;
-    const response = await fetch(url);
+    let response;
+    try {
+      response = await fetchWithTimeout(url);
+    } catch (error) {
+      const detail = serializeError(error);
+      check(false, `${route.path}:fetch`, detail.message);
+      checkedRoutes.push({
+        path: route.path,
+        status: null,
+        body_length: 0,
+        min_body_length: route.minBodyLength ?? ((route.rawIncludes ?? []).length > 0 ? 20 : 500),
+        expected_text_count: (route.includes ?? []).length + (route.rawIncludes ?? []).length,
+        blocked_pattern_count: 0,
+        fetch_error: detail
+      });
+      continue;
+    }
     const body = await response.text();
     const normalized = normalizeHtmlText(body);
     const blockedMatches = publicLeakMatches(body);
@@ -56,6 +88,7 @@ async function main() {
   const summary = {
     status: findings.every((finding) => finding.passed) ? 'passed' : 'failed',
     base_url: baseUrl,
+    timeout_ms: timeoutMs,
     checkedRoutes,
     failed_findings: findings.filter((finding) => !finding.passed)
   };
@@ -79,6 +112,30 @@ function normalizeHtmlText(value) {
 
 function check(passed, id, message) {
   findings.push({ id, passed: Boolean(passed), message });
+}
+
+async function fetchWithTimeout(url) {
+  try {
+    return await fetch(url, {
+      signal: AbortSignal.timeout(timeoutMs)
+    });
+  } catch (error) {
+    const detail = serializeError(error);
+    const suffix = detail.cause_code ? ` (${detail.cause_code})` : '';
+    throw new Error(`Unable to fetch ${url} within ${timeoutMs}ms${suffix}. Start the public demo server or pass --base-url to a reachable instance.`, {
+      cause: error
+    });
+  }
+}
+
+function serializeError(error) {
+  if (!(error instanceof Error)) return { message: String(error) };
+  return {
+    name: error.name,
+    message: error.message,
+    cause_code: error.cause && typeof error.cause === 'object' && 'code' in error.cause ? String(error.cause.code) : undefined,
+    cause_message: error.cause instanceof Error ? error.cause.message : undefined
+  };
 }
 
 function parseArgs(argv) {
