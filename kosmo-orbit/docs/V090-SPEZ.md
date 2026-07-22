@@ -68,6 +68,11 @@ cad oberfläche … island ui ist die intelligente standard oberfläche».
    Manuell-/Werkzeugleisten-Modus (Vis explizit; Design/Publish/Prepare
    implizit), welcher Schalter/Persistenz-Mechanismus wird der EINE
    (Vis-Muster `kosmo.vis.*`? Grep-Beleg), was fehlt je Station.
+   **Schritt-1-Ergebnis (22.07.): Hypothese widerlegt — der EINE
+   Persistenz-Mechanismus existiert schon (`kosmo.ui.v1`,
+   state/ui-zustand.ts, vier `*Oberflaeche`-Felder); Tag B
+   vereinheitlicht nur den ZUGANG (additive Einstellungen-Checkboxen
+   nach Vis-Vorbild), Fable-Entscheide im Konzeptdokument.**
 2. Schritt 2 (Tag B): Vereinheitlichung GEMÄSS Schritt-1-Dokument:
    EIN Schalter-Mechanismus + Persistenz je Station, Island bleibt
    Standard, KEIN Verhaltens-/Testid-Bruch bestehender Specs
