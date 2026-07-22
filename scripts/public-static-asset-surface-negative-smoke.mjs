@@ -57,8 +57,9 @@ function runSmoke() {
   writeFile(outRoot, 'media/spoofed-public-image.jpg', '%PDF synthetic public fixture renamed as jpg');
   writeBinaryFile(outRoot, 'scripts/spoofed-public-bundle.js', Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00]));
   writeFile(outRoot, 'data/spoofed-public-cache.json', 'SQLite format 3 synthetic fixture renamed as json');
+  writeBinaryFile(outRoot, 'media/oversized-public-image.jpg', Buffer.alloc(1024, 0x61));
 
-  const poisoned = runSurfaceCheck(outRoot, 'poisoned');
+  const poisoned = runSurfaceCheck(outRoot, 'poisoned', ['--max-asset-bytes', '512']);
   if (poisoned.status === 0) {
     throw new Error('Expected public-static-asset-surface-check to fail for synthetic unsafe static assets.');
   }
@@ -82,7 +83,8 @@ function runSmoke() {
     'asset:media/source-root-note.txt:content-leak',
     'asset:media/spoofed-public-image.jpg:blocked-signature',
     'asset:scripts/spoofed-public-bundle.js:blocked-signature',
-    'asset:data/spoofed-public-cache.json:blocked-signature'
+    'asset:data/spoofed-public-cache.json:blocked-signature',
+    'asset:media/oversized-public-image.jpg:oversized-asset'
   ];
   const missingFailedIds = expectedFailedIds.filter((id) => !failedIds.has(id));
 

@@ -11,6 +11,8 @@ const outRoot = resolve(root, args.out || 'out');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-data/review/public-static-asset-surface-check.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-data/review/public-static-asset-surface-check.generated.md');
 const maxTextScanBytes = 2 * 1024 * 1024;
+const defaultMaxAssetBytes = 25 * 1024 * 1024;
+const maxAssetBytes = parseByteLimit(args['max-asset-bytes'], defaultMaxAssetBytes);
 
 const allowedExtensionlessFiles = new Set(['_headers']);
 const allowedExtensions = new Set([
@@ -163,7 +165,8 @@ async function main() {
       writes_public_ready: false,
       starts_server: false,
       scans_static_export_only: true,
-      text_scan_max_bytes: maxTextScanBytes
+      text_scan_max_bytes: maxTextScanBytes,
+      max_asset_bytes: maxAssetBytes
     },
     inputs: {
       out_dir: relative(root, outRoot)
@@ -176,6 +179,7 @@ async function main() {
       embedded_blocked_extension_assets: assets.filter((asset) => asset.embedded_blocked_extensions.length > 0).length,
       unexpected_extension_assets: assets.filter((asset) => asset.unexpected_extension).length,
       blocked_signature_assets: assets.filter((asset) => asset.blocked_signatures.length > 0).length,
+      oversized_assets: assets.filter((asset) => asset.oversized_asset).length,
       path_leak_assets: assets.filter((asset) => asset.path_leak_matches.length > 0).length,
       content_leak_assets: assets.filter((asset) => asset.content_leak_matches.length > 0).length,
       failure_count: failures.length,
@@ -194,6 +198,7 @@ async function main() {
   console.log(`Blocked extensions: ${report.summary.blocked_extension_assets}`);
   console.log(`Unexpected extensions: ${report.summary.unexpected_extension_assets}`);
   console.log(`Blocked signatures: ${report.summary.blocked_signature_assets}`);
+  console.log(`Oversized assets: ${report.summary.oversized_assets}`);
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
 
   if (failures.length > 0) process.exit(1);
@@ -221,6 +226,7 @@ function skippedMissingOutReport() {
       starts_server: false,
       scans_static_export_only: true,
       text_scan_max_bytes: maxTextScanBytes,
+      max_asset_bytes: maxAssetBytes,
       allow_missing_out: true
     },
     inputs: {
@@ -234,6 +240,7 @@ function skippedMissingOutReport() {
       embedded_blocked_extension_assets: 0,
       unexpected_extension_assets: 0,
       blocked_signature_assets: 0,
+      oversized_assets: 0,
       path_leak_assets: 0,
       content_leak_assets: 0,
       failure_count: 0,
@@ -271,6 +278,7 @@ function checkAsset(relativePath) {
   const extensionlessAllowed = extension === '' && allowedExtensionlessFiles.has(basename);
   const unexpectedExtension = !blockedExtension && !extensionlessAllowed && !allowedExtensions.has(extension);
   const blockedSignatures = detectBlockedBinarySignatures(absolutePath);
+  const oversizedAsset = stats.size > maxAssetBytes;
   const pathLeakMatches = publicLeakMatches(relativePath);
   const contentLeakMatches = scanTextContent(absolutePath, extension);
 
@@ -298,6 +306,12 @@ function checkAsset(relativePath) {
       detail: `Static export asset content has blocked source/archive/database signature(s): ${blockedSignatures.join(', ')}`
     });
   }
+  if (oversizedAsset) {
+    failures.push({
+      id: `asset:${relativePath}:oversized-asset`,
+      detail: `Static export asset exceeds the public review size limit: ${stats.size} > ${maxAssetBytes} bytes`
+    });
+  }
   if (pathLeakMatches.length > 0) {
     failures.push({
       id: `asset:${relativePath}:path-leak`,
@@ -321,6 +335,7 @@ function checkAsset(relativePath) {
     embedded_blocked_extensions: embeddedBlockedExtensions,
     unexpected_extension: unexpectedExtension,
     blocked_signatures: blockedSignatures,
+    oversized_asset: oversizedAsset,
     path_leak_matches: [...new Set(pathLeakMatches)],
     content_leak_matches: [...new Set(contentLeakMatches)],
     failures
@@ -371,6 +386,15 @@ function countBy(values) {
   }, {});
 }
 
+function parseByteLimit(value, fallback) {
+  if (value === undefined || value === true || value === '') return fallback;
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    throw new Error(`--max-asset-bytes must be a positive integer, got: ${value}`);
+  }
+  return parsed;
+}
+
 function renderMarkdown(report) {
   const lines = [
     '# Public Static Asset Surface Check',
@@ -388,6 +412,7 @@ function renderMarkdown(report) {
     `- embedded blocked extension assets: ${report.summary.embedded_blocked_extension_assets}`,
     `- unexpected extension assets: ${report.summary.unexpected_extension_assets}`,
     `- blocked signature assets: ${report.summary.blocked_signature_assets}`,
+    `- oversized assets: ${report.summary.oversized_assets}`,
     `- path leak assets: ${report.summary.path_leak_assets}`,
     `- content leak assets: ${report.summary.content_leak_assets}`,
     `- public-ready after check: ${report.summary.public_ready_after_check}`,
