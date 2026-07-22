@@ -28,11 +28,26 @@
   flex: 1;
 }
 
+/* v0.9.1 Owner-Screenshot-Befund 22.07. («nichts abschneiden»): das
+   einspaltige Grid hatte KEINE minmax(0,…)-Spalte — die Spaltenbreite folgt
+   dann dem breitesten min-content-Kind (der «Lernjournal exportieren …»-
+   Knopf, `.k-btn` ist global `white-space: nowrap`), die ganze Sektion ragte
+   damit 49px über den rechten Fensterrand («Clou[d]», «…Bri[dge]» beschnitten,
+   Beschnitt-Sonde 22.07.). `minmax(0, 1fr)` klemmt die Spalte auf die
+   Panelbreite; lange Knopf-Labels dürfen HIER (und nur hier) umbrechen —
+   kurze Labels (Standard/Remote/Cloud) brechen nie, weil sie ohnehin passen. */
 .kp-einstellungen {
   padding: 14px;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--k-s3);
   border-bottom: 1px solid var(--k-line);
+}
+.kp-einstellungen .k-btn {
+  white-space: normal;
+}
+.kp-einstellungen code {
+  overflow-wrap: anywhere;
 }
 .kp-feld-titel {
   font-size: var(--k-t-sm);
