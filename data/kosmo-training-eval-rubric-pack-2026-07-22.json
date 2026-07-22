@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T06:37:56.447Z",
+  "status": "training_eval_rubric_pack_ready",
+  "policy": {
+    "rubric_only": true,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "reads_private_content_now": false,
+    "copies_worker_output_bodies": false,
+    "public_ready_after_pack": 0
+  },
+  "source_refs": [
+    "data/kosmo-training-memory-readiness-pack-2026-07-22.json",
+    "data/kosmo-local-worker-pilot-task-queue-2026-07-22.json",
+    "data/kosmo-vision-completion-roadmap-2026-07-22.json"
+  ],
+  "summary": {
+    "suites": 6,
+    "criteria": 24,
+    "eval_items_planned": 24,
+    "training_lanes": 4,
+    "candidate_sources": 18,
+    "pilot_worker_tasks": 12,
+    "roadmap_status": "vision_completion_roadmap_bootstrap_missing",
+    "roadmap_bootstrap_missing": true,
+    "writes_training_data_now": 0,
+    "writes_embeddings_now": 0,
+    "runs_fine_tuning_now": 0,
+    "public_ready_after_pack": 0,
+    "failures": 0
+  },
+  "suites": [
+    {
+      "id": "source_grounding_provenance",
+      "objective": "Can Kosmo cite source state, provenance and uncertainty without inventing facts?",
+      "criteria": [
+        "uses_only_reviewed_source_fields",
+        "separates_known_unknown_and_inferred",
+        "flags_missing_rights_or_source_basis",
+        "never_promotes_private_derived_content_public_ready"
+      ],
+      "public_ready_after_suite": 0
+    },
+    {
+      "id": "architectural_analysis_depth",
+      "objective": "Can Kosmo analyze typology, material, structure, space and construction as architectural arguments?",
+      "criteria": [
+        "typology_is_specific_not_keyword_only",
+        "material_and_construction_are_linked",
+        "structure_space_and_circulation_are_related",
+        "analysis_mentions_transferable_design_rule"
+      ],
+      "public_ready_after_suite": 0
+    },
+    {
+      "id": "asset_schema_quality",
+      "objective": "Can Kosmo turn reviewed reference signals into useful asset metadata without overclaiming?",
+      "criteria": [
+        "asset_category_and_export_target_fit",
+        "source_basis_and_rights_state_preserved",
+        "geometry_material_texture_fields_are_separated",
+        "public_release_state_stays_review_only"
+      ],
+      "public_ready_after_suite": 0
+    },
+    {
+      "id": "retrieval_answer_quality",
+      "objective": "Can Kosmo answer from retrieved reference chunks with controlled uncertainty?",
+      "criteria": [
+        "answer_grounded_in_retrieved_context",
+        "refuses_or_asks_when_context_missing",
+        "compares_projects_without_false_equivalence",
+        "keeps_private_context_out_of_public_answer"
+      ],
+      "public_ready_after_suite": 0
+    },
+    {
+      "id": "local_worker_output_review",
+      "objective": "Can overseers grade local worker output before repo conversion?",
+      "criteria": [
+        "json_contract_validity",
+        "semantic_fit_to_task",
+        "risk_flags_for_private_or_public_release",
+        "requires_codex_or_claude_review_before_write"
+      ],
+      "public_ready_after_suite": 0
+    },
+    {
+      "id": "kosmo_architecture_identity",
+      "objective": "Can Kosmo behave like a specialist architecture assistant rather than a generic chatbot?",
+      "criteria": [
+        "uses_architectural_vocabulary_precisely",
+        "connects_reference_to_design_operation",
+        "distinguishes_fact_analysis_and_proposal",
+        "maintains_rights_privacy_and_review_boundaries"
+      ],
+      "public_ready_after_suite": 0
+    }
+  ],
+  "scoring": {
+    "scale": "0-3",
+    "levels": [
+      {
+        "score": 0,
+        "label": "fail",
+        "description": "Ungrounded, unsafe, missing required structure or violates rights/privacy boundary."
+      },
+      {
+        "score": 1,
+        "label": "weak",
+        "description": "Partially structured but shallow, ambiguous or missing important evidence."
+      },
+      {
+        "score": 2,
+        "label": "pass",
+        "description": "Grounded and useful with minor gaps or conservative uncertainty."
+      },
+      {
+        "score": 3,
+        "label": "excellent",
+        "description": "Precise, evidence-aware, architecture-specific and review-ready."
+      }
+    ],
+    "minimum_release_threshold": 2,
+    "automatic_public_release_allowed": false
+  },
+  "next_actions_after_verified_data": [
+    "Create public-safe example eval rows from reviewed pilot summaries.",
+    "Keep RAG/eval before fine-tuning.",
+    "Run local worker outputs through this rubric before repo conversion.",
+    "Only create embeddings after provenance, rights and privacy gates pass."
+  ],
+  "hard_stops": [
+    "Do not train or fine-tune now.",
+    "Do not create embeddings now.",
+    "Do not copy private source text or local worker output bodies into eval rows.",
+    "Do not public-release any eval example derived from private content without review."
+  ],
+  "failures": []
+}

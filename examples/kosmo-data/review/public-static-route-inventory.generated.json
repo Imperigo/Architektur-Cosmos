@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-06-30T16:55:20.120Z",
+  "generated_at": "2026-07-22T06:38:59.244Z",
   "generator": "public-static-route-inventory-check",
   "status": "public_static_route_inventory_passed",
   "policy": {
@@ -22,6 +22,8 @@
     "stale_atlas_routes": 0,
     "duplicate_data_slugs": 0,
     "failed_route_file_checks": 0,
+    "stray_artifact_count": 0,
+    "failed_stray_artifact_checks": 0,
     "failure_count": 0
   },
   "atlas_routes": [
@@ -163,14 +165,14 @@
     {
       "file": "out/assets/index.html",
       "status": "passed",
-      "bytes": 191198,
+      "bytes": 193834,
       "leak_matches": [],
       "failures": []
     },
     {
       "file": "out/assets/index.txt",
       "status": "passed",
-      "bytes": 110033,
+      "bytes": 111493,
       "leak_matches": [],
       "failures": []
     },
@@ -1794,14 +1796,14 @@
     {
       "file": "out/references/index.html",
       "status": "passed",
-      "bytes": 160746,
+      "bytes": 163460,
       "leak_matches": [],
       "failures": []
     },
     {
       "file": "out/references/index.txt",
       "status": "passed",
-      "bytes": 89027,
+      "bytes": 90547,
       "leak_matches": [],
       "failures": []
     },
@@ -1820,5 +1822,6 @@
       "failures": []
     }
   ],
+  "stray_artifacts": [],
   "failures": []
 }

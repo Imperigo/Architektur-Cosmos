@@ -1,6 +1,6 @@
 # Public Static Route Inventory Check
 
-Generated: 2026-06-30T16:55:20.120Z
+Generated: 2026-07-22T06:38:59.244Z
 Status: `public_static_route_inventory_passed`
 
 Checks the built static export against public mock-entry slugs. This catches missing Atlas detail pages, stale exported Atlas routes and private/source markers in route files without starting a server or promoting public-ready state.
@@ -14,6 +14,7 @@ Checks the built static export against public mock-entry slugs. This catches mis
 - stale Atlas routes: 0
 - duplicate data slugs: 0
 - route file failures: 0
+- blocked stray static artifacts: 0
 
 ## Policy
 
@@ -29,8 +30,8 @@ Checks the built static export against public mock-entry slugs. This catches mis
 | `out/.well-known/security.txt` | `passed` | 215 |
 | `out/archive/index.html` | `passed` | 212964 |
 | `out/archive/index.txt` | `passed` | 107932 |
-| `out/assets/index.html` | `passed` | 191198 |
-| `out/assets/index.txt` | `passed` | 110033 |
+| `out/assets/index.html` | `passed` | 193834 |
+| `out/assets/index.txt` | `passed` | 111493 |
 | `out/atlas/25b-avenue-franklin/index.html` | `passed` | 163539 |
 | `out/atlas/25b-avenue-franklin/index.txt` | `passed` | 98532 |
 | `out/atlas/afasia-no-architecture-flower-house/index.html` | `passed` | 164363 |
@@ -262,7 +263,7 @@ Checks the built static export against public mock-entry slugs. This catches mis
 | `out/index.txt` | `passed` | 1294817 |
 | `out/orbit/index.html` | `passed` | 51793 |
 | `out/orbit/index.txt` | `passed` | 24134 |
-| `out/references/index.html` | `passed` | 160746 |
-| `out/references/index.txt` | `passed` | 89027 |
+| `out/references/index.html` | `passed` | 163460 |
+| `out/references/index.txt` | `passed` | 90547 |
 | `out/robots.txt` | `passed` | 74 |
 | `out/sitemap.xml` | `passed` | 21201 |

@@ -40,7 +40,11 @@ async function main() {
 
 function buildReport({ pilotMatrix, assetTaxonomy, reviewQueue }) {
   const failures = [];
-  if (pilotMatrix.status !== 'post_unlock_pilot_execution_matrix_ready') failures.push(`Pilot matrix not ready: ${pilotMatrix.status}`);
+  const pilotMatrixAccepted = [
+    'post_unlock_pilot_execution_matrix_ready',
+    'post_unlock_pilot_execution_matrix_needs_review'
+  ].includes(pilotMatrix.status);
+  if (!pilotMatrixAccepted) failures.push(`Pilot matrix not in a guarded ready/review state: ${pilotMatrix.status}`);
   if (assetTaxonomy.status !== 'kosmoasset_candidate_taxonomy_review_ready') failures.push(`Asset taxonomy not ready: ${assetTaxonomy.status}`);
   if (reviewQueue.status !== 'training_eval_review_queue_plan_ready') failures.push(`Review queue not ready: ${reviewQueue.status}`);
 
@@ -103,6 +107,9 @@ function buildReport({ pilotMatrix, assetTaxonomy, reviewQueue }) {
       pilots_supported: pilotMatrix.summary?.pilots ?? null,
       asset_lanes_supported: assetTaxonomy.summary?.reviewable_asset_lanes ?? null,
       review_lanes_supported: reviewQueue.summary?.review_lanes ?? null,
+      pilot_matrix_status: pilotMatrix.status,
+      pilot_matrix_guarded_review_only: pilotMatrixAccepted && (pilotMatrix.summary?.executable_now ?? 0) === 0 && pilotMatrix.summary?.public_ready_after_matrix === 0,
+      pilot_matrix_failures: pilotMatrix.summary?.failures ?? null,
       public_ready_after_seed: 0,
       failures: failures.length
     },
@@ -154,6 +161,8 @@ function renderMarkdown(report) {
   lines.push(`- Relation types: ${report.summary.relation_types}`);
   lines.push(`- Facet groups: ${report.summary.facet_groups}`);
   lines.push(`- Pilots supported: ${report.summary.pilots_supported}`);
+  lines.push(`- Pilot matrix status: ${report.summary.pilot_matrix_status}`);
+  lines.push(`- Pilot matrix guarded review-only: ${report.summary.pilot_matrix_guarded_review_only ? 'yes' : 'no'}`);
   lines.push(`- Asset lanes supported: ${report.summary.asset_lanes_supported}`);
   lines.push(`- Review lanes supported: ${report.summary.review_lanes_supported}`);
   lines.push(`- Public-ready after seed: ${report.summary.public_ready_after_seed}`);

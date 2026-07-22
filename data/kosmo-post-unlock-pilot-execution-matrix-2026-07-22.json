@@ -1,0 +1,200 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T06:37:05.275Z",
+  "status": "post_unlock_pilot_execution_matrix_needs_review",
+  "policy": {
+    "matrix_only": true,
+    "executes_commands_now": false,
+    "reads_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "mutates_pilot_packages_now": false,
+    "public_ready_after_matrix": 0
+  },
+  "source_refs": [
+    "data/kosmoreferences-pilot-intake-readiness-pack-2026-07-22.json",
+    "data/kosmoasset-intake-readiness-pack-2026-07-22.json",
+    "data/kosmo-post-source-root-metadata-readiness-pack-2026-07-22.json",
+    "data/kosmo-owner-unlock-pipeline-checkpoint-2026-07-22.json",
+    "data/kosmo-vision-completion-roadmap-2026-07-22.json"
+  ],
+  "summary": {
+    "pilots": 3,
+    "reference_stages": 24,
+    "reference_blocked_now": 24,
+    "evidence_gap_count": 12,
+    "asset_stages": 18,
+    "asset_count": 6,
+    "command_sequence_steps": 10,
+    "owner_unlock_components_ready": 1,
+    "owner_unlock_guard_checks_passed": 0,
+    "roadmap_status": "vision_completion_roadmap_bootstrap_missing",
+    "roadmap_bootstrap_missing": true,
+    "executable_now": 0,
+    "public_ready_after_matrix": 0,
+    "failures": 1
+  },
+  "pilots": [
+    {
+      "id": "villa-savoye",
+      "title": "Villa Savoye",
+      "status": "blocked_until_owner_unlock_and_source_root_guards",
+      "reference_stages": 8,
+      "reference_blocked_now": 8,
+      "evidence_gap_count": 0,
+      "asset_count": 2,
+      "asset_stage_count": 6,
+      "asset_public_use_allowed": 0,
+      "first_unlocked_reference_actions": [
+        "metadata_inventory_match",
+        "source_slot_binding",
+        "provenance_review",
+        "analysis_layer_completion"
+      ],
+      "first_unlocked_asset_actions": [
+        "source_basis_review",
+        "rights_and_human_review",
+        "asset_schema_normalization",
+        "export_profile_planning"
+      ],
+      "owner_review_surface": "review-only",
+      "public_ready_after_pilot": 0
+    },
+    {
+      "id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "status": "blocked_until_owner_unlock_and_source_root_guards",
+      "reference_stages": 8,
+      "reference_blocked_now": 8,
+      "evidence_gap_count": 0,
+      "asset_count": 2,
+      "asset_stage_count": 6,
+      "asset_public_use_allowed": 0,
+      "first_unlocked_reference_actions": [
+        "metadata_inventory_match",
+        "source_slot_binding",
+        "provenance_review",
+        "analysis_layer_completion"
+      ],
+      "first_unlocked_asset_actions": [
+        "source_basis_review",
+        "rights_and_human_review",
+        "asset_schema_normalization",
+        "export_profile_planning"
+      ],
+      "owner_review_surface": "review-only",
+      "public_ready_after_pilot": 0
+    },
+    {
+      "id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "status": "blocked_until_owner_unlock_and_source_root_guards",
+      "reference_stages": 8,
+      "reference_blocked_now": 8,
+      "evidence_gap_count": 0,
+      "asset_count": 2,
+      "asset_stage_count": 6,
+      "asset_public_use_allowed": 0,
+      "first_unlocked_reference_actions": [
+        "metadata_inventory_match",
+        "source_slot_binding",
+        "provenance_review",
+        "analysis_layer_completion"
+      ],
+      "first_unlocked_asset_actions": [
+        "source_basis_review",
+        "rights_and_human_review",
+        "asset_schema_normalization",
+        "export_profile_planning"
+      ],
+      "owner_review_surface": "review-only",
+      "public_ready_after_pilot": 0
+    }
+  ],
+  "command_sequence": [
+    {
+      "id": "owner_answer_dry_run",
+      "action": "npm run kosmo:owner-unlock-answer-dry-run -- --answer \"<owner_reply>\"",
+      "executable_now": false,
+      "before_private_inventory": true
+    },
+    {
+      "id": "record_owner_source_root_choice",
+      "action": "Record explicit owner answer in decision session; no automatic selection.",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    },
+    {
+      "id": "source_root_decision_session_check",
+      "action": "npm run kosmo:source-root-decision-session-check",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    },
+    {
+      "id": "source_root_blocker_refresh",
+      "action": "npm run kosmo:source-root-blocker-refresh",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    },
+    {
+      "id": "source_root_activation_preflight",
+      "action": "npm run kosmo:source-root-activation-preflight",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    },
+    {
+      "id": "post_owner_activation_queue",
+      "action": "npm run kosmo:source-root-post-owner-activation-queue",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    },
+    {
+      "id": "post_owner_activation_queue_check",
+      "action": "npm run kosmo:source-root-post-owner-activation-queue-check",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    },
+    {
+      "id": "private_metadata_inventory",
+      "action": "npm run kosmo:private-metadata-inventory",
+      "executable_now": false,
+      "before_private_inventory": false,
+      "private_inventory_related": true
+    },
+    {
+      "id": "private_metadata_inventory_check",
+      "action": "npm run kosmo:private-metadata-inventory-check",
+      "executable_now": false,
+      "before_private_inventory": false,
+      "private_inventory_related": true
+    },
+    {
+      "id": "day_batch_loop",
+      "action": "npm run kosmo:day-batch-loop",
+      "executable_now": false,
+      "before_private_inventory": true,
+      "private_inventory_related": false
+    }
+  ],
+  "next_actions_after_owner_reply": [
+    "Run owner unlock answer dry-run and review generated intake map.",
+    "Apply reviewed intake only if owner intent is unambiguous.",
+    "Run source-root guards before private metadata inventory.",
+    "Run pilot-scoped metadata inventory before any OCR, asset generation or public promotion.",
+    "Keep all three pilot packages review-only until provenance and rights gates pass."
+  ],
+  "hard_stops": [
+    "Do not run private inventory from this matrix.",
+    "Do not read private content from this matrix.",
+    "Do not generate assets from private sources before owner/source-root gates pass.",
+    "Do not mark any pilot or asset public-ready."
+  ],
+  "failures": [
+    "Owner unlock checkpoint not ready: owner_unlock_pipeline_checkpoint_attention_required"
+  ]
+}

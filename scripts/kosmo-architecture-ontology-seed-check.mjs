@@ -79,6 +79,11 @@ function buildChecks(seed) {
     check('relation_types_ten', seed.summary?.relation_types === 10, seed.summary?.relation_types),
     check('facet_groups_six', seed.summary?.facet_groups === 6, seed.summary?.facet_groups),
     check('pilots_supported_three', seed.summary?.pilots_supported === 3, seed.summary?.pilots_supported),
+    check('pilot_matrix_status_guarded', [
+      'post_unlock_pilot_execution_matrix_ready',
+      'post_unlock_pilot_execution_matrix_needs_review'
+    ].includes(seed.summary?.pilot_matrix_status), seed.summary?.pilot_matrix_status),
+    check('pilot_matrix_review_only_blocked', seed.summary?.pilot_matrix_guarded_review_only === true, seed.summary?.pilot_matrix_guarded_review_only),
     check('asset_lanes_supported_three', seed.summary?.asset_lanes_supported === 3, seed.summary?.asset_lanes_supported),
     check('review_lanes_supported_five', seed.summary?.review_lanes_supported === 5, seed.summary?.review_lanes_supported),
     check('required_entities_present', ['reference_project', 'source_record', 'building_element', 'material_system', 'space_pattern', 'structure_system', 'asset_record', 'eval_review_item'].every((entity) => entities.includes(entity)), entities.join(',')),

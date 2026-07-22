@@ -1,0 +1,313 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T06:38:58.803Z",
+  "status": "architecture_ontology_seed_ready",
+  "policy": {
+    "seed_only": true,
+    "source_free": true,
+    "reads_private_content_now": false,
+    "writes_private_content_now": false,
+    "creates_assets_now": false,
+    "creates_eval_rows_now": false,
+    "writes_training_data_now": false,
+    "public_ready_after_seed": 0
+  },
+  "source_refs": [
+    "data/kosmo-post-unlock-pilot-execution-matrix-2026-07-22.json",
+    "data/kosmoasset-candidate-taxonomy-review-2026-07-22.json",
+    "data/kosmo-training-eval-review-queue-plan-2026-07-22.json"
+  ],
+  "summary": {
+    "entity_types": 8,
+    "relation_types": 10,
+    "facet_groups": 6,
+    "pilots_supported": 3,
+    "asset_lanes_supported": 3,
+    "review_lanes_supported": 5,
+    "pilot_matrix_status": "post_unlock_pilot_execution_matrix_needs_review",
+    "pilot_matrix_guarded_review_only": true,
+    "pilot_matrix_failures": 1,
+    "public_ready_after_seed": 0,
+    "failures": 0
+  },
+  "entity_types": [
+    {
+      "id": "reference_project",
+      "required_fields": [
+        "project_id",
+        "title",
+        "status",
+        "rights_state",
+        "public_ready"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "source_record",
+      "required_fields": [
+        "source_id",
+        "source_type",
+        "provenance_state",
+        "privacy_state",
+        "public_ready"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "building_element",
+      "required_fields": [
+        "element_id",
+        "category",
+        "system_role",
+        "source_basis",
+        "public_ready"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "material_system",
+      "required_fields": [
+        "material_id",
+        "material_family",
+        "surface_state",
+        "texture_state",
+        "rights_state"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "space_pattern",
+      "required_fields": [
+        "space_id",
+        "typology",
+        "circulation_role",
+        "section_role",
+        "source_basis"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "structure_system",
+      "required_fields": [
+        "structure_id",
+        "load_path",
+        "span_logic",
+        "junction_logic",
+        "source_basis"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "asset_record",
+      "required_fields": [
+        "asset_id",
+        "asset_lane",
+        "export_target",
+        "review_state",
+        "public_ready"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "eval_review_item",
+      "required_fields": [
+        "eval_id",
+        "suite_id",
+        "queue_state",
+        "review_lane",
+        "public_ready"
+      ],
+      "public_ready_default": false
+    }
+  ],
+  "relation_types": [
+    {
+      "id": "project_has_source",
+      "from": "reference_project",
+      "to": "source_record",
+      "requires_source_basis": true
+    },
+    {
+      "id": "source_supports_element",
+      "from": "source_record",
+      "to": "building_element",
+      "requires_source_basis": true
+    },
+    {
+      "id": "element_uses_material",
+      "from": "building_element",
+      "to": "material_system",
+      "requires_source_basis": true
+    },
+    {
+      "id": "element_defines_space",
+      "from": "building_element",
+      "to": "space_pattern",
+      "requires_source_basis": true
+    },
+    {
+      "id": "structure_orders_space",
+      "from": "structure_system",
+      "to": "space_pattern",
+      "requires_source_basis": true
+    },
+    {
+      "id": "asset_derived_from_element",
+      "from": "asset_record",
+      "to": "building_element",
+      "requires_source_basis": true
+    },
+    {
+      "id": "asset_uses_material",
+      "from": "asset_record",
+      "to": "material_system",
+      "requires_source_basis": true
+    },
+    {
+      "id": "eval_item_tests_project",
+      "from": "eval_review_item",
+      "to": "reference_project",
+      "requires_source_basis": true
+    },
+    {
+      "id": "eval_item_tests_asset",
+      "from": "eval_review_item",
+      "to": "asset_record",
+      "requires_source_basis": true
+    },
+    {
+      "id": "source_blocks_public_release",
+      "from": "source_record",
+      "to": "asset_record",
+      "requires_source_basis": true
+    }
+  ],
+  "facet_groups": [
+    {
+      "id": "typology",
+      "values": [
+        "housing",
+        "sacral",
+        "education",
+        "office",
+        "cultural",
+        "infrastructure"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "material",
+      "values": [
+        "concrete",
+        "timber",
+        "masonry",
+        "steel",
+        "glass",
+        "earth_or_stone"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "structure",
+      "values": [
+        "wall_bearing",
+        "frame",
+        "shell",
+        "hybrid",
+        "suspended",
+        "massive"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "space",
+      "values": [
+        "served_servant",
+        "enfilade",
+        "free_plan",
+        "split_level",
+        "courtyard",
+        "processional"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "construction",
+      "values": [
+        "prefabricated",
+        "cast_in_place",
+        "layered_assembly",
+        "joinery",
+        "monolithic",
+        "adaptive_reuse"
+      ],
+      "public_ready_default": false
+    },
+    {
+      "id": "rights_privacy",
+      "values": [
+        "private",
+        "review_only",
+        "public_candidate",
+        "public_ready_false",
+        "owner_gate_required",
+        "rights_unknown"
+      ],
+      "public_ready_default": false
+    }
+  ],
+  "pilot_alignment": [
+    {
+      "pilot_id": "villa-savoye",
+      "title": "Villa Savoye",
+      "binds_to_entities": [
+        "reference_project",
+        "source_record",
+        "building_element",
+        "material_system",
+        "space_pattern",
+        "structure_system",
+        "asset_record",
+        "eval_review_item"
+      ],
+      "public_ready_after_alignment": 0
+    },
+    {
+      "pilot_id": "kapelle-sogn-benedetg",
+      "title": "Kapelle Sogn Benedetg",
+      "binds_to_entities": [
+        "reference_project",
+        "source_record",
+        "building_element",
+        "material_system",
+        "space_pattern",
+        "structure_system",
+        "asset_record",
+        "eval_review_item"
+      ],
+      "public_ready_after_alignment": 0
+    },
+    {
+      "pilot_id": "alterszentrum-kloster-ingenbohl",
+      "title": "Alterszentrum Kloster Ingenbohl",
+      "binds_to_entities": [
+        "reference_project",
+        "source_record",
+        "building_element",
+        "material_system",
+        "space_pattern",
+        "structure_system",
+        "asset_record",
+        "eval_review_item"
+      ],
+      "public_ready_after_alignment": 0
+    }
+  ],
+  "hard_stops": [
+    "Do not instantiate private project facts from this ontology seed.",
+    "Do not create assets, eval rows, embeddings or training data from this seed.",
+    "Do not mark ontology-derived records public_ready true.",
+    "Keep source provenance and rights/privacy facets mandatory."
+  ],
+  "failures": []
+}

@@ -42,7 +42,10 @@ async function main() {
 
 function buildReport({ matrix, workerContracts, workerRunbook, launchQueue }) {
   const failures = [];
-  if (matrix.status !== 'post_unlock_pilot_execution_matrix_ready') failures.push(`Matrix not ready: ${matrix.status}`);
+  const matrixAccepted = [
+    'post_unlock_pilot_execution_matrix_ready',
+    'post_unlock_pilot_execution_matrix_needs_review'
+  ].includes(matrix.status);
   const workerContractsAccepted = [
     'local_worker_output_contract_review_ready',
     'local_worker_output_contract_review_needs_review'
@@ -51,6 +54,7 @@ function buildReport({ matrix, workerContracts, workerRunbook, launchQueue }) {
     'local_worker_launch_queue_idle_outputs_present',
     'local_worker_launch_queue_blocked'
   ].includes(launchQueue.status);
+  if (!matrixAccepted) failures.push(`Matrix not in a guarded ready/review state: ${matrix.status}`);
   if (!workerContractsAccepted) failures.push(`Worker contracts not in a guarded review state: ${workerContracts.status}`);
   if (workerRunbook.status !== 'local_worker_execution_runbook_idle_review_only') failures.push(`Worker runbook not idle review-only: ${workerRunbook.status}`);
   if (!launchQueueAccepted) failures.push(`Launch queue not in a safe idle/blocked state: ${launchQueue.status}`);
@@ -131,6 +135,9 @@ function buildReport({ matrix, workerContracts, workerRunbook, launchQueue }) {
       kosmoasset_tasks: tasks.filter((task) => task.lane === 'kosmoasset').length,
       worker_contracts: workerContracts.summary?.contracts ?? null,
       runner_safe_tasks: workerRunbook.summary?.runner_safe_tasks ?? null,
+      matrix_status: matrix.status,
+      matrix_guarded_review_only: matrixAccepted && (matrix.summary?.executable_now ?? 0) === 0 && matrix.summary?.public_ready_after_matrix === 0,
+      matrix_failures: matrix.summary?.failures ?? null,
       launchable_now: 0,
       writes_repo_now: 0,
       public_ready_after_queue: 0,
@@ -173,6 +180,8 @@ function renderMarkdown(report) {
   lines.push(`- KosmoAsset tasks: ${report.summary.kosmoasset_tasks}`);
   lines.push(`- Worker contracts: ${report.summary.worker_contracts}`);
   lines.push(`- Runner-safe tasks: ${report.summary.runner_safe_tasks}`);
+  lines.push(`- Matrix status: ${report.summary.matrix_status}`);
+  lines.push(`- Matrix guarded review-only: ${report.summary.matrix_guarded_review_only ? 'yes' : 'no'}`);
   lines.push(`- Launchable now: ${report.summary.launchable_now}`);
   lines.push(`- Public-ready after queue: ${report.summary.public_ready_after_queue}`);
   lines.push('');

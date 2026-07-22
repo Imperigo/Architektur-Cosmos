@@ -1,0 +1,144 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T06:37:51.595Z",
+  "status": "local_worker_pilot_task_queue_guard_passed",
+  "policy": {
+    "validates_queue_only": true,
+    "executes_local_worker_now": false,
+    "reads_private_content_now": false,
+    "writes_repo_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmo-local-worker-pilot-task-queue-2026-07-22.json"
+  ],
+  "summary": {
+    "checks": 24,
+    "passed": 24,
+    "failures": 0,
+    "warnings": 0,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "status_ready_blocked",
+      "status": "passed",
+      "evidence": "local_worker_pilot_task_queue_ready_blocked"
+    },
+    {
+      "id": "policy_queue_only",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "policy_no_execute_now",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_private_reads",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_no_repo_write",
+      "status": "passed",
+      "evidence": false
+    },
+    {
+      "id": "policy_requires_overseer",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "public_ready_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "three_pilots",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "twelve_tasks",
+      "status": "passed",
+      "evidence": 12
+    },
+    {
+      "id": "four_tasks_per_pilot",
+      "status": "passed",
+      "evidence": 4
+    },
+    {
+      "id": "nine_references_tasks",
+      "status": "passed",
+      "evidence": 9
+    },
+    {
+      "id": "three_asset_tasks",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "worker_contracts_present",
+      "status": "passed",
+      "evidence": 9
+    },
+    {
+      "id": "matrix_status_guarded",
+      "status": "passed",
+      "evidence": "post_unlock_pilot_execution_matrix_needs_review"
+    },
+    {
+      "id": "matrix_review_only_blocked",
+      "status": "passed",
+      "evidence": true
+    },
+    {
+      "id": "launchable_now_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "writes_repo_now_zero",
+      "status": "passed",
+      "evidence": 0
+    },
+    {
+      "id": "all_tasks_blocked",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "all_tasks_public_ready_zero",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "all_tasks_have_overseer",
+      "status": "passed",
+      "evidence": ""
+    },
+    {
+      "id": "hard_stop_no_launch_now",
+      "status": "passed",
+      "evidence": "do not launch local worker tasks from this queue now. do not pass full private documents to local workers. do not let local worker output write directly to repo. do not mark local worker output public-ready."
+    },
+    {
+      "id": "hard_stop_no_full_private_docs",
+      "status": "passed",
+      "evidence": "do not launch local worker tasks from this queue now. do not pass full private documents to local workers. do not let local worker output write directly to repo. do not mark local worker output public-ready."
+    },
+    {
+      "id": "hard_stop_no_repo_write",
+      "status": "passed",
+      "evidence": "do not launch local worker tasks from this queue now. do not pass full private documents to local workers. do not let local worker output write directly to repo. do not mark local worker output public-ready."
+    },
+    {
+      "id": "hard_stop_no_public_ready",
+      "status": "passed",
+      "evidence": "do not launch local worker tasks from this queue now. do not pass full private documents to local workers. do not let local worker output write directly to repo. do not mark local worker output public-ready."
+    }
+  ]
+}

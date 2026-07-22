@@ -74,6 +74,11 @@ function buildChecks(queue) {
     check('nine_references_tasks', queue.summary?.kosmoreferences_tasks === 9, queue.summary?.kosmoreferences_tasks),
     check('three_asset_tasks', queue.summary?.kosmoasset_tasks === 3, queue.summary?.kosmoasset_tasks),
     check('worker_contracts_present', queue.summary?.worker_contracts === 9, queue.summary?.worker_contracts),
+    check('matrix_status_guarded', [
+      'post_unlock_pilot_execution_matrix_ready',
+      'post_unlock_pilot_execution_matrix_needs_review'
+    ].includes(queue.summary?.matrix_status), queue.summary?.matrix_status),
+    check('matrix_review_only_blocked', queue.summary?.matrix_guarded_review_only === true, queue.summary?.matrix_guarded_review_only),
     check('launchable_now_zero', queue.summary?.launchable_now === 0, queue.summary?.launchable_now),
     check('writes_repo_now_zero', queue.summary?.writes_repo_now === 0, queue.summary?.writes_repo_now),
     check('all_tasks_blocked', (queue.tasks || []).every((task) => task.executable_now === false), (queue.tasks || []).filter((task) => task.executable_now).map((task) => task.id).join(',')),
