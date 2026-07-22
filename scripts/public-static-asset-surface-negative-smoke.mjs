@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 
 const root = process.cwd();
@@ -58,6 +58,7 @@ function runSmoke() {
   writeBinaryFile(outRoot, 'scripts/spoofed-public-bundle.js', Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00]));
   writeFile(outRoot, 'data/spoofed-public-cache.json', 'SQLite format 3 synthetic fixture renamed as json');
   writeBinaryFile(outRoot, 'media/oversized-public-image.jpg', Buffer.alloc(1024, 0x61));
+  writeSymlink(outRoot, 'media/linked-public-image.jpg', '../index.html');
 
   const poisoned = runSurfaceCheck(outRoot, 'poisoned', ['--max-asset-bytes', '512']);
   if (poisoned.status === 0) {
@@ -84,7 +85,8 @@ function runSmoke() {
     'asset:media/spoofed-public-image.jpg:blocked-signature',
     'asset:scripts/spoofed-public-bundle.js:blocked-signature',
     'asset:data/spoofed-public-cache.json:blocked-signature',
-    'asset:media/oversized-public-image.jpg:oversized-asset'
+    'asset:media/oversized-public-image.jpg:oversized-asset',
+    'asset:media/linked-public-image.jpg:symlink-asset'
   ];
   const missingFailedIds = expectedFailedIds.filter((id) => !failedIds.has(id));
 
@@ -140,6 +142,12 @@ function writeBinaryFile(outRoot, relativePath, body) {
   const filePath = resolve(outRoot, relativePath);
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, body);
+}
+
+function writeSymlink(outRoot, relativePath, target) {
+  const filePath = resolve(outRoot, relativePath);
+  mkdirSync(dirname(filePath), { recursive: true });
+  symlinkSync(target, filePath);
 }
 
 function parseArgs(argv) {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync, statSync } from 'node:fs';
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import { dirname, extname, relative, resolve } from 'node:path';
 import { publicLeakMatches, publicLeakVariants } from './public-leak-patterns.mjs';
@@ -180,6 +180,7 @@ async function main() {
       unexpected_extension_assets: assets.filter((asset) => asset.unexpected_extension).length,
       blocked_signature_assets: assets.filter((asset) => asset.blocked_signatures.length > 0).length,
       oversized_assets: assets.filter((asset) => asset.oversized_asset).length,
+      symlink_assets: assets.filter((asset) => asset.symlink_asset).length,
       path_leak_assets: assets.filter((asset) => asset.path_leak_matches.length > 0).length,
       content_leak_assets: assets.filter((asset) => asset.content_leak_matches.length > 0).length,
       failure_count: failures.length,
@@ -199,6 +200,7 @@ async function main() {
   console.log(`Unexpected extensions: ${report.summary.unexpected_extension_assets}`);
   console.log(`Blocked signatures: ${report.summary.blocked_signature_assets}`);
   console.log(`Oversized assets: ${report.summary.oversized_assets}`);
+  console.log(`Symlink assets: ${report.summary.symlink_assets}`);
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
 
   if (failures.length > 0) process.exit(1);
@@ -241,6 +243,7 @@ function skippedMissingOutReport() {
       unexpected_extension_assets: 0,
       blocked_signature_assets: 0,
       oversized_assets: 0,
+      symlink_assets: 0,
       path_leak_assets: 0,
       content_leak_assets: 0,
       failure_count: 0,
@@ -260,7 +263,7 @@ async function collectFiles(directory, prefix = '') {
     const absolutePath = resolve(directory, item.name);
     if (item.isDirectory()) {
       collected.push(...await collectFiles(absolutePath, relativePath));
-    } else if (item.isFile()) {
+    } else if (item.isFile() || item.isSymbolicLink()) {
       collected.push(relativePath);
     }
   }
@@ -271,17 +274,25 @@ function checkAsset(relativePath) {
   const absolutePath = resolve(outRoot, relativePath);
   const extension = extname(relativePath).toLowerCase();
   const basename = relativePath.split('/').pop();
-  const stats = statSync(absolutePath);
+  const lstat = lstatSync(absolutePath);
+  const symlinkAsset = lstat.isSymbolicLink();
+  const stats = symlinkAsset ? lstat : statSync(absolutePath);
   const failures = [];
   const blockedExtension = blockedExtensions.has(extension);
   const embeddedBlockedExtensions = detectEmbeddedBlockedExtensions(relativePath, extension);
   const extensionlessAllowed = extension === '' && allowedExtensionlessFiles.has(basename);
   const unexpectedExtension = !blockedExtension && !extensionlessAllowed && !allowedExtensions.has(extension);
-  const blockedSignatures = detectBlockedBinarySignatures(absolutePath);
+  const blockedSignatures = symlinkAsset ? [] : detectBlockedBinarySignatures(absolutePath);
   const oversizedAsset = stats.size > maxAssetBytes;
   const pathLeakMatches = publicLeakMatches(relativePath);
-  const contentLeakMatches = scanTextContent(absolutePath, extension);
+  const contentLeakMatches = symlinkAsset ? [] : scanTextContent(absolutePath, extension);
 
+  if (symlinkAsset) {
+    failures.push({
+      id: `asset:${relativePath}:symlink-asset`,
+      detail: 'Static export must not contain symbolic links; publish only concrete generated public assets.'
+    });
+  }
   if (blockedExtension) {
     failures.push({
       id: `asset:${relativePath}:blocked-extension`,
@@ -336,6 +347,7 @@ function checkAsset(relativePath) {
     unexpected_extension: unexpectedExtension,
     blocked_signatures: blockedSignatures,
     oversized_asset: oversizedAsset,
+    symlink_asset: symlinkAsset,
     path_leak_matches: [...new Set(pathLeakMatches)],
     content_leak_matches: [...new Set(contentLeakMatches)],
     failures
@@ -413,6 +425,7 @@ function renderMarkdown(report) {
     `- unexpected extension assets: ${report.summary.unexpected_extension_assets}`,
     `- blocked signature assets: ${report.summary.blocked_signature_assets}`,
     `- oversized assets: ${report.summary.oversized_assets}`,
+    `- symlink assets: ${report.summary.symlink_assets}`,
     `- path leak assets: ${report.summary.path_leak_assets}`,
     `- content leak assets: ${report.summary.content_leak_assets}`,
     `- public-ready after check: ${report.summary.public_ready_after_check}`,
