@@ -114,9 +114,11 @@
   justify-content: center;
   touch-action: none;
   cursor: grab;
+  --k-zeiger: grab; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .pubisl-buehne:active {
   cursor: grabbing;
+  --k-zeiger: grabbing; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .pubisl-transform {
   transform-origin: center center;

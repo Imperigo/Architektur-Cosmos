@@ -39,6 +39,22 @@
 :root[data-eigencursor='an'] {
   cursor: none;
 }
+/* v0.9.0 Owner-Punkt 22.07.2026 («mach das sie überall die kosmo maus ist,
+   aktuell kommt viel noch die standard windows maus zum vorschein»):
+   `cursor` ist vererbt — jede Komponente mit EIGENER Regel (`cursor:
+   pointer/grab/col-resize/…` in aura.css & Co.) überschrieb das
+   root-`none`, dort erschien der System-Zeiger ZUSÄTZLICH zur Kosmo-Ebene
+   (Doppel-Cursor). Darum hart auf allen Elementen erzwingen; die
+   `ZonenForm`-Abbildung liest den Wert seither aus der Spiegel-Property
+   `--k-zeiger` (s. `CursorEbene.tsx` `computedCursorVon`), nicht mehr aus
+   dem computed `cursor`. Eingabefelder bleiben die einzige System-Cursor-
+   Ausnahme (Regel unten, ebenfalls !important — unter lauter important-
+   Regeln entscheidet wieder die Spezifität). */
+:root[data-eigencursor='an'] *,
+:root[data-eigencursor='an'] *::before,
+:root[data-eigencursor='an'] *::after {
+  cursor: none !important;
+}
 /* Ausnahmen (Spec §8): Inputs/Textarea/Select/contenteditable behalten den
    normalen Text-/System-Cursor — die Ebene versteckt sich dort zusätzlich
    selbst (siehe `.cursor-ebene--versteckt` unten, von CursorEbene.tsx per
@@ -50,7 +66,7 @@
 :root[data-eigencursor='an'] select,
 :root[data-eigencursor='an'] [contenteditable='true'],
 :root[data-eigencursor='an'] [contenteditable=''] {
-  cursor: auto;
+  cursor: auto !important;
 }
 
 /* Wrapper — Schachtel 1: NUR das rAF-Translate (siehe CursorEbene.tsx,

@@ -1294,6 +1294,15 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
       // bleiben beim bisherigen `meldeFehler`.
       if (!istAntFehltFehler(err)) {
         meldeFehler(err);
+      } else {
+        // v0.9.0 Owner-Befund 22.07.2026 («anmelden passiert nichts»): die
+        // Anleitung erscheint unterhalb des sichtbaren Bereichs — ohne
+        // sofortiges Feedback wirkt der Klick wie ein Nichts. Kurzer
+        // Wegweiser-Toast ZUSÄTZLICH zur Panel-Anleitung (F1 bleibt).
+        melde('Die Anthropic-CLI (ant) fehlt auf diesem Gerät — Anleitung unten im Panel (oder API-Schlüssel eintragen).', {
+          ton: 'info',
+          dauerMs: 7000,
+        });
       }
     } finally {
       await aktualisiereAntStatus();

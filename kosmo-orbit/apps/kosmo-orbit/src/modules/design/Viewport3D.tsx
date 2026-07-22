@@ -2669,7 +2669,13 @@ export function Viewport3D({ handlers }: { handlers: React.RefObject<ViewportHan
       {
         const tool = handlers.current?.sketchMode ? 'skizze' : handlers.current?.pickMode ? 'auswahl' : 'wand';
         const cur = werkzeugCursorFuer(tool, navModusRef.current);
-        if (renderer.domElement.style.cursor !== cur) renderer.domElement.style.cursor = cur;
+        if (renderer.domElement.style.cursor !== cur) {
+          renderer.domElement.style.cursor = cur;
+          // v0.9.0 Cursor-Spiegel: der eigentliche `cursor` ist global
+          // `none !important` (cursor-ebene.css) — die Kosmo-Ebene liest
+          // die Form aus dieser vererbten Property.
+          renderer.domElement.style.setProperty('--k-zeiger', cur);
+        }
       }
       // J1b: Long-Press-Automat MUSS jeden Tick laufen (Timer-Fenster) —
       // sonst verpasst on-demand einen gehaltenen Zeiger. Öffnet das

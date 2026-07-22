@@ -141,9 +141,11 @@
      dem Button-Element selbst). */
   touch-action: none;
   cursor: grab;
+  --k-zeiger: grab; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .k-dock-panel-kopf:active {
   cursor: grabbing;
+  --k-zeiger: grabbing; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 
 /* v0.8.0B / W3 (Spez §4, B-54) — 7px→6px (Blaupausen-Mass). */
@@ -260,6 +262,7 @@
   background: var(--k-ink-faint);
   opacity: 0.55;
   cursor: grab;
+  --k-zeiger: grab; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
   touch-action: none;
   z-index: 2;
   transition: opacity var(--k-dock-schnell) var(--k-ease-standard);
@@ -270,6 +273,7 @@
 }
 .k-dock-panel-griff:active {
   cursor: grabbing;
+  --k-zeiger: grabbing; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .k-dock-panel-inhalt-schlank {
   width: 100%;
@@ -347,9 +351,11 @@
 .k-dock-splitter[data-art='col-left'],
 .k-dock-splitter[data-art='col-right'] {
   cursor: col-resize;
+  --k-zeiger: col-resize; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .k-dock-splitter[data-art='row'] {
   cursor: row-resize;
+  --k-zeiger: row-resize; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .k-dock-splitter::after {
   content: '';

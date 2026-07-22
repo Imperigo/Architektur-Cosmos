@@ -18,10 +18,10 @@ import './cursor-ebene.css';
  *
  * Architektur (Spec §8, wörtlich «drei Schachteln»):
  *  Wrapper (rAF-Translate, NIE React-State pro Frame)
- *   → Rotor (CSS-`transition: transform 140ms --k-ease-entrance`, Winkel
- *     akkumuliert + auf ±180° normalisiert — siehe `naechsterWinkel()` unten
- *     — damit der Browser beim Interpolieren IMMER den kürzeren Weg nimmt,
- *     nie einmal ganz herum)
+ *   → Rotor (Struktur-Schachtel; die frühere Richtungs-Rotation ist seit
+ *     v0.9.0 entfernt — Owner-Punkt 22.07.2026, s. Notiz unten — der Pfeil
+ *     steht immer aufrecht, die CSS-Transition bleibt als toter, harmloser
+ *     Rest des reduced-motion-Beweises)
  *    → SVG-Box (Morph-Kollaps/Entfalten + separat verschachtelt der
  *      Klick-Feder-Pop — "Pop nie auf dem Rotor").
  *
@@ -96,7 +96,13 @@ import './cursor-ebene.css';
  * Spec einzuschalten (siehe `e2e/cursor-ebene.spec.ts`).
  */
 
-const ROTATIONS_SCHWELLE_PX = 3;
+/* v0.9.0 Owner-Punkt 22.07.2026 («entferne wieder das die mausrichtung sich
+   dreht, mach die maus wieder normal»): die Richtungs-Rotation des Rotors
+   ist ENTFERNT — der Pfeil steht immer aufrecht wie ein System-Zeiger. Die
+   Rotor-Schachtel selbst bleibt (Struktur + reduced-motion-Beweis in
+   `e2e/cursor-ebene.spec.ts` unverändert), sie dreht nur nie mehr. Die
+   frueheren Helfer `normalisiereAufPlusMinus180`/`naechsterWinkel` und die
+   3px-Schwelle sind mit der Rotation gefallen. */
 
 function istEingabefeld(el: Element | null): boolean {
   if (!el) return false;
@@ -105,13 +111,25 @@ function istEingabefeld(el: Element | null): boolean {
   return (el as HTMLElement).isContentEditable === true;
 }
 
-/** COMPUTED `cursor` der Elementkette — reiner DOM-Lesezugriff, keine
+/** Zonen-Signal der Elementkette — reiner DOM-Lesezugriff, keine
  *  Interpretation (die Abbildung auf eine `ZonenForm` übernimmt die reine
- *  Funktion `formVonComputedCursor`, `state/cursor-zustand.ts`). */
+ *  Funktion `formVonComputedCursor`, `state/cursor-zustand.ts`).
+ *
+ *  v0.9.0 (Owner-Punkt 22.07.2026 «überall die kosmo maus»): `cursor` wird
+ *  seither GLOBAL per `cursor:none !important` erzwungen (`cursor-ebene.
+ *  css`) — der computed `cursor` ist damit überall `none` und trägt kein
+ *  Zonen-Signal mehr. Die Zonen deklarieren ihre Form deshalb über die
+ *  ebenso VERERBTE Custom Property `--k-zeiger` (Spiegel direkt neben der
+ *  jeweiligen `cursor:`-Regel, grep `--k-zeiger:`); der computed-cursor-
+ *  Fallback bleibt für den Fall, dass die Ebene ohne globales `none` läuft
+ *  (z.B. Webdriver-Testpfad). Inline-Setzer (Viewport3D) spiegeln per
+ *  `style.setProperty('--k-zeiger', …)`. */
 function computedCursorVon(el: Element | null): string {
   if (!el) return '';
   try {
-    return getComputedStyle(el).cursor;
+    const stil = getComputedStyle(el);
+    const zeiger = stil.getPropertyValue('--k-zeiger').trim();
+    return zeiger || stil.cursor;
   } catch {
     return '';
   }
@@ -122,21 +140,6 @@ function computedCursorVon(el: Element | null): string {
  *  bewusst NICHT mehr erkannt (s. Kopfkommentar, D1-Fix). */
 function istPraezisionsZone(el: Element | null): boolean {
   return el?.closest('[data-cursor-zone]')?.getAttribute('data-cursor-zone') === 'praezision';
-}
-
-/** Δ auf ±180° normalisiert (Spec §8, wörtlich) — damit die CSS-Transition
- *  beim Interpolieren zwischen `vorher` und dem Rückgabewert IMMER den
- *  kürzeren Weg nimmt statt einmal ganz herumzudrehen. `vorher` ist der
- *  AKKUMULIERTE (unbeschränkte) Winkel, `rohesZiel` liegt in (-180, 180]. */
-function normalisiereAufPlusMinus180(grad: number): number {
-  let g = grad % 360;
-  if (g > 180) g -= 360;
-  if (g <= -180) g += 360;
-  return g;
-}
-function naechsterWinkel(vorher: number, rohesZiel: number): number {
-  const delta = normalisiereAufPlusMinus180(rohesZiel - vorher);
-  return vorher + delta;
 }
 
 type MorphPhase = 'ruhe' | 'kollaps' | 'entfalten';
@@ -322,10 +325,7 @@ export function CursorEbene() {
   const [zonenForm, setZonenForm] = useState<ZonenForm | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const rotorRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef({ x: -100, y: -100 });
-  const winkelAkkumuliertRef = useRef(0);
-  const letzteWinkelPositionRef = useRef<{ x: number; y: number } | null>(null);
   // Refs, die der pointermove-Handler unten synchron lesen/schreiben kann,
   // ohne bei jedem Aufruf einen veralteten Closure-Stand des jeweiligen
   // State zu sehen (der Handler selbst wird nur einmal pro `aktiv`-Wechsel
@@ -442,24 +442,8 @@ export function CursorEbene() {
         setZonenForm(naechsteForm);
       }
 
-      // Rotor-Winkel: nur ab 3px Bewegung seit dem letzten Winkel-Update
-      // neu berechnen (Spec §8 "Update ab 3px") — sonst würde Zittern in
-      // Mini-Bewegungen den Pfeil ständig neu ausrichten.
-      const letzte = letzteWinkelPositionRef.current;
-      if (letzte) {
-        const dx = e.clientX - letzte.x;
-        const dy = e.clientY - letzte.y;
-        if (dx * dx + dy * dy >= ROTATIONS_SCHWELLE_PX * ROTATIONS_SCHWELLE_PX) {
-          const rohesZiel = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
-          winkelAkkumuliertRef.current = naechsterWinkel(winkelAkkumuliertRef.current, rohesZiel);
-          letzteWinkelPositionRef.current = { x: e.clientX, y: e.clientY };
-          if (rotorRef.current) {
-            rotorRef.current.style.transform = `rotate(${winkelAkkumuliertRef.current}deg)`;
-          }
-        }
-      } else {
-        letzteWinkelPositionRef.current = { x: e.clientX, y: e.clientY };
-      }
+      // Richtungs-Rotation entfernt (Owner-Punkt 22.07.2026, s. Kopf-Notiz):
+      // der Pfeil bleibt aufrecht — hier passiert bewusst nichts mehr.
     }
 
     function aufKlick() {
@@ -510,7 +494,7 @@ export function CursorEbene() {
       aria-hidden="true"
       data-testid="cursor-ebene"
     >
-      <div ref={rotorRef} className="cursor-ebene-rotor">
+      <div className="cursor-ebene-rotor">
         <div
           className={morphKlasse}
           onAnimationEnd={(e) => {

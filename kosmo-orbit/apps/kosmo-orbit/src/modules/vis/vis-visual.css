@@ -214,6 +214,7 @@
 /* ── Node-Kopf/Knöpfe (Cursor/Farb-Utilities, keine Geometrie) ────── */
 .vis-node-kopf-griff {
   cursor: grab;
+  --k-zeiger: grab; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .vis-node-kopf-label {
   letter-spacing: 0.04em;
@@ -230,6 +231,7 @@
 }
 .vis-node-port-hit {
   cursor: crosshair;
+  --k-zeiger: crosshair; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .vis-node-koerper--gesperrt {
   pointer-events: none;

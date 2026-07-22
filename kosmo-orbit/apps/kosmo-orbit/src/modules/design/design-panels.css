@@ -553,6 +553,7 @@
   inset: 0;
   touch-action: none;
   cursor: crosshair;
+  --k-zeiger: crosshair; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
 }
 .so-svg {
   position: absolute;
@@ -625,6 +626,7 @@
   border: 1px solid var(--k-line-strong);
   background: var(--k-surface);
   cursor: crosshair;
+  --k-zeiger: crosshair; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
   touch-action: none;
 }
 .me-fuss {

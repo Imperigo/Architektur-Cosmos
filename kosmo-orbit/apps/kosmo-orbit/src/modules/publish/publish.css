@@ -531,6 +531,7 @@
 }
 .k-plankopf-chip-knopf:disabled {
   cursor: not-allowed;
+  --k-zeiger: not-allowed; /* v0.9.0 Cursor-Spiegel fuer die Kosmo-Ebene (cursor selbst ist global none) */
   opacity: 0.5;
 }
 
