@@ -108,7 +108,8 @@ function documentChecks(doc) {
     check(`${doc.kind}:no_public_promotion`, !hasForbiddenPromotion(doc.text), forbiddenEvidence(doc.text, forbiddenPromotionPatterns())),
     check(`${doc.kind}:no_private_inventory_execution`, !hasForbiddenPrivateExecution(doc.text), forbiddenEvidence(doc.text, forbiddenPrivateExecutionPatterns())),
     check(`${doc.kind}:no_training_activation`, !hasForbiddenTrainingActivation(doc.text), forbiddenEvidence(doc.text, forbiddenTrainingPatterns())),
-    check(`${doc.kind}:no_worker_launch_claim`, !hasForbiddenWorkerLaunch(doc.text), forbiddenEvidence(doc.text, forbiddenWorkerPatterns()))
+    check(`${doc.kind}:no_worker_launch_claim`, !hasForbiddenWorkerLaunch(doc.text), forbiddenEvidence(doc.text, forbiddenWorkerPatterns())),
+    check(`${doc.kind}:no_broad_stage_command`, !hasUnguardedBroadStageCommand(doc.text), broadStageEvidence(doc.text))
   ];
 }
 
@@ -166,6 +167,10 @@ function hasForbiddenWorkerLaunch(text) {
   return forbiddenWorkerPatterns().some((pattern) => pattern.test(text));
 }
 
+function hasUnguardedBroadStageCommand(text) {
+  return broadStageEvidence(text) !== 'none';
+}
+
 function forbiddenPromotionPatterns() {
   return [
     /public[-_ ]ready(?:\s+\w+){0,4}\s*[:=]\s*(?:1|true|yes)\b/i,
@@ -204,6 +209,24 @@ function forbiddenWorkerPatterns() {
     /worker outputs?\s+(?:copied|published|exported)\b/i,
     /workerlogs?\s+(?:copied|published|exported)\b/i
   ];
+}
+
+function forbiddenBroadStagePatterns() {
+  return [
+    /\bgit\s+add\s+(?:--\s+)?\.(?:\s|$|`)/i,
+    /\bgit\s+add\s+-A(?:\s|$|`)/i,
+    /\bgit\s+add\s+--all(?:\s|$|`)/i
+  ];
+}
+
+function broadStageEvidence(text) {
+  const guardPattern = /\b(?:do not|don't|never|avoid|forbid|forbidden|kein|keine|nicht|verboten)\b/i;
+  for (const line of text.split(/\r?\n/)) {
+    if (guardPattern.test(line)) continue;
+    const evidence = forbiddenEvidence(line, forbiddenBroadStagePatterns());
+    if (evidence !== 'none') return evidence;
+  }
+  return 'none';
 }
 
 function forbiddenEvidence(text, patterns) {

@@ -42,7 +42,8 @@ try {
     '- public-ready: yes',
     '- local worker launched',
     '- embeddings created',
-    '- private inventory ran'
+    '- private inventory ran',
+    '- git add -A'
   ].join('\n'));
 
   const result = spawnSync('node', [
@@ -73,11 +74,13 @@ try {
     'handoff:public_ready_zero',
     'handoff:no_public_promotion',
     'handoff:no_private_inventory_execution',
+    'handoff:no_broad_stage_command',
     'handoff:blocks_broad_stage',
     'memory:public_ready_zero',
     'memory:no_private_inventory_execution',
     'memory:no_training_activation',
-    'memory:no_worker_launch_claim'
+    'memory:no_worker_launch_claim',
+    'memory:no_broad_stage_command'
   ];
   const missingRequiredFailures = requiredFailures.filter((id) => !failedIds.has(id));
   const failedAsExpected = result.status !== 0
