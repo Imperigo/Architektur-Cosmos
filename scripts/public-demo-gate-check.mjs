@@ -1,6 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
+import {
+  blockedPublicRoutePatternFor,
+  hasKnownPublicManifestStaticExtension,
+  requiredPublicManifestRoutes
+} from './public-route-policy.mjs';
 import { publicRouteChecks, publicRoutes } from './public-route-manifest.mjs';
 
 const entries = JSON.parse(fs.readFileSync('data/mock-entries.json', 'utf8'));
@@ -14,29 +19,15 @@ const blockedLicenses = new Set([
   'unknown'
 ]);
 const allowedAssetRights = new Set(['public_domain', 'licensed', 'own_work']);
+const siteOrigins = new Set([
+  'https://architekturkosmos.ch',
+  'https://www.architekturkosmos.ch',
+  'http://127.0.0.1:3000',
+  'http://localhost:3000'
+]);
 const modelsBySlug = new Map(publicModelPreviews.models.map((model) => [model.slug, model]));
 const failures = [];
 const warnings = [];
-const requiredManifestRoutes = new Set([
-  '/',
-  '/atlas/',
-  '/references/',
-  '/assets/',
-  '/orbit/',
-  '/robots.txt',
-  '/sitemap.xml'
-]);
-const allowedManifestStaticExtensions = new Set(['.svg', '.txt', '.xml']);
-const blockedRoutePatterns = [
-  /(^|\/)admin(\/|$)/i,
-  /(^|\/)private(\/|$)/i,
-  /(^|\/)source-root(\/|$)/i,
-  /(^|\/)archive-intake(\/|$)/i,
-  /(^|\/)_overseer(\/|$)/i,
-  /(^|\/)worker[-_]?logs?(\/|$)/i,
-  /(^|\/)\.codex(\/|$)/i,
-  /(^|\/)\.claude(\/|$)/i
-];
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index >= 0 ? process.argv[index + 1] : null;
@@ -177,10 +168,14 @@ function checkRouteManifestSurfaces() {
     if (route.path.includes('//')) {
       recordFailure(`route-manifest:${route.path}:double-slash`, `public route path must not contain //: ${route.path}`);
     }
-    if (route.path !== '/' && !hasKnownManifestStaticExtension(route.path) && !route.path.endsWith('/')) {
+    if (
+      route.path !== '/'
+      && !hasKnownPublicManifestStaticExtension(route.path, warnings, 'route-manifest')
+      && !route.path.endsWith('/')
+    ) {
       recordFailure(`route-manifest:${route.path}:trailing-slash`, `HTML public route path must use a trailing slash: ${route.path}`);
     }
-    const blockedPattern = blockedRoutePatterns.find((pattern) => pattern.test(route.path));
+    const blockedPattern = blockedPublicRoutePatternFor(route.path);
     if (blockedPattern) {
       recordFailure(
         `route-manifest:${route.path}:blocked-surface`,
@@ -214,24 +209,77 @@ function checkRouteManifestSurfaces() {
     }
   }
 
-  for (const requiredRoute of requiredManifestRoutes) {
+  for (const requiredRoute of requiredPublicManifestRoutes) {
     if (!seen.has(requiredRoute)) {
       recordFailure(`route-manifest:${requiredRoute}:required`, `required public route missing from manifest: ${requiredRoute}`);
     }
   }
 
+  checkPublicRoutesExport(routePaths);
+
   return [...routePaths].sort();
 }
 
-function hasKnownManifestStaticExtension(path) {
-  const match = path.match(/\.[a-z0-9]+$/i);
-  if (!match) return false;
-  if (allowedManifestStaticExtensions.has(match[0].toLowerCase())) return true;
-  warnings.push({
-    id: `route-manifest:${path}:static-extension`,
-    detail: `Route uses an unrecognized static extension: ${path}`
+function checkPublicRoutesExport(routePaths) {
+  if (!Array.isArray(publicRoutes)) {
+    recordFailure('route-manifest:publicRoutes:export', 'publicRoutes must be exported as an array.');
+    return;
+  }
+
+  const expectedSet = new Set(routePaths);
+  const exportedSet = new Set();
+
+  publicRoutes.forEach((routePath, index) => {
+    if (typeof routePath !== 'string' || routePath.trim().length === 0) {
+      recordFailure(`route-manifest:publicRoutes:${index}:path`, `publicRoutes[${index}] must be a non-empty route string.`);
+      return;
+    }
+
+    if (exportedSet.has(routePath)) {
+      recordFailure(`route-manifest:publicRoutes:${routePath}:duplicate`, `duplicate publicRoutes export path: ${routePath}`);
+    }
+    exportedSet.add(routePath);
+
+    if (!expectedSet.has(routePath)) {
+      recordFailure(
+        `route-manifest:publicRoutes:${routePath}:missing-route-check`,
+        `publicRoutes exports a route missing from publicRouteChecks: ${routePath}`
+      );
+    }
+
+    const blockedPattern = blockedPublicRoutePatternFor(routePath);
+    if (blockedPattern) {
+      recordFailure(
+        `route-manifest:publicRoutes:${routePath}:blocked-surface`,
+        `publicRoutes must not expose private/admin/source surfaces: ${blockedPattern}`
+      );
+    }
+
+    if (hasPrivateLeak(routePath)) {
+      recordFailure(
+        `route-manifest:publicRoutes:${routePath}:path-leak`,
+        `publicRoutes path leaks private/source pattern: ${routePath}`
+      );
+    }
   });
-  return true;
+
+  for (const routePath of routePaths) {
+    if (!exportedSet.has(routePath)) {
+      recordFailure(
+        `route-manifest:publicRoutes:${routePath}:missing-export`,
+        `publicRouteChecks route is missing from publicRoutes export: ${routePath}`
+      );
+    }
+  }
+
+  const sameOrder = publicRoutes.length === routePaths.length
+    && publicRoutes.every((routePath, index) => routePath === routePaths[index]);
+  if (!sameOrder) {
+    recordFailure(
+      'route-manifest:publicRoutes:order',
+      'publicRoutes must match publicRouteChecks.map((route) => route.path) exactly and in order.'
+    );
+  }
 }
 
 async function checkRenderedRoutes(baseUrl) {
@@ -267,6 +315,8 @@ async function checkRenderedRoutes(baseUrl) {
 
 function checkStaticExportRoutes(outDir = 'out') {
   const checkedRoutes = [];
+  const checkedLinks = [];
+  const checkedTargets = new Set();
   const outRoot = path.resolve(outDir);
 
   if (!fs.existsSync(outRoot)) {
@@ -279,6 +329,8 @@ function checkStaticExportRoutes(outDir = 'out') {
         status: 'failed_missing_out',
         out_dir: outDir,
         checked_routes: checkedRoutes,
+        checked_links: checkedLinks.length,
+        checked_internal_targets: checkedTargets.size,
         checked_text_surface_files: 0
       };
     }
@@ -286,6 +338,8 @@ function checkStaticExportRoutes(outDir = 'out') {
       status: 'skipped_missing_out',
       out_dir: outDir,
       checked_routes: checkedRoutes,
+      checked_links: checkedLinks.length,
+      checked_internal_targets: checkedTargets.size,
       checked_text_surface_files: 0
     };
   }
@@ -323,6 +377,10 @@ function checkStaticExportRoutes(outDir = 'out') {
     if (leakMatches.length > 0) {
       recordFailure(`static-route:${route.path}:leak`, `exported route contains blocked private/source patterns: ${leakMatches.join(', ')}`);
     }
+
+    if (isHtmlRoute(route.path)) {
+      checkStaticExportLinks(outRoot, route.path, body, checkedLinks, checkedTargets);
+    }
   }
 
   const textSurfaceFiles = collectStaticTextSurfaceFiles(outRoot);
@@ -342,8 +400,86 @@ function checkStaticExportRoutes(outDir = 'out') {
     status: 'checked',
     out_dir: outDir,
     checked_routes: checkedRoutes,
+    checked_links: checkedLinks.length,
+    checked_internal_targets: checkedTargets.size,
     checked_text_surface_files: textSurfaceFiles.length
   };
+}
+
+function checkStaticExportLinks(outRoot, routePath, body, checkedLinks, checkedTargets) {
+  for (const href of extractAnchorHrefs(body)) {
+    checkedLinks.push({ route: routePath, href });
+
+    const hrefLeakMatches = publicLeakMatches(href);
+    if (hrefLeakMatches.length > 0) {
+      recordFailure(
+        `static-route:${routePath}:href-leak:${href}`,
+        `exported route href contains blocked private/source patterns: ${hrefLeakMatches.join(', ')}`
+      );
+    }
+
+    const targetPath = normalizeInternalHref(href);
+    if (!targetPath) continue;
+
+    const blockedPattern = blockedPublicRoutePatternFor(targetPath);
+    if (blockedPattern) {
+      recordFailure(
+        `static-route:${routePath}:href-blocked-surface:${targetPath}`,
+        `exported route links to a blocked private/admin/source surface: ${blockedPattern}`
+      );
+    }
+
+    if (targetPath.includes('?')) {
+      continue;
+    }
+
+    checkedTargets.add(targetPath);
+    const targetFilePath = staticFilePath(outRoot, targetPath);
+    if (!fs.existsSync(targetFilePath)) {
+      recordFailure(
+        `static-route:${routePath}:href-target-missing:${targetPath}`,
+        `exported route links to a missing static target: ${path.relative(process.cwd(), targetFilePath)}`
+      );
+    }
+  }
+}
+
+function extractAnchorHrefs(html) {
+  const hrefs = [];
+  const anchorPattern = /<a\b[^>]*\bhref=(["'])(.*?)\1/gi;
+  let match;
+  while ((match = anchorPattern.exec(String(html))) !== null) {
+    hrefs.push(decodeHtmlAttribute(match[2]));
+  }
+  return hrefs;
+}
+
+function normalizeInternalHref(href) {
+  const value = String(href ?? '').trim();
+  if (!value || value.startsWith('#')) return null;
+  if (/^(mailto|tel|javascript|data|blob):/i.test(value)) return null;
+
+  let parsed;
+  try {
+    parsed = new URL(value, 'https://architekturkosmos.ch');
+  } catch {
+    recordFailure('static-route:href-invalid-url', `exported route has an invalid href: ${value}`);
+    return null;
+  }
+
+  if (!siteOrigins.has(parsed.origin)) return null;
+  const routePath = `${parsed.pathname}${parsed.search}` || '/';
+  return routePath.startsWith('/') ? routePath : `/${routePath}`;
+}
+
+function decodeHtmlAttribute(value) {
+  return String(value)
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
 }
 
 function staticFilePath(outRoot, routePath) {
@@ -351,6 +487,10 @@ function staticFilePath(outRoot, routePath) {
   const normalized = routePath.replace(/^\/+/, '');
   if (/\.[a-z0-9]+$/i.test(normalized)) return path.join(outRoot, normalized);
   return path.join(outRoot, normalized, 'index.html');
+}
+
+function isHtmlRoute(routePath) {
+  return !/\.(svg|txt|xml)$/i.test(routePath);
 }
 
 function normalizeHtmlText(value) {
@@ -403,6 +543,8 @@ async function main() {
     static_export: {
       status: staticExport.status,
       out_dir: staticExport.out_dir,
+      checked_links: staticExport.checked_links,
+      checked_internal_targets: staticExport.checked_internal_targets,
       checked_text_surface_files: staticExport.checked_text_surface_files
     },
     failures,
