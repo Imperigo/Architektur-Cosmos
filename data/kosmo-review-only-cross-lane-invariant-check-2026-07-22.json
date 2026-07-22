@@ -1,0 +1,1368 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T07:09:29.198Z",
+  "status": "review_only_cross_lane_invariant_check_passed",
+  "policy": {
+    "validates_existing_reports_only": true,
+    "reads_private_content_now": false,
+    "copies_private_content_now": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "writes_public_files_now": false,
+    "writes_training_data_now": false,
+    "writes_embeddings_now": false,
+    "runs_fine_tuning_now": false,
+    "public_ready_after_check": 0
+  },
+  "source_refs": [
+    "data/kosmoreferences-pilot-intake-readiness-pack-2026-07-22.json",
+    "data/kosmoasset-intake-readiness-pack-2026-07-22.json",
+    "data/kosmo-training-eval-rubric-pack-2026-07-22.json",
+    "data/kosmo-training-eval-row-template-2026-07-22.json",
+    "data/kosmo-training-eval-review-queue-plan-2026-07-22.json"
+  ],
+  "summary": {
+    "lanes_checked": 5,
+    "checks": 212,
+    "passed": 212,
+    "failures": 0,
+    "invariant_paths_checked": 186,
+    "public_ready_after_check": 0
+  },
+  "checks": [
+    {
+      "id": "references_intake_readiness:status",
+      "status": "passed",
+      "evidence": "kosmoreferences_pilot_intake_readiness_pack_ready"
+    },
+    {
+      "id": "references_intake_readiness:policy_object",
+      "status": "passed",
+      "evidence": "object"
+    },
+    {
+      "id": "references_intake_readiness:source_refs_present",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "references_intake_readiness:public_ready_after_zero",
+      "status": "passed",
+      "evidence": {
+        "policy": {
+          "public_ready_after_pack": 0
+        },
+        "summary": {
+          "public_ready_assets": 0,
+          "public_ready_after_pack": 0
+        }
+      }
+    },
+    {
+      "id": "asset_intake_readiness:status",
+      "status": "passed",
+      "evidence": "kosmoasset_intake_readiness_pack_ready"
+    },
+    {
+      "id": "asset_intake_readiness:policy_object",
+      "status": "passed",
+      "evidence": "object"
+    },
+    {
+      "id": "asset_intake_readiness:source_refs_present",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "asset_intake_readiness:public_ready_after_zero",
+      "status": "passed",
+      "evidence": {
+        "policy": {
+          "public_ready_after_pack": 0
+        },
+        "summary": {
+          "public_ready_after_pack": 0
+        }
+      }
+    },
+    {
+      "id": "training_eval_rubric:status",
+      "status": "passed",
+      "evidence": "training_eval_rubric_pack_ready"
+    },
+    {
+      "id": "training_eval_rubric:policy_object",
+      "status": "passed",
+      "evidence": "object"
+    },
+    {
+      "id": "training_eval_rubric:source_refs_present",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "training_eval_rubric:public_ready_after_zero",
+      "status": "passed",
+      "evidence": {
+        "policy": {
+          "public_ready_after_pack": 0
+        },
+        "summary": {
+          "public_ready_after_pack": 0
+        }
+      }
+    },
+    {
+      "id": "training_eval_row_template:status",
+      "status": "passed",
+      "evidence": "training_eval_row_template_ready"
+    },
+    {
+      "id": "training_eval_row_template:policy_object",
+      "status": "passed",
+      "evidence": "object"
+    },
+    {
+      "id": "training_eval_row_template:source_refs_present",
+      "status": "passed",
+      "evidence": 1
+    },
+    {
+      "id": "training_eval_row_template:public_ready_after_zero",
+      "status": "passed",
+      "evidence": {
+        "policy": {
+          "public_ready_after_template": 0
+        },
+        "summary": {
+          "public_ready_after_template": 0
+        }
+      }
+    },
+    {
+      "id": "training_eval_review_queue_plan:status",
+      "status": "passed",
+      "evidence": "training_eval_review_queue_plan_ready"
+    },
+    {
+      "id": "training_eval_review_queue_plan:policy_object",
+      "status": "passed",
+      "evidence": "object"
+    },
+    {
+      "id": "training_eval_review_queue_plan:source_refs_present",
+      "status": "passed",
+      "evidence": 3
+    },
+    {
+      "id": "training_eval_review_queue_plan:public_ready_after_zero",
+      "status": "passed",
+      "evidence": {
+        "policy": {
+          "public_ready_after_plan": 0
+        },
+        "summary": {
+          "public_ready_after_plan": 0
+        }
+      }
+    },
+    {
+      "id": "references_intake_readiness.policy.reads_private_content",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.policy.copies_private_content",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.policy.runs_private_inventory_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.policy.writes_public_files",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.policy.public_ready_after_pack",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.summary.public_ready_after_pack",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[6].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[6].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[7].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[0].intake_stages[7].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[6].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[6].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[7].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[1].intake_stages[7].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[6].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[6].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[7].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "references_intake_readiness.pilots[2].intake_stages[7].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.policy.reads_private_content",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.policy.copies_private_content",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.policy.runs_private_inventory_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.policy.uploads_allowed",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.policy.public_ready_after_pack",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.summary.promotion_allowed",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.summary.public_ready_after_pack",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].public_use_allowed",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[0].stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].public_use_allowed",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[1].stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].public_use_allowed",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.pilot_asset_groups[2].stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[0].stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[1].stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[0].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[0].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[1].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[1].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[2].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[2].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[3].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[3].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[4].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[4].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[5].reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "asset_intake_readiness.library_candidate_groups[2].stages[5].public_ready_after_stage",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.policy.writes_training_data_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.policy.writes_embeddings_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.policy.runs_fine_tuning_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.policy.reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.policy.copies_worker_output_bodies",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.policy.public_ready_after_pack",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.summary.writes_training_data_now",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.summary.writes_embeddings_now",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.summary.runs_fine_tuning_now",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.summary.public_ready_after_pack",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.suites[0].public_ready_after_suite",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.suites[1].public_ready_after_suite",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.suites[2].public_ready_after_suite",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.suites[3].public_ready_after_suite",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.suites[4].public_ready_after_suite",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.suites[5].public_ready_after_suite",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_rubric.scoring.automatic_public_release_allowed",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.writes_eval_rows_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.writes_training_data_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.writes_embeddings_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.runs_fine_tuning_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.stores_private_content",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.policy.public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.summary.writes_eval_rows_now",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.summary.writes_training_data_now",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.summary.public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[0].row_stub.public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[0].public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[1].row_stub.public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[1].public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[2].row_stub.public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[2].public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[3].row_stub.public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[3].public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[4].row_stub.public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[4].public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[5].row_stub.public_ready",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_row_template.templates[5].public_ready_after_template",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.writes_eval_rows_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.writes_training_data_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.writes_embeddings_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.runs_fine_tuning_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.reads_private_content_now",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.stores_private_content",
+      "status": "passed",
+      "evidence": false,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.policy.public_ready_after_plan",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "training_eval_review_queue_plan.summary.public_ready_after_plan",
+      "status": "passed",
+      "evidence": 0,
+      "kind": "invariant"
+    },
+    {
+      "id": "cross_lane:pilot_ids_match_asset_bridge",
+      "status": "passed",
+      "evidence": {
+        "references": [
+          "villa-savoye",
+          "kapelle-sogn-benedetg",
+          "alterszentrum-kloster-ingenbohl"
+        ],
+        "assets": [
+          "villa-savoye",
+          "kapelle-sogn-benedetg",
+          "alterszentrum-kloster-ingenbohl"
+        ]
+      }
+    },
+    {
+      "id": "cross_lane:training_suites_match_templates",
+      "status": "passed",
+      "evidence": {
+        "rubric": [
+          "source_grounding_provenance",
+          "architectural_analysis_depth",
+          "asset_schema_quality",
+          "retrieval_answer_quality",
+          "local_worker_output_review",
+          "kosmo_architecture_identity"
+        ],
+        "templates": [
+          "source_grounding_provenance",
+          "architectural_analysis_depth",
+          "asset_schema_quality",
+          "retrieval_answer_quality",
+          "local_worker_output_review",
+          "kosmo_architecture_identity"
+        ]
+      }
+    },
+    {
+      "id": "cross_lane:rights_privacy_review_lane_present",
+      "status": "passed",
+      "evidence": [
+        "candidate_intake",
+        "source_grounding_review",
+        "architecture_quality_review",
+        "rights_privacy_review",
+        "promotion_decision"
+      ]
+    },
+    {
+      "id": "cross_lane:source_grounding_review_lane_present",
+      "status": "passed",
+      "evidence": [
+        "candidate_intake",
+        "source_grounding_review",
+        "architecture_quality_review",
+        "rights_privacy_review",
+        "promotion_decision"
+      ]
+    },
+    {
+      "id": "cross_lane:promotion_decision_lane_present",
+      "status": "passed",
+      "evidence": [
+        "candidate_intake",
+        "source_grounding_review",
+        "architecture_quality_review",
+        "rights_privacy_review",
+        "promotion_decision"
+      ]
+    },
+    {
+      "id": "cross_lane:all_hard_stops_present",
+      "status": "passed",
+      "evidence": [
+        "references_intake_readiness:5",
+        "asset_intake_readiness:6",
+        "training_eval_rubric:4",
+        "training_eval_row_template:5",
+        "training_eval_review_queue_plan:5"
+      ]
+    }
+  ]
+}

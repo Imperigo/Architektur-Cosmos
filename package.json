@@ -182,6 +182,7 @@
     "kosmo:training-eval-row-template-check": "node scripts/kosmo-training-eval-row-template-check.mjs",
     "kosmo:training-eval-review-queue-plan": "node scripts/kosmo-training-eval-review-queue-plan.mjs",
     "kosmo:training-eval-review-queue-plan-check": "node scripts/kosmo-training-eval-review-queue-plan-check.mjs",
+    "kosmo:review-only-cross-lane-invariant-check": "node scripts/kosmo-review-only-cross-lane-invariant-check.mjs",
     "kosmo:architecture-ontology-seed": "node scripts/kosmo-architecture-ontology-seed.mjs",
     "kosmo:architecture-ontology-seed-check": "node scripts/kosmo-architecture-ontology-seed-check.mjs",
     "kosmo:source-root-owner-answer-execution-checklist": "node scripts/kosmo-source-root-owner-answer-execution-checklist.mjs",
