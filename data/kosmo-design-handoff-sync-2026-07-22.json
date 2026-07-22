@@ -1,0 +1,165 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T10:50:13.324Z",
+  "status": "kosmo_design_handoff_sync_review_only_ready",
+  "mode": "review_only",
+  "public_display_allowed": false,
+  "policy": {
+    "sync_only": true,
+    "reads_handoff_text": true,
+    "copies_private_paths": false,
+    "copies_document_bodies": false,
+    "edits_sibling_lane_code": false,
+    "writes_public_files_now": false,
+    "records_owner_decisions": false,
+    "runs_private_inventory_now": false,
+    "executes_local_workers_now": false,
+    "public_ready_after_sync": 0
+  },
+  "source_refs": [
+    {
+      "id": "source_free_queue",
+      "lane": "ArchitectureCosmos",
+      "source_label": "kosmo-source-independent-work-queue-2026-07-22.md"
+    },
+    {
+      "id": "data_lane_sweep",
+      "lane": "KosmoReferences/KosmoAsset",
+      "source_label": "kosmodata-lane-sweep-2026-07-22.md"
+    },
+    {
+      "id": "overseer_sync_board",
+      "lane": "KosmoOverseer",
+      "source_label": "kosmo-overseer-sync-board-2026-07-22.md"
+    },
+    {
+      "id": "claude_overseer_intake",
+      "lane": "Claude/KosmoOverseer",
+      "source_label": "2026-06-16-codex-synergiebericht-338-claude-kosmooverseer-implementation-intake.md"
+    },
+    {
+      "id": "cross_lane_handoff_sync",
+      "lane": "Codex/KosmoDesign",
+      "source_label": "2026-07-01-codex-cross-lane-handoff-sync.md"
+    },
+    {
+      "id": "tkb_program_refresh",
+      "lane": "Claude/KosmoPrepare",
+      "source_label": "2026-07-01-claude-tkb-programm-authentisch-aufgefrischt.md"
+    },
+    {
+      "id": "tkb_ifc_rematerialized",
+      "lane": "Claude/KosmoPublish",
+      "source_label": "2026-07-01-claude-kosmopublish-tkb-rematerialisiert-to-kosmovis.md"
+    },
+    {
+      "id": "tkb_massing_model",
+      "lane": "Claude/KosmoPublish/KosmoVis",
+      "source_label": "2026-07-01-claude-tkb-programm-treues-massenmodell-to-kosmovis.md"
+    }
+  ],
+  "summary": {
+    "inputs": 8,
+    "signals": 8,
+    "handoff_inputs": 6,
+    "privacy_guards": 8,
+    "failures": 0,
+    "public_ready_after_sync": 0
+  },
+  "signals": [
+    {
+      "id": "source_free_queue",
+      "lane": "ArchitectureCosmos",
+      "source_label": "kosmo-source-independent-work-queue-2026-07-22.md",
+      "finding": "Source-free queue has no Codex-executable tasks; fallback work must stay review-only or public-safe.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "data_lane_sweep",
+      "lane": "KosmoReferences/KosmoAsset",
+      "source_label": "kosmodata-lane-sweep-2026-07-22.md",
+      "finding": "References and asset lanes are structurally ready for review, but not promotion.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "overseer_sync_board",
+      "lane": "KosmoOverseer",
+      "source_label": "kosmo-overseer-sync-board-2026-07-22.md",
+      "finding": "Overseer board is current; owner, source-root and private-inventory blockers remain active.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "claude_overseer_intake",
+      "lane": "Claude/KosmoOverseer",
+      "source_label": "2026-06-16-codex-synergiebericht-338-claude-kosmooverseer-implementation-intake.md",
+      "finding": "Claude/KosmoOverseer intake keeps exact staging and owner unlock gates as active coordination boundaries.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "cross_lane_handoff_sync",
+      "lane": "Codex/KosmoDesign",
+      "source_label": "2026-07-01-codex-cross-lane-handoff-sync.md",
+      "finding": "KosmoDesign/KosmoDraw contracts may be consumed, but sibling-lane code must not be silently edited.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "tkb_program_refresh",
+      "lane": "Claude/KosmoPrepare",
+      "source_label": "2026-07-01-claude-tkb-programm-authentisch-aufgefrischt.md",
+      "finding": "TKB program refresh is a private-lane dependency signal for design/render review, not a public data source.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "tkb_ifc_rematerialized",
+      "lane": "Claude/KosmoPublish",
+      "source_label": "2026-07-01-claude-kosmopublish-tkb-rematerialisiert-to-kosmovis.md",
+      "finding": "Geometry-bearing publish output unblocks lane-local render QA, while raw working paths remain non-public.",
+      "review_only": true,
+      "public_display_allowed": false
+    },
+    {
+      "id": "tkb_massing_model",
+      "lane": "Claude/KosmoPublish/KosmoVis",
+      "source_label": "2026-07-01-claude-tkb-programm-treues-massenmodell-to-kosmovis.md",
+      "finding": "Program-faithful massing is suitable for lane-local visual QA, not direct public promotion.",
+      "review_only": true,
+      "public_display_allowed": false
+    }
+  ],
+  "integration_notes": [
+    "Codex may consume KosmoDesign and KosmoDraw contracts and write visible notices, but this sync does not edit sibling-lane code.",
+    "TKB design/render signals remain lane-local review dependencies and cannot be used as public website content or public-ready evidence.",
+    "KosmoReferences and KosmoAsset stay review-only until owner source-root, rights and promotion decisions pass their guards.",
+    "Overseer should route future design/render follow-ups through explicit handoffs before related file edits."
+  ],
+  "blockers": [
+    {
+      "id": "owner_source_root_choice",
+      "status": "owner_action_required",
+      "effect": "Blocks private inventory and private-derived authoring."
+    },
+    {
+      "id": "owner_review_batches",
+      "status": "owner_action_required",
+      "effect": "Blocks promotion of review-only reference and asset candidates."
+    },
+    {
+      "id": "public_ready",
+      "status": "locked_zero",
+      "effect": "No synced signal is public-displayable."
+    }
+  ],
+  "hard_stops": [
+    "Do not treat handoff signals as owner approval.",
+    "Do not copy private source paths or document bodies into public files.",
+    "Do not run private inventory or local workers on private contents from this sync.",
+    "Do not set public-ready."
+  ],
+  "failures": []
+}
