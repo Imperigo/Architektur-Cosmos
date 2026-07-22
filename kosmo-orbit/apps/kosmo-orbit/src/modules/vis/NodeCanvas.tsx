@@ -447,6 +447,15 @@ export function NodeCanvas({
               patchLauf(nodeId, { ...marker, status: 'fertig', bild: j.result.images[0] ?? '', qa: j.result.qa });
             } else if (j.status === 'error') {
               patchLauf(nodeId, { ...marker, status: 'fehler', fehler: 'Render fehlgeschlagen' });
+            } else if (j.status === 'kein-render-worker') {
+              // Matrix-C-1-Fund (v0.9.0): dieser ehrliche Worker-Status wurde
+              // vorher von safeParse abgelehnt und hier still verschluckt —
+              // jetzt landet die Worker-Begründung sichtbar am Node.
+              patchLauf(nodeId, {
+                ...marker,
+                status: 'fehler',
+                fehler: j.message ?? 'Kein Render-Worker auf der HomeStation aktiv (Checkpoint/ComfyUI prüfen).',
+              });
             } else {
               patchLauf(nodeId, { ...marker, status: mappeJobStatus(j) });
             }

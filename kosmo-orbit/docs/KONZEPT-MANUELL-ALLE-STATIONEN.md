@@ -76,8 +76,15 @@ erhalten, gated auf `designOberflaeche === 'manuell'`.
   Eigenschaften-Float).
 - App-weite Gate-Logik: `App.tsx:333/358/362` — `designIslandAktiv =
   screen==='design' && designOberflaeche==='island'`, geht in
-  `bodenDockAusgeblendet` ein (blendet `BodenDock` NUR für
-  design+Island aus).
+  `bodenDockAusgeblendet` ein. **Korrektur (Matrix-C-5-Fund,
+  22.07.2026):** `bodenDockAusgeblendet` (`App.tsx:359-363`) blendet das
+  BodenDock für ALLE VIER Stationen im Island-Modus aus
+  (design/vis/prepare/publish je über ihr `…IslandAktiv`-Flag) — die
+  frühere Formulierung «NUR design+Island» war falsch; die
+  Vier-Stationen-Verallgemeinerung existiert seit v0.8.4 (PC1/PC3/PC4).
+  Zeilennummern-Hinweis: einzelne Locator in diesem Dokument sind seit
+  E-K15/2 um einige Zeilen verschoben (z.B. Einstellungen.tsx-Vis-Checkbox
+  jetzt ~821, Store-Read ~364) — Datei+Sachverhalt bleiben massgeblich.
 
 ### 1.2 Vis (`apps/kosmo-orbit/src/modules/vis/`) — die explizite Referenz
 

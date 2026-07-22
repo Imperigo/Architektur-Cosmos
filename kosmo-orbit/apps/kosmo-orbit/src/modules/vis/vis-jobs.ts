@@ -98,6 +98,10 @@ export function mappeJobStatus(record: { status: string; result?: unknown }): No
       return 'fehler';
     case 'cancelled':
       return 'abgebrochen';
+    case 'kein-render-worker':
+      // Matrix-C-1-Fund (v0.9.0): der ehrliche Worker-Status erreicht jetzt
+      // die App (Vertrag erweitert) — als Fehler anzeigen, nie als Warten.
+      return 'fehler';
     default:
       // Unbekannter/neuer Bridge-Status: ein Wartezustand ist ehrlicher als
       // «rendert» — wir behaupten keine laufende Rechnung (Fable-Auflage 7).

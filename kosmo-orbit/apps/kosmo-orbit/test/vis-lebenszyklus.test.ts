@@ -87,6 +87,12 @@ describe('istAuthFehler (KLEIN 8 — 401/403 nicht mehr still verschlucken)', ()
   });
 });
 
+describe('mappeJobStatus — kein-render-worker (Matrix-C-1-Fund v0.9.0)', () => {
+  it('mappt den ehrlichen Worker-Status auf fehler statt auf einen Wartezustand', () => {
+    expect(mappeJobStatus({ status: 'kein-render-worker' })).toBe('fehler');
+  });
+});
+
 describe('bridgeVermutlichCspGeblockt (KLEIN 9 — LAN-IP ehrlich benennen)', () => {
   const setzeBridge = (url: string | null) => {
     const store: Record<string, string> = url === null ? {} : { 'kosmo.bridge': url };

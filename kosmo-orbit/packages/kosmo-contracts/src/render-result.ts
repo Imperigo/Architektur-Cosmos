@@ -49,6 +49,12 @@ export const RenderJobStatus = z.enum([
   'done',
   'error',
   'cancelled',
+  // Matrix-C-1-Fund (v0.9.0, 22.07.2026): der ComfyUI-Worker schreibt diesen
+  // ehrlichen Status seit E-R (kein Checkpoint/ComfyUI nicht erreichbar) —
+  // er fehlte hier aber, wodurch `RenderJob.safeParse` in der App JEDE
+  // solche Antwort ablehnte und der Poll den Zustand still verschluckte.
+  // Gleiches Muster wie `kein-blender-worker` in `blender-sim.ts`.
+  'kein-render-worker',
 ]);
 
 /**

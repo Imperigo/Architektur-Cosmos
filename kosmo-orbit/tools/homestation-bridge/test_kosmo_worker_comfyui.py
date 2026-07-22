@@ -467,9 +467,42 @@ check("(j) Auslastung nicht messbar (kein nvidia-smi) ⇒ sicherheitshalber nich
 
 
 # ---------------------------------------------------------------------------
+# (j) Live-Abbruch WAEHREND des ComfyUI-Pollens (Matrix-C-1-Fund 22.07.2026):
+#     bereit_nach=3 haelt den Mock zwei /history-Polls lang unfertig — der
+#     nach Claim gesetzte cancelled-Status MUSS vom on_tick-Waechter
+#     (_AbgebrochenWaehrendPoll) VOR der Fertigstellung erkannt werden.
+#     Beweis gegen (b): dort war der Mock nach 1 Poll fertig, der Abbruch
+#     griff erst am Schritt-3-Read — hier darf /view NIE aufgerufen werden.
+# ---------------------------------------------------------------------------
+mock_j = starte_mock([CHECKPOINT], bereit_nach=3)
+try:
+    store_j = neuer_store()
+    job_id_j, dir_j = neuer_job(store_j, "9000-jjj", neue_scene())
+    comfy_j = w.ComfyUIClient(mock_j.base_url)
+
+    def abbrechen_nach_claim_j(job_dir: Path) -> None:
+        aktuell = json.loads((job_dir / "job.json").read_text(encoding="utf-8"))
+        aktuell["status"] = "cancelled"
+        aktuell["message"] = "Vom Nutzer abgebrochen (Live-Poll-Test-Hook)."
+        (job_dir / "job.json").write_text(json.dumps(aktuell, indent=2), encoding="utf-8")
+
+    bericht_j = w.fuehre_pass_aus(
+        store_j, comfy_j, idle_immer(), "comfyui-worker", CHECKPOINT, 0.01, 5.0,
+        nach_uebernahme_hook=abbrechen_nach_claim_j,
+    )
+    record_j = lies_record(dir_j)
+    check("(j) Live-Abbruch: Bericht vermerkt den Abbruch", job_id_j in bericht_j.abgebrochen)
+    check("(j) Live-Abbruch: Status bleibt cancelled", record_j["status"] == "cancelled")
+    check("(j) Live-Abbruch: /view wurde NIE aufgerufen (Poll wurde frueh verlassen)", len(mock_j.view_aufrufe) == 0)
+    check("(j) Live-Abbruch: KEINE render-result.json geschrieben", not (dir_j / "render-result.json").exists())
+finally:
+    stoppe_mock(mock_j)
+
+
+# ---------------------------------------------------------------------------
 # Aufräumen (Verzeichnisse dieser Tests) + Abschluss
 # ---------------------------------------------------------------------------
-for pfad in (store_a, store_b, store_c, store_d, store_e, store_f, store_h, store_i, kaputter_store.parent):
+for pfad in (store_a, store_b, store_c, store_d, store_e, store_f, store_h, store_i, store_j, kaputter_store.parent):
     shutil.rmtree(pfad, ignore_errors=True)
 
 print(f"\n{_zaehler - len(failures)}/{_zaehler} Prüfungen bestanden.")
@@ -477,5 +510,14 @@ if failures:
     print("FEHLGESCHLAGEN:")
     for f in failures:
         print(f"  - {f}")
-    sys.exit(1)
-sys.exit(0)
+
+# Matrix-C-1-Fund (22.07.2026): `sys.exit()` auf Modulebene liess `python3 -m
+# pytest` beim Einsammeln mit INTERNALERROR (unerwarteter SystemExit)
+# abstuerzen. Als Skript bleibt der Exit-Code erhalten; unter pytest melden
+# die bereits gelaufenen Pruefungen ihr Ergebnis als EIN Sammel-Testfall.
+if __name__ == "__main__":
+    sys.exit(1 if failures else 0)
+
+
+def test_kosmo_worker_suite() -> None:
+    assert not failures, f"{len(failures)}/{_zaehler} Prüfungen rot: {failures}"

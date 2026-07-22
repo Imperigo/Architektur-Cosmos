@@ -171,6 +171,13 @@ WantedBy=multi-user.target
 ```
 
 `sudo tee /etc/systemd/system/kosmo-render-worker.service`:
+> **VOR dem Kopieren lesen (Matrix-C-2-Befund 22.07.2026):** **`--store`-Pfad muss WORTGLEICH mit dem `kosmo-bridge.service`-`--store`
+> übereinstimmen** (`docs/VPN-HOMEPC-ANLEITUNG.md` §9 zeigt die Bridge-Unit
+> — falls sie dort ohne explizites `--store` läuft, prüfen, welchen Pfad
+> `_store_fuer()`/`KOSMO_JOB_STORE` tatsächlich wählt, und denselben hier
+> eintragen — sonst bleibt jeder Job für immer `queued`, der Worker sieht ihn
+> nie, siehe `docs/HOMESTATION-ANDOCKEN.md` Fehlertabelle Zeile 2).
+
 ```ini
 [Unit]
 Description=KosmoOrbit Render-Worker (ComfyUI-Adapter, V090-SPEZ E-R)
@@ -195,12 +202,6 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-**`--store`-Pfad muss WORTGLEICH mit dem `kosmo-bridge.service`-`--store`
-übereinstimmen** (`docs/VPN-HOMEPC-ANLEITUNG.md` §9 zeigt die Bridge-Unit
-— falls sie dort ohne explizites `--store` läuft, prüfen, welchen Pfad
-`_store_fuer()`/`KOSMO_JOB_STORE` tatsächlich wählt, und denselben hier
-eintragen — sonst bleibt jeder Job für immer `queued`, der Worker sieht ihn
-nie, siehe `docs/HOMESTATION-ANDOCKEN.md` Fehlertabelle Zeile 2).
 
 **GPU-Idle-Fenster als Owner-Parameter** (Default im Worker: Zeitfenster
 22–06 Uhr, Auslastungsschwelle 10 % via `nvidia-smi`) — überschreibbar:
