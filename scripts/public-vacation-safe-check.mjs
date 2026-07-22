@@ -9,6 +9,8 @@ const args = parseArgs(process.argv.slice(2));
 const reportRoot = resolve(root, args['report-dir'] || '.tmp/public-vacation-safe-check');
 const keepReports = Boolean(args['keep-reports']);
 const requireStaticExport = Boolean(args['require-static-export']);
+const publicStaticExportSmokeJson = resolve(reportRoot, 'public-static-export-smoke.generated.json');
+const publicStaticExportSmokeMarkdown = resolve(reportRoot, 'public-static-export-smoke.generated.md');
 
 const checks = [
   {
@@ -37,9 +39,9 @@ const checks = [
       'node',
       'scripts/public-static-export-smoke.mjs',
       '--output',
-      resolve(reportRoot, 'public-static-export-smoke.generated.json'),
+      publicStaticExportSmokeJson,
       '--markdown',
-      resolve(reportRoot, 'public-static-export-smoke.generated.md')
+      publicStaticExportSmokeMarkdown
     ],
     requiresOut: true,
     purpose: 'Checks existing exported public routes for content sentinels, private/source markers and missing _next/static assets.'
@@ -148,8 +150,11 @@ const checks = [
       '--out',
       resolve(reportRoot, 'kosmo-review-only-publication-fence.generated.json'),
       '--markdown',
-      resolve(reportRoot, 'kosmo-review-only-publication-fence.generated.md')
+      resolve(reportRoot, 'kosmo-review-only-publication-fence.generated.md'),
+      '--publicStaticSmoke',
+      publicStaticExportSmokeJson
     ],
+    requiresOut: true,
     purpose: 'Verifies owner-pending and review-only reports cannot promote public-ready state.'
   },
   {
