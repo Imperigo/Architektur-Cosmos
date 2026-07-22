@@ -8,7 +8,7 @@
     "build:fresh": "rm -rf .next out && next build && node scripts/next-static-export-assets.mjs",
     "start": "next start",
     "lint": "eslint .",
-    "public:gate-check": "node scripts/public-demo-gate-check.mjs",
+    "public:gate-check": "npm run public:route-manifest-check && node scripts/public-demo-gate-check.mjs",
     "public:demo-gate-require-static-export-negative-smoke": "node scripts/public-demo-gate-require-static-export-negative-smoke.mjs",
     "public:demo-gate-static-link-negative-smoke": "node scripts/public-demo-gate-static-link-negative-smoke.mjs",
     "public:demo-gate-static-sentinel-negative-smoke": "node scripts/public-demo-gate-static-sentinel-negative-smoke.mjs",
