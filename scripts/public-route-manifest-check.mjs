@@ -165,6 +165,7 @@ function checkRoute(route) {
       checkSentinel(path, kind, value);
     }
   }
+  checkSentinelDuplicates(path, includes, rawIncludes);
 
   if (route.minBodyLength !== undefined && (!Number.isInteger(route.minBodyLength) || route.minBodyLength < 1)) {
     failures.push({
@@ -256,6 +257,26 @@ function checkSentinel(path, kind, value) {
       id: `route:${path}:${kind}:private-pattern`,
       detail: `Route ${path} sentinel matches private/source leak patterns: ${leakMatches.join(', ')}`
     });
+  }
+}
+
+function checkSentinelDuplicates(path, includes, rawIncludes) {
+  const seen = new Map();
+  for (const [kind, values] of [['includes', includes], ['rawIncludes', rawIncludes]]) {
+    for (const value of values) {
+      if (typeof value !== 'string') continue;
+      const normalized = value.trim();
+      if (!normalized) continue;
+      const previousKind = seen.get(normalized);
+      if (previousKind) {
+        failures.push({
+          id: `route:${path}:${kind}:duplicate`,
+          detail: `Route ${path} repeats sentinel ${JSON.stringify(normalized)} in ${previousKind} and ${kind}.`
+        });
+      } else {
+        seen.set(normalized, kind);
+      }
+    }
   }
 }
 

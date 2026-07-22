@@ -59,6 +59,9 @@ function runSmoke() {
     'route:/assets/#debug:fragment-or-query',
     'route:/../private/:dot-segment',
     'route:/assets\\private/:backslash',
+    'route:/ak-symbol.svg:includes:empty',
+    'route:/ak-symbol.svg:includes:duplicate',
+    'route:/ak-symbol.svg:rawIncludes:duplicate',
     'route:/bad-min/:min-body-length'
   ];
   const missingFailures = requiredFailures.filter((id) => !failedIds.has(id));
@@ -94,6 +97,7 @@ function renderSyntheticManifest() {
     "  { path: '/assets/#debug', includes: ['Synthetic fragment route'] },",
     "  { path: '/../private/', includes: ['Synthetic dot segment route'] },",
     "  { path: '/assets\\\\private/', includes: ['Synthetic backslash route'] },",
+    "  { path: '/ak-symbol.svg', includes: ['', 'Kosmo public symbol', 'Kosmo public symbol'], rawIncludes: ['Kosmo public symbol'] },",
     "  { path: '/bad-min/', includes: ['Synthetic bad minimum'], minBodyLength: 0 },",
     '];',
     ''
