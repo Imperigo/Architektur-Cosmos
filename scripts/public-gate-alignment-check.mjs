@@ -12,32 +12,38 @@ const requiredGateCommands = [
   {
     id: 'route_manifest',
     command: 'npm run public:route-manifest-check',
-    coveredByVacationSafe: 'scripts/public-route-manifest-check.mjs'
+    coveredByVacationSafe: 'scripts/public-route-manifest-check.mjs',
+    negativeSmoke: 'scripts/public-route-manifest-negative-smoke.mjs'
   },
   {
     id: 'navigation_canon',
     command: 'npm run public:navigation-canon-check',
-    coveredByVacationSafe: 'scripts/public-navigation-canon-check.mjs'
+    coveredByVacationSafe: 'scripts/public-navigation-canon-check.mjs',
+    negativeSmoke: 'scripts/public-navigation-canon-negative-smoke.mjs'
   },
   {
     id: 'demo_gate',
     command: 'node scripts/public-demo-gate-check.mjs',
-    coveredByVacationSafe: 'scripts/public-demo-gate-check.mjs'
+    coveredByVacationSafe: 'scripts/public-demo-gate-check.mjs',
+    negativeSmoke: 'scripts/public-demo-gate-static-sentinel-negative-smoke.mjs'
   },
   {
     id: 'static_link',
     command: 'node scripts/public-static-link-check.mjs --allow-missing-out',
-    coveredByVacationSafe: 'scripts/public-static-link-check.mjs'
+    coveredByVacationSafe: 'scripts/public-static-link-check.mjs',
+    negativeSmoke: 'scripts/public-static-link-negative-smoke.mjs'
   },
   {
     id: 'static_asset_surface',
     command: 'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
-    coveredByVacationSafe: 'scripts/public-static-asset-surface-check.mjs'
+    coveredByVacationSafe: 'scripts/public-static-asset-surface-check.mjs',
+    negativeSmoke: 'scripts/public-static-asset-surface-negative-smoke.mjs'
   },
   {
     id: 'entry_detail_dossier',
     command: 'npm run public:entry-detail-dossier-check',
-    coveredByVacationSafe: 'scripts/public-entry-detail-dossier-check.mjs'
+    coveredByVacationSafe: 'scripts/public-entry-detail-dossier-check.mjs',
+    negativeSmoke: 'scripts/public-entry-detail-dossier-negative-smoke.mjs'
   }
 ];
 
@@ -91,6 +97,13 @@ for (const required of requiredGateCommands) {
       detail: `public-vacation-safe-check.mjs must cover ${required.coveredByVacationSafe}.`
     });
   }
+
+  if (!vacationSafeSource.includes(required.negativeSmoke)) {
+    failures.push({
+      id: `vacation-safe:${required.id}:negative-smoke-coverage`,
+      detail: `public-vacation-safe-check.mjs must cover the negative smoke ${required.negativeSmoke}.`
+    });
+  }
 }
 
 for (const command of gateCommands) {
@@ -123,7 +136,8 @@ const report = {
     starts_server: false,
     writes_public_ready: false,
     verifies_static_gate_shape: true,
-    verifies_vacation_safe_coverage: true
+    verifies_vacation_safe_coverage: true,
+    verifies_negative_smoke_coverage: true
   },
   inputs: {
     package_json: relative(root, packagePath),
@@ -137,6 +151,7 @@ const report = {
   },
   gate_commands: gateCommands,
   required_gate_commands: requiredGateCommands.map((item) => item.command),
+  required_negative_smokes: requiredGateCommands.map((item) => item.negativeSmoke),
   failures
 };
 

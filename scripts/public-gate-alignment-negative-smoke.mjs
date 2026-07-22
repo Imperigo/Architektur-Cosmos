@@ -19,11 +19,17 @@ const cleanGateScript = [
 
 const cleanVacationSafeSource = [
   "command: ['node', 'scripts/public-demo-gate-check.mjs']",
+  "command: ['node', 'scripts/public-demo-gate-static-sentinel-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-route-manifest-check.mjs']",
+  "command: ['node', 'scripts/public-route-manifest-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-navigation-canon-check.mjs']",
+  "command: ['node', 'scripts/public-navigation-canon-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-static-link-check.mjs']",
+  "command: ['node', 'scripts/public-static-link-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-static-asset-surface-check.mjs']",
-  "command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']"
+  "command: ['node', 'scripts/public-static-asset-surface-negative-smoke.mjs']",
+  "command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']",
+  "command: ['node', 'scripts/public-entry-detail-dossier-negative-smoke.mjs']"
 ].join('\n');
 
 const cases = [
@@ -76,6 +82,12 @@ const cases = [
     gateScript: cleanGateScript,
     vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']", ''),
     expectedFailures: ['vacation-safe:entry_detail_dossier:coverage']
+  },
+  {
+    id: 'missing_negative_smoke_coverage',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-static-link-negative-smoke.mjs']", ''),
+    expectedFailures: ['vacation-safe:static_link:negative-smoke-coverage']
   }
 ];
 
