@@ -6,10 +6,16 @@ import { dirname, relative, resolve } from 'node:path';
 const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const dateStamp = new Date().toISOString().slice(0, 10);
+const allowOwnerBlocked = args.allowOwnerBlocked === true ||
+  args['allow-owner-blocked'] === true ||
+  args.mode === 'owner-blocked';
+const outputSlug = allowOwnerBlocked
+  ? 'kosmo-owner-unlock-pipeline-blocked-safety-check'
+  : 'kosmo-owner-unlock-pipeline-checkpoint-check';
 
 const checkpointPath = resolve(root, args.checkpoint || `data/kosmo-owner-unlock-pipeline-checkpoint-${dateStamp}.json`);
-const outputJson = resolve(root, args.out || `data/kosmo-owner-unlock-pipeline-checkpoint-check-${dateStamp}.json`);
-const outputMd = resolve(root, args.markdown || `docs/codex/kosmo-owner-unlock-pipeline-checkpoint-check-${dateStamp}.md`);
+const outputJson = resolve(root, args.out || `data/${outputSlug}-${dateStamp}.json`);
+const outputMd = resolve(root, args.markdown || `docs/codex/${outputSlug}-${dateStamp}.md`);
 
 main().catch((error) => {
   console.error(error);
@@ -18,16 +24,23 @@ main().catch((error) => {
 
 async function main() {
   const checkpoint = await readJson(checkpointPath);
-  const checks = buildChecks(checkpoint);
+  const checks = allowOwnerBlocked
+    ? buildOwnerBlockedSafetyChecks(checkpoint)
+    : buildChecks(checkpoint);
   const failures = checks.filter((checkItem) => checkItem.status === 'failed');
   const report = {
     schema_version: '0.1',
     generated_at: new Date().toISOString(),
     status: failures.length === 0
-      ? 'owner_unlock_pipeline_checkpoint_guard_passed'
-      : 'owner_unlock_pipeline_checkpoint_guard_failed',
+      ? (allowOwnerBlocked
+          ? 'owner_unlock_pipeline_checkpoint_blocked_safety_guard_passed'
+          : 'owner_unlock_pipeline_checkpoint_guard_passed')
+      : (allowOwnerBlocked
+          ? 'owner_unlock_pipeline_checkpoint_blocked_safety_guard_failed'
+          : 'owner_unlock_pipeline_checkpoint_guard_failed'),
     policy: {
       validates_checkpoint_only: true,
+      owner_blocked_safety_mode: allowOwnerBlocked,
       records_decisions: false,
       writes_intake_file_now: false,
       mutates_session_files_now: false,
@@ -88,6 +101,46 @@ function buildChecks(checkpoint) {
     check('session_apply_smoke_passed', checkpoint.summary?.session_apply_guard_smoke_status === 'owner_unlock_session_apply_guard_smoke_passed', checkpoint.summary?.session_apply_guard_smoke_status),
     check('session_apply_smoke_mode_applied', checkpoint.summary?.session_apply_guard_smoke_mode === 'applied_matches_preview', checkpoint.summary?.session_apply_guard_smoke_mode),
     check('session_apply_smoke_allows_private_diagnostic', checkpoint.summary?.session_apply_guard_smoke_private_diagnostic_allowed === true, checkpoint.summary?.session_apply_guard_smoke_private_diagnostic_allowed),
+    check('session_apply_smoke_no_real_write', checkpoint.summary?.session_apply_guard_smoke_writes_real_session === false, checkpoint.summary?.session_apply_guard_smoke_writes_real_session),
+    check('post_source_readiness_ready', checkpoint.summary?.post_source_readiness_status === 'post_source_root_metadata_readiness_pack_ready', checkpoint.summary?.post_source_readiness_status),
+    check('post_source_readiness_guard_passed', checkpoint.summary?.post_source_readiness_guard_status === 'post_source_root_metadata_readiness_pack_guard_passed', checkpoint.summary?.post_source_readiness_guard_status),
+    check('post_source_readiness_blocked_now_positive', Number(checkpoint.summary?.post_source_readiness_blocked_now || 0) > 0, checkpoint.summary?.post_source_readiness_blocked_now),
+    check('post_source_readiness_inventory_guard_safe', [
+      'private_metadata_inventory_guard_passed',
+      'private_metadata_inventory_guard_failed'
+    ].includes(checkpoint.summary?.post_source_readiness_inventory_guard_status), checkpoint.summary?.post_source_readiness_inventory_guard_status),
+    check('applies_decision_now_false', checkpoint.summary?.applies_decision_now === false, checkpoint.summary?.applies_decision_now),
+    check('component_public_ready_zero', (checkpoint.components || []).every((component) => component.public_ready_after_component === 0), (checkpoint.components || []).filter((component) => component.public_ready_after_component !== 0).map((component) => component.id).join(',')),
+    check('hard_stop_no_approval', hardStops.includes('owner approval'), hardStops),
+    check('hard_stop_no_private_content', hardStops.includes('private content'), hardStops),
+    check('hard_stop_no_inventory', hardStops.includes('private inventory'), hardStops),
+    check('hard_stop_no_public_ready', hardStops.includes('public-ready'), hardStops)
+  ];
+}
+
+function buildOwnerBlockedSafetyChecks(checkpoint) {
+  const hardStops = (checkpoint.hard_stops || []).join(' ').toLowerCase();
+  const guardChecks = Number(checkpoint.summary?.guard_checks || 0);
+  const guardChecksPassed = Number(checkpoint.summary?.guard_checks_passed || 0);
+  return [
+    check('status_ready_or_owner_blocked', [
+      'owner_unlock_pipeline_checkpoint_ready',
+      'owner_unlock_pipeline_checkpoint_attention_required'
+    ].includes(checkpoint.status), checkpoint.status),
+    check('policy_checkpoint_only', checkpoint.policy?.checkpoint_only === true, checkpoint.policy?.checkpoint_only),
+    check('policy_no_decisions', checkpoint.policy?.records_decisions === false, checkpoint.policy?.records_decisions),
+    check('policy_no_intake_write', checkpoint.policy?.writes_intake_file_now === false, checkpoint.policy?.writes_intake_file_now),
+    check('policy_no_session_mutation', checkpoint.policy?.mutates_session_files_now === false, checkpoint.policy?.mutates_session_files_now),
+    check('policy_no_commands_now', checkpoint.policy?.executes_commands_now === false, checkpoint.policy?.executes_commands_now),
+    check('policy_no_private_reads', checkpoint.policy?.reads_private_content_now === false, checkpoint.policy?.reads_private_content_now),
+    check('policy_no_inventory_now', checkpoint.policy?.runs_private_inventory_now === false, checkpoint.policy?.runs_private_inventory_now),
+    check('public_ready_zero', checkpoint.summary?.public_ready_after_checkpoint === 0, checkpoint.summary?.public_ready_after_checkpoint),
+    check('twenty_nine_components', checkpoint.summary?.components === 29, checkpoint.summary?.components),
+    check('some_component_ready', Number(checkpoint.summary?.components_ready || 0) > 0, `${checkpoint.summary?.components_ready}/${checkpoint.summary?.components}`),
+    check('owner_blocked_all_present_guards_passed', guardChecks === guardChecksPassed, `${guardChecksPassed}/${guardChecks}`),
+    check('owner_reply_not_applied', ['pending', 'broad_intent_seen_exact_reply_not_applied'].includes(checkpoint.summary?.owner_reply_state), checkpoint.summary?.owner_reply_state),
+    check('source_root_blocked', String(checkpoint.summary?.source_root_state || '').includes('blocked'), checkpoint.summary?.source_root_state),
+    check('session_preview_no_writes_now', checkpoint.summary?.session_edit_preview_writes_now === false, checkpoint.summary?.session_edit_preview_writes_now),
     check('session_apply_smoke_no_real_write', checkpoint.summary?.session_apply_guard_smoke_writes_real_session === false, checkpoint.summary?.session_apply_guard_smoke_writes_real_session),
     check('post_source_readiness_ready', checkpoint.summary?.post_source_readiness_status === 'post_source_root_metadata_readiness_pack_ready', checkpoint.summary?.post_source_readiness_status),
     check('post_source_readiness_guard_passed', checkpoint.summary?.post_source_readiness_guard_status === 'post_source_root_metadata_readiness_pack_guard_passed', checkpoint.summary?.post_source_readiness_guard_status),
