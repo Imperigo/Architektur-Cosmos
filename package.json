@@ -23,6 +23,8 @@
     "public:route-gate-alignment-check": "node scripts/public-route-gate-alignment-check.mjs",
     "public:route-manifest-check": "node scripts/public-route-manifest-check.mjs",
     "public:route-manifest-negative-smoke": "node scripts/public-route-manifest-negative-smoke.mjs",
+    "public:app-route-source-policy-check": "node scripts/public-app-route-source-policy-check.mjs",
+    "public:app-route-source-policy-negative-smoke": "node scripts/public-app-route-source-policy-negative-smoke.mjs",
     "public:copy-canon-check": "node scripts/public-copy-canon-check.mjs",
     "public:explorer-canon-check": "node scripts/public-explorer-canon-check.mjs",
     "public:atlas-pilot-canon-check": "node scripts/public-atlas-pilot-canon-check.mjs",

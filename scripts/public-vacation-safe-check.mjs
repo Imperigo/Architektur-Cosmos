@@ -53,6 +53,16 @@ const checks = [
     purpose: 'Verifies the public route manifest guard rejects synthetic duplicate, private/source, missing-source and malformed route entries.'
   },
   {
+    id: 'public_app_route_source_policy',
+    command: ['node', 'scripts/public-app-route-source-policy-check.mjs'],
+    purpose: 'Checks public app route source files for private/source path patterns, manifest coverage and approved dynamic Atlas slug sources.'
+  },
+  {
+    id: 'public_app_route_source_policy_negative_smoke',
+    command: ['node', 'scripts/public-app-route-source-policy-negative-smoke.mjs'],
+    purpose: 'Verifies the app route source policy guard rejects synthetic private/source routes, missing manifest coverage and unsupported dynamic routes.'
+  },
+  {
     id: 'public_route_link_fetch_negative_smoke',
     command: ['node', 'scripts/public-route-link-fetch-negative-smoke.mjs'],
     purpose: 'Verifies the live public route link smoke writes structured fetch findings when the demo server is unreachable.'
