@@ -319,7 +319,17 @@ Spezial-Untermenü verschieben — ok?).
 > geöffnet werden können z.b»
 **Bereich:** PlanView-Anzeige (Zoom-abhängige Textskalierung) + derive
 (Druckmass) — zwei Ebenen sauber trennen. **Aufwand:** L. **Status:**
-offen.
+ANZEIGE-EBENE ERLEDIGT (ROADMAP 607, E-K27a): `zoomTextFs()` klemmt die
+fünf welt-fixen PlanView-Schriften (Dim-Labels, Plan-/Unternehmer-Texte,
+Achskopf, Ortho-Hinweis) auf 1.8–5 mm Bildschirm; passt ein Mass nicht
+mehr zwischen seine Ticks, verdichtet es zu einem Punktsymbol
+(`dim-verdichtet`) statt sich zu überlagern; Masskette-Bildschirm-Spiegel
+als echte Masslinie mit Verlängerungslinien + Pro-Segment-Labels
+(K18-Folgeteil). Beweis `e2e/zoom-text.spec.ts`, Goldens byte-still.
+OFFEN bleibt die DRUCK-Ebene (derive/plansvg-Textmasse je Massstab) —
+deklarierter eigener Golden-Zug einer Folgeversion (V090-SPEZ Nicht-Ziel);
+Pop-up-Blasen-Idee des Owners bewusst zurückgestellt (Punktsymbol ist
+die minimale ehrliche Verdichtung).
 
 ### K28 · S.8 — Raumstempel-Umrahmung zu massiv, Farbe prüfen
 > «raumstempel umrahmung aktuell sehr massiv, und warum diese farbe?»

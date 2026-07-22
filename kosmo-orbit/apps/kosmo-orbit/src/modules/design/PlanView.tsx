@@ -159,6 +159,28 @@ const ZONE_VERLETZT_WARN_FARBE = 'var(--k-warning-2)';
 // ist ein anderer Ton).
 const RAUMGRAPH_FARBE = 'var(--k-graph)';
 
+/**
+ * E-K27a (v0.9.0, Owner-Register K27 ANZEIGE-Ebene, wörtlich: «je nach
+ * ansicht muss du text kleiner oder grösser machen solche textfelde sind
+ * mind 1.8mm bis max. 5mm gross (wie archicad, das es leserlich ist)»):
+ * welt-fixe Plan-Schrift wuchs bisher ungebremst mit dem Zoom. Dieser
+ * Klammer-Helfer hält die BILDSCHIRM-Grösse im Band 1.8–5 mm
+ * (Papier-Äquivalent bei 96 dpi); innerhalb des Bands bleibt die Schrift
+ * exakt wie bisher (kein Byte Unterschied bei mittleren Zoomstufen).
+ * Rückgabe in Welt-Einheiten fürs SVG. Die DRUCK-Schrift (derive/plansvg)
+ * ist bewusst unberührt — K27-Druckmass ist deklariertes Nicht-Ziel mit
+ * eigenem Golden-Zug (V090-SPEZ §E-K27a); Goldens bleiben byte-still.
+ */
+const PX_PRO_MM = 96 / 25.4;
+const ZOOMTEXT_MIN_PX = 1.8 * PX_PRO_MM;
+const ZOOMTEXT_MAX_PX = 5 * PX_PRO_MM;
+function zoomTextFs(fsWelt: number, scale: number): number {
+  const px = fsWelt * scale;
+  if (px < ZOOMTEXT_MIN_PX) return ZOOMTEXT_MIN_PX / scale;
+  if (px > ZOOMTEXT_MAX_PX) return ZOOMTEXT_MAX_PX / scale;
+  return fsWelt;
+}
+
 export function PlanView({
   handlers,
   onLod,
@@ -1435,7 +1457,7 @@ export function PlanView({
                   x={t.at.x}
                   y={-t.at.y}
                   textAnchor="middle"
-                  fontSize={220}
+                  fontSize={zoomTextFs(220, view.scale)}
                   fontFamily="ui-monospace, monospace"
                   fill={UNTERNEHMERPLAN_OVERLAY_FARBE}
                 >
@@ -1662,39 +1684,79 @@ export function PlanView({
               der Kommentar-Marker oben — geht NICHT durch `derivePlan()`,
               keine Golden betroffen. Kein Sichtbarkeits-Filter (nur für
               Kommentare beauftragt, §8 C-26). */}
+          {/* E-K27a: Der Spiegel ist keine gestrichelte Auf-Punkt-Linie mehr,
+              sondern eine echte Masslinie mit Verlängerungslinien und
+              Pro-Segment-Labels — dieselbe Geometrie-Idee wie im plansvg-
+              Druckweg (602: Abstand/Luft/Überstand in Papier-mm, +90°-
+              Normale). Am Bildschirm ist «Papier» nicht definiert, darum
+              zoom-neutral in Bildschirm-px (X / view.scale). Druck-Wahrheit
+              bleibt plansvg; die Punkt-Kreise bleiben welt-fix als
+              Griff-Marker der Klickkette. */}
           <g data-testid="plan-massketten">
             {doc
               .byKind<MassKette>('masskette')
               .filter((mk) => mk.storeyId === activeStoreyId)
               .map((mk) => {
-                let gesamt = 0;
-                for (let i = 1; i < mk.punkte.length; i++) {
-                  gesamt += Math.hypot(mk.punkte[i]!.x - mk.punkte[i - 1]!.x, mk.punkte[i]!.y - mk.punkte[i - 1]!.y);
-                }
-                const mitte = mk.punkte[Math.floor((mk.punkte.length - 1) / 2)]!;
+                const abstand = 26 / view.scale;
+                const luft = 4 / view.scale;
+                const ueberstand = 8 / view.scale;
+                const strich = 1.1 / view.scale;
                 return (
                   <g key={mk.id} data-testid="plan-masskette">
-                    <path
-                      d={`M ${mk.punkte.map((p) => `${p.x} ${-p.y}`).join(' L ')}`}
-                      fill="none"
-                      stroke="var(--k-ink-soft)"
-                      strokeWidth={14}
-                      strokeDasharray={dashWelt(DASH.achseWohn, 100)}
-                    />
+                    {mk.punkte.slice(1).map((b, i) => {
+                      const a = mk.punkte[i]!;
+                      const len = Math.hypot(b.x - a.x, b.y - a.y);
+                      if (len < 1) return null;
+                      const nx = -(b.y - a.y) / len;
+                      const ny = (b.x - a.x) / len;
+                      const mx = (a.x + b.x) / 2 + nx * (abstand + 10 / view.scale);
+                      const my = (a.y + b.y) / 2 + ny * (abstand + 10 / view.scale);
+                      return (
+                        <g key={i}>
+                          <line
+                            data-testid="mk-hilfslinie"
+                            x1={a.x + nx * luft}
+                            y1={-(a.y + ny * luft)}
+                            x2={a.x + nx * (abstand + ueberstand)}
+                            y2={-(a.y + ny * (abstand + ueberstand))}
+                            stroke="var(--k-ink-soft)"
+                            strokeWidth={strich}
+                          />
+                          <line
+                            data-testid="mk-hilfslinie"
+                            x1={b.x + nx * luft}
+                            y1={-(b.y + ny * luft)}
+                            x2={b.x + nx * (abstand + ueberstand)}
+                            y2={-(b.y + ny * (abstand + ueberstand))}
+                            stroke="var(--k-ink-soft)"
+                            strokeWidth={strich}
+                          />
+                          <line
+                            data-testid="mk-masslinie"
+                            x1={a.x + nx * abstand}
+                            y1={-(a.y + ny * abstand)}
+                            x2={b.x + nx * abstand}
+                            y2={-(b.y + ny * abstand)}
+                            stroke="var(--k-ink-soft)"
+                            strokeWidth={strich}
+                          />
+                          <text
+                            x={mx}
+                            y={-my}
+                            textAnchor="middle"
+                            fontSize={11 / view.scale}
+                            fontFamily="var(--k-font-mono)"
+                            fill="var(--k-ink-soft)"
+                            pointerEvents="none"
+                          >
+                            {formatLength(Math.round(len))}
+                          </text>
+                        </g>
+                      );
+                    })}
                     {mk.punkte.map((p, i) => (
-                      <circle key={i} cx={p.x} cy={-p.y} r={36} fill="var(--k-ink-soft)" />
+                      <circle key={`p${i}`} cx={p.x} cy={-p.y} r={36} fill="var(--k-ink-soft)" />
                     ))}
-                    <text
-                      x={mitte.x}
-                      y={-mitte.y - 90 / view.scale}
-                      textAnchor="middle"
-                      fontSize={11 / view.scale}
-                      fontFamily="var(--k-font-mono)"
-                      fill="var(--k-ink-soft)"
-                      pointerEvents="none"
-                    >
-                      {formatLength(Math.round(gesamt))}
-                    </text>
                   </g>
                 );
               })}
@@ -1760,7 +1822,7 @@ export function PlanView({
                 x={t.at.x}
                 y={-t.at.y + (t.zeile ?? 0) * 300}
                 textAnchor="middle"
-                fontSize={220}
+                fontSize={zoomTextFs(220, view.scale)}
                 fontFamily="ui-monospace, monospace"
                 fill="var(--k-ink)"
               >
@@ -1797,7 +1859,7 @@ export function PlanView({
                           x={p.x}
                           y={-p.y + 100}
                           textAnchor="middle"
-                          fontSize={300}
+                          fontSize={zoomTextFs(300, view.scale)}
                           fill="var(--k-ink-soft)"
                           fontFamily="var(--k-font-mono)"
                         >
@@ -1868,14 +1930,28 @@ export function PlanView({
                   {c.ticks.slice(0, -1).map((t, i) => {
                     const next = c.ticks[i + 1]!;
                     const mid = (t + next) / 2;
-                    const fs = innen ? 240 : 280;
+                    // E-K27a: Schrift im 1.8–5mm-Band; passt das Mass nicht
+                    // mehr zwischen seine Ticks (Overlap-Fall des Owner-
+                    // Befunds), VERDICHTET es zu einem Punktsymbol statt
+                    // sich mit den Nachbarn zu überlagern — der Wert bleibt
+                    // über die Aussenkette/Masskette erreichbar.
+                    const fs = zoomTextFs(innen ? 240 : 280, view.scale);
+                    const label = dimensionLabel(t, next);
+                    const labelBreite = label.length * 0.62 * fs;
+                    if (labelBreite > (next - t) * 0.92) {
+                      return c.axis === 'x' ? (
+                        <circle key={`t${i}`} data-testid="dim-verdichtet" cx={mid} cy={-c.offset - 120} r={fs * 0.18} stroke="none" />
+                      ) : (
+                        <circle key={`t${i}`} data-testid="dim-verdichtet" cx={c.offset - 120} cy={-mid} r={fs * 0.18} stroke="none" />
+                      );
+                    }
                     return c.axis === 'x' ? (
                       <text key={`t${i}`} x={mid} y={-c.offset - 120} textAnchor="middle" fontSize={fs} stroke="none" fontFamily="var(--k-font-mono)">
-                        {dimensionLabel(t, next)}
+                        {label}
                       </text>
                     ) : (
                       <text key={`t${i}`} x={c.offset - 120} y={-mid} textAnchor="middle" fontSize={fs} stroke="none" fontFamily="var(--k-font-mono)" transform={`rotate(-90 ${c.offset - 120} ${-mid})`}>
-                        {dimensionLabel(t, next)}
+                        {label}
                       </text>
                     );
                   })}
@@ -2235,7 +2311,7 @@ export function PlanView({
                   data-testid="ortho-hinweis"
                   x={cursor.x + 340}
                   y={-cursor.y - 340}
-                  fontSize={200}
+                  fontSize={zoomTextFs(200, view.scale)}
                   fill="var(--k-success)"
                   fontFamily="var(--k-font-mono)"
                 >
