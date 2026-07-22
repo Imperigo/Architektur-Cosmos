@@ -14,6 +14,7 @@ const cleanGateScript = [
   'node scripts/public-demo-gate-check.mjs',
   'node scripts/public-static-link-check.mjs --allow-missing-out',
   'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
+  'node scripts/public-static-sitemap-check.mjs --allow-missing-out',
   'npm run public:entry-detail-dossier-check',
   'npm run public:gate-alignment-check'
 ].join(' && ');
@@ -34,6 +35,8 @@ const cleanVacationSafeSource = [
   "command: ['node', 'scripts/public-client-bundle-privacy-diagnostic-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-static-asset-surface-check.mjs']",
   "command: ['node', 'scripts/public-static-asset-surface-negative-smoke.mjs']",
+  "command: ['node', 'scripts/public-static-sitemap-check.mjs']",
+  "command: ['node', 'scripts/public-static-sitemap-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']",
   "command: ['node', 'scripts/public-entry-detail-dossier-negative-smoke.mjs']"
 ].join('\n');
@@ -43,7 +46,7 @@ const cases = [
     id: 'missing_route_manifest',
     gateScript: 'node scripts/public-demo-gate-check.mjs && node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
     vacationSafeSource: cleanVacationSafeSource,
-    expectedFailures: ['gate:route_manifest:missing', 'gate:route_gate_alignment:missing', 'gate:navigation_canon:missing', 'gate:demo_gate:order', 'gate:static_link:missing', 'gate:static_asset_surface:order', 'gate:entry_detail_dossier:missing']
+    expectedFailures: ['gate:route_manifest:missing', 'gate:route_gate_alignment:missing', 'gate:navigation_canon:missing', 'gate:demo_gate:order', 'gate:static_link:missing', 'gate:static_asset_surface:order', 'gate:static_sitemap:missing', 'gate:entry_detail_dossier:missing']
   },
   {
     id: 'wrong_order',
@@ -54,6 +57,7 @@ const cases = [
       'npm run public:navigation-canon-check',
       'node scripts/public-static-link-check.mjs --allow-missing-out',
       'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
+      'node scripts/public-static-sitemap-check.mjs --allow-missing-out',
       'npm run public:entry-detail-dossier-check'
     ].join(' && '),
     vacationSafeSource: cleanVacationSafeSource,
@@ -63,7 +67,7 @@ const cases = [
     id: 'missing_allow_missing_out',
     gateScript: 'npm run public:route-manifest-check && npm run public:route-gate-alignment-check && npm run public:navigation-canon-check && node scripts/public-demo-gate-check.mjs && node scripts/public-static-asset-surface-check.mjs && npm run public:entry-detail-dossier-check',
     vacationSafeSource: cleanVacationSafeSource,
-    expectedFailures: ['gate:static_link:missing', 'gate:static_asset_surface:missing', 'gate:unexpected-command:node-scripts-public-static-asset-surface-check-mjs']
+    expectedFailures: ['gate:static_link:missing', 'gate:static_asset_surface:missing', 'gate:static_sitemap:missing', 'gate:unexpected-command:node-scripts-public-static-asset-surface-check-mjs']
   },
   {
     id: 'static_link_missing_allow_missing_out',
@@ -74,10 +78,26 @@ const cases = [
       'node scripts/public-demo-gate-check.mjs',
       'node scripts/public-static-link-check.mjs',
       'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
+      'node scripts/public-static-sitemap-check.mjs --allow-missing-out',
       'npm run public:entry-detail-dossier-check'
     ].join(' && '),
     vacationSafeSource: cleanVacationSafeSource,
     expectedFailures: ['gate:static_link:missing', 'gate:unexpected-command:node-scripts-public-static-link-check-mjs']
+  },
+  {
+    id: 'static_sitemap_missing_allow_missing_out',
+    gateScript: [
+      'npm run public:route-manifest-check',
+      'npm run public:route-gate-alignment-check',
+      'npm run public:navigation-canon-check',
+      'node scripts/public-demo-gate-check.mjs',
+      'node scripts/public-static-link-check.mjs --allow-missing-out',
+      'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
+      'node scripts/public-static-sitemap-check.mjs',
+      'npm run public:entry-detail-dossier-check'
+    ].join(' && '),
+    vacationSafeSource: cleanVacationSafeSource,
+    expectedFailures: ['gate:static_sitemap:missing', 'gate:unexpected-command:node-scripts-public-static-sitemap-check-mjs']
   },
   {
     id: 'forbidden_live_check',
@@ -105,6 +125,18 @@ const cases = [
     gateScript: cleanGateScript,
     vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-route-gate-alignment-negative-smoke.mjs']", ''),
     expectedFailures: ['vacation-safe:route_gate_alignment:negative-smoke-coverage']
+  },
+  {
+    id: 'missing_static_sitemap_coverage',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-static-sitemap-check.mjs']", ''),
+    expectedFailures: ['vacation-safe:static_sitemap:coverage']
+  },
+  {
+    id: 'missing_static_sitemap_negative_smoke_coverage',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-static-sitemap-negative-smoke.mjs']", ''),
+    expectedFailures: ['vacation-safe:static_sitemap:negative-smoke-coverage']
   },
   {
     id: 'missing_gate_alignment_negative_smoke_coverage',

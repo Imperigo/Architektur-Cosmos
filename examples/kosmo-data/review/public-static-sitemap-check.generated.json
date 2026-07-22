@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-01T11:08:49.131Z",
+  "generated_at": "2026-07-22T13:32:57.055Z",
   "generator": "public-static-sitemap-check",
   "status": "public_static_sitemap_check_passed",
   "policy": {
@@ -19,7 +19,8 @@
     "expected_sitemap_paths": 118,
     "actual_sitemap_paths": 118,
     "duplicate_sitemap_paths": 0,
-    "failed_checks": 0
+    "failed_checks": 0,
+    "public_ready_after_check": 0
   },
   "expected_sitemap_paths": [
     "/",

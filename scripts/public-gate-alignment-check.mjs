@@ -46,6 +46,12 @@ const requiredGateCommands = [
     negativeSmoke: 'scripts/public-static-asset-surface-negative-smoke.mjs'
   },
   {
+    id: 'static_sitemap',
+    command: 'node scripts/public-static-sitemap-check.mjs --allow-missing-out',
+    coveredByVacationSafe: 'scripts/public-static-sitemap-check.mjs',
+    negativeSmoke: 'scripts/public-static-sitemap-negative-smoke.mjs'
+  },
+  {
     id: 'entry_detail_dossier',
     command: 'npm run public:entry-detail-dossier-check',
     coveredByVacationSafe: 'scripts/public-entry-detail-dossier-check.mjs',

@@ -1,6 +1,6 @@
 # Public Static Sitemap Check
 
-Generated: 2026-07-01T11:08:49.131Z
+Generated: 2026-07-22T13:32:57.055Z
 Status: `public_static_sitemap_check_passed`
 
 Checks the exported robots.txt and sitemap.xml against the public route allowlist and mock-entry Atlas slugs without starting a server, reading private source contents or changing public-ready state.

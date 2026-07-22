@@ -8,7 +8,7 @@
     "build:fresh": "rm -rf .next out && next build && node scripts/next-static-export-assets.mjs",
     "start": "next start",
     "lint": "eslint .",
-    "public:gate-check": "npm run public:route-manifest-check && npm run public:route-gate-alignment-check && npm run public:navigation-canon-check && node scripts/public-demo-gate-check.mjs && node scripts/public-static-link-check.mjs --allow-missing-out && node scripts/public-static-asset-surface-check.mjs --allow-missing-out && npm run public:entry-detail-dossier-check && npm run public:gate-alignment-check",
+    "public:gate-check": "npm run public:route-manifest-check && npm run public:route-gate-alignment-check && npm run public:navigation-canon-check && node scripts/public-demo-gate-check.mjs && node scripts/public-static-link-check.mjs --allow-missing-out && node scripts/public-static-asset-surface-check.mjs --allow-missing-out && node scripts/public-static-sitemap-check.mjs --allow-missing-out && npm run public:entry-detail-dossier-check && npm run public:gate-alignment-check",
     "public:gate-alignment-check": "node scripts/public-gate-alignment-check.mjs",
     "public:gate-alignment-negative-smoke": "node scripts/public-gate-alignment-negative-smoke.mjs",
     "public:demo-gate-require-static-export-negative-smoke": "node scripts/public-demo-gate-require-static-export-negative-smoke.mjs",

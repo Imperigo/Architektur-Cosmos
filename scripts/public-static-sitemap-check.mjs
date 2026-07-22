@@ -12,6 +12,7 @@ const outRoot = resolve(root, args.out || 'out');
 const siteUrl = String(args['site-url'] || 'https://architekturkosmos.ch').replace(/\/$/, '');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-data/review/public-static-sitemap-check.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-data/review/public-static-sitemap-check.generated.md');
+const allowMissingOut = Boolean(args['allow-missing-out']);
 
 const requiredTopLevelPaths = ['/', '/atlas/', '/references/', '/assets/', '/orbit/', '/archive/'];
 const expectedSitemapPaths = [
@@ -26,7 +27,49 @@ main().catch((error) => {
 
 async function main() {
   if (!existsSync(outRoot)) {
-    throw new Error(`Static export not found: ${relative(root, outRoot)}. Run npm run build first.`);
+    if (!allowMissingOut) {
+      throw new Error(`Static export not found: ${relative(root, outRoot)}. Run npm run build first or pass --allow-missing-out.`);
+    }
+
+    const report = {
+      schema_version: '0.1',
+      generated_at: new Date().toISOString(),
+      generator: 'public-static-sitemap-check',
+      status: 'public_static_sitemap_check_skipped_missing_out',
+      policy: {
+        source_free: true,
+        reads_private_content: false,
+        writes_public_ready: false,
+        starts_server: false,
+        scans_static_export_only: true,
+        allow_missing_out: true
+      },
+      inputs: {
+        out_dir: relative(root, outRoot),
+        site_url: siteUrl,
+        public_entry_count: entries.length
+      },
+      summary: {
+        expected_sitemap_paths: expectedSitemapPaths.length,
+        actual_sitemap_paths: 0,
+        duplicate_sitemap_paths: 0,
+        failed_checks: 0,
+        public_ready_after_check: 0
+      },
+      expected_sitemap_paths: expectedSitemapPaths,
+      actual_sitemap_paths: [],
+      checks: [],
+      warnings: [
+        {
+          id: 'static_export_missing',
+          detail: `Static export not found: ${relative(root, outRoot)}. Sitemap coverage was skipped because --allow-missing-out was passed.`
+        }
+      ]
+    };
+
+    await writeReport(report);
+    printReport(report);
+    return;
   }
 
   const robotsPath = resolve(outRoot, 'robots.txt');
@@ -96,27 +139,39 @@ async function main() {
       expected_sitemap_paths: expectedSitemapPaths.length,
       actual_sitemap_paths: sitemapPaths.length,
       duplicate_sitemap_paths: duplicatePaths.length,
-      failed_checks: failedChecks.length
+      failed_checks: failedChecks.length,
+      public_ready_after_check: 0
     },
     expected_sitemap_paths: expectedSitemapPaths,
     actual_sitemap_paths: sitemapPaths,
     checks
   };
 
+  await writeReport(report);
+  printReport(report);
+
+  if (failedChecks.length > 0) process.exit(1);
+}
+
+async function writeReport(report) {
   await Promise.all([
     mkdir(dirname(outputJsonPath), { recursive: true }),
     mkdir(dirname(outputMdPath), { recursive: true })
   ]);
-  await writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  await writeFile(outputMdPath, renderMarkdown(report), 'utf8');
+  await Promise.all([
+    writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8'),
+    writeFile(outputMdPath, renderMarkdown(report), 'utf8')
+  ]);
+}
 
+function printReport(report) {
+  const failedChecks = Number(report.summary.failed_checks || 0);
+  const checkCount = Array.isArray(report.checks) ? report.checks.length : 0;
   console.log('Public static sitemap check');
   console.log(`Status: ${report.status}`);
   console.log(`Sitemap paths: ${report.summary.actual_sitemap_paths}/${report.summary.expected_sitemap_paths}`);
-  console.log(`Checks: ${checks.length - failedChecks.length}/${checks.length}`);
+  console.log(`Checks: ${checkCount - failedChecks}/${checkCount}`);
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
-
-  if (failedChecks.length > 0) process.exit(1);
 }
 
 function extractLocs(value) {
