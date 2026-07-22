@@ -259,8 +259,9 @@ sind ungültig).
   ComfyUI gemeldeter Ist-Wert. Nur `pct: 1.0` bei `status: done` ist exakt.
   Ein künftiger Ausbau auf echte Websocket-Progress-Events ist offen.
 - **Keine geometrie-treue Konditionierung.** `render.faithful`
-  (ControlNet-Stärke laut Vertrag) wird aus `render-scene.json` gelesen,
-  aber der minimale Txt2Img-Graph dieses Adapters reicht das GLB/die
+  (ControlNet-Stärke laut Vertrag) wird von diesem minimalen Adapter derzeit
+  komplett ignoriert (`baue_prompt_graph` liest das Feld nicht einmal aus),
+  und der Txt2Img-Graph reicht das GLB/die
   Geometrie NICHT an ComfyUI weiter (kein Tiefen-/Normalen-Pass, kein
   ControlNet-Node). Der Render folgt aktuell nur dem Text-Prompt — eine
   geometrie-treue Veredelung (das eigentliche KosmoVis-Zielbild) braucht

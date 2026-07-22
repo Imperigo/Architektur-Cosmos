@@ -72,8 +72,8 @@ KSampler → VAEDecode → SaveImage) übersetzt. **Offene Owner-Frage
 dieser Worker rendert NUR, wenn `--checkpoint`/`KOSMO_RENDER_WORKER_CHECKPOINT`
 gesetzt UND in ComfyUI vorhanden ist, sonst `kein-render-worker`. Eine
 geometrie-treue ControlNet-/Tiefenpass-Konditionierung aus dem GLB ist NICHT
-Teil dieses minimalen Adapters (`render.faithful` wird gelesen, aber noch
-nicht an ComfyUI weitergereicht) — dokumentierte Lücke, kein verschwiegenes
+Teil dieses minimalen Adapters (`render.faithful` wird derzeit komplett
+ignoriert — weder gelesen noch weitergereicht, Matrix-C-2-Praezisierung) — dokumentierte Lücke, kein verschwiegenes
 Verhalten.
 
 Aufruf:
