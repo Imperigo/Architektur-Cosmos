@@ -11,6 +11,8 @@ const tempRoot = resolve(root, args['tmp-dir'] || '.tmp/public-static-link-negat
 const keepTemp = Boolean(args['keep-temp']);
 const blockedHref = '/_overseer/private-source.pdf';
 const missingHref = '/atlas/missing-public-route/';
+const cssAssetHref = '/_next/static/css/public-static-link-negative-smoke.css';
+const missingCssAssetHref = '/_next/static/media/missing-public-static-link-negative-smoke.woff2';
 const coreLinks = ['/', '/references/', '/assets/', '/atlas/', '/orbit/'];
 
 try {
@@ -29,6 +31,14 @@ function runSmoke() {
 
   const htmlRoutes = publicRouteChecks.filter((route) => isHtmlRoute(route.path));
   htmlRoutes.forEach((route) => writeRoute(outRoot, route.path, renderRouteHtml(route.path)));
+  writeFile(outRoot, cssAssetHref, [
+    '/* synthetic source-root marker for public static link guard */',
+    '@font-face {',
+    '  font-family: "KosmoSynthetic";',
+    `  src: url("${missingCssAssetHref}") format("woff2");`,
+    '}',
+    ''
+  ].join('\n'));
 
   const outputPath = resolve(tempRoot, 'report.json');
   const markdownPath = resolve(tempRoot, 'report.md');
@@ -65,7 +75,9 @@ function runSmoke() {
     `/:href_leak_pattern:${blockedHref}`,
     `${blockedHref}:target_path_leak_patterns`,
     `${blockedHref}:target_missing`,
-    `${missingHref}:target_missing`
+    `${missingHref}:target_missing`,
+    `${cssAssetHref}:static_asset_content_leak_patterns`,
+    `${missingCssAssetHref}:static_asset_missing`
   ];
   const missingFailures = requiredFailures.filter((id) => !failedIds.has(id));
 
@@ -80,6 +92,8 @@ function runSmoke() {
     starts_server: false,
     blocked_href: blockedHref,
     missing_href: missingHref,
+    css_asset_href: cssAssetHref,
+    missing_css_asset_href: missingCssAssetHref,
     expected_failed_checks: requiredFailures,
     observed_failed_checks: [...failedIds].sort(),
     report_path: keepTemp ? relative(root, outputPath) : null
@@ -98,6 +112,7 @@ function renderRouteHtml(routePath) {
     '<head>',
     '  <meta charset="utf-8">',
     `  <title>Architecture Cosmos synthetic route ${routePath}</title>`,
+    routePath === '/' ? `  <link rel="stylesheet" href="${cssAssetHref}">` : '',
     '</head>',
     '<body>',
     ...links.map((href) => `  <a href="${href}">${href}</a>`),
@@ -108,6 +123,10 @@ function renderRouteHtml(routePath) {
 }
 
 function writeRoute(outRoot, routePath, body) {
+  writeFile(outRoot, routePath, body);
+}
+
+function writeFile(outRoot, routePath, body) {
   const filePath = routeFilePath(outRoot, routePath);
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, body, 'utf8');

@@ -198,6 +198,14 @@ function checkStaticAsset(path) {
       id: `${path}:static_asset_missing`,
       detail: `Expected referenced static asset to exist in export: ${relative(root, filePath)}`
     });
+  } else if (isTextStaticAsset(path)) {
+    const bodyLeakMatches = publicLeakMatches(readFileSync(filePath, 'utf8'));
+    if (bodyLeakMatches.length > 0) {
+      failures.push({
+        id: `${path}:static_asset_content_leak_patterns`,
+        detail: `Blocked private/source patterns in exported static asset content: ${bodyLeakMatches.join(', ')}`
+      });
+    }
   }
   return {
     path,
@@ -344,6 +352,10 @@ function decodeUrlPath(path) {
 
 function isHtmlRoute(path) {
   return !/\.(svg|txt|xml)$/i.test(path);
+}
+
+function isTextStaticAsset(path) {
+  return /\.(css|html|json|svg|txt|xml)$/i.test(String(path || '').split('?')[0].split('#')[0]);
 }
 
 function decodeHtmlAttribute(value) {
