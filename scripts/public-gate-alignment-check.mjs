@@ -16,6 +16,12 @@ const requiredGateCommands = [
     negativeSmoke: 'scripts/public-route-manifest-negative-smoke.mjs'
   },
   {
+    id: 'route_gate_alignment',
+    command: 'npm run public:route-gate-alignment-check',
+    coveredByVacationSafe: 'scripts/public-route-gate-alignment-check.mjs',
+    negativeSmoke: 'scripts/public-route-gate-alignment-negative-smoke.mjs'
+  },
+  {
     id: 'navigation_canon',
     command: 'npm run public:navigation-canon-check',
     coveredByVacationSafe: 'scripts/public-navigation-canon-check.mjs',
