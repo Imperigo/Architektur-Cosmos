@@ -199,6 +199,24 @@ const checks = [
     purpose: 'Verifies the static link guard rejects synthetic private/source hrefs and missing internal route targets.'
   },
   {
+    id: 'public_client_bundle_privacy_diagnostic',
+    command: [
+      'node',
+      'scripts/public-client-bundle-privacy-diagnostic.mjs',
+      '--output',
+      resolve(reportRoot, 'public-client-bundle-privacy-diagnostic.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-client-bundle-privacy-diagnostic.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Runs a report-only scan of exported client bundles for public leak patterns without writing excerpts or promoting public-ready state.'
+  },
+  {
+    id: 'public_client_bundle_privacy_diagnostic_negative_smoke',
+    command: ['node', 'scripts/public-client-bundle-privacy-diagnostic-negative-smoke.mjs'],
+    purpose: 'Verifies the client-bundle diagnostic stays report-only while flagging synthetic local/private markers and ignoring public /home/ URLs.'
+  },
+  {
     id: 'public_static_asset_surface_check',
     command: [
       'node',

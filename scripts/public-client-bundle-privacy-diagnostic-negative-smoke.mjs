@@ -82,6 +82,9 @@ function runSmoke() {
   if (report.summary?.public_ready_after_check !== 0) {
     throw new Error('Expected public_ready_after_check to stay 0.');
   }
+  if (report.policy?.review_only !== true || report.policy?.public_display_allowed !== false) {
+    throw new Error('Expected diagnostic report policy to stay review_only and public_display_allowed false.');
+  }
 
   console.log(JSON.stringify({
     status: 'passed',

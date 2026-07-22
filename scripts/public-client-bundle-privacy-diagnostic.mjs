@@ -55,7 +55,9 @@ async function buildDiagnosticReport() {
       starts_server: false,
       scans_static_export_only: true,
       report_only: true,
+      review_only: true,
       hard_gate: false,
+      public_display_allowed: false,
       includes_bundle_excerpt: false,
       filters_bare_public_home_routes: true,
       scan_max_bytes: maxScanBytes
@@ -99,7 +101,9 @@ function skippedMissingBundleReport() {
       starts_server: false,
       scans_static_export_only: true,
       report_only: true,
+      review_only: true,
       hard_gate: false,
+      public_display_allowed: false,
       includes_bundle_excerpt: false,
       filters_bare_public_home_routes: true,
       scan_max_bytes: maxScanBytes
