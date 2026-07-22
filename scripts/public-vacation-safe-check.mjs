@@ -123,6 +123,11 @@ const checks = [
     purpose: 'Keeps the Cloudflare Worker in Static Assets mode with read-only public API routes and no live D1/R2/upload bindings.'
   },
   {
+    id: 'public_worker_boundary_negative_smoke',
+    command: ['node', 'scripts/public-worker-boundary-negative-smoke.mjs'],
+    purpose: 'Verifies the public Worker boundary guard rejects synthetic D1/R2 bindings, admin/upload routes, write methods, secrets and external fetches.'
+  },
+  {
     id: 'public_static_route_inventory',
     command: [
       'node',

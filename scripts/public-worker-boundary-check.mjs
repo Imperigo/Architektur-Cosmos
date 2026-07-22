@@ -8,8 +8,10 @@ const root = process.cwd();
 const args = parseArgs(process.argv.slice(2));
 const outputJson = resolve(root, args.output || 'examples/kosmo-data/review/public-worker-boundary-check.generated.json');
 const outputMd = resolve(root, args.markdown || 'examples/kosmo-data/review/public-worker-boundary-check.generated.md');
-const wranglerPath = resolve(root, 'wrangler.jsonc');
-const workerPath = resolve(root, 'src/worker.ts');
+const wranglerPath = resolve(root, args.wrangler || 'wrangler.jsonc');
+const workerPath = resolve(root, args.worker || 'src/worker.ts');
+const wranglerDisplayPath = displayPath(wranglerPath);
+const workerDisplayPath = displayPath(workerPath);
 
 const allowedApiRoutes = new Set([
   '/api/entries.json',
@@ -110,7 +112,7 @@ async function main() {
 function checkWrangler() {
   const findings = [];
   if (!existsSync(wranglerPath)) {
-    return [finding('wrangler_missing', 'wrangler.jsonc', 1, 'wrangler.jsonc is required for the Cloudflare Static Assets deploy.')];
+    return [finding('wrangler_missing', wranglerDisplayPath, 1, 'wrangler.jsonc is required for the Cloudflare Static Assets deploy.')];
   }
 
   const source = readFileSync(wranglerPath, 'utf8');
@@ -123,13 +125,13 @@ function checkWrangler() {
   for (const key of blockedWranglerKeys) {
     const pattern = new RegExp(`"${escapeRegExp(key)}"\\s*:`);
     if (pattern.test(withoutComments)) {
-      findings.push(finding(`wrangler_forbidden_${key}`, 'wrangler.jsonc', lineNumberAt(source, source.indexOf(key)), `Forbidden live binding/config key for static public Worker: ${key}.`));
+      findings.push(finding(`wrangler_forbidden_${key}`, wranglerDisplayPath, lineNumberAt(source, source.indexOf(key)), `Forbidden live binding/config key for static public Worker: ${key}.`));
     }
   }
 
   const mainMatch = source.match(/^\s*"main"\s*:\s*"([^"]+)"/m);
   if (mainMatch && mainMatch[1] !== './src/worker.ts') {
-    findings.push(finding('wrangler_unexpected_main', 'wrangler.jsonc', lineNumberAt(source, source.search(/^\s*"main"/m)), 'Unexpected Worker main entry. Keep the lightweight src/worker.ts shell.'));
+    findings.push(finding('wrangler_unexpected_main', wranglerDisplayPath, lineNumberAt(source, source.search(/^\s*"main"/m)), 'Unexpected Worker main entry. Keep the lightweight src/worker.ts shell.'));
   }
 
   return findings;
@@ -138,7 +140,7 @@ function checkWrangler() {
 function checkWorker() {
   const findings = [];
   if (!existsSync(workerPath)) {
-    return [finding('worker_missing', 'src/worker.ts', 1, 'src/worker.ts is required for the read-only API shell.')];
+    return [finding('worker_missing', workerDisplayPath, 1, 'src/worker.ts is required for the read-only API shell.')];
   }
 
   const source = readFileSync(workerPath, 'utf8');
@@ -149,23 +151,23 @@ function checkWorker() {
 
   const methodLiterals = stringLiteralsMatching(source, /\b(?:method|Access-Control-Allow-Methods)\b[\s\S]{0,80}(['"`])([A-Z]+)\1/g);
   for (const method of methodLiterals.filter((method) => !['GET', 'OPTIONS'].includes(method))) {
-    findings.push(finding(`worker_forbidden_method_${method.toLowerCase()}`, 'src/worker.ts', lineNumberAt(source, source.indexOf(method)), `Forbidden public Worker method: ${method}.`));
+    findings.push(finding(`worker_forbidden_method_${method.toLowerCase()}`, workerDisplayPath, lineNumberAt(source, source.indexOf(method)), `Forbidden public Worker method: ${method}.`));
   }
 
   const apiRoutes = stringLiteralsMatching(source, /(['"`])(\/api\/[^'"`]+)\1/g);
   for (const route of apiRoutes) {
     if (blockedRouteFragments.some((fragment) => route.startsWith(fragment))) {
-      findings.push(finding(`worker_blocked_route_${slugify(route)}`, 'src/worker.ts', lineNumberAt(source, source.indexOf(route)), `Forbidden private/admin/upload Worker route: ${route}.`));
+      findings.push(finding(`worker_blocked_route_${slugify(route)}`, workerDisplayPath, lineNumberAt(source, source.indexOf(route)), `Forbidden private/admin/upload Worker route: ${route}.`));
     }
     if (!allowedApiRoutes.has(route)) {
-      findings.push(finding(`worker_unknown_route_${slugify(route)}`, 'src/worker.ts', lineNumberAt(source, source.indexOf(route)), `Unexpected public Worker API route. Add an explicit review before exposing: ${route}.`));
+      findings.push(finding(`worker_unknown_route_${slugify(route)}`, workerDisplayPath, lineNumberAt(source, source.indexOf(route)), `Unexpected public Worker API route. Add an explicit review before exposing: ${route}.`));
     }
   }
 
   for (const blocked of blockedWorkerPatterns) {
     const match = blocked.pattern.exec(source);
     if (match) {
-      findings.push(finding(blocked.id, 'src/worker.ts', lineNumberAt(source, match.index), blocked.reason));
+      findings.push(finding(blocked.id, workerDisplayPath, lineNumberAt(source, match.index), blocked.reason));
     }
   }
 
@@ -174,7 +176,7 @@ function checkWorker() {
   if (/\btype\s+Env\s*=\s*\{[\s\S]*?\}/.test(source)) {
     const envBlock = source.match(/\btype\s+Env\s*=\s*\{[\s\S]*?\}/)?.[0] || '';
     if (!/ASSETS\s*:\s*AssetsBinding/.test(envBlock) || envBlock.split('\n').filter((line) => /^[\sA-Z0-9_]+:/.test(line)).length > 1) {
-      findings.push(finding('worker_env_extra_bindings', 'src/worker.ts', lineNumberAt(source, source.indexOf('type Env')), 'Worker Env must not add live D1/R2/KV/service bindings without an owner architecture decision.'));
+      findings.push(finding('worker_env_extra_bindings', workerDisplayPath, lineNumberAt(source, source.indexOf('type Env')), 'Worker Env must not add live D1/R2/KV/service bindings without an owner architecture decision.'));
     }
   }
 
@@ -188,7 +190,7 @@ function checkExternalFetchCalls(source) {
       const isGlobalFetchCall = /(^|[^\w.])fetch\s*\(/.test(line);
       if (!isGlobalFetchCall) return [];
       if (/fetch\s*\(\s*_?request\s*[:),]/.test(line)) return [];
-      return [finding('external_fetch', 'src/worker.ts', index + 1, 'The public Worker should serve bundled static data and ASSETS only.')];
+      return [finding('external_fetch', workerDisplayPath, index + 1, 'The public Worker should serve bundled static data and ASSETS only.')];
     });
 }
 
@@ -199,7 +201,7 @@ function requirePattern(findings, source, pattern, id, reason) {
 }
 
 function inferFileForId(id) {
-  return id.startsWith('wrangler') ? 'wrangler.jsonc' : 'src/worker.ts';
+  return id.startsWith('wrangler') ? wranglerDisplayPath : workerDisplayPath;
 }
 
 function finding(id, file, line, reason) {
@@ -231,6 +233,11 @@ function escapeRegExp(value) {
 
 function slugify(value) {
   return value.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'route';
+}
+
+function displayPath(path) {
+  const normalized = relative(root, path) || path;
+  return normalized.startsWith('..') ? path : normalized;
 }
 
 function renderMarkdown(report) {

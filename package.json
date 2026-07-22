@@ -41,6 +41,7 @@
     "public:navigation-canon-negative-smoke": "node scripts/public-navigation-canon-negative-smoke.mjs",
     "public:runtime-boundary-check": "node scripts/public-runtime-boundary-check.mjs",
     "public:worker-boundary-check": "node scripts/public-worker-boundary-check.mjs",
+    "public:worker-boundary-negative-smoke": "node scripts/public-worker-boundary-negative-smoke.mjs",
     "public:leak-pattern-negative-smoke": "node scripts/public-leak-pattern-negative-smoke.mjs",
     "public:vacation-safe-public-ready-negative-smoke": "node scripts/public-vacation-safe-public-ready-negative-smoke.mjs",
     "public:sitemap-route-leak-check": "node scripts/public-sitemap-route-leak-check.mjs",

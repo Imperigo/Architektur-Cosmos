@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T07:41:13.742Z",
+  "generator": "public-worker-boundary-check",
+  "status": "public_worker_boundary_check_passed",
+  "policy": {
+    "source_free": true,
+    "reads_private_content": false,
+    "writes_public_ready": false,
+    "starts_server": false,
+    "static_assets_worker": true,
+    "api_read_only": true
+  },
+  "summary": {
+    "allowed_api_routes": 7,
+    "failed_findings": 0,
+    "public_ready_after_check": 0
+  },
+  "findings": []
+}
