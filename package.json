@@ -36,6 +36,7 @@
     "public:static-sitemap-check": "node scripts/public-static-sitemap-check.mjs",
     "public:static-sitemap-negative-smoke": "node scripts/public-static-sitemap-negative-smoke.mjs",
     "public:navigation-canon-check": "node scripts/public-navigation-canon-check.mjs",
+    "public:navigation-canon-negative-smoke": "node scripts/public-navigation-canon-negative-smoke.mjs",
     "public:runtime-boundary-check": "node scripts/public-runtime-boundary-check.mjs",
     "public:worker-boundary-check": "node scripts/public-worker-boundary-check.mjs",
     "public:leak-pattern-negative-smoke": "node scripts/public-leak-pattern-negative-smoke.mjs",

@@ -84,6 +84,11 @@ const checks = [
     purpose: 'Keeps the shared public header navigation aligned with the route manifest and private/source leak rules.'
   },
   {
+    id: 'public_navigation_canon_negative_smoke',
+    command: ['node', 'scripts/public-navigation-canon-negative-smoke.mjs'],
+    purpose: 'Verifies the public navigation canon guard rejects duplicate links, private/source hrefs, missing PublicArea coverage and blank labels.'
+  },
+  {
     id: 'public_runtime_boundary',
     command: [
       'node',

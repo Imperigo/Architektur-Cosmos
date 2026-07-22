@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 import ts from 'typescript';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
 import { publicRouteChecks } from './public-route-manifest.mjs';
 
 const root = process.cwd();
-const headerPath = resolve(root, 'components/public/PublicSiteHeader.tsx');
+const args = parseArgs(process.argv.slice(2));
+const headerPath = resolve(root, args.header || 'components/public/PublicSiteHeader.tsx');
 const source = readFileSync(headerPath, 'utf8');
 const sourceFile = ts.createSourceFile(headerPath, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 const publicRouteSet = new Set(publicRouteChecks.map((route) => route.path));
@@ -90,6 +91,7 @@ const failedFindings = findings.filter((finding) => !finding.passed);
 const summary = {
   status: failedFindings.length === 0 ? 'passed' : 'failed',
   checked_navigation_items: items.length,
+  header_path: relative(root, headerPath),
   required_core_navigation_paths: requiredCoreNav,
   public_area_ids: [...publicAreaIds].sort(),
   navigation_items: items,
@@ -176,4 +178,21 @@ function duplicates(values) {
 
 function check(passed, id, message) {
   findings.push({ id, passed: Boolean(passed), message });
+}
+
+function parseArgs(argv) {
+  const parsed = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) continue;
+    const key = token.slice(2);
+    const next = argv[index + 1];
+    if (index + 1 < argv.length && next && !String(next).startsWith('--')) {
+      parsed[key] = next;
+      index += 1;
+    } else {
+      parsed[key] = true;
+    }
+  }
+  return parsed;
 }
