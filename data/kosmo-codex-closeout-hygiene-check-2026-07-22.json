@@ -1,6 +1,6 @@
 {
   "schema_version": "0.1",
-  "generated_at": "2026-07-22T09:44:24.787Z",
+  "generated_at": "2026-07-22T10:07:01.451Z",
   "status": "codex_closeout_hygiene_check_passed",
   "policy": {
     "validates_closeout_notes_only": true,
@@ -12,8 +12,8 @@
     "public_ready_after_check": 0
   },
   "source_refs": [
-    "../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-public-runtime-boundary-negative-smoke.md",
-    "../../09 Codex Memory/2026-07-22 Public Runtime Boundary Negative Smoke.md"
+    "../../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-public-leak-workspace-alias-expansion.md",
+    "../../09 Codex Memory/2026-07-22 Public Leak Workspace Alias Expansion.md"
   ],
   "summary": {
     "documents_checked": 2,
@@ -26,12 +26,12 @@
     {
       "id": "handoff:non_empty",
       "status": "passed",
-      "evidence": "2549 bytes"
+      "evidence": "2454 bytes"
     },
     {
       "id": "handoff:has_status",
       "status": "passed",
-      "evidence": "ry Negative Smoke Generated: 2026-07-22T11:41:20+02:00 ## Status - Vacation start checks completed. - Source-free queue reported `Codex executable now: 0`; this block used the safe fallback lane for public regression-"
+      "evidence": "space Alias Expansion Generated: 2026-07-22 12:04 CEST ## Status - Source-free queue reported `source_independent_work_queue_ready` with Codex executable now `0`; fallback selected: public privacy gate hardening. - Ow"
     },
     {
       "id": "handoff:mentions_source_free_queue",
@@ -41,17 +41,17 @@
     {
       "id": "handoff:mentions_owner_or_source_root_block",
       "status": "passed",
-      "evidence": "safe fallback lane for public regression-gate hardening. - Owner/source-root remains blocked pending explicit owner reply and guards. - public ready remains 0. ## Done - Added `scripts/public-runtime-boundary-negative"
+      "evidence": "ow `0`; fallback selected: public privacy gate hardening. - Owner unlock remains `owner_unlock_pipeline_checkpoint_attention_required`; source-root and private inventory stay blocked until explicit owner reply and green"
     },
     {
       "id": "handoff:public_ready_zero",
       "status": "passed",
-      "evidence": "-"
+      "evidence": "reen guards. - Data lane sweep stayed review-only passed. - Public-ready remains `0`. ## Completed - Extended `scripts/public-leak-patterns.mjs` so public text-surface scans also flag common private workspace aliases:"
     },
     {
       "id": "handoff:privacy_hard_stops",
       "status": "passed",
-      "evidence": "not run `git add .`. ## Privacy - Source-free only. - No private PDF, OCR, scan, OneDrive/archive raw content, worker output body, workerlogs, private inventory, embeddings, fine-tunes, or private-derived public promo"
+      "evidence": "ck_pipeline_checkpoint_attention_required`; source-root and private inventory stay blocked until explicit owner reply and green guards. - Data lane sweep stayed review-only passed. - Public-ready remains `0`. ## Complet"
     },
     {
       "id": "handoff:no_public_promotion",
@@ -76,12 +76,12 @@
     {
       "id": "memory:non_empty",
       "status": "passed",
-      "evidence": "1524 bytes"
+      "evidence": "1417 bytes"
     },
     {
       "id": "memory:has_status",
       "status": "passed",
-      "evidence": "# 2026-07-22 Public Runtime Boundary Negative Smoke ## Status Source-free queue reported `Codex executable now: 0`; fallback work hardened the public static-runtime gates. Owner/source-root remains blocked. Public"
+      "evidence": "# 2026-07-22 Public Leak Workspace Alias Expansion ## Status - Source-free queue stayed at Codex executable `0`; fallback work used public privacy gate hardening. - Owner/source-root and private inventory remain b"
     },
     {
       "id": "memory:mentions_source_free_queue",
@@ -91,17 +91,17 @@
     {
       "id": "memory:mentions_owner_or_source_root_block",
       "status": "passed",
-      "evidence": "0`; fallback work hardened the public static-runtime gates. Owner/source-root remains blocked. Public ready remains 0. ## Completed - Added `scripts/public-runtime-boundary-negative-smoke.mjs`. - Added npm alias `publi"
+      "evidence": "le `0`; fallback work used public privacy gate hardening. - Owner/source-root and private inventory remain blocked. - Public-ready remains `0`. ## Ergebnis - Expanded `publicLeakMatches()` coverage for spaced/underscor"
     },
     {
       "id": "memory:public_ready_zero",
       "status": "passed",
-      "evidence": "-"
+      "evidence": "- Owner/source-root and private inventory remain blocked. - Public-ready remains `0`. ## Ergebnis - Expanded `publicLeakMatches()` coverage for spaced/underscored private workspace aliases: `source root`, `private libr"
     },
     {
       "id": "memory:privacy_hard_stops",
       "status": "passed",
-      "evidence": "if the queue stays at 0 executable tasks. ## Privacy - No private PDF, OCR, scan, OneDrive/archive raw content, worker output body, workerlogs, or private inventory used. - No embeddings, fine-tunes, private-derived pu"
+      "evidence": "used public privacy gate hardening. - Owner/source-root and private inventory remain blocked. - Public-ready remains `0`. ## Ergebnis - Expanded `publicLeakMatches()` coverage for spaced/underscored private workspace a"
     },
     {
       "id": "memory:no_public_promotion",
@@ -126,42 +126,42 @@
     {
       "id": "handoff:has_checks_section",
       "status": "passed",
-      "evidence": "ative smoke into `scripts/public-vacation-safe-check.mjs`. ## Checks - `npm run public:runtime-boundary-negative-smoke`: passed. - `npm run public:runtime-boundary-check`: passed. - `npm run public:worker-boundary-nega"
+      "evidence": ", `public_display_allowed`, or public-ready flags changed. ## Checks - `node scripts/public-leak-pattern-negative-smoke.mjs`: passed, 40/40 cases. - `npm run public:gate-check`: passed, static export scanned 245 text s"
     },
     {
       "id": "handoff:has_exact_staging_section",
       "status": "passed",
-      "evidence": "ion-safe-check -- --require-static-export`: passed, 31/31. ## Exact Staging - `package.json` - `scripts/public-runtime-boundary-check.mjs` - `scripts/public-runtime-boundary-negative-smoke.mjs` - `scripts/public-vacati"
+      "evidence": "n. - Do not stage unrelated files. Do not run `git add .`. ## Exact Staging - `scripts/public-leak-patterns.mjs` - `scripts/public-leak-pattern-negative-smoke.mjs` - `data/kosmo-codex-closeout-hygiene-check-2026-07-22."
     },
     {
       "id": "handoff:blocks_broad_stage",
       "status": "passed",
-      "evidence": "cs/codex/kosmo-codex-closeout-hygiene-check-2026-07-22.md` Do not stage unrelated files and do not run `git add .`. ## Privacy - Source-free only. - No private PDF, OCR, scan, OneDrive/archive raw content, worker outp"
+      "evidence": "ed; push should wait for remote-delta review/integration. - Do not stage unrelated files. Do not run `git add .`. ## Exact Staging - `scripts/public-leak-patterns.mjs` - `scripts/public-leak-pattern-negative-smoke.mjs`"
     },
     {
       "id": "handoff:mentions_no_push_when_divergent_or_dirty",
       "status": "passed",
-      "evidence": "already heavily dirty. - `main` is ahead/behind remote; no push. Push should wait for remote-delta review/reconciliation."
+      "evidence": "tarted. - `public_ready_after_check` remains `0`. ## Git / Push - Local commit created in `ArchitectureCosmos`: `cc6385d` (`Expand public leak workspace alias guard`). - Worktree was already extensively dirty before th"
     },
     {
       "id": "memory:has_completed_or_status_section",
       "status": "passed",
-      "evidence": "# 2026-07-22 Public Runtime Boundary Negative Smoke ## Status Source-free queue reported `Codex executable now: 0`; fallback work hardened the public static-runtime gates. Owner/source-root remains blocked. Publ"
+      "evidence": "# 2026-07-22 Public Leak Workspace Alias Expansion ## Status - Source-free queue stayed at Codex executable `0`; fallback work used public privacy gate hardening. - Owner/source-root and private inventory remai"
     },
     {
       "id": "memory:records_checks",
       "status": "passed",
-      "evidence": "- Added the new smoke to `public-vacation-safe-check`. ## Checks - `npm run public:runtime-boundary-negative-smoke`: passed. - `npm run public:runtime-boundary-check`: passed. - `npm run public:worker-boundary-negativ"
+      "evidence": "- No public content or review-only status was promoted. ## Checks - `node scripts/public-leak-pattern-negative-smoke.mjs`: passed. - `npm run public:gate-check`: passed. - `npm run public:vacation-safe-check`: passed."
     },
     {
       "id": "memory:records_next_state",
       "status": "passed",
-      "evidence": "-safe-check -- --require-static-export`: passed, 31/31. ## Next - Owner unlock still needs explicit owner reply and source-root guards. - Branch remains divergent from `origin/main`; push should wait for remote-delta r"
+      "evidence": "passed. - `npm run public:vacation-safe-check`: passed. ## Next - Local commit in `ArchitectureCosmos`: `cc6385d` (`Expand public leak workspace alias guard`). - Owner unlock still needs explicit owner reply. - Branch"
     },
     {
       "id": "cross:distinct_files",
       "status": "passed",
-      "evidence": "../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-public-runtime-boundary-negative-smoke.md / ../../09 Codex Memory/2026-07-22 Public Runtime Boundary Negative Smoke.md"
+      "evidence": "../../KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-public-leak-workspace-alias-expansion.md / ../../09 Codex Memory/2026-07-22 Public Leak Workspace Alias Expansion.md"
     },
     {
       "id": "cross:handoff_and_memory_public_ready_zero",
