@@ -189,11 +189,7 @@ konsistenter Schalter je Station geführt); die Werkzeuganordnung (K14c)
 ist Unterkategorie davon. **Konsequenz:** die geplante 0.9.0-
 «Manuell-Codepfad-Löschung» in Vis wird NEU BEWERTET — nicht löschen,
 sondern als gepflegte klassische Ansicht führen. **Aufwand:** L.
-**Status:** offen — **Rückfrage R3** (bestätigt das die Rücknahme der
-Vis-Codepfad-Löschung? Ich lese es so).
-
-## Arbeitsbuch / KosmoDesign (Seiten 5–12)
-
+**Status:** ERLEDIGT als Konzept+Zugang (ROADMAP 599/604 — kosmo.ui.v1 ist der EINE Zustand, Zugang vereinheitlicht: Einstellungen-Checkboxen für Design/Publish/Prepare nach Vis-Vorbild, Insel-Werkzeuge bleiben gleichwertig; voller CAD-Ausbau je Station = dokumentierte Folgeposten im KONZEPT-MANUELL-ALLE-STATIONEN.md).
 ### K16 · S.5 — Fehlendes Symbol oben rechts
 > «hier ist das symbol weg»
 **Deutung:** auf dem Screenshot fehlt oben rechts ein Icon (leerer

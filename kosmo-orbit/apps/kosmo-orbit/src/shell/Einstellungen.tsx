@@ -352,6 +352,20 @@ export function Einstellungen({
   const visOberflaeche = useUiZustand((s) => s.visOberflaeche);
   const setVisOberflaeche = useUiZustand((s) => s.setVisOberflaeche);
 
+  // E-K15/2 (V090-SPEZ.md §E-K15, 22.07.2026, Fable-Entscheid in
+  // docs/KONZEPT-MANUELL-ALLE-STATIONEN.md «Fable-Entscheide» Punkt 2):
+  // additive Einstellungen-Checkboxen für Design/Publish/Prepare nach dem
+  // Vis-Vorbild oben — lesen/schreiben GENAU dieselben Bestandsfelder wie
+  // die jeweiligen Insel-Werkzeuge (`state/ui-zustand.ts`), KEIN neuer
+  // Zustand, KEINE Zweitlogik. Beide Zugänge (Insel-Werkzeug + Checkbox)
+  // bleiben nebeneinander bestehen, EIN Zustand `kosmo.ui.v1`.
+  const designOberflaeche = useUiZustand((s) => s.designOberflaeche);
+  const setDesignOberflaeche = useUiZustand((s) => s.setDesignOberflaeche);
+  const publishOberflaeche = useUiZustand((s) => s.publishOberflaeche);
+  const setPublishOberflaeche = useUiZustand((s) => s.setPublishOberflaeche);
+  const prepareOberflaeche = useUiZustand((s) => s.prepareOberflaeche);
+  const setPrepareOberflaeche = useUiZustand((s) => s.setPrepareOberflaeche);
+
   // v0.7.8 Welle 3 (P8, Geführte Tour): Einstieg «Werkzeug-Dock kennenlernen»
   // — die Tour selbst (`shell/dock/DockTour.tsx`) manipuliert Dock-/UI-
   // Zustand der DESIGN-Station direkt (kein Doc/Undo) und braucht darum eine
@@ -772,6 +786,65 @@ export function Einstellungen({
             <span className="es-feld-hinweis">
               Ältere Vollflächen-Ansicht mit Werkzeugleiste, Dock-Panels, Legende und gespeicherten Ansichten — Island
               bleibt der Standard.
+            </span>
+          </div>
+
+          {/* E-K15/2 (V090-SPEZ.md §E-K15, 22.07.2026): additiver
+              Einstellungen-Zugang zur manuellen KosmoDesign-Oberfläche —
+              zusätzlich zum bestehenden Insel-Werkzeug `manuell`
+              (`island-katalog.ts`), nicht als Ersatz. Rückweg AUS 'manuell'
+              bleibt der bestehende `island-zurueck`-Knopf im Manuell-Chrome
+              (`DesignWorkspace.tsx`). */}
+          <div className="es-feld-block">
+            <label className="es-schalter-label">
+              <input
+                type="checkbox"
+                data-testid="einstellung-design-manuell"
+                checked={designOberflaeche === 'manuell'}
+                onChange={(e) => setDesignOberflaeche(e.target.checked ? 'manuell' : 'island')}
+              />
+              Manuelle Ansicht (KosmoDesign)
+            </label>
+            <span className="es-feld-hinweis">
+              Klassische Werkzeugleiste, Entwurfs-Dock und Dock-Panels — Island bleibt der Standard.
+            </span>
+          </div>
+
+          {/* E-K15/2 — additiver Einstellungen-Zugang zur manuellen
+              KosmoPublish-Oberfläche, zusätzlich zum bestehenden
+              Insel-Werkzeug `manuell` (`publish-island-katalog.ts`).
+              Rückweg bleibt `island-zurueck` (`PublishWorkspace.tsx`). */}
+          <div className="es-feld-block">
+            <label className="es-schalter-label">
+              <input
+                type="checkbox"
+                data-testid="einstellung-publish-manuell"
+                checked={publishOberflaeche === 'manuell'}
+                onChange={(e) => setPublishOberflaeche(e.target.checked ? 'manuell' : 'island')}
+              />
+              Manuelle Ansicht (KosmoPublish)
+            </label>
+            <span className="es-feld-hinweis">
+              Klassische Blattliste, Werkzeugleiste und Dossier-/Plankopf-Werkzeuge — Island bleibt der Standard.
+            </span>
+          </div>
+
+          {/* E-K15/2 — additiver Einstellungen-Zugang zur manuellen
+              KosmoPrepare-Oberfläche, zusätzlich zum bestehenden
+              Insel-Werkzeug `manuell` (`prepare-island-katalog.ts`).
+              Rückweg bleibt `island-zurueck` (`PrepareWorkspace.tsx`). */}
+          <div className="es-feld-block">
+            <label className="es-schalter-label">
+              <input
+                type="checkbox"
+                data-testid="einstellung-prepare-manuell"
+                checked={prepareOberflaeche === 'manuell'}
+                onChange={(e) => setPrepareOberflaeche(e.target.checked ? 'manuell' : 'island')}
+              />
+              Manuelle Ansicht (KosmoPrepare)
+            </label>
+            <span className="es-feld-hinweis">
+              Klassische Werkzeugleiste, Ingest-Zone und Dokumentliste — Island bleibt der Standard.
             </span>
           </div>
         </section>
