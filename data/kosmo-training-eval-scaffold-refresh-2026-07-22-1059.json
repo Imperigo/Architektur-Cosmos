@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T10:58:59+02:00",
+  "status": "training_eval_scaffold_refresh_recorded",
+  "mode": "review_only",
+  "public_display_allowed": false,
+  "public_ready": 0,
+  "source_independent_queue": {
+    "status": "source_independent_work_queue_ready",
+    "codex_executable_now": 0,
+    "owner_actions": 2
+  },
+  "fallback_task": {
+    "lane": "training_ontology_eval",
+    "summary": "Refreshed and revalidated the review-only training eval scaffold without creating eval rows or training data.",
+    "writes_training_data_now": 0,
+    "writes_embeddings_now": 0,
+    "runs_fine_tuning_now": 0
+  },
+  "checks": [
+    {
+      "command": "npm run kosmo:training-eval-rubric-pack-check",
+      "status": "passed",
+      "passed": 21,
+      "total": 21,
+      "failures": 0
+    },
+    {
+      "command": "npm run kosmo:training-eval-row-template-check",
+      "status": "passed",
+      "passed": 22,
+      "total": 22,
+      "failures": 0
+    },
+    {
+      "command": "npm run kosmo:training-eval-review-queue-plan-check",
+      "status": "passed",
+      "passed": 32,
+      "total": 32,
+      "failures": 0
+    },
+    {
+      "command": "npm run kosmo:review-only-cross-lane-invariant-check",
+      "status": "passed",
+      "passed": 212,
+      "total": 212,
+      "failures": 0
+    },
+    {
+      "command": "npm run public:gate-check",
+      "status": "passed",
+      "failures": 0,
+      "warnings": 0
+    }
+  ],
+  "hard_stops_preserved": [
+    "no_private_source_content_read",
+    "no_ocr_or_pdf_bodies_copied",
+    "no_local_worker_output_bodies_copied",
+    "no_embeddings_created",
+    "no_fine_tunes_run",
+    "no_public_ready_promotion"
+  ],
+  "handoffs": {
+    "orbit_inbox": "/mnt/data/ArchitekturKosmos/KosmoOrbit/_overseer/intake/inbox/2026-07-22-codex-training-eval-scaffold-refresh-1059.md",
+    "codex_memory": "/mnt/data/ArchitekturKosmos/09 Codex Memory/2026-07-22 Training Eval Scaffold Refresh 1059.md"
+  },
+  "git_publish": {
+    "branch": "main",
+    "ahead": 26,
+    "behind": 63,
+    "push_attempted": false,
+    "reason": "branch divergence and large pre-existing dirty worktree require integration before publish"
+  }
+}
