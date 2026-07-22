@@ -48,6 +48,11 @@ const checks = [
     purpose: 'Verifies the public route manifest guard rejects synthetic duplicate, private/source, missing-source and malformed route entries.'
   },
   {
+    id: 'public_route_link_fetch_negative_smoke',
+    command: ['node', 'scripts/public-route-link-fetch-negative-smoke.mjs'],
+    purpose: 'Verifies the live public route link smoke writes structured fetch findings when the demo server is unreachable.'
+  },
+  {
     id: 'public_static_export_smoke',
     command: [
       'node',

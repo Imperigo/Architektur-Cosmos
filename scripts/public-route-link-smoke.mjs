@@ -8,6 +8,7 @@ import { publicRouteChecks } from './public-route-manifest.mjs';
 const args = parseArgs(process.argv.slice(2));
 const root = process.cwd();
 const baseUrl = String(args['base-url'] || 'http://127.0.0.1:3000').replace(/\/$/, '');
+const timeoutMs = Number(args['timeout-ms'] || 5000);
 const siteOrigin = new URL(baseUrl).origin;
 const publicOrigin = 'https://architekturkosmos.ch';
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-data/review/public-route-link-smoke.generated.json');
@@ -22,7 +23,22 @@ const requiredCoreLinks = ['/', '/references/', '/assets/', '/atlas/', '/orbit/'
 const findings = [];
 
 main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
+  console.log(JSON.stringify({
+    schema_version: '0.1',
+    generator: 'public-route-link-smoke',
+    status: 'public_route_link_smoke_failed',
+    base_url: baseUrl,
+    timeout_ms: timeoutMs,
+    public_display_allowed: false,
+    failed_findings: [
+      {
+        id: 'runtime:unexpected_error',
+        passed: false,
+        message: error instanceof Error ? error.message : String(error)
+      }
+    ],
+    error: serializeError(error)
+  }, null, 2));
   process.exit(1);
 });
 
@@ -33,7 +49,22 @@ async function main() {
   let skippedExternal = 0;
 
   for (const path of seedRoutes) {
-    const response = await fetch(`${baseUrl}${path}`);
+    let response;
+    try {
+      response = await fetchWithTimeout(`${baseUrl}${path}`);
+    } catch (error) {
+      const detail = serializeError(error);
+      check(false, `${path}:fetch`, detail.message);
+      checkedPages.push({
+        path,
+        status: null,
+        anchor_count: 0,
+        core_link_count: 0,
+        private_pattern_count: 0,
+        fetch_error: detail
+      });
+      continue;
+    }
     const body = await response.text();
     const links = extractAnchorHrefs(body);
     const normalizedLinks = new Set(links.map((href) => normalizeInternalHref(href)).filter(Boolean));
@@ -71,7 +102,19 @@ async function main() {
   }
 
   for (const targetPath of [...targetPaths].sort()) {
-    const response = await fetch(`${baseUrl}${targetPath}`);
+    let response;
+    try {
+      response = await fetchWithTimeout(`${baseUrl}${targetPath}`);
+    } catch (error) {
+      const detail = serializeError(error);
+      checkedTargets.push({
+        path: targetPath,
+        status: null,
+        fetch_error: detail
+      });
+      check(false, `${targetPath}:target_fetch`, detail.message);
+      continue;
+    }
     checkedTargets.push({
       path: targetPath,
       status: response.status
@@ -86,6 +129,7 @@ async function main() {
     generator: 'public-route-link-smoke',
     status: failedFindings.length === 0 ? 'public_route_link_smoke_passed' : 'public_route_link_smoke_failed',
     base_url: baseUrl,
+    timeout_ms: timeoutMs,
     public_display_allowed: false,
     seed_route_count: seedRoutes.length,
     checked_target_count: checkedTargets.length,
@@ -132,6 +176,30 @@ function normalizeInternalHref(href) {
 
   const path = `${parsed.pathname}${parsed.search}` || '/';
   return path.startsWith('/') ? path : `/${path}`;
+}
+
+async function fetchWithTimeout(url) {
+  try {
+    return await fetch(url, {
+      signal: AbortSignal.timeout(timeoutMs)
+    });
+  } catch (error) {
+    const detail = serializeError(error);
+    const suffix = detail.cause_code ? ` (${detail.cause_code})` : '';
+    throw new Error(`Unable to fetch ${url} within ${timeoutMs}ms${suffix}. Start the public demo server or pass --base-url to a reachable instance.`, {
+      cause: error
+    });
+  }
+}
+
+function serializeError(error) {
+  if (!(error instanceof Error)) return { message: String(error) };
+  return {
+    name: error.name,
+    message: error.message,
+    cause_code: error.cause && typeof error.cause === 'object' && 'code' in error.cause ? String(error.cause.code) : undefined,
+    cause_message: error.cause instanceof Error ? error.cause.message : undefined
+  };
 }
 
 function isHtmlRoute(path) {
