@@ -20,6 +20,11 @@ const requiredGateCommands = [
     coveredByVacationSafe: 'scripts/public-demo-gate-check.mjs'
   },
   {
+    id: 'static_link',
+    command: 'node scripts/public-static-link-check.mjs --allow-missing-out',
+    coveredByVacationSafe: 'scripts/public-static-link-check.mjs'
+  },
+  {
     id: 'static_asset_surface',
     command: 'node scripts/public-static-asset-surface-check.mjs --allow-missing-out',
     coveredByVacationSafe: 'scripts/public-static-asset-surface-check.mjs'

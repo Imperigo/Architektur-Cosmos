@@ -11,6 +11,7 @@ const args = parseArgs(process.argv.slice(2));
 const outRoot = resolve(root, args.out || 'out');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-data/review/public-static-link-check.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-data/review/public-static-link-check.generated.md');
+const allowMissingOut = Boolean(args['allow-missing-out']);
 
 const siteOrigins = new Set([
   'https://architekturkosmos.ch',
@@ -27,7 +28,57 @@ main().catch((error) => {
 
 async function main() {
   if (!existsSync(outRoot)) {
-    throw new Error(`Static export not found: ${relative(root, outRoot)}. Run npm run build first.`);
+    if (!allowMissingOut) {
+      throw new Error(`Static export not found: ${relative(root, outRoot)}. Run npm run build first.`);
+    }
+
+    const report = {
+      schema_version: '0.1',
+      generated_at: new Date().toISOString(),
+      generator: 'public-static-link-check',
+      status: 'public_static_link_check_skipped_missing_out',
+      policy: {
+        source_free: true,
+        reads_private_content: false,
+        writes_public_ready: false,
+        starts_server: false,
+        scans_static_export_only: true,
+        allow_missing_out: true
+      },
+      inputs: {
+        out_dir: relative(root, outRoot)
+      },
+      summary: {
+        checked_pages: 0,
+        checked_internal_targets: 0,
+        checked_static_assets: 0,
+        skipped_external_links: 0,
+        failed_pages: 0,
+        failed_targets: 0,
+        failed_static_assets: 0,
+        failure_count: 0,
+        public_ready_after_check: 0
+      },
+      pages: [],
+      targets: [],
+      static_assets: [],
+      failures: [],
+      warnings: [
+        {
+          id: 'static_export_missing',
+          detail: `Static export not found: ${relative(root, outRoot)}. Link coverage was skipped because --allow-missing-out was passed.`
+        }
+      ]
+    };
+
+    await writeReport(report);
+    console.log('Public static link check');
+    console.log(`Status: ${report.status}`);
+    console.log('Pages: 0/0');
+    console.log('Internal targets: 0/0');
+    console.log('Static assets: 0/0');
+    console.log(`Wrote: ${relative(root, outputMdPath)}`);
+    return;
   }
 
   const seedRoutes = publicRouteChecks.filter((route) => isHtmlRoute(route.path));
@@ -74,12 +125,7 @@ async function main() {
     failures
   };
 
-  await Promise.all([
-    mkdir(dirname(outputJsonPath), { recursive: true }),
-    mkdir(dirname(outputMdPath), { recursive: true })
-  ]);
-  await writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
-  await writeFile(outputMdPath, renderMarkdown(report), 'utf8');
+  await writeReport(report);
 
   console.log('Public static link check');
   console.log(`Status: ${report.status}`);
@@ -89,6 +135,15 @@ async function main() {
   console.log(`Wrote: ${relative(root, outputMdPath)}`);
 
   if (failures.length > 0) process.exit(1);
+}
+
+async function writeReport(report) {
+  await Promise.all([
+    mkdir(dirname(outputJsonPath), { recursive: true }),
+    mkdir(dirname(outputMdPath), { recursive: true })
+  ]);
+  await writeFile(outputJsonPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  await writeFile(outputMdPath, renderMarkdown(report), 'utf8');
 }
 
 function checkPage(route) {
@@ -404,6 +459,11 @@ function renderMarkdown(report) {
   if (report.failures.length > 0) {
     lines.push('', '## Failures', '');
     report.failures.forEach((failure) => lines.push(`- \`${failure.id}\`: ${failure.detail}`));
+  }
+
+  if (report.warnings?.length > 0) {
+    lines.push('', '## Warnings', '');
+    report.warnings.forEach((warning) => lines.push(`- \`${warning.id}\`: ${warning.detail}`));
   }
 
   return `${lines.join('\n')}\n`;
