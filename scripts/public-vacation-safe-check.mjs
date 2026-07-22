@@ -43,6 +43,16 @@ const checks = [
     purpose: 'Keeps public gate routes aligned with route-content smoke coverage.'
   },
   {
+    id: 'public_gate_alignment',
+    command: ['node', 'scripts/public-gate-alignment-check.mjs'],
+    purpose: 'Keeps the lightweight public:gate-check command static, source-free and covered by the vacation-safe aggregate.'
+  },
+  {
+    id: 'public_gate_alignment_negative_smoke',
+    command: ['node', 'scripts/public-gate-alignment-negative-smoke.mjs'],
+    purpose: 'Verifies the public gate alignment guard rejects synthetic missing, reordered, live and under-covered gate commands.'
+  },
+  {
     id: 'public_route_manifest',
     command: ['node', 'scripts/public-route-manifest-check.mjs'],
     purpose: 'Rejects private/admin/source-style public route manifest entries and verifies each route has a matching app/public source before live or static route checks run.'
