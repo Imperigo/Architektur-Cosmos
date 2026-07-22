@@ -43,6 +43,7 @@ import { StartSequenz } from './shell/StartSequenz';
 // selbst (kein anderer Verhalten/State/Handler wurde hier verändert).
 import { BodenDock } from './shell/BodenDock';
 import { AppDeinstallieren } from './shell/AppDeinstallieren';
+import { installiereFehlerberichte } from './state/fehlerberichte';
 import { StarterGuide } from './shell/StarterGuide';
 import { ErsteStartFrage } from './shell/ErsteStartFrage';
 import { istStarterGuideAbgeschlossen, starterGuideAlsAbgeschlossenMarkieren } from './shell/starter-guide-schritte';
@@ -411,6 +412,11 @@ export function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [rolle],
   );
+
+  // v0.9.0 Fehlermeldeweg (Owner-Auftrag 22.07.2026): Fehler-Toasts +
+  // window-Fehler in den lokalen Ringpuffer, gebündelt an die Bridge —
+  // Details/Kette s. `state/fehlerberichte.ts`.
+  useEffect(() => installiereFehlerberichte(), []);
 
   useEffect(() => {
     onSyncStatus((s, p, w) => {

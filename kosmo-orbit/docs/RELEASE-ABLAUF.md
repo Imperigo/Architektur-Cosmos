@@ -46,6 +46,16 @@ Exit ≠ 0 (und es legt das Kapitel-Gerüst an). Ehrlich benannt: das Skript
 holt selbst KEINE Notion-Daten, es verhindert nur das Vergessen.
 Tests: `node tools/ai-scan-delta.test.mjs`.
 
+## 0b. Fehlerbericht-Eingang sichten (v0.9.0, Owner-Auftrag 22.07.2026)
+
+`wissen/fehlerberichte/eingang.jsonl` lesen (kommt automatisch von der
+HomeServer-Bridge, s. `docs/HOMESERVER-STATUS.md` «Fehlerbericht-Eingang»).
+Jeden noch offenen Eintrag entweder in dieser Version fixen oder benannt
+(mit Begründung) auf die Kandidatenliste der Folgeversion setzen — stille
+Verluste sind ein Ritualverstoss. Existiert die Datei nicht, den Stand des
+Server-Postens prüfen (Deploy-Key offen?) und das im Release-Text ehrlich
+sagen.
+
 ## 1. Version bumpen
 
 Drei Stellen, immer zusammen:

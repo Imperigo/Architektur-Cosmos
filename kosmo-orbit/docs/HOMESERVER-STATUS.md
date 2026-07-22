@@ -80,3 +80,24 @@ steht aus — E-V-Rundgang).
    Remote-Traffic durch die tailscale0-Regeln.
 3. TLS/Caddy: erst wenn die App-Seite `remoteTls` trägt (Folgeposten;
    über Tailscale ist der Verkehr bereits WireGuard-verschlüsselt).
+
+
+## Fehlerbericht-Eingang (v0.9.0, Owner-Auftrag 22.07.2026)
+
+Die App bündelt ihre Fehlermeldungen (Fehler-Toasts, window-Fehler) und
+POSTet sie token-geschützt an die Bridge: `POST /fehlerbericht`. Die Bridge
+hängt jede Meldung als JSON-Zeile an:
+
+- `KOSMO_FEHLERBERICHT_PFAD` — Default `~/kosmo-fehlerberichte.jsonl`.
+  EMPFOHLEN (damit der Repo-Agent den Eingang liest):
+  `~/Architektur-Cosmos/kosmo-orbit/wissen/fehlerberichte/eingang.jsonl`
+- `KOSMO_FEHLERBERICHT_GIT=1` — dann committet+pusht die Bridge die Datei
+  best-effort auf den Entwicklungs-Branch (eigener Thread, Fehler nur im
+  Journal). **Voraussetzung: Push-Rechte des Klons** (Deploy-Key/PAT —
+  offener Worker-Punkt; ohne Rechte bleibt die Datei lokal, ehrlich
+  geloggt als «push fehlgeschlagen»).
+
+Beide Variablen gehören in die systemd-Unit `kosmo-bridge` (Environment=).
+Der Repo-Agent sichtet `wissen/fehlerberichte/eingang.jsonl` vor jedem
+Release (RELEASE-ABLAUF §0b) und setzt die Punkte auf die Fix-Liste der
+nächsten Version.

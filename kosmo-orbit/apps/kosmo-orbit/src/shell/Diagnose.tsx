@@ -4,6 +4,7 @@ import { allCommands, deriveAll } from '@kosmo/kernel';
 import { BridgeHealth } from '@kosmo/contracts';
 import { useProject } from '../state/project-store';
 import { listDocs } from '../modules/prepare/knowledge';
+import { fehlerberichtStand } from '../state/fehlerberichte';
 
 /**
  * KosmoDoc-Selbstdiagnose (Owner-Q24) — prüft die lebenden Nähte des Systems:
@@ -140,6 +141,22 @@ export async function diagnose(): Promise<Befund[]> {
       bereich: 'Bridge',
       status: 'warnung',
       detail: `nicht erreichbar — Rendern/Speak-to-Kosmo brauchen die HomeStation${cspHinweis}`,
+    });
+  }
+
+  // 4b) Fehlermeldeweg (v0.9.0, Owner-Auftrag 22.07.2026): wie viele
+  // App-Fehler lokal erfasst und wie viele davon an die Bridge übertragen
+  // sind — «übertragen» heisst NUR «bei der Bridge angekommen», die
+  // Weitergabe ins Repo macht der Server (KOSMO_FEHLERBERICHT_GIT).
+  {
+    const fb = fehlerberichtStand();
+    befunde.push({
+      bereich: 'Fehlerberichte',
+      status: fb.erfasst === fb.uebertragen ? 'ok' : 'warnung',
+      detail:
+        fb.erfasst === 0
+          ? 'keine Fehler erfasst'
+          : `${fb.erfasst} erfasst · ${fb.uebertragen} an die Bridge übertragen${fb.erfasst > fb.uebertragen ? ' — Rest wartet auf HomeServer-Verbindung' : ''}`,
     });
   }
 

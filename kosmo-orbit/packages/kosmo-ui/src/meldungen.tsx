@@ -39,6 +39,18 @@ export function melde(
   opts?: { ton?: Meldung['ton']; dauerMs?: number; aktion?: Meldung['aktion'] },
 ): void {
   const ton = opts?.ton ?? 'info';
+  // v0.9.0 Fehlermeldeweg (Owner-Auftrag 22.07.2026 «wenn kosmo
+  // fehlermeldungen bekommt … an dich gesendet»): jede Fehler-Meldung wird
+  // zusätzlich als DOM-Event publiziert — die App (state/fehlerberichte.ts)
+  // sammelt sie und reicht sie an die HomeServer-Bridge weiter. Rein
+  // additiv, feuert nur im Browser (Unit-Tests ohne DOM bleiben unberührt).
+  if (ton === 'fehler' && typeof window !== 'undefined') {
+    try {
+      window.dispatchEvent(new CustomEvent('kosmo-fehlermeldung', { detail: { text } }));
+    } catch {
+      /* Event-Publikation darf nie die Meldung selbst verhindern. */
+    }
+  }
   const m: Meldung = { id: naechsteId++, text, ton, ...(opts?.aktion ? { aktion: opts.aktion } : {}) };
   meldungen = [...meldungen.slice(-3), m]; // nie mehr als 4 aufs Mal
   timer.set(m.id, setTimeout(() => entferne(m.id), opts?.dauerMs ?? (ton === 'fehler' ? 8000 : 4000)));

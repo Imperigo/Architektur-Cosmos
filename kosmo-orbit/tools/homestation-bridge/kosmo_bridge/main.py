@@ -425,6 +425,91 @@ async def list_jobs():
     return jobs[:50]
 
 
+# ---------- Fehlermeldeweg (v0.9.0, Owner-Auftrag 22.07.2026) ----------
+#
+# «wenn kosmo fehlermeldungen bekommt … direkt über repo hier an dich
+# gesendet und auf liste gesetzt» — die App (state/fehlerberichte.ts) bündelt
+# ihre Fehler-Toasts/window-Fehler und POSTet sie hierher (Token-geschützt
+# wie alles ausser /health). Die Bridge hängt jede Meldung als JSON-Zeile an
+# KOSMO_FEHLERBERICHT_PFAD (Default ~/kosmo-fehlerberichte.jsonl). Liegt der
+# Pfad im Repo-Klon und ist KOSMO_FEHLERBERICHT_GIT=1 gesetzt, wird die Datei
+# best-effort committet und gepusht (eigener Thread, Fehler nur geloggt) —
+# so landet der Eingang im Entwicklungs-Branch, wo der Repo-Agent ihn vor
+# jedem Release sichtet (docs/RELEASE-ABLAUF.md §0b). Ohne Push-Rechte
+# (Deploy-Key fehlt noch, Worker-Punkt) bleibt die Datei lokal — ehrlich
+# geloggt.
+
+_FEHLERBERICHT_MAX_BYTES = 64 * 1024
+
+
+def _fehlerbericht_pfad() -> Path:
+    return Path(os.environ.get("KOSMO_FEHLERBERICHT_PFAD", str(Path.home() / "kosmo-fehlerberichte.jsonl"))).expanduser()
+
+
+def _fehlerbericht_git_push(pfad: Path) -> None:
+    """Best-effort: add/commit/push NUR der Berichtsdatei im umgebenden Repo.
+    Läuft im Thread; jeder Fehler wird geloggt, nie geworfen."""
+    import subprocess
+
+    try:
+        repo = subprocess.run(
+            ["git", "-C", str(pfad.parent), "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, timeout=10,
+        )
+        if repo.returncode != 0:
+            print(f"[fehlerbericht] kein Git-Repo um {pfad.parent} — Datei bleibt lokal", file=sys.stderr)
+            return
+        wurzel = repo.stdout.strip()
+        subprocess.run(["git", "-C", wurzel, "add", str(pfad)], capture_output=True, timeout=10)
+        commit = subprocess.run(
+            ["git", "-C", wurzel, "commit", "-m", "Fehlerbericht-Eingang (automatisch, HomeServer-Bridge)", "--", str(pfad)],
+            capture_output=True, text=True, timeout=15,
+        )
+        if commit.returncode != 0:
+            # z.B. "nothing to commit" — kein Fehler im Sinne des Melde-Wegs.
+            return
+        push = subprocess.run(["git", "-C", wurzel, "push"], capture_output=True, text=True, timeout=60)
+        if push.returncode != 0:
+            print(f"[fehlerbericht] push fehlgeschlagen (Deploy-Key fehlt?): {push.stderr.strip()[:200]}", file=sys.stderr)
+    except Exception as exc:  # noqa: BLE001 — best-effort, nie werfen
+        print(f"[fehlerbericht] git-Weg fehlgeschlagen: {exc}", file=sys.stderr)
+
+
+@app.post("/fehlerbericht")
+async def fehlerbericht(request: Request):
+    raw = await _read_body_capped(request, _FEHLERBERICHT_MAX_BYTES, "fehlerbericht")
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except Exception:
+        raise HTTPException(status_code=400, detail="Kein gültiges JSON")
+    berichte = payload.get("berichte")
+    if not isinstance(berichte, list) or not berichte:
+        raise HTTPException(status_code=400, detail="'berichte' (nicht-leere Liste) fehlt")
+    if len(berichte) > 50:
+        raise HTTPException(status_code=400, detail="Höchstens 50 Berichte pro Bündel")
+    pfad = _fehlerbericht_pfad()
+    pfad.parent.mkdir(parents=True, exist_ok=True)
+    angenommen = 0
+    with pfad.open("a", encoding="utf-8") as f:
+        for b in berichte:
+            if not isinstance(b, dict) or not isinstance(b.get("text"), str) or not b["text"].strip():
+                continue
+            zeile = {
+                "empfangen_um": _now(),
+                "zeit": str(b.get("zeit", ""))[:40],
+                "text": b["text"].strip()[:500],
+                "quelle": str(b.get("quelle", ""))[:20],
+                "version": str(b.get("version", ""))[:20],
+            }
+            f.write(json.dumps(zeile, ensure_ascii=False) + "\n")
+            angenommen += 1
+    if angenommen == 0:
+        raise HTTPException(status_code=400, detail="Kein Bericht mit gültigem 'text'")
+    if os.environ.get("KOSMO_FEHLERBERICHT_GIT") == "1":
+        threading.Thread(target=_fehlerbericht_git_push, args=(pfad,), daemon=True).start()
+    return {"ok": True, "angenommen": angenommen, "pfad": str(pfad)}
+
+
 # ---------- KosmoDev-Workorders (Block 2 / AB2, kosmodev.workorder/v1) ----------
 #
 # Der Kreis «Owner erfasst → Worker setzt um»: die Bridge nimmt die Workorder
