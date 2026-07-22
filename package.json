@@ -32,6 +32,8 @@
     "public:static-export-smoke": "node scripts/public-static-export-smoke.mjs",
     "public:static-link-check": "node scripts/public-static-link-check.mjs",
     "public:static-link-negative-smoke": "node scripts/public-static-link-negative-smoke.mjs",
+    "public:static-header-check": "node scripts/public-static-header-check.mjs",
+    "public:static-header-negative-smoke": "node scripts/public-static-header-negative-smoke.mjs",
     "public:static-metadata-check": "node scripts/public-static-metadata-check.mjs",
     "public:static-metadata-negative-smoke": "node scripts/public-static-metadata-negative-smoke.mjs",
     "public:static-route-inventory-check": "node scripts/public-static-route-inventory-check.mjs",

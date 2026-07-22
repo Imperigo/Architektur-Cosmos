@@ -169,6 +169,24 @@ const checks = [
     purpose: 'Verifies the static link guard rejects synthetic private/source hrefs and missing internal route targets.'
   },
   {
+    id: 'public_static_header_check',
+    command: [
+      'node',
+      'scripts/public-static-header-check.mjs',
+      '--output',
+      resolve(reportRoot, 'public-static-header-check.generated.json'),
+      '--markdown',
+      resolve(reportRoot, 'public-static-header-check.generated.md')
+    ],
+    requiresOut: true,
+    purpose: 'Checks exported public HTML pages for the shared header, core navigation links, active route state and private/source markers.'
+  },
+  {
+    id: 'public_static_header_negative_smoke',
+    command: ['node', 'scripts/public-static-header-negative-smoke.mjs'],
+    purpose: 'Verifies the static header guard rejects synthetic missing headers, wrong active route state, missing core navigation and private/source markers.'
+  },
+  {
     id: 'public_static_metadata_check',
     command: [
       'node',
