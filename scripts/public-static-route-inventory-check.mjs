@@ -14,6 +14,8 @@ const entriesPath = resolve(root, args.entries || 'data/mock-entries.json');
 const allowedExportSupportFiles = new Set(['404.html', '404/index.html', '_headers', 'ak-symbol.svg']);
 const allowedExportPrefixes = ['_next/', 'archive-models/'];
 const blockedStrayArtifactPatterns = [
+  /(^|\/)admin(\/|$)/i,
+  /(^|\/)api(\/|$)/i,
   /(^|\/)review(\/|$)/i,
   /generated\.(json|md|txt)$/i,
   /provenance/i,

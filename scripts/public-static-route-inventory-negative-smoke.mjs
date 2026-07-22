@@ -44,25 +44,50 @@ async function main() {
       throw new Error(`Expected clean synthetic export to pass, got ${clean.status}.\n${clean.output}`);
     }
 
-    await writeFixtureFile(
-      join(outDir, 'kosmo-reference-provenance/provenance-check.generated.json'),
-      JSON.stringify({ status: 'review_only', public_ready: false }, null, 2)
-    );
+    const blockedArtifactCases = [
+      {
+        label: 'provenance-generated',
+        relativePath: 'kosmo-reference-provenance/provenance-check.generated.json',
+        body: JSON.stringify({ status: 'review_only', public_ready: false }, null, 2)
+      },
+      {
+        label: 'admin-html',
+        relativePath: 'admin/index.html',
+        body: '<!doctype html><html><body>Internal operator panel</body></html>'
+      },
+      {
+        label: 'api-json',
+        relativePath: 'api/private-inventory.json',
+        body: JSON.stringify({ status: 'blocked_until_owner_unlock' }, null, 2)
+      },
+      {
+        label: 'worker-logs',
+        relativePath: 'worker-logs/run.txt',
+        body: 'redacted worker log placeholder'
+      }
+    ];
 
-    const poisoned = runInventory(workspace, outDir, entriesPath, 'poisoned');
-    if (poisoned.status === 0) {
-      throw new Error('Expected synthetic stray generated provenance artifact to fail the static route inventory check.');
-    }
-    const failureIds = (poisoned.report?.failures ?? []).map((failure) => failure.id);
-    if (!failureIds.includes('stray-export:kosmo-reference-provenance/provenance-check.generated.json:blocked-artifact')) {
-      throw new Error(`Inventory failure did not include the expected stray artifact id.\n${poisoned.output}\n${JSON.stringify(poisoned.report, null, 2)}`);
+    for (const testCase of blockedArtifactCases) {
+      await writeCleanRouteFiles(outDir);
+      await writeFixtureFile(join(outDir, testCase.relativePath), testCase.body);
+
+      const poisoned = runInventory(workspace, outDir, entriesPath, `poisoned-${testCase.label}`);
+      if (poisoned.status === 0) {
+        throw new Error(`Expected synthetic stray ${testCase.label} artifact to fail the static route inventory check.`);
+      }
+      const expectedFailureId = `stray-export:${testCase.relativePath}:blocked-artifact`;
+      const failureIds = (poisoned.report?.failures ?? []).map((failure) => failure.id);
+      if (!failureIds.includes(expectedFailureId)) {
+        throw new Error(`Inventory failure did not include the expected stray artifact id ${expectedFailureId}.\n${poisoned.output}\n${JSON.stringify(poisoned.report, null, 2)}`);
+      }
+      await rm(join(outDir, testCase.relativePath), { force: true });
     }
 
     console.log(JSON.stringify({
       status: 'passed',
-      checked_cases: 2,
+      checked_cases: 1 + blockedArtifactCases.length,
       clean_export_exit: clean.status,
-      poisoned_export_exit: poisoned.status
+      blocked_artifact_cases: blockedArtifactCases.map((testCase) => testCase.relativePath)
     }, null, 2));
   } finally {
     await rm(workspace, { recursive: true, force: true });
