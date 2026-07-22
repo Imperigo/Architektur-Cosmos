@@ -30,6 +30,8 @@ const cleanVacationSafeSource = [
   "command: ['node', 'scripts/public-navigation-canon-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-static-link-check.mjs']",
   "command: ['node', 'scripts/public-static-link-negative-smoke.mjs']",
+  "command: ['node', 'scripts/public-client-bundle-privacy-diagnostic.mjs']",
+  "command: ['node', 'scripts/public-client-bundle-privacy-diagnostic-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-static-asset-surface-check.mjs']",
   "command: ['node', 'scripts/public-static-asset-surface-negative-smoke.mjs']",
   "command: ['node', 'scripts/public-entry-detail-dossier-check.mjs']",
@@ -100,6 +102,18 @@ const cases = [
     gateScript: cleanGateScript,
     vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-gate-alignment-negative-smoke.mjs']", ''),
     expectedFailures: ['vacation-safe:gate_alignment_negative_smoke:coverage']
+  },
+  {
+    id: 'missing_client_bundle_privacy_diagnostic_coverage',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-client-bundle-privacy-diagnostic.mjs']", ''),
+    expectedFailures: ['vacation-safe:client_bundle_privacy_diagnostic:coverage']
+  },
+  {
+    id: 'missing_client_bundle_privacy_diagnostic_negative_smoke_coverage',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-client-bundle-privacy-diagnostic-negative-smoke.mjs']", ''),
+    expectedFailures: ['vacation-safe:client_bundle_privacy_diagnostic_negative_smoke:coverage']
   }
 ];
 

@@ -61,6 +61,14 @@ const requiredVacationSafeOnlyChecks = [
   {
     id: 'gate_alignment_negative_smoke',
     coveredByVacationSafe: 'scripts/public-gate-alignment-negative-smoke.mjs'
+  },
+  {
+    id: 'client_bundle_privacy_diagnostic',
+    coveredByVacationSafe: 'scripts/public-client-bundle-privacy-diagnostic.mjs'
+  },
+  {
+    id: 'client_bundle_privacy_diagnostic_negative_smoke',
+    coveredByVacationSafe: 'scripts/public-client-bundle-privacy-diagnostic-negative-smoke.mjs'
   }
 ];
 
