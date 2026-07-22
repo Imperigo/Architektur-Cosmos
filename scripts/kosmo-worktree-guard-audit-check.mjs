@@ -61,6 +61,7 @@ async function main() {
 function buildChecks(audit) {
   const rules = (audit.worker_rules || []).join(' ').toLowerCase();
   const topLevelBuckets = audit.buckets?.by_top_level || [];
+  const branchState = audit.branch_state || {};
   return [
     check('known_status', ['worktree_guard_audit_dirty_review_required', 'worktree_guard_audit_clean'].includes(audit.status), audit.status),
     check('audit_only', audit.policy?.audit_only === true, audit.policy?.audit_only),
@@ -68,12 +69,19 @@ function buildChecks(audit) {
     check('no_staging', audit.policy?.stages_files === false, audit.policy?.stages_files),
     check('no_reverts', audit.policy?.reverts_files === false, audit.policy?.reverts_files),
     check('broad_stage_blocked', audit.policy?.broad_stage_allowed === false && audit.summary?.broad_stage_allowed === false, `${audit.policy?.broad_stage_allowed}/${audit.summary?.broad_stage_allowed}`),
+    check('remote_behind_push_guard_present', audit.policy?.push_when_remote_behind_requires_owner_or_sync_decision === true, audit.policy?.push_when_remote_behind_requires_owner_or_sync_decision),
+    check('branch_state_present', typeof branchState === 'object' && 'branch' in branchState && 'upstream' in branchState, JSON.stringify(branchState)),
+    check('branch_counts_consistent', branchState.ahead === null || Number.isInteger(branchState.ahead), JSON.stringify(branchState)),
+    check('branch_behind_counts_consistent', branchState.behind === null || Number.isInteger(branchState.behind), JSON.stringify(branchState)),
+    check('summary_branch_state_mirrors_detail', audit.summary?.ahead === branchState.ahead && audit.summary?.behind === branchState.behind && audit.summary?.diverged === branchState.diverged, JSON.stringify({ summary: audit.summary, branchState })),
+    check('push_requires_sync_on_remote_behind', branchState.behind > 0 ? branchState.push_requires_sync_decision === true : true, JSON.stringify(branchState)),
     check('public_ready_zero', audit.policy?.public_ready_after_audit === 0 && audit.summary?.public_ready_after_audit === 0, `${audit.policy?.public_ready_after_audit}/${audit.summary?.public_ready_after_audit}`),
     check('entry_counts_present', Number.isInteger(audit.summary?.entries) && Number.isInteger(audit.summary?.untracked), JSON.stringify(audit.summary || {})),
     check('top_level_buckets_present', topLevelBuckets.length === audit.summary?.top_level_buckets, `${topLevelBuckets.length}/${audit.summary?.top_level_buckets}`),
     check('rule_blocks_git_add_dot', rules.includes('git add .'), rules),
     check('rule_exact_files', rules.includes('stage exact files'), rules),
-    check('rule_no_unrelated_reverts', rules.includes('do not revert unrelated'), rules)
+    check('rule_no_unrelated_reverts', rules.includes('do not revert unrelated'), rules),
+    check('rule_blocks_divergent_push', rules.includes('do not push') && rules.includes('diverge'), rules)
   ];
 }
 

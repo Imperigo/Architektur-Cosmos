@@ -20,11 +20,12 @@ main().catch((error) => {
 
 async function main() {
   const statusLines = await gitStatusLines();
+  const branchState = await gitBranchState();
   const entries = statusLines
     .map(parseStatusLine)
     .filter(Boolean)
     .filter((entry) => !isSelfOutput(entry.path));
-  const audit = buildAudit(entries);
+  const audit = buildAudit(entries, branchState);
 
   await mkdir(dirname(outputJson), { recursive: true });
   await mkdir(dirname(outputMd), { recursive: true });
@@ -47,6 +48,41 @@ async function gitStatusLines() {
     maxBuffer: 1024 * 1024 * 10
   });
   return stdout.split(/\r?\n/).filter(Boolean);
+}
+
+async function gitBranchState() {
+  const branch = await gitText(['rev-parse', '--abbrev-ref', 'HEAD']);
+  const upstream = await gitText(['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{upstream}']);
+  let ahead = null;
+  let behind = null;
+
+  if (upstream) {
+    const counts = await gitText(['rev-list', '--left-right', '--count', `${upstream}...HEAD`]);
+    const [behindText, aheadText] = counts.split(/\s+/);
+    behind = Number.isInteger(Number.parseInt(behindText, 10)) ? Number.parseInt(behindText, 10) : null;
+    ahead = Number.isInteger(Number.parseInt(aheadText, 10)) ? Number.parseInt(aheadText, 10) : null;
+  }
+
+  return {
+    branch: branch || null,
+    upstream: upstream || null,
+    ahead,
+    behind,
+    diverged: Number.isInteger(ahead) && Number.isInteger(behind) && ahead > 0 && behind > 0,
+    push_requires_sync_decision: Number.isInteger(behind) && behind > 0
+  };
+}
+
+async function gitText(args) {
+  try {
+    const { stdout } = await execFileAsync('git', args, {
+      cwd: root,
+      maxBuffer: 1024 * 1024
+    });
+    return stdout.trim();
+  } catch {
+    return '';
+  }
 }
 
 function parseStatusLine(line) {
@@ -74,7 +110,7 @@ function isSelfOutput(path) {
   ].includes(path);
 }
 
-function buildAudit(entries) {
+function buildAudit(entries, branchState) {
   const staged = entries.filter((entry) => entry.staged);
   const unstaged = entries.filter((entry) => entry.unstaged);
   const untracked = entries.filter((entry) => entry.untracked);
@@ -94,6 +130,7 @@ function buildAudit(entries) {
       stages_files: false,
       reverts_files: false,
       broad_stage_allowed: false,
+      push_when_remote_behind_requires_owner_or_sync_decision: true,
       public_ready_after_audit: 0
     },
     summary: {
@@ -105,8 +142,15 @@ function buildAudit(entries) {
       status_code_buckets: byCode.length,
       high_risk_path_hints: highRiskHints.length,
       broad_stage_allowed: false,
+      branch: branchState.branch,
+      upstream: branchState.upstream,
+      ahead: branchState.ahead,
+      behind: branchState.behind,
+      diverged: branchState.diverged,
+      push_requires_sync_decision: branchState.push_requires_sync_decision,
       public_ready_after_audit: 0
     },
+    branch_state: branchState,
     buckets: {
       by_top_level: byTopLevel,
       by_status_code: byCode
@@ -120,6 +164,7 @@ function buildAudit(entries) {
       'Stage exact files only and inspect git diff --cached --stat before commit.',
       'Treat existing dirty files as user/other-worker state unless the current worker created them in this batch.',
       'Do not revert unrelated dirty files.',
+      'If local and upstream branches diverge, do not push until a sync or owner decision is explicit.',
       'If a file owned by another worker must change, write a handoff.'
     ]
   };
@@ -162,6 +207,15 @@ function renderMarkdown(audit) {
   lines.push(`- High-risk path hints: ${audit.summary.high_risk_path_hints}`);
   lines.push(`- Broad stage allowed: ${audit.summary.broad_stage_allowed ? 'yes' : 'no'}`);
   lines.push(`- Public-ready after audit: ${audit.summary.public_ready_after_audit}`);
+  lines.push('');
+  lines.push('## Branch State');
+  lines.push('');
+  lines.push(`- Branch: ${audit.branch_state.branch || '-'}`);
+  lines.push(`- Upstream: ${audit.branch_state.upstream || '-'}`);
+  lines.push(`- Ahead: ${audit.branch_state.ahead ?? '-'}`);
+  lines.push(`- Behind: ${audit.branch_state.behind ?? '-'}`);
+  lines.push(`- Diverged: ${audit.branch_state.diverged ? 'yes' : 'no'}`);
+  lines.push(`- Push requires sync decision: ${audit.branch_state.push_requires_sync_decision ? 'yes' : 'no'}`);
   lines.push('');
   lines.push('## Top-Level Buckets');
   lines.push('');

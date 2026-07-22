@@ -1,0 +1,487 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-07-22T10:43:36.964Z",
+  "status": "worktree_guard_audit_dirty_review_required",
+  "policy": {
+    "audit_only": true,
+    "reads_file_contents": false,
+    "stages_files": false,
+    "reverts_files": false,
+    "broad_stage_allowed": false,
+    "push_when_remote_behind_requires_owner_or_sync_decision": true,
+    "public_ready_after_audit": 0
+  },
+  "summary": {
+    "entries": 1855,
+    "staged": 0,
+    "unstaged": 1415,
+    "untracked": 440,
+    "top_level_buckets": 26,
+    "status_code_buckets": 2,
+    "high_risk_path_hints": 80,
+    "broad_stage_allowed": false,
+    "branch": "main",
+    "upstream": "origin/main",
+    "ahead": 0,
+    "behind": 0,
+    "diverged": false,
+    "push_requires_sync_decision": false,
+    "public_ready_after_audit": 0
+  },
+  "branch_state": {
+    "branch": "main",
+    "upstream": "origin/main",
+    "ahead": 0,
+    "behind": 0,
+    "diverged": false,
+    "push_requires_sync_decision": false
+  },
+  "buckets": {
+    "by_top_level": [
+      {
+        "key": "docs",
+        "count": 629
+      },
+      {
+        "key": "data",
+        "count": 569
+      },
+      {
+        "key": "examples",
+        "count": 382
+      },
+      {
+        "key": "scripts",
+        "count": 155
+      },
+      {
+        "key": "app",
+        "count": 50
+      },
+      {
+        "key": "public",
+        "count": 27
+      },
+      {
+        "key": "components",
+        "count": 9
+      },
+      {
+        "key": "schema",
+        "count": 9
+      },
+      {
+        "key": "lib",
+        "count": 6
+      },
+      {
+        "key": ".github",
+        "count": 3
+      },
+      {
+        "key": "_IMPORT_NOTE_2026-06-10.md",
+        "count": 1
+      },
+      {
+        "key": ".gitignore",
+        "count": 1
+      },
+      {
+        "key": ".nvmrc",
+        "count": 1
+      },
+      {
+        "key": ".tmp",
+        "count": 1
+      },
+      {
+        "key": "AGENTS.md",
+        "count": 1
+      },
+      {
+        "key": "DEPLOYMENT.md",
+        "count": 1
+      },
+      {
+        "key": "eslint.config.mjs",
+        "count": 1
+      },
+      {
+        "key": "next-env.d.ts",
+        "count": 1
+      },
+      {
+        "key": "next.config.js",
+        "count": 1
+      },
+      {
+        "key": "postcss.config.js",
+        "count": 1
+      },
+      {
+        "key": "README.md",
+        "count": 1
+      },
+      {
+        "key": "SECURITY.md",
+        "count": 1
+      },
+      {
+        "key": "src",
+        "count": 1
+      },
+      {
+        "key": "tailwind.config.ts",
+        "count": 1
+      },
+      {
+        "key": "tsconfig.json",
+        "count": 1
+      },
+      {
+        "key": "wrangler.jsonc",
+        "count": 1
+      }
+    ],
+    "by_status_code": [
+      {
+        "key": " M",
+        "count": 1415
+      },
+      {
+        "key": "??",
+        "count": 440
+      }
+    ]
+  },
+  "high_risk_path_hints": [
+    {
+      "code": " M",
+      "path": ".github/workflows/ci.yml"
+    },
+    {
+      "code": " M",
+      "path": ".github/workflows/live-security.yml"
+    },
+    {
+      "code": " M",
+      "path": ".github/workflows/weekly-update-scout.yml"
+    },
+    {
+      "code": " M",
+      "path": "app/icon.svg"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitAuditTrail.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitAutonomousFireState.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitAutonomousLoopLedger.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitAutonomyStatus.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitCommandContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDataGovernanceContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDeleteExportRestoreDrill.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDemoQuestions.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDemoReadiness.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDemoReviewPath.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDesignHandoffPanel.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitDesignPilotPath.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitFireCadenceGuard.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitGitHubImperigoGate.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitHealthReadiness.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitInstallationTopology.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitKosmoSketchAdapterContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitLaunchDecisionBrief.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitLearningMode.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitLocalIdentityContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitLocalStorageDecisionDraft.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitOfficeMemoryReadiness.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitOfficePilotScene.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitOfficeRoutine.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPermissionMatrix.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPilotFacilitatorChecklist.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPilotMeasurement.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPilotMeasurementKit.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPilotResultDraft.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPilotRunbook.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPilotSessionTemplate.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPresenterBrief.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitProgressMap.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitProjectDashboard.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPublishReadiness.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitPushDecisionDraft.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitQualityEvidence.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitReviewDecisionDraft.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitRiskRegister.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitRoleSwitcher.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitRuntimeAdapterContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitRuntimeBoundary.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitRuntimeContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitToolRegistry.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitToolchainReadiness.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitVisionBridge.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitWorkflowDelta.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitWorkstationPriorities.tsx"
+    },
+    {
+      "code": " M",
+      "path": "app/orbit/OrbitWorkstationProfileContract.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/archive/ArchiveCursor.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/ProjectMediaGrid.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/RadialAtlasClient.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/RadialText.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/RelationOverlay.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/SemanticEntryNode.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/StyleSectors.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/TimeRings.tsx"
+    },
+    {
+      "code": " M",
+      "path": "components/atlas/WormholeCanvas.tsx"
+    },
+    {
+      "code": " M",
+      "path": "data/agent-decisions.json"
+    },
+    {
+      "code": " M",
+      "path": "data/archive-preview.json"
+    },
+    {
+      "code": " M",
+      "path": "data/brain-rules.json"
+    },
+    {
+      "code": " M",
+      "path": "data/brain-tools.json"
+    },
+    {
+      "code": " M",
+      "path": "data/database-analysis-preview.json"
+    },
+    {
+      "code": " M",
+      "path": "data/entry-draft-template.json"
+    },
+    {
+      "code": " M",
+      "path": "data/ingenbohl-pdf-extraction-decision-brief-2026-06-13.json"
+    },
+    {
+      "code": " M",
+      "path": "data/ingenbohl-pdf-extraction-decision-brief-2026-06-14.json"
+    },
+    {
+      "code": " M",
+      "path": "data/ingenbohl-pdf-extraction-decision-brief-2026-06-15.json"
+    },
+    {
+      "code": " M",
+      "path": "data/ingenbohl-pdf-extraction-decision-brief-2026-06-30.json"
+    },
+    {
+      "code": " M",
+      "path": "data/ingenbohl-pdf-extraction-decision-brief-2026-07-02.json"
+    },
+    {
+      "code": " M",
+      "path": "data/ingenbohl-pdf-extraction-decision-brief-2026-07-21.json"
+    },
+    {
+      "code": " M",
+      "path": "data/kosmo-architecture-ontology-seed-check-2026-07-22.json"
+    },
+    {
+      "code": " M",
+      "path": "data/kosmo-codex-closeout-hygiene-check-2026-07-22.json"
+    },
+    {
+      "code": " M",
+      "path": "data/kosmo-codex-morning-routine-run-2026-06-30.json"
+    },
+    {
+      "code": " M",
+      "path": "data/kosmo-codex-morning-routine-run-2026-07-02.json"
+    },
+    {
+      "code": " M",
+      "path": "data/kosmo-codex-morning-routine-run-2026-07-21.json"
+    },
+    {
+      "code": " M",
+      "path": "data/kosmo-data-lane-command-router-2026-06-14.json"
+    }
+  ],
+  "worker_rules": [
+    "Do not run git add . in this repository.",
+    "Stage exact files only and inspect git diff --cached --stat before commit.",
+    "Treat existing dirty files as user/other-worker state unless the current worker created them in this batch.",
+    "Do not revert unrelated dirty files.",
+    "If local and upstream branches diverge, do not push until a sync or owner decision is explicit.",
+    "If a file owned by another worker must change, write a handoff."
+  ]
+}
