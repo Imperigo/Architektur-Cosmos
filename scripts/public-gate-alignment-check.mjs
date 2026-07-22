@@ -86,6 +86,7 @@ const packageJson = JSON.parse(readFileSync(packagePath, 'utf8'));
 const vacationSafeSource = readFileSync(vacationSafePath, 'utf8');
 const gateScript = packageJson.scripts?.['public:gate-check'] || '';
 const gateCommands = splitShellAnd(gateScript);
+const vacationSafeCommandPaths = extractVacationSafeCommandPaths(vacationSafeSource);
 const failures = [];
 
 if (!gateScript) {
@@ -112,14 +113,14 @@ for (const required of requiredGateCommands) {
     });
   }
 
-  if (!vacationSafeSource.includes(required.coveredByVacationSafe)) {
+  if (!vacationSafeCommandPaths.has(required.coveredByVacationSafe)) {
     failures.push({
       id: `vacation-safe:${required.id}:coverage`,
       detail: `public-vacation-safe-check.mjs must cover ${required.coveredByVacationSafe}.`
     });
   }
 
-  if (!vacationSafeSource.includes(required.negativeSmoke)) {
+  if (!vacationSafeCommandPaths.has(required.negativeSmoke)) {
     failures.push({
       id: `vacation-safe:${required.id}:negative-smoke-coverage`,
       detail: `public-vacation-safe-check.mjs must cover the negative smoke ${required.negativeSmoke}.`
@@ -128,7 +129,7 @@ for (const required of requiredGateCommands) {
 }
 
 for (const required of requiredVacationSafeOnlyChecks) {
-  if (!vacationSafeSource.includes(required.coveredByVacationSafe)) {
+  if (!vacationSafeCommandPaths.has(required.coveredByVacationSafe)) {
     failures.push({
       id: `vacation-safe:${required.id}:coverage`,
       detail: `public-vacation-safe-check.mjs must cover ${required.coveredByVacationSafe}.`
@@ -183,6 +184,7 @@ const report = {
   required_gate_commands: requiredGateCommands.map((item) => item.command),
   required_negative_smokes: requiredGateCommands.map((item) => item.negativeSmoke),
   required_vacation_safe_only_checks: requiredVacationSafeOnlyChecks.map((item) => item.coveredByVacationSafe),
+  vacation_safe_command_paths: [...vacationSafeCommandPaths].sort(),
   failures
 };
 
@@ -194,6 +196,33 @@ function splitShellAnd(script) {
     .split(/\s+&&\s+/)
     .map((command) => command.trim().replace(/\s+/g, ' '))
     .filter(Boolean);
+}
+
+function extractVacationSafeCommandPaths(source) {
+  const paths = new Set();
+  const commandArrayPattern = /command\s*:\s*\[([\s\S]*?)\]/g;
+  let match;
+
+  while ((match = commandArrayPattern.exec(String(source))) !== null) {
+    const tokens = extractStringTokens(match[1]);
+    tokens
+      .filter((token) => /^scripts\/.+\.mjs$/i.test(token))
+      .forEach((token) => paths.add(token));
+  }
+
+  return paths;
+}
+
+function extractStringTokens(value) {
+  const tokens = [];
+  const stringPattern = /(['"])((?:\\.|(?!\1)[\s\S])*)\1/g;
+  let match;
+
+  while ((match = stringPattern.exec(String(value))) !== null) {
+    tokens.push(match[2]);
+  }
+
+  return tokens;
 }
 
 function slug(value) {

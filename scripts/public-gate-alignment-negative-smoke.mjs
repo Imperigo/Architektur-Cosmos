@@ -92,6 +92,15 @@ const cases = [
     expectedFailures: ['vacation-safe:route_gate_alignment:coverage']
   },
   {
+    id: 'vacation_coverage_comment_only',
+    gateScript: cleanGateScript,
+    vacationSafeSource: cleanVacationSafeSource.replace(
+      "command: ['node', 'scripts/public-route-gate-alignment-check.mjs']",
+      '// Coverage note mentions scripts/public-route-gate-alignment-check.mjs but does not execute it.'
+    ),
+    expectedFailures: ['vacation-safe:route_gate_alignment:coverage']
+  },
+  {
     id: 'missing_negative_smoke_coverage',
     gateScript: cleanGateScript,
     vacationSafeSource: cleanVacationSafeSource.replace("command: ['node', 'scripts/public-route-gate-alignment-negative-smoke.mjs']", ''),
