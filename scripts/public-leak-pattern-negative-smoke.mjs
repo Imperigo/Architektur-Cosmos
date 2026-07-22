@@ -13,8 +13,12 @@ const cases = [
   ['.claude/settings.local.json', '/\\.claude/i'],
   ['.codex/session.json', '/\\.codex/i'],
   ['worker logs should stay local', '/worker[-_\\s]?logs?/i'],
+  ['worker-output/raw-response.json', '/worker[-_\\s]?outputs?/i'],
   ['protected-source.pdf', '/\\.pdf($|\\?)/i'],
   ['archive-intake/out/raw.json', '/archive-intake/i'],
+  ['raw-archive/one-off-export.json', '/(?:raw[-_\\s]?archive|archive[-_\\s]?raw)/i'],
+  ['private-scan-page-001.jpg', '/(?:private|source)[-_\\s]?scans?/i'],
+  ['scan transcript page text', '/(?:ocr|scan)[-_\\s]?transcripts?/i'],
   ['OCR extracted page text', '/\\bocr\\b/i']
 ];
 
