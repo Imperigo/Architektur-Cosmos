@@ -90,6 +90,19 @@ Druckmass-Ebene ist deklariertes NICHT-Ziel** (eigener Golden-Zug einer
 Folgeversion — Regel «genau EIN Zug pro Version», der gehört K18).
 Goldens müssen byte-still bleiben (reine Anzeige!).
 
+### E-S «Sync-Server ohne tsx» (Tag B, Sonnet, klein — Server-Bericht 22.07.)
+Befund des lokalen Workers: `tools/sync-server` importiert das TS-only-
+Paket `@kosmo/lizenz`; Ubuntu-Node 22.22 kann kein Type-Stripping
+(ERR_NO_TYPESCRIPT) — der Server läuft dort nur über global installiertes
+tsx (Abweichung von §9, `docs/HOMESERVER-STATUS.md`). Repo-Fix: der
+Sync-Server wird mit purem `node` lauffähig — bevorzugt via JS-Build
+(dist) für `@kosmo/lizenz` (oder des Sync-Einstiegs), Weg am Bestand
+entscheiden (bestehende Build-Muster der packages nutzen, kein neues
+Build-System). Beweis: `node tools/sync-server/src/server.mjs` (bzw. der
+neue Einstieg) startet in einer Node-only-Umgebung ohne tsx; Runbook §9
+und HOMESERVER-STATUS nachführen; systemd-Unit-Vorlage zurück auf node.
+- TABU: Sync-Protokoll/Verhalten (nur Lauffähigkeit), kernel, apps.
+
 ### E-KS «KosmoSpez» (BEDINGT — nur falls R5 eintrifft)
 Nur wenn der Owner den ETH-OneDrive-Zugang (R5) während des Fensters
 liefert: eigener Spez-Nachtrag auf Basis der K37c-Token

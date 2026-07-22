@@ -202,10 +202,10 @@ VPN-HOMEPC-ANLEITUNG). Darum gehört zu JEDER Release-Zustellung das Paar:
 
 - [ ] **Mac:** Remote-Edition-DMG aus dem frischen Desktop-CI-Lauf
       (Artefakt `kosmo-orbit-remote-macos-latest`) — Link in den Chat.
-- [ ] **iPad:** Home-PC auf denselben Stand heben — auf dem Home-PC
-      `~/Architektur-Cosmos/kosmo-orbit/tools/homeserver-update.sh`
-      ausführen (holt Branch, baut, startet kosmo-app/-bridge/-sync neu).
-      Dem Owner im selben Atemzug wie der DMG-Link mitgeben; sobald der
-      Home-PC einen eigenen Claude-Worker/eine Routine hat, übernimmt der
-      diesen Schritt automatisch.
+- [ ] **iPad:** Home-PC auf denselben Stand heben — seit 22.07. geschieht
+      das AUTOMATISCH: `kosmo-autoupdate.timer` auf dem Home-PC zieht neue
+      Commits binnen ≤15 min und baut/startet selbst
+      (`docs/HOMESERVER-STATUS.md`). In der Zustell-Nachricht nur noch
+      ERWÄHNEN («iPad aktualisiert sich automatisch in ~15 min»); der
+      manuelle Weg `tools/homeserver-update.sh` bleibt als Fallback.
 - [ ] Beide Meldungen in EINER Nachricht — nie Mac ohne iPad.
