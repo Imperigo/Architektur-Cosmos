@@ -278,13 +278,15 @@ function checkStaticExportRoutes(outDir = 'out') {
       return {
         status: 'failed_missing_out',
         out_dir: outDir,
-        checked_routes: checkedRoutes
+        checked_routes: checkedRoutes,
+        checked_text_surface_files: 0
       };
     }
     return {
       status: 'skipped_missing_out',
       out_dir: outDir,
-      checked_routes: checkedRoutes
+      checked_routes: checkedRoutes,
+      checked_text_surface_files: 0
     };
   }
 
@@ -323,10 +325,24 @@ function checkStaticExportRoutes(outDir = 'out') {
     }
   }
 
+  const textSurfaceFiles = collectStaticTextSurfaceFiles(outRoot);
+  for (const relativeFilePath of textSurfaceFiles) {
+    const filePath = path.join(outRoot, relativeFilePath);
+    const body = fs.readFileSync(filePath, 'utf8');
+    const leakMatches = publicLeakMatches(`${relativeFilePath}\n${body}`);
+    if (leakMatches.length > 0) {
+      recordFailure(
+        `static-export-text:${relativeFilePath}:leak`,
+        `exported static text surface contains blocked private/source patterns: ${leakMatches.join(', ')}`
+      );
+    }
+  }
+
   return {
     status: 'checked',
     out_dir: outDir,
-    checked_routes: checkedRoutes
+    checked_routes: checkedRoutes,
+    checked_text_surface_files: textSurfaceFiles.length
   };
 }
 
@@ -350,6 +366,27 @@ function normalizeHtmlText(value) {
     .trim();
 }
 
+function collectStaticTextSurfaceFiles(outRoot, directory = outRoot, prefix = '') {
+  const textExtensions = new Set(['.html', '.txt', '.xml', '.svg', '.json', '.md']);
+  const files = [];
+  for (const item of fs.readdirSync(directory, { withFileTypes: true })) {
+    const relativePath = prefix ? `${prefix}/${item.name}` : item.name;
+    if (relativePath.startsWith('_next/')) continue;
+    if (relativePath.startsWith('archive-models/')) continue;
+
+    const absolutePath = path.join(directory, item.name);
+    if (item.isDirectory()) {
+      files.push(...collectStaticTextSurfaceFiles(outRoot, absolutePath, relativePath));
+      continue;
+    }
+    if (!item.isFile()) continue;
+
+    const extension = path.extname(item.name).toLowerCase();
+    if (textExtensions.has(extension)) files.push(relativePath);
+  }
+  return files.sort();
+}
+
 async function main() {
   checkDataSurfaces();
   const checkedRouteManifest = checkRouteManifestSurfaces();
@@ -365,7 +402,8 @@ async function main() {
     checked_static_routes: staticExport.checked_routes,
     static_export: {
       status: staticExport.status,
-      out_dir: staticExport.out_dir
+      out_dir: staticExport.out_dir,
+      checked_text_surface_files: staticExport.checked_text_surface_files
     },
     failures,
     warnings
