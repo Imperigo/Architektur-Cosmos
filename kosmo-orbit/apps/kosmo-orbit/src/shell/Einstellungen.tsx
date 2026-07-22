@@ -47,6 +47,7 @@ import {
   verbindeHomeServer,
   warZuletztVerbunden,
   type HomeServerProbeErgebnis,
+  type HomeServerRollenEintrag,
   type KanalStatus,
 } from '../state/home-server';
 import { istTauriDesktop } from './cloud-login';
@@ -165,7 +166,10 @@ function setStartMaximiertEingestellt(an: boolean): void {
  * E-H «Ein-Klick-HomeServer» — Chip-Text/-Klasse je Kanal, IMMER aus einem
  * echten Probe-Ergebnis (`hsStatus`) oder dem ehrlichen Zwischenzustand
  * («prüft…»/«noch nicht geprüft»); nie ein hartkodiertes «VERBUNDEN» ohne
- * Probe (Sanktion 7).
+ * Probe (Sanktion 7). Der Chip-TEXT selbst bleibt bewusst der bisherige
+ * («VERBUNDEN»/«NICHT VERBUNDEN») — der neue Staffelungs-Abgleich (E-L,
+ * v0.9.0) kommt als EIGENER Block direkt darunter (`llmRollenListe` unten),
+ * damit der bestehende Chip-Vertrag (E-H/E2E) textgleich bleibt.
  */
 function homeServerChip(
   label: string,
@@ -178,6 +182,14 @@ function homeServerChip(
     ? { text: `${label} — VERBUNDEN`, klasse: 'es-homeserver-chip--verbunden' }
     : { text: `${label} — NICHT VERBUNDEN`, klasse: 'es-homeserver-chip--nicht-verbunden' };
 }
+
+/** Deutsche Rollen-Labels — dieselbe Konvention wie `KosmoPanel.tsx`s
+ *  Rollen-Badge (`NAMEN: Record<KosmoRolle, string>`, `KosmoPanel.tsx:199`). */
+const ROLLEN_LABEL: Record<HomeServerRollenEintrag['rolle'], string> = {
+  meister: 'Meister',
+  leiter: 'Leiter',
+  zeichner: 'Zeichner',
+};
 
 /**
  * E-K5 (`docs/V0812-SPEZ.md`, Sanktion 4): natürliche Reihenfolge der 8
@@ -603,6 +615,39 @@ export function Einstellungen({
                 );
               })}
             </div>
+
+            {/* E-L «ehrliche Modell-Anzeige» (`docs/V090-SPEZ.md` §E-L,
+                Owner-Beleg: bisher nur pauschal «llm nicht verbunden» in der
+                Mac-App sichtbar). Nur gerendert, wenn Ollama überhaupt
+                geantwortet hat (`hsStatus.llmModelle` additiv gesetzt,
+                s. `state/home-server.ts`) — läuft der Server nicht, bleibt
+                der KOSMO-LLM-Chip oben textgleich «NICHT VERBUNDEN» wie vor
+                E-L, ohne erfundenen Rollen-Abgleich (Sanktion 7). */}
+            {hsStatus?.llmModelle && (
+              <div className="es-homeserver-rollen" data-testid="homeserver-llm-rollen">
+                {hsStatus.llmModelle.rollen.map((eintrag) => (
+                  <div
+                    key={eintrag.rolle}
+                    data-testid={`homeserver-llm-rolle-${eintrag.rolle}`}
+                    className={`es-homeserver-rolle ${
+                      eintrag.vorhanden ? 'es-homeserver-rolle--vorhanden' : 'es-homeserver-rolle--fehlend'
+                    }`}
+                  >
+                    <span aria-hidden="true">{eintrag.vorhanden ? '✓' : '✗'}</span>
+                    <span>
+                      {ROLLEN_LABEL[eintrag.rolle]} {eintrag.modell} {eintrag.vorhanden ? 'vorhanden' : 'fehlt'}
+                    </span>
+                  </div>
+                ))}
+                {hsStatus.llmModelle.meisterFallbackAufLeiter && (
+                  <div className="es-homeserver-rollen-fallback" data-testid="homeserver-llm-meister-fallback">
+                    Kosmo-Meister läuft mangels installiertem Modell aktuell deklariert auf dem Leiter-Modell (
+                    {hsStatus.llmModelle.rollen.find((r) => r.rolle === 'leiter')?.modell}) — arbeitsfähig statt
+                    stumm.
+                  </div>
+                )}
+              </div>
+            )}
 
             {hsNetzProbeGescheitert && (
               <div className="es-homeserver-tailscale" data-testid="homeserver-tailscale-hinweis">

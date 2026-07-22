@@ -148,20 +148,174 @@ describe('Probes (gemockt) — pruefeBridge/pruefeSync/pruefeOllama', () => {
     expect(await pruefeSync('ws://100.88.48.73:8700', 20)).toBe('nicht-verbunden');
   });
 
-  it('pruefeOllama: /api/tags 200 → verbunden; Netzfehler (kein Ollama-Prozess) → ehrlich nicht-verbunden', async () => {
+  it('pruefeOllama: leere URL → sofort nicht-verbunden, `modelle` bleibt undefined (kein Server-Kontakt)', async () => {
     setzeLocalStorage();
-    vi.stubGlobal('fetch', (async (url: unknown) => {
-      expect(String(url)).toBe('http://100.88.48.73:11434/api/tags');
-      return { ok: true } as Response;
-    }) as unknown as typeof fetch);
     const { pruefeOllama } = await import('../src/state/home-server');
-    expect(await pruefeOllama('http://100.88.48.73:11434')).toBe('verbunden');
+    const erg = await pruefeOllama('');
+    expect(erg).toEqual({ status: 'nicht-verbunden' });
+  });
 
+  it('pruefeOllama: Netzfehler (kein Ollama-Prozess, ECONNREFUSED) → ehrlich nicht-verbunden, `modelle` bleibt undefined', async () => {
+    setzeLocalStorage();
     vi.stubGlobal('fetch', (async () => {
       throw new Error('ECONNREFUSED');
     }) as unknown as typeof fetch);
-    const { pruefeOllama: pruefeOllama2 } = await import('../src/state/home-server');
-    expect(await pruefeOllama2('http://100.88.48.73:11434')).toBe('nicht-verbunden');
+    const { pruefeOllama } = await import('../src/state/home-server');
+    expect(await pruefeOllama('http://100.88.48.73:11434')).toEqual({ status: 'nicht-verbunden' });
+  });
+
+  it('pruefeOllama: HTTP-Fehlerstatus (z.B. 500) → nicht-verbunden, `modelle` bleibt undefined', async () => {
+    setzeLocalStorage();
+    vi.stubGlobal('fetch', (async () => ({ ok: false, status: 500 })) as unknown as typeof fetch);
+    const { pruefeOllama } = await import('../src/state/home-server');
+    expect(await pruefeOllama('http://100.88.48.73:11434')).toEqual({ status: 'nicht-verbunden' });
+  });
+
+  it('pruefeOllama: Timeout (kein Ereignis, `AbortSignal`) → ehrlich nicht-verbunden', async () => {
+    setzeLocalStorage();
+    vi.stubGlobal('fetch', (async (_url: unknown, init?: RequestInit) => {
+      return await new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new Error('AbortError')));
+      });
+    }) as unknown as typeof fetch);
+    const { pruefeOllama, PROBE_TIMEOUT_MS } = await import('../src/state/home-server');
+    expect(PROBE_TIMEOUT_MS).toBeGreaterThan(0);
+    expect(await pruefeOllama('http://100.88.48.73:11434')).toEqual({ status: 'nicht-verbunden' });
+  });
+
+  it('pruefeOllama: Server antwortet 200, aber Zeichner/Leiter fehlen (nur Fremd-Modell installiert) → ehrlich nicht-verbunden, Modellliste bleibt aber gefüllt', async () => {
+    setzeLocalStorage();
+    vi.stubGlobal('fetch', (async (url: unknown) => {
+      expect(String(url)).toBe('http://100.88.48.73:11434/api/tags');
+      return {
+        ok: true,
+        json: async () => ({ models: [{ name: 'llama3.2:latest' }] }),
+      } as unknown as Response;
+    }) as unknown as typeof fetch);
+    const { pruefeOllama } = await import('../src/state/home-server');
+    expect(await pruefeOllama('http://100.88.48.73:11434')).toEqual({
+      status: 'nicht-verbunden',
+      modelle: ['llama3.2:latest'],
+    });
+  });
+
+  it('pruefeOllama: Zeichner ODER Leiter vorhanden → verbunden (Owner-Fall aus `docs/HOMESERVER-STATUS.md`: Meister qwen3:72b fehlt bewusst, Leiter+Zeichner installiert)', async () => {
+    setzeLocalStorage();
+    vi.stubGlobal('fetch', (async () => ({
+      ok: true,
+      json: async () => ({ models: [{ name: 'qwen3-coder:30b' }, { name: 'qwen3:30b' }, { name: 'llama3.2' }] }),
+    })) as unknown as typeof fetch);
+    const { pruefeOllama } = await import('../src/state/home-server');
+    const erg = await pruefeOllama('http://100.88.48.73:11434');
+    expect(erg.status).toBe('verbunden');
+    expect(erg.modelle).toEqual(['qwen3-coder:30b', 'qwen3:30b', 'llama3.2']);
+  });
+
+  it('pruefeOllama: nur der Zeichner allein reicht bereits für verbunden', async () => {
+    setzeLocalStorage();
+    vi.stubGlobal('fetch', (async () => ({
+      ok: true,
+      json: async () => ({ models: [{ name: 'qwen3-coder:30b' }] }),
+    })) as unknown as typeof fetch);
+    const { pruefeOllama } = await import('../src/state/home-server');
+    expect((await pruefeOllama('http://100.88.48.73:11434')).status).toBe('verbunden');
+  });
+
+  it('pruefeOllama: 200 aber kaputtes/leeres JSON → ehrlich leere Modellliste statt Crash, nicht-verbunden', async () => {
+    setzeLocalStorage();
+    vi.stubGlobal('fetch', (async () => ({
+      ok: true,
+      json: async () => {
+        throw new SyntaxError('Unexpected end of JSON input');
+      },
+    })) as unknown as typeof fetch);
+    const { pruefeOllama } = await import('../src/state/home-server');
+    expect(await pruefeOllama('http://100.88.48.73:11434')).toEqual({ status: 'nicht-verbunden', modelle: [] });
+  });
+});
+
+describe('E-L (v0.9.0) — ehrlicher Staffelungs-Abgleich in pruefeHomeServer/verbindeHomeServer (`llmModelle`, additiv)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('Ollama nicht erreichbar (Container-Ehrlichkeitsbeweis): `llmModelle` fehlt GANZ — kein erfundener Rollen-Abgleich ohne Server-Kontakt', async () => {
+    setzeLocalStorage();
+    stubWebSocket('open');
+    vi.stubGlobal('fetch', (async (url: unknown) => {
+      const s = String(url);
+      if (s.includes(':8600')) return { ok: true } as Response;
+      if (s.includes(':11434')) throw new Error('ECONNREFUSED');
+      return { ok: false } as Response;
+    }) as unknown as typeof fetch);
+    const { pruefeHomeServer } = await import('../src/state/home-server');
+    const erg = await pruefeHomeServer('100.88.48.73');
+    expect(erg.llm).toBe('nicht-verbunden');
+    expect(erg.llmModelle).toBeUndefined();
+    expect('llmModelle' in erg).toBe(false);
+  });
+
+  it('Ollama antwortet, Meister fehlt (Owner-Fall) → `llmModelle` zeigt Meister fehlend + Leiter/Zeichner vorhanden + deklarierten Fallback', async () => {
+    setzeLocalStorage();
+    stubWebSocket('open');
+    vi.stubGlobal('fetch', (async (url: unknown) => {
+      const s = String(url);
+      if (s.includes(':11434')) {
+        return {
+          ok: true,
+          json: async () => ({ models: [{ name: 'qwen3-coder:30b' }, { name: 'qwen3:30b' }] }),
+        } as unknown as Response;
+      }
+      return { ok: true } as Response;
+    }) as unknown as typeof fetch);
+    const { pruefeHomeServer } = await import('../src/state/home-server');
+    const erg = await pruefeHomeServer('100.88.48.73');
+    expect(erg.llm).toBe('verbunden');
+    expect(erg.llmModelle).toBeDefined();
+    expect(erg.llmModelle?.verfuegbar).toEqual(['qwen3-coder:30b', 'qwen3:30b']);
+    expect(erg.llmModelle?.rollen).toEqual([
+      { rolle: 'meister', modell: 'qwen3:72b', vorhanden: false },
+      { rolle: 'leiter', modell: 'qwen3:30b', vorhanden: true },
+      { rolle: 'zeichner', modell: 'qwen3-coder:30b', vorhanden: true },
+    ]);
+    expect(erg.llmModelle?.meisterFallbackAufLeiter).toBe(true);
+  });
+
+  it('Ollama antwortet, aber kein einziges Staffelungs-Modell installiert (nur Fremd-Modell) → llm bleibt ehrlich nicht-verbunden, `llmModelle` zeigt trotzdem alle drei als fehlend', async () => {
+    setzeLocalStorage();
+    stubWebSocket('open');
+    vi.stubGlobal('fetch', (async (url: unknown) => {
+      const s = String(url);
+      if (s.includes(':11434')) {
+        return { ok: true, json: async () => ({ models: [{ name: 'llama3.2:latest' }] }) } as unknown as Response;
+      }
+      return { ok: true } as Response;
+    }) as unknown as typeof fetch);
+    const { pruefeHomeServer } = await import('../src/state/home-server');
+    const erg = await pruefeHomeServer('100.88.48.73');
+    expect(erg.llm).toBe('nicht-verbunden');
+    expect(erg.llmModelle?.rollen.every((r) => !r.vorhanden)).toBe(true);
+    expect(erg.llmModelle?.meisterFallbackAufLeiter).toBe(true);
+  });
+
+  it('Ollama antwortet mit allen drei Staffelungs-Modellen: kein Fallback nötig, alle Rollen vorhanden', async () => {
+    setzeLocalStorage();
+    stubWebSocket('open');
+    vi.stubGlobal('fetch', (async (url: unknown) => {
+      const s = String(url);
+      if (s.includes(':11434')) {
+        return {
+          ok: true,
+          json: async () => ({
+            models: [{ name: 'qwen3:72b' }, { name: 'qwen3:30b' }, { name: 'qwen3-coder:30b' }],
+          }),
+        } as unknown as Response;
+      }
+      return { ok: true } as Response;
+    }) as unknown as typeof fetch);
+    const { pruefeHomeServer } = await import('../src/state/home-server');
+    const erg = await pruefeHomeServer('100.88.48.73');
+    expect(erg.llm).toBe('verbunden');
+    expect(erg.llmModelle?.rollen.every((r) => r.vorhanden)).toBe(true);
+    expect(erg.llmModelle?.meisterFallbackAufLeiter).toBe(false);
   });
 });
 

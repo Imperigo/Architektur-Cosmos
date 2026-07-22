@@ -353,6 +353,34 @@
   font-family: var(--k-font-mono);
 }
 
+/* E-L «ehrliche Modell-Anzeige» (`docs/V090-SPEZ.md` §E-L) — Staffelungs-
+   Abgleich statt Pauschalurteil beim KOSMO-LLM-Chip: je Rolle ein Zeilen-
+   Eintrag, vorhanden ✓ oder fehlend, plus ein Fallback-Hinweis. */
+.es-homeserver-rollen {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: var(--k-s2);
+  font-size: var(--k-t-sm);
+}
+.es-homeserver-rolle {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--k-ink-soft);
+}
+.es-homeserver-rolle--vorhanden {
+  color: var(--k-success);
+}
+.es-homeserver-rolle--fehlend {
+  color: var(--k-warning);
+}
+.es-homeserver-rollen-fallback {
+  margin-top: 2px;
+  color: var(--k-warning);
+  font-size: var(--k-t-sm);
+}
+
 .es-homeserver-tailscale {
   display: inline-flex;
   align-items: center;

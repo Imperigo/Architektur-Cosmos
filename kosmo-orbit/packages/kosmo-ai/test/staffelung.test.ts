@@ -5,6 +5,7 @@ import {
   STANDARD_ROLLEN_MODELL_KARTE,
   anthropicConfigFuerRolle,
   loeseRollenModelle,
+  loeseRollenModelleMitVerfuegbarkeit,
   ollamaConfigFuerRolle,
   rolleFuerAufgabe,
   staffelungIstZusammengefasst,
@@ -196,6 +197,54 @@ describe('ollamaConfigFuerRolle / anthropicConfigFuerRolle — vollständige Pro
   it('AnthropicConfig für Zeichner nutzt das güngstigere Standard-Cloud-Modell', () => {
     const cfg = anthropicConfigFuerRolle('zeichner', { apiKey: 'sk-test' });
     expect(cfg.model).toBe('claude-sonnet-5');
+  });
+});
+
+describe('loeseRollenModelleMitVerfuegbarkeit — v0.9.0/E-L: Meister-Fallback bei fehlendem Modell (echte Server-Liste)', () => {
+  it('Meister-Modell vorhanden: keine Änderung, kein Fallback gemeldet', () => {
+    const konfig = { provider: 'ollama' as const };
+    const erg = loeseRollenModelleMitVerfuegbarkeit(konfig, ['qwen3:72b', 'qwen3:30b', 'qwen3-coder:30b']);
+    expect(erg.meisterFallbackAufLeiter).toBe(false);
+    expect(erg.modelle).toEqual(loeseRollenModelle(konfig));
+  });
+
+  it('Owner-Fall (`docs/HOMESERVER-STATUS.md`): Meister qwen3:72b fehlt bewusst → Meister fällt auf das Leiter-Modell zurück, deklariert', () => {
+    const konfig = { provider: 'ollama' as const };
+    const erg = loeseRollenModelleMitVerfuegbarkeit(konfig, ['qwen3:30b', 'qwen3-coder:30b', 'llama3.2:latest']);
+    expect(erg.meisterFallbackAufLeiter).toBe(true);
+    expect(erg.modelle.meister).toBe(STANDARD_ROLLEN_MODELL_KARTE.lokal.leiter);
+    expect(erg.modelle.meister).toBe(erg.modelle.leiter);
+    // Leiter/Zeichner bleiben unangetastet — kein Kaskaden-Automatismus.
+    expect(erg.modelle.leiter).toBe(STANDARD_ROLLEN_MODELL_KARTE.lokal.leiter);
+    expect(erg.modelle.zeichner).toBe(STANDARD_ROLLEN_MODELL_KARTE.lokal.zeichner);
+  });
+
+  it('`undefined` (nicht geprüft) lässt die Standard-Auflösung unangetastet — kein stiller Fallback ohne Beleg', () => {
+    const konfig = { provider: 'ollama' as const };
+    const erg = loeseRollenModelleMitVerfuegbarkeit(konfig, undefined);
+    expect(erg.meisterFallbackAufLeiter).toBe(false);
+    expect(erg.modelle).toEqual(loeseRollenModelle(konfig));
+  });
+
+  it('leere Liste (Server geprüft, aber KEIN Modell installiert): auch das ist ein fehlender Meister → Fallback', () => {
+    const konfig = { provider: 'ollama' as const };
+    const erg = loeseRollenModelleMitVerfuegbarkeit(konfig, []);
+    expect(erg.meisterFallbackAufLeiter).toBe(true);
+    expect(erg.modelle.meister).toBe(erg.modelle.leiter);
+  });
+
+  it('Cloud wird ignoriert (kein /api/tags dort, mindestensOpus bleibt der Boden)', () => {
+    const konfig = { provider: 'anthropic' as const };
+    const erg = loeseRollenModelleMitVerfuegbarkeit(konfig, ['irrelevant']);
+    expect(erg.meisterFallbackAufLeiter).toBe(false);
+    expect(erg.modelle.meister).toBe(CLOUD_MODELL_MIN);
+  });
+
+  it('eine Karten-Überschreibung des Meister-Modells wird respektiert — der Fallback greift gegen das NEU gewählte Modell, nicht das Guideline-Default', () => {
+    const konfig = { provider: 'ollama' as const, karte: { lokal: { meister: 'mein-eigenes-meister-modell' } } };
+    const erg = loeseRollenModelleMitVerfuegbarkeit(konfig, ['qwen3:30b', 'qwen3-coder:30b']);
+    expect(erg.meisterFallbackAufLeiter).toBe(true);
+    expect(erg.modelle.meister).toBe(STANDARD_ROLLEN_MODELL_KARTE.lokal.leiter);
   });
 });
 

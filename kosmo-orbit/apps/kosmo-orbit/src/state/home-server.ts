@@ -1,4 +1,10 @@
-import { betriebKonfig } from '@kosmo/ai';
+import {
+  betriebKonfig,
+  KOSMO_ROLLEN,
+  loeseRollenModelleMitVerfuegbarkeit,
+  STANDARD_ROLLEN_MODELL_KARTE,
+  type KosmoRolle,
+} from '@kosmo/ai';
 import { loadSettings, type KosmoSettings } from '../shell/KosmoPanel';
 
 /**
@@ -27,6 +33,24 @@ import { loadSettings, type KosmoSettings } from '../shell/KosmoPanel';
  * Ollama ist im Container/Dev-Setup bewusst NICHT gestartet (Ehrlichkeits-
  * beweis) und bleibt darum ehrlich `nicht-verbunden`, auch wenn Bridge/Sync
  * längst stehen (gemischtes Bild, kein Alles-oder-nichts-Fake).
+ *
+ * v0.9.0 / E-L («Kosmo-LLM: Ollama als Remote-Default + ehrliche
+ * Modell-Anzeige», `docs/V090-SPEZ.md` §E-L, Sanktion 3): der Owner sah in
+ * der Mac-App bisher nur ein PAUSCHALES «llm nicht verbunden»
+ * (`shell/Einstellungen.tsx`s `homeServerChip()`) — egal ob der Ollama-
+ * Server lief, aber das erwartete Modell fehlte, oder ob er gar nicht
+ * erreichbar war. `pruefeOllama()` liest jetzt zusätzlich `/api/tags` aus
+ * und meldet die rohe Modellliste zurück; `pruefeHomeServer()`/
+ * `verbindeHomeServer()` bauen daraus — additiv, KEIN neues Zustandssystem —
+ * den `llmModelle`-Rollen-Abgleich (Meister/Leiter/Zeichner je vorhanden
+ * ja/nein + deklarierter Meister→Leiter-Fallback, s.
+ * `@kosmo/ai`s `loeseRollenModelleMitVerfuegbarkeit`). `llmModelle` fehlt
+ * ganz, wenn der Server gar nicht geantwortet hat (Netzfehler/Timeout) —
+ * genau der bisherige Ehrlichkeits-Fall bleibt textgleich «NICHT VERBUNDEN»
+ * ohne jede erfundene Rollen-Angabe. Der `llm`-Kanalstatus selbst wird
+ * strenger: «verbunden» gilt nur noch, wenn der Server antwortet UND
+ * mindestens Leiter ODER Zeichner installiert ist (Sanktion 7 aus 0.8.12
+ * gilt unverändert — nie grün ohne Modell).
  */
 
 export const HOMESERVER_HOST_KEY = 'kosmo.homeserver.host';
@@ -47,10 +71,33 @@ export interface HomeServerEndpunkte {
   ollamaUrl: string;
 }
 
+/** Ein Rollen-Eintrag im ehrlichen Staffelungs-Abgleich (E-L) — Standard-
+ *  Modellname je Rolle + ob er in der `/api/tags`-Liste tatsächlich vorkam. */
+export interface HomeServerRollenEintrag {
+  rolle: KosmoRolle;
+  modell: string;
+  vorhanden: boolean;
+}
+
+/** Ehrlicher Staffelungs-Abgleich für den KOSMO-LLM-Chip (E-L, v0.9.0) — nur
+ *  vorhanden, wenn der Ollama-Server überhaupt geantwortet hat. */
+export interface HomeServerLlmAbgleich {
+  /** Rohe Modellnamen aus `/api/tags` (kann leer sein — Server erreichbar, aber kein Modell installiert). */
+  verfuegbar: string[];
+  /** Meister/Leiter/Zeichner je mit Standard-Modellname + vorhanden ja/nein. */
+  rollen: HomeServerRollenEintrag[];
+  /** `true`, wenn der Meister fehlt und (deklariert, s. `staffelung.ts`) auf das Leiter-Modell zurückfällt. */
+  meisterFallbackAufLeiter: boolean;
+}
+
 export interface HomeServerProbeErgebnis {
   bridge: KanalStatus;
   sync: KanalStatus;
   llm: KanalStatus;
+  /** Additiv (E-L, v0.9.0): fehlt ganz, wenn Ollama nicht geantwortet hat
+   *  (Netzfehler/Timeout/HTTP-Fehler) — dann bleibt der Chip textgleich wie
+   *  vor E-L, ohne erfundenen Rollen-Abgleich (Sanktion 7). */
+  llmModelle?: HomeServerLlmAbgleich;
 }
 
 /** Aktueller HomeServer-Host — EINE Quelle (Spec: `kosmo.homeserver.host`),
@@ -146,29 +193,84 @@ export function pruefeSync(syncUrl: string, ms: number = PROBE_TIMEOUT_MS): Prom
   });
 }
 
+/** `/api/tags`-Antwort → rohe Modellnamen. Robust gegen ein unerwartetes/
+ *  fehlendes JSON-Format — ein Server, der zwar 200 antwortet, aber kein
+ *  gültiges `{models:[...]}` liefert, gilt ehrlich als «kein Modell», NIE
+ *  als Crash. */
+async function leseModellNamen(res: Response): Promise<string[]> {
+  try {
+    const daten = (await res.json()) as { models?: Array<{ name?: unknown }> } | undefined;
+    if (!daten || !Array.isArray(daten.models)) return [];
+    return daten.models.map((m) => m?.name).filter((n): n is string => typeof n === 'string');
+  } catch {
+    return [];
+  }
+}
+
+export interface OllamaProbeErgebnis {
+  status: KanalStatus;
+  /** `undefined`, wenn der Server NICHT geantwortet hat (Netzfehler/Timeout/
+   *  HTTP-Fehler) — sonst die rohen `/api/tags`-Modellnamen (auch ein leeres
+   *  Array ist ein gültiges, ehrliches Ergebnis: Server erreichbar, nichts
+   *  installiert). */
+  modelle?: string[];
+}
+
 /** Ollama `/api/tags` — dasselbe Muster wie `WerkzeugSetup.tsx`s
  *  `pruefe('ollama')`. Läuft Ollama nicht (Container-Dev-Betrieb bewusst
- *  ohne, Ehrlichkeitsbeweis), bleibt der Kanal ehrlich `nicht-verbunden`. */
-export async function pruefeOllama(ollamaUrl: string): Promise<KanalStatus> {
-  if (!ollamaUrl) return 'nicht-verbunden';
+ *  ohne, Ehrlichkeitsbeweis), bleibt der Kanal ehrlich `nicht-verbunden`,
+ *  `modelle` bleibt `undefined`.
+ *
+ *  E-L (v0.9.0, Sanktion 7 aus 0.8.12 gilt weiter): «verbunden» heisst NICHT
+ *  mehr nur «Server hat mit 200 geantwortet» — erst wenn der Server ZUSÄTZLICH
+ *  mindestens den Leiter ODER den Zeichner installiert hat, gilt der Kanal
+ *  als verbunden. Ein antwortender Server ohne jedes Staffelungs-Modell wäre
+ *  sonst ein stillschweigendes Grün ohne echte Nutzbarkeit — genau das
+ *  Pauschalurteil, das dieses Paket behebt (statt nur den Text zu ändern). */
+export async function pruefeOllama(ollamaUrl: string): Promise<OllamaProbeErgebnis> {
+  if (!ollamaUrl) return { status: 'nicht-verbunden' };
   try {
     const res = await mitTimeout((signal) => fetch(`${ollamaUrl.replace(/\/$/, '')}/api/tags`, { signal }));
-    return res.ok ? 'verbunden' : 'nicht-verbunden';
+    if (!res.ok) return { status: 'nicht-verbunden' };
+    const modelle = await leseModellNamen(res);
+    const { leiter, zeichner } = STANDARD_ROLLEN_MODELL_KARTE.lokal;
+    const vorhanden = new Set(modelle);
+    const status: KanalStatus = vorhanden.has(leiter) || vorhanden.has(zeichner) ? 'verbunden' : 'nicht-verbunden';
+    return { status, modelle };
   } catch {
-    return 'nicht-verbunden';
+    return { status: 'nicht-verbunden' };
   }
+}
+
+/** Rohe `/api/tags`-Modellliste → der Staffelungs-Abgleich für den Chip
+ *  (Meister/Leiter/Zeichner je vorhanden ja/nein + deklarierter Meister-
+ *  Fallback) — reine Ableitung über `@kosmo/ai`s
+ *  `loeseRollenModelleMitVerfuegbarkeit`, kein Parallel-Zustand. */
+function baueLlmAbgleich(verfuegbar: string[]): HomeServerLlmAbgleich {
+  const { meisterFallbackAufLeiter } = loeseRollenModelleMitVerfuegbarkeit({ provider: 'ollama' }, verfuegbar);
+  const vorhanden = new Set(verfuegbar);
+  const rollen: HomeServerRollenEintrag[] = KOSMO_ROLLEN.map((rolle) => {
+    const modell = STANDARD_ROLLEN_MODELL_KARTE.lokal[rolle];
+    return { rolle, modell, vorhanden: vorhanden.has(modell) };
+  });
+  return { verfuegbar, rollen, meisterFallbackAufLeiter };
 }
 
 /** Alle drei Kanäle parallel prüfen, OHNE die Betriebsart anzufassen — der
  *  Weg für die Auto-Reprobe beim Wiedereröffnen der Einstellungen. */
 export async function pruefeHomeServer(host: string = homeServerHost()): Promise<HomeServerProbeErgebnis> {
   const ep = homeServerEndpunkte(host);
-  const [bridge, sync, llm] = await Promise.all([
+  const [bridge, sync, ollama] = await Promise.all([
     pruefeBridge(ep.bridgeUrl),
     pruefeSync(ep.syncUrl),
     pruefeOllama(ep.ollamaUrl),
   ]);
-  return { bridge, sync, llm };
+  return {
+    bridge,
+    sync,
+    llm: ollama.status,
+    ...(ollama.modelle !== undefined ? { llmModelle: baueLlmAbgleich(ollama.modelle) } : {}),
+  };
 }
 
 /**

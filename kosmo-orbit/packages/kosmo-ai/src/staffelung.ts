@@ -347,6 +347,53 @@ function enthaeltStrategieSchluesselwort(text: string): boolean {
 }
 
 /**
+ * v0.9.0 / E-L («Kosmo-LLM: Ollama als Remote-Default + ehrliche
+ * Modell-Anzeige», `docs/V090-SPEZ.md` §E-L Punkt 4) — Modell-VERFÜGBARKEITS-
+ * Abgleich, ANDERS als `lokalEinGpuModell` oben: jenes ist ein Owner-
+ * konfigurierter, statischer Sparfall (Leiter/Zeichner teilen sich bewusst
+ * EIN Modell, unabhängig davon, was auf dem Server wirklich installiert ist).
+ * Dies hier prüft gegen eine ECHTE Modellliste vom Server (`/api/tags`, die
+ * HomeServer-Sonde `apps/kosmo-orbit/src/state/home-server.ts`s
+ * `pruefeOllama()`): fehlt das Meister-Modell dort, fällt die Meister-ROLLE
+ * DEKLARIERT auf das Leiter-Modell zurück — Kosmo bleibt arbeitsfähig statt
+ * stumm (Owner-Fall aus `docs/HOMESERVER-STATUS.md`: `qwen3:72b` fehlt
+ * BEWUSST, zu gross für 32 GB VRAM). Leiter/Zeichner werden NICHT
+ * automatisch kaskadiert, wenn sie fehlen — nur der dokumentierte
+ * Meister→Leiter-Fall, kein Rätsel-Automatismus. Reine Funktion, kein
+ * Netz/Seiteneffekt (die Modellliste kommt bereits fertig geprobt herein).
+ */
+export interface RollenVerfuegbarkeit {
+  /** Rollen→Modell NACH dem Fallback (Meister zeigt ggf. schon das Leiter-Modell). */
+  modelle: RollenModelle;
+  /** `true`, wenn der Meister fehlt und deklariert auf das Leiter-Modell zurückfällt. */
+  meisterFallbackAufLeiter: boolean;
+}
+
+/**
+ * `konfig` bestimmt die Standard-/Karten-Auflösung wie gehabt
+ * (`loeseRollenModelle`); `verfuegbareModelle` ist die rohe `/api/tags`-Liste
+ * (Modellnamen, z. B. `['qwen3:30b', 'qwen3-coder:30b', 'llama3.2:latest']`).
+ * `undefined` bedeutet «nicht geprüft» (Server nicht erreichbar/kein Probe-
+ * Lauf) — dann bleibt die Standard-Auflösung unangetastet, KEIN stiller
+ * Fallback ohne Beleg. Nur für `provider: 'ollama'` relevant (Cloud hat kein
+ * `/api/tags`, dort bleibt der Boden ohnehin `mindestensOpus`-gesichert).
+ */
+export function loeseRollenModelleMitVerfuegbarkeit(
+  konfig: StaffelungKonfig,
+  verfuegbareModelle: readonly string[] | undefined,
+): RollenVerfuegbarkeit {
+  const basis = loeseRollenModelle(konfig);
+  if (konfig.provider !== 'ollama' || verfuegbareModelle === undefined) {
+    return { modelle: basis, meisterFallbackAufLeiter: false };
+  }
+  const vorhanden = new Set(verfuegbareModelle);
+  if (vorhanden.has(basis.meister)) {
+    return { modelle: basis, meisterFallbackAufLeiter: false };
+  }
+  return { modelle: { ...basis, meister: basis.leiter }, meisterFallbackAufLeiter: true };
+}
+
+/**
  * Reine, regelbasierte Zug-Klassifikation → eine der 7 Aufgabenklassen.
  * KEIN LLM-Aufruf, kein Netz/Seiteneffekt — voll containertestbar, exakt wie
  * `waehleModellFuerRolle` oben. `rolleFuerAufgabe(klassifiziereZug(...))`

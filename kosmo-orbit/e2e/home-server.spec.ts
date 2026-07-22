@@ -197,3 +197,121 @@ test.describe('iPad 1024×768 (Touch)', () => {
     await expect(page.locator('[data-testid="homeserver-trennen"]')).toBeVisible();
   });
 });
+
+/**
+ * V090-SPEZ E-L «Kosmo-LLM: Ollama als Remote-Default + ehrliche
+ * Modell-Anzeige» (`docs/V090-SPEZ.md` §E-L, Punkt 3+4). ADDITIVE Erweiterung
+ * — die Suite oben bleibt unverändert (kein Ollama im Container laufen zu
+ * lassen ist der bestehende Ehrlichkeitsbeweis, Sanktion 7). Hier wird
+ * `/api/tags` gezielt per `page.route` gemockt (Owner-Live-Kontext,
+ * `docs/HOMESERVER-STATUS.md`: `qwen3-coder:30b` + `qwen3:30b` installiert,
+ * `qwen3:72b` fehlt BEWUSST — zu gross für 32 GB VRAM), um den STAFFELUNGS-
+ * ABGLEICH zu beweisen, den ein reiner Container-Lauf nie zeigen könnte.
+ */
+test.describe('E-L «ehrliche Modell-Anzeige» — Staffelungs-Abgleich statt Pauschalurteil (gemockt /api/tags)', () => {
+  test('Owner-Fall: Leiter+Zeichner installiert, Meister fehlt bewusst → Chip VERBUNDEN, Rollen-Abgleich zeigt Meister fehlend + deklarierten Fallback auf den Leiter', async ({
+    page,
+  }) => {
+    await page.route('**/api/tags', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ models: [{ name: 'qwen3-coder:30b' }, { name: 'qwen3:30b' }] }),
+      }),
+    );
+
+    await zentraleLaden(page);
+    await einstellungenOeffnen(page);
+    await hostSetzen(page, '127.0.0.1');
+    await page.click('[data-testid="homeserver-verbinden"]');
+
+    // Server antwortet UND mindestens Leiter/Zeichner vorhanden → VERBUNDEN,
+    // NIE stillschweigend grün ohne echtes Modell (Sanktion 7 gilt weiter).
+    await expect(page.locator('[data-testid="homeserver-status-llm"]')).toHaveText('KOSMO-LLM — VERBUNDEN', {
+      timeout: 10_000,
+    });
+
+    const rollen = page.locator('[data-testid="homeserver-llm-rollen"]');
+    await expect(rollen).toBeVisible();
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-meister"]')).toContainText('Meister');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-meister"]')).toContainText('qwen3:72b');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-meister"]')).toContainText('fehlt');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-leiter"]')).toContainText('vorhanden');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-zeichner"]')).toContainText('vorhanden');
+
+    // Deklarierter Fallback: der Meister läuft arbeitsfähig auf dem
+    // Leiter-Modell statt stumm zu bleiben (staffelung.ts).
+    await expect(page.locator('[data-testid="homeserver-llm-meister-fallback"]')).toBeVisible();
+    await expect(page.locator('[data-testid="homeserver-llm-meister-fallback"]')).toContainText('qwen3:30b');
+  });
+
+  test('alle drei Staffelungs-Modelle installiert → Rollen-Abgleich zeigt alle drei vorhanden, KEIN Fallback-Hinweis', async ({
+    page,
+  }) => {
+    await page.route('**/api/tags', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          models: [{ name: 'qwen3:72b' }, { name: 'qwen3:30b' }, { name: 'qwen3-coder:30b' }],
+        }),
+      }),
+    );
+
+    await zentraleLaden(page);
+    await einstellungenOeffnen(page);
+    await hostSetzen(page, '127.0.0.1');
+    await page.click('[data-testid="homeserver-verbinden"]');
+
+    await expect(page.locator('[data-testid="homeserver-status-llm"]')).toHaveText('KOSMO-LLM — VERBUNDEN', {
+      timeout: 10_000,
+    });
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-meister"]')).toContainText('vorhanden');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-leiter"]')).toContainText('vorhanden');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-zeichner"]')).toContainText('vorhanden');
+    await expect(page.locator('[data-testid="homeserver-llm-meister-fallback"]')).toHaveCount(0);
+  });
+
+  test('Server antwortet, aber KEIN Staffelungs-Modell installiert (nur Fremd-Modell) → Chip bleibt ehrlich NICHT VERBUNDEN, Rollen-Abgleich zeigt alle drei fehlend', async ({
+    page,
+  }) => {
+    await page.route('**/api/tags', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ models: [{ name: 'llama3.2:latest' }] }),
+      }),
+    );
+
+    await zentraleLaden(page);
+    await einstellungenOeffnen(page);
+    await hostSetzen(page, '127.0.0.1');
+    await page.click('[data-testid="homeserver-verbinden"]');
+
+    // Der Server hat geantwortet, aber ohne ein einziges Staffelungs-Modell
+    // ist Kosmo nicht arbeitsfähig — der Chip bleibt ehrlich NICHT
+    // VERBUNDEN, nie stillschweigend grün (Sanktion 7).
+    await expect(page.locator('[data-testid="homeserver-status-llm"]')).toHaveText('KOSMO-LLM — NICHT VERBUNDEN', {
+      timeout: 10_000,
+    });
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-meister"]')).toContainText('fehlt');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-leiter"]')).toContainText('fehlt');
+    await expect(page.locator('[data-testid="homeserver-llm-rolle-zeichner"]')).toContainText('fehlt');
+  });
+
+  test('ohne Mock (Ollama im Container weiterhin bewusst nicht gestartet) → ehrlich NICHT VERBUNDEN wie bisher, KEIN erfundener Rollen-Abgleich', async ({
+    page,
+  }) => {
+    await zentraleLaden(page);
+    await einstellungenOeffnen(page);
+    await hostSetzen(page, '127.0.0.1');
+    await page.click('[data-testid="homeserver-verbinden"]');
+
+    await expect(page.locator('[data-testid="homeserver-status-llm"]')).toHaveText('KOSMO-LLM — NICHT VERBUNDEN', {
+      timeout: 10_000,
+    });
+    // Additiv heisst additiv: ohne echten Server-Kontakt erscheint der neue
+    // Rollen-Block gar nicht erst — kein erfundener Abgleich ohne Beleg.
+    await expect(page.locator('[data-testid="homeserver-llm-rollen"]')).toHaveCount(0);
+  });
+});

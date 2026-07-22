@@ -100,6 +100,32 @@ describe('Betriebsart → Konfiguration (Default unverändert, B8-Regressionssch
   });
 });
 
+describe('v0.9.0 / E-L «Ollama als Remote-Default» — Festnagel-Test (`docs/V090-SPEZ.md` §E-L Punkt 1, Sanktion 3)', () => {
+  // ERKUNDUNG (Bau-Auftrag E-L): `betriebKonfig()` ist bereits die EINE
+  // Quelle, über die sowohl `KosmoPanel.tsx` (`loadSettings()`/
+  // `wechsleBetriebsart()`) als auch `state/home-server.ts`
+  // (`homeServerEndpunkte`/`verbindeHomeServer`) den Provider ableiten —
+  // kein Parallel-Zustand gefunden (grep `provider`/`anthropic` in
+  // `packages/kosmo-ai` + `KosmoPanel.tsx`). Dieser Block nagelt das
+  // Verhalten fest, statt es umzubauen (Sanktion 3).
+  it('Remote wählt IMMER den Ollama-Provider als Default — nie Anthropic, egal welcher Host', () => {
+    expect(betriebKonfig({ betriebsart: 'remote', remoteHost: '100.87.3.2' }).provider).toBe('ollama');
+    expect(betriebKonfig({ betriebsart: 'remote', remoteHost: '' }).provider).toBe('ollama');
+    expect(betriebKonfig({ betriebsart: 'remote' }).provider).toBe('ollama');
+    expect(betriebKonfig({ betriebsart: 'remote', remoteHost: 'kosmo.local', remoteTls: true }).provider).toBe(
+      'ollama',
+    );
+  });
+
+  it('nur Cloud liefert je den Anthropic-Provider — Standard und Remote bleiben ausnahmslos bei Ollama', () => {
+    const betriebsarten = ['standard', 'remote'] as const;
+    for (const art of betriebsarten) {
+      expect(betriebKonfig({ betriebsart: art }).provider).toBe('ollama');
+    }
+    expect(betriebKonfig({ betriebsart: 'cloud' }).provider).toBe('anthropic');
+  });
+});
+
 describe('bereinigeHost', () => {
   it('nimmt blossen Host, Name oder IP unverändert', () => {
     expect(bereinigeHost('kosmo.local')).toBe('kosmo.local');
