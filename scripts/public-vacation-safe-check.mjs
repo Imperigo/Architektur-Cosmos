@@ -112,6 +112,11 @@ const checks = [
     purpose: 'Checks an existing static export for missing or stale Atlas detail routes and private/source markers.'
   },
   {
+    id: 'public_static_route_inventory_negative_smoke',
+    command: ['node', 'scripts/public-static-route-inventory-negative-smoke.mjs'],
+    purpose: 'Verifies the static route inventory guard rejects synthetic stray generated review/provenance artifacts outside the public route allowlist.'
+  },
+  {
     id: 'public_static_link_check',
     command: [
       'node',

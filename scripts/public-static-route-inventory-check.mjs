@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
 import { publicLeakMatches } from './public-leak-patterns.mjs';
@@ -10,7 +10,24 @@ const args = parseArgs(process.argv.slice(2));
 const outRoot = resolve(root, args.out || 'out');
 const outputJsonPath = resolve(root, args.output || 'examples/kosmo-data/review/public-static-route-inventory.generated.json');
 const outputMdPath = resolve(root, args.markdown || 'examples/kosmo-data/review/public-static-route-inventory.generated.md');
-const entriesPath = resolve(root, 'data/mock-entries.json');
+const entriesPath = resolve(root, args.entries || 'data/mock-entries.json');
+const allowedExportSupportFiles = new Set(['404.html', '404/index.html', '_headers', 'ak-symbol.svg']);
+const allowedExportPrefixes = ['_next/', 'archive-models/'];
+const blockedStrayArtifactPatterns = [
+  /(^|\/)review(\/|$)/i,
+  /generated\.(json|md|txt)$/i,
+  /provenance/i,
+  /decision/i,
+  /owner/i,
+  /source[-_]?root/i,
+  /private/i,
+  /worker[-_\s]?logs?/i,
+  /_overseer/i,
+  /\.codex/i,
+  /\.claude/i
+];
+const textArtifactExtensions = new Set(['.html', '.txt', '.xml', '.json', '.md', '.svg']);
+const maxStrayTextBytes = 2 * 1024 * 1024;
 
 main().catch((error) => {
   console.error(error instanceof Error ? error.message : String(error));
@@ -26,6 +43,7 @@ async function main() {
   const exportedSlugSet = new Set(atlasSlugs);
   const routeFiles = routeFilesForInventory(atlasSlugs);
   const routeFileChecks = routeFiles.map(checkRouteFile);
+  const strayArtifactChecks = await checkStrayPublicArtifacts(routeFiles);
 
   const failures = [
     ...duplicateSlugs.map((slug) => ({
@@ -44,7 +62,8 @@ async function main() {
         id: `atlas:${slug}:stale-export`,
         detail: `Exported /atlas/${slug}/ is not present in data/mock-entries.json.`
       })),
-    ...routeFileChecks.flatMap((file) => file.failures)
+    ...routeFileChecks.flatMap((file) => file.failures),
+    ...strayArtifactChecks.flatMap((file) => file.failures)
   ];
 
   const report = {
@@ -71,10 +90,13 @@ async function main() {
       stale_atlas_routes: atlasSlugs.filter((slug) => !expectedSlugSet.has(slug)).length,
       duplicate_data_slugs: duplicateSlugs.length,
       failed_route_file_checks: routeFileChecks.filter((file) => file.status !== 'passed').length,
+      stray_artifact_count: strayArtifactChecks.length,
+      failed_stray_artifact_checks: strayArtifactChecks.filter((file) => file.status !== 'passed').length,
       failure_count: failures.length
     },
     atlas_routes: atlasSlugs.map((slug) => `/atlas/${slug}/`),
     route_files: routeFileChecks,
+    stray_artifacts: strayArtifactChecks,
     failures
   };
 
@@ -182,6 +204,80 @@ function checkRouteFile(relativeFilePath) {
   };
 }
 
+async function checkStrayPublicArtifacts(routeFiles) {
+  const allowedFiles = new Set([...routeFiles, ...allowedExportSupportFiles]);
+  const allFiles = await collectOutFiles(outRoot);
+  return allFiles
+    .filter((relativeFilePath) => !isAllowedStaticExportFile(relativeFilePath, allowedFiles))
+    .map(checkStrayPublicArtifact)
+    .filter((file) => file.status !== 'passed');
+}
+
+async function collectOutFiles(directory, prefix = '') {
+  if (!existsSync(directory)) return [];
+  const items = await readdir(directory, { withFileTypes: true });
+  const collected = [];
+  for (const item of items) {
+    const relativePath = prefix ? `${prefix}/${item.name}` : item.name;
+    const absolutePath = resolve(directory, item.name);
+    if (item.isDirectory()) {
+      collected.push(...await collectOutFiles(absolutePath, relativePath));
+    } else if (item.isFile()) {
+      collected.push(relativePath);
+    }
+  }
+  return collected.sort();
+}
+
+function isAllowedStaticExportFile(relativeFilePath, allowedFiles) {
+  return allowedFiles.has(relativeFilePath)
+    || allowedExportPrefixes.some((prefix) => relativeFilePath.startsWith(prefix));
+}
+
+function checkStrayPublicArtifact(relativeFilePath) {
+  const absolutePath = resolve(outRoot, relativeFilePath);
+  const failures = [];
+  const pathMatches = [
+    ...publicLeakMatches(relativeFilePath),
+    ...blockedStrayArtifactMatches(relativeFilePath)
+  ];
+  const contentMatches = strayTextContentMatches(absolutePath);
+
+  if (pathMatches.length > 0 || contentMatches.length > 0) {
+    failures.push({
+      id: `stray-export:${relativeFilePath}:blocked-artifact`,
+      detail: `Static export contains a non-route artifact with blocked review/private/source marker(s): ${[...new Set([...pathMatches, ...contentMatches])].join(', ')}`
+    });
+  }
+
+  return {
+    file: relative(root, absolutePath),
+    status: failures.length === 0 ? 'passed' : 'failed',
+    path_matches: [...new Set(pathMatches)],
+    content_matches: [...new Set(contentMatches)],
+    failures
+  };
+}
+
+function blockedStrayArtifactMatches(value) {
+  const text = String(value);
+  return blockedStrayArtifactPatterns
+    .filter((pattern) => pattern.test(text))
+    .map((pattern) => pattern.toString());
+}
+
+function strayTextContentMatches(absolutePath) {
+  const extension = absolutePath.match(/\.[a-z0-9]+$/i)?.[0]?.toLowerCase();
+  if (!extension || !textArtifactExtensions.has(extension)) return [];
+  const stats = statSync(absolutePath);
+  if (stats.size > maxStrayTextBytes) return [];
+  const body = readFileSync(absolutePath, 'utf8');
+  return [
+    ...publicLeakMatches(body),
+    ...blockedStrayArtifactMatches(body)
+  ];
+}
+
 function findDuplicates(values) {
   const seen = new Set();
   const duplicates = new Set();
@@ -210,6 +306,7 @@ function renderMarkdown(report) {
     `- stale Atlas routes: ${report.summary.stale_atlas_routes}`,
     `- duplicate data slugs: ${report.summary.duplicate_data_slugs}`,
     `- route file failures: ${report.summary.failed_route_file_checks}`,
+    `- blocked stray static artifacts: ${report.summary.failed_stray_artifact_checks}`,
     '',
     '## Policy',
     '',
