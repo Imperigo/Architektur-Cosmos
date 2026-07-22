@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "public:gate-check": "node scripts/public-demo-gate-check.mjs",
+    "public:demo-gate-require-static-export-negative-smoke": "node scripts/public-demo-gate-require-static-export-negative-smoke.mjs",
     "public:bundle-check": "node scripts/kosmo-reference-bundle-check.mjs examples/kosmo-references/kosmodraw-reference-bundle.review-only.fixture.json examples/kosmo-references/kosmodraw-villa-savoye-sketch-to-3d.review-only.fixture.json examples/kosmo-references/review/kosmodraw-plan-profile-adapted.review-only.json",
     "public:bundle-intake-review": "node scripts/kosmo-reference-bundle-intake-review.mjs",
     "public:bundle-intake-review-check": "node scripts/kosmo-reference-bundle-intake-review-check.mjs",

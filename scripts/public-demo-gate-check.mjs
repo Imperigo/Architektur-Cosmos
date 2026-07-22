@@ -42,6 +42,10 @@ function argValue(name) {
   return index >= 0 ? process.argv[index + 1] : null;
 }
 
+function hasFlag(name) {
+  return process.argv.includes(name);
+}
+
 function publicAssetCandidateForMedia(entry, media) {
   if (!media?.url) return undefined;
   return entry.asset_candidates?.find((candidate) => {
@@ -266,6 +270,17 @@ function checkStaticExportRoutes(outDir = 'out') {
   const outRoot = path.resolve(outDir);
 
   if (!fs.existsSync(outRoot)) {
+    if (hasFlag('--require-static-export')) {
+      recordFailure(
+        'static-export:out:missing',
+        `static export directory is missing and --require-static-export was passed: ${path.relative(process.cwd(), outRoot)}`
+      );
+      return {
+        status: 'failed_missing_out',
+        out_dir: outDir,
+        checked_routes: checkedRoutes
+      };
+    }
     return {
       status: 'skipped_missing_out',
       out_dir: outDir,

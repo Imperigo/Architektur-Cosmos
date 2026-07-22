@@ -15,8 +15,17 @@ const publicStaticExportSmokeMarkdown = resolve(reportRoot, 'public-static-expor
 const checks = [
   {
     id: 'public_demo_gate',
-    command: ['node', 'scripts/public-demo-gate-check.mjs'],
+    command: [
+      'node',
+      'scripts/public-demo-gate-check.mjs',
+      ...(requireStaticExport ? ['--require-static-export'] : [])
+    ],
     purpose: 'Checks public data surfaces, pilot media/model rights gates and optional route leak scanning.'
+  },
+  {
+    id: 'public_demo_gate_require_static_export_negative_smoke',
+    command: ['node', 'scripts/public-demo-gate-require-static-export-negative-smoke.mjs'],
+    purpose: 'Verifies the public demo gate rejects a missing static export when --require-static-export is passed.'
   },
   {
     id: 'public_route_gate_alignment',
