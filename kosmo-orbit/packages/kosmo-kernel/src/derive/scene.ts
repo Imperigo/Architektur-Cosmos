@@ -1,4 +1,4 @@
-import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type Gelaender, type MassBody, type Opening, type Rampe, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
+import { columnOutline, profilOutline, type Assembly, type Beam, type Column, type FreeMesh, type Gelaender, type MassBody, type Opening, type Profil, type Rampe, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
@@ -590,6 +590,36 @@ function miterWallEnds(artifact: GeometryArtifact, doc: KosmoDoc, wall: Wall, le
   shear(artifact.edges);
 }
 
+/**
+ * Grundriss-Polygon einer Stütze MIT Profil-Katalog-Berücksichtigung
+ * (v0.9.2 P-P1, `docs/V092-SPEZ.md` §P-P1) — der `columnOutline`-Aufrufer,
+ * den die Spec meint: bei gesetzter `profilId` (und existierendem Profil im
+ * Doc) ersetzt die transformierte `profilOutline` (entities.ts) den Rechteck-
+ * /Rund-Eigenbau, sonst GENAU der bisherige `columnOutline(column)`-Aufruf
+ * (Golden-Guard — byte-identisch ohne `profilId`). Die Transformation
+ * (Rotation + Verschiebung nach `at`) ist dieselbe Formel wie in
+ * `columnOutline` selbst, nur auf ein beliebiges Profil-Polygon statt des
+ * eingebauten Rechtecks angewandt.
+ */
+function columnOutlineMitProfil(doc: KosmoDoc, column: Column): Pt[] {
+  if (column.profilId) {
+    const profil = doc.get<Profil>(column.profilId);
+    if (profil && profil.kind === 'profil') {
+      const w = ((column.rotationGrad ?? 0) * Math.PI) / 180;
+      const cos = Math.cos(w);
+      const sin = Math.sin(w);
+      return profilOutline(profil).map((p) => ({
+        x: Math.round(column.at.x + p.x * cos - p.y * sin),
+        y: Math.round(column.at.y + p.x * sin + p.y * cos),
+      }));
+    }
+    // Hängende Referenz (sollte der Referenz-Schutz in profilLoeschen
+    // verhindern) — ehrlicher Rückfall auf den Eigenbau statt eines Absturzes,
+    // pure Ableitungen werfen hier nie (Muster: jede andere derive/-Funktion).
+  }
+  return columnOutline(column); // CCW = positive Fläche
+}
+
 /** Stütze: Profil-Extrusion vom Geschossboden bis OK Geschoss (A3). */
 function deriveColumn(doc: KosmoDoc, column: Column): GeometryArtifact | null {
   const storey = doc.get<Storey>(column.storeyId);
@@ -597,11 +627,69 @@ function deriveColumn(doc: KosmoDoc, column: Column): GeometryArtifact | null {
   return extrudePolygon(
     column.id,
     column.material,
-    columnOutline(column), // CCW = positive Fläche
+    columnOutlineMitProfil(doc, column),
     [],
     storey.elevation,
     storey.elevation + storey.height,
   );
+}
+
+/**
+ * Balken-Querschnitt entlang einer horizontalen Achse extrudieren
+ * (v0.9.2 P-P1) — `localOutline` liegt lokal in der (Breite, Höhe)-Ebene
+ * (`profilOutline`-Vertrag, entities.ts), wird hier wie ein gewöhnliches
+ * `extrudePolygon` lokal entlang der EIGENEN Z-Achse (0…Länge) gebaut und
+ * anschliessend Punkt für Punkt ins Weltkoordinatensystem gedreht: lokal-X →
+ * Quer-Normale `n` (horizontal), lokal-Y → Welt-Z (vertikal, Oberkante des
+ * Profils = `zTop`), lokal-Z → Achsrichtung `d` (a→b). `n`/`d`/Welt-Z bilden
+ * eine orthonormale Basis (Balkenachse bleibt horizontal), die Drehung ist
+ * daher reine Koordinaten-Umrechnung ohne Verzerrung.
+ */
+function extrudeProfilEntlangAchse(
+  entityId: string,
+  materialKey: string,
+  localOutline: readonly Pt[],
+  a: Pt,
+  d: { x: number; y: number },
+  n: { x: number; y: number },
+  laenge: number,
+  zTop: number,
+): GeometryArtifact {
+  const yMax = Math.max(...localOutline.map((p) => p.y));
+  const centerZ = zTop - yMax; // Profil-Oberkante (max lokal-y) sitzt an OK Geschoss
+  const lokal = extrudePolygon(entityId, materialKey, localOutline, [], 0, laenge);
+  const dreh = (arr: Float32Array): Float32Array => {
+    const out = new Float32Array(arr.length);
+    for (let i = 0; i < arr.length; i += 3) {
+      const lx = arr[i]!;
+      const ly = arr[i + 1]!;
+      const lz = arr[i + 2]!;
+      out[i] = a.x + n.x * lx + d.x * lz;
+      out[i + 1] = a.y + n.y * lx + d.y * lz;
+      out[i + 2] = centerZ + ly;
+    }
+    return out;
+  };
+  const drehNormal = (arr: Float32Array): Float32Array => {
+    const out = new Float32Array(arr.length);
+    for (let i = 0; i < arr.length; i += 3) {
+      const lx = arr[i]!;
+      const ly = arr[i + 1]!;
+      const lz = arr[i + 2]!;
+      out[i] = n.x * lx + d.x * lz;
+      out[i + 1] = n.y * lx + d.y * lz;
+      out[i + 2] = ly;
+    }
+    return out;
+  };
+  return {
+    entityId,
+    materialKey,
+    positions: dreh(lokal.positions),
+    normals: drehNormal(lokal.normals),
+    indices: lokal.indices,
+    edges: dreh(lokal.edges),
+  };
 }
 
 /** Unterzug: Balken unter der Decke — Oberkante = OK Geschoss (A3). */
@@ -612,9 +700,17 @@ function deriveBeam(doc: KosmoDoc, beam: Beam): GeometryArtifact | null {
   if (len < 1) return null;
   const d = { x: (beam.b.x - beam.a.x) / len, y: (beam.b.y - beam.a.y) / len };
   const n = { x: -d.y, y: d.x };
+  const zTop = storey.elevation + storey.height;
+  if (beam.profilId) {
+    const profil = doc.get<Profil>(beam.profilId);
+    if (profil && profil.kind === 'profil') {
+      return extrudeProfilEntlangAchse(beam.id, beam.material, profilOutline(profil), beam.a, d, n, len, zTop);
+    }
+    // Hängende Referenz — ehrlicher Rückfall auf den Rechteck-Eigenbau
+    // unten (dasselbe Prinzip wie `columnOutlineMitProfil`), statt zu werfen.
+  }
   const h = beam.breite / 2;
   const P = (p: Pt, off: number): Pt => ({ x: p.x + n.x * off, y: p.y + n.y * off });
-  const zTop = storey.elevation + storey.height;
   return extrudePolygon(
     beam.id,
     beam.material,

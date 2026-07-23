@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Beam, Boundary, FreeMesh, Gelaender, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
+import type { Furniture, Assembly, Beam, Boundary, Column, FreeMesh, Gelaender, GridAxis, Kommentar, Mangel, MassKette, Opening, Profil, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
@@ -115,6 +115,148 @@ export const createAssembly = registerCommand({
       layers: p.layers,
     };
     return [added(assembly)];
+  },
+});
+
+/**
+ * Profil-Commands (v0.9.2 P-P1, `docs/V092-SPEZ.md` §P-P1) — Typenkatalog-
+ * Eintrag für Stützen/Unterzüge, PROJEKTGLOBAL wie `design.aufbauErstellen`
+ * oben (kein `storeyId`). `pruefeProfilMasse` läuft in Erstellen UND Ändern
+ * (nach dem Feld-Merge) — dieselbe Prüfung an beiden Stellen, damit Ändern
+ * nie ein halb-gültiges Profil zurücklässt (Muster
+ * `design.wandZeichnen`/`design.eigenschaftSetzen`: Erstellen- und
+ * Ändern-Pfad teilen denselben Bestands-Bereich).
+ */
+function pruefeProfilMasse(
+  form: Profil['form'],
+  m: { b?: number | undefined; h?: number | undefined; d?: number | undefined; steg?: number | undefined; flansch?: number | undefined },
+): void {
+  const brauch = (feld: 'b' | 'h' | 'd' | 'steg' | 'flansch', wert: number | undefined): number => {
+    if (wert === undefined) throw new CommandError(`Profil «${form}» braucht «${feld}»`);
+    if (!Number.isFinite(wert) || wert <= 0) throw new CommandError(`«${feld}» muss grösser als 0 sein`);
+    return wert;
+  };
+  if (form === 'rechteck') {
+    brauch('b', m.b);
+    brauch('h', m.h);
+    return;
+  }
+  if (form === 'rund') {
+    brauch('d', m.d);
+    return;
+  }
+  // stahl-i / stahl-u: Steg muss schmaler als der Flansch bleiben und die
+  // Flansche dürfen sich nicht überlappen — sonst wäre `profilOutline`
+  // (entities.ts) ein sich selbst schneidendes Polygon.
+  const b = brauch('b', m.b);
+  const h = brauch('h', m.h);
+  const steg = brauch('steg', m.steg);
+  const flansch = brauch('flansch', m.flansch);
+  if (steg >= b) {
+    throw new CommandError('steg muss kleiner als b sein');
+  }
+  if (flansch * 2 >= h) {
+    throw new CommandError('flansch × 2 muss kleiner als h sein (sonst überlappen sich die Flansche)');
+  }
+}
+
+export const createProfil = registerCommand({
+  id: 'design.profilErstellen',
+  title: 'Profil erstellen',
+  description:
+    'Erstellt ein wiederverwendbares Stützen-/Unterzugsprofil für den Typenkatalog (projektglobal, wie ein Aufbau). rechteck braucht b (Breite) + h (Höhe), rund braucht d (Durchmesser), stahl-i/stahl-u brauchen h (Gesamthöhe) + b (Flanschbreite) + steg (Stegdicke) + flansch (Flanschdicke) — alle Masse in mm, grösser 0.',
+  params: z.object({
+    name: z.string().min(1),
+    form: z.enum(['rechteck', 'rund', 'stahl-i', 'stahl-u']),
+    b: z.number().int().positive().optional().describe('Breite (rechteck) bzw. Flanschbreite (stahl-i/-u), mm'),
+    h: z.number().int().positive().optional().describe('Höhe (rechteck) bzw. Gesamthöhe (stahl-i/-u), mm'),
+    d: z.number().int().positive().optional().describe('Durchmesser (rund), mm'),
+    steg: z.number().int().positive().optional().describe('Stegdicke (stahl-i/-u), mm'),
+    flansch: z.number().int().positive().optional().describe('Flanschdicke (stahl-i/-u), mm'),
+  }),
+  summarize: (p) => `Profil «${p.name}» (${p.form})`,
+  run: (doc, p) => {
+    pruefeProfilMasse(p.form, p);
+    const profil: Profil = {
+      id: newId('profil'),
+      kind: 'profil',
+      name: p.name,
+      form: p.form,
+      ...(p.b !== undefined ? { b: p.b } : {}),
+      ...(p.h !== undefined ? { h: p.h } : {}),
+      ...(p.d !== undefined ? { d: p.d } : {}),
+      ...(p.steg !== undefined ? { steg: p.steg } : {}),
+      ...(p.flansch !== undefined ? { flansch: p.flansch } : {}),
+    };
+    return [added(profil)];
+  },
+});
+
+export const profilAendern = registerCommand({
+  id: 'design.profilAendern',
+  title: 'Profil ändern',
+  description:
+    'Ändert ein bestehendes Profil — nur die übergebenen Felder wechseln, der Rest bleibt unverändert. Nach der Änderung müssen die Masse weiterhin zur (neuen oder unveränderten) Form passen, sonst wird ehrlich abgelehnt (kein Klemmen).',
+  params: z.object({
+    profilId: z.string(),
+    name: z.string().min(1).optional(),
+    form: z.enum(['rechteck', 'rund', 'stahl-i', 'stahl-u']).optional(),
+    b: z.number().int().positive().optional(),
+    h: z.number().int().positive().optional(),
+    d: z.number().int().positive().optional(),
+    steg: z.number().int().positive().optional(),
+    flansch: z.number().int().positive().optional(),
+  }),
+  summarize: (p) => `Profil «${p.profilId}» geändert`,
+  run: (doc, p) => {
+    const profil = require<Profil>(doc, p.profilId, 'profil');
+    const form = p.form ?? profil.form;
+    // Nicht übergebene Masse bleiben, wie im Katalog gespeichert — auch über
+    // einen Formwechsel hinweg (bewusst KEIN automatisches Aufräumen
+    // formfremder Altfelder: `profilOutline` liest je Form ohnehin nur die
+    // zutreffenden Felder, ein liegen gebliebenes `b` einer vorigen rund-Form
+    // z.B. bleibt wirkungslos).
+    const merged = {
+      b: p.b ?? profil.b,
+      h: p.h ?? profil.h,
+      d: p.d ?? profil.d,
+      steg: p.steg ?? profil.steg,
+      flansch: p.flansch ?? profil.flansch,
+    };
+    pruefeProfilMasse(form, merged);
+    const after: Profil = {
+      ...profil,
+      name: p.name ?? profil.name,
+      form,
+      ...(merged.b !== undefined ? { b: merged.b } : {}),
+      ...(merged.h !== undefined ? { h: merged.h } : {}),
+      ...(merged.d !== undefined ? { d: merged.d } : {}),
+      ...(merged.steg !== undefined ? { steg: merged.steg } : {}),
+      ...(merged.flansch !== undefined ? { flansch: merged.flansch } : {}),
+    };
+    return [{ id: profil.id, before: profil, after }];
+  },
+});
+
+export const profilLoeschen = registerCommand({
+  id: 'design.profilLoeschen',
+  title: 'Profil löschen',
+  description:
+    'Löscht ein Profil aus dem Typenkatalog — lehnt ehrlich ab (mit der Referenzliste im Fehlertext), solange noch eine Stütze oder ein Unterzug per profilId darauf verweist.',
+  params: z.object({ profilId: z.string() }),
+  summarize: () => 'Profil gelöscht',
+  run: (doc, p) => {
+    const profil = require<Profil>(doc, p.profilId, 'profil');
+    const referenzen = [
+      ...doc.byKind<Column>('column').filter((c) => c.profilId === p.profilId).map((c) => `Stütze ${c.id}`),
+      ...doc.byKind<Beam>('beam').filter((b) => b.profilId === p.profilId).map((b) => `Unterzug ${b.id}`),
+    ];
+    if (referenzen.length > 0) {
+      throw new CommandError(
+        `Profil «${profil.name}» ist noch referenziert von: ${referenzen.join(', ')} — erst dort profilId entfernen oder umstellen`,
+      );
+    }
+    return [{ id: profil.id, before: profil, after: null }];
   },
 });
 
@@ -767,6 +909,10 @@ const editableFields = [
   // Zeile mit Opening.width (numerisch), hoehenDelta/podestLaenge sind neu.
   'hoehenDelta',
   'podestLaenge',
+  // v0.9.2 P-P1 (V092-SPEZ §P-P1): additiv für `column`/`beam` — Profil-
+  // Referenz aus dem Typenkatalog (s. Sonderbehandlung weiter unten: leerer
+  // String entfernt die Referenz wieder, KEIN generischer Feld-Zuweisungspfad).
+  'profilId',
 ] as const;
 
 const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
@@ -826,8 +972,9 @@ export const setProperty = registerCommand({
       // E2 (V088-SPEZ §3, PA1-088): additive Zeilen — bisher komplett ohne
       // Setzweg (D2).
       furniture: ['rotationGrad'],
-      column: ['material', 'b', 't', 'rotationGrad'],
-      beam: ['breite', 'hoehe', 'material'],
+      // v0.9.2 P-P1 (V092-SPEZ §P-P1): additiv — profilId.
+      column: ['material', 'b', 't', 'rotationGrad', 'profilId'],
+      beam: ['breite', 'hoehe', 'material', 'profilId'],
       // v0.9.1 P-A1 (V091-SPEZ §P-A1): additive Zeile, Muster column/beam.
       gelaender: ['hoehe', 'art'],
       // v0.9.2 P-G (V092-SPEZ §P-G): additive Zeile — dieselben drei Felder
@@ -952,6 +1099,10 @@ export const setProperty = registerCommand({
       if (wert.length === 0) throw new CommandError('Blattname darf nicht leer sein');
     }
     if (p.feld === 'assemblyId') require<Assembly>(doc, String(wert), 'assembly');
+    // Merge-Hinweis v0.9.2 (Fable-Copy-back): P-G-ramp-Gate und P-P1-
+    // profilId-Sonderpfad sind disjunkt (ramp trägt kein profilId, column/
+    // beam keine ramp-Felder) — beide Zweige stehen nacheinander VOR dem
+    // generischen Zuweisungspfad unten.
     if (e.kind === 'ramp') {
       // v0.9.2 P-G (V092-SPEZ §P-G): dasselbe ehrliche Gate wie
       // design.rampeGeometrieSetzen (Sanktion 4 — keine stille Klemmung),
@@ -977,6 +1128,23 @@ export const setProperty = registerCommand({
         );
       }
       return [{ id: e.id, before: e, after: next }];
+    }
+    if (p.feld === 'profilId') {
+      // v0.9.2 P-P1 (V092-SPEZ §P-P1): eigener Pfad statt des generischen
+      // Zuweisungspfads unten — «leerer String entfernt das Feld» braucht
+      // einen destrukturierenden Wegwurf (Muster `mangelStatusSetzen`
+      // `const { behobenAm: _weg, ...ohne } = mangel`), keine simple
+      // Überschreibung. Eine unbekannte Id wirft ehrlich (wie `assemblyId`
+      // oben) — bei column/beam ist das schon durch `fields.includes` oben
+      // sichergestellt (nur die beiden Kinds tragen `profilId`).
+      if (String(p.wert).trim().length === 0) {
+        const { profilId: _weg, ...ohne } = e as typeof e & { profilId?: string };
+        void _weg;
+        return [{ id: e.id, before: e, after: ohne as typeof e }];
+      }
+      require<Profil>(doc, String(p.wert), 'profil');
+      const after = { ...e, profilId: String(p.wert) } as typeof e;
+      return [{ id: e.id, before: e, after }];
     }
     const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet' ? 'meta' : p.feld]:
       p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet'

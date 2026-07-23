@@ -59,6 +59,14 @@ export interface Column extends Base {
   t?: Mm;
   material: string;
   rotationGrad?: number;
+  /**
+   * Profil-Referenz (v0.9.2 P-P1, `docs/V092-SPEZ.md` §P-P1) — additiv,
+   * verweist auf ein `Profil` aus dem Typenkatalog (`profilOutline()` unten).
+   * GOLDEN-GUARD: fehlt das Feld, bleibt die Ableitung (`columnOutline`,
+   * `derive/scene.ts` `deriveColumn`) byte-identisch zum heutigen `profil`/
+   * `b`/`t`-Eigenbau — `profilId` überschreibt diesen NUR, wenn gesetzt.
+   */
+  profilId?: string;
 }
 
 /** Unterzug (RE-ARCHICAD A3): Balken unter der Decke, OK = OK Geschoss. */
@@ -70,6 +78,12 @@ export interface Beam extends Base {
   breite: Mm;
   hoehe: Mm;
   material: string;
+  /** Profil-Referenz (v0.9.2 P-P1) — s. `Column.profilId`-Kommentar; bei
+   * gesetzter Id liest `derive/scene.ts` `deriveBeam` den echten
+   * Profil-Querschnitt (auch Stahl-I/-U) statt des Rechteck-Eigenbaus aus
+   * `breite`/`hoehe`. Golden-Guard identisch: fehlt `profilId`, byte-gleiches
+   * Bestandsverhalten. */
+  profilId?: string;
 }
 
 /**
@@ -111,6 +125,84 @@ export function columnOutline(c: Column): Pt[] {
     x: Math.round(c.at.x + p.x * cos - p.y * sin),
     y: Math.round(c.at.y + p.x * sin + p.y * cos),
   }));
+}
+
+/**
+ * Profil (v0.9.2 P-P1, `docs/V092-SPEZ.md` §P-P1) — wiederverwendbares
+ * Stützen-/Unterzugsprofil für den Typenkatalog, PROJEKTGLOBAL wie
+ * `Assembly` (kein `storeyId`, ein Katalogeintrag). `form` bestimmt, welche
+ * Masse zählen (Rest bleibt `undefined`, s. `profilOutline`):
+ * rechteck → b (Breite) × h (Höhe); rund → d (Durchmesser); stahl-i/stahl-u
+ * → h (Gesamthöhe), b (Flanschbreite), steg (Stegdicke), flansch
+ * (Flanschdicke) — dieselben Feldnamen für beide Stahlformen, weil beide
+ * dieselbe Bemassung brauchen (nur die Kontur unterscheidet sich, s.
+ * `profilOutline`). Alle Masse in mm, > 0 (Command-Gate in `commands/design.ts`).
+ */
+export interface Profil extends Base {
+  kind: 'profil';
+  name: string;
+  form: 'rechteck' | 'rund' | 'stahl-i' | 'stahl-u';
+  /** rechteck: Breite · stahl-i/-u: Flanschbreite. */
+  b?: Mm;
+  /** rechteck: Höhe · stahl-i/-u: Gesamthöhe. */
+  h?: Mm;
+  /** rund: Durchmesser. */
+  d?: Mm;
+  /** stahl-i/-u: Stegdicke. */
+  steg?: Mm;
+  /** stahl-i/-u: Flanschdicke. */
+  flansch?: Mm;
+}
+
+/**
+ * Profil-Querschnitt, LOKAL um 0/0 (Muster `columnOutline` oben — rund als
+ * 16-Eck, dieselbe Segmentzahl). rechteck/rund sind reine Eigenformen wie
+ * bei `columnOutline`; stahl-i liefert ein echtes I-Profil-Polygon (12
+ * Punkte), stahl-u ein C-förmiges Kanalprofil (8 Punkte, Steg links, Öffnung
+ * nach rechts) — jeweils die einfachste ehrliche Näherung OHNE Walzradien
+ * (Ausrundungen sind ein späterer Detailgrad, kein Normreihen-Katalog ist
+ * Teil dieses Postens, s. V092-SPEZ Nicht-Ziele). Fehlende Masse zählen als 0
+ * (die Commands lehnen das vorher ab, `profilOutline` selbst wirft nie —
+ * pure Ableitung, wie `columnOutline`). CCW = positive Fläche.
+ */
+export function profilOutline(p: Profil): Pt[] {
+  const rund = (n: number) => Math.round(n);
+  if (p.form === 'rund') {
+    const r = (p.d ?? 0) / 2;
+    const pts: Pt[] = [];
+    for (let i = 0; i < 16; i++) {
+      const w = (i / 16) * 2 * Math.PI;
+      pts.push({ x: rund(r * Math.cos(w)), y: rund(r * Math.sin(w)) });
+    }
+    return pts;
+  }
+  if (p.form === 'stahl-i') {
+    const hb = (p.b ?? 0) / 2;
+    const hh = (p.h ?? 0) / 2;
+    const hw = (p.steg ?? 0) / 2;
+    const ft = p.flansch ?? 0;
+    return [
+      { x: -hb, y: -hh }, { x: hb, y: -hh }, { x: hb, y: -hh + ft }, { x: hw, y: -hh + ft },
+      { x: hw, y: hh - ft }, { x: hb, y: hh - ft }, { x: hb, y: hh }, { x: -hb, y: hh },
+      { x: -hb, y: hh - ft }, { x: -hw, y: hh - ft }, { x: -hw, y: -hh + ft }, { x: -hb, y: -hh + ft },
+    ].map((q) => ({ x: rund(q.x), y: rund(q.y) }));
+  }
+  if (p.form === 'stahl-u') {
+    const hb = (p.b ?? 0) / 2;
+    const hh = (p.h ?? 0) / 2;
+    const steg = p.steg ?? 0;
+    const ft = p.flansch ?? 0;
+    return [
+      { x: -hb, y: -hh }, { x: hb, y: -hh }, { x: hb, y: -hh + ft }, { x: -hb + steg, y: -hh + ft },
+      { x: -hb + steg, y: hh - ft }, { x: hb, y: hh - ft }, { x: hb, y: hh }, { x: -hb, y: hh },
+    ].map((q) => ({ x: rund(q.x), y: rund(q.y) }));
+  }
+  // rechteck (Default)
+  const hb = (p.b ?? 0) / 2;
+  const hh = (p.h ?? 0) / 2;
+  return [
+    { x: -hb, y: -hh }, { x: hb, y: -hh }, { x: hb, y: hh }, { x: -hb, y: hh },
+  ].map((q) => ({ x: rund(q.x), y: rund(q.y) }));
 }
 
 export type LayerFunction = 'tragend' | 'daemmung' | 'bekleidung' | 'dichtung' | 'hohlraum';
@@ -743,7 +835,9 @@ export interface VisGraph extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Rampe | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette | Gelaender;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Rampe | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette | Gelaender
+  // v0.9.2 P-P1 (V092-SPEZ §P-P1): additiv ans Ende, wie jede spätere Entity hier.
+  | Profil;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {
