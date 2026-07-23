@@ -9,6 +9,14 @@
 > verbindet sich per Ein-Klick-HomeServer (Einstellungen). Release-Zustellung
 > ist IMMER das Paar Mac-DMG + iPad-Serverstand (`RELEASE-ABLAUF.md` §7).
 
+> **Betriebsregime bis v1.0 (Owner-Entscheid 23.07.):** Zwischenversionen
+> ab 0.9.2 laufen OHNE Voll-E2E-Komplettlauf und OHNE Installer-/Download-
+> Zustellung — beides kehrt für v1.0 zurück. Je Version bleibt das
+> release-gate light (`npm run release-gate`) + gezielte E2E der
+> angefassten Bereiche; Paket-Gates und Golden-Disziplin unverändert hart.
+> Web/iPad aktualisieren per Push automatisch. Details:
+> `kosmo-orbit/docs/V092-SPEZ.md` §Betriebsregime.
+
 > **Kurswechsel Release-Takt (Owner-Kompass 20.07., F8):** v0.8.11 war der
 > **letzte Kleintakt** — ab jetzt grössere Versionssprünge Richtung 0.9.0
 > (vier F9-Stränge) und 1.0 (= Demobeweis, `docs/OWNER-KOMPASS-2026-07-20.md`).
