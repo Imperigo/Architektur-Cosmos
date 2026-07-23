@@ -365,7 +365,12 @@ export function BodenDock({ onOeffnen, onSyncToggle, kosmoOpen, onKosmoOpen }: B
               falls `kosmoOpen` je ohne diesen Trenner rendern sollte). */}
           <span className="boden-dock-trenner" aria-hidden="true" />
           <div className="boden-dock-kosmo-slot">
-            <KosmoSymbol eingebettet onOpen={onKosmoOpen} />
+            {/* P-F2 (v0.9.2): `onOeffnen` ist derselbe Stations-Navigations-
+                Weg, den jeder andere Dock-Knopf hier schon nutzt — reicht
+                nur zusätzlich durch, damit das Rechtsklick-Stationen-Menü
+                des eingebetteten Orbs (Kosmo-Untertools) auch innerhalb
+                einer Station funktioniert, nicht nur auf der Zentrale. */}
+            <KosmoSymbol eingebettet onOpen={onKosmoOpen} onStationOeffnen={onOeffnen} />
           </div>
         </>
       )}

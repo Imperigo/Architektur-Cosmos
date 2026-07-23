@@ -29,6 +29,15 @@ import { expect, test } from '@playwright/test';
  * Heuristik bei 0-Breite/Höhe-Segmenten) — wir prüfen deshalb `toBeAttached()`
  * statt `toBeVisible()` auf Icon-internen Pfaden, nie auf den echten
  * Knöpfen/Containern selbst.
+ *
+ * P-F2 (v0.9.2, Owner-Feedback 23.07. + bindende AskUserQuestion-Antwort):
+ * ZWEI Verträge oben sind revidiert, nicht mehr gültig — (a) die Reihe zeigt
+ * jetzt DREI statt vier Kacheln (KosmoData·KosmoDesign·KosmoOffice — «Kosmo»
+ * ist entfallen, seine 8 Untertools laufen über das Rechtsklick-Menü des
+ * Kosmo-Orbs, `e2e/kosmo-orb-stationen-menu.spec.ts`); (b) «unten mittig»
+ * ist umgekehrt zu «oben, direkt unter der Wortmarke» (Owner: «Paket nach
+ * oben schieben»). Beide Änderungen sind unten je an ihrer Teststelle
+ * dokumentiert.
  */
 
 async function zentraleLaden(page: import('@playwright/test').Page): Promise<void> {
@@ -48,14 +57,19 @@ function ueberlappenSich(
   return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
-test('4 Hauptwerkzeuge sind sichtbar, mit Titel (KosmoDesign/KosmoData/Kosmo/KosmoOffice)', async ({ page }) => {
+test('3 Hauptwerkzeuge sind sichtbar, mit Titel (KosmoDesign/KosmoData/KosmoOffice)', async ({ page }) => {
+  // P-F2 (v0.9.2, bindende Owner-Entscheidung nach AskUserQuestion): die
+  // «Kosmo»-Kachel ist aus der Zentrale-Reihe entfernt — ihre 8 Untertools
+  // (Speak/Sketch/Modell/Train/Dev/Doc/Trust/Package) sind jetzt über das
+  // Rechtsklick-Menü des Kosmo-Orbs rechts unten erreichbar (Beweis:
+  // `e2e/kosmo-orb-stationen-menu.spec.ts`), NICHT mehr über eine eigene
+  // Zentrale-Kachel.
   await zentraleLaden(page);
   await expect(page.locator('[data-testid="orbit-start"]')).toBeVisible();
 
   const erwartet: Record<string, string> = {
     design: 'KosmoDesign',
     data: 'KosmoData',
-    kosmo: 'Kosmo',
     office: 'KosmoOffice',
   };
   for (const [id, titel] of Object.entries(erwartet)) {
@@ -63,8 +77,9 @@ test('4 Hauptwerkzeuge sind sichtbar, mit Titel (KosmoDesign/KosmoData/Kosmo/Kos
     await expect(knopf).toBeVisible();
     await expect(knopf).toContainText(titel);
   }
-  // Genau 4 — keine fünfte Kachel/kein Rest der alten Familien-Ansicht.
-  await expect(page.locator('[data-testid^="orbit-haupt-"]')).toHaveCount(4);
+  await expect(page.locator('[data-testid="orbit-haupt-kosmo"]')).toHaveCount(0);
+  // Genau 3 — keine vierte/fünfte Kachel/kein Rest der alten Familien-Ansicht.
+  await expect(page.locator('[data-testid^="orbit-haupt-"]')).toHaveCount(3);
 });
 
 test('Hover auf KosmoDesign zeigt Draw/Prepare/Vis/Publish mit Kurzbeschrieb', async ({ page }) => {
@@ -202,7 +217,8 @@ test('Statik: die Kachel-Reihe steht — zwei Bounding-Box-Messungen im Abstand 
   }
 
   // Dieselbe Probe je Hauptkachel — keine Kachel driftet einzeln.
-  for (const id of ['design', 'data', 'kosmo', 'office']) {
+  // P-F2 (v0.9.2): 'kosmo' ist keine Zentrale-Kachel mehr, s. Test oben.
+  for (const id of ['design', 'data', 'office']) {
     const knopf = page.locator(`[data-testid="orbit-haupt-${id}"]`);
     const a = await knopf.boundingBox();
     await page.waitForTimeout(500);
@@ -248,17 +264,30 @@ test('Komposition: Wortmarke ist horizontal zentriert (±2px) über der Kachel-R
   expect(Math.abs(wortmarkeCenterX - reiheCenterX)).toBeLessThan(2);
 });
 
-test('Komposition: Kachel-Reihe unten mittig, Reihenfolge Kosmo·KosmoData·KosmoDesign·KosmoOffice', async ({
+test('Komposition: Kachel-Reihe direkt unter der Wortmarke, oben im Paket, Reihenfolge KosmoData·KosmoDesign·KosmoOffice', async ({
   page,
 }) => {
+  // P-F2 (v0.9.2, Owner-Feedback 23.07. wörtlich: «spiegle die vier Kosmo
+  // tools nach oben unter das Kosmo Orbit Logo, das Kosmo Orbit logo und
+  // ganzes packet noch etwas nach oben schieben»): ERSETZT den früheren
+  // «unten mittig»-Vertrag (V084-SPEZ §4.2) — die Reihe sass bis P-F2 durch
+  // `.orbit084-wortmarke-buehne`s `flex:1;justify-content:center` in der
+  // UNTEREN Hälfte des Viewports (live gemessen: y≈750-890 bei 900px
+  // Höhe), mit einer riesigen, ungenutzten Lücke zur Wortmarke darüber.
+  // Jetzt ist `.orbit084-wortmarke-buehne` `flex:none` (orbit-065.css) —
+  // Wortmarke + Kachel-Reihe stapeln sich mit kleinem, festem Abstand am
+  // OBEREN Rand von `.k-orbit-start`, der freie Rest der Spalte liegt jetzt
+  // UNTER der Reihe statt darüber verteilt. Reihenfolge zusätzlich auf DREI
+  // Kacheln verkürzt (bindende Owner-Entscheidung nach AskUserQuestion,
+  // s. Test oben «3 Hauptwerkzeuge») — «Kosmo» ist keine Zentrale-Kachel mehr.
   await page.setViewportSize({ width: 1440, height: 900 });
   await zentraleLaden(page);
   const reihe = page.locator('[data-testid="zentrale-kacheln"]');
   await expect(reihe).toBeVisible();
 
-  // Reihenfolge = Owner-Wortlaut, per x-Koordinate der 4 Hauptknöpfe geprüft
+  // Reihenfolge = Owner-Wortlaut, per x-Koordinate der Hauptknöpfe geprüft
   // (nicht per DOM-Reihenfolge allein — die sichtbare Anordnung zählt).
-  const erwarteteReihenfolge = ['kosmo', 'data', 'design', 'office'];
+  const erwarteteReihenfolge = ['data', 'design', 'office'];
   const positionen: { id: string; x: number }[] = [];
   for (const id of erwarteteReihenfolge) {
     const box = await page.locator(`[data-testid="orbit-haupt-${id}"]`).boundingBox();
@@ -268,17 +297,21 @@ test('Komposition: Kachel-Reihe unten mittig, Reihenfolge Kosmo·KosmoData·Kosm
   const sortiert = [...positionen].sort((a, b) => a.x - b.x).map((p) => p.id);
   expect(sortiert).toEqual(erwarteteReihenfolge);
 
-  // «unten mittig»: die Reihe sitzt in der unteren Hälfte des Viewports UND
-  // horizontal zentriert innerhalb ihrer eigenen Spalte (`.orbit065-home-
-  // rechts`) — die bestehende Zweispalten-Achse links (Begrüssung/
-  // Projekte, ausserhalb des PA2-Dateikreises geschützt) bleibt daneben
-  // erhalten, «Bildschirmmitte» ist darum nicht das messbare Ziel (s.
-  // Wortmarken-Test oben, dieselbe Begründung).
+  // «oben, direkt unter der Wortmarke, ganzes Paket nach oben geschoben»:
+  // die Reihe sitzt in der OBEREN Hälfte des Viewports (Umkehr des alten
+  // Vertrags), mit einer KLEINEN Lücke zur Wortmarke direkt darüber (kein
+  // grosser Leerraum mehr) — UND bleibt horizontal zentriert innerhalb
+  // ihrer eigenen Spalte (`.orbit065-home-rechts`) wie zuvor.
   const reiheBox = await reihe.boundingBox();
+  const wortmarkeBox = await page.locator('[data-testid="orbit-wortmarke"]').boundingBox();
   const spalteBox = await page.locator('.orbit065-home-rechts').boundingBox();
   expect(reiheBox).not.toBeNull();
+  expect(wortmarkeBox).not.toBeNull();
   expect(spalteBox).not.toBeNull();
-  expect(reiheBox!.y + reiheBox!.height).toBeGreaterThan(900 / 2);
+  expect(reiheBox!.y).toBeLessThan(900 / 2);
+  const luecke = reiheBox!.y - (wortmarkeBox!.y + wortmarkeBox!.height);
+  expect(luecke).toBeGreaterThanOrEqual(0);
+  expect(luecke).toBeLessThan(90);
   const reiheCenterX = reiheBox!.x + reiheBox!.width / 2;
   const spalteCenterX = spalteBox!.x + spalteBox!.width / 2;
   expect(Math.abs(reiheCenterX - spalteCenterX)).toBeLessThan(4);
@@ -315,7 +348,8 @@ for (const groesse of [
 test('Fächer: Hover auf jede Hauptkachel zeigt eine sichtbare Untertool-Liste', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await zentraleLaden(page);
-  for (const id of ['design', 'data', 'kosmo', 'office']) {
+  // P-F2 (v0.9.2): 'kosmo' ist keine Zentrale-Kachel mehr, s. Test oben.
+  for (const id of ['design', 'data', 'office']) {
     const haupt = page.locator(`[data-testid="orbit-haupt-${id}"]`);
     await haupt.hover();
     const faecher = page.locator(`[data-testid="orbit-faecher-${id}"]`);
@@ -327,13 +361,19 @@ test('Fächer: Hover auf jede Hauptkachel zeigt eine sichtbare Untertool-Liste',
   }
 });
 
-test('Fächer: paarweise Bounding-Box-Überlappung aller sichtbaren Untertool-Karten ist 0 (dichtester Fächer: Kosmo)', async ({
+test('Fächer: paarweise Bounding-Box-Überlappung aller sichtbaren Untertool-Karten ist 0 (dichtester Zentrale-Fächer: KosmoDesign)', async ({
   page,
 }) => {
+  // P-F2 (v0.9.2): der bisherige Prüfling «Kosmo» (8 Untertools) ist keine
+  // Zentrale-Kachel mehr — dasselbe Bounding-Box-Überlappungs-Netz für
+  // GENAU diese 8 Einträge lebt jetzt am Orb-Menü,
+  // `e2e/kosmo-orb-stationen-menu.spec.ts`. Hier prüft der Test weiterhin
+  // den dichtesten Zentrale-Fächer — das ist jetzt «KosmoDesign» (5
+  // Untertools: Draw/Prepare/Vis/Publish/Modellbaum).
   await page.setViewportSize({ width: 1440, height: 900 });
   await zentraleLaden(page);
-  await page.locator('[data-testid="orbit-haupt-kosmo"]').hover();
-  const faecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
+  await page.locator('[data-testid="orbit-haupt-design"]').hover();
+  const faecher = page.locator('[data-testid="orbit-faecher-design"]');
   await expect(faecher).toHaveClass(/\boffen\b/);
 
   const karten = faecher.locator('[data-testid^="module-"], [data-testid^="orbit-sub-"]');
@@ -362,7 +402,10 @@ test('Fächer: jede Untertool-Karte des offenen Fächers ist vollständig im Vie
   ]) {
     await page.setViewportSize({ width: groesse.breite, height: groesse.hoehe });
     await zentraleLaden(page);
-    for (const id of ['design', 'kosmo']) {
+    // P-F2 (v0.9.2): 'kosmo' ist keine Zentrale-Kachel mehr — 'design' bleibt
+    // der dichteste Zentrale-Fächer (s. Test oben), zusätzlich 'office' als
+    // zweiter realer Fächer dieser Reihe.
+    for (const id of ['design', 'office']) {
       await page.locator(`[data-testid="orbit-haupt-${id}"]`).hover();
       const faecher = page.locator(`[data-testid="orbit-faecher-${id}"]`);
       await expect(faecher).toHaveClass(/\boffen\b/);

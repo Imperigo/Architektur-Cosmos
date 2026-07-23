@@ -424,6 +424,31 @@ export function loadSettings(): KosmoSettings {
 }
 
 /**
+ * P-F2 (Owner-Feedback 23.07., Sprechblasensystem): EIN Provider-Konstruktor
+ * für BEIDE Verbraucher — die volle `ChatSession` (Panel, unten im
+ * `session`-`useMemo`) UND die schlanke, werkzeuglose Blasen-Antwort
+ * (`shell/KosmoSymbol.tsx`s `sendeBlasenNachricht`). Reiner Extract, KEINE
+ * Verhaltensänderung am bestehenden Panel-Pfad (byte-identische Auswahl-
+ * Logik, nur aus dem `session`-`useMemo` herausgezogen) — «eine Wahrheit»
+ * statt einer zweiten, driftenden Provider-Auswahl.
+ */
+export function baueChatProvider(settings: KosmoSettings): ChatProvider {
+  return settings.provider === 'mock'
+    ? new MockProvider()
+    : settings.provider === 'scripted'
+      ? new ScriptedProvider(settings.skriptId ?? '')
+      : settings.provider === 'anthropic'
+        ? new AnthropicProvider(
+            settings.cloudAuth === 'abo'
+              ? { oauthToken: settings.anthropicOauthToken, model: settings.anthropicModel }
+              : { apiKey: settings.anthropicKey, model: settings.anthropicModel },
+          )
+        : settings.provider === 'lmstudio'
+          ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
+          : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
+}
+
+/**
  * Kosmo spricht (Owner-Q7): Text → Bridge-/tts → Audio.
  * Ohne Bridge fällt die Stimme auf `speechSynthesis` des Browsers zurück
  * (de-CH wenn vorhanden) — die Bridge-Stimme bleibt der Qualitätsweg.
@@ -856,20 +881,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
   };
 
   const session = useMemo(() => {
-    const provider: ChatProvider =
-      settings.provider === 'mock'
-        ? new MockProvider()
-        : settings.provider === 'scripted'
-          ? new ScriptedProvider(settings.skriptId ?? '')
-          : settings.provider === 'anthropic'
-            ? new AnthropicProvider(
-                settings.cloudAuth === 'abo'
-                  ? { oauthToken: settings.anthropicOauthToken, model: settings.anthropicModel }
-                  : { apiKey: settings.anthropicKey, model: settings.anthropicModel },
-              )
-            : settings.provider === 'lmstudio'
-              ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
-              : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
+    const provider: ChatProvider = baueChatProvider(settings);
     const { doc } = useProject.getState();
     let currentKosmoBubble = -1;
     // v0.8.2/P6 (additiv, §6.7 C-3/C-11): die App konfiguriert heute EIN

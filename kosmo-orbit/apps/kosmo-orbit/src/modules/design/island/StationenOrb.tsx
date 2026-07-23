@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useOverlaySchliessen, type ModuleId } from '@kosmo/ui';
+import { KIcon, useOverlaySchliessen, type ModuleId } from '@kosmo/ui';
 import { ORBIT_HAUPTWERKZEUGE, type OrbitHauptwerkzeug } from '../../../shell/orbit-werkzeuge';
 import './island.css';
 
@@ -117,7 +117,18 @@ export function StationenOrb({ aktivesModul, onStationOeffnen, onZentrale }: Sta
         // schliessen.
         onClick={() => setOffen(true)}
       >
-        AK
+        {/* P-F2 (Owner-Feedback 23.07. wörtlich: «der AK Button soll ein
+            symbol erhalten (nicht text)»): das rohe Textkürzel «AK» weicht
+            einem Icon aus dem bestehenden Bestand (`packages/kosmo-ui/src/
+            icons.tsx`) — kein neues Zeichen erfunden. `mehr` (drei Punkte)
+            ist bereits die App-weite Konvention für «weitere/andere
+            Optionen» (derselbe Fallback-Glyph für unbekannte Untertool-
+            Icons, `OrbitStart.tsx` `UNTERTOOL_ICON`) und passt damit
+            wörtlich zur Funktion dieses Knopfs: Direktzugang zu den
+            ANDEREN Stationen. `aria-hidden` (Standard von `KIcon` ohne
+            `title`-Prop) — der Button trägt sein `aria-label` bereits
+            selbst, kein doppelter Accessible-Name nötig. */}
+        <KIcon name="mehr" size={16} />
       </button>
       {offen ? (
         <div className="isl-buehnenkopf-popover isl-stationen-orb-popover-liste" data-testid="stationen-orb-popover">

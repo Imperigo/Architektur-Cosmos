@@ -29,6 +29,10 @@ test('KosmoPackage: ohne Kontext (frischer Stand) zeigt jede kontextabhängige K
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
 
+  // P-F2 (v0.9.2): «KosmoPackage» ist keine Zentrale-Kachel mehr — der
+  // frühere Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel;
+  // jetzt am Kosmo-Orb-Rechtsklick-Menü, `module-paket` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-paket"]');
   await expect(page.locator('[data-testid="paket-werkzeugleiste"]')).toBeVisible();
   await expect(page.locator('[data-testid="paket-titel"]')).toContainText('KosmoPackage');
@@ -91,6 +95,10 @@ test('KosmoPackage: mit vollem Kontext (Geschoss + Blatt + Logo) sind alle sechs
   }, logoSvg);
 
   await page.getByLabel('Zur Zentrale').click();
+  // P-F2 (v0.9.2): «KosmoPackage» ist keine Zentrale-Kachel mehr — der
+  // frühere Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel;
+  // jetzt am Kosmo-Orb-Rechtsklick-Menü, `module-paket` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-paket"]');
   await expect(page.locator('[data-testid="paket-werkzeugleiste"]')).toBeVisible();
 
@@ -135,6 +143,10 @@ test('KosmoPackage: Einstellungen-Knopf öffnet das gefilterte Einstellungen-Pan
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
 
+  // P-F2 (v0.9.2): «KosmoPackage» ist keine Zentrale-Kachel mehr — der
+  // frühere Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel;
+  // jetzt am Kosmo-Orb-Rechtsklick-Menü, `module-paket` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-paket"]');
   await page.click('[data-testid="station-einstellungen-paket"]');
   const panel = page.locator('[data-testid="einstellungen-panel"]');

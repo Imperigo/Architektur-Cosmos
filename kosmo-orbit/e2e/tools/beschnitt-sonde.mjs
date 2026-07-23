@@ -101,8 +101,11 @@ for (const g of GROESSEN) {
       await knopf.click({ force: true }).catch(() => {});
       await p.waitForTimeout(1500);
       await scanUnd(`station:${m}`);
-      // zurück zur Zentrale fürs nächste Modul
-      const heim = p.locator('[data-testid="island-kopf-logo-orbit"]');
+      // zurück zur Zentrale fürs nächste Modul — P-F2 (v0.9.2): das
+      // KosmoOrbit-Logo (`island-kopf-logo-orbit`) ist entfallen, das
+      // Stations-Logo übernimmt die Klick-Funktion; sein testid ist
+      // dynamisch (`island-kopf-logo-<aktive-modulId>`), darum Prefix-Match.
+      const heim = p.locator('[data-testid^="island-kopf-logo-"]');
       if (await heim.count()) {
         await heim.first().click({ force: true }).catch(() => {});
         await p.waitForTimeout(800);

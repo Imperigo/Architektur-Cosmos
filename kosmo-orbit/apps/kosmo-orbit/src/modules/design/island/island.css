@@ -754,28 +754,22 @@
 /* ── Bühnenkopf (PD2, §1): Stationen-Orb + Ansichts-Info — beide fix
    positioniert, teilen sich die `--f-*`-Token-Familie wie `.isl-root` oben
    (kein zweiter Token-Layer).
-   PD5 (Owner-Korrektur, wörtlich «links oben kosmoorbit und kosmodesign in
-   gleicher grösse wie einstellungsknopf … Überlagerung beheben, saubere
-   Abstände in der Reihe KosmoOrbit → KosmoDesign → AK-Orb → Ansichts-Info»):
-   `top` rückt von 22px auf 14px (deckt sich jetzt mit `.isl-kopf-logo-*`/
-   `.isl-einstellungen-kreis`, EINE Zeile statt zwei leicht versetzter) — die
-   frühere Owner-Überlagerung kam aus genau diesem `top:14` (Logos) vs.
-   `top:22` (Bühnenkopf)-Versatz plus zu knappem Lücken, behoben statt
-   kaschiert. Die vier linken Kopf-Elemente teilen sich jetzt EIN 52px-Raster
-   (38px sichtbarer Kreis + 14px Lücke, wie schon zuvor zwischen Stationen-Orb
-   und Ansichts-Info): KosmoOrbit `left:14`, KosmoDesign `left:66` (beide
-   App.tsx, `.isl-kopf-logo-*` unten), Stationen-Orb `left:118` (war 74),
-   Ansichts-Info `left:170` (war 126) — der bestehende +52-Abstand zwischen
-   Stationen-Orb und Ansichts-Info bleibt dabei UNVERÄNDERT, nur beide rücken
-   gemeinsam um weitere 44px nach rechts, um den zwei Logo-Kreisen Platz zu
-   machen.
+   PD5 (Owner-Korrektur 17.07.2026) → P-F2 (v0.9.2, Owner-Feedback 23.07.
+   wörtlich: «wir entfernen das kosmorbit logo … kosmodesign logo … nach
+   links verschieben»): das KosmoOrbit-Logo ist ERSATZLOS entfallen — die
+   Reihe trägt jetzt DREI statt vier Kopf-Elemente auf demselben 52px-Raster
+   (38px sichtbarer Kreis + 14px Lücke): KosmoDesign (Stations-Logo)
+   `left:14` (war 66 — rückt in die alte KosmoOrbit-Position, App.tsx
+   `.isl-kopf-logo-*`), Stationen-Orb `left:66` (war 118), Ansichts-Info
+   `left:118` (war 170) — jedes Element rückt exakt 52px nach links, der
+   +52-Abstand zwischen Stationen-Orb und Ansichts-Info bleibt dabei
+   UNVERÄNDERT.
    PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «Geschosseinstellung raus
    aus der Tab-Leiste, als kleine vertikale Pille unter dem KosmoOrbit-Logo»):
-   `.isl-geschoss-pille` setzt DASSELBE 52px-Raster senkrecht fort —
-   `top:66px` (= 14 + 38px sichtbarer Kreis + 14px Lücke) unter dem
-   KosmoOrbit-Logo (`App.tsx` `.isl-kopf-logo-orbit`, `left:14/top:14`),
-   selbst `left:14px` (deckungsgleich mit dem Logo-Kreis darüber, eine
-   senkrechte Spalte). Eigene Regel weiter unten (`.isl-geschoss-pille-label`
+   `.isl-geschoss-pille` bleibt UNVERÄNDERT auf `left:14px` — sitzt jetzt
+   unter dem (nach links gerückten) KosmoDesign-Logo statt dem entfallenen
+   KosmoOrbit-Logo, exakt dieselbe senkrechte Spalte, kein Koordinaten-
+   Wechsel nötig. Eigene Regel weiter unten (`.isl-geschoss-pille-label`
    analog `.isl-ansichts-info-label`). */
 .isl-buehnenkopf {
   position: fixed;
@@ -784,23 +778,22 @@
   font-family: var(--k-font-ui);
 }
 .isl-buehnenkopf-stationen-orb {
-  left: 118px;
+  left: 66px;
 }
 .isl-buehnenkopf-ansichts-info {
-  left: 170px;
+  left: 118px;
 }
 .isl-geschoss-pille {
   top: 66px;
   left: 14px;
 }
 
-/* PD5: EIN gemeinsamer 38px-Glas-Kreis-Stil für alle vier Kopf-Elemente
-   (Owner, wörtlich «gleiche grösse wie einstellungsknopf») — Stationen-Orb,
-   Einstellungs-Kreis UND die beiden Logo-Kreise (`.isl-kopf-logo-orbit`/
-   `.isl-kopf-logo-design`, unten) teilen sich exakt dieselbe Regel. */
+/* PD5 → P-F2: EIN gemeinsamer 38px-Glas-Kreis-Stil für alle drei Kopf-
+   Elemente (Owner, wörtlich «gleiche grösse wie einstellungsknopf») —
+   Stationen-Orb, Einstellungs-Kreis UND der verbleibende Logo-Kreis
+   (`.isl-kopf-logo-design`) teilen sich exakt dieselbe Regel. */
 .isl-stationen-orb-pill,
 .isl-einstellungen-kreis,
-.isl-kopf-logo-orbit,
 .isl-kopf-logo-design {
   display: flex;
   align-items: center;
@@ -823,13 +816,13 @@
   padding: 0;
 }
 
-/* Die beiden Logo-Kreise oben links — eigene `position:fixed`-Koordinaten
-   (kein `.isl-root`-Kind, analog `.isl-einstellungen-kreis`), erstes und
-   zweites Feld im gemeinsamen 52px-Raster (s. `.isl-buehnenkopf`-Kommentar
-   oben). `.isl-kopf-logo-design` ist bewusst NICHT `cursor:pointer`
-   (dekorativ, kein zweiter Klick-Weg) — überschreibt die geerbte Regel oben
-   gezielt zurück auf `default`. */
-.isl-kopf-logo-orbit,
+/* Der verbleibende Logo-Kreis oben links — eigene `position:fixed`-
+   Koordinaten (kein `.isl-root`-Kind, analog `.isl-einstellungen-kreis`),
+   erstes Feld im gemeinsamen 52px-Raster (s. `.isl-buehnenkopf`-Kommentar
+   oben). P-F2: jetzt `cursor:pointer` (übernimmt die «Zur Zentrale»-
+   Funktion des entfernten KosmoOrbit-Logos, App.tsx) — die frühere
+   `cursor:default`-Overrideregel («dekorativ, kein zweiter Klick-Weg») ist
+   damit gegenstandslos und entfällt. */
 .isl-kopf-logo-design {
   position: fixed;
   top: 14px;
@@ -846,38 +839,13 @@
      `--isl-pill-ink` (Kopf der Datei) statt aus einem zweiten Hartwert. */
   --k-ink: var(--isl-pill-ink);
 }
-.isl-kopf-logo-orbit {
-  left: 14px;
-}
+/* P-F2: rückt in die alte KosmoOrbit-Position (war `left:66px`) — das
+   entfernte KosmoOrbit-Logo sass hier vorher auf `left:14px`. `cursor:
+   default` (dekorativ, «kein zweiter Klick-Weg») entfällt ERSATZLOS: der
+   Kreis ist jetzt der einzige, klickbare «Zur Zentrale»-Weg (`onClick` in
+   App.tsx), `cursor:pointer` erbt bereits aus der geteilten Regel oben. */
 .isl-kopf-logo-design {
-  left: 66px;
-  cursor: default;
-}
-
-/* PB3 (`docs/V084-SPEZ.md` §8 C-24, Owner wörtlich «Logo grau … der
-   KosmoOrbit-Kopf-Kreis … verliert jede Farb-Fläche»): NUR der KosmoOrbit-
-   Kreis (nicht `.isl-kopf-logo-design`, dessen Rollenpunkt-Farbe bewusst
-   Stationsfarbe bleibt) — `Logo6a` (`packages/kosmo-ui/src/logo-6a.tsx`,
-   hinter `OrbitMark module="orbit"`) zeichnet Ring/Neun-Quadrat mit
-   `var(--k-ink)` (oben bereits neutral auf `var(--isl-pill-ink)` überschrieben) UND
-   Satellit/Mittelpunkt mit `var(--k-signal)` (Teal, bisher eine übrig
-   gebliebene Farb-Fläche) + `var(--k-success)`/`var(--k-danger)` für die
-   (hier ungenutzten) `zustand`-Ausprägungen 'fertig'/'fehler'. Dieselbe
-   lokale Custom-Property-Override-Technik wie die `--k-ink`-Zeile oben
-   (CSS-Variablen vererben sich normal über den DOM-Baum, bleiben ausserhalb
-   dieses einen Kreises unverändert) — diesmal auf `currentColor` statt
-   einen zweiten Hartwert, damit «Symbol currentColor» (Spec-Wortlaut §8
-   C-24) buchstäblich zutrifft: `color:var(--isl-pill-ink)` kommt bereits aus der
-   geteilten 38px-Kreis-Regel oben, `currentColor` löst sich darauf auf —
-   Ring/Quadrat/Satellit/Mittelpunkt landen damit alle auf demselben
-   neutralen Grauton, keine einzige Farb-Fläche bleibt übrig. Muss NACH der
-   kombinierten `.isl-kopf-logo-orbit, .isl-kopf-logo-design`-Regel oben
-   stehen (Kaskade: gleiche Spezifität, spätere Quellreihenfolge gewinnt). */
-.isl-kopf-logo-orbit {
-  --k-ink: currentColor;
-  --k-signal: currentColor;
-  --k-success: currentColor;
-  --k-danger: currentColor;
+  left: 14px;
 }
 
 /* PD5 (Owner-Befund «einheitliche Symbole»): der Einstellungs-Kreis oben
@@ -896,6 +864,19 @@
   right: 14px;
   z-index: 42;
   font-family: var(--k-font-ui);
+}
+/* P-F2 (Owner-Feedback 23.07., «Haupteinstellungen überdeckt Kosmos Chat»):
+   `right:14px` ist relativ zum GANZEN Fenster — sobald das KosmoPanel
+   (340px, `kosmo-panel.css` `.kp-panel`) rechts andockt, läge dieser Kreis
+   sonst GENAU über der Panel-eigenen Kopfzeile. Der Modifier schiebt ihn um
+   die Panel-Breite + denselben 14px-Rand nach links, App.tsx setzt ihn nur,
+   solange `kosmoOpen` wahr ist — der Knopf bleibt so IMMER erreichbar UND
+   überlappt nie die Panel-Fläche (ehrliche Positions-Lösung, kein
+   Verstecken). 340px ist bewusst derselbe Hartwert wie an den anderen
+   Stellen, die sich schon auf die Panel-Breite beziehen (s. `aura.css`
+   `.k-orbit-ring-feld`-Kommentar «auch bei OFFENEM Kosmo-Panel (340px)»). */
+.isl-einstellungen-kreis--kosmo-offen {
+  right: calc(340px + 14px);
 }
 
 .isl-ansichts-info-label {
@@ -979,7 +960,7 @@
    die relativ zu einem beliebig positionierten Werkzeugknopf öffnen). Muss
    NACH `.isl-buehnenkopf-popover` stehen (Kaskade: gleiche Spezifität,
    spätere Quellreihenfolge gewinnt), s. identisches Muster bei
-   `.isl-kopf-logo-orbit` oben. */
+   `.isl-kopf-logo-design` oben. */
 .isl-geschoss-pille-popover {
   top: 0;
   left: calc(100% + var(--k-s3));

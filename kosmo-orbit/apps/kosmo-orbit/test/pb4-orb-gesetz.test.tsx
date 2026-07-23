@@ -99,7 +99,7 @@ describe('KosmoSymbol — Orb-Gesetz (E2-Tabelle)', () => {
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 
-  it('«Antworten» in der Karte öffnet ebenfalls das Panel und schliesst die Karte', () => {
+  it('P-F2 (Owner-Feedback 23.07.): «Antworten» fokussiert nur das Eingabefeld — KEIN Panel-Aufklappen mehr von der Karte aus', () => {
     const onOpen = vi.fn();
     render(<KosmoSymbol onOpen={onOpen} />);
     klickEreignis(q('kosmo-symbol')!);
@@ -108,8 +108,12 @@ describe('KosmoSymbol — Orb-Gesetz (E2-Tabelle)', () => {
     });
     expect(q('kosmo-karte')).not.toBeNull();
     klickEreignis(q('kosmo-karte-antworten')!);
-    expect(onOpen).toHaveBeenCalledTimes(1);
-    expect(q('kosmo-karte')).toBeNull();
+    // Der frühere Direktweg zum grossen Panel («der Balken») ist mit P-F2
+    // abgelöst — die Karte bleibt offen, die Konversation läuft in Blasen
+    // weiter (s. `KosmoSymbol.tsx`-Kopfkommentar).
+    expect(onOpen).not.toHaveBeenCalled();
+    expect(q('kosmo-karte')).not.toBeNull();
+    expect(document.activeElement).toBe(q('kosmo-karte-eingabe'));
   });
 
   it('«Später» schliesst die Karte OHNE das Panel zu öffnen', () => {

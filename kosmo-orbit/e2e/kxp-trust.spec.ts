@@ -16,6 +16,9 @@ test('KosmoTrust: Leerzustand vor jedem Paket — Export-/Öffnen-Einstieg sicht
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
   await page.reload();
 
+  // P-F2 (v0.9.2): «Trust» ist keine Zentrale-Kachel mehr — jetzt am
+  // Kosmo-Orb-Rechtsklick-Menü, `module-trust` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-trust"]');
   await expect(page.locator('[data-testid="kxp-werkzeugleiste"]')).toBeVisible();
   await expect(page.locator('[data-testid="kxp-leerzustand"]')).toBeVisible();
@@ -36,6 +39,9 @@ test('KosmoTrust: Export-Dialog zeigt reale Vorschau (Blätter/Journal) VOR dem 
   await expect(page.locator('[data-testid="sheet-0"]')).toBeVisible();
   await page.getByLabel('Zur Zentrale').click();
 
+  // P-F2 (v0.9.2): «Trust» ist keine Zentrale-Kachel mehr — jetzt am
+  // Kosmo-Orb-Rechtsklick-Menü, `module-trust` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-trust"]');
   await page.click('[data-testid="kxp-export-oeffnen"]');
 
@@ -64,6 +70,9 @@ test('KosmoTrust: Viewer zeigt ein importiertes .kxp read-only mit Manifest + Tr
   await page.click('[data-testid="module-publish"]');
   await page.click('[data-testid="add-sheet"]');
   await page.getByLabel('Zur Zentrale').click();
+  // P-F2 (v0.9.2): «Trust» ist keine Zentrale-Kachel mehr — jetzt am
+  // Kosmo-Orb-Rechtsklick-Menü, `module-trust` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-trust"]');
 
   await page.click('[data-testid="kxp-export-oeffnen"]');
@@ -100,6 +109,9 @@ test('KosmoTrust: Freigabe-Zustandsmaschine — Entwurf → Zur Freigabe → Fre
   await page.click('[data-testid="module-publish"]');
   await page.click('[data-testid="add-sheet"]');
   await page.getByLabel('Zur Zentrale').click();
+  // P-F2 (v0.9.2): «Trust» ist keine Zentrale-Kachel mehr — jetzt am
+  // Kosmo-Orb-Rechtsklick-Menü, `module-trust` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-trust"]');
   await page.click('[data-testid="kxp-export-oeffnen"]');
   const [download] = await Promise.all([
@@ -149,6 +161,9 @@ test('KosmoTrust: ein Übergang ohne gewählte Rolle bleibt unmöglich (KSelect 
   await page.click('[data-testid="module-publish"]');
   await page.click('[data-testid="add-sheet"]');
   await page.getByLabel('Zur Zentrale').click();
+  // P-F2 (v0.9.2): «Trust» ist keine Zentrale-Kachel mehr — jetzt am
+  // Kosmo-Orb-Rechtsklick-Menü, `module-trust` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-trust"]');
   await page.click('[data-testid="kxp-export-oeffnen"]');
   const [download] = await Promise.all([

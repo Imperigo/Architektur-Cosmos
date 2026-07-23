@@ -110,8 +110,11 @@ test('Zustand persistiert über Reload — offen bleibt offen, zu bleibt zu', as
   await expect(page.locator('[data-testid="kosmo-panel"]')).toBeVisible();
   await expect(page.locator('[data-testid="kosmo-symbol"]')).toHaveCount(0);
 
-  // Über den Header-Toggle schliessen (nicht nur das ×-Kreuz im Panel selbst).
-  await page.click('[data-testid="kosmo-toggle"]');
+  // P-F2 (Owner-Feedback 23.07.): `kosmo-toggle` rendert auf der Zentrale
+  // (`screen==='home'`) nicht mehr (App.tsx `kopfWerkzeuge()`-Guard, der Orb
+  // ist dort der einzige Kosmo-Zugang) — Schliessen läuft hier über das
+  // ×-Kreuz im Panel selbst (unverändert vorhanden, s. `KosmoPanel.tsx`).
+  await page.click('[aria-label="Schliessen"]');
   await expect(page.locator('[data-testid="kosmo-panel"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="kosmo-symbol"]')).toBeVisible();
 

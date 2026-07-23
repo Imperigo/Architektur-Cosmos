@@ -431,39 +431,41 @@
   flex-wrap: wrap;
 }
 
-/* Projekt-Tableiste (P-Z, docs/V0812-SPEZ.md §E-Z): ein Tab je Tresor-
-   Projekt + Schluss-Tab «+ Neues Projekt». `.orbit065-home-links` (die linke
-   Spalte, s. App.tsx Layout-Anker-Kommentar) ist schmal (~260-300px) — echte
-   Tabs NEBENEINANDER würden ab 2-3 Projekten sofort umbrechen und optisch
-   wieder zur alten vertikalen Liste werden. Darum bleibt die Zeile bewusst
-   EINZEILIG (`flex-wrap: nowrap`) und scrollt horizontal (`overflow-x: auto`)
-   statt umzubrechen — dieselbe Lösung wie Browser-Tableisten/App-Tableisten
-   in schmalen Spalten. `min-width: 0` auf Container UND Tabs verhindert, dass
-   der Flex-Inhalt die feste Spaltenbreite sprengt (bekannte Flexbox-Falle,
-   s. `aura.css`-Kommentar zu `min-height/min-width:0`). Jeder Tab/Knopf hält
-   die iPad-Touch-Mindesthöhe 44px ein (`e2e/projekt-tableiste.spec.ts`). */
-.app-projekt-tableiste {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  gap: 6px;
-  min-width: 0;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--k-line);
-  padding-bottom: 8px;
+/* P-F2 (Owner-Feedback 23.07. wörtlich: «neues projekt erstellen nach wie
+   vor mit scrollen … darf so nicht sein, finde neue ui darstellung»):
+   ERSETZT die frühere EINZEILIGE `overflow-x:auto`-Tableiste (P-Z,
+   docs/V0812-SPEZ.md §E-Z — «+ Neues Projekt» sass dort als LETZTER Tab
+   hinter horizontalem Scroll, sobald genug Projekte im Tresor lagen; genau
+   der gemeldete Bug). Jetzt ein KOMPAKTES, umbrechendes Grid statt einer
+   Einzelzeile: `repeat(auto-fill, minmax(150px, 1fr))` + `minmax(0,1fr)`-
+   Spalten (stehende Owner-Regel seit v0.9.1 «nichts abschneiden, nichts
+   unnötig scrollbar», Beleg `wissen/training/claude/lehren/v0.9.1.md` Nr. 9
+   — dieselbe Falle, die dort einen 49px-Fensterüberlauf verursachte). Die
+   «+»-Kachel steht laut App.tsx JETZT als ERSTES Kind vor der Projekt-Liste
+   — ohne jeden Scroll sofort erreichbar. `max-height` + eigenes
+   `overflow-y:auto` bleiben als SICHERHEITSNETZ für sehr viele Projekte
+   (zusätzliche REIHEN scrollen kontrolliert INNERHALB dieser Fläche, nie
+   die Root-Seite — dasselbe Muster wie `.orbit065-home-links`). Jeder
+   Tab/Knopf hält die iPad-Touch-Mindesthöhe 44px ein
+   (`e2e/projekt-tableiste.spec.ts`). */
+.app-projekt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  max-height: 168px;
+  overflow-y: auto;
+  padding-bottom: 2px;
   scrollbar-width: thin;
 }
 .app-projekt-tab {
   display: flex;
   align-items: center;
   gap: 2px;
-  flex: 0 0 auto;
   min-height: 44px;
   min-width: 0;
   padding-left: 12px;
   border: 1px solid var(--k-line);
-  border-bottom: 2px solid transparent;
-  border-radius: var(--k-radius-sm) var(--k-radius-sm) 0 0;
+  border-radius: var(--k-radius-sm);
   background: var(--k-surface);
 }
 .app-projekt-tab-aktiv {
@@ -517,7 +519,13 @@ button.app-projekt-tab-oeffnen:hover {
   color: var(--k-danger);
   background: var(--k-hover);
 }
+/* P-F2: die «+»-Kachel ist IMMER die erste Grid-Zelle (App.tsx) UND spannt
+   die volle Grid-Breite (`grid-column: 1 / -1`) — Namensfeld + Knopf
+   brauchen mehr Raum als eine einzelne ~150px-Projektkachel, und die volle
+   Breite macht «Neues Projekt» zusätzlich als die prominenteste, erste
+   Aktion erkennbar (Owner-Auftrag: sofort ohne Scrollen erreichbar). */
 .app-projekt-tab-neu {
+  grid-column: 1 / -1;
   gap: 8px;
   padding-right: 8px;
 }
@@ -527,7 +535,8 @@ button.app-projekt-tab-oeffnen:hover {
   border: 1px solid var(--k-line-strong);
   background: var(--k-raised);
   font-size: 13px;
-  width: 200px;
+  flex: 1 1 auto;
+  min-width: 0;
   min-height: 44px;
 }
 .app-projekt-neu-knopf {

@@ -132,6 +132,10 @@ test.describe('BodenDock-Reserve — daten/wissen/chat/pipeline (C-14)', () => {
     page,
   }) => {
     await seed(page);
+    // P-F2 (v0.9.2): «Dev» ist keine Zentrale-Kachel mehr — der frühere
+    // Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel; jetzt am
+    // Kosmo-Orb-Rechtsklick-Menü, `module-dev` bleibt dieselbe Testid.
+    await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
     await page.click('[data-testid="module-dev"]');
     await expect(page.locator('[data-testid="boden-dock"]')).toBeVisible();
 

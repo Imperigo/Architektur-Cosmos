@@ -29,6 +29,11 @@ test('Voller Kreis: erfassen → übergeben → Fake-Worker → erledigt · Simu
 
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('kosmo.onboarded', '1'));
+  // P-F2 (v0.9.2): «Dev» ist keine Zentrale-Kachel mehr — der frühere
+  // Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel (Harter
+  // Vertrag, immer im DOM). Jetzt am Kosmo-Orb-Rechtsklick-Menü, `module-
+  // dev` bleibt dieselbe Testid (s. `KosmoSymbol.tsx`).
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-dev"]');
 
   // Auftrag erfassen (Buildplan E4-Voraussetzung) — Karte erscheint mit
@@ -113,6 +118,9 @@ test('Offline ehrlich: Übergeben ohne Bridge nennt den Zustand, Aufträge bleib
     localStorage.setItem('kosmo.bridge', 'http://localhost:8699');
   });
   await page.goto('/');
+  // P-F2 (v0.9.2): s. Kommentar oben — «Dev» läuft jetzt über den
+  // Kosmo-Orb-Rechtsklick, `module-dev` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-dev"]');
 
   const auftragText = 'E2E-Offline: Fensterbreite prüfen';

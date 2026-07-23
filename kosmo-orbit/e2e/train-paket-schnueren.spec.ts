@@ -37,6 +37,9 @@ test('Trainingspaket schnüren → Manifest-Download mit korrekten Hashes (kosmo
   }, KURATIERTER_EINTRAG);
   await page.reload();
 
+  // P-F2 (v0.9.2): «Train» ist keine Zentrale-Kachel mehr — jetzt am
+  // Kosmo-Orb-Rechtsklick-Menü, `module-train` bleibt dieselbe Testid.
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-train"]');
   await expect(page.locator('[data-testid="train-werkzeugleiste"]')).toBeVisible();
 

@@ -45,8 +45,16 @@ async function animationenAbwarten(page: Page): Promise<void> {
   );
 }
 
-/** Je Hauptwerkzeug: die realen Block-Testids seiner Untertools (aus
- *  `shell/orbit-werkzeuge.ts`) + der erwartete Klartext-Titel je Block. */
+/**
+ * Je Hauptwerkzeug: die realen Block-Testids seiner Untertools (aus
+ * `shell/orbit-werkzeuge.ts`) + der erwartete Klartext-Titel je Block.
+ *
+ * P-F2 (v0.9.2, bindende Owner-Entscheidung nach AskUserQuestion): der
+ * frühere `kosmo`-Eintrag ist entfallen — «Kosmo» ist keine Zentrale-Kachel
+ * mehr (`OrbitStart.tsx`, `KACHEL_REIHENFOLGE`), das analoge SVG-Logo-
+ * /Klartext-/Trefferflächen-Netz für seine 8 Untertools lebt jetzt am
+ * Kosmo-Orb-Rechtsklick-Menü, `e2e/kosmo-orb-stationen-menu.spec.ts`.
+ */
 const FAECHER: Record<string, { testid: string; titel: string }[]> = {
   design: [
     { testid: 'module-design', titel: 'Draw' },
@@ -58,16 +66,6 @@ const FAECHER: Record<string, { testid: string; titel: string }[]> = {
   data: [
     { testid: 'module-data', titel: 'Reference' },
     { testid: 'module-asset', titel: 'Asset' },
-  ],
-  kosmo: [
-    { testid: 'module-speak', titel: 'Speak' },
-    { testid: 'module-sketch', titel: 'Sketch' },
-    { testid: 'orbit-sub-modell', titel: 'Modell' },
-    { testid: 'module-train', titel: 'Train' },
-    { testid: 'module-dev', titel: 'Dev' },
-    { testid: 'module-doc', titel: 'Doc' },
-    { testid: 'module-trust', titel: 'Trust' },
-    { testid: 'module-paket', titel: 'Package' },
   ],
   office: [
     { testid: 'orbit-office-lead', titel: 'KosmoLead' },
@@ -115,25 +113,9 @@ test('(b) KosmoDesign-Fächer: alle Blöcke linksbündig (identische x-Koordinat
   }
 });
 
-test('(b) Kosmo-Fächer (dichtester Fächer, 8 Blöcke): alle Blöcke linksbündig (identische x-Koordinate)', async ({
-  page,
-}) => {
-  await zentraleLaden(page);
-  await page.locator('[data-testid="orbit-haupt-kosmo"]').hover();
-  const faecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
-  await expect(faecher).toHaveClass(/\boffen\b/);
-  await animationenAbwarten(page);
-
-  const xWerte: number[] = [];
-  for (const { testid } of FAECHER['kosmo']!) {
-    const box = await faecher.locator(`[data-testid="${testid}"]`).boundingBox();
-    expect(box, `${testid} fehlt`).not.toBeNull();
-    xWerte.push(box!.x);
-  }
-  for (const x of xWerte) {
-    expect(Math.abs(x - xWerte[0]!)).toBeLessThan(1);
-  }
-});
+// P-F2 (v0.9.2): «(b) Kosmo-Fächer (dichtester Fächer, 8 Blöcke)» ist nach
+// `e2e/kosmo-orb-stationen-menu.spec.ts` umgezogen (dort «Rechtsklick-Menü:
+// alle 8 Einträge linksbündig») — 'kosmo' ist keine Zentrale-Kachel mehr.
 
 for (const hauptId of Object.keys(FAECHER)) {
   test(`(c) Fächer ${hauptId}: Trefferfläche jedes Blocks ist mindestens 44px hoch`, async ({ page }) => {
@@ -158,25 +140,6 @@ for (const hauptId of Object.keys(FAECHER)) {
  * (OrbitStart.tsx-Kopfkommentar: Tap auf ein nicht-aktives Hauptwerkzeug
  * öffnet NUR den Fächer) — kein Hover nötig.
  */
-test.describe('iPad 1024×768 (Touch)', () => {
-  test.use({ viewport: { width: 1024, height: 768 }, hasTouch: true });
-
-  test('Kosmo-Fächer öffnet per Tap, alle Blöcke ≥44px und linksbündig', async ({ page }) => {
-    await zentraleLaden(page);
-    await page.locator('[data-testid="orbit-haupt-kosmo"]').tap();
-    const faecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
-    await expect(faecher).toHaveClass(/\boffen\b/);
-    await animationenAbwarten(page);
-
-    const xWerte: number[] = [];
-    for (const { testid } of FAECHER['kosmo']!) {
-      const box = await faecher.locator(`[data-testid="${testid}"]`).boundingBox();
-      expect(box, `${testid} fehlt`).not.toBeNull();
-      expect(box!.height).toBeGreaterThanOrEqual(43.5);
-      xWerte.push(box!.x);
-    }
-    for (const x of xWerte) {
-      expect(Math.abs(x - xWerte[0]!)).toBeLessThan(1);
-    }
-  });
-});
+// P-F2 (v0.9.2): der iPad-Tap-Beweis fürs (entfallene) Kosmo-Fächer ist
+// ebenfalls nach `e2e/kosmo-orb-stationen-menu.spec.ts` umgezogen (dort
+// «iPad 1024×768 (Touch)» am Orb statt an der Kachel).

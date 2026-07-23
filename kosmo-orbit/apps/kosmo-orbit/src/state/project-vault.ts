@@ -276,12 +276,28 @@ export function oeffneJsonAlsNeuesProjekt(json: DocJson): void {
   speicher?.setItem(AKTIV_KEY, aktivId);
 }
 
-/** Neues, leeres Projekt (Bootstrap macht die Werkstatt beim Öffnen). */
+/**
+ * P-F2 (Owner-Feedback 23.07. wörtlich: «auf home screen sind projekte
+ * unbenannt»): WURZELURSACHE war hier — leer gelassenes Namensfeld fiel auf
+ * den STATISCHEN Text `'Unbenannt'`, der App.tsx unverändert als
+ * `p.name` in JEDEM Tresor-Tab anzeigt (`ProjektListe`, App.tsx). Legte der
+ * Architekt mehrere Projekte ohne Namenseingabe an (der einzige reale
+ * Eingabeweg, `projekt-neu-name`, ist ein Freitextfeld ohne Pflicht), zeigte
+ * die Tableiste mehrere ununterscheidbare «Unbenannt»-Tabs — nicht nur EIN
+ * Projekt hiess so, ALLE taten es. Fix an der Wurzel: ein ehrlicher,
+ * NUMMERIERTER Standardname («Projekt N»), damit jedes still angelegte
+ * Projekt in der Tableiste unterscheidbar bleibt, statt eine Konstante zu
+ * wiederholen. `naechsterStandardname` (App.tsx `ProjektListe`) berechnet N
+ * aus den ECHTEN, bereits geladenen Tresor-Einträgen (kollisionsfrei) und
+ * reicht ihn als `name` durch — dieser Fallback hier greift nur, wenn
+ * `neuesProjekt` je OHNE Namensargument von woanders gerufen würde (heute
+ * kein Aufrufer, defensiv statt eines zweiten „Unbenannt“).
+ */
 export function neuesProjekt(name: string): void {
   aktivId = `projekt-${Date.now().toString(36)}`;
   speicher?.setItem(AKTIV_KEY, aktivId);
   const doc = new KosmoDoc();
-  doc.settings = { ...doc.settings, projectName: name || 'Unbenannt' };
+  doc.settings = { ...doc.settings, projectName: name || `Projekt ${new Date().toLocaleString('de-CH')}` };
   useProject.setState({
     doc,
     revision: 0,

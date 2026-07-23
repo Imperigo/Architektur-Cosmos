@@ -42,10 +42,27 @@ test('Zentrale: Speichern/Öffnen NICHT im Eck-Werkzeug, übrige Alltags-Werkzeu
   await expect(page.locator('[data-testid="save-project"]')).toHaveCount(0);
   await expect(page.locator('[data-testid="open-project"]')).toHaveCount(0);
 
-  await expect(page.locator('[data-testid="kosmo-toggle"]')).toBeVisible();
+  // P-F2 (Owner-Feedback 23.07. wörtlich: «auch rechts oben auf
+  // hauptstartseite steht noch kosmo neben dem sync aus, das kann auch
+  // weg»): `kosmo-toggle` ist ab jetzt die EINE bewusste Ausnahme von
+  // «übrige Alltags-Werkzeuge unverändert» — auf der Zentrale ist der frei
+  // schwebende Kosmo-Orb (`kosmo-symbol`, Doppelklick öffnet dasselbe
+  // Panel) der einzige Kosmo-Zugang; der Kopfzeilen-Zwilling entfällt dort
+  // ERSATZLOS (App.tsx `kopfWerkzeuge()`, `screen !== 'home'`-Guard). Auf
+  // jeder Station (s. Test unten) bleibt er unverändert bestehen.
+  await expect(page.locator('[data-testid="kosmo-toggle"]')).toHaveCount(0);
+  await expect(page.locator('[data-testid="kosmo-symbol"]')).toBeVisible();
   await expect(page.locator('[data-testid="sync-toggle"]')).toBeVisible();
   await expect(page.locator('[data-testid="starter-guide-start"]')).toBeVisible();
   await expect(page.locator('[data-testid="einstellungen-oeffnen"]')).toBeVisible();
+});
+
+test('Station (KosmoData): `kosmo-toggle` bleibt dort unverändert vorhanden (P-F2 betrifft NUR die Zentrale)', async ({
+  page,
+}) => {
+  await ueberspringeOnboarding(page);
+  await page.click('[data-testid="module-data"]');
+  await expect(page.locator('[data-testid="kosmo-toggle"]')).toBeVisible();
 });
 
 test('Datenstation: Speichern/Öffnen da mit Projekt-Sprache, Auto-Save-Indikator sichtbar', async ({ page }) => {

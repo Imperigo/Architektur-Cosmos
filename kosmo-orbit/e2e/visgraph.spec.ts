@@ -143,15 +143,17 @@ test('Node-Canvas-Handwerk: Port-Drag verbindet typisiert, Node-Drag committet, 
   // Prompt tippen → Kombinierer zeigt ihn live
   await page.locator('[data-testid="prompt-text"]').fill('Blick vom Quai');
   // Island-Hotspot (Muster `e2e/blender-bridge.spec.ts` Kopfkommentar zum
-  // KSwitch-Fall): der Insel-Kopf («Zur Zentrale»-Logo, `island-kopf-logo-
-  // orbit`, `island.css` `left:14px`/ein ~38px-Kreis) schwebt fix oben-links
-  // über dem Node-Canvas und überdeckt den alten Testpunkt (30,30), den es im
-  // Manuell-Modus nicht gab. `force:true` wäre hier FALSCH (es klickt das
-  // oberste Element am Punkt trotzdem real an — träfe also das Logo und
-  // navigierte zur Zentrale, gemessen im ersten Anlauf dieser Migration) —
-  // der Testpunkt wandert darum auf (30,260), klar unterhalb des Logo-Kreises,
-  // weiterhin ein echter Canvas-Hintergrund-Klick ohne Produktcode-Fix
-  // (PB1/PC0-Hotspot ausserhalb dieses Dateikreises).
+  // KSwitch-Fall): der Insel-Kopf («Zur Zentrale»-Logo, seit P-F2
+  // `island-kopf-logo-design` — vorher `island-kopf-logo-orbit`, s.
+  // `island.css` `left:14px`/ein ~38px-Kreis, dieselbe Position/Grösse)
+  // schwebt fix oben-links über dem Node-Canvas und überdeckt den alten
+  // Testpunkt (30,30), den es im Manuell-Modus nicht gab. `force:true` wäre
+  // hier FALSCH (es klickt das oberste Element am Punkt trotzdem real an —
+  // träfe also das Logo und navigierte zur Zentrale, gemessen im ersten
+  // Anlauf dieser Migration) — der Testpunkt wandert darum auf (30,260),
+  // klar unterhalb des Logo-Kreises, weiterhin ein echter Canvas-
+  // Hintergrund-Klick ohne Produktcode-Fix (PB1/PC0-Hotspot ausserhalb
+  // dieses Dateikreises).
   await page.locator('[data-testid="node-canvas"]').click({ position: { x: 30, y: 260 } });
   await expect(page.locator('[data-testid="kombinierer-prompt"]')).toContainText('Blick vom Quai');
 

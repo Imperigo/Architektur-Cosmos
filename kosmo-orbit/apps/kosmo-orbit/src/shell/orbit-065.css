@@ -32,25 +32,42 @@
  * IMMER «oben» — s. Kommentar bei `.orbit065-faecher-huelle` unten).
  */
 
-/* ── PA2 (v0.8.4) — zentrierte Wortmarke über der Kachel-Reihe ──────────
-   `flex:1` im Elternteil `.k-orbit-start` (aura.css) zentriert diesen Block
-   vertikal im gesamten freien Raum ÜBER der Kachel-Reihe — «KosmoOrbit-
-   Schriftzug zentral mittig, Texte zentriert» (Owner-Auftrag wörtlich). */
+/* ── PA2 (v0.8.4) → P-F2 (v0.9.2, Owner-Feedback 23.07.) — Wortmarke direkt
+   ÜBER der Kachel-Reihe, ganzes Paket nach oben ───────────────────────────
+   Owner wörtlich: «spiegle die vier Kosmo tools nach oben unter das Kosmo
+   Orbit Logo, das Kosmo Orbit logo und ganzes packet noch etwas nach oben
+   schieben». Bis P-F2 trug dieser Block `flex:1; justify-content:center` —
+   das zentrierte die Wortmarke in JEDEM freien Raum ÜBER der Kachel-Reihe
+   (`.k-orbit-ring-feld`, aura.css, `flex:none`) und schob die Reihe damit an
+   den UNTEREN Rand des Viewports (live gemessen: Reihe bei y≈750-890 von
+   900px Fensterhöhe, riesige Lücke zwischen Logo und Reihe). JETZT `flex:
+   none` — die Wortmarke nimmt nur noch ihre natürliche Höhe ein, `.k-orbit-
+   ring-feld` folgt direkt danach (kleiner, fester Abstand statt der alten
+   Centering-Lücke); beide Blöcke stapeln sich dadurch am OBEREN Rand von
+   `.k-orbit-start` (aura.css, `flex-direction:column; height:100%`) — der
+   frei bleibende Rest der Spalte liegt jetzt UNTER der Kachel-Reihe, nicht
+   mehr darüber verteilt («Paket nach oben»). Direkte Folge (dokumentiert,
+   kein Versehen): der Fächer jeder Hauptkachel öffnet ab jetzt NACH UNTEN
+   statt nach oben (`OrbitStart.tsx`, `orbit065-faecher-huelle--unten` statt
+   `--oben`) — mit der Reihe nahe am oberen Rand wäre für «nach oben» kaum
+   noch Luft, während unterhalb reichlich Platz frei ist; die CSS für
+   `--unten` existierte bereits vollständig (s. Kopfkommentar dieser Datei,
+   «totes, aber harmloses CSS, falls ein späteres Paket sie wieder braucht»
+   — genau dieses Paket). `e2e/orbit-start.spec.ts` (V084-SPEZ §4.2 «unten
+   mittig») ist entsprechend EHRLICH auf die neue Position umgeschrieben
+   (Bau-Bericht P-F2). */
 .orbit084-wortmarke-buehne {
-  flex: 1;
-  min-height: 0;
+  flex: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--k-s3);
   text-align: center;
-  /* PA2-Nachtrag: vertikal kompakter (`--k-s3` statt `--k-s5`) — bei
-     1280×720 (kleinster Pflicht-Viewport) brauchte der dichteste Fächer
-     (Kosmo, 8 Untertools) den Raum, den dieses Padding sonst band; ohne
-     die Kürzung ragte seine oberste Karte über den Viewport-Rand hinaus
-     (live mit Playwright nachgemessen, s. `aura.css` `.k-orbit-start`). */
-  padding: var(--k-s3) var(--k-s4);
+  /* Moderater Kopfabstand statt der alten, durch `flex:1`-Centering
+     berechneten Lücke — «etwas nach oben schieben», nicht bündig an den
+     Fensterrand (Owner: «etwas», kein Extremwert). */
+  padding: var(--k-s5) var(--k-s4) var(--k-s3);
 }
 .orbit084-wortmarke {
   display: inline-flex;

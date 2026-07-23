@@ -14,10 +14,12 @@ import './island.css';
  * positionierte Bühnenkopf-Pille statt eines zweiten Abschnitts im
  * Ansichts-Popover.
  *
- * **Position (`island.css`):** direkt unter dem KosmoOrbit-Logo-Kreis
- * (`App.tsx` `.isl-kopf-logo-orbit`, `left:14/top:14`) — `left:14px`,
- * `top:66px` (= 14 + 38px sichtbarer Kreis + 14px Lücke, dasselbe
- * 52px-Raster wie die horizontale Kopf-Reihe, nur senkrecht fortgesetzt).
+ * **Position (`island.css`):** direkt unter dem Stations-Logo-Kreis
+ * (`App.tsx` `.isl-kopf-logo-design`, `left:14/top:14` — P-F2 v0.9.2: war
+ * bis dahin `.isl-kopf-logo-orbit`, das mit diesem Paket ersatzlos entfiel;
+ * dieselbe Koordinate, kein Wechsel nötig) — `left:14px`, `top:66px`
+ * (= 14 + 38px sichtbarer Kreis + 14px Lücke, dasselbe 52px-Raster wie die
+ * horizontale Kopf-Reihe, nur senkrecht fortgesetzt).
  * Teilt sich die `--f-pill`-Token-Familie mit den übrigen Insel-Pillen
  * (gleiches Grau) und `--k-radius-pill` (gleiche Radien) — «vertikale
  * Pille»: schmal (38px, deckungsgleich mit dem Kreis darüber), aber höher

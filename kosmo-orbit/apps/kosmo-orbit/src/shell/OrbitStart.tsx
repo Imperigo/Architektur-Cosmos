@@ -119,8 +119,17 @@ const HAUPT_AKZENT: Record<HauptwerkzeugId, string> = {
  * (die Datentabelle bleibt design/data/kosmo/office — ihr bestehender
  * Unit-Test `orbit-werkzeuge.test.ts` prüft genau diese Reihenfolge und
  * gehört nicht zum PA2-Dateikreis).
+ *
+ * P-F2 (v0.9.2, Owner-Feedback 23.07. + bindende AskUserQuestion-Antwort):
+ * «Kosmo» fällt aus der ANZEIGE-Reihenfolge — der Kosmo-Orb rechts unten
+ * (`shell/KosmoSymbol.tsx`) übernimmt den Zugang zu dessen 8 Untertools
+ * über ein eigenes Rechtsklick-Menü (`kosmo-stationen-menu`, s. dort) statt
+ * über eine eigene Kachel hier. WEITERHIN bewusst NUR eine Anzeige-
+ * Reihenfolge (`ORBIT_HAUPTWERKZEUGE` bleibt unangetastet, `kosmoHaupt`/
+ * `kosmoReihenfolge` unten laufen unverändert weiter — sie speisen jetzt
+ * nur keine sichtbare Kachel mehr, s. `kachelReihe()`).
  */
-const KACHEL_REIHENFOLGE: HauptwerkzeugId[] = ['kosmo', 'data', 'design', 'office'];
+const KACHEL_REIHENFOLGE: HauptwerkzeugId[] = ['data', 'design', 'office'];
 
 function kachelReihe(): OrbitHauptwerkzeug[] {
   return KACHEL_REIHENFOLGE.map((id) => ORBIT_HAUPTWERKZEUGE.find((h) => h.id === id)!);
@@ -147,7 +156,10 @@ function kachelReihe(): OrbitHauptwerkzeug[] {
  * SACHLICH PASSENDSTE vorhandene Zeichen (dokumentiert im Baubericht als
  * Icon-Zuordnungstabelle). KEINE neuen Icons in `kosmo-ui` (eingefroren).
  */
-const UNTERTOOL_ICON: Record<string, KIconName> = {
+// P-F2 (v0.9.2): exportiert, damit `KosmoSymbol.tsx`s Rechtsklick-Stationen-
+// Menü (Ersatz für die entfallene «Kosmo»-Kachel) dieselben Icons für seine
+// 8 Einträge zeigt — EINE Icon-Zuordnungstabelle statt einer zweiten Kopie.
+export const UNTERTOOL_ICON: Record<string, KIconName> = {
   // KosmoDesign
   draw: 'stift', // Zeichnen (Wände/Decken/Dach/Pläne) — Stift = Zeichenwerkzeug.
   prepare: 'lupe', // Grundlagen aufnehmen/Wissenssuche — Lupe = Recherche.
@@ -452,14 +464,20 @@ export function OrbitStart({ onOeffnen, rollenPrio }: OrbitStartProps) {
                   {h.kommend && <span className="k-orbit-badge-kommend">kommend</span>}
                 </span>
               </button>
-              {/* PA2: der Fächer öffnet IMMER nach OBEN (keine Kompass-
-                  richtung mehr — eine horizontale Kachel-Reihe hat nur noch
-                  eine sinnvolle Öffnungsrichtung: über sich selbst, nie
-                  zwischen die Nachbar-Kacheln). Familien-Beschrieb bekommt
-                  festen Platz ÜBER dem Kartenfächer (eigenes Element,
-                  `--k-s3`-Abstand aus dem `gap` der Hülle in
-                  orbit-065.css) statt als erste Zeile IM Fächer. */}
-              <div className={`orbit065-faecher-huelle orbit065-faecher-huelle--oben${offen ? ' offen' : ''}`}>
+              {/* PA2: der Fächer öffnet nur in EINE Richtung (keine
+                  Kompassrichtung mehr — eine horizontale Kachel-Reihe hat
+                  nur noch eine sinnvolle Öffnungsrichtung, nie zwischen die
+                  Nachbar-Kacheln). P-F2 (v0.9.2, Owner-Feedback 23.07.,
+                  s. Kopfkommentar `orbit-065.css` `.orbit084-wortmarke-
+                  buehne`): die Reihe sitzt jetzt nahe am OBEREN Rand direkt
+                  unter der Wortmarke — «nach oben» öffnen hätte dort kaum
+                  noch Luft, darum öffnet der Fächer ab jetzt NACH UNTEN
+                  (`--unten` statt `--oben`, dieselbe CSS-Familie, vorher
+                  ungenutzt). Familien-Beschrieb bekommt weiterhin festen
+                  Platz VOR der Kartenliste (eigenes Element, `--k-s3`-
+                  Abstand aus dem `gap` der Hülle in orbit-065.css) statt als
+                  erste Zeile IM Fächer. */}
+              <div className={`orbit065-faecher-huelle orbit065-faecher-huelle--unten${offen ? ' offen' : ''}`}>
                 <div className="orbit065-beschrieb" data-testid={`orbit-beschrieb-${h.id}`}>
                   {h.kurzbeschrieb}
                 </div>

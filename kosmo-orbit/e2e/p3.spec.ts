@@ -36,7 +36,15 @@ test('Auftragsbuch: ⚑ im Kosmo-Panel + Erfassen in KosmoDev → Workorder-Expo
   await page.click('[data-testid="kosmo-flagge"]');
   await expect(page.locator('[data-testid="meldung-erfolg"]')).toContainText('Auftrag im KosmoDev-Buch');
 
-  // KosmoDev: Auftrag steht im Buch, zweiter kommt direkt dazu
+  // KosmoDev: Auftrag steht im Buch, zweiter kommt direkt dazu.
+  // P-F2 (v0.9.2): «Dev» ist keine Zentrale-Kachel mehr — der frühere
+  // Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel. Das Panel
+  // ist hier noch offen (s. `kosmo.panelOffen` oben) — der Kosmo-Orb
+  // rendert erst, sobald es zu ist (`App.tsx`, `!kosmoOpen`-Guard); Panel
+  // schliessen, dann über den Orb-Rechtsklick navigieren (`module-dev`
+  // bleibt dieselbe Testid).
+  await page.click('[aria-label="Schliessen"]');
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-dev"]');
   await expect(page.locator('[data-testid="auftrag-karte"]')).toHaveCount(1);
   await expect(page.locator('[data-testid="auftrag-karte"]').first()).toContainText('Kurzbefehl-Ziffer');

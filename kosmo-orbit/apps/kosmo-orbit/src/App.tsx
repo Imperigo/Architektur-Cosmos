@@ -97,11 +97,13 @@ import { CursorEbene } from './shell/CursorEbene';
 import { OnboardingWizard } from './shell/OnboardingWizard';
 import './shell/orbit-065.css';
 import './app.css';
-// PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): `.isl-einstellungen-kreis`
-// UND die beiden Logo-Kreise unten (`.isl-kopf-logo-orbit`/`-design`,
-// Einstellungs-/Navigations-Zugang im Island-Modus) teilen sich jetzt bewusst
-// dieselbe Regel wie `.isl-stationen-orb-pill` — «einheitlicher Kreis-Stil
-// für alle vier Kopf-Elemente» (Owner, wörtlich). Expliziter Import statt
+// PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026) → P-F2 (v0.9.2, Owner-
+// Feedback 23.07.): `.isl-einstellungen-kreis` UND der verbleibende
+// Logo-Kreis unten (`.isl-kopf-logo-design` — `.isl-kopf-logo-orbit` ist mit
+// P-F2 ersatzlos entfallen, Einstellungs-/Navigations-Zugang im
+// Island-Modus) teilen sich jetzt bewusst dieselbe Regel wie
+// `.isl-stationen-orb-pill` — «einheitlicher Kreis-Stil für alle
+// Kopf-Elemente» (Owner, wörtlich). Expliziter Import statt
 // sich auf den transitiven Import über die island-Komponenten zu verlassen
 // (dieselbe Datei wird auch von `island/StationenOrb.tsx`/`island/
 // AnsichtsInfo.tsx`/`island/KosmoOrb.tsx` importiert, kein zweiter
@@ -651,17 +653,34 @@ export function App() {
           <Hairline vertical />
         </>
       )}
-      <span className={`${fokusKlasse(fokusStufe('kosmo'))} app-inline-nowrap`}>
-        <button
-          onClick={() => setKosmoOpen(!kosmoOpen)}
-          data-testid="kosmo-toggle"
-          className="k-druck app-druck-reset"
-          aria-label="Kosmo öffnen/schliessen"
-        >
-          <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
-        </button>
-      </span>
-      <Hairline vertical />
+      {/* P-F2 (Owner-Feedback 23.07. wörtlich: «auch rechts oben auf
+          hauptstartseite steht noch kosmo neben dem sync aus, das kann auch
+          weg»): dieser Knopf öffnete/schloss NUR das grosse Panel — exakt
+          dieselbe Funktion, die der frei schwebende Kosmo-Orb rechts unten
+          (`KosmoSymbol.tsx`, Doppelklick) auf der Zentrale ohnehin trägt.
+          Owner-Entscheid: auf der Zentrale ist der Orb der EINZIGE
+          Kosmo-Zugang — dieser Knopf rendert darum NUR NOCH ausserhalb der
+          Zentrale (`screen !== 'home'`, gleiche Guard-Form wie die
+          Speichern/Öffnen-Gruppe oben, K6). In jeder Station bleibt er
+          UNVERÄNDERT (dort trägt das eingebettete `KosmoSymbol` im
+          Boden-Dock dieselbe Doppelklick-Funktion, aber dieser Kopfzeilen-
+          Knopf war dort schon immer ein zusätzlicher, legitimer zweiter Weg
+          — vom Owner nur für die Zentrale bemängelt). */}
+      {screen !== 'home' && (
+        <>
+          <span className={`${fokusKlasse(fokusStufe('kosmo'))} app-inline-nowrap`}>
+            <button
+              onClick={() => setKosmoOpen(!kosmoOpen)}
+              data-testid="kosmo-toggle"
+              className="k-druck app-druck-reset"
+              aria-label="Kosmo öffnen/schliessen"
+            >
+              <Badge hue={moduleHue.kosmo}>{kosmoOpen ? 'Kosmo' : 'Kosmo öffnen'}</Badge>
+            </button>
+          </span>
+          <Hairline vertical />
+        </>
+      )}
       {/* K7 (docs/OWNER-KORREKTUREN-2026-07.md, Owner wörtlich: «einstellung
           ist KosmoOrbit grundeinstellungen und fragenzeichen, die beiden
           dürfen präsenter sein. sync aus ist daneben»): ? (Rundgang) und
@@ -835,65 +854,39 @@ export function App() {
         {kopfWerkzeuge()}
       </header>
       )}
-      {/* PD5 (Owner-Korrektur, wörtlich «links oben kosmoorbit und
-          kosmodesign in gleicher grösse wie einstellungsknopf, kosmoorbit
-          symbol klickbar was zum hauptmenü zurückführt» — revidiert den
-          ersten PD5-Entwurf, der beide Logos ersatzlos entfernt hatte):
-          KosmoOrbit-Symbol + KosmoDesign-Logo BLEIBEN oben links, jetzt aber
-          im selben 38px-Glas-Kreis-Stil wie Stationen-Orb/Einstellungs-Kreis
-          (`.isl-kopf-logo-orbit`/`.isl-kopf-logo-design`, `island/island.css`
-          — teilen sich dieselbe Basis-Regel wie `.isl-stationen-orb-pill`/
-          `.isl-einstellungen-kreis`, s. dortiger Kommentar: «einheitlicher
-          Kreis-Stil für alle vier Kopf-Elemente»). KosmoOrbit bleibt
-          klickbar (Zur Zentrale, derselbe `gehZu('home')`-Weg wie die
-          Kopfbalken-Wortmarke); KosmoDesign bleibt dekorativ (kein zweiter
-          Klick-Weg, wie schon im ursprünglichen PD4-Ersatz). Überlagerung
-          behoben: alle vier Kopf-Elemente (KosmoOrbit → KosmoDesign →
-          Stationen-Orb → Ansichts-Info) sitzen jetzt in EINER Reihe auf
-          `top:14px` mit gleichmässigem 52px-Raster (`island/island.css`,
-          `.isl-buehnenkopf`-Kommentar) — die frühere Owner-Überlagerung kam
-          aus zwei unterschiedlichen `top`-Werten (Logos `top:14`, Bühnenkopf
-          `top:22`) plus zu knappem Lücken; behoben statt kaschiert. */}
-      {/* K16 (Owner-Korrekturen 2026-07, S.5): `app-druck-reset` entfernt —
-          die Reset-Klasse (`app.css`, `background:none; border:none;
-          color:inherit`) steht im gebauten Bundle NACH der Insel-Kreis-Regel
-          (`island/island.css` PD5-Regel, gleiche Spezifität → Kaskade
-          entscheidet) und strippte diesem Kreis das dunkle Pill-Glas; die
-          helle `--isl-pill-ink`-Tinte stand damit hell-auf-hell → «leerer
-          weisser Kreis». Die PD5-Regel styled den Button vollständig
-          (Hintergrund/Rand/Padding/Font) — der Reset ist hier überflüssig,
-          `k-druck` (nur transition/hover/active) bleibt. */}
-      {bodenDockAusgeblendet && (
-        <button
-          onClick={() => gehZu('home')}
-          className="k-druck isl-kopf-logo-orbit"
-          aria-label="Zur Zentrale"
-          data-testid="island-kopf-logo-orbit"
-        >
-          <OrbitMark module="orbit" size={20} />
-        </button>
-      )}
-      {/* PC1 (`docs/V084-SPEZ.md` §5 W2): dieses zweite Kopf-Logo trug bisher
-          FEST `module="design"`/`title="KosmoDesign"` — jetzt aus der aktiven
-          Station abgeleitet (`sortierteModule`/`modules` kennt jede Station
-          ihre `ModuleId`+Name, dasselbe Muster wie die Stations-Badge oben,
-          Z.640-641). Für `screen==='design'` ist das Ergebnis BYTE-GLEICH
-          (`aktivesModulFuerKopf.id==='design'` → derselbe testid/dieselbe
-          Wortmarke wie zuvor, `island-ui.spec.ts` bleibt unverändert grün);
-          `screen==='vis'` bekommt jetzt sein eigenes «KosmoVis»-Logo statt
-          fälschlich «KosmoDesign» zu zeigen. */}
+      {/* PD5 (Owner-Korrektur 17.07.2026) → P-F2 (v0.9.2, Owner-Feedback
+          23.07. wörtlich: «dann direkt links das kosmodesign logo ist gut,
+          das behalten und nach links verschieben, wir entfernen das
+          kosmorbit logo, dafür übernimmt die zurückkehrfunktion ins
+          hauptmenü nun das kosmodesign logo»): das KosmoOrbit-Symbol
+          (`.isl-kopf-logo-orbit`, testid `island-kopf-logo-orbit`) ist
+          ERSATZLOS entfernt — zwei Logos nebeneinander, die BEIDE «zurück
+          zur Zentrale» bedeuteten (das zweite optisch dekorativ), waren
+          redundant. Das verbleibende Stations-Logo (`island-kopf-logo-
+          <id>`, z. B. `island-kopf-logo-design`) übernimmt die Klick-
+          Funktion 1:1 (`gehZu('home')`, `aria-label="Zur Zentrale"`, war
+          vorher NUR am jetzt entfernten Orbit-Logo) und rückt in dessen
+          altes `left:14px`-Feld nach — «nach links verschieben»
+          (`island/island.css`: `.isl-kopf-logo-design` jetzt auf `left:14px`
+          statt `66px`; Stationen-Orb/Ansichts-Info rücken je 52px nach,
+          s. dortiger Kommentar). Bleibt im selben 38px-Glas-Kreis-Stil wie
+          Stationen-Orb/Einstellungs-Kreis (`.isl-stationen-orb-pill`-
+          Basisregel, «einheitlicher Kreis-Stil»). */}
       {bodenDockAusgeblendet && (() => {
         const aktivesModulFuerKopf = modules.find((m) => m.screen === screen);
         const modulId = aktivesModulFuerKopf?.id ?? 'design';
         const modulName = aktivesModulFuerKopf?.name ?? 'KosmoDesign';
         return (
-          <span
-            aria-hidden="true"
-            className="isl-kopf-logo-design"
+          <button
+            type="button"
+            onClick={() => gehZu('home')}
+            className="k-druck isl-kopf-logo-design"
+            aria-label="Zur Zentrale"
+            title={modulName}
             data-testid={`island-kopf-logo-${modulId}`}
           >
-            <OrbitMark module={modulId} size={18} title={modulName} />
-          </span>
+            <OrbitMark module={modulId} size={18} />
+          </button>
         );
       })()}
       {/* Einstellungs-Zugang als einfacher, standalone Kreis oben rechts —
@@ -903,10 +896,22 @@ export function App() {
           `.isl-einstellungen-kreis` (`island/island.css`) — bewusst
           identisch zu `.isl-stationen-orb-pill`/den beiden Logo-Kreisen
           oben («einheitliche Symbole», s. dortiger Kommentar). */}
+      {/* P-F2 (Owner-Feedback 23.07. wörtlich: «der button für
+          haupteinstellungen … überdeckt aktuell z.b Kosmos chat»):
+          `.isl-einstellungen-kreis` sitzt `position:fixed; right:14px` —
+          das ist relativ zum GESAMTEN Fenster, nicht zur Restbreite des
+          3D/Plan-Inhalts. Öffnet sich das KosmoPanel (340px docked rechts,
+          `kosmo-panel.css` `.kp-panel`), lag dieser Kreis GENAU über der
+          Panel-eigenen Kopfzeile (live nachgemessen, beide Kreise an
+          x≈1400 bei 1440px Fensterbreite — der Owner-Screenshot-Befund).
+          Ehrliche Lösung (kein Verstecken des Chats): der Modifier
+          `--kosmo-offen` verschiebt den Kreis um die Panel-Breite nach
+          links, sobald `kosmoOpen` wahr ist — er bleibt IMMER sichtbar UND
+          überlappt nie mehr die Panel-Fläche. */}
       {bodenDockAusgeblendet && (
         <button
           onClick={() => oeffneEinstellungen()}
-          className="k-druck isl-einstellungen-kreis"
+          className={`k-druck isl-einstellungen-kreis${kosmoOpen ? ' isl-einstellungen-kreis--kosmo-offen' : ''}`}
           aria-label="Einstellungen öffnen"
           title="Einstellungen"
           data-testid="island-einstellungen-kreis"
@@ -1105,8 +1110,9 @@ export function App() {
                 // PD5: «Zentrale» zusätzlich ADDITIV im `StationenOrb`-
                 // Popover erreichbar (Owner: «kann bleiben, schadet nicht»)
                 // — WÖRTLICH derselbe `gehZu('home')`-Aufruf wie der
-                // klickbare `island-kopf-logo-orbit` oben (Owner-Korrektur:
-                // beide Logos bleiben, kein Ersatz).
+                // klickbare Stations-Logo-Kreis oben (`island-kopf-logo-
+                // design` — P-F2 v0.9.2: übernimmt diese Funktion vom
+                // ersatzlos entfernten `island-kopf-logo-orbit`).
                 onZurZentrale={() => gehZu('home')}
               />
             </div>
@@ -1341,7 +1347,13 @@ export function App() {
           generische `KosmoSymbol` bleibt darum auf `screen === 'home'`
           beschränkt, `bodenDockAusgeblendet` fällt hier bewusst weg (bleibt
           für das BodenDock selbst weiter unten unverändert massgeblich). */}
-      {!kosmoOpen && screen === 'home' && <KosmoSymbol onOpen={() => setKosmoOpen(true)} />}
+      {/* P-F2 (v0.9.2, bindende Owner-Entscheidung): `onStationOeffnen`
+          verdrahtet das Rechtsklick-Stationen-Menü des Orbs — derselbe
+          `oeffneModulById`-Weg wie `OrbitStart`s eigenes `onOeffnen`, EIN
+          Navigations-Pfad, kein zweiter. */}
+      {!kosmoOpen && screen === 'home' && (
+        <KosmoSymbol onOpen={() => setKosmoOpen(true)} onStationOeffnen={oeffneModulById} />
+      )}
       {/* V1.6 Block E: nicht-modales Guide-Overlay — bewusst AUSSERHALB der
           Fehlerzonen-Stationen, damit es stationsübergreifend sichtbar
           bleibt. `key=guideLauf` sorgt dafür, dass ein erneuter Aufruf immer
@@ -1519,6 +1531,23 @@ function VariantenArchiv({ onOpen }: { onOpen: () => void }) {
  * «Löschen»-Beschriftung — das erfüllt den «ruhig»-Auftrag, ohne den Test
  * zu brechen.
  */
+/**
+ * P-F2 (Owner-Feedback 23.07., Wurzelursache «Projekte unbenannt»): ehrlicher,
+ * kollisionsfreier Standardname für ein OHNE Eingabe angelegtes Projekt —
+ * «Projekt N», N = erste freie Zahl ab der Anzahl bereits vorhandener
+ * Tresor-Einträge (nicht einfach `+1`: löscht/benennt der Architekt um,
+ * bleibt der nächste Vorschlag trotzdem eindeutig). Ersetzt den früheren
+ * statischen Fallback `'Unbenannt'` (`state/project-vault.ts`), der bei
+ * mehreren leer angelegten Projekten ALLE gleich und ununterscheidbar
+ * benannte.
+ */
+function naechsterStandardname(vorhandene: readonly { name: string }[]): string {
+  const namen = new Set(vorhandene.map((p) => p.name));
+  let n = vorhandene.length + 1;
+  while (namen.has(`Projekt ${n}`)) n += 1;
+  return `Projekt ${n}`;
+}
+
 function ProjektListe({ onOpen }: { onOpen: () => void }) {
   const [projekte, setProjekte] = useState<Omit<VaultEintrag, 'json'>[]>([]);
   const [neuName, setNeuName] = useState('');
@@ -1538,7 +1567,59 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
           Noch keine gesicherten Stände — sobald du zeichnest, erscheint dein Projekt hier.
         </div>
       )}
-      <div className="app-projekt-tableiste" role="tablist" aria-label="Projekte">
+      {/* P-F2 (Owner-Feedback 23.07. wörtlich: «neues projekt erstellen
+          nach wie vor mit scrollen … darf so nicht sein»): die frühere
+          EINZEILIGE `overflow-x:auto`-Tableiste (s. git-history) reihte
+          «+ Neues Projekt» als LETZTEN Tab an — ab genug Projekten lag der
+          Knopf hinter horizontalem Scroll verborgen, exakt der gemeldete
+          Bug. Jetzt ein KOMPAKTES Grid (`.app-projekt-grid`,
+          `grid-template-columns: repeat(auto-fill, minmax(150px,1fr))` +
+          `minmax(0,1fr)`-Spalten, stehende Regel seit v0.9.1 «nichts
+          abschneiden, nichts unnötig scrollbar», Beleg
+          `wissen/training/claude/lehren/v0.9.1.md` Nr. 9): die «+»-Kachel
+          steht IMMER als ERSTES Kind vor der `.map()` — ohne jeden Scroll
+          sofort erreichbar, unabhängig davon, wie viele Projekte im Tresor
+          liegen. Ein eigenes `max-height` + `overflow-y:auto` bleibt als
+          SICHERHEITSNETZ für sehr viele Projekte (dieselbe Zeilen-Grösse
+          bleibt erhalten, nur zusätzliche REIHEN scrollen kontrolliert
+          INNERHALB dieser Fläche — nie die Root-Seite, exakt das Muster von
+          `.orbit065-home-links`). Testids/Handler (`projekt-<id>`/
+          `projekt-oeffnen-<id>`/`projekt-neu`/`projekt-neu-name`) bleiben
+          WÖRTLICH unverändert (Harter Vertrag, `e2e/projekt-tableiste.spec.ts`
+          u. a.). */}
+      <div className="app-projekt-grid" role="tablist" aria-label="Projekte">
+        {/* «+ Neues Projekt» — IMMER die erste Kachel (vorher: letzter Tab
+            hinter Scroll). Trägt die bestehende Name-Eingabe (unverändert
+            testid-kompatibel, s. `cursor-ebene.spec.ts`/`orbit-hub-
+            vollausbau.spec.ts`: beide erwarten das Feld SOFORT sichtbar,
+            ohne vorherigen Klick). */}
+        <div className="app-projekt-tab app-projekt-tab-neu">
+          <input
+            value={neuName}
+            data-testid="projekt-neu-name"
+            onChange={(e) => setNeuName(e.target.value)}
+            placeholder="Neues Projekt — Name"
+            className="app-projekt-neu-feld"
+          />
+          <KButton
+            size="sm"
+            tone="quiet"
+            className="app-projekt-neu-knopf"
+            data-testid="projekt-neu"
+            onClick={() => {
+              // P-F2 (Wurzelursache «unbenannt»): leeres Feld bekommt jetzt
+              // einen ehrlichen, nummerierten Standardnamen statt der
+              // früheren Konstante `'Unbenannt'` (state/project-vault.ts),
+              // die JEDES so angelegte Projekt gleich und ununterscheidbar
+              // benannte (s. `naechsterStandardname` oben).
+              neuesProjekt(neuName.trim() || naechsterStandardname(projekte));
+              setNeuName('');
+              onOpen();
+            }}
+          >
+            + Neues Projekt
+          </KButton>
+        </div>
         {projekte.map((p) => {
           const aktiv = p.id === aktivesProjektId();
           return (
@@ -1587,32 +1668,6 @@ function ProjektListe({ onOpen }: { onOpen: () => void }) {
             </div>
           );
         })}
-        {/* «+ Neues Projekt» als letzter Tab — trägt die bestehende
-            Name-Eingabe (unverändert testid-kompatibel, s. `cursor-ebene.
-            spec.ts`/`orbit-hub-vollausbau.spec.ts`: beide erwarten das Feld
-            SOFORT sichtbar, ohne vorherigen Klick). */}
-        <div className="app-projekt-tab app-projekt-tab-neu">
-          <input
-            value={neuName}
-            data-testid="projekt-neu-name"
-            onChange={(e) => setNeuName(e.target.value)}
-            placeholder="Neues Projekt — Name"
-            className="app-projekt-neu-feld"
-          />
-          <KButton
-            size="sm"
-            tone="quiet"
-            className="app-projekt-neu-knopf"
-            data-testid="projekt-neu"
-            onClick={() => {
-              neuesProjekt(neuName.trim());
-              setNeuName('');
-              onOpen();
-            }}
-          >
-            + Neues Projekt
-          </KButton>
-        </div>
       </div>
       {/* Katalog-Transfer (A8) — ruhige Zeile UNTER der Tableiste (P-Z):
           Aufbauten/Vorlagen/Module/Formeln ins nächste Projekt. Wirkt auf das

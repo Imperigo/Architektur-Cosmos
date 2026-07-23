@@ -45,10 +45,18 @@ test('R2-N1: Fächer (KosmoDesign) überlappt die Zentrum-BoundingBox nicht', as
   expect(ueberlappenSich(faecherBox!, zentrumBox!)).toBe(false);
 });
 
-test('R2-N1: Fächer (Kosmo, 6 Untertools — dichtester Fächer) überlappt Zentrum nicht', async ({ page }) => {
+// P-F2 (v0.9.2, bindende Owner-Entscheidung nach AskUserQuestion): «Kosmo»
+// ist keine Zentrale-Kachel mehr (`OrbitStart.tsx`, `KACHEL_REIHENFOLGE`) —
+// seine 8 Untertools laufen jetzt über das Rechtsklick-Menü des Kosmo-Orbs
+// (`e2e/kosmo-orb-stationen-menu.spec.ts`, dort das analoge R2-N2-Netz für
+// GENAU diese 8 Einträge). Die beiden Tests hier prüfen seither 'office'
+// (4 Untertools — Bestandsschutz-`kommend`, aber weiterhin mit realer
+// Boxgrösse im DOM, s. `OrbitStart.tsx`-Kopfkommentar «Harter Vertrag»)
+// statt des entfallenen 'kosmo'.
+test('R2-N1: Fächer (KosmoOffice) überlappt Zentrum nicht', async ({ page }) => {
   await zentraleLaden(page);
-  await page.locator('[data-testid="orbit-haupt-kosmo"]').hover();
-  const faecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
+  await page.locator('[data-testid="orbit-haupt-office"]').hover();
+  const faecher = page.locator('[data-testid="orbit-faecher-office"]');
   await expect(faecher).toHaveClass(/\boffen\b/);
 
   const faecherBox = await faecher.boundingBox();
@@ -58,17 +66,17 @@ test('R2-N1: Fächer (Kosmo, 6 Untertools — dichtester Fächer) überlappt Zen
   expect(ueberlappenSich(faecherBox!, zentrumBox!)).toBe(false);
 });
 
-test('R2-N2: die Karteikarten im Kosmo-Fächer sind paarweise disjunkt (kein Überlappen trotz Staffelung)', async ({
+test('R2-N2: die Karteikarten im KosmoOffice-Fächer sind paarweise disjunkt (kein Überlappen trotz Staffelung)', async ({
   page,
 }) => {
   await zentraleLaden(page);
-  await page.locator('[data-testid="orbit-haupt-kosmo"]').hover();
-  const faecher = page.locator('[data-testid="orbit-faecher-kosmo"]');
+  await page.locator('[data-testid="orbit-haupt-office"]').hover();
+  const faecher = page.locator('[data-testid="orbit-faecher-office"]');
   await expect(faecher).toHaveClass(/\boffen\b/);
 
-  const karten = faecher.locator('[data-testid^="module-"], [data-testid^="orbit-sub-"]');
+  const karten = faecher.locator('[data-testid^="module-"], [data-testid^="orbit-sub-"], [data-testid^="orbit-office-"]');
   const anzahl = await karten.count();
-  expect(anzahl).toBeGreaterThanOrEqual(5); // Kosmo: speak/sketch/modell/train/dev/doc
+  expect(anzahl).toBeGreaterThanOrEqual(4); // KosmoOffice: lead/buero-hr/lehre/bau
 
   const boxen: { x: number; y: number; width: number; height: number }[] = [];
   for (let i = 0; i < anzahl; i++) {

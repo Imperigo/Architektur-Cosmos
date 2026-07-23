@@ -157,6 +157,13 @@ test('KosmoDoc-Modul: Diagnose läuft, Hilfe-Karten stehen', async ({ page }) =>
     localStorage.setItem('kosmo.starterGuide.done', '1');
   });
   await page.reload();
+  // P-F2 (v0.9.2): «Doc» ist keine Zentrale-Kachel mehr — der frühere
+  // Direktklick lief über die entfallene «Kosmo»-Fächer-Kachel. Panel ist
+  // hier noch offen (`kosmo.panelOffen` oben) — der Kosmo-Orb rendert erst,
+  // sobald es zu ist; schliessen, dann per Orb-Rechtsklick navigieren
+  // (`module-doc` bleibt dieselbe Testid).
+  await page.click('[aria-label="Schliessen"]');
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-doc"]'); // D1: eigene Kachel (vorher fälschlich id «draw»)
   await page.click('[data-testid="doc-tab-hilfe"]');
   await expect(page.getByText('Zeichnen in KosmoDesign')).toBeVisible();
@@ -2092,19 +2099,30 @@ test('Stationen-Kacheln (Vision D1): Doc/Draw/Sketch/Speak führen an den richti
     localStorage.setItem('kosmo.starterGuide.done', '1');
   });
   await page.reload();
+  // P-F2 (v0.9.2): Doc/Sketch/Speak sind Kosmo-Untertools — keine
+  // Zentrale-Kachel mehr, jetzt am Kosmo-Orb-Rechtsklick-Menü (`module-*`
+  // bleibt dieselbe Testid). Panel ist hier noch offen (`kosmo.panelOffen`
+  // oben) — der Orb rendert erst, sobald es zu ist; EINMAL schliessen
+  // genügt, `kosmoOpen` bleibt danach für den ganzen Test zu. `module-draw`
+  // (Modellbaum) bleibt UNVERÄNDERT ein echter Untertool der KosmoDesign-
+  // Kachel (`orbit-werkzeuge.ts`) — dort weiterhin ohne Orb-Umweg klickbar.
+  await page.click('[aria-label="Schliessen"]');
   // KosmoDoc: die eigene Kachel (Bugfix: hiess vorher id «draw»)
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-doc"]');
   await expect(page.locator('[data-testid="doc-tab-diagnose"]')).toBeVisible();
   await page.click('header button[aria-label="Zur Zentrale"]');
-  // KosmoDraw: Deep-Link öffnet Design MIT Draw-Panel
+  // KosmoDraw: Deep-Link öffnet Design MIT Draw-Panel (weiterhin eigene Kachel)
   await page.click('[data-testid="module-draw"]');
   await expect(page.locator('[data-testid="draw-panel"]')).toBeVisible();
   await page.click('header button[aria-label="Zur Zentrale"]');
   // KosmoSketch: Deep-Link aktiviert das Skizze-Werkzeug
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-sketch"]');
   await expect(page.locator('[data-testid="tool-skizze"]')).toBeVisible();
   await page.click('header button[aria-label="Zur Zentrale"]');
   // KosmoSpeak: öffnet das Kosmo-Panel (Push-to-Talk lebt dort)
+  await page.click('[data-testid="kosmo-symbol"]', { button: 'right' });
   await page.click('[data-testid="module-speak"]');
   await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
 });

@@ -312,8 +312,8 @@ test.describe('P8 — Zwei-Finger-Doppeltipp-Undo (§10.2, Default AUS)', () => 
   });
 });
 
-test.describe('PD5 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl + Owner-Korrektur, 17.07.2026)', () => {
-  test('Island-Modus: Kopfbalken NICHT im DOM, KosmoOrbit + KosmoDesign + Stationen-Orb + Einstellungs-Kreis EINHEITLICH, ohne Überlagerung', async ({
+test.describe('PD5 → P-F2 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl 17.07.2026 + Owner-Feedback 23.07.2026)', () => {
+  test('Island-Modus: Kopfbalken NICHT im DOM, KosmoDesign-Logo (klickbar) + Stationen-Orb + Einstellungs-Kreis EINHEITLICH, ohne Überlagerung', async ({
     page,
   }) => {
     await ueberspringeOnboarding(page);
@@ -327,35 +327,38 @@ test.describe('PD5 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl + Owner-Korre
     await expect(page.locator('[data-testid="starter-guide-start"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="einstellungen-oeffnen"]')).toHaveCount(0);
 
-    // PD5 Owner-Korrektur (wörtlich «links oben kosmoorbit und kosmodesign
-    // in gleicher grösse wie einstellungsknopf»): beide Logos bleiben, jetzt
-    // im selben Glas-Kreis-Stil wie Stationen-Orb/Einstellungs-Kreis.
-    const orbitLogo = page.locator('[data-testid="island-kopf-logo-orbit"]');
+    // P-F2 (v0.9.2, Owner-Feedback 23.07. wörtlich: «wir entfernen das
+    // kosmorbit logo, dafür übernimmt die zurückkehrfunktion ins hauptmenü
+    // nun das kosmodesign logo»): das KosmoOrbit-Logo (`island-kopf-logo-
+    // orbit`) ist ERSATZLOS entfernt — zwei «Zur Zentrale»-Logos
+    // nebeneinander waren redundant. `island-kopf-logo-design` bleibt im
+    // selben Glas-Kreis-Stil wie Stationen-Orb/Einstellungs-Kreis UND
+    // übernimmt jetzt selbst die Klick-Funktion (Test unten).
+    await expect(page.locator('[data-testid="island-kopf-logo-orbit"]')).toHaveCount(0);
     const designLogo = page.locator('[data-testid="island-kopf-logo-design"]');
-    await expect(orbitLogo).toBeVisible();
     await expect(designLogo).toBeVisible();
     await expect(page.locator('[data-testid="island-einstellungen-kreis"]')).toBeVisible();
 
-    // PD5 «einheitlicher Kreis-Stil für alle vier Kopf-Elemente» (Owner,
-    // wörtlich): KosmoOrbit, KosmoDesign, Stationen-Orb, Einstellungs-Kreis
+    // PD5 «einheitlicher Kreis-Stil» (Owner, wörtlich) — jetzt für DREI statt
+    // vier Kopf-Elemente: KosmoDesign-Logo, Stationen-Orb, Einstellungs-Kreis
     // teilen sich exakt dieselbe visuelle Grösse (38px sichtbar/44px
     // Trefferfläche, `.isl-stationen-orb-pill`-Basisregel).
-    const orbitBox = await orbitLogo.boundingBox();
     const designBox = await designLogo.boundingBox();
     const stationenOrbBox = await page.locator('[data-testid="stationen-orb-pill"]').boundingBox();
     const ansichtsInfoBox = await page.locator('[data-testid="ansichts-info-label"]').boundingBox();
     const einstellungenKreisBox = await page.locator('[data-testid="island-einstellungen-kreis"]').boundingBox();
-    for (const box of [orbitBox, designBox, stationenOrbBox, einstellungenKreisBox]) {
+    for (const box of [designBox, stationenOrbBox, einstellungenKreisBox]) {
       expect(box).not.toBeNull();
     }
-    for (const box of [designBox, stationenOrbBox, einstellungenKreisBox]) {
-      expect(box?.width).toBeCloseTo(orbitBox?.width ?? -1, 0);
-      expect(box?.height).toBeCloseTo(orbitBox?.height ?? -1, 0);
+    for (const box of [stationenOrbBox, einstellungenKreisBox]) {
+      expect(box?.width).toBeCloseTo(designBox?.width ?? -1, 0);
+      expect(box?.height).toBeCloseTo(designBox?.height ?? -1, 0);
     }
 
-    // PD5 «Überlagerung beheben, saubere Abstände in der Reihe KosmoOrbit →
-    // KosmoDesign → AK-Orb → Ansichts-Info» (Owner, wörtlich) — jedes Paar
-    // benachbarter Kopf-Elemente bleibt disjunkt.
+    // PD5 «Überlagerung beheben, saubere Abstände» (Owner, wörtlich) — jedes
+    // Paar benachbarter Kopf-Elemente bleibt disjunkt (jetzt KosmoDesign →
+    // Stationen-Orb → Ansichts-Info, P-F2 rückt alle drei um je 52px nach
+    // links in die frei gewordene KosmoOrbit-Spalte).
     function disjunkt(
       a: { x: number; y: number; width: number; height: number } | null,
       b: { x: number; y: number; width: number; height: number } | null,
@@ -363,16 +366,16 @@ test.describe('PD5 — Kopfbalken-Ersatz Bereinigung (Owner-Befehl + Owner-Korre
       if (!a || !b) return false;
       return a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y;
     }
-    expect(disjunkt(orbitBox, designBox)).toBe(true);
     expect(disjunkt(designBox, stationenOrbBox)).toBe(true);
     expect(disjunkt(stationenOrbBox, ansichtsInfoBox)).toBe(true);
 
     await page.screenshot({ path: 'test-results/pd5-082-orbit-kopf-bereinigt.png' });
 
-    // KosmoOrbit-Symbol bleibt klickbar (Owner, wörtlich «kosmoorbit symbol
-    // klickbar was zum hauptmenü zurückführt») — derselbe `gehZu('home')`-Weg
-    // wie die Kopfbalken-Wortmarke; die Zentrale-Kachel ist danach wieder da.
-    await orbitLogo.click();
+    // P-F2: das KosmoDesign-Logo ist jetzt selbst klickbar (Owner, wörtlich
+    // «zurückkehrfunktion ins hauptmenü nun das kosmodesign logo») —
+    // derselbe `gehZu('home')`-Weg, den vorher NUR das entfernte
+    // KosmoOrbit-Logo trug; die Zentrale-Kachel ist danach wieder da.
+    await designLogo.click();
     await expect(page.locator('[data-testid="module-design"]')).toBeVisible();
     await page.click('[data-testid="module-design"]');
 
@@ -515,14 +518,21 @@ test.describe('K16 — Einstellungs-Kreis oben rechts trägt wieder ein sichtbar
    * unsichtbar); (b) das rohe ⚙-Textzeichen hing an der Systemschrift statt
    * an der KIcon-Registry. Dieser Test verankert beide Fixes: echtes dunkles
    * Pill-Glas als computed style + ein echtes SVG-Icon (KIcon `zahnrad`) im
-   * Kreis — für den Kreis oben rechts UND den KosmoOrbit-Kreis oben links
+   * Kreis — für den Kreis oben rechts UND den Stations-Logo-Kreis oben links
    * (derselbe Reset sass auf beiden).
+   *
+   * P-F2 (v0.9.2, Owner-Feedback 23.07.): `island-kopf-logo-orbit` ist mit
+   * diesem Paket ERSATZLOS entfernt (das KosmoOrbit-Logo entfällt, das
+   * Stations-Logo `island-kopf-logo-design` übernimmt seine Position UND
+   * Klick-Funktion, s. App.tsx-Kommentar) — dieser Test prüft darum jetzt
+   * `island-kopf-logo-design` statt `-orbit`, gleiche Glas-Regel, gleicher
+   * Fix.
    */
-  test('Einstellungs-Kreis + KosmoOrbit-Kreis: dunkles Pill-Glas, sichtbares SVG-Symbol', async ({ page }) => {
+  test('Einstellungs-Kreis + Stations-Logo-Kreis: dunkles Pill-Glas, sichtbares SVG-Symbol', async ({ page }) => {
     await ueberspringeOnboarding(page);
     await page.click('[data-testid="module-design"]');
 
-    for (const testid of ['island-einstellungen-kreis', 'island-kopf-logo-orbit']) {
+    for (const testid of ['island-einstellungen-kreis', 'island-kopf-logo-design']) {
       const el = page.locator(`[data-testid="${testid}"]`);
       await expect(el).toBeVisible();
       // Dunkles Pill-Glas (`--f-pill`-Fallback rgba(16,19,25,.92)) — vor dem
