@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Beam, Boundary, Column, FreeMesh, Gelaender, GridAxis, Kommentar, Mangel, MassKette, Opening, Profil, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
+import type { Furniture, Assembly, Beam, Boundary, Column, DetailMarker, FreeMesh, Gelaender, GridAxis, Kommentar, Mangel, MassKette, Opening, Profil, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
@@ -913,6 +913,11 @@ const editableFields = [
   // Referenz aus dem Typenkatalog (s. Sonderbehandlung weiter unten: leerer
   // String entfernt die Referenz wieder, KEIN generischer Feld-Zuweisungspfad).
   'profilId',
+  // v0.9.2 P-D (V092-SPEZ §P-D): additiv für `detail` — 'name' teilt sich die
+  // Zeile mit den übrigen echten `name`-Feldern (Zone/Sheet/…, s. Ausnahme-
+  // Liste im generischen Zuweisungspfad unten), 'massstab' ist neu (eigenes
+  // Gate > 0 unten, Muster hoehenDelta bei `ramp`).
+  'massstab',
 ] as const;
 
 const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
@@ -935,7 +940,7 @@ export const setProperty = registerCommand({
   id: 'design.eigenschaftSetzen',
   title: 'Eigenschaft ändern',
   description:
-    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Geländer(hoehe — 700–1500 mm, art — staketen/handlauf/voll) · Rampe(width — min 600 mm, hoehenDelta — ganzzahlig > 0, podestLaenge — ganzzahlig ≥ 0, 0/leer entfernt das Podest wieder; JEDE Änderung prüft danach dasselbe ehrliche Steigungs-Gate wie design.rampeGeometrieSetzen: > 15 % wird abgelehnt, Tiefgaragen-Grenze, keine stille Klemmung) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Geländer(hoehe — 700–1500 mm, art — staketen/handlauf/voll) · Rampe(width — min 600 mm, hoehenDelta — ganzzahlig > 0, podestLaenge — ganzzahlig ≥ 0, 0/leer entfernt das Podest wieder; JEDE Änderung prüft danach dasselbe ehrliche Steigungs-Gate wie design.rampeGeometrieSetzen: > 15 % wird abgelehnt, Tiefgaragen-Grenze, keine stille Klemmung) · Detail(name, massstab — Massstab-Nenner > 0) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
   params: z.object({
     entityId: z.string(),
     feld: z.enum(editableFields),
@@ -981,6 +986,9 @@ export const setProperty = registerCommand({
       // wie design.rampeZeichnen (width/hoehenDelta/podestLaenge), gleiches
       // ehrliches Steigungs-Gate wie design.rampeGeometrieSetzen unten.
       ramp: ['width', 'hoehenDelta', 'podestLaenge'],
+      // v0.9.2 P-D (V092-SPEZ §P-D): additive Zeile — name/massstab, Muster
+      // gelaender/column (kein Vorher-Setzweg für `detail`).
+      detail: ['name', 'massstab'],
     };
     const fields = allowed[e.kind] ?? [];
     if (!fields.includes(p.feld)) {
@@ -1049,6 +1057,16 @@ export const setProperty = registerCommand({
     }
     if (p.feld === 'hoehenDelta' && e.kind === 'ramp' && Number(wert) <= 0) {
       throw new CommandError('hoehenDelta muss grösser als 0 sein');
+    }
+    if (p.feld === 'massstab' && e.kind === 'detail') {
+      // v0.9.2 P-D: massstab ist KEIN ganzzahliges mm-Feld (nicht im
+      // `numeric`-Katalog oben) — eigener Zahlen-Check + Gate > 0, Muster
+      // hoehenDelta bei `ramp` (ehrliche Ablehnung statt stiller Klemmung,
+      // Sanktion 4), dieselbe Grenze wie `design.detailErstellen` (zod
+      // `.positive()`).
+      const n = typeof p.wert === 'number' ? p.wert : Number(p.wert);
+      if (!Number.isFinite(n) || n <= 0) throw new CommandError('massstab muss grösser als 0 sein');
+      wert = n;
     }
     if (p.feld === 'rahmenbreite' && Number(wert) <= 0) {
       throw new CommandError('rahmenbreite muss grösser als 0 sein');
@@ -1146,8 +1164,12 @@ export const setProperty = registerCommand({
       const after = { ...e, profilId: String(p.wert) } as typeof e;
       return [{ id: e.id, before: e, after }];
     }
-    const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet' ? 'meta' : p.feld]:
-      p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet'
+    // v0.9.2 P-D: `detail` trägt `name` als ECHTES Modellfeld (Muster
+    // Zone/Sheet — s. `entities.ts` `DetailMarker.name`), NICHT `meta.name`
+    // wie die meisten anderen Kinds — additive Erweiterung der Ausnahmeliste.
+    const NAME_IST_ECHTES_FELD = e.kind === 'storey' || e.kind === 'assembly' || e.kind === 'zone' || e.kind === 'sheet' || e.kind === 'detail';
+    const after = { ...e, [p.feld === 'name' && !NAME_IST_ECHTES_FELD ? 'meta' : p.feld]:
+      p.feld === 'name' && !NAME_IST_ECHTES_FELD
         ? { ...e.meta, name: String(wert) }
         : wert } as typeof e;
     return [{ id: e.id, before: e, after }];
@@ -1776,6 +1798,67 @@ export const setRampGeometry = registerCommand({
       );
     }
     return [{ id: rampe.id, before: rampe, after: { ...rampe, a: neueA, b: neueB } }];
+  },
+});
+
+/**
+ * v0.9.2 P-D (`docs/V092-SPEZ.md` §P-D — Scope v1 BEWUSST schmal): Detail-
+ * Marker — reines Ausschnitt-Rechteck (a/b, Muster `design.rampeZeichnen`)
+ * über einem Geschoss, mit Massstab-Nenner (Muster `SheetPlacement.scale`,
+ * `entities.ts` §534: «Massstab, z.B. 100 für 1:100» — hier z.B. 5 für 1:5)
+ * und Namen. EHRLICHE Ablehnung statt stiller Korrektur (Sanktion 4): ein
+ * entartetes Rechteck (a.x===b.x ODER a.y===b.y — keine Fläche) lässt den
+ * Marker gar nicht erst entstehen; `massstab > 0` prüft bereits das
+ * zod-Schema (`z.number().positive()`), dieselbe Ablehnung wie ein
+ * manueller Wurf, nur eine Zeile weiter oben (`execute()` in `core.ts`
+ * bündelt Zod-Fehler bereits als `CommandError`).
+ *
+ * KEIN Plan-/Druck-Einbau hier (s. `entities.ts` `DetailMarker`-Kommentar) —
+ * die Ausschnitt-ABLEITUNG als reine Daten liefert `derive/detail.ts`
+ * `deriveDetail`, gelesen von der Publish-Station (read-only-Voransicht).
+ */
+export const createDetail = registerCommand({
+  id: 'design.detailErstellen',
+  title: 'Detail-Marker erstellen',
+  description:
+    'Markiert einen rechteckigen Ausschnitt-Bereich (a/b, diagonale Eckpunkte) im Grundriss eines Geschosses als eigenen, feiner skalierten Detailplan (Ausschnitt-Ableitung: derive/detail.ts deriveDetail). massstab = Massstab-Nenner, z.B. 5 für 1:5 (Muster publish.ansichtPlatzieren scale), muss grösser als 0 sein. a und b dürfen kein entartetes Rechteck aufspannen (gleiche x- oder y-Koordinate wird abgelehnt). KEIN Marker-Symbol im gedruckten Plan (Scope v1).',
+  params: z.object({
+    storeyId: z.string(),
+    a: PtSchema,
+    b: PtSchema,
+    massstab: z.number().positive().describe('Massstab-Nenner, z.B. 5 für 1:5'),
+    name: z.string().min(1),
+  }),
+  summarize: (p) => `Detail «${p.name}» 1:${p.massstab}`,
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const a = p.a as Pt;
+    const b = p.b as Pt;
+    if (a.x === b.x || a.y === b.y) {
+      throw new CommandError('Detail-Bereich ist entartet (a und b spannen kein Rechteck auf)');
+    }
+    const detail: DetailMarker = {
+      id: newId('detail'),
+      kind: 'detail',
+      storeyId: p.storeyId,
+      a,
+      b,
+      massstab: p.massstab,
+      name: p.name,
+    };
+    return [added(detail)];
+  },
+});
+
+export const deleteDetail = registerCommand({
+  id: 'design.detailLoeschen',
+  title: 'Detail-Marker löschen',
+  description: 'Löscht einen gesetzten Detail-Marker wieder.',
+  params: z.object({ detailId: z.string() }),
+  summarize: () => 'Detail-Marker gelöscht',
+  run: (doc, p) => {
+    const detail = require<DetailMarker>(doc, p.detailId, 'detail');
+    return [{ id: detail.id, before: detail, after: null }];
   },
 });
 

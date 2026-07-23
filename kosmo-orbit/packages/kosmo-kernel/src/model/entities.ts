@@ -797,6 +797,38 @@ export interface MassKette extends Base {
   punkte: Pt[];
 }
 
+/**
+ * Detail-Marker (v0.9.2 P-D, `docs/V092-SPEZ.md` §P-D — Scope v1 BEWUSST
+ * schmal) — markiert einen Ausschnitt-Bereich im Grundriss eines Geschosses,
+ * der als eigener, feiner skalierter Detailplan gedacht ist (Muster
+ * `Zone`/`Rampe`: `bereich` ist ein Rechteck über zwei Punkte `a`/`b`, wie
+ * `Rampe.a`/`Rampe.b`, KEIN beliebiges Polygon). `massstab` ist — wie
+ * `SheetPlacement.scale` (s. dort, «Massstab, z.B. 100 für 1:100») — der
+ * Massstab-NENNER, z.B. 5 für 1:5; je kleiner die Zahl, desto stärker
+ * vergrössert das Detail gegenüber dem 1:1-Weltmodell.
+ *
+ * V1-SCOPE-EHRLICHKEIT: Diese Entity ist reine GEOMETRIE + METADATEN, kein
+ * Druck-Baustein. Der Marker erscheint NICHT im Plan-Grundriss (`derive/
+ * plan.ts`/`derive/plansvg.ts` bleiben unangetastet — ein Marker-Symbol im
+ * Druck wäre ein ZWEITER, eigenständiger Golden-Zug und ausdrücklich
+ * Nicht-Ziel dieses Postens); die Ausschnitt-ABLEITUNG als reine Daten liefert
+ * `derive/detail.ts` (`deriveDetail`), gelesen von der Publish-Station
+ * (read-only-Voransicht) — das Aufziehen des Rechtecks direkt im PlanView
+ * ist ausdrücklich NICHT Teil dieses Postens (baut der Hauptagent separat).
+ */
+export interface DetailMarker extends Base {
+  kind: 'detail';
+  storeyId: string;
+  /** Erste Ecke des Ausschnitt-Rechtecks, Welt-mm (Muster `Rampe.a`). */
+  a: Pt;
+  /** Gegenüberliegende Ecke des Ausschnitt-Rechtecks, Welt-mm (Muster `Rampe.b`) —
+   * a/b spannen ein zu den Achsen paralleles Rechteck auf (KEINE Rotation v1). */
+  b: Pt;
+  /** Massstab-Nenner, z.B. 5 für 1:5 (Muster `SheetPlacement.scale`), > 0. */
+  massstab: number;
+  name: string;
+}
+
 /** Port-Typen im Render-Graphen (V1-P2): nur gleiche Typen verbinden sich.
  * `kameras` (Owner-Befund K20/A10): Auto-Kamera-Standpunkte, s. derive/kamera.ts. */
 export type VisPortTyp = 'szene' | 'bild' | 'prompt' | 'zahl' | 'material' | 'kameras';
@@ -837,7 +869,9 @@ export interface VisGraph extends Base {
 export type Entity =
   | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Rampe | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette | Gelaender
   // v0.9.2 P-P1 (V092-SPEZ §P-P1): additiv ans Ende, wie jede spätere Entity hier.
-  | Profil;
+  | Profil
+  // v0.9.2 P-D (V092-SPEZ §P-D): additiv ans Ende, wie jede spätere Entity hier.
+  | DetailMarker;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

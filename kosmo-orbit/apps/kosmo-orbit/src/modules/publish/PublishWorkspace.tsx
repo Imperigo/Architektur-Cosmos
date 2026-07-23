@@ -2,11 +2,13 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Hairline, Messrahmen, Badge, KButton, KIcon, KInput, KSelect, KSwitch, KToolbar, KToolGruppe, Panel, moduleHue, melde, meldeFehler } from '@kosmo/ui';
 import {
   blattverzeichnisSvg,
+  deriveDetail,
   plankopfReserveMm,
   planToDxf,
   sheetPaperSize,
   sheetToSvg,
   transmittalCsv,
+  type DetailMarker,
   type Sheet,
   type SheetFormat,
   type Storey,
@@ -85,6 +87,14 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
   );
   const storeys = useMemo(
     () => doc.storeysOrdered(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [revision],
+  );
+  // v0.9.2 P-D (V092-SPEZ §P-D) — Detail-Marker des ganzen Projekts (Muster
+  // `sheets`/`storeys` oben: `doc.byKind`, memoisiert auf `revision`), für die
+  // read-only-Karte unten (Liste + Inline-SVG-Voransicht aus `deriveDetail`).
+  const details = useMemo(
+    () => doc.byKind<DetailMarker>('detail'),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [revision],
   );
@@ -1092,6 +1102,71 @@ export function PublishWorkspace({ onEinstellungen, onKosmoOeffnen }: PublishWor
               Set speichern
             </KButton>
           </div>
+        </div>
+        <Hairline />
+        {/* v0.9.2 P-D (`docs/V092-SPEZ.md` §P-D — Scope v1 BEWUSST schmal):
+            read-only-Detailansicht — Liste aller `DetailMarker` des Projekts
+            (Name, Massstab, Geschoss), Muster `pubsets`-Abschnitt oben
+            (`k-publish-abschnitt` + Karten-Liste). Je Marker eine kleine
+            read-only-SVG-Voransicht aus `deriveDetail`-DATEN (App-seitiges
+            Inline-SVG — der Kernel-Druckweg `plansvg` bleibt unangetastet,
+            s. `derive/detail.ts`-Kopfkommentar). KEIN Aufziehen des
+            Rechtecks hier — das baut der Hauptagent separat im PlanView
+            (ausserhalb dieses Dateikreises), darum ehrlicher Leerzustand
+            statt eines toten «+»-Knopfs. */}
+        <div className="k-publish-abschnitt" data-testid="detail-liste">
+          <span className="k-publish-abschnitt-label">Details (Voransicht)</span>
+          {details.length === 0 ? (
+            <span className="k-publish-hinweis-klein" data-testid="detail-leer">
+              Noch keine Details — Marker im Plan aufziehen folgt.
+            </span>
+          ) : (
+            details.map((d) => {
+              const ableitung = deriveDetail(doc, d.id);
+              const geschoss = storeys.find((s) => s.id === d.storeyId);
+              const breite = Math.max(ableitung.groesse.breite, 1);
+              const hoehe = Math.max(ableitung.groesse.hoehe, 1);
+              return (
+                <div
+                  key={d.id}
+                  className="k-publish-detail-karte"
+                  data-testid="detail-karte"
+                  style={{ ['--_hue' as string]: moduleHue.publish }}
+                >
+                  <div className="k-publish-detail-kopf">
+                    <span className="k-publish-detail-name" data-testid={`detail-name-${d.id}`}>
+                      {ableitung.meta.name}
+                    </span>
+                    <span className="k-publish-detail-meta" data-testid={`detail-meta-${d.id}`}>
+                      1:{ableitung.meta.massstab} · {geschoss?.name ?? '– (Geschoss fehlt)'}
+                    </span>
+                  </div>
+                  <svg
+                    viewBox={`0 0 ${breite} ${hoehe}`}
+                    preserveAspectRatio="xMidYMid meet"
+                    className="k-publish-detail-svg"
+                    data-testid={`detail-svg-${d.id}`}
+                    role="img"
+                    aria-label={`Detail-Voransicht ${ableitung.meta.name}`}
+                  >
+                    {ableitung.regionen.map((r, i) => (
+                      <path
+                        key={`r${i}`}
+                        d={r.rings.map((ring) => `M${ring.map((p) => `${p.x} ${p.y}`).join('L')}Z`).join(' ')}
+                        fill="currentColor"
+                        fillOpacity={0.12}
+                        fillRule="evenodd"
+                        stroke="none"
+                      />
+                    ))}
+                    {ableitung.linien.map((l, i) => (
+                      <line key={`l${i}`} x1={l.a.x} y1={l.a.y} x2={l.b.x} y2={l.b.y} stroke="currentColor" strokeWidth={1} />
+                    ))}
+                  </svg>
+                </div>
+              );
+            })
+          )}
         </div>
         <div className="k-publish-spacer" />
         {/* R1-Fix (Kritik-065 p-09/i-09, «Blatt SVG»/«Grundriss DXF» als

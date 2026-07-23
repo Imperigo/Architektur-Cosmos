@@ -82,3 +82,5 @@ export * from './derive/zonenwaende';
 export * from './geometry/skeleton';
 export * from './derive/dossier';
 export * from './derive/plankopf';
+// v0.9.2 P-D (V092-SPEZ §P-D): additiv ans Ende, wie jede spätere Ableitung hier.
+export * from './derive/detail';

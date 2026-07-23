@@ -235,6 +235,51 @@
   min-width: 0;
 }
 
+/* v0.9.2 P-D (V092-SPEZ §P-D) — Detail-Marker-Karten: read-only-Voransicht,
+   dieselbe KCard-Anatomie wie `.k-publish-pubset-karte` (2px-Hue-Akzent
+   LINKS, 40%), zusätzlich eine kleine Inline-SVG-Voransicht darunter (App-
+   seitiges SVG aus `deriveDetail`-DATEN — der Kernel-Druckweg `plansvg`
+   bleibt unangetastet, s. Kopfkommentar `derive/detail.ts`). */
+.k-publish-detail-karte {
+  position: relative;
+  display: grid;
+  gap: var(--k-s2);
+  padding: var(--k-s3);
+  padding-left: calc(var(--k-s3) + 6px);
+  border-radius: var(--k-radius-karte);
+  background: var(--k-surface);
+}
+.k-publish-detail-karte::before {
+  content: '';
+  position: absolute;
+  left: var(--k-s2);
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--_hue) 45%, var(--k-line-strong));
+}
+.k-publish-detail-kopf {
+  display: flex;
+  align-items: baseline;
+  gap: var(--k-s2);
+  font-size: var(--k-t-sm);
+}
+.k-publish-detail-name {
+  font-weight: 550;
+  flex: 1;
+}
+.k-publish-detail-meta {
+  color: var(--k-ink-faint);
+}
+.k-publish-detail-svg {
+  width: 100%;
+  height: 96px;
+  background: var(--k-raised);
+  border-radius: var(--k-radius-sm);
+  color: var(--k-ink-soft);
+}
+
 /* Export-Gruppe — Hairline statt Rahmenbox (Gesetz 8: Flächenstufen +
    Hairlines statt Kästen). War zuvor `border:1px solid …` rundum. */
 .k-publish-export-gruppe {
