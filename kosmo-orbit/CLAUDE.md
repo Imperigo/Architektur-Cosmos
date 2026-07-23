@@ -1,6 +1,6 @@
 # KosmoOrbit — Arbeitsanleitung für Kosmo/Claude
 
-> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.9.1** (Stand 23.07.2026);
+> **⚠️ ZUERST: Stand prüfen.** Aktuelle Version = **v0.9.2** (Stand 23.07.2026);
 > alles davor ist **Archiv**. Der Web-Container wird gelegentlich auf einen
 > älteren Commit zurückgerollt — **immer vom echten Remote-Kopf ausgehen**
 > (`git fetch origin claude/kosmo-orbit-v1-build-pzxkbj` +, falls lokal
@@ -11,7 +11,7 @@
 > **Versions-Hinweis:** Owner-Anzeigeversion und `package.json`/`Cargo.toml`/
 > `tauri.conf.json`/`vite.config.ts` (`APP_VERSION`, fünfter Bump-Träger —
 > beim v0.8.2-Release vergessen, P10-Fund ROADMAP 447) sind deckungsgleich
-> **0.9.1**. Details in `../STAND.md`. **Kurswechsel:** v0.8.11 war der
+> **0.9.2**. Details in `../STAND.md`. **Kurswechsel:** v0.8.11 war der
 > letzte Kleintakt — ab jetzt grössere Sprünge Richtung 0.9.0/1.0
 > (Owner-Kompass 20.07., `docs/OWNER-KOMPASS-2026-07-20.md`). **Seit
 > 0.8.12:** der Owner-Home-PC ist der KosmoOrbit-Server (HomeStation live,
@@ -25,7 +25,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 
 ## Was du zuerst liest
 
-1. `ROADMAP.md` — 624 nummerierte Einträge (Stand v0.9.1), jeder ein
+1. `ROADMAP.md` — 641 nummerierte Einträge (Stand v0.9.2), jeder ein
    abgeschlossenes Feature mit Belegen. Der jüngste Stand steht **unten** vor
    dem Marker «Phase 3 abgeschlossen».
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
@@ -47,7 +47,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 cd kosmo-orbit
 npm install                 # Root-Workspace (npm workspaces)
 npm run build               # baut alle Pakete + die App
-npm test                    # 1221 Kernel + 1780 App + 330 KI + 54 Contracts + 44 Data + 8 Lizenz + 111 UI = 3548 (Stand v0.9.1)
+npm test                    # 1321 Kernel + 1784 App + 340 KI + 54 Contracts + 44 Data + 8 Lizenz + 111 UI = 3662 (Stand v0.9.2)
 npm run typecheck           # 8 Workspaces, exactOptionalPropertyTypes ist AN
 npm run svg-qa              # 40 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
 ```

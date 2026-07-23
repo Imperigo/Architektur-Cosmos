@@ -1,7 +1,7 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.9.1 «Trittsicher»** (Stand 23.07.2026, ROADMAP 624).
-**Alle Versionen davor (≤ v0.9.0) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.9.2 «Massgenau»** (Stand 23.07.2026, ROADMAP 641).
+**Alle Versionen davor (≤ v0.9.1) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 > **Betriebs-Novum seit 0.8.12:** der Owner-Home-PC (andrins-workstation,
 > Tailnet `100.88.48.73`) ist der KosmoOrbit-Server (Bridge/Sync/App/Ollama,
@@ -24,7 +24,7 @@
 > **Versions-Hinweis:** Der Bump hat FÜNF Träger — `package.json` (Root + App),
 > `Cargo.toml`, `tauri.conf.json` und das `APP_VERSION`-Literal in
 > `apps/kosmo-orbit/vite.config.ts` (speist den App-Kopf; beim v0.8.2-Bump
-> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.8.12**, dazu der
+> vergessen, P10-Fund ROADMAP 447) — alle deckungsgleich **0.9.2**, dazu der
 > `kosmo-orbit`-Eintrag in `Cargo.lock`. Der `__APP_VERSION__`-Entkopplungs-
 > Mechanismus bleibt für künftige Teil-Release-Buchstaben-Ausnahmen bestehen.
 

@@ -110,3 +110,17 @@ Gesamt-Kette (Welt −750) mitten durch die Beschlag-Zeile «BRH 90»
 Welt-Offsets der Ableitung; die Papier-Grammatik gilt für Hilfslinien,
 Schrift und Verdichtung (Begründung auch im dims-Block-Kommentar von
 `plansvg.ts`).
+
+## Schluss — Release-Stand v0.9.2 (Fable, 23.07.2026)
+
+Nach dem einen Zug (629) folgten elf weitere Landungen (630–640: P-D,
+P-P2, Detail-Werkzeug, P-F2–P-F7, zoomTextFsOderAus, Geometrie-
+Grundaudit) — **alle byte-still**: `git status --short -- kosmo-orbit/
+packages/kosmo-kernel/test/golden/` (vom Repo-Root) blieb bei jedem
+Gate leer, der Bestand steht bei 41 Goldens (40 SVG + 1 IFC). Beim
+Tag-C-Ritual bestätigt: release-gate Exit 0 (svg-qa 40 Goldens / 0
+harte Fehler, dieselben 4 weichen Baseline-Warnungen), Matrix-Prüfer
+C-1 hat Teil 1b gegen `git show 9e4478f5 --stat` nachgezählt
+(exakt die 20 Dateien, 0 ausserhalb). Damit ist GW-092 geschlossen;
+der nächste deklarierte Zug ist das Detail-Marker-Symbol im Druck
+(0.9.3 «Detailtreu», V09-SERIE-PLAN).
