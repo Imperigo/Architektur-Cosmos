@@ -357,6 +357,13 @@ export function KSelect(props: KSelectProps) {
           ref={listeRef}
           id={popupId}
           role="listbox"
+          // Marker für fremde Aussenklick-Gesetze (useOverlaySchliessen):
+          // die Listbox liegt als body-Portal AUSSERHALB jedes Overlay-DOMs —
+          // ohne diesen Anker würde ein mousedown auf eine Option das
+          // umgebende Overlay (Insel-Popup, Orb-Karte, …) schliessen und den
+          // KSelect mitten in der Wahl unmounten (E2E-Befund island-leer,
+          // Trace-Ziel: Wahl verpuffte, Insel klappte zu).
+          data-kselect-portal=""
           {...(testid !== undefined ? { 'data-testid': `${testid}-popup` } : {})}
           className="k-menu offen k-einblenden"
           style={{

@@ -115,6 +115,27 @@ describe('useOverlaySchliessen — Aussenklick', () => {
     expect(geschlossen).toBe(0);
   });
 
+  it('mousedown in einer portalten KSelect-Listbox (data-kselect-portal, ausserhalb ref) ruft onClose NICHT', () => {
+    // P-F6-Nachzug (v0.9.2): die KSelect-Listbox lebt als body-Portal und
+    // liegt darum IMMER ausserhalb des Overlay-`ref` — ein mousedown auf
+    // eine Option darf das Overlay trotzdem nicht schliessen, sonst
+    // unmountet der KSelect vor dem click und die Wahl verpufft
+    // (E2E-Befund island-leer, Trace-Ziel).
+    let geschlossen = 0;
+    montiere(() => geschlossen++);
+
+    const listbox = document.createElement('div');
+    listbox.setAttribute('data-kselect-portal', '');
+    const option = document.createElement('button');
+    listbox.appendChild(option);
+    document.body.appendChild(listbox);
+    act(() => {
+      option.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    });
+    expect(geschlossen).toBe(0);
+    listbox.remove();
+  });
+
   it('aussenklick:false unterdrückt den Aussenklick-Schluss', () => {
     let geschlossen = 0;
     montiere(() => geschlossen++, { aussenklick: false });

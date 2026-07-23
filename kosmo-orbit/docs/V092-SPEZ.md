@@ -124,3 +124,40 @@ Golden-Zug) · Stahlprofil-Normreihen-Katalog (HEA/IPE-Tabellen = Daten-
 Posten später) · Sonnenstudien-Tool (KosmoSpez/R5) · KosmoTrain-Ingest
 (bleibt bedingt: nur bei eingetroffenem Worker-Bericht, sonst erneut
 deklarierter Entfall) · HDD-Voll-Index · Serie H/I/J.
+
+## Ergebnis (Tag C, 23.07.2026 — Fable)
+
+**Matrix 9/9 BESTANDEN** (drei read-only-Prüfer + Fable für C-9, alle
+adversarial gegen HEAD `2e8eb84c` bzw. den Ritual-Stand):
+C-1 Druckmass (Grammatik + Bildschirm-Parität 0.62/0.92 + Ist==20er-Liste
+per `git show 9e4478f5 --stat` nachgezählt, svg-qa 40/0) · C-2 Profil-Kern
+(35/35 Tests, Referenz-Schutz, Golden-Guard byte-identisch bewiesen) ·
+C-3 Profil-UI (island-only, Cluster-B-Verbot per Commit-Stat bewiesen) ·
+C-4 art in 3D (25/25, quantitative Box-Zählung 3/11/4) · C-5 ramp-Gate
+(38/38 inkl. Byte-Gleichheit nach Ablehnung) · C-6 Podest-Guard
+(gelaender-rampe-plan.svg seit dem deklarierten K27-Zug byte-still, keine
+Podest-Spur im Druckweg) · C-7 Detail (16/16, kein Druck-Einbau,
+Fable/Sonnet-Trennung per Commits 684754b7/3694af61 belegt) · C-8 Politur
++ Sonde (Ellipsis-Fallback, `npm run beschnitt-sonde` Exit 0 mit NULL
+Funden — Probelauf wie deklariert, Gate-Einbau ab 0.9.3) · C-9 Kurzritual
+(dieser Block).
+
+**Gates:** `npm run release-gate` Exit 0 (Typecheck 8 WS · Kernel 1321 ·
+App 1784 · KI 340 · Contracts 54 · Data 44 · Lizenz 8 · UI 112 = 3663 ·
+svg-qa 40/0 hart · Secrets/SFT/Website-Sync grün). Gezielte E2E der
+angefassten Bereiche: 22 Specs, am Ende alle grün — der Lauf fand einen
+ECHTEN P-F6-Nachzug (portalte KSelect-Listbox galt `useOverlaySchliessen`
+als «aussen», Fix + neuer Hook-Test, ROADMAP 641) und einen
+Umgebungs-Fehlalarm (Bridge-CORS-Allowlist endet bei Port 5183, Lauf lief
+auf 5190; Bridge lief zudem noch aus einem entfernten Worktree vom
+20.07.) — nach Fix/Neustart island-leer+vis-island 18/18 und
+island-ui/-verdrahtung/profil-manager/orb-stationen-menü 33/33 grün.
+Goldens: 41 (40 SVG + 1 IFC), byte-still ausser dem EINEN deklarierten
+K27-Zug (GW-092 geschlossen). Betriebsregime eingehalten: KEIN Voll-E2E,
+KEINE Installer (Sanktion 6). Sieben Bump-Träger deckungsgleich 0.9.2.
+
+**Offen deklariert (Folgeposten):** Pan-Fehlerzonen-Diagnose wartet auf
+die exakte Owner-Fehlerzeile (ROADMAP 638) · Abo-Modus Tools/Diff-Karten
++ Stop-Kill (639) · L-Treppen-Koplanar (640) · Beschnitt-Sonde wird ab
+0.9.3 Gate-Schritt · e2e/tools-Screenshot-Helfer referenzieren den alten
+Kachel-Klickweg.

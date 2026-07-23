@@ -1,6 +1,6 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.9.2 «Massgenau»** (Stand 23.07.2026, ROADMAP 641).
+**Aktuelle Version: v0.9.2 «Massgenau»** (Stand 23.07.2026, ROADMAP 642).
 **Alle Versionen davor (≤ v0.9.1) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 > **Betriebs-Novum seit 0.8.12:** der Owner-Home-PC (andrins-workstation,

@@ -126,7 +126,16 @@ export function useOverlaySchliessen(
     const schliesseAussen = (e: MouseEvent) => {
       if (!aussenklick) return;
       const el = ref.current;
-      if (el && !el.contains(e.target as Node)) onCloseRef.current();
+      const ziel = e.target as Node;
+      // Seit P-F6 (v0.9.2) rendert `KSelect` seine Listbox als
+      // `document.body`-Portal — sie liegt damit IMMER ausserhalb von `ref`,
+      // obwohl sie logisch zum Overlay-Inhalt gehört. Ein mousedown auf eine
+      // Option darf das umgebende Overlay nicht schliessen (sonst unmountet
+      // der KSelect vor dem `click` und die Wahl verpufft — E2E-Befund
+      // island-leer, Trace-Ziel). `[data-kselect-portal]` markiert genau
+      // diese Listbox (`select.tsx`).
+      if (ziel instanceof Element && ziel.closest('[data-kselect-portal]') !== null) return;
+      if (el && !el.contains(ziel)) onCloseRef.current();
     };
     const schliesseEsc = (e: KeyboardEvent) => {
       if (!esc) return;

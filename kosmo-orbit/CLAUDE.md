@@ -25,7 +25,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 
 ## Was du zuerst liest
 
-1. `ROADMAP.md` — 641 nummerierte Einträge (Stand v0.9.2), jeder ein
+1. `ROADMAP.md` — 642 nummerierte Einträge (Stand v0.9.2), jeder ein
    abgeschlossenes Feature mit Belegen. Der jüngste Stand steht **unten** vor
    dem Marker «Phase 3 abgeschlossen».
 2. `docs/V2-AUFTAKT.md` — der fertige Erst-Prompt und die V2-Prioritäten.
@@ -47,7 +47,7 @@ ROADMAP 123). Diese Datei bringt einen neuen Worker in Minuten auf Betrieb.
 cd kosmo-orbit
 npm install                 # Root-Workspace (npm workspaces)
 npm run build               # baut alle Pakete + die App
-npm test                    # 1321 Kernel + 1784 App + 340 KI + 54 Contracts + 44 Data + 8 Lizenz + 111 UI = 3662 (Stand v0.9.2)
+npm test                    # 1321 Kernel + 1784 App + 340 KI + 54 Contracts + 44 Data + 8 Lizenz + 112 UI = 3663 (Stand v0.9.2)
 npm run typecheck           # 8 Workspaces, exactOptionalPropertyTypes ist AN
 npm run svg-qa              # 40 Goldens, 0 harte Fehler (4 weiche Text-Overlap-Warnungen, bewusst lange Musterwerte)
 ```
