@@ -1,7 +1,7 @@
 # AKTUELLER STAND — immer zuerst lesen
 
-**Aktuelle Version: v0.9.0 «Heimkraft»** (Stand 22.07.2026, ROADMAP 613).
-**Alle Versionen davor (≤ v0.8.12) sind ARCHIV.** Nie mehr darauf aufbauen.
+**Aktuelle Version: v0.9.1 «Trittsicher»** (Stand 23.07.2026, ROADMAP 624).
+**Alle Versionen davor (≤ v0.9.0) sind ARCHIV.** Nie mehr darauf aufbauen.
 
 > **Betriebs-Novum seit 0.8.12:** der Owner-Home-PC (andrins-workstation,
 > Tailnet `100.88.48.73`) ist der KosmoOrbit-Server (Bridge/Sync/App/Ollama,

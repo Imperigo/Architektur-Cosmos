@@ -98,3 +98,32 @@ deklarierter Entfall → P-C · C-8 Ritual komplett inkl. §0b → Fable.
 nächste IDC-Nachbau-Welle · Sonnenstudien-Tool (K34/K37) = KosmoSpez-/R5-
 gebunden (Fundament existiert: suncalc in besonnungsvergleich.ts/Viewport3D/
 SONNE-Insel) · HDD-Voll-Index · Gaussian Splatting · Serie H/I/J.
+
+
+## Ergebnisblock (Release-Gate, 23.07.2026)
+
+**Alle Posten gelandet:** P-A2 Rampen-Kern (615) · P-A1 Geländer-Kern (619) ·
+P-T betriebKonfig (620) · P-B2 Insel+Inspector (621) · P-B1 Zeichnen+Griffe
+(622, Fable/Cluster B) · P-B3 Golden-Zug (623, Ist==Prognose 0 bewegt/+1 neu,
+GW-091 Teil 2) · **P-C: deklarierter Entfall** (kein Home-PC-Worker-Bericht
+eingetroffen — §P-C-Klausel, ehrlich im Neuigkeiten-Block benannt).
+
+**Matrix C-1…C-8:** C-1…C-5 durch unabhängige adversariale Prüfer ERFÜLLT
+(Datei:Zeile-Belege + echte Testläufe, Workflow wf_85902fc4); C-6/C-7 nach
+einem HEAD-Pin-Prozessfehler (Prüfer auf 2be2641 gepinnt, Vorbereitungs-
+Commit 1ccbfcd kam dazwischen — die Prüfer brachen KORREKT ab) vom Fable auf
+dem aktuellen Stand nachgeprüft und ERFÜLLT: Literal-grep ausserhalb
+betrieb.ts nur 3 Doku-Kommentare, TLS-Zweig intakt; kein Worker-Bericht →
+Entfall deklariert. C-8 = dieses Ritual selbst (Träger-Bumps, lehren VOR dem
+🚀-Commit committet [1ccbfcd], §0b-Sichtung: KEINE eingegangenen
+Fehlerberichte — Übertragungsweg wartet auf Owner-Env+Deploy-Key).
+
+**Zahlen:** Kernel 1221 · App 1780 · KI 330 · Contracts 54 · Data 44 ·
+Lizenz 8 · UI 111 = 3548 · Goldens 41 Dateien (40 SVG + 1 IFC), svg-qa 40/0 ·
+Sanktionen 1–6: keine verletzt. Voll-E2E-Ergebnis und release-gate-Exit
+stehen im 🚀-Commit-Text (ROADMAP 624).
+
+**Owner-Zusatzpunkte in dieser Version (ausserhalb der Spez, 22.07.):**
+Claude-Abo-Login-Fix (echte claude-CLI statt Phantom-`ant`, 616) ·
+Cursor Windows-Schräge 22.25° + minimale Klick-Reaktion + Effizienz
+(616/617) · UI-Beschnitt-Audit mit neuer Sonde, 49-px-Panel-Fix (618).
