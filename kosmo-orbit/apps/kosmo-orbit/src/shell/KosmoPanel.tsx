@@ -15,6 +15,8 @@ import {
   lizenzHinweis,
   personas,
   pruefeAnthropicZugang,
+  STANDARD_BRIDGE_URL,
+  STANDARD_LLM_URL,
   type Aufgabenklasse,
   type Betriebsart,
   type ChatProvider,
@@ -386,7 +388,7 @@ const defaultSettings: KosmoSettings = {
   betriebsart: 'standard',
   remoteHost: '',
   provider: 'ollama',
-  baseUrl: 'http://localhost:11434',
+  baseUrl: STANDARD_LLM_URL,
   model: 'qwen3-coder:30b',
   lmBaseUrl: 'http://localhost:1234/v1',
   lmModel: 'qwen/qwen3-30b-a3b',
@@ -427,7 +429,7 @@ export function loadSettings(): KosmoSettings {
  * (de-CH wenn vorhanden) — die Bridge-Stimme bleibt der Qualitätsweg.
  */
 async function speak(text: string): Promise<void> {
-  const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  const bridge = (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
   const kurz = text.slice(0, 600);
   // v0.7.2 §6 (TTS-Wiedergabe→speaking): der genaue Endzeitpunkt hängt vom
   // gewählten Wiedergabeweg ab (Bridge-Audio ODER Browser-`speechSynthesis`)
@@ -1480,7 +1482,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
     }
     if (startetGerade.current) return;
     startetGerade.current = true;
-    const bridgeUrl = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+    const bridgeUrl = (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
     if (!(await bridgeErreichbar(bridgeUrl))) {
       startetGerade.current = false;
       starteBrowserStt();
@@ -1498,7 +1500,7 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
         // erkanntem Text) übernimmt sofort mit 'thinking' (`onBusy(true)`).
         if (useKosmoStatus.getState().zustand === 'listening') useKosmoStatus.getState().setzeZustand('idle');
         const audio = new Blob(parts, { type: rec.mimeType });
-        const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+        const bridge = (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
         try {
           const form = new FormData();
           form.append('audio', audio, 'aufnahme.webm');

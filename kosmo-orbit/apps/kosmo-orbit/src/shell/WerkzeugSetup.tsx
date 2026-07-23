@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Badge, Hairline, KButton, KIcon, melde, moduleHue } from '@kosmo/ui';
-import type { Betriebsart } from '@kosmo/ai';
+import { STANDARD_BRIDGE_URL, STANDARD_LLM_URL, STANDARD_SYNC_URL, type Betriebsart } from '@kosmo/ai';
 import { installBefehleFuer, plattformAus, werkzeugeFuer, type Plattform, type Pruefung, type Werkzeug } from '../state/werkzeuge';
 import { werkzeugHolen } from './werkzeug-holen';
 import { istTauriDesktop } from './cloud-login';
@@ -59,19 +59,19 @@ async function pruefe(art: Pruefung): Promise<Status> {
   if (art === 'ollama') {
     const base = (() => {
       try {
-        return JSON.parse(localStorage.getItem('kosmo.llm') ?? '{}').baseUrl ?? 'http://localhost:11434';
+        return JSON.parse(localStorage.getItem('kosmo.llm') ?? '{}').baseUrl ?? STANDARD_LLM_URL;
       } catch {
-        return 'http://localhost:11434';
+        return STANDARD_LLM_URL;
       }
     })();
     return (await erreichbar(base, '/api/tags')) ? 'da' : 'fehlt';
   }
   if (art === 'bridge') {
-    const bridge = localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600';
+    const bridge = localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL;
     return (await erreichbar(bridge, '/health')) ? 'da' : 'fehlt';
   }
   // sync: ws-URL → http für den /raeume-Ping
-  const sync = (localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700').replace(/^ws/, 'http');
+  const sync = (localStorage.getItem('kosmo.sync.url') ?? STANDARD_SYNC_URL).replace(/^ws/, 'http');
   return (await erreichbar(sync, '/raeume')) ? 'da' : 'fehlt';
 }
 

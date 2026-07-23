@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BridgeHealth } from '@kosmo/contracts';
+import { STANDARD_BRIDGE_URL } from '@kosmo/ai';
 import { useVisRuntime } from './vis-runtime';
 
 /**
@@ -25,9 +26,9 @@ import { useVisRuntime } from './vis-runtime';
 
 function bridgeUrl(): string {
   try {
-    return (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+    return (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
   } catch {
-    return 'http://localhost:8600';
+    return STANDARD_BRIDGE_URL;
   }
 }
 

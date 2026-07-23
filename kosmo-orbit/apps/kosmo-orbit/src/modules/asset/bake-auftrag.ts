@@ -1,4 +1,5 @@
 import { exportGlb, type KosmoDoc } from '@kosmo/kernel';
+import { STANDARD_BRIDGE_URL } from '@kosmo/ai';
 import { BakeJob, bridgeRoutes } from '@kosmo/contracts';
 import { speichereGlb, type KosmoAsset } from '../../state/asset-bibliothek';
 import { pruefeGlbHeader } from '../../state/glb-guard';
@@ -24,7 +25,7 @@ import { pruefeGlbHeader } from '../../state/glb-guard';
 /** Bridge-Basis-URL — dieselbe `localStorage`-Naht wie `vis-jobs.ts`, aber
  * eine eigene, unabhängige Kopie (kein Import, s. Dateikopf). */
 function bridgeBase(): string {
-  return (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  return (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
 }
 
 /** Bridge-Token — eigene Kopie derselben `localStorage`-Naht wie oben. */

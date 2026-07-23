@@ -10,6 +10,7 @@
  * anzufassen.
  */
 import { BridgeHealth } from '@kosmo/contracts';
+import { STANDARD_SYNC_URL } from '@kosmo/ai';
 import { qrSvg } from '../state/qr';
 
 export interface ZentralePing {
@@ -74,7 +75,7 @@ export function gpuZeile(health: BridgeHealth | null): string {
  * verbindet automatisch; ein Scan von hier profitiert davon, ohne dass
  * dieser Wizard selbst irgendetwas verbindet. */
 export function zentralePairingLink(): string {
-  const syncUrl = localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700';
+  const syncUrl = localStorage.getItem('kosmo.sync.url') ?? STANDARD_SYNC_URL;
   const syncRoom = localStorage.getItem('kosmo.sync.room') ?? 'projekt-1';
   const syncToken = (localStorage.getItem('kosmo.sync.token') ?? '').trim();
   const basis = `${window.location.origin}${window.location.pathname}`;

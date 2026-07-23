@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { evaluiereGraph, exportGlb, type AutoKameraStandpunkt, type Sheet, type VisGraph } from '@kosmo/kernel';
+import { STANDARD_BRIDGE_URL } from '@kosmo/ai';
 import { RenderJob, BlenderSimJob, BakeJob, bridgeRoutes, type BlenderSimArt } from '@kosmo/contracts';
 import { melde, meldeFehler } from '@kosmo/ui';
 import { useProject } from '../../state/project-store';
@@ -58,7 +59,7 @@ export function bridgeVermutlichCspGeblockt(): boolean {
 }
 
 export function bridgeBase(): string {
-  return (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  return (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
 }
 
 /**

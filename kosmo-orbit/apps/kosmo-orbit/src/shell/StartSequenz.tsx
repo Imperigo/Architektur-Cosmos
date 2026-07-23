@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { STANDARD_BRIDGE_URL } from '@kosmo/ai';
 import { ORBIT_HAUPTWERKZEUGE } from './orbit-werkzeuge';
 import './start-sequenz.css';
 
@@ -60,7 +61,7 @@ import './start-sequenz.css';
 
 const ERZWINGEN_SCHLUESSEL = 'kosmo.start.erzwingen';
 const BRIDGE_SCHLUESSEL = 'kosmo.bridge';
-const BRIDGE_FALLBACK = 'http://localhost:8600';
+const BRIDGE_FALLBACK = STANDARD_BRIDGE_URL;
 const LLM_SCHLUESSEL = 'kosmo.llm';
 const BRIDGE_TIMEOUT_MS = 1500;
 

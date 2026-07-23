@@ -1,3 +1,5 @@
+import { STANDARD_BRIDGE_URL } from '@kosmo/ai';
+
 /**
  * Wissensbasis (KosmoPrepare, Owner-Q28) — Grundlagen-Ingestion.
  *
@@ -45,7 +47,7 @@ export interface KnowledgeChunk {
  * `BASIS_EMBED_TIMEOUT_MS` unten.
  */
 export async function embedTexts(texts: string[], timeoutMs = 6000): Promise<number[][] | null> {
-  const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  const bridge = (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {

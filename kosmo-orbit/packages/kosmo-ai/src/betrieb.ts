@@ -22,6 +22,37 @@
 export type Betriebsart = 'standard' | 'remote' | 'cloud';
 
 /**
+ * Warum EINE Quelle (Matrix-C-3-Nebenbefund 0.9.0, C-3 22.07.2026): die drei
+ * Standard-Dienst-Adressen (Ollama/Bridge/Sync) waren als ~14 Literal-
+ * Fallbacks über den App-Code verstreut (KosmoPanel, WerkzeugSetup, Diagnose,
+ * StartSequenz, Onboarding, vis/asset/prepare-Module …) — jede Kopie eine
+ * eigene Chance, beim nächsten Port-/Schema-Wechsel zu vergessen. Diese drei
+ * Konstanten sind der EINZIGE Ort im ganzen Monorepo, an dem
+ * `localhost:11434`/`:8600`/`:8700` noch als Literal geschrieben steht;
+ * `betriebKonfig()` selbst liest unten NUR noch Host/Port aus genau diesen
+ * Konstanten heraus (`new URL(...)`) statt eigene Literale zu tragen — App-
+ * Code importiert ausschliesslich die fertigen `STANDARD_*_URL`-Werte, nie
+ * wieder `'http://localhost:...'` von Hand. Bewusst NICHT für den TLS-Edge-
+ * Fall gedacht (`https`/`wss`, Remote + `remoteTls: true`) — der bleibt
+ * ausschliesslich `betriebKonfig()` vorbehalten, weil dort Schema und Host
+ * variabel sind; diese Konstanten sind nur der Klartext-Standardfall
+ * (lokales HomePC, vertrauenswürdiges Büro-LAN).
+ */
+/** Standard-Ollama-Adresse — der eine Fallback, den App-Code importieren soll. */
+export const STANDARD_LLM_URL = 'http://localhost:11434';
+/** Standard-Bridge-Adresse (Render/STT/TTS) — der eine Fallback für App-Code. */
+export const STANDARD_BRIDGE_URL = 'http://localhost:8600';
+/** Standard-Sync-Adresse (Yjs) — der eine Fallback für App-Code. */
+export const STANDARD_SYNC_URL = 'ws://localhost:8700';
+
+/** Ports der drei Standard-Adressen oben, aus denselben Konstanten geparst —
+ *  `betriebKonfig()` baut damit Remote-/TLS-Adressen, ohne die Portzahlen ein
+ *  zweites Mal als Literal zu schreiben. */
+const STANDARD_LLM_PORT = new URL(STANDARD_LLM_URL).port;
+const STANDARD_BRIDGE_PORT = new URL(STANDARD_BRIDGE_URL).port;
+const STANDARD_SYNC_PORT = new URL(STANDARD_SYNC_URL).port;
+
+/**
  * Cloud-Anmeldeart (Owner: «Mit Claude anmelden» — auch mit einem Claude-Abo
  * per Browser-Login, nicht nur mit eingetipptem API-Schlüssel).
  * - **schluessel** — klassischer API-Schlüssel, `x-api-key`.
@@ -174,9 +205,9 @@ export function betriebKonfig(ein: BetriebEingabe): BetriebKonfig {
   return {
     betriebsart: ein.betriebsart,
     provider: 'ollama',
-    llmBaseUrl: `${httpSchema}://${host}:11434`,
-    bridgeUrl: `${httpSchema}://${host}:8600`,
-    syncUrl: `${wsSchema}://${host}:8700`,
+    llmBaseUrl: `${httpSchema}://${host}:${STANDARD_LLM_PORT}`,
+    bridgeUrl: `${httpSchema}://${host}:${STANDARD_BRIDGE_PORT}`,
+    syncUrl: `${wsSchema}://${host}:${STANDARD_SYNC_PORT}`,
     cloudModell: mindestensOpus(ein.cloudModell),
     cloud: false,
     ...(tls ? { remoteTls: true } : {}),

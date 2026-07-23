@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Badge, Hairline, KButton, KIcon, KInput, KSelect, OrbitMark } from '@kosmo/ui';
-import type { Betriebsart } from '@kosmo/ai';
+import { STANDARD_BRIDGE_URL, STANDARD_SYNC_URL, type Betriebsart } from '@kosmo/ai';
 import type { BridgeHealth } from '@kosmo/contracts';
 import { useProject } from '../state/project-store';
 import { werkzeugeFuer, type Pruefung, type Werkzeug } from '../state/werkzeuge';
@@ -129,8 +129,8 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
 
   const settings = loadSettings();
   const betriebsart = settings.betriebsart;
-  const bridgeUrl = localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600';
-  const syncHttp = (localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700').replace(/^ws/, 'http');
+  const bridgeUrl = localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL;
+  const syncHttp = (localStorage.getItem('kosmo.sync.url') ?? STANDARD_SYNC_URL).replace(/^ws/, 'http');
 
   const aktuell = ONBOARDING_SCHRITTE[schritt]!;
   const istErster = schritt === 0;

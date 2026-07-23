@@ -17,6 +17,7 @@ import {
   type KTabItem,
 } from '@kosmo/ui';
 import { finalerRenderPrompt, renderPromptBausteine, exportGlb, VIS_NODE_KATALOG, VIS_STIMMUNGEN, type VisGraph } from '@kosmo/kernel';
+import { STANDARD_BRIDGE_URL } from '@kosmo/ai';
 import { useProject } from '../../state/project-store';
 import { basisNodeHoehe, NODE_W, NodeCanvas } from './NodeCanvas';
 import { bridgeToken, platziereBildAufsBlatt, sendeGraphRenderAuftrag } from './vis-jobs';
@@ -107,7 +108,7 @@ const STIMMUNGEN = Object.values(VIS_STIMMUNGEN);
 const PRESET_KURZLABEL: Record<PresetId, string> = { fokus: 'Fokus', arbeiten: 'Arbeiten', pruefen: 'Prüfen' };
 
 function loadBridgeUrl(): string {
-  return localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600';
+  return localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL;
 }
 
 function loadSerien(): Serie[] {

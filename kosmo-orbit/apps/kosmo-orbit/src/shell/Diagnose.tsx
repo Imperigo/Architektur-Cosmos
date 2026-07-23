@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Karteikarte, Badge, KButton } from '@kosmo/ui';
 import { allCommands, deriveAll } from '@kosmo/kernel';
+import { STANDARD_BRIDGE_URL, STANDARD_LLM_URL } from '@kosmo/ai';
 import { BridgeHealth } from '@kosmo/contracts';
 import { useProject } from '../state/project-store';
 import { listDocs } from '../modules/prepare/knowledge';
@@ -86,7 +87,7 @@ export async function diagnose(): Promise<Befund[]> {
     if (cfg.provider === 'mock') {
       befunde.push({ bereich: 'Kosmo-LLM', status: 'warnung', detail: 'Demo-Modus (kein LLM verbunden)' });
     } else {
-      const base = (cfg.baseUrl ?? 'http://localhost:11434').replace(/\/$/, '');
+      const base = (cfg.baseUrl ?? STANDARD_LLM_URL).replace(/\/$/, '');
       const res = await fetchWithTimeout(`${base}/api/tags`, 3000);
       const json = (await res.json()) as { models?: { name: string }[] };
       const names = (json.models ?? []).map((m) => m.name);
@@ -110,7 +111,7 @@ export async function diagnose(): Promise<Befund[]> {
   // 4) HomeStation-Bridge — inkl. Worker-/GPU-Zeile aus /health (HS3): die
   // Kette sagt selbst, ob ein GPU-Leerlauf-Fenster gemeldet wird. Ohne echte
   // GPU-Abfrage fehlt das Feld ehrlich (nie vorgetäuscht).
-  const bridge = (localStorage.getItem('kosmo.bridge') ?? 'http://localhost:8600').replace(/\/$/, '');
+  const bridge = (localStorage.getItem('kosmo.bridge') ?? STANDARD_BRIDGE_URL).replace(/\/$/, '');
   try {
     const res = await fetchWithTimeout(`${bridge}/health`, 3000);
     const roh = (await res.json()) as unknown;

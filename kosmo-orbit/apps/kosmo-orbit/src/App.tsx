@@ -19,6 +19,7 @@ import {
   type ModuleId,
   type ThemeName,
 } from '@kosmo/ui';
+import { STANDARD_SYNC_URL } from '@kosmo/ai';
 import { DesignWorkspace } from './modules/design/DesignWorkspace';
 // PB3 (`docs/V084-SPEZ.md` §8 C-24, §5 W3): Stationen-Orb/Ansichts-Info/
 // Geschoss-Pille rendern jetzt HIER statt in `DesignWorkspace.tsx` — der
@@ -295,7 +296,7 @@ export function App() {
   const [starterGuideOffen, setStarterGuideOffen] = useState(false);
   const [guideLauf, setGuideLauf] = useState(0);
   const [peers, setPeers] = useState(0);
-  const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? 'ws://localhost:8700');
+  const [syncUrl, setSyncUrl] = useState(localStorage.getItem('kosmo.sync.url') ?? STANDARD_SYNC_URL);
   const [syncRoom, setSyncRoom] = useState(localStorage.getItem('kosmo.sync.room') ?? 'projekt-1');
   const [syncToken, setSyncToken] = useState(localStorage.getItem('kosmo.sync.token') ?? '');
   const [wartend, setWartend] = useState(0);
