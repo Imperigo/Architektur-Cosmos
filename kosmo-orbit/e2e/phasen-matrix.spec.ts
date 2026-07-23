@@ -85,26 +85,27 @@ test.describe('Phasen-Matrix — ZEICHNEN-Insel-Leiste (harte Ausblendung, kein 
 
   const ZEICHNEN_OHNE_R7 = ['auswahl', 'wand', 'oeffnung', 'zone', 'dach', 'treppe', 'stuetze', 'skizze', 'messen'];
 
-  test('1 STRATEGIE: alle 11 ZEICHNEN-Werkzeuge, inkl. Volumen/Mesh', async ({ page }) => {
+  // v0.9.1 P-B2/P-B1: ZEICHNEN 11→13 (gelaender/rampe additiv; beide stehen bewusst NICHT in phasen-matrix.ts — ungelistete Ids bleiben in jeder Phase sichtbar, s. P-B2-Entscheid ROADMAP 621), Ausschreibung damit 13−2=11.
+  test('1 STRATEGIE: alle 13 ZEICHNEN-Werkzeuge, inkl. Volumen/Mesh', async ({ page }) => {
     await seed(page);
     await page.click('[data-testid="module-design"]');
 
     await setzeSiaPhaseUeberInsel(page, 'strategie');
     await oeffneZeichnenLeiste(page);
 
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(11);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(13);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toBeVisible();
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toBeVisible();
   });
 
-  test('4 AUSSCHREIBUNG: Volumen + Mesh fallen hart heraus, die übrigen 9 bleiben erreichbar', async ({ page }) => {
+  test('4 AUSSCHREIBUNG: Volumen + Mesh fallen hart heraus, die übrigen 11 bleiben erreichbar', async ({ page }) => {
     await seed(page);
     await page.click('[data-testid="module-design"]');
 
     await setzeSiaPhaseUeberInsel(page, 'ausschreibung');
     await oeffneZeichnenLeiste(page);
 
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(9);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(11);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toHaveCount(0);
     for (const id of ZEICHNEN_OHNE_R7) {
@@ -112,7 +113,7 @@ test.describe('Phasen-Matrix — ZEICHNEN-Insel-Leiste (harte Ausblendung, kein 
     }
   });
 
-  test('Phasenwechsel Strategie→Ausschreibung ändert den sichtbaren Werkzeugbestand beweisbar (11 → 9), Undo stellt Strategie + Volumen/Mesh wieder her', async ({
+  test('Phasenwechsel Strategie→Ausschreibung ändert den sichtbaren Werkzeugbestand beweisbar (13 → 11), Undo stellt Strategie + Volumen/Mesh wieder her', async ({
     page,
   }) => {
     await seed(page);
@@ -120,11 +121,11 @@ test.describe('Phasen-Matrix — ZEICHNEN-Insel-Leiste (harte Ausblendung, kein 
 
     await setzeSiaPhaseUeberInsel(page, 'strategie');
     await oeffneZeichnenLeiste(page);
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(11);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(13);
 
     await setzeSiaPhaseUeberInsel(page, 'ausschreibung');
     await oeffneZeichnenLeiste(page);
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(9);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(11);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toHaveCount(0);
 
@@ -134,7 +135,7 @@ test.describe('Phasen-Matrix — ZEICHNEN-Insel-Leiste (harte Ausblendung, kein 
     // unverändert stimmen»).
     await page.keyboard.press('Control+z');
     await oeffneZeichnenLeiste(page);
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(11);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(13);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toBeVisible();
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toBeVisible();
   });
