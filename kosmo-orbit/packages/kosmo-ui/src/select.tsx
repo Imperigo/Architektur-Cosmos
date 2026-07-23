@@ -13,6 +13,7 @@ import {
   type ReactNode,
   type SelectHTMLAttributes,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 /**
  * KSelect (v0.6.9) — ECHTES Custom-Dropdown im Werkplan-Stil.
@@ -136,6 +137,12 @@ export function KSelect(props: KSelectProps) {
 
   const [offen, setOffen] = useState(false);
   const [aktivIndex, setAktivIndex] = useState(0);
+  // P-F6 (v0.9.2): fixe Lage der portalierten Listbox, berechnet beim
+  // Öffnen aus dem Trigger-Rechteck (`oeffne()`); top-Variante = normal
+  // nach unten, bottom-Variante = nach oben geklappt (Platzmangel).
+  const [popupLage, setPopupLage] = useState<
+    { left: number; breite: number; top?: number; bottom?: number } | null
+  >(null);
   const [intern, setIntern] = useState<string | undefined>(() =>
     defaultValue !== undefined ? String(defaultValue) : undefined,
   );
@@ -153,19 +160,38 @@ export function KSelect(props: KSelectProps) {
   const anzeige = gewaehlt?.label ?? optionen[0]?.label ?? '';
 
   // Aussenklick + Escape schliessen — exakt das KMenu-Muster (overlay.tsx).
+  // P-F6 (v0.9.2): die Liste hängt seit dem Portal-Umbau an document.body —
+  // der Aussenklick-Test muss BEIDE Wurzeln kennen (Trigger-Span UND
+  // portaliertes Listbox-Div), sonst schlösse jeder Optionsklick sofort.
   useEffect(() => {
     if (!offen) return undefined;
     const schliesseAussen = (e: MouseEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setOffen(false);
+      const ziel = e.target as Node;
+      const imTrigger = wrapRef.current?.contains(ziel) ?? false;
+      const inListe = listeRef.current?.contains(ziel) ?? false;
+      if (!imTrigger && !inListe) setOffen(false);
     };
     const schliesseEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOffen(false);
     };
+    // P-F6: die Liste ist position:fixed — beim Scrollen/Resize irgendeines
+    // Containers würde sie am alten Fleck schweben; schliessen ist das
+    // ehrliche Standardverhalten (natives <select> macht dasselbe).
+    // capture:true fängt auch Scrolls in inneren Overflow-Containern
+    // (.isl-popup/.isl-fenster), die nie bis window bubbeln.
+    const schliesseScroll = (e: Event) => {
+      if (listeRef.current && e.target instanceof Node && listeRef.current.contains(e.target)) return;
+      setOffen(false);
+    };
     document.addEventListener('mousedown', schliesseAussen);
     document.addEventListener('keydown', schliesseEsc);
+    window.addEventListener('scroll', schliesseScroll, { capture: true, passive: true });
+    window.addEventListener('resize', schliesseScroll);
     return () => {
       document.removeEventListener('mousedown', schliesseAussen);
       document.removeEventListener('keydown', schliesseEsc);
+      window.removeEventListener('scroll', schliesseScroll, { capture: true } as EventListenerOptions);
+      window.removeEventListener('resize', schliesseScroll);
     };
   }, [offen]);
 
@@ -206,6 +232,26 @@ export function KSelect(props: KSelectProps) {
     const startIndex =
       zielIndex ?? Math.max(0, optionen.findIndex((o) => o.value === wert));
     setAktivIndex(startIndex);
+    // P-F6 (v0.9.2, Owner-Feedback/P-F4-Fund): Lage der portalierten Liste
+    // aus dem Trigger-Rechteck — position:fixed entkommt jedem
+    // overflow:auto-Vorfahren (die Insel-Popups .isl-popup/.isl-fenster
+    // klippten den absoluten Dropdown, island.css §Stufe 3). Unten öffnen
+    // ist der Normalfall; reicht der Platz unter dem Trigger nicht für die
+    // maxHeight (280) UND ist oben mehr Luft, klappt die Liste nach oben
+    // (bottom-verankert — die tatsächliche Listenhöhe ist vor dem Render
+    // nicht bekannt, der Anker braucht sie nicht).
+    const r = triggerRef.current?.getBoundingClientRect();
+    if (r) {
+      const platzUnten = window.innerHeight - r.bottom;
+      const nachOben = platzUnten < 292 && r.top > platzUnten;
+      setPopupLage(
+        nachOben
+          ? { left: r.left, bottom: window.innerHeight - r.top + 2, breite: r.width }
+          : { left: r.left, top: r.bottom + 2, breite: r.width },
+      );
+    } else {
+      setPopupLage(null);
+    }
     setOffen(true);
   };
 
@@ -301,14 +347,34 @@ export function KSelect(props: KSelectProps) {
       >
         {anzeige === '' ? ' ' : anzeige}
       </button>
-      {offen && (
+      {offen &&
+        // P-F6 (v0.9.2): Listbox als body-Portal mit fixer Lage aus dem
+        // Trigger-Rechteck — entkommt den overflow-Klippen der Insel-Popups
+        // (P-F4-Fund, island.css:410/446 ↔ vorher position:absolute hier).
+        // z-index unter der CursorEbene (2147483000), über allen Fenstern.
+        createPortal(
         <div
           ref={listeRef}
           id={popupId}
           role="listbox"
           {...(testid !== undefined ? { 'data-testid': `${testid}-popup` } : {})}
           className="k-menu offen k-einblenden"
-          style={{ minWidth: '100%', maxWidth: 'min(420px, 80vw)', maxHeight: 280, overflowY: 'auto', overflowX: 'hidden' }}
+          style={{
+            position: 'fixed',
+            zIndex: 2147482000,
+            ...(popupLage
+              ? {
+                  left: popupLage.left,
+                  minWidth: popupLage.breite,
+                  ...('top' in popupLage && popupLage.top !== undefined ? { top: popupLage.top } : {}),
+                  ...('bottom' in popupLage && popupLage.bottom !== undefined ? { bottom: popupLage.bottom } : {}),
+                }
+              : { minWidth: '100%' }),
+            maxWidth: 'min(420px, 80vw)',
+            maxHeight: 280,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+          }}
         >
           {optionen.map((o, i) => (
             <button
@@ -349,8 +415,9 @@ export function KSelect(props: KSelectProps) {
               {o.label === '' ? ' ' : o.label}
             </button>
           ))}
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </span>
   );
 }

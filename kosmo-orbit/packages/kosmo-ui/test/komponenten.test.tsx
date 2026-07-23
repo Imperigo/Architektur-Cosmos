@@ -82,13 +82,14 @@ describe('KSelect: Custom-Dropdown (v0.6.9) — Trigger/Popup/data-value-Vertrag
 
     const trigger = container.querySelector('[data-testid="mein-select"]') as HTMLButtonElement;
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
-    expect(container.querySelector('[data-testid="mein-select-popup"]')).toBeNull();
+    // P-F6 (v0.9.2): die Listbox rendert als body-Portal (Klipp-Fix) — Suche auf document.
+    expect(document.querySelector('[data-testid="mein-select-popup"]')).toBeNull();
 
     act(() => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    const popup = container.querySelector('[data-testid="mein-select-popup"]') as HTMLElement;
+    const popup = document.querySelector('[data-testid="mein-select-popup"]') as HTMLElement;
     expect(popup).not.toBeNull();
     expect(popup.getAttribute('role')).toBe('listbox');
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
@@ -103,7 +104,7 @@ describe('KSelect: Custom-Dropdown (v0.6.9) — Trigger/Popup/data-value-Vertrag
     });
 
     expect(werte).toEqual(['b']);
-    expect(container.querySelector('[data-testid="mein-select-popup"]')).toBeNull();
+    expect(document.querySelector('[data-testid="mein-select-popup"]')).toBeNull();
   });
 
   it('Esc schliesst das offene Popup ohne onChange', () => {
@@ -125,12 +126,12 @@ describe('KSelect: Custom-Dropdown (v0.6.9) — Trigger/Popup/data-value-Vertrag
     act(() => {
       trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
-    expect(container.querySelector('[data-testid="esc-select-popup"]')).not.toBeNull();
+    expect(document.querySelector('[data-testid="esc-select-popup"]')).not.toBeNull();
 
     act(() => {
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     });
-    expect(container.querySelector('[data-testid="esc-select-popup"]')).toBeNull();
+    expect(document.querySelector('[data-testid="esc-select-popup"]')).toBeNull();
     expect(werte).toEqual([]);
   });
 });

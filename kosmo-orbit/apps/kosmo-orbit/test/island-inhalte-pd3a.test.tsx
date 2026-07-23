@@ -171,7 +171,9 @@ describe('Wand — Referenzmuster, echte Wirkung (Command→Patch, kein Mock)', 
     act(() => {
       trigger!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
-    const option = container!.querySelector<HTMLButtonElement>(
+    // P-F6 (v0.9.2): KSelect-Listbox rendert als body-Portal (Klipp-Fix) —
+    // Suche auf document statt auf dem Render-Container.
+    const option = document.querySelector<HTMLButtonElement>(
       `[data-testid="island-wand-aufbau-popup"] button[data-value="${aufbau2Id}"]`,
     );
     expect(option).not.toBeNull();

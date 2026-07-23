@@ -86,7 +86,7 @@ test.describe('Phase als Projekt-Eigenschaft — Wechsel wirkt beweisbar (ZEICHN
     await page.click('[data-testid="module-design"]');
 
     await oeffneZeichnenLeiste(page);
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(13);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(14);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toBeVisible();
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toBeVisible();
 
@@ -97,7 +97,7 @@ test.describe('Phase als Projekt-Eigenschaft — Wechsel wirkt beweisbar (ZEICHN
     await einstellungenSchliessen(page);
 
     await oeffneZeichnenLeiste(page);
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(11);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(12);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toHaveCount(0);
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toHaveCount(0);
 
@@ -106,7 +106,7 @@ test.describe('Phase als Projekt-Eigenschaft — Wechsel wirkt beweisbar (ZEICHN
     // egal über welche Oberfläche er geschrieben wurde.
     await page.keyboard.press('Control+z');
     await oeffneZeichnenLeiste(page);
-    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(13);
+    await expect(page.locator('[data-testid="island-zeichnen-leiste"] .isl-werkzeug')).toHaveCount(14);
     await expect(page.locator('[data-testid="island-werkzeug-volumen"]')).toBeVisible();
     await expect(page.locator('[data-testid="island-werkzeug-mesh"]')).toBeVisible();
   });
