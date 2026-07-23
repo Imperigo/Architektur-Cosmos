@@ -2,6 +2,30 @@ import { chromium } from 'playwright';
 
 // Beschnitt-Sonde v2 (Owner-Auftrag 22.07.: «überprüfe die gesamte ui auf
 // solche fehler … nichts so scrollbar machen und nichts abschneiden»).
+//
+// P-U (0.9.2, `docs/V092-SPEZ.md` §P-U): als `npm run beschnitt-sonde`
+// (`package.json`) verdrahtet — Exit 1 bei Funden ausserhalb der unten
+// deklarierten Ausnahme-Liste, Exit 0 sonst. Port konfigurierbar über
+// `BESCHNITT_PORT` (Default 5183, Muster `KOSMO_E2E_PORT` in
+// `playwright.config.ts` — parallele Isolations-Worktrees brauchen einen
+// eigenen Port, s. Skill `parallel-pakete`).
+
+const PORT = process.env['BESCHNITT_PORT'] ?? '5183';
+
+// Bewusste, dokumentierte Ausnahmen (bekannte, gewollte Beschnitte — kein
+// automatisches Klemmen, jede Zeile mit Grund). Heute genau EINE:
+// der 1-zeilige Line-Clamp der Fächer-Untertitel (`orbit-faecher`-Kacheln,
+// `data-testid` enthält den Modul-Namen, CSS-Zeilenklemme ist Absicht,
+// s. `apps/kosmo-orbit/src/shell` Fächer-Untertitel-Styles). `um` bleibt
+// klein (Rundungsreste der Klemme, kein echter Überlauf) — Schwelle 10px.
+const AUSNAHMEN = [
+  {
+    grund: 'orbit-faecher Untertitel: bewusster 1-zeiliger Line-Clamp',
+    passt: (f) => f.art === 'beschnitten' && f.sel.includes('orbit-faecher') && f.um <= 10,
+  },
+];
+
+const istAusnahme = (f) => AUSNAHMEN.some((a) => a.passt(f));
 
 const GROESSEN = [
   { name: '1440x900', width: 1440, height: 900 },
@@ -47,7 +71,7 @@ const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' })
 const alle = [];
 for (const g of GROESSEN) {
   const p = await b.newPage({ viewport: { width: g.width, height: g.height } });
-  await p.goto('http://127.0.0.1:5183');
+  await p.goto(`http://127.0.0.1:${PORT}`);
   await p.evaluate(() => {
     localStorage.setItem('kosmo.onboarded', '1');
     localStorage.setItem('kosmo.starterGuide.done', '1');
@@ -103,4 +127,24 @@ for (const g of GROESSEN) {
   await p.close();
 }
 await b.close();
+
+const echteFunde = alle.filter((f) => !istAusnahme(f));
+const ausgenommeneFunde = alle.filter((f) => istAusnahme(f));
+
 console.log(JSON.stringify(alle, null, 1));
+if (ausgenommeneFunde.length > 0) {
+  console.log(
+    `\n${ausgenommeneFunde.length} Fund(e) durch deklarierte Ausnahme abgedeckt (s. AUSNAHMEN oben):`,
+  );
+  for (const f of ausgenommeneFunde) {
+    console.log(`  - [${f.kontext}] ${f.art} um ${f.um}px: ${f.sel}`);
+  }
+}
+
+if (echteFunde.length > 0) {
+  console.error(`\nBESCHNITT-SONDE: ${echteFunde.length} Fund(e) ausserhalb der Ausnahme-Liste — Exit 1.`);
+  process.exit(1);
+} else {
+  console.log(`\nBESCHNITT-SONDE: keine Funde ausserhalb der Ausnahme-Liste — Exit 0.`);
+  process.exit(0);
+}

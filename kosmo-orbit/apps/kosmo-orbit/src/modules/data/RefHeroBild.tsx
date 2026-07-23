@@ -99,7 +99,11 @@ export function RefHeroBild({
         ))}
       </svg>
       {zeigeQuelle && (
-        <span data-testid="ref-bild-quelle" className="kd-hero-quelle">
+        // P-U (0.9.2, Befund ROADMAP 618): einzeilig mit Ellipsis statt
+        // Zeichenumbruch (data.css `.kd-hero-quelle`) — `title` trägt den
+        // Volltext weiter, auch wenn die Zelle (z. B. die 40px-OBJEKT-Spalte
+        // der Referenzen-Tabelle) ihn beschneidet.
+        <span data-testid="ref-bild-quelle" className="kd-hero-quelle" title={zeile}>
           {zeile}
         </span>
       )}

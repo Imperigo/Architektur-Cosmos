@@ -855,5 +855,13 @@
   font-size: var(--k-t-xs);
   color: var(--k-ink-faint);
   text-align: center;
-  overflow-wrap: anywhere;
+  /* P-U (0.9.2, Befund ROADMAP 618): in der schmalen OBJEKT-Spalte der
+     Referenzen-Tabelle (40px, `.kd-tabelle-bild`) quetschte
+     `overflow-wrap: anywhere` den Fallback-Text «Bild nicht lokal — Quelle:
+     …» in einen Zeichen-für-Zeichen-Umbruch. Einzeilig mit Ellipsis statt
+     Umbruch — der Volltext bleibt über `title` (RefHeroBild.tsx) abrufbar. */
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
