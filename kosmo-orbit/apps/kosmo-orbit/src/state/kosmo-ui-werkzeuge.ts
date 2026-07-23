@@ -107,6 +107,8 @@ const TOOL_LABEL: Record<ToolId, string> = {
   // v0.9.1 P-B1 (docs/V091-SPEZ.md §P-B1): additive Zeilen, TOOL_IDS 13→15.
   gelaender: 'Geländer',
   rampe: 'Rampe',
+  // v0.9.2 P-D-Nachzug (docs/V092-SPEZ.md §P-D): additive Zeile, 15→16.
+  detail: 'Detail',
 };
 
 const VIEW_LABEL: Record<ViewMode, string> = {

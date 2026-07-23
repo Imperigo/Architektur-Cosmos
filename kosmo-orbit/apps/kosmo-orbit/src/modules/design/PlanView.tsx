@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, gelaenderTeile, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, rampenTeile, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Beam, type Furniture, type Gelaender, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Rampe, type Roof, type Slab, type Stair, type Wall, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, gelaenderTeile, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, rampenTeile, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Beam, type DetailMarker, type Furniture, type Gelaender, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Rampe, type Roof, type Slab, type Stair, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -1852,6 +1852,47 @@ export function PlanView({
                       pointerEvents="none"
                     >
                       {pfeil.text}
+                    </text>
+                  </g>
+                );
+              })}
+          </g>
+          {/* v0.9.2 P-D-Nachzug (Fable, Cluster B — `docs/V092-SPEZ.md` §P-D):
+              Detail-Marker-Overlay nach EXAKT dem Geländer-/Rampen-Muster
+              darüber — reines App-Overlay, geht NICHT durch `derivePlan()`
+              (Marker im Druck = deklariertes Nicht-Ziel, zweiter Golden-Zug
+              0.9.3). V1 bewusst NICHT interaktiv (kein plan-hit-test-Eintrag,
+              keine Griffe — folgt 0.9.3 mit dem Detail-Zeichnen): gestricheltes
+              Ausschnitt-Rechteck + Name·Massstab-Etikett, pointer-events:none. */}
+          <g data-testid="plan-detail-overlay" pointerEvents="none">
+            {doc
+              .byKind<DetailMarker>('detail')
+              .filter((d) => d.storeyId === activeStoreyId)
+              .map((d) => {
+                const x0 = Math.min(d.a.x, d.b.x);
+                const x1 = Math.max(d.a.x, d.b.x);
+                const y0 = Math.min(d.a.y, d.b.y);
+                const y1 = Math.max(d.a.y, d.b.y);
+                return (
+                  <g key={d.id} data-testid="plan-detail">
+                    <rect
+                      x={x0}
+                      y={-y1}
+                      width={x1 - x0}
+                      height={y1 - y0}
+                      fill="none"
+                      stroke="var(--k-signal)"
+                      strokeWidth={BILDSCHIRM_PLAN.linieFein}
+                      strokeDasharray={dashWelt(DASH.unterzug, 100)}
+                    />
+                    <text
+                      x={x0}
+                      y={-y1 - 12 / view.scale}
+                      fontSize={11 / view.scale}
+                      fontFamily="var(--k-font-mono)"
+                      fill="var(--k-signal)"
+                    >
+                      {d.name} · 1:{d.massstab}
                     </text>
                   </g>
                 );

@@ -206,6 +206,10 @@ const ZEICHNEN: readonly IslandWerkzeug[] = [
   // (Rampe) Felder.
   werkzeug('gelaender', 'Geländer', 'zeichnen', icon(ISLAND_GLYPHEN, 'gelaender'), 'teilweise', true, { toolId: 'gelaender' }),
   werkzeug('rampe', 'Rampe', 'zeichnen', icon(ISLAND_GLYPHEN, 'rampe'), 'teilweise', true, { toolId: 'rampe' }),
+  // v0.9.2 P-D-Nachzug (Fable, docs/V092-SPEZ.md §P-D): Detail-Marker als
+  // Zwei-Punkt-Zeichenwerkzeug (echte ToolId, Klickkette in
+  // DesignWorkspace.tsx) — Gesamtstand 33 (ZEICHNEN 14).
+  werkzeug('detail', 'Detail', 'zeichnen', icon(ISLAND_GLYPHEN, 'detail'), 'teilweise', true, { toolId: 'detail' }),
 ];
 
 /** ANSICHT (6) — §3.2. */

@@ -64,16 +64,16 @@ function zaehleAkzentpunkte(html: string): number {
   return (html.match(/r="1\.13"/g) ?? []).length;
 }
 
-describe('island-glyphen: 24 Werkzeug-Icons decken exakt die Katalog-Lücke ab (inkl. skizze, PE2; v0.9.1 P-B2: + gelaender/rampe; v0.9.2 P-P2: + profil)', () => {
-  it('WERKZEUG_KATALOG hat 32 Einträge (Fundament 29 unverändert, D-Vertrag §3.1-§3.4; v0.9.1 P-B2: +gelaender/rampe, v0.9.2 P-P2: +profil)', () => {
-    expect(WERKZEUG_KATALOG).toHaveLength(32);
+describe('island-glyphen: 25 Werkzeug-Icons decken exakt die Katalog-Lücke ab (inkl. skizze, PE2; v0.9.1 P-B2: + gelaender/rampe; v0.9.2 P-P2: + profil)', () => {
+  it('WERKZEUG_KATALOG hat 33 Einträge (Fundament 29 unverändert, D-Vertrag §3.1-§3.4; v0.9.1 P-B2: +gelaender/rampe, v0.9.2 P-P2: +profil; v0.9.2 P-D-Nachzug: +detail)', () => {
+    expect(WERKZEUG_KATALOG).toHaveLength(33);
   });
 
-  it('ISLAND_GLYPHEN deckt exakt die Katalog-Ids ohne echtes werkzeug-icons.tsx-SVG ab — ALLE 32 Werkzeuge sind jetzt SVG-vollständig', () => {
+  it('ISLAND_GLYPHEN deckt exakt die Katalog-Ids ohne echtes werkzeug-icons.tsx-SVG ab — ALLE 33 Werkzeuge sind jetzt SVG-vollständig', () => {
     const erwartet = katalogIdsOhneSvg().sort();
     const tatsaechlich = Object.keys(ISLAND_GLYPHEN).sort();
     expect(tatsaechlich).toEqual(erwartet);
-    expect(tatsaechlich).toHaveLength(24);
+    expect(tatsaechlich).toHaveLength(25);
   });
 
   it('jeder ISLAND_GLYPHEN-Schlüssel ist eine echte Katalog-Id (kein Tippfehler)', () => {
@@ -89,7 +89,7 @@ describe('island-glyphen: 24 Werkzeug-Icons decken exakt die Katalog-Lücke ab (
     }
   });
 
-  it('kein Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 32 sind ComponentType)', () => {
+  it('kein Katalog-Werkzeug trägt mehr einen Text-Kürzel-Fallback als `glyphe` (alle 33 sind ComponentType)', () => {
     for (const w of WERKZEUG_KATALOG) {
       expect(typeof w.glyphe, w.id).not.toBe('string');
     }
@@ -154,7 +154,7 @@ describe('island-glyphen: 11 Pill-Icons decken alle Insel-Ids aller vier Station
   });
 });
 
-describe('island-glyphen: alle 36 Icons (24 Werkzeug + 12 Pille) — Bauvorschrift je Icon (werkzeug-icons.tsx:1-31)', () => {
+describe('island-glyphen: alle 37 Icons (25 Werkzeug + 12 Pille) — Bauvorschrift je Icon (werkzeug-icons.tsx:1-31)', () => {
   // s. Datei-Kopfkommentar: bewusst KEIN Objekt-Merge (würde die zwei
   // geteilten Schlüssel `graph`/`darstellung` stillschweigend kollabieren)
   // — stattdessen zwei präfigierte Namenslisten über eine gemeinsame Map.
@@ -163,8 +163,8 @@ describe('island-glyphen: alle 36 Icons (24 Werkzeug + 12 Pille) — Bauvorschri
   for (const [id, Icon] of Object.entries(ISLAND_PILL_GLYPHEN)) ALLE.set(`pille:${id}`, Icon);
   const NAMEN = [...ALLE.keys()];
 
-  it('insgesamt genau 36 Icons (24 Werkzeug + 12 Pille), keine Kollision beim Zählen', () => {
-    expect(NAMEN).toHaveLength(36);
+  it('insgesamt genau 37 Icons (25 Werkzeug + 12 Pille), keine Kollision beim Zählen', () => {
+    expect(NAMEN).toHaveLength(37);
   });
 
   it('jedes Icon rendert ein SVG mit viewBox 0 0 24 24, strokeWidth 1.75, runden Kappen/Joins, aria-hidden', () => {

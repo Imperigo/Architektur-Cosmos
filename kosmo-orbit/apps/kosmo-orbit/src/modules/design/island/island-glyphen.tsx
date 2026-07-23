@@ -330,7 +330,19 @@ const profil = glyphe(
   </>,
 );
 
-/** Die 24 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
+/** Detail — Ausschnitt-Rechteck mit Lupen-Kreis über der Ecke (Muster
+ *  `DetailMarker`-Rechteck a/b + Vergrösserungs-Gedanke 1:n), Akzent im
+ *  Lupenzentrum (v0.9.2 P-D-Nachzug, `docs/V092-SPEZ.md` §P-D). */
+const detail = glyphe(
+  <>
+    <path d="M4 8 H14 V18 H4 Z" strokeDasharray="2.5 2" />
+    <circle cx={16.5} cy={7.5} r={4.5} fill="none" />
+    <path d="M19.8 10.8 L22 13" />
+    {akzent(16.5, 7.5)}
+  </>,
+);
+
+/** Die 25 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
 export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   oeffnung,
   messen,
@@ -356,6 +368,7 @@ export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   gelaender,
   rampe,
   profil,
+  detail,
 };
 
 // ── 4 Island-Pill-Icons ────────────────────────────────────────────────

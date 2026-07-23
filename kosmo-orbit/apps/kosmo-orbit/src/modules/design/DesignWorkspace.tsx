@@ -46,6 +46,9 @@ import {
   // unten) — der Kernel kennt keinen Endpunkt-/Eckpunkt-Weg über
   // `design.eigenschaftSetzen` (`editableFields`, `commands/design.ts`).
   type MassBody,
+  // v0.9.2 P-D-Nachzug: Detail-Zwei-Punkt braucht den Typ nur für die
+  // ehrliche «Detail N»-Namensvergabe (byKind-Zählung in `punktSetzen`).
+  type DetailMarker,
   // E5 (v0.8.6 PB3, docs/V086-SPEZ.md §3): Öffnungs-Griff — `onGriffEnd`
   // braucht den vollen Typ, um Wirtswand + Breite fürs Clamp zu lesen.
   type Opening,
@@ -61,7 +64,7 @@ import {
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { verarbeiteUnternehmerplanDatei, useUnternehmerplan } from './unternehmerplan';
 import { VERSCHIEBBAR, istGesperrt, wandTreffer } from './plan-hit-test';
-import { gelaenderVorgabeLesen, oeffnungVorgabeLesen, rampeVorgabeLesen } from './island/inhalte/zeichnen';
+import { detailVorgabeLesen, gelaenderVorgabeLesen, oeffnungVorgabeLesen, rampeVorgabeLesen } from './island/inhalte/zeichnen';
 import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
@@ -200,7 +203,7 @@ import {
 // 'kommentar' ergänzt — 1:1 dieselbe Erweiterung wie `state/ui-zustand.ts`s
 // `ToolId` (TOOL_IDS 10→13), hier lokal dupliziert (Bestand vor diesem
 // Paket, keine Import-Umstellung in diesem additiven Auftrag).
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh' | 'oeffnung' | 'messen' | 'kommentar' | 'gelaender' | 'rampe';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh' | 'oeffnung' | 'messen' | 'kommentar' | 'gelaender' | 'rampe' | 'detail';
 
 // K16 A6: dasselbe Lernjournal wie `KosmoPanel.tsx` (👍/👎) — EIN Store
 // (`journalStore()`), eine Modul-Instanz. Loggt hier ausschliesslich, welche
@@ -347,6 +350,8 @@ const WERKZEUG_KURZLABEL: Record<ToolId, string> = {
   // v0.9.1 P-B1 (docs/V091-SPEZ.md §P-B1): additive Zeilen, 13→15.
   gelaender: 'Geländer',
   rampe: 'Rampe',
+  // v0.9.2 P-D-Nachzug (docs/V092-SPEZ.md §P-D): additive Zeile, 15→16.
+  detail: 'Detail',
   kommentar: 'Kommentar',
 };
 
@@ -1669,6 +1674,32 @@ export function DesignWorkspace({
               width: vorgabe.width,
               hoehenDelta: vorgabe.hoehenDelta,
               ...(vorgabe.podestLaenge ? { podestLaenge: vorgabe.podestLaenge } : {}),
+            });
+          } catch (err) {
+            meldeFehler(err);
+          }
+          setPoints([]);
+        }
+      } else if (tool === 'detail') {
+        // v0.9.2 P-D-Nachzug (Fable, Cluster B — docs/V092-SPEZ.md §P-D):
+        // Zwei-Punkt nach dem Rampen-Muster direkt darüber — erster Klick
+        // erste Ecke, zweiter Klick Gegenecke des Ausschnitt-Rechtecks.
+        // Massstab kommt aus der ZEICHNEN-Insel-Vorgabe (`detailVorgabeLesen`),
+        // der Name wird ehrlich fortlaufend vergeben («Detail N» — editierbar
+        // über design.eigenschaftSetzen, UI dafür folgt 0.9.3). Entartete
+        // Rechtecke lehnt der Kernel ab (CommandError → Toast).
+        if (points.length === 0) {
+          setPoints([p]);
+        } else {
+          const vorgabe = detailVorgabeLesen();
+          const anzahl = doc.byKind<DetailMarker>('detail').length;
+          try {
+            runCommand('design.detailErstellen', {
+              storeyId: activeStoreyId,
+              a: points[0]!,
+              b: p,
+              massstab: vorgabe.massstab,
+              name: `Detail ${anzahl + 1}`,
             });
           } catch (err) {
             meldeFehler(err);

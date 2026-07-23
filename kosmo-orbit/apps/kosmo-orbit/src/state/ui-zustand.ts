@@ -67,10 +67,14 @@ export type ToolId =
   | 'messen'
   | 'kommentar'
   | 'gelaender'
-  | 'rampe';
+  | 'rampe'
+  // v0.9.2 P-D-Nachzug (Fable, Cluster B — docs/V092-SPEZ.md §P-D): Detail-
+  // Marker-Aufziehen als Zwei-Punkt-Werkzeug (Muster Rampe), 15 → 16;
+  // synchron mit DesignWorkspace.tsx' lokaler ToolId-Kopie.
+  | 'detail';
 
 /** Für Validierung (`ui-befehle.ts` `ui.werkzeugSetzen`) — 1:1 aus `ToolId`. */
-export const TOOL_IDS: readonly ToolId[] = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'schnitt', 'skizze', 'mesh', 'oeffnung', 'messen', 'kommentar', 'gelaender', 'rampe'];
+export const TOOL_IDS: readonly ToolId[] = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'schnitt', 'skizze', 'mesh', 'oeffnung', 'messen', 'kommentar', 'gelaender', 'rampe', 'detail'];
 
 export type ViewMode = '3d' | '2d' | 'split' | 'quad';
 

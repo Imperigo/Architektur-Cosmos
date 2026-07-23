@@ -19,7 +19,7 @@ import { useProject } from '../src/state/project-store';
  * reiner Toggle — s. `island-katalog.ts`-Kopfkommentar): 16 Ids mussten
  * Stufe2 UND Stufe3 registriert haben. v0.9.1 P-B2 (`docs/V091-SPEZ.md`
  * §P-B2) hängt additiv zwei weitere ZEICHNEN-Ids an (`gelaender`/`rampe`,
- * beide mit Stufe2+Stufe3 registriert) — jetzt 18 Ids. Zusätzlich ein
+ * beide mit Stufe2+Stufe3 registriert) — jetzt 19 Ids. Zusätzlich ein
  * Rendering-Smoke-Test je Datei und ein «echte Wirkung»-Beweis am
  * Referenzmuster Wand (Command→Patch, kein Mock).
  */
@@ -38,9 +38,10 @@ const ZEICHNEN_IDS = [
   'messen',
   'gelaender',
   'rampe',
+  'detail',
 ];
 const ANSICHT_IDS_OHNE_ACHSEN = ['darstellung', 'sonne', 'ebenen', 'trace', 'graph'];
-const ALLE_18 = [...ZEICHNEN_IDS, ...ANSICHT_IDS_OHNE_ACHSEN];
+const ALLE_19 = [...ZEICHNEN_IDS, ...ANSICHT_IDS_OHNE_ACHSEN];
 
 let container: HTMLDivElement | null = null;
 let root: Root | null = null;
@@ -67,18 +68,18 @@ afterEach(() => {
   }
 });
 
-describe('Registry — 18/19 ZEICHNEN+ANSICHT-Ids (Achsen ausgenommen; v0.9.1 P-B2: 16→18), je Stufe2+Stufe3', () => {
-  it('registrierteWerkzeugIds() enthält genau die 18 erwarteten Ids', () => {
+describe('Registry — 19/20 ZEICHNEN+ANSICHT-Ids (Achsen ausgenommen; v0.9.1 P-B2: 16→18, v0.9.2 P-D-Nachzug: 18→19), je Stufe2+Stufe3', () => {
+  it('registrierteWerkzeugIds() enthält genau die 19 erwarteten Ids', () => {
     const ids = registrierteWerkzeugIds();
-    expect(ids.sort()).toEqual([...ALLE_18].sort());
-    expect(ids).toHaveLength(18);
+    expect(ids.sort()).toEqual([...ALLE_19].sort());
+    expect(ids).toHaveLength(19);
   });
 
   it('registrierteWerkzeugIds() enthält NICHT «achsen» (hatPopup:false, reiner Toggle)', () => {
     expect(registrierteWerkzeugIds()).not.toContain('achsen');
   });
 
-  it.each(ALLE_18)('%s hat Stufe2 UND Stufe3 registriert (hartes Gate C-38)', (id) => {
+  it.each(ALLE_19)('%s hat Stufe2 UND Stufe3 registriert (hartes Gate C-38)', (id) => {
     const inhalt = inhaltFuer(id);
     expect(inhalt).toBeDefined();
     expect(inhalt!.Stufe2).toBeTypeOf('function');

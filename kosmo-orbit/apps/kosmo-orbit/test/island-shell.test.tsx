@@ -15,7 +15,7 @@ import { setTouchUndoGesteEingestellt } from '../src/state/touch-undo';
  * 1000ms-Rückklapp-Timer (PB2, v0.8.4, Owner: «nach 1s» — war 900ms bis
  * v0.8.3), die Toast-Regel für Werkzeuge ohne Popup, der
  * Katalog (ursprünglich 29/29, 11/6/6/6; v0.9.1 P-B2: 31/31, 13/6/6/6; v0.9.2
- * P-P2: 32/32, 13/6/7/6 — s. `describe`-Block unten) und beide Farbwelten
+ * P-P2+P-D: 33/33, 14/6/7/6 — s. `describe`-Block unten) und beide Farbwelten
  * (PAPIER/`orbit`).
  *
  * Rendert über einen echten `createRoot` (Muster `schwarm-orbs.test.tsx`/
@@ -83,13 +83,13 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('Island-Katalog (§3, ursprünglich 29/29; v0.9.1 P-B2 hängt gelaender/rampe additiv ans Ende von ZEICHNEN — 31/31; v0.9.2 P-P2 hängt profil additiv ans Ende von PROJEKT — 32/32)', () => {
-  it('zählt 13 ZEICHNEN / 6 ANSICHT / 7 PROJEKT / 6 AUSTAUSCH — Gesamt 32', () => {
-    expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(13);
+describe('Island-Katalog (§3, ursprünglich 29/29; v0.9.1 P-B2 hängt gelaender/rampe additiv ans Ende von ZEICHNEN — 31/31; v0.9.2 P-P2 hängt profil additiv ans Ende von PROJEKT, der P-D-Nachzug detail ans Ende von ZEICHNEN — 33/33)', () => {
+  it('zählt 14 ZEICHNEN / 6 ANSICHT / 7 PROJEKT / 6 AUSTAUSCH — Gesamt 33', () => {
+    expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(14);
     expect(werkzeugeFuerIsland('ansicht')).toHaveLength(6);
     expect(werkzeugeFuerIsland('projekt')).toHaveLength(7);
     expect(werkzeugeFuerIsland('austausch')).toHaveLength(6);
-    expect(WERKZEUG_KATALOG).toHaveLength(32);
+    expect(WERKZEUG_KATALOG).toHaveLength(33);
   });
 
   it('jede Id ist eindeutig (keine doppelten Werkzeuge über die vier Islands hinweg)', () => {

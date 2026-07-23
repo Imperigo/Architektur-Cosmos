@@ -1707,7 +1707,77 @@ function RampeStufe3() {
 }
 
 // ---------------------------------------------------------------------------
-// Registrierung — 13/13 ZEICHNEN-Werkzeuge (keine hatPopup-Ausnahme in dieser
+// Detail-Marker (v0.9.2 P-D-Nachzug, docs/V092-SPEZ.md §P-D) — Vorgabe für
+// den Zwei-Punkt-Modus (Muster Rampe oben): nur der Massstab-Nenner; der
+// Name wird beim Commit ehrlich fortlaufend vergeben («Detail N»,
+// DesignWorkspace.tsx `punktSetzen`). Editieren bestehender Marker
+// (name/massstab via design.eigenschaftSetzen) bekommt seine UI mit dem
+// Detail-Zeichnen in 0.9.3 — hier keine Attrappe.
+// ---------------------------------------------------------------------------
+
+interface DetailVorgabe {
+  massstab: number;
+}
+
+let detailVorgabe: DetailVorgabe = { massstab: 5 };
+
+/** Lese-Zugriff für den Detail-Zwei-Punkt-Commit — Muster `rampeVorgabeLesen()`. */
+export function detailVorgabeLesen(): DetailVorgabe {
+  return detailVorgabe;
+}
+
+function useDetailVorgabe(): readonly [DetailVorgabe, (patch: Partial<DetailVorgabe>) => void] {
+  const [zustand, setZustandRoh] = useState(detailVorgabe);
+  const setZustand = (patch: Partial<DetailVorgabe>) => {
+    const naechster = { ...zustand, ...patch };
+    detailVorgabe = naechster;
+    setZustandRoh(naechster);
+  };
+  return [zustand, setZustand] as const;
+}
+
+function DetailVorgabeFelder({ testidPrefix }: { testidPrefix: string }) {
+  const [vorgabe, setVorgabe] = useDetailVorgabe();
+  return (
+    <>
+      <Zeile label="Massstab 1:n (Nenner, > 0)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={1}
+          data-testid={`${testidPrefix}-massstab`}
+          value={vorgabe.massstab}
+          onChange={(e) => setVorgabe({ massstab: Number(e.target.value) || 5 })}
+        />
+      </Zeile>
+      <Hinweis testid={`${testidPrefix}-hinweis`}>
+        Zwei Klicks im Plan spannen das Ausschnitt-Rechteck auf («Detail N», Massstab aus dieser
+        Vorgabe). Die read-only-Voransicht liegt in KosmoPublish (Detail-Karte); Zeichnen IM
+        Detail und das Marker-Symbol im Druck folgen 0.9.3.
+      </Hinweis>
+    </>
+  );
+}
+
+function DetailStufe2() {
+  return (
+    <div className="pd3a-stufe2" data-testid="island-detail-stufe2" onClick={(e) => e.stopPropagation()}>
+      <DetailVorgabeFelder testidPrefix="island-detail-vorgabe" />
+    </div>
+  );
+}
+
+function DetailStufe3() {
+  return (
+    <div className="pd3a-stufe3" data-testid="island-detail-stufe3">
+      <DetailVorgabeFelder testidPrefix="island-detail-fenster" />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Registrierung — 14/14 ZEICHNEN-Werkzeuge (keine hatPopup-Ausnahme in dieser
 // Insel, s. `island-katalog.ts`).
 // ---------------------------------------------------------------------------
 
@@ -1724,3 +1794,4 @@ registriereInhalt('mesh', { Stufe2: MeshStufe2, Stufe3: MeshStufe3 });
 registriereInhalt('messen', { Stufe2: MessenStufe2, Stufe3: MessenStufe3 });
 registriereInhalt('gelaender', { Stufe2: GelaenderStufe2, Stufe3: GelaenderStufe3 });
 registriereInhalt('rampe', { Stufe2: RampeStufe2, Stufe3: RampeStufe3 });
+registriereInhalt('detail', { Stufe2: DetailStufe2, Stufe3: DetailStufe3 });
