@@ -181,6 +181,22 @@ function zoomTextFs(fsWelt: number, scale: number): number {
   return fsWelt;
 }
 
+/** v0.9.2 Owner-Feedback 23.07. («raumstempel beschriftungen sind wenn man
+ *  raus zoomt überlagernd … sie sind gefixte grössen je nach mst. also beim
+ *  rauszoome sieht man die nicht mehr»): Für RAUMSTEMPEL/Etiketten wird die
+ *  untere Klammer NICHT mehr als Vergrösserung angewandt — genau die blies
+ *  die Welt-Schrift beim Rauszoomen auf (MIN_PX/scale wächst mit fallendem
+ *  scale) und stapelte die Stempel übereinander (Owner-Screenshot). Neu:
+ *  unterhalb der 1.8-mm-Lesegrenze wird das Label AUSGEBLENDET (null) —
+ *  das erfüllt beide Owner-Regeln zugleich (nie unleserlich klein, nie
+ *  überlagernd). Die obere 5-mm-Klammer bleibt (Reinzoomen). Bemassungen
+ *  behalten bewusst die volle E-K27a-Klammer + Verdichtung (eigener,
+ *  spec-geprüfter Vertrag `e2e/zoom-text.spec.ts`). */
+function zoomTextFsOderAus(fsWelt: number, scale: number): number | null {
+  if (fsWelt * scale < ZOOMTEXT_MIN_PX) return null;
+  return zoomTextFs(fsWelt, scale);
+}
+
 export function PlanView({
   handlers,
   onLod,
@@ -1465,6 +1481,7 @@ export function PlanView({
                 />
               ))}
               {unternehmerDxf.texte.map((t, i) => (
+                zoomTextFsOderAus(220, view.scale) === null ? null : (
                 <text
                   key={`ut${i}`}
                   x={t.at.x}
@@ -1476,6 +1493,7 @@ export function PlanView({
                 >
                   {t.text}
                 </text>
+                )
               ))}
             </g>
           )}
@@ -1952,20 +1970,26 @@ export function PlanView({
               LOD «fern»: keine Texte (Owner-Auflage, Schrift matscht zuerst) */}
           <g data-testid="plan-texte" style={{ display: lod === 'fern' ? 'none' : undefined }}>
           {plan &&
-            plan.texte.map((t, i) => (
-              <text
-                key={`t${i}`}
-                className={t.classes.join(' ')}
-                x={t.at.x}
-                y={-t.at.y + (t.zeile ?? 0) * 300}
-                textAnchor="middle"
-                fontSize={zoomTextFs(220, view.scale)}
-                fontFamily="ui-monospace, monospace"
-                fill="var(--k-ink)"
-              >
-                {t.text}
-              </text>
-            ))}
+            plan.texte.map((t, i) => {
+              // v0.9.2 Owner-Feedback: unter der Lesegrenze ausblenden statt
+              // aufblasen (Raumstempel-Überlagerung beim Rauszoomen).
+              const fs = zoomTextFsOderAus(220, view.scale);
+              if (fs === null) return null;
+              return (
+                <text
+                  key={`t${i}`}
+                  className={t.classes.join(' ')}
+                  x={t.at.x}
+                  y={-t.at.y + (t.zeile ?? 0) * 300}
+                  textAnchor="middle"
+                  fontSize={fs}
+                  fontFamily="ui-monospace, monospace"
+                  fill="var(--k-ink)"
+                >
+                  {t.text}
+                </text>
+              );
+            })}
           </g>
 
           {/* Stützenraster: Achsen strichpunktiert + Achskopf an beiden Enden.
@@ -1992,6 +2016,9 @@ export function PlanView({
                     [ax.a, ax.b].map((p, k) => (
                       <g key={k}>
                         <circle cx={p.x} cy={-p.y} r={280} fill="var(--k-surface)" stroke="var(--k-ink-soft)" strokeWidth={9} />
+                        {/* v0.9.2: Achskopf-Text unter Lesegrenze ausblenden
+                            (Kreis schrumpft welt-fix mit — kein Aufblasen). */}
+                        {zoomTextFsOderAus(300, view.scale) !== null && (
                         <text
                           x={p.x}
                           y={-p.y + 100}
@@ -2002,6 +2029,7 @@ export function PlanView({
                         >
                           {ax.label}
                         </text>
+                        )}
                       </g>
                     ))}
                 </g>
