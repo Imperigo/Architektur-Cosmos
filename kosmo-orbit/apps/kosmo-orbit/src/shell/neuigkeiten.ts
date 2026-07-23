@@ -35,6 +35,21 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.9.1',
+    datum: '2026-07-23',
+    punkte: [
+      { text: 'Geländer als echtes Werkzeug: Klickkette im Plan (Doppelklick/Enter/Esc schliesst ab), Höhe 700–1500 mm mit ehrlicher SIA-Ablehnung statt stiller Korrektur, Arten Staketen/Handlauf/Voll, Pfosten an jedem Knick, 3D mit Pfosten und Handlauf-Band.', station: 'design' },
+      { text: 'Rampe als echtes Werkzeug: zwei Klicks Fuss→Kopf, Steigung immer live aus den Rohwerten; über 6 % kommt der ehrliche Hinweis «nicht hindernisfrei (SIA 500)», über 15 % lehnt der Kern ab (Tiefgaragen-Grenze) — auch beim Nachziehen am Griff.', station: 'design' },
+      { text: 'Geländer und Rampe im gedruckten Plan (der eine Golden-Zug dieser Version): Polylinie mit Pfosten-Strichen bzw. Kontur mit Lauflinie, bergauf-Pfeil und %-Angabe — alle 40 Bestands-Referenzpläne blieben byte-identisch.', station: 'design' },
+      { text: 'Beide Werkzeuge in der ZEICHNEN-Insel (13 Werkzeuge) mit Mini-Popups und Inspector-Feldern; die Rampe zeigt dort ehrlich nur an, was der Kern heute editieren kann.', station: 'design' },
+      { text: '«Mit Claude-Abo anmelden» repariert: Die App suchte eine CLI namens «ant», die es nicht gibt — jetzt nutzt sie die echte claude-CLI, der Klick öffnet das Anmelde-Fenster im Browser (Desktop-App).' },
+      { text: 'Kosmo-Zeiger in Windows-Schräge (linke Kante senkrecht), minimale Klick-Reaktion statt Gummi-Bounce, und spürbar flüssiger: keine Dauer-Rechenschleife mehr, Positions-Update direkt im Mausereignis.' },
+      { text: 'UI-Beschnitt-Audit nach Owner-Screenshots: Die Kosmo-Einstellungen ragten 49 px über den Fensterrand («Clou…») — gefixt; eine neue Beschnitt-Sonde prüft alle Stationen automatisch auf abgeschnittene Inhalte.' },
+      { text: 'Die drei Standard-Dienstadressen (Ollama/Bridge/Sync) leben jetzt genau einmal im Code statt als 14 verstreute Kopien — ein Port-Wechsel kann keine Stelle mehr vergessen.' },
+      { text: 'KosmoTrain-Ingest (IDC/ETH-Auswertung) bewusst verschoben: der Home-PC-Worker-Bericht ist noch nicht eingetroffen — deklarierter Entfall nach Spez, kein stiller Ausfall.' },
+    ],
+  },
+  {
     version: '0.9.0',
     datum: '2026-07-22',
     punkte: [
