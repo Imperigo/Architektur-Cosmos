@@ -1,5 +1,5 @@
 import earcut from 'earcut';
-import type { Pt } from '../model/units';
+import { polygonArea, type Pt } from '../model/units';
 
 /**
  * Mesh-Bausteine — transferable typed arrays, KEIN three.js-Import im Kern.
@@ -57,16 +57,35 @@ class MeshBuilder {
  * Alle Koordinaten in mm; y-Weltachse des Plans wird zur -z-Achse des 3D
  * NICHT hier gemappt — der Kern bleibt in (x, y, zHöhe); das Mapping in die
  * three.js-Konvention (y-up) macht der Viewport.
+ *
+ * P-F7 (Geometrie-Grundaudit 3D, Owner-Befund 23.07. «volumenwerkzeug … innen
+ * hohl») — Wurzelursache: `outline`/`holes` kommen bei `design.volumenErstellen`
+ * und `design.deckeZeichnen` UNGEPRÜFT vom Aufrufer (anders als z.B.
+ * `deriveKnotenstuecke`/die Fenster-Ableitungen in scene.ts, die ihr Polygon
+ * selbst auf CCW zwingen). Die Seitenflächen-Normale unten (`nx = dy/len,
+ * ny = -dx/len`) ist NUR für eine CCW-gewickelte `ring` korrekt auswärts
+ * gerichtet — bei CW-Eingabe (vom Harnisch `test/geometrie-invarianten.test.ts`
+ * nachgewiesen: Dreiecke 4–11, alle vier Seitenwände) zeigt sie einwärts,
+ * während earcut die Deckel-Dreiecke selbst re-kanonisiert (linkedList()
+ * erzwingt intern eine feste Richtung, s. `node_modules/earcut/src/earcut.js`)
+ * und darum unauffällig bleibt — nur die Seiten kippen, das erzeugt genau das
+ * «von aussen hohl, Deckel/Boden sichtbar»-Bild. Fix am selben Ort wie
+ * `prismaMesh` (`derive/mesh-topo.ts`, Kommentar «ein CW-Polygon wird intern
+ * zu CCW gedreht») — hier zusätzlich für jedes Loch (Löcher müssen der
+ * AUSSENKONTUR entgegengesetzt gewickelt sein, sonst zeigt die Schacht-Wand
+ * des Lochs ebenfalls falsch).
  */
 export function extrudePolygon(
   entityId: string,
   materialKey: string,
-  outline: readonly Pt[],
-  holes: readonly (readonly Pt[])[],
+  outlineIn: readonly Pt[],
+  holesIn: readonly (readonly Pt[])[],
   z0: number,
   z1: number,
 ): GeometryArtifact {
   const b = new MeshBuilder();
+  const outline = polygonArea(outlineIn as Pt[]) >= 0 ? outlineIn : [...outlineIn].reverse();
+  const holes = holesIn.map((h) => (polygonArea(h as Pt[]) <= 0 ? h : [...h].reverse()));
   // Earcut-Eingabe: flaches Array + Lochindizes
   const flat: number[] = [];
   for (const p of outline) flat.push(p.x, p.y);

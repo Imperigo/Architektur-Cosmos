@@ -1024,7 +1024,19 @@ function deriveSatteldach(
     let nz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
     const nl = Math.hypot(nx, ny, nz) || 1;
     nx /= nl; ny /= nl; nz /= nl;
-    if (nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
+    // P-F7-Fix: die Wicklungswahl unten MUSS am ursprünglichen Vorzeichen von
+    // `nz` hängen — vorher wurde geprüft, ob das bereits auf "nach oben"
+    // KORRIGIERTE `nz` (s. Zeile darunter) ≥ 0 ist, was nach der Korrektur
+    // IMMER zutrifft (die Korrektur erzwingt genau das) und die
+    // `else`-Wicklung damit zu totem Code machte. Für eine CW-gewickelte
+    // `ring` (Owner-Verdacht «Grundproblem», nachgewiesen für form «sattel»
+    // in `test/geometrie-invarianten.test.ts`, Dreiecke 0–3 vor dem Fix)
+    // zeigte die gespeicherte Normale darum nach oben, während die
+    // tatsächliche, aus der (unveränderten) Vertex-Reihenfolge folgende
+    // Dreiecksnormale nach unten zeigte — derselbe Fehlerklasse wie der
+    // Rampen-Bug (ROADMAP 634).
+    const zeigteUrspruenglichNachUnten = nz < 0;
+    if (zeigteUrspruenglichNachUnten) { nx = -nx; ny = -ny; nz = -nz; }
     const base = pos.length / 3;
     for (const q of ring) {
       const [x, y, z] = P(q);
@@ -1032,7 +1044,7 @@ function deriveSatteldach(
       nor.push(nx, ny, nz);
     }
     for (let i = 1; i < ring.length - 1; i++) {
-      if (nz >= 0) idx.push(base, base + i, base + i + 1);
+      if (!zeigteUrspruenglichNachUnten) idx.push(base, base + i, base + i + 1);
       else idx.push(base, base + i + 1, base + i);
     }
     // Traufe + Ortgang (First-First-Kanten separat, einmal, unten)
@@ -1103,7 +1115,15 @@ function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
     let nz = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
     const nl = Math.hypot(nx, ny, nz) || 1;
     nx /= nl; ny /= nl; nz /= nl;
-    if (nz < 0) { nx = -nx; ny = -ny; nz = -nz; }
+    // P-F7-Fix (dieselbe Korrektur wie deriveSatteldach oben, gleicher
+    // Fehlerklasse): Wicklungswahl am URSPRÜNGLICHEN nz-Vorzeichen, nicht am
+    // schon korrigierten. Aktuell folgenlos, weil `convexSkeleton` seine
+    // `ring`s bereits CCW erzwingt («CCW erzwingen», geometry/skeleton.ts) —
+    // der `else`-Zweig war darum bisher toter Code, kein beobachtbarer Bug;
+    // hier trotzdem behoben, damit die Funktion für sich genommen korrekt
+    // ist und nicht nur durch eine Zusicherung der aufrufenden Funktion.
+    const zeigteUrspruenglichNachUnten = nz < 0;
+    if (zeigteUrspruenglichNachUnten) { nx = -nx; ny = -ny; nz = -nz; }
     const base = pos.length / 3;
     for (const q of ring) {
       const [x, y, z] = P(q);
@@ -1112,7 +1132,7 @@ function deriveRoof(doc: KosmoDoc, roof: Roof): GeometryArtifact | null {
     }
     // Fächer-Triangulation (Faces sind monoton/konvex genug)
     for (let i = 1; i < ring.length - 1; i++) {
-      if (nz >= 0) idx.push(base, base + i, base + i + 1);
+      if (!zeigteUrspruenglichNachUnten) idx.push(base, base + i, base + i + 1);
       else idx.push(base, base + i + 1, base + i);
     }
     // Traufkante (beide o≈0) und Grat (Traufe→First) als Linien;
@@ -1191,6 +1211,23 @@ function deriveStair(doc: KosmoDoc, stair: Stair): GeometryArtifact | null {
       // Wangen (Seiten)
       quad(P(s0, half, zb), P(s0, half, zt), P(s1, half, zt), P(s1, half, zb), n.x, n.y, 0);
       quad(P(s1, -half, zb), P(s1, -half, zt), P(s0, -half, zt), P(s0, -half, zb), -n.x, -n.y, 0);
+      // Sohle + Rückseite (P-F7-Fix, «fehlende Flächen»): jede Stufe war bis
+      // hierhin nach unten UND an ihrem hinteren Ende (s1) offen — kein
+      // Boden unter dem Tritt, keine Wange schliesst die Stufe zur nächsten
+      // hin ab. Geschlossenheits-Invariante (test/geometrie-invarianten.
+      // test.ts) fand genau das: jede Stufenkante mit Zähler 1 statt 2 —
+      // dieselbe «innen hohl»-Fehlerklasse wie beim Volumenkörper, hier als
+      // fehlende statt falsch gewickelte Fläche. Sohle spiegelt die
+      // Trittfläche (gleiche vier Punkte, umgekehrte Reihenfolge — die
+      // Normale zeigt dadurch nach unten statt oben, Muster wie der
+      // Rampen-Fix oben); Rückseite ist exakt das Stirnseite-Muster der
+      // Rampe (bereits wicklungskonsistent), nur auf s1/zb/zt der Stufe
+      // übertragen. Jede Stufe wird damit ein vollständig geschlossener
+      // Quader; anschliessende Stufen teilen sich Kanten, bilden aber
+      // zusammen weiterhin ein lückenloses Volumen (keine Golden-Wirkung:
+      // kein Golden-Fixture nutzt eine Treppe, s. Auditbericht).
+      quad(P(s1, half, zb), P(s1, -half, zb), P(s0, -half, zb), P(s0, half, zb), 0, 0, -1);
+      quad(P(s1, half, zb), P(s1, half, zt), P(s1, -half, zt), P(s1, -half, zb), d.x, d.y, 0);
       // Trittkante
       edges.push(...P(s0, half, zt), ...P(s0, -half, zt));
     }
@@ -1306,13 +1343,19 @@ function deriveRamp(doc: KosmoDoc, ramp: Rampe): GeometryArtifact | null {
   // umgekehrte Wicklung hier macht die tatsächliche Dreiecksnormale wieder
   // deckungsgleich mit der schon korrekten `(dnx,dny,dnz)`.
   quad(P(0, half, z0), P(0, -half, z0), P(laenge, -half, z1), P(laenge, half, z1), dnx, dny, dnz);
-  // Unterseite, eben auf Geschossniveau
-  quad(P(0, half, z0), P(0, -half, z0), P(laenge, -half, z0), P(laenge, half, z0), 0, 0, -1);
+  // Unterseite, eben auf Geschossniveau (P-F7-Fix: Wicklung war der
+  // Lauffläche entgegengesetzt gewickelt — dieselbe P0,P3,P2,P1-Drehung wie
+  // beim P-F5-Fix oben, nur für die abwärts gerichtete Normale; nachgewiesen
+  // durch `test/geometrie-invarianten.test.ts`, Dreiecke 2/3 vor dem Fix).
+  quad(P(0, half, z0), P(laenge, half, z0), P(laenge, -half, z0), P(0, -half, z0), 0, 0, -1);
   // Stirnseite am Kopfende (b), senkrecht
   quad(P(laenge, half, z0), P(laenge, half, z1), P(laenge, -half, z1), P(laenge, -half, z0), d.x, d.y, 0);
-  // Wangen (Seiten) — Dreiecke: die Rampe beginnt am Fusspunkt (a) auf Bodenniveau
-  tri(P(0, half, z0), P(laenge, half, z0), P(laenge, half, z1), n.x, n.y, 0);
-  tri(P(0, -half, z0), P(laenge, -half, z1), P(laenge, -half, z0), -n.x, -n.y, 0);
+  // Wangen (Seiten) — Dreiecke: die Rampe beginnt am Fusspunkt (a) auf
+  // Bodenniveau. P-F7-Fix: beide Wangen waren wicklungsinvertiert (letzte
+  // zwei Punkte vertauscht behebt es, Muster wie oben) — nachgewiesen durch
+  // denselben Harnisch (Dreiecke 6/7 vor dem Fix).
+  tri(P(0, half, z0), P(laenge, half, z1), P(laenge, half, z0), n.x, n.y, 0);
+  tri(P(0, -half, z0), P(laenge, -half, z0), P(laenge, -half, z1), -n.x, -n.y, 0);
 
   // Sichtlinien: geneigte Deckkanten + Stirnkante oben
   edges.push(...P(0, half, z0), ...P(laenge, half, z1));
