@@ -190,6 +190,10 @@ test.describe('P8 — Island-Popup-Bounding-Box-Sweep (§10.1, docs/V083-SPEZ.md
     'skizze',
     'mesh',
     'messen',
+    // v0.9.1 P-B2 (docs/V091-SPEZ.md §P-B2): additiv ans Ende gehängt —
+    // dieselbe Reihenfolge wie `island-katalog.ts`s ZEICHNEN-Array.
+    'gelaender',
+    'rampe',
   ].map((id) => ({ island: 'zeichnen' as const, id, hatPopup: true }));
 
   const ANSICHT: readonly KatalogEintrag[] = [
@@ -216,10 +220,10 @@ test.describe('P8 — Island-Popup-Bounding-Box-Sweep (§10.1, docs/V083-SPEZ.md
 
   const GESAMTKATALOG: readonly KatalogEintrag[] = [...ZEICHNEN, ...ANSICHT, ...PROJEKT, ...AUSTAUSCH];
 
-  test('Bounding-Box-Sweep — 29/29 Werkzeuge, kein Popup/Fenster verlässt den 1024×768-Viewport', async ({
+  test('Bounding-Box-Sweep — 31/31 Werkzeuge (v0.9.1 P-B2: 29→31), kein Popup/Fenster verlässt den 1024×768-Viewport', async ({
     page,
   }) => {
-    expect(GESAMTKATALOG, 'Katalog muss exakt 29 Einträge haben (§14 Beleg 13)').toHaveLength(29);
+    expect(GESAMTKATALOG, 'Katalog muss exakt 31 Einträge haben (ursprünglich 29, §14 Beleg 13; v0.9.1 P-B2 hängt gelaender/rampe additiv an ZEICHNEN)').toHaveLength(31);
     expect(GESAMTKATALOG[GESAMTKATALOG.length - 1]!.id).toBe('manuell');
 
     await ueberspringeOnboarding(page);
@@ -262,26 +266,27 @@ test.describe('P8 — Island-Popup-Bounding-Box-Sweep (§10.1, docs/V083-SPEZ.md
       geprueft.push(`${island}/${id} (Popup+Fenster innerhalb 1024×768)`);
     }
 
-    expect(geprueft).toHaveLength(29);
+    expect(geprueft).toHaveLength(31);
   });
 
-  test('Bounding-Box-Einzelbeweis — hohe ZEICHNEN-Insel (11 Werkzeuge, §10.1-Fund ROADMAP 427)', async ({ page }) => {
+  test('Bounding-Box-Einzelbeweis — hohe ZEICHNEN-Insel (13 Werkzeuge, §10.1-Fund ROADMAP 427; v0.9.1 P-B2: 11→13)', async ({ page }) => {
     await ueberspringeOnboarding(page);
     await page.click('[data-testid="module-design"]');
     await oeffneInsel(page, 'zeichnen');
 
-    // «Messen» ist das LETZTE der 11 ZEICHNEN-Werkzeuge (island-katalog.ts) —
-    // die Leiste ist an diesem Punkt komplett aufgefächert (voller Katalog),
-    // exakt der Fall aus ROADMAP 427 («Popup-Position der hohen ZEICHNEN-
-    // Insel nahe der Statusleiste»).
-    const knopf = page.locator('[data-testid="island-werkzeug-messen"]');
+    // «Rampe» ist jetzt das LETZTE der 13 ZEICHNEN-Werkzeuge (island-
+    // katalog.ts, v0.9.1 P-B2 hängt gelaender/rampe additiv hinter Messen
+    // an) — die Leiste ist an diesem Punkt komplett aufgefächert (voller
+    // Katalog), exakt der Fall aus ROADMAP 427 («Popup-Position der hohen
+    // ZEICHNEN-Insel nahe der Statusleiste»).
+    const knopf = page.locator('[data-testid="island-werkzeug-rampe"]');
     await knopf.click();
-    const fenster = page.locator('[data-testid="island-messen-fenster"]');
+    const fenster = page.locator('[data-testid="island-rampe-fenster"]');
     await knopf.click();
     await expect(fenster).toBeVisible();
     pruefeInnerhalbViewport(
       await fenster.boundingBox(),
-      'zeichnen/messen Fenster (elftes Werkzeug, volle Leistenhöhe)',
+      'zeichnen/rampe Fenster (13. Werkzeug, volle Leistenhöhe)',
     );
     await page.screenshot({ path: 'test-results/p8-083-zeichnen-hoch-geklammert.png' });
   });

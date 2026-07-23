@@ -9,6 +9,7 @@ import {
   formatArea,
   formatLength,
   isSettingsPatch,
+  rampSteigungProzent,
   type Assembly,
   type BeschlagKategorie,
   type Entity,
@@ -53,6 +54,10 @@ const kindLabel: Record<string, string> = {
   column: 'Stütze',
   beam: 'Unterzug',
   furniture: 'Möbel',
+  // v0.9.1 P-B2 (docs/V091-SPEZ.md §P-B2): additive Labels — die zwei neuen
+  // Zweige unten.
+  gelaender: 'Geländer',
+  ramp: 'Rampe',
 };
 
 // E6 (v0.8.10, Z5): Zone.raumTyp-Werteliste — dieselbe Aufzählung wie
@@ -62,6 +67,16 @@ const kindLabel: Record<string, string> = {
 const RAUMTYP_OPTIONEN = [
   'zimmer', 'wohnen', 'kueche', 'bad', 'korridor', 'treppenhaus', 'abstellraum', 'balkon', 'technik', 'gewerbe',
 ] as const;
+
+/** v0.9.1 P-B2 (docs/V091-SPEZ.md §P-B2): Gesamtlänge einer Polylinie —
+ *  dieselbe Rechnung wie `design.gelaenderZeichnen`s `summarize`/`island/
+ *  inhalte/zeichnen.tsx`s `gelaenderLaenge()` (Kernel-`dist()`, additiv
+ *  dupliziert statt eines dritten Imports für eine Ein-Zeilen-Summe). */
+function polylinienLaenge(punkte: readonly { x: number; y: number }[]): number {
+  let gesamt = 0;
+  for (let i = 1; i < punkte.length; i++) gesamt += dist(punkte[i - 1]!, punkte[i]!);
+  return gesamt;
+}
 
 /** §2.2 Kopfzeile-Rezept («WAND · W-014») — Kurzbezeichnung ist der Zonen-
  *  Name (falls vorhanden) oder ein kurzes ID-Fragment, sonst wäre die
@@ -586,6 +601,84 @@ export function Inspector() {
             disabled={gesperrt}
           />
         </Row>
+      )}
+
+      {/* v0.9.1 P-B2 (docs/V091-SPEZ.md §P-B2): NEUER Zweig — die allowed-Map
+          erlaubt gelaender: hoehe/art bereits (design.ts:828); der
+          Bestands-Bereich für hoehe (700–1500 mm, SIA-Absturzsicherung) prüft
+          der Kernel selbst (design.ts:875-880) und wirft über denselben
+          Fehlerweg wie jedes andere Feld (`set()` oben). */}
+      {entity.kind === 'gelaender' && (
+        <>
+          <Row label="Höhe">
+            <NumberField
+              value={entity.hoehe}
+              suffix="mm"
+              testid="inspector-gelaender-hoehe"
+              onCommit={(v) => set('hoehe', v)}
+              disabled={gesperrt}
+            />
+          </Row>
+          <Row label="Art">
+            <KSelect
+              size="sm"
+              value={entity.art}
+              onChange={(e) => set('art', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-gelaender-art"
+              disabled={gesperrt}
+            >
+              <option value="staketen">Staketen</option>
+              <option value="handlauf">Handlauf</option>
+              <option value="voll">Voll</option>
+            </KSelect>
+          </Row>
+          <Row label="Länge">
+            <Measure>{formatLength(Math.round(polylinienLaenge(entity.punkte)))}</Measure>
+          </Row>
+        </>
+      )}
+
+      {/* v0.9.1 P-B2 (docs/V091-SPEZ.md §P-B2): NEUER Zweig — die allowed-Map
+          erlaubt `ramp` NICHT (design.ts:798-828 kennt kein `ramp`), darum
+          bleibt dieser Zweig bewusst NUR ANZEIGE: die abgeleitete Steigung
+          (`rampSteigungProzent`, @kosmo/kernel — nie gespeichert, dieselbe
+          Funktion wie das Kernel-Gate in design.rampeZeichnen) + die
+          Rohwerte. Kein erfundener Editierweg, der eigenschaftSetzen
+          vortäuscht (Sanktion 4, V091-SPEZ) — ehrliche Grenze wie bei
+          `TreppeInfo` (island/inhalte/zeichnen.tsx). */}
+      {entity.kind === 'ramp' && (
+        <>
+          <Row label="Steigung">
+            <span data-testid="inspector-rampe-steigung">
+              <Measure>
+                {rampSteigungProzent(entity.a, entity.b, entity.hoehenDelta, entity.podestLaenge).toFixed(1)} %
+                {rampSteigungProzent(entity.a, entity.b, entity.hoehenDelta, entity.podestLaenge) > 6
+                  ? ' — nicht hindernisfrei (SIA 500)'
+                  : ''}
+              </Measure>
+            </span>
+          </Row>
+          <Row label="Breite">
+            <span data-testid="inspector-rampe-breite">{formatLength(entity.width)}</span>
+          </Row>
+          <Row label="Höhendelta">
+            <span data-testid="inspector-rampe-hoehendelta">{formatLength(entity.hoehenDelta)}</span>
+          </Row>
+          <Row label="Lauflänge">
+            <span data-testid="inspector-rampe-lauflaenge">{formatLength(Math.round(dist(entity.a, entity.b)))}</span>
+          </Row>
+          {entity.podestLaenge !== undefined && (
+            <Row label="Podestlänge">
+              <span data-testid="inspector-rampe-podestlaenge">{formatLength(entity.podestLaenge)}</span>
+            </Row>
+          )}
+          <p className="dp-hinweis" data-testid="inspector-rampe-hinweis-nicht-editierbar">
+            Nur Anzeige — design.eigenschaftSetzen kennt «ramp» nicht (kein Kernel-Command dieses
+            Auftrags), darum bleiben Breite/Höhendelta/Podest hier unveränderbar statt eine
+            Attrappe vorzutäuschen.
+          </p>
+        </>
       )}
 
       {entity.kind === 'opening' && (

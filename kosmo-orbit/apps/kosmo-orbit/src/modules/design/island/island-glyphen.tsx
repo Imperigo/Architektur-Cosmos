@@ -61,6 +61,10 @@ import type { ComponentType, ReactNode } from 'react';
  * `vis-island-katalog.ts`), `blatt`/`darstellung` (publish,
  * `publish-island-katalog.ts`), `aufnahme`/`wissen`/`bestand` (prepare,
  * `prepare-island-katalog.ts`) — macht 11 Pill-Icons total.
+ *
+ * **v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2):** + 2 weitere Werkzeug-Icons für
+ * die neuen ZEICHNEN-Werkzeuge `gelaender`/`rampe` (`island-katalog.ts`) —
+ * `ISLAND_GLYPHEN` trägt jetzt 23 Einträge, derselben Bauvorschrift folgend.
  */
 
 const WURZEL_ATTRIBUTE = {
@@ -290,7 +294,28 @@ const skizze = glyphe(
   </>,
 );
 
-/** Die 21 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
+/** Geländer — Handlauf-Band über gleichmässig geteilten Staketen (Muster
+ *  `derive/gelaender.ts`s Pfosten-/Handlauf-Zerlegung), Akzent am linken
+ *  Handlauf-Ende (v0.9.1 P-B2, `docs/V091-SPEZ.md` §P-B2). */
+const gelaender = glyphe(
+  <>
+    <path d="M4 8 H20 M6 8 V18 M10 8 V18 M14 8 V18 M18 8 V18" />
+    {akzent(4, 8)}
+  </>,
+);
+
+/** Rampe — geneigte Lauffläche mit Grundlinie + Steigungspfeil (Muster
+ *  `derive/rampe.ts`s Plan-Steigungspfeil, Schaft am Fuss, Spitze am Kopf),
+ *  Akzent an der Pfeilspitze (v0.9.1 P-B2, `docs/V091-SPEZ.md` §P-B2). */
+const rampe = glyphe(
+  <>
+    <path d="M4 20 H20 M4 20 L18 8" />
+    <path d="M14 8 H18 V12" />
+    {akzent(18, 8)}
+  </>,
+);
+
+/** Die 23 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
 export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   oeffnung,
   messen,
@@ -313,6 +338,8 @@ export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   sync,
   manuell,
   skizze,
+  gelaender,
+  rampe,
 };
 
 // ── 4 Island-Pill-Icons ────────────────────────────────────────────────

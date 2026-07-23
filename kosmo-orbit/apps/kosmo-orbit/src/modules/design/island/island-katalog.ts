@@ -2,9 +2,13 @@
  * Island-Werkzeug-Katalog (PD1 Fundament + PD2 Verdrahtung, `docs/ISLAND-UI-
  * SPEZ.md` §2/§3).
  *
- * Statischer, reiner Datensatz — die vollständige 29-Werkzeug-Zuordnung auf
+ * Statischer, reiner Datensatz — die ursprüngliche 29-Werkzeug-Zuordnung auf
  * die vier Islands (ZEICHNEN 11 / ANSICHT 6 / PROJEKT 6 / AUSTAUSCH 6),
  * Reihenfolge und Zählung 1:1 aus der Mapping-Tabelle §3.1–§3.4 übernommen.
+ * v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2) hängt additiv zwei weitere
+ * ZEICHNEN-Werkzeuge ans Ende der Insel (`gelaender`/`rampe`) — Gesamtstand
+ * jetzt 31 (ZEICHNEN 13 / ANSICHT 6 / PROJEKT 6 / AUSTAUSCH 6), s. dortigen
+ * Kommentar.
  *
  * **PD2 (diese Fassung): `toolId` echt gesetzt**, wo eine Insel-Id 1:1 einer
  * bestehenden `ui-zustand.ts`-`ToolId` entspricht (die neun Zeichenwerkzeuge
@@ -179,6 +183,21 @@ const ZEICHNEN: readonly IslandWerkzeug[] = [
   werkzeug('mesh', 'Mesh', 'zeichnen', IconMesh, 'vorhanden', true, { toolId: 'mesh' }),
   // v0.8.3 E2/E3 (§2/§3.3, §8-7 jetzt entschieden): echter ToolId.
   werkzeug('messen', 'Messen', 'zeichnen', icon(ISLAND_GLYPHEN, 'messen'), 'vorhanden', true, { toolId: 'messen' }),
+  // v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2): zwei NEUE ZEICHNEN-Werkzeuge —
+  // die Kernel-Seite (Entity + Command, P-A1/P-A2) ist fertig gelandet,
+  // `toolId` aktiviert echt denselben generischen `setTool`-Weg wie jedes
+  // andere Zeichenwerkzeug (`aktiviereIslandWerkzeug()`,
+  // `DesignWorkspace.tsx`, unverändert — kein Sonderfall nötig). Status
+  // bewusst `teilweise` (wie ebenen/rendern/blaetter/sync): der Modus lässt
+  // sich setzen, die eigentliche Klickketten-/Zwei-Punkt-Interaktion im
+  // Plan (`PlanView.tsx`s `punktSetzen()`) ist NICHT Teil dieses Pakets
+  // (Cluster-B-TABU) — das liefert P-B1 (Fable). Die Mini-Popups
+  // (`inhalte/zeichnen.tsx`) tragen Vorgabewerte fürs künftige Zeichnen
+  // plus — sobald ein Geländer/eine Rampe existiert — die editierbaren
+  // (Geländer) bzw. rein angezeigten, weil vom Kernel nicht editierbaren
+  // (Rampe) Felder.
+  werkzeug('gelaender', 'Geländer', 'zeichnen', icon(ISLAND_GLYPHEN, 'gelaender'), 'teilweise', true, { toolId: 'gelaender' }),
+  werkzeug('rampe', 'Rampe', 'zeichnen', icon(ISLAND_GLYPHEN, 'rampe'), 'teilweise', true, { toolId: 'rampe' }),
 ];
 
 /** ANSICHT (6) — §3.2. */

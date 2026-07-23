@@ -14,7 +14,8 @@ import { setTouchUndoGesteEingestellt } from '../src/state/touch-undo';
  * `IslandShell`s Zustandsmaschine (pill↔leiste↔popup↔fenster), der
  * 1000ms-Rückklapp-Timer (PB2, v0.8.4, Owner: «nach 1s» — war 900ms bis
  * v0.8.3), die Toast-Regel für Werkzeuge ohne Popup, der
- * Katalog (29/29, 11/6/6/6) und beide Farbwelten (PAPIER/`orbit`).
+ * Katalog (ursprünglich 29/29, 11/6/6/6; v0.9.1 P-B2: 31/31, 13/6/6/6 — s.
+ * `describe`-Block unten) und beide Farbwelten (PAPIER/`orbit`).
  *
  * Rendert über einen echten `createRoot` (Muster `schwarm-orbs.test.tsx`/
  * `varianten-panel.test.tsx`) — jsdom kennt `mouseenter`/`mouseleave` nicht
@@ -81,13 +82,13 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-describe('Island-Katalog (§3, 29/29)', () => {
-  it('zählt 11 ZEICHNEN / 6 ANSICHT / 6 PROJEKT / 6 AUSTAUSCH — Gesamt 29', () => {
-    expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(11);
+describe('Island-Katalog (§3, ursprünglich 29/29; v0.9.1 P-B2 hängt gelaender/rampe additiv ans Ende von ZEICHNEN — 31/31)', () => {
+  it('zählt 13 ZEICHNEN / 6 ANSICHT / 6 PROJEKT / 6 AUSTAUSCH — Gesamt 31', () => {
+    expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(13);
     expect(werkzeugeFuerIsland('ansicht')).toHaveLength(6);
     expect(werkzeugeFuerIsland('projekt')).toHaveLength(6);
     expect(werkzeugeFuerIsland('austausch')).toHaveLength(6);
-    expect(WERKZEUG_KATALOG).toHaveLength(29);
+    expect(WERKZEUG_KATALOG).toHaveLength(31);
   });
 
   it('jede Id ist eindeutig (keine doppelten Werkzeuge über die vier Islands hinweg)', () => {
@@ -106,13 +107,15 @@ describe('IslandShell — Zustandsmaschine (§4.1: pill→leiste→popup→fenst
     expect(q('island-zeichnen-leiste')).toBeNull();
   });
 
-  it('Hover öffnet die Leiste (Stufe 1) mit allen 11 ZEICHNEN-Werkzeugen', () => {
+  it('Hover öffnet die Leiste (Stufe 1) mit allen 13 ZEICHNEN-Werkzeugen (v0.9.1 P-B2: + gelaender/rampe)', () => {
     hoverEnter(q('island-zeichnen-root')!);
     expect(q('island-zeichnen-pill')).toBeNull();
     expect(q('island-zeichnen-leiste')).not.toBeNull();
     expect(q('island-werkzeug-wand')).not.toBeNull();
     expect(q('island-werkzeug-auswahl')).not.toBeNull();
     expect(q('island-werkzeug-messen')).not.toBeNull();
+    expect(q('island-werkzeug-gelaender')).not.toBeNull();
+    expect(q('island-werkzeug-rampe')).not.toBeNull();
   });
 
   it('Klick auf ein Werkzeug MIT Popup (Wand) öffnet das Mini-Popup (Stufe 2)', () => {

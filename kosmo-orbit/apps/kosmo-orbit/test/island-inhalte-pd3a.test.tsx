@@ -14,16 +14,33 @@ import { useProject } from '../src/state/project-store';
 
 /**
  * PD3a (`docs/ISLAND-UI-SPEZ.md` §4.4/§7 PD3a-Zeile) — beweist das harte Gate
- * C-38 («kein Werkzeug endet bei Stufe 1») für die 17 ZEICHNEN+ANSICHT-
- * Zeilen der Mapping-Tabelle, MINUS Achsen (`hatPopup:false`, reiner Toggle
- * — s. `island-katalog.ts`-Kopfkommentar): 16 Ids müssen Stufe2 UND Stufe3
- * registriert haben. Zusätzlich ein Rendering-Smoke-Test je Datei und ein
- * «echte Wirkung»-Beweis am Referenzmuster Wand (Command→Patch, kein Mock).
+ * C-38 («kein Werkzeug endet bei Stufe 1») für die ursprünglich 17
+ * ZEICHNEN+ANSICHT-Zeilen der Mapping-Tabelle, MINUS Achsen (`hatPopup:false`,
+ * reiner Toggle — s. `island-katalog.ts`-Kopfkommentar): 16 Ids mussten
+ * Stufe2 UND Stufe3 registriert haben. v0.9.1 P-B2 (`docs/V091-SPEZ.md`
+ * §P-B2) hängt additiv zwei weitere ZEICHNEN-Ids an (`gelaender`/`rampe`,
+ * beide mit Stufe2+Stufe3 registriert) — jetzt 18 Ids. Zusätzlich ein
+ * Rendering-Smoke-Test je Datei und ein «echte Wirkung»-Beweis am
+ * Referenzmuster Wand (Command→Patch, kein Mock).
  */
 
-const ZEICHNEN_IDS = ['auswahl', 'wand', 'oeffnung', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'skizze', 'mesh', 'messen'];
+const ZEICHNEN_IDS = [
+  'auswahl',
+  'wand',
+  'oeffnung',
+  'volumen',
+  'zone',
+  'dach',
+  'treppe',
+  'stuetze',
+  'skizze',
+  'mesh',
+  'messen',
+  'gelaender',
+  'rampe',
+];
 const ANSICHT_IDS_OHNE_ACHSEN = ['darstellung', 'sonne', 'ebenen', 'trace', 'graph'];
-const ALLE_16 = [...ZEICHNEN_IDS, ...ANSICHT_IDS_OHNE_ACHSEN];
+const ALLE_18 = [...ZEICHNEN_IDS, ...ANSICHT_IDS_OHNE_ACHSEN];
 
 let container: HTMLDivElement | null = null;
 let root: Root | null = null;
@@ -50,18 +67,18 @@ afterEach(() => {
   }
 });
 
-describe('Registry — 16/17 ZEICHNEN+ANSICHT-Ids (Achsen ausgenommen), je Stufe2+Stufe3', () => {
-  it('registrierteWerkzeugIds() enthält genau die 16 erwarteten Ids', () => {
+describe('Registry — 18/19 ZEICHNEN+ANSICHT-Ids (Achsen ausgenommen; v0.9.1 P-B2: 16→18), je Stufe2+Stufe3', () => {
+  it('registrierteWerkzeugIds() enthält genau die 18 erwarteten Ids', () => {
     const ids = registrierteWerkzeugIds();
-    expect(ids.sort()).toEqual([...ALLE_16].sort());
-    expect(ids).toHaveLength(16);
+    expect(ids.sort()).toEqual([...ALLE_18].sort());
+    expect(ids).toHaveLength(18);
   });
 
   it('registrierteWerkzeugIds() enthält NICHT «achsen» (hatPopup:false, reiner Toggle)', () => {
     expect(registrierteWerkzeugIds()).not.toContain('achsen');
   });
 
-  it.each(ALLE_16)('%s hat Stufe2 UND Stufe3 registriert (hartes Gate C-38)', (id) => {
+  it.each(ALLE_18)('%s hat Stufe2 UND Stufe3 registriert (hartes Gate C-38)', (id) => {
     const inhalt = inhaltFuer(id);
     expect(inhalt).toBeDefined();
     expect(inhalt!.Stufe2).toBeTypeOf('function');

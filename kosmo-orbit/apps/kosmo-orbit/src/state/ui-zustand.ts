@@ -32,7 +32,25 @@ import { ARBEITSMODI, type Arbeitsmodus } from './arbeitsmodi-kern';
 /** v0.8.3 E3 (§3.1, `docs/V083-SPEZ.md`, Island-§8-Freigabe §8-5/§8-7/§8-6):
  *  `'oeffnung'`/`'messen'`/`'kommentar'` additiv ergänzt (10 → 13) — eigene
  *  Klickmodi in `DesignWorkspace.tsx`s `punktSetzen()`, s. dortigen
- *  Kommentar. Kein bestehender Wert verändert. */
+ *  Kommentar. Kein bestehender Wert verändert.
+ *
+ *  v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2, bewusst NICHT erweitert): die
+ *  zwei neuen ZEICHNEN-Werkzeuge `gelaender`/`rampe` (`island-katalog.ts`)
+ *  tragen `toolId: 'gelaender'`/`'rampe'` als reinen `string` (das Feld
+ *  `IslandWerkzeug.toolId` ist bereits `string`, keine `ToolId`) — sie
+ *  aktivieren ihren Modus über denselben bestehenden, generischen Weg wie
+ *  jedes andere Zeichenwerkzeug (`DesignWorkspace.tsx`s
+ *  `aktiviereIslandWerkzeug()`: `setTool(w.toolId as ToolId)`, ein
+ *  bewusster Type-Assertion-Durchlass, der JEDEN String akzeptiert). Diese
+ *  `ToolId`-Union bleibt darum BYTE-STILL: sie zusätzlich um 'gelaender'/
+ *  'rampe' zu erweitern bräche `DesignWorkspace.tsx`s eigene, dort lokal
+ *  duplizierte (TABU-Datei, `docs/V091-SPEZ.md` Sanktion 3) `ToolId`-
+ *  Kopie — deren Aktualisierung ist P-B1s Aufgabe (Cluster B), sobald dort
+ *  auch die echte Klickketten-/Zwei-Punkt-Interaktion für die beiden Modi
+ *  entsteht. Bis dahin funktioniert das MODUS-SETZEN bereits (der
+ *  Assertion-Durchlass ist exakt dafür gebaut), nur die formale
+ *  Enum-Mitgliedschaft fehlt noch — ehrlich dokumentierte Zwischenstufe,
+ *  keine stille Attrappe. */
 export type ToolId =
   | 'auswahl'
   | 'wand'

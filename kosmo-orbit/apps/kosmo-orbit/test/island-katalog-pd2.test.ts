@@ -23,11 +23,21 @@ function werkzeug(id: string) {
 }
 
 describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
-  it('bleibt 29/29 (PD2 ändert nur Felder, keine Werkzeuge)', () => {
-    expect(WERKZEUG_KATALOG).toHaveLength(29);
+  it('bleibt 31/31 (PD2 ändert nur Felder, keine Werkzeuge; v0.9.1 P-B2 hängt gelaender/rampe additiv ans Ende — 29→31)', () => {
+    expect(WERKZEUG_KATALOG).toHaveLength(31);
   });
 
   it.each(ECHTE_TOOL_IDS)('%s trägt toolId===id (echte ui-zustand.ts-ToolId)', (id) => {
+    expect(werkzeug(id).toolId).toBe(id);
+  });
+
+  // v0.9.1 P-B2 (docs/V091-SPEZ.md §P-B2): gelaender/rampe tragen ebenfalls
+  // toolId===id, ABER bewusst KEINE echte ui-zustand.ts-ToolId (s. dortigen
+  // Kommentar — DesignWorkspace.tsx bleibt TABU, der String-Durchlass
+  // `setTool(w.toolId as ToolId)` aktiviert den Modus trotzdem). Eigene
+  // Zeile statt ECHTE_TOOL_IDS-Erweiterung, um diesen Unterschied nicht zu
+  // verwischen.
+  it.each(['gelaender', 'rampe'])('%s trägt toolId===id (String-Durchlass, keine erweiterte ToolId-Union — s. ui-zustand.ts-Kommentar)', (id) => {
     expect(werkzeug(id).toolId).toBe(id);
   });
 
@@ -103,11 +113,11 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
   // gegen `registrierteWerkzeugIds()` (die echte, geladene Registry) zeigt
   // sich: 7 der 8 sind bereits echt, nur Achsen bleibt bewusst ohne Popup
   // (§4.4-Ausnahme, kein Rahmen — Owner-sauber geschlossen statt Attrappe).
-  it('C-27: alle 27 Popup-Werkzeuge sind in der Registry ECHT verdrahtet — nur Achsen (kein Popup, §4.4-Ausnahme) bleibt bewusst aussen vor', () => {
+  it('C-27: alle Popup-Werkzeuge sind in der Registry ECHT verdrahtet — nur Achsen (kein Popup, §4.4-Ausnahme) bleibt bewusst aussen vor (v0.9.1 P-B2: 27→29, gelaender/rampe additiv mit hatPopup=true)', () => {
     const registriert = new Set(registrierteWerkzeugIds());
     const mitPopup = WERKZEUG_KATALOG.filter((w) => w.hatPopup);
     const ohnePopup = WERKZEUG_KATALOG.filter((w) => !w.hatPopup);
-    expect(mitPopup).toHaveLength(27);
+    expect(mitPopup).toHaveLength(29);
     expect(ohnePopup.map((w) => w.id).sort()).toEqual(['achsen', 'manuell']);
     for (const w of mitPopup) {
       expect(registriert.has(w.id), `${w.id} fehlt in der Registry`).toBe(true);
@@ -120,8 +130,8 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     expect(registriert.has('achsen')).toBe(false);
   });
 
-  it('werkzeugeFuerIsland liefert weiterhin 11/6/6/6 (Zuordnung durch PD2 unangetastet)', () => {
-    expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(11);
+  it('werkzeugeFuerIsland liefert jetzt 13/6/6/6 (v0.9.1 P-B2: ZEICHNEN 11→13, ANSICHT/PROJEKT/AUSTAUSCH unangetastet)', () => {
+    expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(13);
     expect(werkzeugeFuerIsland('ansicht')).toHaveLength(6);
     expect(werkzeugeFuerIsland('projekt')).toHaveLength(6);
     expect(werkzeugeFuerIsland('austausch')).toHaveLength(6);

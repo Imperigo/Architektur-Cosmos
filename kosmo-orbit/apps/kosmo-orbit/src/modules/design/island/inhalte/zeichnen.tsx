@@ -5,11 +5,14 @@ import {
   dist,
   formatArea,
   formatLength,
+  rampSteigungProzent,
   treppenTeile,
   type Assembly,
+  type Gelaender,
   type MassBody,
   type MassKette,
   type Opening,
+  type Rampe,
   type Roof,
   type Stair,
   type Storey,
@@ -1330,7 +1333,381 @@ function MessenStufe3() {
 }
 
 // ---------------------------------------------------------------------------
-// Registrierung — 11/11 ZEICHNEN-Werkzeuge (keine hatPopup-Ausnahme in dieser
+// 12 · Geländer — v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2): die Kernel-Seite
+// (Entity `Gelaender` + `design.gelaenderZeichnen` + `design.eigenschafts
+// Setzen`-Felder hoehe/art) ist bereits gelandet (P-A1). Ist ein Geländer
+// ausgewählt, editieren hoehe/art ECHT über `setzeEigenschaft` (Bestands-
+// Bereich 700–1500 mm prüft der Kernel selbst, derselbe Fehlerweg wie jedes
+// andere Feld); ist keins ausgewählt, zeigt das Popup Vorgabewerte für den
+// künftigen Klickketten-Zeichenmodus (Muster Öffnung-Vorgabe oben). Die
+// eigentliche Klickkette im Plan (Muster Masskette) baut P-B1 (Fable,
+// Cluster B — TABU für dieses Paket, s. `island-katalog.ts`-Kommentar) —
+// dieses Paket setzt nur den Modus (`toolId: 'gelaender'`, generischer
+// `aktiviereIslandWerkzeug()`-Weg) und die Vorgabewerte, die P-B1s
+// Klickketten-Commit dereinst lesen kann.
+// ---------------------------------------------------------------------------
+
+interface GelaenderVorgabe {
+  hoehe: number;
+  art: 'staketen' | 'handlauf' | 'voll';
+}
+
+let gelaenderVorgabe: GelaenderVorgabe = { hoehe: 1000, art: 'staketen' };
+
+/** Lese-Zugriff für P-B1s künftigen Geländer-Klickketten-Commit — derselbe
+ *  Modul-Singleton-Weg wie `oeffnungVorgabeLesen()` oben, nur ohne
+ *  React-Re-Render-Kopplung (der Klickketten-Abschluss liest den aktuellen
+ *  Stand einmal je Commit, kein Abo nötig). */
+export function gelaenderVorgabeLesen(): GelaenderVorgabe {
+  return gelaenderVorgabe;
+}
+
+function useGelaenderVorgabe(): readonly [GelaenderVorgabe, (patch: Partial<GelaenderVorgabe>) => void] {
+  const [zustand, setZustandRoh] = useState(gelaenderVorgabe);
+  const setZustand = (patch: Partial<GelaenderVorgabe>) => {
+    const naechster = { ...zustand, ...patch };
+    gelaenderVorgabe = naechster;
+    setZustandRoh(naechster);
+  };
+  return [zustand, setZustand] as const;
+}
+
+function GelaenderVorgabeHinweis() {
+  return (
+    <Hinweis testid="island-gelaender-hinweis-vorgabe">
+      Vorgabewerte für den künftigen Geländer-Klickketten-Modus (Muster Masskette, mind. zwei
+      Punkte) — die Klickkette im Plan liefert P-B1 (Fable, Cluster B); design.gelaenderZeichnen
+      existiert bereits im Kernel (P-A1).
+    </Hinweis>
+  );
+}
+
+/** Gesamtlänge der Polylinie — dieselbe Rechnung wie `kettenLaenge()`/
+ *  `design.gelaenderZeichnen`s `summarize` (Kernel, `commands/design.ts`). */
+function gelaenderLaenge(g: Gelaender): number {
+  let gesamt = 0;
+  for (let i = 1; i < g.punkte.length; i++) gesamt += dist(g.punkte[i - 1]!, g.punkte[i]!);
+  return gesamt;
+}
+
+function GelaenderStufe2() {
+  const entity = useAusgewaehlteEntitaet();
+  const runCommand = useProject((s) => s.runCommand);
+  const [vorgabe, setVorgabe] = useGelaenderVorgabe();
+  const gelaender = entity && entity.kind === 'gelaender' ? (entity as Gelaender) : null;
+
+  if (gelaender) {
+    return (
+      <div className="pd3a-stufe2" data-testid="island-gelaender-stufe2" onClick={(e) => e.stopPropagation()}>
+        <Zeile label="Höhe (mm)">
+          <KInput
+            size="sm"
+            mono
+            type="number"
+            min={700}
+            max={1500}
+            data-testid="island-gelaender-hoehe"
+            value={gelaender.hoehe}
+            onChange={(e) => setzeEigenschaft(runCommand, gelaender.id, 'hoehe', Number(e.target.value))}
+          />
+        </Zeile>
+        <Zeile label="Art">
+          <KSelect
+            size="sm"
+            data-testid="island-gelaender-art"
+            value={gelaender.art}
+            onChange={(e) => setzeEigenschaft(runCommand, gelaender.id, 'art', e.target.value)}
+          >
+            <option value="staketen">Staketen</option>
+            <option value="handlauf">Handlauf</option>
+            <option value="voll">Voll</option>
+          </KSelect>
+        </Zeile>
+        <p className="pd3a-kennzahl" data-testid="island-gelaender-laenge">
+          Länge: {formatLength(Math.round(gelaenderLaenge(gelaender)))}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pd3a-stufe2" data-testid="island-gelaender-stufe2" onClick={(e) => e.stopPropagation()}>
+      <Zeile label="Höhe (mm, Vorgabe 700–1500)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={700}
+          max={1500}
+          data-testid="island-gelaender-vorgabe-hoehe"
+          value={vorgabe.hoehe}
+          onChange={(e) => setVorgabe({ hoehe: Number(e.target.value) || 1000 })}
+        />
+      </Zeile>
+      <Zeile label="Art (Vorgabe)">
+        <KSelect
+          size="sm"
+          data-testid="island-gelaender-vorgabe-art"
+          value={vorgabe.art}
+          onChange={(e) => setVorgabe({ art: e.target.value as GelaenderVorgabe['art'] })}
+        >
+          <option value="staketen">Staketen</option>
+          <option value="handlauf">Handlauf</option>
+          <option value="voll">Voll</option>
+        </KSelect>
+      </Zeile>
+      <GelaenderVorgabeHinweis />
+    </div>
+  );
+}
+
+function GelaenderStufe3() {
+  const entity = useAusgewaehlteEntitaet();
+  const runCommand = useProject((s) => s.runCommand);
+  const [vorgabe, setVorgabe] = useGelaenderVorgabe();
+  const gelaender = entity && entity.kind === 'gelaender' ? (entity as Gelaender) : null;
+
+  if (gelaender) {
+    return (
+      <div className="pd3a-stufe3" data-testid="island-gelaender-stufe3">
+        <Zeile label="Höhe (mm)">
+          <KInput
+            size="sm"
+            mono
+            type="number"
+            min={700}
+            max={1500}
+            data-testid="island-gelaender-fenster-hoehe"
+            value={gelaender.hoehe}
+            onChange={(e) => setzeEigenschaft(runCommand, gelaender.id, 'hoehe', Number(e.target.value))}
+          />
+        </Zeile>
+        <Zeile label="Art">
+          <KSelect
+            size="sm"
+            data-testid="island-gelaender-fenster-art"
+            value={gelaender.art}
+            onChange={(e) => setzeEigenschaft(runCommand, gelaender.id, 'art', e.target.value)}
+          >
+            <option value="staketen">Staketen</option>
+            <option value="handlauf">Handlauf</option>
+            <option value="voll">Voll</option>
+          </KSelect>
+        </Zeile>
+        <p className="pd3a-kennzahl">
+          Länge: {formatLength(Math.round(gelaenderLaenge(gelaender)))} · {gelaender.punkte.length} Punkte
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="pd3a-stufe3" data-testid="island-gelaender-stufe3">
+      <Zeile label="Höhe (mm, Vorgabe 700–1500)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={700}
+          max={1500}
+          value={vorgabe.hoehe}
+          onChange={(e) => setVorgabe({ hoehe: Number(e.target.value) || 1000 })}
+        />
+      </Zeile>
+      <Zeile label="Art (Vorgabe)">
+        <KSelect size="sm" value={vorgabe.art} onChange={(e) => setVorgabe({ art: e.target.value as GelaenderVorgabe['art'] })}>
+          <option value="staketen">Staketen</option>
+          <option value="handlauf">Handlauf</option>
+          <option value="voll">Voll</option>
+        </KSelect>
+      </Zeile>
+      <GelaenderVorgabeHinweis />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 13 · Rampe — v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2): die Kernel-Seite
+// (Entity `Rampe` + `design.rampeZeichnen` mit dem ehrlichen Steigungs-Gate)
+// ist bereits gelandet (P-A2) — `design.eigenschaftSetzen` kennt `ramp`
+// JEDOCH NICHT (Kontext dieses Auftrags), darum bleibt eine ausgewählte
+// Rampe hier bewusst NUR ANZEIGE: die abgeleitete Steigung
+// (`rampSteigungProzent`, @kosmo/kernel — NIE gespeichert, immer frisch
+// gerechnet, dieselbe Funktion wie das Kernel-Gate) + die Rohwerte. Kein
+// erfundener Editierweg, der eigenschaftSetzen vortäuscht — ehrlich nur
+// anzeigen, was der Kernel wirklich erlaubt (Sanktion 4, V091-SPEZ). Ist
+// keine Rampe ausgewählt, zeigt das Popup Vorgabewerte für den künftigen
+// Zwei-Punkt-Zeichenmodus (Muster Wand) — die Zwei-Punkt-Interaktion im Plan
+// baut P-B1 (Fable, Cluster B — TABU für dieses Paket).
+// ---------------------------------------------------------------------------
+
+interface RampeVorgabe {
+  width: number;
+  hoehenDelta: number;
+  podestLaenge: number | null;
+}
+
+let rampeVorgabe: RampeVorgabe = { width: 1200, hoehenDelta: 170, podestLaenge: null };
+
+/** Lese-Zugriff für P-B1s künftigen Rampe-Zwei-Punkt-Commit — Muster
+ *  `gelaenderVorgabeLesen()`/`oeffnungVorgabeLesen()` oben. */
+export function rampeVorgabeLesen(): RampeVorgabe {
+  return rampeVorgabe;
+}
+
+function useRampeVorgabe(): readonly [RampeVorgabe, (patch: Partial<RampeVorgabe>) => void] {
+  const [zustand, setZustandRoh] = useState(rampeVorgabe);
+  const setZustand = (patch: Partial<RampeVorgabe>) => {
+    const naechster = { ...zustand, ...patch };
+    rampeVorgabe = naechster;
+    setZustandRoh(naechster);
+  };
+  return [zustand, setZustand] as const;
+}
+
+function RampeVorgabeHinweis() {
+  return (
+    <Hinweis testid="island-rampe-hinweis-vorgabe">
+      Vorgabewerte für den künftigen Rampe-Zwei-Punkt-Modus (Muster Wand) — die Zwei-Punkt-
+      Interaktion im Plan liefert P-B1 (Fable, Cluster B); design.rampeZeichnen (ehrliches
+      Steigungs-Gate: &gt;6&nbsp;% Hinweis, &gt;15&nbsp;% Ablehnung) existiert bereits im Kernel
+      (P-A2).
+    </Hinweis>
+  );
+}
+
+/** Ausgewählte Rampe — reine Anzeige (Steigung + Rohwerte). `eigenschaftSetzen`
+ *  kennt `kind:'ramp'` nicht (design.ts `allowed`-Map) — kein editierbares
+ *  Feld hier, ehrlich wie bei `TreppeInfo` oben. */
+function RampeInfo() {
+  const entity = useAusgewaehlteEntitaet();
+  const rampe = entity && entity.kind === 'ramp' ? (entity as Rampe) : null;
+  if (!rampe) return <Hinweis>Keine Rampe ausgewählt — Rampe im Viewer wählen.</Hinweis>;
+  const steigung = rampSteigungProzent(rampe.a, rampe.b, rampe.hoehenDelta, rampe.podestLaenge);
+  return (
+    <>
+      <p className="pd3a-kennzahl" data-testid="island-rampe-steigung">
+        Steigung: {steigung.toFixed(1)} % {steigung > 6 ? '— nicht hindernisfrei (SIA 500)' : ''}
+      </p>
+      <p className="pd3a-kennzahl" data-testid="island-rampe-rohwerte">
+        Breite: {formatLength(rampe.width)} · Höhendelta: {formatLength(rampe.hoehenDelta)} · Lauf:{' '}
+        {formatLength(Math.round(dist(rampe.a, rampe.b)))}
+        {rampe.podestLaenge !== undefined ? ` · Podest: ${formatLength(rampe.podestLaenge)}` : ''}
+      </p>
+      <Hinweis testid="island-rampe-hinweis-nicht-editierbar">
+        Nur Anzeige — design.eigenschaftSetzen kennt Rampen-Felder (noch) nicht (kein Kernel-
+        Command dieses Auftrags), darum bleiben Breite/Höhendelta/Podest hier unveränderbar statt
+        eine Attrappe vorzutäuschen.
+      </Hinweis>
+    </>
+  );
+}
+
+function RampeStufe2() {
+  const entity = useAusgewaehlteEntitaet();
+  const [vorgabe, setVorgabe] = useRampeVorgabe();
+  const rampe = entity && entity.kind === 'ramp' ? (entity as Rampe) : null;
+
+  if (rampe) {
+    return (
+      <div className="pd3a-stufe2" data-testid="island-rampe-stufe2" onClick={(e) => e.stopPropagation()}>
+        <RampeInfo />
+      </div>
+    );
+  }
+
+  return (
+    <div className="pd3a-stufe2" data-testid="island-rampe-stufe2" onClick={(e) => e.stopPropagation()}>
+      <Zeile label="Breite (mm, min. 600)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={600}
+          data-testid="island-rampe-vorgabe-breite"
+          value={vorgabe.width}
+          onChange={(e) => setVorgabe({ width: Number(e.target.value) || 600 })}
+        />
+      </Zeile>
+      <Zeile label="Höhendelta (mm)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={1}
+          data-testid="island-rampe-vorgabe-hoehendelta"
+          value={vorgabe.hoehenDelta}
+          onChange={(e) => setVorgabe({ hoehenDelta: Number(e.target.value) || 1 })}
+        />
+      </Zeile>
+      <Zeile label="Podestlänge (mm, optional)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={0}
+          data-testid="island-rampe-vorgabe-podestlaenge"
+          value={vorgabe.podestLaenge ?? ''}
+          onChange={(e) => setVorgabe({ podestLaenge: e.target.value === '' ? null : Number(e.target.value) })}
+        />
+      </Zeile>
+      <RampeVorgabeHinweis />
+    </div>
+  );
+}
+
+function RampeStufe3() {
+  const entity = useAusgewaehlteEntitaet();
+  const [vorgabe, setVorgabe] = useRampeVorgabe();
+  const rampe = entity && entity.kind === 'ramp' ? (entity as Rampe) : null;
+
+  if (rampe) {
+    return (
+      <div className="pd3a-stufe3" data-testid="island-rampe-stufe3">
+        <RampeInfo />
+      </div>
+    );
+  }
+
+  return (
+    <div className="pd3a-stufe3" data-testid="island-rampe-stufe3">
+      <Zeile label="Breite (mm, min. 600)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={600}
+          value={vorgabe.width}
+          onChange={(e) => setVorgabe({ width: Number(e.target.value) || 600 })}
+        />
+      </Zeile>
+      <Zeile label="Höhendelta (mm)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={1}
+          value={vorgabe.hoehenDelta}
+          onChange={(e) => setVorgabe({ hoehenDelta: Number(e.target.value) || 1 })}
+        />
+      </Zeile>
+      <Zeile label="Podestlänge (mm, optional)">
+        <KInput
+          size="sm"
+          mono
+          type="number"
+          min={0}
+          value={vorgabe.podestLaenge ?? ''}
+          onChange={(e) => setVorgabe({ podestLaenge: e.target.value === '' ? null : Number(e.target.value) })}
+        />
+      </Zeile>
+      <RampeVorgabeHinweis />
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Registrierung — 13/13 ZEICHNEN-Werkzeuge (keine hatPopup-Ausnahme in dieser
 // Insel, s. `island-katalog.ts`).
 // ---------------------------------------------------------------------------
 
@@ -1345,3 +1722,5 @@ registriereInhalt('stuetze', { Stufe2: StuetzeStufe2, Stufe3: StuetzeStufe3 });
 registriereInhalt('skizze', { Stufe2: SkizzeStufe2, Stufe3: SkizzeStufe3 });
 registriereInhalt('mesh', { Stufe2: MeshStufe2, Stufe3: MeshStufe3 });
 registriereInhalt('messen', { Stufe2: MessenStufe2, Stufe3: MessenStufe3 });
+registriereInhalt('gelaender', { Stufe2: GelaenderStufe2, Stufe3: GelaenderStufe3 });
+registriereInhalt('rampe', { Stufe2: RampeStufe2, Stufe3: RampeStufe3 });

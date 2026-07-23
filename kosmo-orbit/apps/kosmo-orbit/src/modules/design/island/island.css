@@ -221,6 +221,38 @@
   border-radius: var(--f-r-md);
   box-shadow: var(--k-shadow-lg, var(--k-shadow-overlay));
 }
+/*
+ * v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2) — Scroll-statt-Überlapp-
+ * Sicherheitsnetz für die VERTIKALEN Inseln (ZEICHNEN/PROJEKT), analog zum
+ * bereits bestehenden `.isl-popup`/`.isl-fenster`-Muster oben (s. dortigen
+ * Kommentar «derselbe Scroll-statt-Überlapp-Sicherheitsnetz wie bei
+ * `.dw-dropdown`»): die ZEICHNEN-Leiste ist vertikal MITTIG verankert
+ * (`.isl-rand-links`, `top:50%`/`translateY(-50%)`) — mit den zwei NEUEN
+ * Werkzeugen `gelaender`/`rampe` (11→13) wächst ihre Höhe so weit, dass die
+ * Zentrierung das OBERSTE Werkzeug («Auswahl») unter die fixe Geschoss-Pille
+ * (`.isl-geschoss-pille`, `top:66px`, 54px hoch, endet bei `y=120px`) schiebt
+ * — live nachgemessen bei 1024×768 (kleinster getesteter Viewport, `e2e/
+ * popup-kollision.spec.ts`s P8-Sweep): OHNE dieses Sicherheitsnetz liegt
+ * «Auswahl» bei y≈94.5–138.5, überlappt die Pille um ≈25px (Pointer-
+ * Interception, Playwright-Beleg). `calc(100dvh - 208px)` hält den
+ * Leisten-Kasten so klein, dass «Auswahl» bei diesem Viewport ≥10px Abstand
+ * zur Pille behält (leiste_top = (768−560)/2 = 104px, Auswahl-Offset ≈26px
+ * → 130px, Pille-Ende 120px), OHNE bei den üblichen (≥900px hohen)
+ * Viewports überhaupt einzugreifen (900−208=692px > die tatsächliche
+ * 13-Werkzeug-Höhe von ≈631px — kein Clipping, unverändertes Verhalten).
+ * PROJEKT (6 Werkzeuge, ebenfalls vertikal) bleibt weit unter jeder
+ * Schwelle, ebenfalls unberührt. Reine Zahlenwert-Sicherung für den HEUTIGEN
+ * Bestand — wächst die ZEICHNEN-Insel künftig weiter oder ändert sich die
+ * Geschoss-Pille-Geometrie, muss der 208px-Reserve-Wert neu vermessen
+ * werden (kein automatischer Kollisions-Messweg wie bei `klammereInViewport`
+ * in `IslandShell.tsx`, das gezielt Popup/Fenster vermisst — eine
+ * äquivalente Laufzeit-Messung für die Leiste selbst ist bewusst NICHT Teil
+ * dieses Pakets, s. Bauagenten-Bericht).
+ */
+.isl-vertikal .isl-leiste {
+  max-height: calc(100dvh - 208px);
+  overflow-y: auto;
+}
 .isl-leiste-kopf {
   font-family: var(--k-font-mono);
   font-size: 9px;
