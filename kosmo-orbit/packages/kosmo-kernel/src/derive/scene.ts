@@ -629,6 +629,16 @@ function deriveBeam(doc: KosmoDoc, beam: Beam): GeometryArtifact | null {
 const GELAENDER_PFOSTEN_MM = 40;
 /** Handlauf-Bandhöhe (v0.9.1 P-A1, V091-SPEZ). */
 const GELAENDER_HANDLAUF_HOEHE_MM = 40;
+/** Staketen-Querschnitt (quadratische Stäbe, `art: 'staketen'`), v0.9.2 P-G. */
+const GELAENDER_STAKETE_MM = 20;
+/** Ziel-Rasterabstand der Staketen entlang eines Handlauf-Segments (SIA-
+ * Absturzsicherung: Durchgangsöffnung klein genug für ein Kind), v0.9.2 P-G —
+ * dasselbe Teilungsmuster wie `GELAENDER_PFOSTEN_TEILUNG_MM`
+ * (`derive/gelaender.ts`): `n = ceil(Segmentlänge / 120)`, tatsächlicher
+ * Abstand `Segmentlänge / n` ist stets ≤ 120 mm. */
+const GELAENDER_STAKETE_RASTER_MM = 120;
+/** Plattendicke der geschlossenen Brüstung (`art: 'voll'`), v0.9.2 P-G. */
+const GELAENDER_VOLL_DICKE_MM = 80;
 
 /**
  * Mehrere Extrusionen einer Entity zu EINEM GeometryArtifact zusammenführen
@@ -661,15 +671,31 @@ function mergeArtifacts(entityId: string, materialKey: string, teile: readonly G
 }
 
 /**
- * Geländer (v0.9.1 P-A1, `docs/V091-SPEZ.md` K24): Pfosten als dünne
- * quadratische Extrusionen (~40×40 mm, Höhe g.hoehe ab OK Geschossboden) +
- * ein Handlauf-Band (~40 mm hoch) auf Höhe g.hoehe entlang jedes
- * Polylinien-Segments — Muster `deriveColumn`/`deriveBeam` (`extrudePolygon`).
- * Die Zerlegung (Pfosten-Positionen, Handlauf-Segmente) kommt aus
- * `derive/gelaender.ts` (`gelaenderTeile`) — EINE Wahrheit, kein zweiter
- * Berechnungsweg. `art` (staketen/handlauf/voll) unterscheidet die 3D-Form
- * bewusst NICHT (V091-SPEZ nennt nur Pfosten+Handlauf als P-A1-Umfang; eine
- * echte Staketen-/Voll-Füllung ist ausserhalb dieses Pakets).
+ * Geländer (v0.9.1 P-A1 Pfosten+Handlauf, v0.9.2 P-G `art`-Füllung,
+ * `docs/V092-SPEZ.md` §P-G): Pfosten als dünne quadratische Extrusionen
+ * (~40×40 mm, Höhe g.hoehe ab OK Geschossboden) + ein Handlauf-Band (~40 mm
+ * hoch) auf Höhe g.hoehe entlang jedes Polylinien-Segments — Muster
+ * `deriveColumn`/`deriveBeam` (`extrudePolygon`). Die Zerlegung (Pfosten-
+ * Positionen, Handlauf-Segmente) kommt aus `derive/gelaender.ts`
+ * (`gelaenderTeile`) — EINE Wahrheit, kein zweiter Berechnungsweg; `art`
+ * fügt darauf AUFBAUEND je eine Füllung zwischen z0 (OK Boden) und der
+ * Handlauf-Unterkante (`z1 - halbBand`) hinzu, IMMER entlang derselben
+ * `handlaufSegmente`, nie einer eigenen Geometrie:
+ * - `'handlauf'`: keine Füllung — exakt der v0.9.1-Bestand (nur Pfosten +
+ *   Band). Golden-Guard: Bestands-Fixtures mit `art: 'handlauf'` bleiben
+ *   dadurch unverändert.
+ * - `'staketen'` (Default): zusätzliche senkrechte Quadrat-Stäbe
+ *   (`GELAENDER_STAKETE_MM` ~20×20 mm) im Ziel-Raster
+ *   `GELAENDER_STAKETE_RASTER_MM` (~120 mm, SIA-Kindersicherheit) je
+ *   Handlauf-Segment — dasselbe Teilungsmuster wie die Pfosten-Zerlegung
+ *   (`n = ceil(Segmentlänge / 120)`), aber nur an den INNENLIEGENDEN
+ *   Rasterpunkten (`k = 1..n-1`): die Segmentenden sind bereits als Pfosten
+ *   vorhanden, ein Stab dort wäre eine reine Dopplung.
+ * - `'voll'`: EINE geschlossene Brüstungsplatte (~80 mm dick,
+ *   `GELAENDER_VOLL_DICKE_MM`) je Handlauf-Segment statt der Staketen —
+ *   dieselbe Extrusionsform wie das Handlauf-Band selbst (Achse a→b,
+ *   Normale × halbe Dicke), nur über die volle Höhe z0…Unterkante statt der
+ *   dünnen Bandhöhe.
  */
 function deriveGelaender(doc: KosmoDoc, g: Gelaender): GeometryArtifact | null {
   const storey = doc.get<Storey>(g.storeyId);
@@ -715,6 +741,55 @@ function deriveGelaender(doc: KosmoDoc, g: Gelaender): GeometryArtifact | null {
         z1 + halbBand,
       ),
     );
+  }
+
+  const fuellungUnterkante = z1 - halbBand;
+  if (g.art === 'staketen') {
+    const halbStakete = GELAENDER_STAKETE_MM / 2;
+    for (const seg of teile.handlaufSegmente) {
+      const len = Math.hypot(seg.b.x - seg.a.x, seg.b.y - seg.a.y);
+      if (len < 1) continue;
+      const d = { x: (seg.b.x - seg.a.x) / len, y: (seg.b.y - seg.a.y) / len };
+      const n = Math.max(1, Math.ceil(len / GELAENDER_STAKETE_RASTER_MM));
+      for (let k = 1; k < n; k++) {
+        const t = (len * k) / n;
+        const p: Pt = { x: seg.a.x + d.x * t, y: seg.a.y + d.y * t };
+        parts.push(
+          extrudePolygon(
+            g.id,
+            'stahl',
+            [
+              { x: p.x - halbStakete, y: p.y - halbStakete },
+              { x: p.x + halbStakete, y: p.y - halbStakete },
+              { x: p.x + halbStakete, y: p.y + halbStakete },
+              { x: p.x - halbStakete, y: p.y + halbStakete },
+            ],
+            [],
+            z0,
+            fuellungUnterkante,
+          ),
+        );
+      }
+    }
+  } else if (g.art === 'voll') {
+    const halbDicke = GELAENDER_VOLL_DICKE_MM / 2;
+    for (const seg of teile.handlaufSegmente) {
+      const len = Math.hypot(seg.b.x - seg.a.x, seg.b.y - seg.a.y);
+      if (len < 1) continue;
+      const d = { x: (seg.b.x - seg.a.x) / len, y: (seg.b.y - seg.a.y) / len };
+      const n = { x: -d.y, y: d.x };
+      const P = (p: Pt, off: number): Pt => ({ x: p.x + n.x * off, y: p.y + n.y * off });
+      parts.push(
+        extrudePolygon(
+          g.id,
+          'stahl',
+          [P(seg.a, -halbDicke), P(seg.b, -halbDicke), P(seg.b, halbDicke), P(seg.a, halbDicke)],
+          [],
+          z0,
+          fuellungUnterkante,
+        ),
+      );
+    }
   }
 
   return mergeArtifacts(g.id, 'stahl', parts);

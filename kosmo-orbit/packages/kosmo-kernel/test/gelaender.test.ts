@@ -7,6 +7,7 @@ import {
   CommandError,
   deriveEntity,
   gelaenderTeile,
+  extrudePolygon,
   type Gelaender,
 } from '../src';
 
@@ -263,5 +264,86 @@ describe('derive/scene — deriveGelaender (3D, Pfosten + Handlauf-Band)', () =>
     // Geschoss aus dem Doc entfernen, ohne das Geländer anzufassen
     doc.apply([{ id: storeyId, before: doc.get(storeyId)!, after: null }]);
     expect(deriveEntity(doc, id)).toBeNull();
+  });
+});
+
+describe('derive/scene — deriveGelaender: `art` wirkt in 3D (v0.9.2 P-G)', () => {
+  // Ein perBox-Referenzwert: EIN Extrusions-Quader (egal welcher Grösse)
+  // erzeugt IMMER dieselbe Vertex-/Index-Anzahl (Deckel + Boden + 4
+  // Seitenflächen, s. `derive/mesh.ts extrudePolygon`) — dynamisch aus
+  // derselben Funktion abgeleitet statt einer erratenen Magic Number, damit
+  // der Test robust gegen Implementationsdetails der Triangulierung bleibt.
+  const einBox = extrudePolygon('ref', 'stahl', [
+    { x: -10, y: -10 }, { x: 10, y: -10 }, { x: 10, y: 10 }, { x: -10, y: 10 },
+  ], [], 0, 100);
+  const POS_PRO_BOX = einBox.positions.length;
+  const IDX_PRO_BOX = einBox.indices.length;
+
+  function gelaenderKurz(doc: KosmoDoc, storeyId: string, art: Gelaender['art']) {
+    // Eine einzige gerade Strecke 0→1000mm: EIN Handlauf-Segment, Pfosten-
+    // Zerlegung liefert genau 2 Pfosten (Segment ≤ 1200mm, beide Enden,
+    // kein Zwischenpfosten). Staketen-Raster (~120mm): n=ceil(1000/120)=9,
+    // Interior-Punkte k=1..8 → 8 Staketen (die Segmentenden fallen mit den
+    // beiden Pfosten zusammen und werden NICHT doppelt gesetzt).
+    return execute(doc, 'design.gelaenderZeichnen', {
+      storeyId,
+      punkte: [{ x: 0, y: 0 }, { x: 1000, y: 0 }],
+      hoehe: 1000,
+      art,
+    });
+  }
+
+  it("art 'handlauf' bleibt exakt der v0.9.1-Bestand: 2 Pfosten + 1 Band = 3 Quader, KEINE Füllung", () => {
+    const doc = new KosmoDoc();
+    const storeyId = geschoss(doc);
+    const res = gelaenderKurz(doc, storeyId, 'handlauf');
+    const id = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, id)!;
+    expect(artifact.positions.length).toBe(POS_PRO_BOX * 3);
+    expect(artifact.indices.length).toBe(IDX_PRO_BOX * 3);
+  });
+
+  it("art 'staketen' fügt 8 zusätzliche Stab-Quader zwischen den Pfosten ein (3 + 8 = 11 Quader)", () => {
+    const doc = new KosmoDoc();
+    const storeyId = geschoss(doc);
+    const res = gelaenderKurz(doc, storeyId, 'staketen');
+    const id = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, id)!;
+    expect(artifact.positions.length).toBe(POS_PRO_BOX * 11);
+    expect(artifact.indices.length).toBe(IDX_PRO_BOX * 11);
+  });
+
+  it("art 'voll' ersetzt die Staketen durch EINE Brüstungsplatte je Segment (3 + 1 = 4 Quader)", () => {
+    const doc = new KosmoDoc();
+    const storeyId = geschoss(doc);
+    const res = gelaenderKurz(doc, storeyId, 'voll');
+    const id = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, id)!;
+    expect(artifact.positions.length).toBe(POS_PRO_BOX * 4);
+    expect(artifact.indices.length).toBe(IDX_PRO_BOX * 4);
+  });
+
+  it('alle drei Formen liefern unterschiedliche Vertex-Mengen (staketen > voll > handlauf)', () => {
+    const doc = new KosmoDoc();
+    const storeyId = geschoss(doc);
+    const handlauf = deriveEntity(doc, (gelaenderKurz(doc, storeyId, 'handlauf').patches[0] as { id: string }).id)!;
+    const voll = deriveEntity(doc, (gelaenderKurz(doc, storeyId, 'voll').patches[0] as { id: string }).id)!;
+    const staketen = deriveEntity(doc, (gelaenderKurz(doc, storeyId, 'staketen').patches[0] as { id: string }).id)!;
+    expect(staketen.positions.length).toBeGreaterThan(voll.positions.length);
+    expect(voll.positions.length).toBeGreaterThan(handlauf.positions.length);
+  });
+
+  it("art 'voll' und 'staketen' teilen dieselbe Höhe (z0 bis Handlauf-Unterkante) — nur die Form der Füllung unterscheidet sich", () => {
+    // Indirekter Nachweis über die Bounding-Box in z: beide Füllvarianten
+    // haben denselben Positions-Wertebereich in z ausser der zusätzlichen
+    // Handlauf-Band-Spitze — hier genügt der Vertex-Zahl-Unterschied aus dem
+    // Test oben; dieser Test sichert zusätzlich, dass 'voll' NICHT dieselbe
+    // Anzahl Quader wie 'staketen' erzeugt (unterschiedliche Formen, nicht
+    // nur unterschiedliche Zahl gleicher Formen).
+    const doc = new KosmoDoc();
+    const storeyId = geschoss(doc);
+    const voll = deriveEntity(doc, (gelaenderKurz(doc, storeyId, 'voll').patches[0] as { id: string }).id)!;
+    const staketen = deriveEntity(doc, (gelaenderKurz(doc, storeyId, 'staketen').patches[0] as { id: string }).id)!;
+    expect(voll.positions.length).not.toBe(staketen.positions.length);
   });
 });

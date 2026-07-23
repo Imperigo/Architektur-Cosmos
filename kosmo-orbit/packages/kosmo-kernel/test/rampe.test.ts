@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { KosmoDoc, invertPatches } from '../src/model/doc';
-import { execute } from '../src/commands/core';
+import { execute, CommandError } from '../src/commands/core';
 import '../src/commands/design';
 import type { Rampe } from '../src/model/entities';
 import { rampenTeile, rampSteigungProzent } from '../src/derive/rampe';
@@ -245,5 +245,174 @@ describe('design.rampeZeichnen — Command-Roundtrip + Undo', () => {
         hoehenDelta: 100,
       }),
     ).toThrow(/existiert nicht/);
+  });
+});
+
+/**
+ * `rampenTeile.plan.podestTrennlinie` (v0.9.2 P-G, `docs/V092-SPEZ.md`
+ * §P-G): reine Daten, NUR vorhanden bei gesetztem UND positivem
+ * podestLaenge (Daten-Guard, Sanktion 5) — der App-/Plan-Einbau ist NICHT
+ * Teil dieses Pakets.
+ */
+describe('rampenTeile — podestTrennlinie (Daten-Guard, nur bei gesetztem Podest)', () => {
+  it('ohne podestLaenge fehlt podestTrennlinie ganz', () => {
+    const ramp: Rampe = {
+      id: 'r_ohne_podest', kind: 'ramp', storeyId: 's', a: { x: 0, y: 0 }, b: { x: 1000, y: 0 },
+      width: 200, hoehenDelta: 100,
+    };
+    const teile = rampenTeile(ramp, 0);
+    expect('podestTrennlinie' in teile.plan).toBe(false);
+    expect(teile.plan.podestTrennlinie).toBeUndefined();
+  });
+
+  it('podestLaenge 0 verhält sich wie kein Podest — keine Trennlinie', () => {
+    const ramp: Rampe = {
+      id: 'r_podest_0', kind: 'ramp', storeyId: 's', a: { x: 0, y: 0 }, b: { x: 1000, y: 0 },
+      width: 200, hoehenDelta: 100, podestLaenge: 0,
+    };
+    const teile = rampenTeile(ramp, 0);
+    expect(teile.plan.podestTrennlinie).toBeUndefined();
+  });
+
+  it('mit gesetztem podestLaenge liegt die Trennlinie am Übergang Lauf→Podest, quer über die volle width', () => {
+    const ramp: Rampe = {
+      id: 'r_mit_podest', kind: 'ramp', storeyId: 's', a: { x: 0, y: 0 }, b: { x: 1000, y: 0 },
+      width: 200, hoehenDelta: 100, podestLaenge: 500,
+    };
+    const teile = rampenTeile(ramp, 0);
+    // Lauflänge = 1000 - 500 = 500, Übergangspunkt bei x=500 (Achse entlang
+    // x, Normale entlang y, half = 100).
+    expect(teile.plan.podestTrennlinie).toEqual({
+      a: { x: 500, y: 100 },
+      b: { x: 500, y: -100 },
+    });
+  });
+
+  it('Übergangspunkt dreht sich mit einer diagonalen Achse mit', () => {
+    const ramp: Rampe = {
+      id: 'r_diag_podest', kind: 'ramp', storeyId: 's', a: { x: 0, y: 0 }, b: { x: 3000, y: 4000 },
+      width: 1000, hoehenDelta: 250, podestLaenge: 1000,
+    };
+    const teile = rampenTeile(ramp, 0);
+    // Länge 5000, Lauflänge 4000, Richtung (0.6, 0.8) -> Übergang bei
+    // (2400, 3200); Normale (-0.8, 0.6), half=500.
+    expect(teile.plan.podestTrennlinie).toBeDefined();
+    expect(teile.plan.podestTrennlinie!.a.x).toBeCloseTo(2400 + -0.8 * 500, 3);
+    expect(teile.plan.podestTrennlinie!.a.y).toBeCloseTo(3200 + 0.6 * 500, 3);
+    expect(teile.plan.podestTrennlinie!.b.x).toBeCloseTo(2400 - -0.8 * 500, 3);
+    expect(teile.plan.podestTrennlinie!.b.y).toBeCloseTo(3200 - 0.6 * 500, 3);
+  });
+});
+
+/**
+ * `design.eigenschaftSetzen` lernt `ramp` (v0.9.2 P-G, §P-G): width/
+ * hoehenDelta/podestLaenge, DASSELBE ehrliche Gate wie
+ * `design.rampeGeometrieSetzen` (Sanktion 4 — keine stille Klemmung), sowie
+ * die konditionale Entfernung von podestLaenge bei 0/leer (Sanktion 5).
+ */
+describe('design.eigenschaftSetzen — Rampe (width/hoehenDelta/podestLaenge)', () => {
+  function rampeMitId(doc: KosmoDoc, storeyId: string, overrides: Partial<Record<string, unknown>> = {}) {
+    const res = execute(doc, 'design.rampeZeichnen', {
+      storeyId,
+      a: { x: 0, y: 0 },
+      b: { x: 2000, y: 0 },
+      hoehenDelta: 100, // 5 % Steigung, viel Spielraum bis 15 %
+      ...overrides,
+    });
+    return (res.patches[0] as { id: string }).id;
+  }
+
+  it('Happy Path: setzt width auf einen gültigen Wert (>= 600)', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'width', wert: 1500 });
+    expect(doc.get<Rampe>(id)!.width).toBe(1500);
+  });
+
+  it('lehnt width < 600 ab (Bestands-Bereich design.rampeZeichnen)', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    expect(() =>
+      execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'width', wert: 599 }),
+    ).toThrow(CommandError);
+    expect(doc.get<Rampe>(id)!.width).toBe(1200); // unangetastet
+  });
+
+  it('Happy Path: setzt hoehenDelta auf einen gültigen, positiven Wert', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'hoehenDelta', wert: 150 });
+    expect(doc.get<Rampe>(id)!.hoehenDelta).toBe(150);
+  });
+
+  it('lehnt hoehenDelta <= 0 ab', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    expect(() =>
+      execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'hoehenDelta', wert: 0 }),
+    ).toThrow(CommandError);
+  });
+
+  it('Happy Path: setzt podestLaenge auf einen gültigen Wert (>= 0)', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'podestLaenge', wert: 400 });
+    expect(doc.get<Rampe>(id)!.podestLaenge).toBe(400);
+  });
+
+  it('podestLaenge auf 0 entfernt das Feld ganz (konditionaler Spread, exactOptionalPropertyTypes)', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId, { podestLaenge: 300 });
+    expect('podestLaenge' in doc.get<Rampe>(id)!).toBe(true);
+    execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'podestLaenge', wert: 0 });
+    const nach = doc.get<Rampe>(id)!;
+    expect('podestLaenge' in nach).toBe(false);
+  });
+
+  it('podestLaenge auf leeren String entfernt das Feld ebenso (0/leer, wortwörtlich)', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId, { podestLaenge: 300 });
+    execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'podestLaenge', wert: '' });
+    expect('podestLaenge' in doc.get<Rampe>(id)!).toBe(false);
+  });
+
+  it('Gate-Ablehnung: Steigung > 15 % auf dem NEUEN Zustand wirft, KEINE Klemmung — Zustand bleibt byte-gleich', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId); // a(0,0)->b(2000,0), hoehenDelta 100 -> 5 %
+    const vorher = JSON.stringify(doc.toJSON());
+    // hoehenDelta 400 auf 2000mm Lauf = 20 % > 15 %-Grenze
+    expect(() =>
+      execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'hoehenDelta', wert: 400 }),
+    ).toThrow(/Rampensteigung 20\.0 ?% übersteigt die 15 ?%-Grenze \(Tiefgarage\)/);
+    expect(JSON.stringify(doc.toJSON())).toBe(vorher); // byte-gleich, keine Klemmung
+    expect(doc.get<Rampe>(id)!.hoehenDelta).toBe(100);
+  });
+
+  it('Gate-Ablehnung greift auch, wenn ein gesetztes podestLaenge die Reststrecke verkürzt', () => {
+    const { doc, storeyId } = grundgeruest();
+    // a(0,0)->b(2000,0), hoehenDelta 200 (10 % ohne Podest) + podestLaenge
+    // 1000 -> Reststrecke 1000mm -> 20 % > 15 %.
+    const id = rampeMitId(doc, storeyId, { hoehenDelta: 200, podestLaenge: 500 });
+    expect(() =>
+      execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'podestLaenge', wert: 1000 }),
+    ).toThrow(CommandError);
+    expect(doc.get<Rampe>(id)!.podestLaenge).toBe(500); // unangetastet
+  });
+
+  it('lehnt ein bei Rampe nicht änderbares Feld ab', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    expect(() =>
+      execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'pitch', wert: 10 }),
+    ).toThrow(CommandError);
+  });
+
+  it('EIN Command = EIN Undo-Schritt', () => {
+    const { doc, storeyId } = grundgeruest();
+    const id = rampeMitId(doc, storeyId);
+    const res = execute(doc, 'design.eigenschaftSetzen', { entityId: id, feld: 'width', wert: 1500 });
+    expect(res.patches).toHaveLength(1);
+    doc.apply(invertPatches(res.patches));
+    expect(doc.get<Rampe>(id)!.width).toBe(1200);
   });
 });

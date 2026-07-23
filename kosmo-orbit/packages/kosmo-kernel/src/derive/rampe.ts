@@ -28,6 +28,16 @@ export interface RampenPlanBausteine {
   lauflinie: { a: Pt; b: Pt };
   /** Steigungspfeil: Schaft am Fuss (a), Spitze am Kopf (b, zeigt bergauf), plus %-Text. */
   pfeil: { schaft: Pt; spitze: Pt; text: string };
+  /** Querlinie am Übergang Lauf→Podest (v0.9.2 P-G, `docs/V092-SPEZ.md`
+   * §P-G) — NUR vorhanden, wenn `r.podestLaenge` gesetzt UND > 0 ist
+   * (Daten-Guard, Sanktion 5: ohne gesetztes Feld exakt Bestandsverhalten,
+   * das Golden-Fixture `gelaender-rampe-plan.svg` trägt kein Podest und
+   * bleibt so byte-still). Liegt am Übergangspunkt (Abstand `lauflaenge`
+   * ab `a`, also `laenge - podestLaenge` — dieselbe Reststrecke wie
+   * `rampSteigungProzent`), quer über die volle `width`. Reines Daten-
+   * Feld — der Plan-Einbau (App-Overlay) ist P-D/Fable-Sache, NICHT
+   * dieses Pakets (`derive/plan.ts` bleibt unangetastet). */
+  podestTrennlinie?: { a: Pt; b: Pt };
 }
 
 export interface RampenTeile {
@@ -78,6 +88,20 @@ export function rampenTeile(r: Rampe, elevation: number): RampenTeile {
       kontur,
       lauflinie: { a: r.a, b: r.b },
       pfeil: { schaft: r.a, spitze: r.b, text: `${steigungProzent.toFixed(1)} %` },
+      // v0.9.2 P-G: nur bei gesetztem UND positivem podestLaenge — 0/undefined
+      // lässt das Feld ganz weg (exactOptionalPropertyTypes, Sanktion 5).
+      ...(r.podestLaenge !== undefined && r.podestLaenge > 0
+        ? {
+            podestTrennlinie: (() => {
+              const lauflaenge = Math.max(0, laenge - r.podestLaenge);
+              const m: Pt = { x: r.a.x + d.x * lauflaenge, y: r.a.y + d.y * lauflaenge };
+              return {
+                a: { x: m.x + n.x * half, y: m.y + n.y * half },
+                b: { x: m.x - n.x * half, y: m.y - n.y * half },
+              };
+            })(),
+          }
+        : {}),
     },
   };
 }

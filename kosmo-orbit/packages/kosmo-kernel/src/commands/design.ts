@@ -763,6 +763,10 @@ const editableFields = [
   // die Zeile mit Beam.hoehe (numerisch, s. Bestands-Bereichsprüfung unten),
   // art ist neu.
   'art',
+  // v0.9.2 P-G (V092-SPEZ §P-G): additiv für `ramp` — width teilt sich die
+  // Zeile mit Opening.width (numerisch), hoehenDelta/podestLaenge sind neu.
+  'hoehenDelta',
+  'podestLaenge',
 ] as const;
 
 const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
@@ -785,7 +789,7 @@ export const setProperty = registerCommand({
   id: 'design.eigenschaftSetzen',
   title: 'Eigenschaft ändern',
   description:
-    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Geländer(hoehe — 700–1500 mm, art — staketen/handlauf/voll) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Geländer(hoehe — 700–1500 mm, art — staketen/handlauf/voll) · Rampe(width — min 600 mm, hoehenDelta — ganzzahlig > 0, podestLaenge — ganzzahlig ≥ 0, 0/leer entfernt das Podest wieder; JEDE Änderung prüft danach dasselbe ehrliche Steigungs-Gate wie design.rampeGeometrieSetzen: > 15 % wird abgelehnt, Tiefgaragen-Grenze, keine stille Klemmung) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
   params: z.object({
     entityId: z.string(),
     feld: z.enum(editableFields),
@@ -826,6 +830,10 @@ export const setProperty = registerCommand({
       beam: ['breite', 'hoehe', 'material'],
       // v0.9.1 P-A1 (V091-SPEZ §P-A1): additive Zeile, Muster column/beam.
       gelaender: ['hoehe', 'art'],
+      // v0.9.2 P-G (V092-SPEZ §P-G): additive Zeile — dieselben drei Felder
+      // wie design.rampeZeichnen (width/hoehenDelta/podestLaenge), gleiches
+      // ehrliches Steigungs-Gate wie design.rampeGeometrieSetzen unten.
+      ramp: ['width', 'hoehenDelta', 'podestLaenge'],
     };
     const fields = allowed[e.kind] ?? [];
     if (!fields.includes(p.feld)) {
@@ -839,6 +847,11 @@ export const setProperty = registerCommand({
       // ganzzahlig und nicht-negativ — die engeren Bestands-Bereiche (aus den
       // Erstellen-Commands) prüfen die dedizierten Blöcke unten.
       'b', 't', 'breite', 'hoehe', 'rahmenbreite',
+      // v0.9.2 P-G: hoehenDelta/podestLaenge sind ganzzahlige mm-Felder wie
+      // die übrigen — podestLaenge darf dabei 0 werden (bedeutet «entfernen»,
+      // s. Sonderbehandlung unten), das generische `wert < 0`-Wurf lässt 0
+      // bewusst durch.
+      'hoehenDelta', 'podestLaenge',
     ];
     let wert: string | number = p.wert;
     if (numeric.includes(p.feld)) {
@@ -880,6 +893,15 @@ export const setProperty = registerCommand({
     }
     if (p.feld === 'art' && !GELAENDER_ART_WERTE.includes(String(wert) as (typeof GELAENDER_ART_WERTE)[number])) {
       throw new CommandError(`art muss eines von ${GELAENDER_ART_WERTE.join(', ')} sein`);
+    }
+    if (p.feld === 'width' && e.kind === 'ramp' && Number(wert) < 600) {
+      // Bestands-Bereich aus design.rampeZeichnen (width min 600 mm) —
+      // eigenschaftSetzen darf keinen Wert zulassen, den das Erstellen-
+      // Command ablehnen würde (dasselbe Prinzip wie column b/t oben).
+      throw new CommandError('width muss mindestens 600 mm betragen (Bestands-Bereich design.rampeZeichnen)');
+    }
+    if (p.feld === 'hoehenDelta' && e.kind === 'ramp' && Number(wert) <= 0) {
+      throw new CommandError('hoehenDelta muss grösser als 0 sein');
     }
     if (p.feld === 'rahmenbreite' && Number(wert) <= 0) {
       throw new CommandError('rahmenbreite muss grösser als 0 sein');
@@ -930,6 +952,32 @@ export const setProperty = registerCommand({
       if (wert.length === 0) throw new CommandError('Blattname darf nicht leer sein');
     }
     if (p.feld === 'assemblyId') require<Assembly>(doc, String(wert), 'assembly');
+    if (e.kind === 'ramp') {
+      // v0.9.2 P-G (V092-SPEZ §P-G): dasselbe ehrliche Gate wie
+      // design.rampeGeometrieSetzen (Sanktion 4 — keine stille Klemmung),
+      // hier auf dem NEUEN Zustand NACH der width/hoehenDelta/podestLaenge-
+      // Änderung geprüft (a/b ändern sich hier nie, nur die drei Felder).
+      const rampe = e as Rampe;
+      // podestLaenge 0 (auch aus leerem String über die numerische
+      // Normalisierung oben) entfernt das Feld ganz — exactOptionalPropertyTypes
+      // verlangt den konditionalen Rest-Destructure statt `podestLaenge:
+      // undefined` (Sanktion 5, keine Bestandsverhalten-Änderung ohne
+      // gesetztes Feld).
+      let next: Rampe;
+      if (p.feld === 'podestLaenge' && Number(wert) === 0) {
+        const { podestLaenge: _entfernt, ...ohnePodest } = rampe;
+        next = ohnePodest;
+      } else {
+        next = { ...rampe, [p.feld]: wert };
+      }
+      const steigung = rampSteigungProzent(next.a, next.b, next.hoehenDelta, next.podestLaenge);
+      if (steigung > 15) {
+        throw new CommandError(
+          `Rampensteigung ${steigung.toFixed(1)} % übersteigt die 15 %-Grenze (Tiefgarage)`,
+        );
+      }
+      return [{ id: e.id, before: e, after: next }];
+    }
     const after = { ...e, [p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet' ? 'meta' : p.feld]:
       p.feld === 'name' && e.kind !== 'storey' && e.kind !== 'assembly' && e.kind !== 'zone' && e.kind !== 'sheet'
         ? { ...e.meta, name: String(wert) }
