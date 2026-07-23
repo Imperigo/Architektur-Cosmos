@@ -109,7 +109,7 @@ async function oeffneCloudEinstellungen(page: Page): Promise<void> {
 
 const FAKE_TOKEN = 'fake-oauth-token-e2e-xyz';
 
-test('Desktop-Stub: «Mit Claude-Abo anmelden» setzt das Token, die Anzeige wechselt auf «angemeldet als Abo»', async ({
+test('Desktop-Stub: «Mit Claude-Abo anmelden» setzt das Token, die Anzeige wechselt auf «Claude-Abo (lokale CLI)»', async ({
   page,
 }) => {
   await stubTauriDesktop(page, FAKE_TOKEN);
@@ -129,13 +129,13 @@ test('Desktop-Stub: «Mit Claude-Abo anmelden» setzt das Token, die Anzeige wec
 
   await page.click('[data-testid="cloud-login-abo"]');
 
-  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('Claude-Abo (lokale CLI)');
   const nachLogin = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
   expect(nachLogin.anthropicOauthToken).toBe(FAKE_TOKEN);
   expect(nachLogin.cloudAuth).toBe('abo');
 });
 
-test('Token-Persistenz über Reload: «angemeldet als Abo» bleibt nach einem vollen Reload bestehen', async ({
+test('Token-Persistenz über Reload: «Claude-Abo (lokale CLI)» bleibt nach einem vollen Reload bestehen', async ({
   page,
 }) => {
   await stubTauriDesktop(page, FAKE_TOKEN);
@@ -147,13 +147,13 @@ test('Token-Persistenz über Reload: «angemeldet als Abo» bleibt nach einem vo
   await page.reload();
   await oeffneCloudEinstellungen(page);
   await page.click('[data-testid="cloud-login-abo"]');
-  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('Claude-Abo (lokale CLI)');
 
   // Voller Reload — kein Test-Hook, keine Wiederholung des Logins. Das Token
   // lebt in `localStorage` (KosmoSettings), nicht im Laufzeit-Speicher.
   await page.reload();
   await oeffneCloudEinstellungen(page);
-  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('Claude-Abo (lokale CLI)');
   const nachReload = await page.evaluate(() => JSON.parse(localStorage.getItem('kosmo.llm')!));
   expect(nachReload.anthropicOauthToken).toBe(FAKE_TOKEN);
 });
@@ -174,15 +174,15 @@ test('«Abmelden»: der Knopf erscheint nur mit aktivem Abo-Token, löscht NUR d
   await expect(page.locator('[data-testid="oauth-abmelden"]')).toHaveCount(0);
 
   await page.click('[data-testid="cloud-login-abo"]');
-  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('Claude-Abo (lokale CLI)');
   await expect(page.locator('[data-testid="oauth-abmelden"]')).toBeVisible();
 
   await page.click('[data-testid="oauth-abmelden"]');
 
-  // Die ANZEIGE ist ehrlich zurückgesetzt — kein «angemeldet als Abo» mehr,
+  // Die ANZEIGE ist ehrlich zurückgesetzt — kein «Claude-Abo (lokale CLI)» mehr,
   // ohne hinterlegten Schlüssel bleibt «nicht angemeldet».
   await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('nicht angemeldet');
-  await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('Claude-Abo (lokale CLI)');
   // Der Knopf selbst verschwindet wieder (kein Token mehr, das er löschen könnte).
   await expect(page.locator('[data-testid="oauth-abmelden"]')).toHaveCount(0);
 
@@ -203,7 +203,7 @@ test('Wechsel auf einen API-Schlüssel löscht ein liegengebliebenes Alt-Token m
   await page.reload();
   await oeffneCloudEinstellungen(page);
   await page.click('[data-testid="cloud-login-abo"]');
-  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('Claude-Abo (lokale CLI)');
 
   // Statt «Abmelden» zu drücken, trägt der Architekt direkt einen neuen
   // API-Schlüssel ein — auch DIESER Weg darf das alte Token nicht liegen
@@ -211,7 +211,7 @@ test('Wechsel auf einen API-Schlüssel löscht ein liegengebliebenes Alt-Token m
   await page.getByLabel('API-Schlüssel (bleibt auf diesem Gerät)').fill('sk-ant-anderer-weg');
 
   await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('API-Schlüssel hinterlegt');
-  await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('angemeldet als Abo');
+  await expect(page.locator('[data-testid="cloud-login-status"]')).not.toContainText('Claude-Abo (lokale CLI)');
   // Der Abmelden-Knopf ist konsequent auch weg — es gibt kein Token mehr,
   // von dem man sich abmelden könnte.
   await expect(page.locator('[data-testid="oauth-abmelden"]')).toHaveCount(0);
@@ -315,7 +315,7 @@ test.describe('ant-CLI-Status (dreiwertig, E10 §3.1)', () => {
     await setzeAntStatus(page, 'eingeloggt');
     await page.click('[data-testid="cloud-login-abo"]');
 
-    await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('angemeldet als Abo');
+    await expect(page.locator('[data-testid="cloud-login-status"]')).toContainText('Claude-Abo (lokale CLI)');
     await expect(page.locator('[data-testid="cloud-login-ant-status"]')).toContainText('holt das Token');
   });
 });

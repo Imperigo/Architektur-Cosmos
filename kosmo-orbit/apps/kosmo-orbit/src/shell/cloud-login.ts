@@ -90,6 +90,10 @@ export function istAntFehltFehler(fehler: unknown): boolean {
 // reinen Zustands-Funktionen hier beheben genau das — ohne DOM/React, damit
 // sie unit-testbar bleiben und `KosmoPanel.tsx` (Owner: Stream 2A) nur die
 // beiden Aufrufe braucht, keine eigene Lösch-Logik.
+//
+// (v0.9.2 P-F3: die Statuszeile zeigt seither «Claude-Abo (lokale CLI)»
+// statt des früheren «angemeldet als Abo» — der Wortlaut oben beschreibt
+// das ZUSTANDS-Ergebnis dieser Funktionen, nicht den exakten UI-Text.)
 // -----------------------------------------------------------------------
 
 /** Minimaler Ausschnitt aus `KosmoSettings`, den die beiden Funktionen unten

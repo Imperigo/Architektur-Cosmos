@@ -104,7 +104,7 @@ Owner-Schlüssel, bleibt **Owner-Abnahme**. Dieses Drehbuch ist genau dafür.
    den eigenen `sk-ant-…`-Schlüssel ins Feld «API-Schlüssel (bleibt auf diesem
    Gerät)» eintragen (oder — Desktop-Build — «Mit Claude-Abo anmelden»
    nutzen, s. `docs/CLOUD-LOGIN-ABO.md`). Der Status wechselt auf «API-Schlüssel
-   hinterlegt» bzw. «angemeldet als Abo».
+   hinterlegt» bzw. «Claude-Abo (lokale CLI)».
 3. **Blick aktivieren**: Häkchen «Kosmo sieht mit» setzen (bei Anthropic per
    Default bereits AN).
 4. **Bild anhängen**: eine Station öffnen, die ein Bild liefert (KosmoDesign:

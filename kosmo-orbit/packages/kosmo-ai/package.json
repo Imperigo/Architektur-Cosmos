@@ -18,6 +18,14 @@
     "jsonrepair": "^3.13.0",
     "zod": "^4.1.0"
   },
+  "peerDependencies": {
+    "@tauri-apps/api": "^2.9.0"
+  },
+  "peerDependenciesMeta": {
+    "@tauri-apps/api": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"

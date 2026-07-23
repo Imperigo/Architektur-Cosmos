@@ -75,7 +75,7 @@ async function oeffneCloudEinstellungen(page: import('@playwright/test').Page) {
   await page.waitForSelector('[data-testid="cloud-login-ant-status"]');
   await page.screenshot({ path: `${OUT}/pa35-084-ant-eingeloggt-vor-klick.png` });
   await page.click('[data-testid="cloud-login-abo"]');
-  await page.waitForSelector('[data-testid="cloud-login-status"]:has-text("angemeldet als Abo")');
+  await page.waitForSelector('[data-testid="cloud-login-status"]:has-text("Claude-Abo (lokale CLI)")');
   await page.screenshot({ path: `${OUT}/pa35-084-abo-angemeldet.png` });
   await page.close();
 }

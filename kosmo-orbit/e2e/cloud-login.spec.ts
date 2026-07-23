@@ -130,6 +130,61 @@ test('Claude-Modell-Select: Freitext-Override für eigene Modell-IDs, persistier
  * abgefangen (Muster `e2e/kosmo-blick-cloud.spec.ts`), damit der Test
  * deterministisch und offline läuft, ohne den Netzcode selbst zu mocken.
  */
+/**
+ * P-F3 (Owner-Punkt 23.07.2026 «claude-abo 401») — der WEB/PWA-Zweig des
+ * NEUEN Chat-Motors `ClaudeCliProvider` (`@kosmo/ai`, `claude-cli.ts`):
+ * Playwright-Chromium hat kein `__TAURI_INTERNALS__`, ist also GENAU der
+ * ehrliche Fall, den `istTauriDesktop()` dort erkennt. Diese Spec setzt
+ * `cloudAuth:'abo'` direkt in `kosmo.llm` (der Login-Knopf selbst ist im
+ * Web ohnehin nicht klickbar, s. Test oben) und beweist: ein Chat-Zug im
+ * Abo-Modus endet NICHT in einem stillen Fehlschlag oder einem 401-Netz-
+ * Request, sondern zeigt exakt den deklarierten Desktop-only-Hinweis im
+ * Chat — denselben Wortlaut wie `claudeAboAnmeldung()` für den Login-Knopf.
+ */
+test.describe('ClaudeCliProvider im Web/PWA (P-F3)', () => {
+  test('Ein Chat-Zug im Abo-Modus endet ohne Tauri im deklarierten Web-Fehlerhinweis, kein Netz-Request', async ({
+    page,
+  }) => {
+    let anthropicRequestGesehen = false;
+    await page.route('https://api.anthropic.com/v1/messages', async (route: Route) => {
+      anthropicRequestGesehen = true;
+      await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+    });
+
+    await page.goto('/');
+    await page.evaluate(() => {
+      localStorage.setItem('kosmo.onboarded', '1');
+      localStorage.setItem(
+        'kosmo.llm',
+        JSON.stringify({
+          provider: 'anthropic',
+          betriebsart: 'cloud',
+          cloudAuth: 'abo',
+          anthropicOauthToken: 'fake-oauth-token-e2e-web',
+          anthropicModel: 'claude-opus-4-8',
+        }),
+      );
+    });
+    await page.reload();
+
+    const orbKnopf = page.locator('[data-testid="kosmo-orb-knopf"]');
+    if ((await orbKnopf.count()) > 0) {
+      await page.dblclick('[data-testid="kosmo-orb-knopf"]');
+    } else {
+      await page.dblclick('[data-testid="kosmo-symbol"]');
+    }
+    await expect(page.locator('[data-testid="kosmo-input"]')).toBeVisible();
+
+    const sendKnopf = page.locator('[data-testid="kosmo-send"]');
+    await expect(sendKnopf).toBeEnabled({ timeout: 15_000 });
+    await page.fill('[data-testid="kosmo-input"]', 'Hallo Kosmo');
+    await sendKnopf.click();
+
+    await expect(page.locator('text=Claude-Abo läuft nur in der Desktop-App')).toBeVisible({ timeout: 15_000 });
+    expect(anthropicRequestGesehen).toBe(false);
+  });
+});
+
 test.describe('API-Schlüssel-Validierungs-Ping (E10 §3.2)', () => {
   test('ok: eine 200-Antwort zeigt "Zugang bestätigt"', async ({ page }) => {
     await page.route('https://api.anthropic.com/v1/messages', async (route: Route) => {

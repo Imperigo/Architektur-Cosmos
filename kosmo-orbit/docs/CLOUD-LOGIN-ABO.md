@@ -53,7 +53,7 @@ Im Kosmo-Panel (⚙ → Betriebsart **Cloud**):
   Nicht klickbar, nichts vorgetäuscht.
 
 Ein Statuszeile (`data-testid="cloud-login-status"`) zeigt jederzeit, welcher
-Weg aktiv ist: *angemeldet als Abo* / *API-Schlüssel hinterlegt* / *nicht
+Weg aktiv ist: *Claude-Abo (lokale CLI)* / *API-Schlüssel hinterlegt* / *nicht
 angemeldet*.
 
 ## Der Desktop-Anmelde-Helfer (Tauri-Command)

@@ -4,6 +4,7 @@ import {
   ChatSession,
   LearningJournal,
   AnthropicProvider,
+  ClaudeCliProvider,
   MockProvider,
   OllamaProvider,
   OpenAiKompatibelProvider,
@@ -431,6 +432,18 @@ export function loadSettings(): KosmoSettings {
  * Verhaltensänderung am bestehenden Panel-Pfad (byte-identische Auswahl-
  * Logik, nur aus dem `session`-`useMemo` herausgezogen) — «eine Wahrheit»
  * statt einer zweiten, driftenden Provider-Auswahl.
+ *
+ * P-F3 (Owner-Punkt 23.07., «claude-abo 401»): der Abo-Zweig
+ * (`cloudAuth === 'abo'`) baut NICHT mehr `AnthropicProvider` mit dem
+ * OAuth-Token als HTTP-Auth — das Token ist kein API-Schlüssel, Anthropic
+ * weist direkte Cloud-Aufrufe damit korrekt mit 401 zurück (WURZEL des
+ * behobenen Fehlers, s. `claude-cli.ts`-Kopfkommentar). Stattdessen läuft
+ * `ClaudeCliProvider` (`@kosmo/ai`) — er startet die bereits per
+ * `claude auth login --claudeai` eingeloggte lokale CLI als Subprozess
+ * (Tauri-Command `claude_cli_chat`, `src-tauri/src/lib.rs`) statt selbst
+ * HTTP zu sprechen. `AnthropicProvider`s `oauthToken`-Weg bleibt im Code
+ * bestehen (eigene Tests, `pruefeAnthropicZugang`-Diagnose) — er wird ab
+ * jetzt schlicht nie mehr für den Chat-Weg konstruiert.
  */
 export function baueChatProvider(settings: KosmoSettings): ChatProvider {
   return settings.provider === 'mock'
@@ -438,11 +451,9 @@ export function baueChatProvider(settings: KosmoSettings): ChatProvider {
     : settings.provider === 'scripted'
       ? new ScriptedProvider(settings.skriptId ?? '')
       : settings.provider === 'anthropic'
-        ? new AnthropicProvider(
-            settings.cloudAuth === 'abo'
-              ? { oauthToken: settings.anthropicOauthToken, model: settings.anthropicModel }
-              : { apiKey: settings.anthropicKey, model: settings.anthropicModel },
-          )
+        ? settings.cloudAuth === 'abo'
+          ? new ClaudeCliProvider({ model: settings.anthropicModel })
+          : new AnthropicProvider({ apiKey: settings.anthropicKey, model: settings.anthropicModel })
         : settings.provider === 'lmstudio'
           ? new OpenAiKompatibelProvider({ baseUrl: settings.lmBaseUrl, model: settings.lmModel })
           : new OllamaProvider({ baseUrl: settings.baseUrl, model: settings.model });
@@ -1973,8 +1984,12 @@ export function KosmoPanel({ onClose, onAbspielStart }: KosmoPanelProps) {
               <div className="kp-feld-titel">
                 Cloud-Anmeldung —{' '}
                 <span data-testid="cloud-login-status" className="kp-ink">
+                  {/* P-F3 (Owner-Punkt 23.07., «claude-abo 401»): ehrlich benannt,
+                      WELCHER Motor tatsächlich antwortet — die lokale CLI
+                      (`ClaudeCliProvider`), nicht mehr ein direkter HTTP-Aufruf
+                      mit dem OAuth-Token (s. `baueChatProvider` oben). */}
                   {settings.cloudAuth === 'abo' && settings.anthropicOauthToken.trim()
-                    ? 'angemeldet als Abo'
+                    ? 'Claude-Abo (lokale CLI)'
                     : settings.anthropicKey.trim()
                       ? 'API-Schlüssel hinterlegt'
                       : 'nicht angemeldet'}

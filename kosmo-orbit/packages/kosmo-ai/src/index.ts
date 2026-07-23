@@ -3,6 +3,7 @@ export * from './betrieb';
 export * from './staffelung';
 export * from './bild-budget';
 export * from './anthropic';
+export * from './claude-cli';
 export * from './openai-kompatibel';
 export * from './scripted';
 export * from './tools';
