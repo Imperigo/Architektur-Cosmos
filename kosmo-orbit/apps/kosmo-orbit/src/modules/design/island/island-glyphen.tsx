@@ -65,6 +65,10 @@ import type { ComponentType, ReactNode } from 'react';
  * **v0.9.1 P-B2 (`docs/V091-SPEZ.md` §P-B2):** + 2 weitere Werkzeug-Icons für
  * die neuen ZEICHNEN-Werkzeuge `gelaender`/`rampe` (`island-katalog.ts`) —
  * `ISLAND_GLYPHEN` trägt jetzt 23 Einträge, derselben Bauvorschrift folgend.
+ *
+ * **v0.9.2 P-P2 (`docs/V092-SPEZ.md` §P-P2):** + 1 weiteres Werkzeug-Icon für
+ * das neue PROJEKT-Werkzeug `profil` (Profil-Manager, `island-katalog.ts`) —
+ * `ISLAND_GLYPHEN` trägt jetzt 24 Einträge, derselben Bauvorschrift folgend.
  */
 
 const WURZEL_ATTRIBUTE = {
@@ -315,7 +319,18 @@ const rampe = glyphe(
   </>,
 );
 
-/** Die 23 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
+/** Profil — I-Profil-Querschnitt (zwei Flansche + Steg, Muster
+ *  `profilOutline()`s stahl-i-Zerlegung, `model/entities.ts`), Akzent am
+ *  oberen Flansch (v0.9.2 P-P2, `docs/V092-SPEZ.md` §P-P2). */
+const profil = glyphe(
+  <>
+    <path d="M5 5 H19 M5 19 H19 M12 5 V19" />
+    <path d="M8 5 V7.5 M16 5 V7.5 M8 16.5 V19 M16 16.5 V19" />
+    {akzent(12, 5)}
+  </>,
+);
+
+/** Die 24 Werkzeug-Icons, geschlüsselt nach `island-katalog.ts`s `IslandWerkzeug.id`. */
 export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   oeffnung,
   messen,
@@ -340,6 +355,7 @@ export const ISLAND_GLYPHEN: Record<string, ComponentType<GlyphProps>> = {
   skizze,
   gelaender,
   rampe,
+  profil,
 };
 
 // ── 4 Island-Pill-Icons ────────────────────────────────────────────────

@@ -5,6 +5,10 @@ import '../src/modules/design/island/inhalte/zeichnen';
 import '../src/modules/design/island/inhalte/ansicht';
 import '../src/modules/design/island/inhalte/projekt';
 import '../src/modules/design/island/inhalte/austausch';
+// v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): additiver Import — ohne ihn fehlte
+// «profil» in `registrierteWerkzeugIds()` und der C-27-Test unten würde ihn
+// fälschlich als unregistriert melden.
+import '../src/modules/design/island/inhalte/profile';
 
 /**
  * PD2 Verdrahtung (`docs/ISLAND-UI-SPEZ.md` §3/§7 PD2-Zeile) — der Katalog
@@ -23,8 +27,8 @@ function werkzeug(id: string) {
 }
 
 describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
-  it('bleibt 31/31 (PD2 ändert nur Felder, keine Werkzeuge; v0.9.1 P-B2 hängt gelaender/rampe additiv ans Ende — 29→31)', () => {
-    expect(WERKZEUG_KATALOG).toHaveLength(31);
+  it('bleibt 32/32 (PD2 ändert nur Felder, keine Werkzeuge; v0.9.1 P-B2: 29→31 gelaender/rampe, v0.9.2 P-P2: 31→32 profil)', () => {
+    expect(WERKZEUG_KATALOG).toHaveLength(32);
   });
 
   it.each(ECHTE_TOOL_IDS)('%s trägt toolId===id (echte ui-zustand.ts-ToolId)', (id) => {
@@ -41,8 +45,8 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     expect(werkzeug(id).toolId).toBe(id);
   });
 
-  it('Werkzeuge ohne echte ToolId (Sonne/Ebenen/Varianten/Phase/Liste/Export/Import/Manuell/Darstellung) haben KEIN toolId', () => {
-    for (const id of ['darstellung', 'sonne', 'ebenen', 'varianten', 'phase', 'liste', 'export', 'import', 'manuell']) {
+  it('Werkzeuge ohne echte ToolId (Sonne/Ebenen/Varianten/Phase/Liste/Export/Import/Manuell/Darstellung/Profile) haben KEIN toolId', () => {
+    for (const id of ['darstellung', 'sonne', 'ebenen', 'varianten', 'phase', 'liste', 'export', 'import', 'manuell', 'profil']) {
       expect(werkzeug(id).toolId).toBeUndefined();
     }
   });
@@ -98,7 +102,7 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
   });
 
   it('verdrahtete Werkzeuge (echte Aktion vorhanden) tragen KEINEN Hinweis', () => {
-    for (const id of [...ECHTE_TOOL_IDS, 'darstellung', 'sonne', 'ebenen', 'varianten', 'phase', 'liste', 'export', 'import']) {
+    for (const id of [...ECHTE_TOOL_IDS, 'darstellung', 'sonne', 'ebenen', 'varianten', 'phase', 'liste', 'export', 'import', 'profil']) {
       expect(werkzeug(id).hinweis).toBeUndefined();
     }
   });
@@ -113,11 +117,11 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
   // gegen `registrierteWerkzeugIds()` (die echte, geladene Registry) zeigt
   // sich: 7 der 8 sind bereits echt, nur Achsen bleibt bewusst ohne Popup
   // (§4.4-Ausnahme, kein Rahmen — Owner-sauber geschlossen statt Attrappe).
-  it('C-27: alle Popup-Werkzeuge sind in der Registry ECHT verdrahtet — nur Achsen (kein Popup, §4.4-Ausnahme) bleibt bewusst aussen vor (v0.9.1 P-B2: 27→29, gelaender/rampe additiv mit hatPopup=true)', () => {
+  it('C-27: alle Popup-Werkzeuge sind in der Registry ECHT verdrahtet — nur Achsen (kein Popup, §4.4-Ausnahme) bleibt bewusst aussen vor (v0.9.1 P-B2: 27→29 gelaender/rampe, v0.9.2 P-P2: 29→30 profil, alle additiv mit hatPopup=true)', () => {
     const registriert = new Set(registrierteWerkzeugIds());
     const mitPopup = WERKZEUG_KATALOG.filter((w) => w.hatPopup);
     const ohnePopup = WERKZEUG_KATALOG.filter((w) => !w.hatPopup);
-    expect(mitPopup).toHaveLength(29);
+    expect(mitPopup).toHaveLength(30);
     expect(ohnePopup.map((w) => w.id).sort()).toEqual(['achsen', 'manuell']);
     for (const w of mitPopup) {
       expect(registriert.has(w.id), `${w.id} fehlt in der Registry`).toBe(true);
@@ -130,10 +134,10 @@ describe('island-katalog — PD2 toolId-Verdrahtung (§3-Fundstellen)', () => {
     expect(registriert.has('achsen')).toBe(false);
   });
 
-  it('werkzeugeFuerIsland liefert jetzt 13/6/6/6 (v0.9.1 P-B2: ZEICHNEN 11→13, ANSICHT/PROJEKT/AUSTAUSCH unangetastet)', () => {
+  it('werkzeugeFuerIsland liefert jetzt 13/6/7/6 (v0.9.1 P-B2: ZEICHNEN 11→13; v0.9.2 P-P2: PROJEKT 6→7 profil, ANSICHT/AUSTAUSCH unangetastet)', () => {
     expect(werkzeugeFuerIsland('zeichnen')).toHaveLength(13);
     expect(werkzeugeFuerIsland('ansicht')).toHaveLength(6);
-    expect(werkzeugeFuerIsland('projekt')).toHaveLength(6);
+    expect(werkzeugeFuerIsland('projekt')).toHaveLength(7);
     expect(werkzeugeFuerIsland('austausch')).toHaveLength(6);
   });
 });

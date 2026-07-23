@@ -86,10 +86,12 @@ afterEach(() => {
 
 describe('PD3b — Registry-Vollständigkeit (hartes Gate: kein Werkzeug endet bei Stufe 1)', () => {
   it('alle PROJEKT+AUSTAUSCH-Werkzeuge ausser «manuell» sind mit Stufe2 UND Stufe3 registriert', () => {
+    // v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): PROJEKT wächst additiv um
+    // `profil` (Profil-Manager, `inhalte/profile.tsx`) — 12→13, 11→12.
     const alle = [...werkzeugeFuerIsland('projekt'), ...werkzeugeFuerIsland('austausch')];
-    expect(alle.length).toBe(12);
+    expect(alle.length).toBe(13);
     const zuPruefen = alle.filter((w) => w.id !== 'manuell');
-    expect(zuPruefen.length).toBe(11);
+    expect(zuPruefen.length).toBe(12);
     for (const w of zuPruefen) {
       const inhalt = inhaltFuer(w.id);
       expect(inhalt?.Stufe2, `Stufe2 fehlt für «${w.id}»`).toBeDefined();

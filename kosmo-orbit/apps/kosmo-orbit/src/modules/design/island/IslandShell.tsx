@@ -19,6 +19,10 @@ import './inhalte/zeichnen';
 import './inhalte/ansicht';
 import './inhalte/projekt';
 import './inhalte/austausch';
+// v0.9.2 P-P2 (`docs/V092-SPEZ.md` §P-P2): Profil-Manager — additiver
+// fünfter Import, registriert das neue PROJEKT-Werkzeug `profil` (eigene
+// Datei statt `inhalte/projekt.tsx`, um deren Dateikreis nicht anzufassen).
+import './inhalte/profile';
 import './island.css';
 
 /**

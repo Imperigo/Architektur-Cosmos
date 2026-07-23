@@ -15,6 +15,10 @@ import {
   type Entity,
   type Opening,
   type Patch,
+  // v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): Profil-Auswahl für Stütze/
+  // Unterzug — liest denselben Profil-Typenkatalog wie `island/inhalte/
+  // profile.tsx` (`Profil`, kind 'profil', projektglobal wie Assembly).
+  type Profil,
 } from '@kosmo/kernel';
 // E6 (v0.8.10, docs/V0810-SPEZ.md §2, Z5): Material-Auswahl für
 // column/beam bezieht dieselbe Katalog-Quelle wie die Wand-Aufbauten
@@ -173,6 +177,10 @@ export function Inspector() {
   };
 
   const assemblies = doc.byKind<Assembly>('assembly');
+  // v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): Profil-Typenkatalog für die
+  // Stütze/Unterzug-Profil-Auswahl unten — dieselbe Quelle wie `island/
+  // inhalte/profile.tsx`.
+  const profile = doc.byKind<Profil>('profil');
 
   const koerper = (
     <div className="insp-koerper">
@@ -539,6 +547,29 @@ export function Inspector() {
               disabled={gesperrt}
             />
           </Row>
+          {/* v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): Profil-Auswahl aus dem
+              Typenkatalog — «— kein Profil —» setzt einen leeren String über
+              `design.eigenschaftSetzen`, der Kernel entfernt `profilId` dann
+              ganz (Bestandsverhalten, GOLDEN-GUARD in P-P1). Gesetztes
+              `profilId` überschreibt NUR die Ableitung (`deriveColumn`),
+              Breite/Tiefe/Rotation oben bleiben unabhängig editierbar. */}
+          <Row label="Profil">
+            <KSelect
+              size="sm"
+              value={entity.profilId ?? ''}
+              onChange={(e) => set('profilId', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-stuetze-profil"
+              disabled={gesperrt}
+            >
+              <option value="">— kein Profil —</option>
+              {profile.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </KSelect>
+          </Row>
         </>
       )}
 
@@ -578,6 +609,26 @@ export function Inspector() {
               {materialkatalog.map((m) => (
                 <option key={m.key} value={m.key}>
                   {m.name}
+                </option>
+              ))}
+            </KSelect>
+          </Row>
+          {/* v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): Profil-Auswahl — s.
+              Kommentar im column-Zweig oben, identisches Verhalten für
+              Unterzug (Breite/Höhe/Material bleiben unabhängig editierbar). */}
+          <Row label="Profil">
+            <KSelect
+              size="sm"
+              value={entity.profilId ?? ''}
+              onChange={(e) => set('profilId', e.target.value)}
+              className="dp-feld-voll"
+              data-testid="inspector-unterzug-profil"
+              disabled={gesperrt}
+            >
+              <option value="">— kein Profil —</option>
+              {profile.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
                 </option>
               ))}
             </KSelect>

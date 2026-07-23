@@ -36,8 +36,8 @@ function werkzeug(id: string) {
 }
 
 describe('island-katalog — PB2 Icon-Verdrahtung (glyphe: string | ComponentType)', () => {
-  it('bleibt 31/31 (PB2 ändert nur den glyphe-Wert; v0.9.1 P-B2 hängt gelaender/rampe additiv an — 29→31, s. eigene Zählung unten)', () => {
-    expect(WERKZEUG_KATALOG).toHaveLength(31);
+  it('bleibt 32/32 (PB2 ändert nur den glyphe-Wert; v0.9.1 P-B2: 29→31 gelaender/rampe, v0.9.2 P-P2: 31→32 profil, s. eigene Zählung unten)', () => {
+    expect(WERKZEUG_KATALOG).toHaveLength(32);
   });
 
   it.each(ACHT_BESTANDS_ICON_IDS)('%s trägt eine Component (werkzeug-icons.tsx-SVG), keinen String mehr', (id) => {
@@ -57,20 +57,20 @@ describe('island-katalog — PB2 Icon-Verdrahtung (glyphe: string | ComponentTyp
     expect(werkzeug('skizze').glyphe).toBe(ISLAND_GLYPHEN['skizze']);
   });
 
-  it('alle 31 Werkzeuge tragen eine Icon-Component, 0 bleiben String (PE2 schliesst die letzte Lücke; v0.9.1 P-B2 hält sie geschlossen)', () => {
+  it('alle 32 Werkzeuge tragen eine Icon-Component, 0 bleiben String (PE2 schliesst die letzte Lücke; v0.9.1 P-B2/v0.9.2 P-P2 halten sie geschlossen)', () => {
     const komponenten = WERKZEUG_KATALOG.filter((w) => typeof w.glyphe === 'function');
     const strings = WERKZEUG_KATALOG.filter((w) => typeof w.glyphe === 'string');
-    expect(komponenten).toHaveLength(31);
+    expect(komponenten).toHaveLength(32);
     expect(strings).toHaveLength(0);
   });
 
-  it('die 8 Bestands-Icons und die 23 ISLAND_GLYPHEN-Icons überschneiden sich nicht und ergeben zusammen 31 (keine Katalog-Id doppelt/fehlend; v0.9.1 P-B2: 21→23 für gelaender/rampe)', () => {
+  it('die 8 Bestands-Icons und die 24 ISLAND_GLYPHEN-Icons überschneiden sich nicht und ergeben zusammen 32 (keine Katalog-Id doppelt/fehlend; v0.9.1 P-B2: 21→23 gelaender/rampe, v0.9.2 P-P2: 23→24 profil)', () => {
     const glyphenIds = new Set(Object.keys(ISLAND_GLYPHEN));
     for (const id of ACHT_BESTANDS_ICON_IDS) {
       expect(glyphenIds.has(id)).toBe(false);
     }
     expect(ACHT_BESTANDS_ICON_IDS).toHaveLength(8);
-    expect(glyphenIds.size).toBe(23);
-    expect(ACHT_BESTANDS_ICON_IDS.length + glyphenIds.size).toBe(31);
+    expect(glyphenIds.size).toBe(24);
+    expect(ACHT_BESTANDS_ICON_IDS.length + glyphenIds.size).toBe(32);
   });
 });

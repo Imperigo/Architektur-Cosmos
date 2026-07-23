@@ -98,3 +98,61 @@
   flex-direction: column;
   gap: var(--k-s3);
 }
+
+/* v0.9.2 P-P2 (docs/V092-SPEZ.md §P-P2): Profil-Manager (`inhalte/
+   profile.tsx`) — additiver `.pd3b-profil-*`-Namensraum, kein Bestands-
+   selektor oben verändert. Grid-Spalte für den Namen mit `minmax(0, 1fr)`
+   + Ellipsis statt Umbruchquetschung (Owner-Regel, Referenzen-Tabelle-Fund
+   618) — Form/Masse bleiben `auto`-breit und einzeilig daneben. */
+.pd3b-profil-manager {
+  max-height: min(70vh, 560px);
+  overflow: auto;
+  min-width: 320px;
+}
+
+.pd3b-profil-liste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s2);
+}
+
+.pd3b-profil-zeile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-s1);
+  padding: var(--k-s2) 0;
+  border-bottom: 1px solid var(--k-glass-stroke, var(--k-line));
+}
+
+.pd3b-profil-zeile-kopf {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: var(--k-s2);
+}
+
+.pd3b-profil-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.pd3b-profil-form,
+.pd3b-profil-masse {
+  font-family: var(--k-font-mono);
+  font-size: 11px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.pd3b-profil-mini-liste {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 11px;
+}
+
+.pd3b-profil-fehler {
+  color: var(--k-danger);
+  opacity: 1;
+}

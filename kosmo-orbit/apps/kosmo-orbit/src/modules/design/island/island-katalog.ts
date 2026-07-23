@@ -10,6 +10,14 @@
  * jetzt 31 (ZEICHNEN 13 / ANSICHT 6 / PROJEKT 6 / AUSTAUSCH 6), s. dortigen
  * Kommentar.
  *
+ * v0.9.2 P-P2 (`docs/V092-SPEZ.md` §P-P2) hängt additiv EIN weiteres
+ * PROJEKT-Werkzeug an (`profil` — Profil-Manager, Typenkatalog-Verwaltung
+ * für Stützen-/Unterzugprofile, `inhalte/profile.tsx`) — Gesamtstand jetzt 32
+ * (ZEICHNEN 13 / ANSICHT 6 / PROJEKT 7 / AUSTAUSCH 6). Kein `toolId` (wie
+ * `kennzahlen`/`liste`): das Werkzeug ist ein reiner Katalog-Manager ohne
+ * Plan-Klickmodus, dieselbe Begründung wie bei den übrigen `toolId`-losen
+ * PROJEKT-Werkzeugen.
+ *
  * **PD2 (diese Fassung): `toolId` echt gesetzt**, wo eine Insel-Id 1:1 einer
  * bestehenden `ui-zustand.ts`-`ToolId` entspricht (die neun Zeichenwerkzeuge
  * mit direktem `setTool`-Weg). Für die übrigen «Vorhanden»/«Teilweise»-
@@ -237,6 +245,15 @@ const PROJEKT: readonly IslandWerkzeug[] = [
   werkzeug('kommentare', 'Kommentare', 'projekt', icon(ISLAND_GLYPHEN, 'kommentare'), 'vorhanden', true, {
     toolId: 'kommentar',
   }),
+  // v0.9.2 P-P2 (`docs/V092-SPEZ.md` §P-P2): additives 7. PROJEKT-Werkzeug —
+  // Profil-Manager (Typenkatalog für Stützen-/Unterzugprofile, projektglobal
+  // wie Assembly). Kein `toolId`: Profile werden NICHT durch einen
+  // Plan-Klickmodus erzeugt (anders als Wand/Stütze/Zone), sondern reine
+  // Katalogpflege im Einstellungsfenster (`inhalte/profile.tsx`) — dieselbe
+  // Begründung wie bei `kennzahlen`/`liste` oben (kein `ui-zustand.ts`-Tool
+  // nötig). Status `vorhanden`: P-P1 (Kernel: Entity+Commands+Referenz-
+  // Schutz) ist bereits vollständig gelandet.
+  werkzeug('profil', 'Profile', 'projekt', icon(ISLAND_GLYPHEN, 'profil'), 'vorhanden', true),
 ];
 
 /** AUSTAUSCH (6) — §3.4. */
@@ -256,7 +273,8 @@ const AUSTAUSCH: readonly IslandWerkzeug[] = [
   werkzeug('manuell', 'Manuell', 'austausch', icon(ISLAND_GLYPHEN, 'manuell'), 'neu', false),
 ];
 
-/** Gesamtkatalog, 29/29, Reihenfolge exakt §3.1→§3.4. */
+/** Gesamtkatalog, 32/32 (ursprünglich 29/29, s. Kopfkommentar für die
+ *  additiven P-B2-/P-P2-Ergänzungen), Reihenfolge exakt §3.1→§3.4 + Anhänge. */
 export const WERKZEUG_KATALOG: readonly IslandWerkzeug[] = [...ZEICHNEN, ...ANSICHT, ...PROJEKT, ...AUSTAUSCH];
 
 export function werkzeugeFuerIsland(island: IslandId): readonly IslandWerkzeug[] {
