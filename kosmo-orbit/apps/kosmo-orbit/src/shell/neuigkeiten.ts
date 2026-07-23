@@ -35,6 +35,24 @@ export interface NeuigkeitenEintrag {
 /** Liste bleibt absteigend nach Version — die neuste zuerst (Test bewiesen). */
 export const NEUIGKEITEN: NeuigkeitenEintrag[] = [
   {
+    version: '0.9.2',
+    datum: '2026-07-23',
+    punkte: [
+      { text: 'Die automatische Aussenbemassung erscheint im gedruckten Plan jetzt mit der vollen Masslinien-Grammatik: Hilfslinien an jedem Messpunkt, feste Papier-Schrift und Verdichtung zu Punktsymbolen bei engen Segmenten — Druck und Bildschirm versprechen dieselbe Lesbarkeit (der eine Golden-Zug dieser Version, 20 Referenzpläne bewusst erneuert).', station: 'design' },
+      { text: 'Profil-Manager: eigene Profile (Rechteck, Rund, Stahl-I, Stahl-U) projektweit anlegen, ändern und löschen (mit ehrlichem Referenz-Hinweis); Stützen und Unterzüge können ein Profil tragen — ohne Profil bleibt alles exakt wie bisher.', station: 'design' },
+      { text: 'Geländer-Arten wirken jetzt in 3D: Staketen als senkrechte Stäbe, «Voll» als geschlossene Brüstungsplatte; Rampen-Breite, -Höhe und Podest sind im Inspector editierbar — mit derselben ehrlichen SIA-Ablehnung wie beim Zeichnen.', station: 'design' },
+      { text: 'Detail-Werkzeug v1: Detailbereich mit zwei Klicks im Plan aufziehen (Name + Massstab, z.B. 1:5), der Ausschnitt erscheint als eigene read-only-Karte in KosmoPublish; das Zeichnen IM Detail folgt in 0.9.3.', station: 'design' },
+      { text: 'Raumstempel-Beschriftungen blenden beim Rauszoomen aus, statt sich überlagernd aufzublasen — feste Papiergrösse je Massstab, wie in ArchiCAD.', station: 'design' },
+      { text: '«Mit Claude-Abo anmelden» funktioniert jetzt wirklich: Die Desktop-App nutzt die lokal installierte claude-CLI als Motor (kein 401 mehr); Web/iPad sagen ehrlich, dass der Abo-Weg die Desktop-App braucht. Werkzeug-Aufrufe/Diff-Karten im Abo-Modus folgen später — die App weist einmalig darauf hin.' },
+      { text: '3D-Geometrie-Grundaudit nach Owner-Befund «innen hohl»: Volumen, Decken, Dächer, Rampen und Treppen sind jetzt geschlossene, korrekt orientierte Körper; ein neuer Invarianten-Test wacht dauerhaft über alle Zerlegungen.', station: 'design' },
+      { text: 'Der Home-Bildschirm wurde aufgeräumt: Projekte tragen automatisch Namen, «Neues Projekt» ist ohne Scrollen erreichbar, die vier Kosmo-Werkzeuge sitzen unter dem Logo, und der Kosmo-Orb rechts unten übernimmt per Rechtsklick die acht Unter-Stationen (die Kachel entfällt).' },
+      { text: 'Inseln öffnen mit sanfter Animation (Dynamic-Island-Gefühl), und offene Insel-Menüs liegen immer VOR den Nachbar-Inseln — Auswahllisten klappen als eigenes Popup auf, bei Platzmangel nach oben.' },
+      { text: 'Der Kosmo-Zeiger ist gespiegelt (Windows-Schräge), reagiert auf die rohe Mausposition (weniger Verzögerung) und verschwindet nicht mehr hinter Einstellungsfenstern.' },
+      { text: 'Beim Koppeln mit der Kosmo-Zentrale scannt das Onboarding die festgelegten HomeServer-Adressen automatisch, statt eine alte Bridge-Adresse vorzuschlagen.' },
+      { text: 'Neue Beschnitt-Sonde als Prüf-Skript (npm run beschnitt-sonde) — ab 0.9.3 fester Bestandteil des Release-Gates.' },
+    ],
+  },
+  {
     version: '0.9.1',
     datum: '2026-07-23',
     punkte: [
