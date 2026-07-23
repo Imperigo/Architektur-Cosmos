@@ -330,6 +330,29 @@ export interface Rampe extends Base {
   podestLaenge?: Mm;
 }
 
+/**
+ * Geländer (v0.9.1 P-A1, `docs/V091-SPEZ.md` K24) — Absturzsicherung als
+ * echtes Werkzeug: bisher gab es nur den 2D-Beschlagshinweis
+ * `Opening.absturzsicherung` an Öffnungen, kein eigenständiges Bauteil für
+ * freistehende Geländer (Balkon-/Terrassen-/Treppenhaus-Brüstungen). Muster
+ * `MassKette`: eine offene Polylinie (mind. zwei Punkte, Welt-mm), kein
+ * geschlossenes Polygon. Die Pfosten-/Handlauf-Zerlegung ist EINE geteilte
+ * Wahrheit für 3D und den späteren Plan-Zweig, s. `derive/gelaender.ts`.
+ */
+export interface Gelaender extends Base {
+  kind: 'gelaender';
+  storeyId: string;
+  /** Mindestens zwei Punkte (Muster `MassKette.punkte`), Welt-mm. */
+  punkte: Pt[];
+  /** Geländerhöhe ab OK Boden des Geschosses, mm — Command-Grenze 700–1500
+   * (SIA-Absturzsicherungsbereich), ausserhalb wird ehrlich abgelehnt statt
+   * geklemmt (`design.gelaenderZeichnen`). */
+  hoehe: Mm;
+  /** staketen (Default, senkrechte Stäbe zwischen den Pfosten) · handlauf
+   * (nur das Handlauf-Band, keine Füllung) · voll (geschlossene Brüstung). */
+  art: 'staketen' | 'handlauf' | 'voll';
+}
+
 /** Walm- oder Satteldach — Grundriss-Polygon + Neigung; Geometrie via Straight Skeleton (Walm)
  * bzw. First-Ebenen-Teilung (Sattel). */
 export interface Roof extends Base {
@@ -720,7 +743,7 @@ export interface VisGraph extends Base {
 }
 
 export type Entity =
-  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Rampe | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette;
+  | Storey | GridAxis | Assembly | Wall | Slab | Opening | Zone | MassBody | Roof | Stair | Rampe | Sheet | Boundary | ImageAsset | Furniture | ZonenTuer | Terrain | Aussparung | Column | Beam | Etikett | VisGraph | FreeMesh | Mangel | Kommentar | MassKette | Gelaender;
 export type EntityKind = Entity['kind'];
 
 export function isHostedBy(e: Entity, hostId: string): boolean {

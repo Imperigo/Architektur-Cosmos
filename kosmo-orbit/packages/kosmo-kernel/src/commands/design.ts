@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { newId } from '../model/ids';
-import type { Furniture, Assembly, Beam, Boundary, FreeMesh, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
+import type { Furniture, Assembly, Beam, Boundary, FreeMesh, Gelaender, GridAxis, Kommentar, Mangel, MassKette, Opening, Slab, Storey, Wall, MassBody, Zone, Roof, Stair, Rampe, ZonenTuer } from '../model/entities';
 import { FREEMESH_MAX_FACES, FREEMESH_MAX_VERTICES } from '../model/entities';
 import { extrudiereRegion, planareRegion, prismaMesh, quaderMesh } from '../derive/mesh-topo';
 import type { AnyPatch, KosmoDoc, ProjektInfo, RaumRegel, RaumprogrammPosten, ZonenVorlage } from '../model/doc';
@@ -759,9 +759,18 @@ const editableFields = [
   'rahmenbreite',
   'band',
   'griffseite',
+  // v0.9.1 P-A1 (V091-SPEZ §P-A1): additiv für `gelaender` — hoehe teilt sich
+  // die Zeile mit Beam.hoehe (numerisch, s. Bestands-Bereichsprüfung unten),
+  // art ist neu.
+  'art',
 ] as const;
 
 const FLUEGELTYP_WERTE = ['dreh', 'kipp', 'drehkipp', 'schiebe', 'fest'] as const;
+// v0.9.1 P-A1 (V091-SPEZ §P-A1): dieselben Werte wie Gelaender.art
+// (entities.ts) — additiv dupliziert nach demselben Muster wie
+// RAUMTYP_WERTE/FLUEGELTYP_WERTE oben (kein gemeinsamer Import, um deren
+// Zeilen nicht anzufassen).
+const GELAENDER_ART_WERTE = ['staketen', 'handlauf', 'voll'] as const;
 // E2 (V088-SPEZ §3, PA1-088): dieselbe Werteliste wie design.zoneErstellen/
 // design.raumTypSetzen — additiv dupliziert, um die bestehenden Enums dort
 // byte-gleich zu lassen (kein gemeinsamer Import, um deren Zeilen nicht
@@ -776,7 +785,7 @@ export const setProperty = registerCommand({
   id: 'design.eigenschaftSetzen',
   title: 'Eigenschaft ändern',
   description:
-    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
+    'Ändert eine Eigenschaft eines Elements. Felder je nach Typ: Zone(name, sia, program, number — Raumnummer, raumTyp) · Dach(pitch, overhang) · Volumen(height, program) · Decke(thickness) · Wand(assemblyId, alignment) · Öffnung(center, width, height, sill, swing, openingType, fluegelTyp — SIA-Öffnungssymbolik in Ansicht/Grundriss, v0.7.1 E5 — sowie typeId, fensterTyp, rahmenbreite, band, griffseite) · Möbel(rotationGrad) · Stütze(material, b, t, rotationGrad) · Unterzug(breite, hoehe, material) · Geländer(hoehe — 700–1500 mm, art — staketen/handlauf/voll) · Blatt(name — Blattname, KosmoPublish). Zahlen in mm (pitch/rotationGrad in Grad).',
   params: z.object({
     entityId: z.string(),
     feld: z.enum(editableFields),
@@ -815,6 +824,8 @@ export const setProperty = registerCommand({
       furniture: ['rotationGrad'],
       column: ['material', 'b', 't', 'rotationGrad'],
       beam: ['breite', 'hoehe', 'material'],
+      // v0.9.1 P-A1 (V091-SPEZ §P-A1): additive Zeile, Muster column/beam.
+      gelaender: ['hoehe', 'art'],
     };
     const fields = allowed[e.kind] ?? [];
     if (!fields.includes(p.feld)) {
@@ -860,6 +871,15 @@ export const setProperty = registerCommand({
     if (p.feld === 'hoehe' && e.kind === 'beam' && (Number(wert) < 100 || Number(wert) > 3000)) {
       // Bestands-Bereich aus design.unterzugZeichnen.
       throw new CommandError('hoehe muss zwischen 100 und 3000 mm liegen (Bestands-Bereich design.unterzugZeichnen)');
+    }
+    if (p.feld === 'hoehe' && e.kind === 'gelaender' && (Number(wert) < 700 || Number(wert) > 1500)) {
+      // Bestands-Bereich aus design.gelaenderZeichnen (SIA-Absturzsicherung) —
+      // eigenschaftSetzen darf keinen Wert zulassen, den das Erstellen-Command
+      // ablehnen würde (dasselbe Prinzip wie column b/t oben).
+      throw new CommandError('hoehe muss zwischen 700 und 1500 mm liegen (SIA-Absturzsicherung, Bestands-Bereich design.gelaenderZeichnen)');
+    }
+    if (p.feld === 'art' && !GELAENDER_ART_WERTE.includes(String(wert) as (typeof GELAENDER_ART_WERTE)[number])) {
+      throw new CommandError(`art muss eines von ${GELAENDER_ART_WERTE.join(', ')} sein`);
     }
     if (p.feld === 'rahmenbreite' && Number(wert) <= 0) {
       throw new CommandError('rahmenbreite muss grösser als 0 sein');
@@ -1579,6 +1599,50 @@ export const setStairGeometry = registerCommand({
     }
 
     return [{ id: stair.id, before: stair, after: neu }];
+  },
+});
+
+/**
+ * Geländer (v0.9.1 P-A1, `docs/V091-SPEZ.md` K24) — echtes Werkzeug statt nur
+ * des 2D-Beschlagshinweises `Opening.absturzsicherung`. Muster
+ * `design.massKetteSetzen`: eine offene Polylinie (mind. zwei Punkte). Die
+ * Höhe wird EHRLICH gegen den SIA-Absturzsicherungsbereich 700–1500 mm
+ * geprüft (zod `.min`/`.max`) — Werte ausserhalb werden abgelehnt, NICHT
+ * stillschweigend geklemmt (Sanktion 4, V091-SPEZ).
+ */
+export const drawGelaender = registerCommand({
+  id: 'design.gelaenderZeichnen',
+  title: 'Geländer zeichnen',
+  description:
+    'Zeichnet ein Geländer als Polylinie (mind. zwei Punkte, Welt-mm) im aktiven Geschoss. hoehe = Geländerhöhe ab OK Boden in mm (Standard 1000, zulässiger Bereich 700–1500 — SIA-Absturzsicherung, Werte ausserhalb werden abgelehnt statt geklemmt). art: staketen (Standard, senkrechte Stäbe), handlauf (nur das Band) oder voll (geschlossene Brüstung).',
+  params: z.object({
+    storeyId: z.string(),
+    punkte: z.array(PtSchema).min(2),
+    hoehe: z
+      .number()
+      .int()
+      .min(700, 'hoehe muss mindestens 700 mm sein (SIA-Absturzsicherung)')
+      .max(1500, 'hoehe darf höchstens 1500 mm sein')
+      .default(1000),
+    art: z.enum(['staketen', 'handlauf', 'voll']).default('staketen'),
+  }),
+  summarize: (p) => {
+    const pts = p.punkte as Pt[];
+    let gesamt = 0;
+    for (let i = 1; i < pts.length; i++) gesamt += dist(pts[i - 1]!, pts[i]!);
+    return `Geländer ${formatLength(Math.round(gesamt))}, ${p.hoehe} mm hoch (${p.art})`;
+  },
+  run: (doc, p) => {
+    require<Storey>(doc, p.storeyId, 'storey');
+    const gelaender: Gelaender = {
+      id: newId('gelaender'),
+      kind: 'gelaender',
+      storeyId: p.storeyId,
+      punkte: p.punkte as Pt[],
+      hoehe: p.hoehe,
+      art: p.art,
+    };
+    return [added(gelaender)];
   },
 });
 

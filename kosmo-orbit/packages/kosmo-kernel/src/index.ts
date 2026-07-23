@@ -34,6 +34,7 @@ export * from './derive/schraffur';
 export * from './derive/fang';
 export * from './derive/treppe';
 export * from './derive/rampe';
+export * from './derive/gelaender';
 export * from './derive/gltf';
 export * from './derive/plansvg';
 // v0.8.0 P7 (Golden-Sammelwechsel 080): Blattgeometrie öffentlich, damit

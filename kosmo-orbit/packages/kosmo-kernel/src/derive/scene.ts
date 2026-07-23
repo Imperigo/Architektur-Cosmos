@@ -1,9 +1,10 @@
-import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type MassBody, type Opening, type Rampe, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
+import { columnOutline, type Assembly, type Beam, type Column, type FreeMesh, type Gelaender, type MassBody, type Opening, type Rampe, type Roof, type Slab, type Stair, type Storey, type Terrain, type Wall } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { dist, type Pt } from '../model/units';
 import { openingRects, wallFrame, axisDirection } from '../geometry/wall';
 import { treppenTeile } from './treppe';
 import { rampenTeile } from './rampe';
+import { gelaenderTeile } from './gelaender';
 import { extrudePolygon, extrudeTerrainBand, extrudeWallWithOpenings, type GeometryArtifact } from './mesh';
 import { featureKanten, flaechenNormale } from './mesh-topo';
 import { convexSkeleton } from '../geometry/skeleton';
@@ -33,6 +34,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
   else if (e.kind === 'column') artifact = deriveColumn(doc, e);
   else if (e.kind === 'beam') artifact = deriveBeam(doc, e);
   else if (e.kind === 'freemesh') artifact = deriveFreeMesh(doc, e);
+  else if (e.kind === 'gelaender') artifact = deriveGelaender(doc, e);
 
   if (artifact) cache.set(id, { revision: doc.revision, artifact });
   return artifact;
@@ -41,7 +43,7 @@ export function deriveEntity(doc: KosmoDoc, id: string): GeometryArtifact | null
 export function deriveAll(doc: KosmoDoc): GeometryArtifact[] {
   const out: GeometryArtifact[] = [];
   for (const e of doc.entities.values()) {
-    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'ramp' || e.kind === 'column' || e.kind === 'beam' || e.kind === 'freemesh') {
+    if (e.kind === 'wall' || e.kind === 'slab' || e.kind === 'mass' || e.kind === 'roof' || e.kind === 'stair' || e.kind === 'ramp' || e.kind === 'column' || e.kind === 'beam' || e.kind === 'freemesh' || e.kind === 'gelaender') {
       const a = deriveEntity(doc, e.id);
       if (a) out.push(a);
     }
@@ -621,6 +623,101 @@ function deriveBeam(doc: KosmoDoc, beam: Beam): GeometryArtifact | null {
     zTop - beam.hoehe,
     zTop,
   );
+}
+
+/** Pfosten-Querschnitt (v0.9.1 P-A1, V091-SPEZ). */
+const GELAENDER_PFOSTEN_MM = 40;
+/** Handlauf-Bandhöhe (v0.9.1 P-A1, V091-SPEZ). */
+const GELAENDER_HANDLAUF_HOEHE_MM = 40;
+
+/**
+ * Mehrere Extrusionen einer Entity zu EINEM GeometryArtifact zusammenführen
+ * — `deriveEntity` liefert genau ein Artefakt je Entity-Id (Cache-Schlüssel),
+ * ein Geländer besteht aber aus mehreren Pfosten- und Handlauf-Boxen
+ * (je eine `extrudePolygon`-Extrusion). Reines Konkatenieren der typisierten
+ * Arrays, Indices werden um die bisherige Vertex-Zahl verschoben.
+ */
+function mergeArtifacts(entityId: string, materialKey: string, teile: readonly GeometryArtifact[]): GeometryArtifact | null {
+  if (teile.length === 0) return null;
+  const pos: number[] = [];
+  const nor: number[] = [];
+  const idx: number[] = [];
+  const edges: number[] = [];
+  for (const t of teile) {
+    const base = pos.length / 3;
+    pos.push(...t.positions);
+    nor.push(...t.normals);
+    for (const i of t.indices) idx.push(i + base);
+    edges.push(...t.edges);
+  }
+  return {
+    entityId,
+    materialKey,
+    positions: new Float32Array(pos),
+    normals: new Float32Array(nor),
+    indices: new Uint32Array(idx),
+    edges: new Float32Array(edges),
+  };
+}
+
+/**
+ * Geländer (v0.9.1 P-A1, `docs/V091-SPEZ.md` K24): Pfosten als dünne
+ * quadratische Extrusionen (~40×40 mm, Höhe g.hoehe ab OK Geschossboden) +
+ * ein Handlauf-Band (~40 mm hoch) auf Höhe g.hoehe entlang jedes
+ * Polylinien-Segments — Muster `deriveColumn`/`deriveBeam` (`extrudePolygon`).
+ * Die Zerlegung (Pfosten-Positionen, Handlauf-Segmente) kommt aus
+ * `derive/gelaender.ts` (`gelaenderTeile`) — EINE Wahrheit, kein zweiter
+ * Berechnungsweg. `art` (staketen/handlauf/voll) unterscheidet die 3D-Form
+ * bewusst NICHT (V091-SPEZ nennt nur Pfosten+Handlauf als P-A1-Umfang; eine
+ * echte Staketen-/Voll-Füllung ist ausserhalb dieses Pakets).
+ */
+function deriveGelaender(doc: KosmoDoc, g: Gelaender): GeometryArtifact | null {
+  const storey = doc.get<Storey>(g.storeyId);
+  if (!storey || storey.kind !== 'storey' || g.punkte.length < 2) return null;
+  const teile = gelaenderTeile(g);
+  const z0 = storey.elevation;
+  const z1 = z0 + g.hoehe;
+  const parts: GeometryArtifact[] = [];
+
+  const halbPfosten = GELAENDER_PFOSTEN_MM / 2;
+  for (const p of teile.pfosten) {
+    parts.push(
+      extrudePolygon(
+        g.id,
+        'stahl',
+        [
+          { x: p.x - halbPfosten, y: p.y - halbPfosten },
+          { x: p.x + halbPfosten, y: p.y - halbPfosten },
+          { x: p.x + halbPfosten, y: p.y + halbPfosten },
+          { x: p.x - halbPfosten, y: p.y + halbPfosten },
+        ],
+        [],
+        z0,
+        z1,
+      ),
+    );
+  }
+
+  const halbBand = GELAENDER_HANDLAUF_HOEHE_MM / 2;
+  for (const seg of teile.handlaufSegmente) {
+    const len = Math.hypot(seg.b.x - seg.a.x, seg.b.y - seg.a.y);
+    if (len < 1) continue;
+    const d = { x: (seg.b.x - seg.a.x) / len, y: (seg.b.y - seg.a.y) / len };
+    const n = { x: -d.y, y: d.x };
+    const P = (p: Pt, off: number): Pt => ({ x: p.x + n.x * off, y: p.y + n.y * off });
+    parts.push(
+      extrudePolygon(
+        g.id,
+        'stahl',
+        [P(seg.a, -halbPfosten), P(seg.b, -halbPfosten), P(seg.b, halbPfosten), P(seg.a, halbPfosten)],
+        [],
+        z1 - halbBand,
+        z1 + halbBand,
+      ),
+    );
+  }
+
+  return mergeArtifacts(g.id, 'stahl', parts);
 }
 
 function deriveSlab(doc: KosmoDoc, slab: Slab): GeometryArtifact | null {
