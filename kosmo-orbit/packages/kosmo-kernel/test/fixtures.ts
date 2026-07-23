@@ -580,3 +580,50 @@ export function testhausMasskette(): { doc: KosmoDoc; storeyId: string } {
 
   return { doc, storeyId };
 }
+
+/** v0.9.1 P-B3 (`docs/V091-SPEZ.md` §P-B3, GOLDEN-WECHSEL-091): EIN
+ *  kombiniertes Fixture für den EINEN neuen Golden `gelaender-rampe-plan.svg`
+ *  — dasselbe Testhaus wie `testhausMasskette` (ohne MassKette), plus ein
+ *  L-förmiges Geländer (Knick-Pfosten-Fall) und eine Rampe mit 10 %
+ *  Steigung (der ehrliche 6–15-%-Durchlauf-Bereich, %-Text im Plan). */
+export function testhausGelaenderRampe(): { doc: KosmoDoc; storeyId: string } {
+  const doc = new KosmoDoc();
+  const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+  const storeyId = (eg.patches[0] as { id: string }).id;
+  const aufbau = execute(doc, 'design.aufbauErstellen', {
+    name: 'AW Beton 36',
+    target: 'wall',
+    layers: [
+      { material: 'beton', thickness: 250, function: 'tragend' },
+      { material: 'daemmung', thickness: 160, function: 'daemmung' },
+    ],
+  });
+  const assemblyId = (aufbau.patches[0] as { id: string }).id;
+  const wand = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    execute(doc, 'design.wandZeichnen', { storeyId, a, b, assemblyId });
+  wand({ x: 0, y: 0 }, { x: 8000, y: 0 });
+  wand({ x: 8000, y: 0 }, { x: 8000, y: 6000 });
+  wand({ x: 8000, y: 6000 }, { x: 0, y: 6000 });
+  wand({ x: 0, y: 6000 }, { x: 0, y: 0 });
+
+  execute(doc, 'design.gelaenderZeichnen', {
+    storeyId,
+    punkte: [
+      { x: 500, y: 500 },
+      { x: 3500, y: 500 },
+      { x: 3500, y: 3000 },
+    ],
+    hoehe: 1000,
+    art: 'staketen',
+  });
+  // 300 mm Delta auf 3 m Lauf = 10 % — läuft durch (6–15 %), «10.0 %»-Text.
+  execute(doc, 'design.rampeZeichnen', {
+    storeyId,
+    a: { x: 4500, y: 1500 },
+    b: { x: 7500, y: 1500 },
+    width: 1200,
+    hoehenDelta: 300,
+  });
+
+  return { doc, storeyId };
+}

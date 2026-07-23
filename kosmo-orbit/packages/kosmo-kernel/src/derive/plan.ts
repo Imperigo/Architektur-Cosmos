@@ -1,4 +1,4 @@
-import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type GridAxis, type MassKette, type Opening, type Roof, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
+import { columnOutline, type Aussparung, type Beam, type Boundary, type Assembly, type Column, type Gelaender, type GridAxis, type MassKette, type Opening, type Rampe, type Roof, type Stair, type Storey, type Wall, type Zone, type ZonenTuer } from '../model/entities';
 import type { KosmoDoc } from '../model/doc';
 import { difference, intersect, union, type Poly } from '../geometry/clip';
 import { materialPrioritaet } from '../model/prioritaet';
@@ -10,6 +10,8 @@ import {
 } from '../geometry/wall';
 import { dist, formatLength, normal, polygonArea, pt, type Pt } from '../model/units';
 import { treppenTeile } from './treppe';
+import { gelaenderTeile } from './gelaender';
+import { rampenTeile } from './rampe';
 import { meshSchnittRinge } from './mesh-topo';
 import { dachGeometrie } from './dach';
 import { pocheEntscheid } from './poche';
@@ -672,6 +674,75 @@ export function derivePlan(doc: KosmoDoc, storeyId: string): PlanGraphic {
       lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 + nn.x * 160), y: Math.round(spitze.y - d.y * 350 + nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
       lines.push({ a: ende, b: { x: Math.round(spitze.x - d.x * 350 - nn.x * 160), y: Math.round(spitze.y - d.y * 350 - nn.y * 160) }, classes: ['symbol', 'lauflinie'] });
     }
+  }
+
+  // v0.9.1 P-B3 (`docs/V091-SPEZ.md` §P-B3, GOLDEN-WECHSEL-091 — der EINE
+  // Golden-Zug der Version): Geländer + Rampe im Druckweg, beide hinter
+  // Daten-Guards (Muster MassKette unten, Golden-Politik §0.5) — keines der
+  // 39 Bestands-SVG-Fixtures trägt eine gelaender-/ramp-Entität, alle
+  // bleiben byte-identisch; der EINE neue Golden `gelaender-rampe-plan.svg`
+  // beweist den aktiven Zweig. Die Geometrie kommt aus DENSELBEN
+  // Zerlegungen wie 3D und App-Overlay (`gelaenderTeile`/`rampenTeile` —
+  // eine Wahrheit, kein zweiter Rechenweg).
+  //
+  // Geländer: Polylinie + Pfosten-Ticks (kurzer Querstrich je Pfosten, quer
+  // zum jeweiligen Segment — Hochbau-Konvention «Linie mit Ticks»). Jeder
+  // Pfosten wird genau EINEM Segment zugeordnet (das erste, auf dem er
+  // liegt) — Knick-Pfosten bekommen so genau einen Tick.
+  for (const g of doc.byKind<Gelaender>('gelaender')) {
+    if (g.storeyId !== storeyId) continue;
+    if (g.punkte.length < 2) continue;
+    const teile = gelaenderTeile(g);
+    for (let i = 1; i < g.punkte.length; i++) {
+      lines.push({ a: { ...g.punkte[i - 1]! }, b: { ...g.punkte[i]! }, classes: ['symbol', 'gelaender'] });
+    }
+    const vergeben = new Set<number>();
+    for (let i = 1; i < g.punkte.length; i++) {
+      const a = g.punkte[i - 1]!;
+      const b = g.punkte[i]!;
+      const len = Math.hypot(b.x - a.x, b.y - a.y);
+      if (len < 1) continue;
+      const d = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+      const nn = { x: -d.y, y: d.x };
+      teile.pfosten.forEach((p, idx) => {
+        if (vergeben.has(idx)) return;
+        // liegt der Pfosten auf DIESEM Segment? (Projektion in [0,len],
+        // Querabstand ~0 — die Zerlegung setzt ihn exakt auf die Achse)
+        const s = (p.x - a.x) * d.x + (p.y - a.y) * d.y;
+        const quer = Math.abs((p.x - a.x) * nn.x + (p.y - a.y) * nn.y);
+        if (s < -0.5 || s > len + 0.5 || quer > 0.5) return;
+        vergeben.add(idx);
+        lines.push({
+          a: { x: Math.round(p.x + nn.x * 80), y: Math.round(p.y + nn.y * 80) },
+          b: { x: Math.round(p.x - nn.x * 80), y: Math.round(p.y - nn.y * 80) },
+          classes: ['symbol', 'gelaender', 'gelaender-pfosten'],
+        });
+      });
+    }
+  }
+  // Rampe: Kontur + gestrichelt gerenderte Lauflinie samt Steigungspfeil
+  // (bergauf, Pfeilkopf-Masse wie die Treppen-Lauflinie oben) + %-Text.
+  for (const r of doc.byKind<Rampe>('ramp')) {
+    if (r.storeyId !== storeyId) continue;
+    if (dist(r.a, r.b) < 1) continue;
+    const teile = rampenTeile(r, storey.elevation);
+    const { kontur, lauflinie, pfeil } = teile.plan;
+    for (let i = 0; i < kontur.length; i++) {
+      lines.push({ a: { ...kontur[i]! }, b: { ...kontur[(i + 1) % kontur.length]! }, classes: ['symbol', 'rampe'] });
+    }
+    lines.push({ a: { ...lauflinie.a }, b: { ...lauflinie.b }, classes: ['symbol', 'rampe', 'lauflinie'] });
+    const l = dist(pfeil.schaft, pfeil.spitze) || 1;
+    const d = { x: (pfeil.spitze.x - pfeil.schaft.x) / l, y: (pfeil.spitze.y - pfeil.schaft.y) / l };
+    const nn = { x: -d.y, y: d.x };
+    const spitze: Pt = { x: Math.round(pfeil.spitze.x - d.x * 300), y: Math.round(pfeil.spitze.y - d.y * 300) };
+    lines.push({ a: { ...pfeil.spitze }, b: { x: Math.round(spitze.x - d.x * 350 + nn.x * 160), y: Math.round(spitze.y - d.y * 350 + nn.y * 160) }, classes: ['symbol', 'rampe', 'lauflinie'] });
+    lines.push({ a: { ...pfeil.spitze }, b: { x: Math.round(spitze.x - d.x * 350 - nn.x * 160), y: Math.round(spitze.y - d.y * 350 - nn.y * 160) }, classes: ['symbol', 'rampe', 'lauflinie'] });
+    const mitte = { x: (lauflinie.a.x + lauflinie.b.x) / 2, y: (lauflinie.a.y + lauflinie.b.y) / 2 };
+    texte.push({
+      at: { x: Math.round(mitte.x + nn.x * 260), y: Math.round(mitte.y + nn.y * 260) },
+      text: pfeil.text,
+      classes: ['rampe', 'rampe-steigung'],
+    });
   }
 
   // Etiketten (A6): assoziativ — der Text kommt LIVE aus der Parametrik.
