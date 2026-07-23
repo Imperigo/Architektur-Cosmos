@@ -411,8 +411,9 @@ export interface DesignWorkspaceProps {
    *  bereits generisch, keine Änderung an `App.tsx` nötig. */
   onStationOeffnen?: (station: 'vis' | 'publish' | 'prepare' | 'data' | 'design') => void;
   /** PD5 (Owner-Befehl + Owner-Korrektur, 17.07.2026): «Zur Zentrale» —
-   *  additiv, derselbe `gehZu('home')`-Weg wie die Kopfbalken-Wortmarke UND
-   *  der (weiterhin gerenderte) klickbare `island-kopf-logo-orbit` (`App.tsx`).
+   *  additiv, derselbe `gehZu('home')`-Weg wie die Kopfbalken-Wortmarke.
+   *  NACHTRAG P-F2 (v0.9.2, ROADMAP 636): `island-kopf-logo-orbit` existiert
+   *  nicht mehr — das STATIONS-Logo trägt den Zur-Zentrale-Klick jetzt selbst.
    *  Nur an `StationenOrb`s zusätzlichen «Zentrale»-Popover-Eintrag
    *  durchgereicht (s. `StationenOrb.tsx` Kopfkommentar) — ein zweiter,
    *  additiver Zugang, kein Ersatz — optional aus demselben Grund wie
