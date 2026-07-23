@@ -9,6 +9,12 @@
 <line x1="7500" y1="-180" x2="7500" y2="180" stroke="#111" stroke-width="50"/>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="9000" y2="1200" stroke-width="36"/>
+<line x1="0" y1="200" x2="0" y2="1600" stroke-width="36"/>
+<line x1="2000" y1="200" x2="2000" y2="1600" stroke-width="36"/>
+<line x1="4000" y1="200" x2="4000" y2="1600" stroke-width="36"/>
+<line x1="6500" y1="200" x2="6500" y2="1600" stroke-width="36"/>
+<line x1="7500" y1="200" x2="7500" y2="1600" stroke-width="36"/>
+<line x1="9000" y1="200" x2="9000" y2="1600" stroke-width="36"/>
 <line x1="-160" y1="1360" x2="160" y2="1040" stroke-width="72"/>
 <line x1="1840" y1="1360" x2="2160" y2="1040" stroke-width="72"/>
 <line x1="3840" y1="1360" x2="4160" y2="1040" stroke-width="72"/>
@@ -19,18 +25,21 @@
 <text x="3000" y="960" text-anchor="middle" font-size="520" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">200</text>
 <text x="3000" y="1640" text-anchor="middle" font-size="400" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">150/90</text>
 <text x="5250" y="960" text-anchor="middle" font-size="520" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">250</text>
-<text x="7000" y="960" text-anchor="middle" font-size="520" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">100</text>
-<text x="7000" y="1640" text-anchor="middle" font-size="400" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">220</text>
+<circle cx="7000" cy="960" r="93.600" stroke="none"/>
 <text x="8250" y="960" text-anchor="middle" font-size="520" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">150</text>
 </g>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="2000" x2="9000" y2="2000" stroke-width="36"/>
+<line x1="0" y1="200" x2="0" y2="2400" stroke-width="36"/>
+<line x1="9000" y1="200" x2="9000" y2="2400" stroke-width="36"/>
 <line x1="-160" y1="2160" x2="160" y2="1840" stroke-width="72"/>
 <line x1="8840" y1="2160" x2="9160" y2="1840" stroke-width="72"/>
 <text x="4500" y="1760" text-anchor="middle" font-size="520" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">900</text>
 </g>
 <g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="36"/>
+<line x1="-200" y1="0" x2="-1600" y2="0" stroke-width="36"/>
+<line x1="-200" y1="-6000" x2="-1600" y2="-6000" stroke-width="36"/>
 <line x1="-1360" y1="-160" x2="-1040" y2="160" stroke-width="72"/>
 <line x1="-1360" y1="-6160" x2="-1040" y2="-5840" stroke-width="72"/>
 <text x="-1440" y="-3000" text-anchor="middle" font-size="520" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none" transform="rotate(-90 -1440 -3000)">600</text>

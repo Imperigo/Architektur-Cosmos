@@ -4,7 +4,7 @@ import { moebelGeometrie, moebelTyp } from './moebel';
 import { beschlagSymbol, beschlagTyp } from './beschlag';
 import { axisDirection, wallFrame } from '../geometry/wall';
 import { derivePlan, nachbarKontextStufe, regionToPath } from './plan';
-import { deriveDimensions, dimensionLabelParts } from './dimensions';
+import { deriveDimensions, dimensionLabel, dimensionLabelParts } from './dimensions';
 import { deriveSection, type SectionSpec } from './section';
 import { schraffurFuer, schraffurLinien } from './schraffur';
 import { pocheEntscheid } from './poche';
@@ -442,49 +442,100 @@ export function planInnerSvg(
     }
   }
 
-  // Assoziative Bemassung: Aussenketten + Innenketten je nach Stil
+  // Assoziative Bemassung: Aussenketten + Innenketten je nach Stil.
+  // K27 «Druckmass» (v0.9.2, der EINE Golden-Zug — docs/GOLDEN-WECHSEL-092.md):
+  // Der Druckweg trägt die Masslinien-Grammatik der Masskette (K18-Block
+  // oben, dieselben Papier-Werte): (1) HILFSLINIEN je Messpunkt der
+  // Aussenketten — von der Wand-Basiskante (`dims.basis`) mit PAPIER-
+  // Luftspalt an der Zeichnung bis mit PAPIER-Überstand über die eigene
+  // Masslinie, derselbe Stift wie die Masslinie (K18-Vorbild).
+  // (2) VERDICHTUNG enger Segmente zum Punktsymbol, EXAKT die Bildschirm-
+  // Regel aus E-K27a (`PlanView.tsx`: Labelbreite `label.length·0.62·fs`
+  // gegen `0.92·Segmentlänge`) — Druck == Bildschirm-Lesbarkeits-
+  // versprechen. (3) Feste Papier-Schrift (2.6/2.2 mm × scale, Bestand).
+  // Die KETTEN-LAGEN bleiben BEWUSST auf den Welt-Offsets der Ableitung:
+  // ein Versuch, sie fest in Papier-mm abzurücken (8 mm + 7 mm je Kette),
+  // schob auf 1:50 die Gesamt-Kette (Welt −750) mitten durch die
+  // Beschlag-Zeile «BRH 90» (Welt −775) — die Werkplan-Annotationszeilen
+  // (S0-Text, Piktogramme 2200 mm, S2-Text 2700 mm) sind dokumentiert
+  // «jenseits der Bemassungsketten ~1100–2000 mm» verortet, und der
+  // Bildschirm (E-K27a) zeigt dieselben Welt-Lagen — Papier-Abrücken
+  // bräche beide Invarianten. Innenketten liegen auf ihrer Wandachse
+  // (keine Hilfslinien — das Bauteil liegt an), verdichten aber nach
+  // derselben Regel.
   const dims = deriveDimensions(doc, storeyId);
+  const DM = { luft: 1, ueberstand: 2 };
   let dimMinX = Infinity;
   let dimMinY = Infinity;
   for (const c of dims.chains) {
     const innen = c.role === 'innen';
+    const lage = c.offset;
     const sw = (innen ? MASS_STIFT.innen : MASS_STIFT.aussen) * scale;
     const tickHalf = (innen ? 0.6 : 0.8) * scale;
     const fs = (innen ? 2.2 : 2.6) * scale;
     const t0 = c.ticks[0]!;
     const t1 = c.ticks[c.ticks.length - 1]!;
+    // E-K27a-Spiegel: passt die Masszahl nicht zwischen ihre Ticks,
+    // verdichtet das Segment zum Punktsymbol (Wert bleibt über die
+    // Nachbar-/Gesamtkette erreichbar); die Zweitzeile entfällt dann mit.
+    const verdichtet = (i: number): boolean => {
+      const label = dimensionLabel(c.ticks[i]!, c.ticks[i + 1]!);
+      return label.length * 0.62 * fs > (c.ticks[i + 1]! - c.ticks[i]!) * 0.92;
+    };
     parts.push(`<g stroke="${GRAU.geschnitten}" fill="${GRAU.geschnitten}">`);
     if (c.axis === 'x') {
-      dimMinY = Math.min(dimMinY, c.offset);
-      parts.push(`<line x1="${t0}" y1="${-c.offset}" x2="${t1}" y2="${-c.offset}" stroke-width="${sw}"/>`);
+      dimMinY = Math.min(dimMinY, lage);
+      parts.push(`<line x1="${t0}" y1="${-lage}" x2="${t1}" y2="${-lage}" stroke-width="${sw}"/>`);
+      if (!innen && dims.basis) {
+        const y1 = -(dims.basis.y - DM.luft * scale);
+        const y2 = -(lage - DM.ueberstand * scale);
+        for (const t of c.ticks) {
+          parts.push(`<line x1="${t}" y1="${y1}" x2="${t}" y2="${y2}" stroke-width="${sw}"/>`);
+        }
+      }
       for (const t of c.ticks) {
-        parts.push(`<line x1="${t - tickHalf}" y1="${-c.offset + tickHalf}" x2="${t + tickHalf}" y2="${-c.offset - tickHalf}" stroke-width="${sw * 2}"/>`);
+        parts.push(`<line x1="${t - tickHalf}" y1="${-lage + tickHalf}" x2="${t + tickHalf}" y2="${-lage - tickHalf}" stroke-width="${sw * 2}"/>`);
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
+        if (verdichtet(i)) {
+          parts.push(`<circle cx="${mid}" cy="${-lage - 1.2 * scale}" r="${(0.18 * fs).toFixed(3)}" stroke="none"/>`);
+          continue;
+        }
         const { cm, rest } = dimensionLabelParts(c.ticks[i]!, c.ticks[i + 1]!);
         const restSpan = rest ? `<tspan dy="${(-0.33 * fs).toFixed(3)}" font-size="${(0.7 * fs).toFixed(3)}">${rest}</tspan>` : '';
-        parts.push(`<text x="${mid}" y="${-c.offset - 1.2 * scale}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${escapeXml(cm)}${restSpan}</text>`);
+        parts.push(`<text x="${mid}" y="${-lage - 1.2 * scale}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${escapeXml(cm)}${restSpan}</text>`);
         // B1: Öffnungs-Höhenmass «h/BH» als Zweitzeile unter der Masslinie
         const z = c.zusatz?.[i];
         if (z) {
-          parts.push(`<text x="${mid}" y="${-c.offset + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${hochzahlSvg(z, 2.0 * scale)}</text>`);
+          parts.push(`<text x="${mid}" y="${-lage + 2.2 * scale}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none">${hochzahlSvg(z, 2.0 * scale)}</text>`);
         }
       }
     } else {
-      dimMinX = Math.min(dimMinX, c.offset);
-      parts.push(`<line x1="${c.offset}" y1="${-t0}" x2="${c.offset}" y2="${-t1}" stroke-width="${sw}"/>`);
+      dimMinX = Math.min(dimMinX, lage);
+      parts.push(`<line x1="${lage}" y1="${-t0}" x2="${lage}" y2="${-t1}" stroke-width="${sw}"/>`);
+      if (!innen && dims.basis) {
+        const x1 = dims.basis.x - DM.luft * scale;
+        const x2 = lage - DM.ueberstand * scale;
+        for (const t of c.ticks) {
+          parts.push(`<line x1="${x1}" y1="${-t}" x2="${x2}" y2="${-t}" stroke-width="${sw}"/>`);
+        }
+      }
       for (const t of c.ticks) {
-        parts.push(`<line x1="${c.offset - tickHalf}" y1="${-t - tickHalf}" x2="${c.offset + tickHalf}" y2="${-t + tickHalf}" stroke-width="${sw * 2}"/>`);
+        parts.push(`<line x1="${lage - tickHalf}" y1="${-t - tickHalf}" x2="${lage + tickHalf}" y2="${-t + tickHalf}" stroke-width="${sw * 2}"/>`);
       }
       for (let i = 0; i < c.ticks.length - 1; i++) {
         const mid = (c.ticks[i]! + c.ticks[i + 1]!) / 2;
+        if (verdichtet(i)) {
+          parts.push(`<circle cx="${lage - 1.2 * scale}" cy="${-mid}" r="${(0.18 * fs).toFixed(3)}" stroke="none"/>`);
+          continue;
+        }
         const { cm, rest } = dimensionLabelParts(c.ticks[i]!, c.ticks[i + 1]!);
         const restSpan = rest ? `<tspan dy="${(-0.33 * fs).toFixed(3)}" font-size="${(0.7 * fs).toFixed(3)}">${rest}</tspan>` : '';
-        parts.push(`<text x="${c.offset - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset - 1.2 * scale} ${-mid})">${escapeXml(cm)}${restSpan}</text>`);
+        parts.push(`<text x="${lage - 1.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${fs}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${lage - 1.2 * scale} ${-mid})">${escapeXml(cm)}${restSpan}</text>`);
         const z = c.zusatz?.[i];
         if (z) {
-          parts.push(`<text x="${c.offset + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${c.offset + 2.2 * scale} ${-mid})">${hochzahlSvg(z, 2.0 * scale)}</text>`);
+          parts.push(`<text x="${lage + 2.2 * scale}" y="${-mid}" text-anchor="middle" font-size="${2.0 * scale}" font-family="${SCHRIFT_MESSBAR}" stroke="none" transform="rotate(-90 ${lage + 2.2 * scale} ${-mid})">${hochzahlSvg(z, 2.0 * scale)}</text>`);
         }
       }
     }

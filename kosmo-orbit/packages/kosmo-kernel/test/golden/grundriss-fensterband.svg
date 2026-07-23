@@ -19,23 +19,31 @@
 <line x1="6567" y1="25" x2="6567" y2="-25" stroke="#111" stroke-width="9"/>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="8000" y2="1200" stroke-width="9"/>
+<line x1="0" y1="50" x2="0" y2="1300" stroke-width="9"/>
+<line x1="150" y1="50" x2="150" y2="1300" stroke-width="9"/>
+<line x1="7850" y1="50" x2="7850" y2="1300" stroke-width="9"/>
+<line x1="8000" y1="50" x2="8000" y2="1300" stroke-width="9"/>
 <line x1="-40" y1="1240" x2="40" y2="1160" stroke-width="18"/>
 <line x1="110" y1="1240" x2="190" y2="1160" stroke-width="18"/>
 <line x1="7810" y1="1240" x2="7890" y2="1160" stroke-width="18"/>
 <line x1="7960" y1="1240" x2="8040" y2="1160" stroke-width="18"/>
-<text x="75" y="1140" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">15</text>
+<circle cx="75" cy="1140" r="23.400" stroke="none"/>
 <text x="4000" y="1140" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">770</text>
 <text x="4000" y="1310" text-anchor="middle" font-size="100" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">190/80</text>
-<text x="7925" y="1140" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">15</text>
+<circle cx="7925" cy="1140" r="23.400" stroke="none"/>
 </g>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="2000" x2="8000" y2="2000" stroke-width="9"/>
+<line x1="0" y1="50" x2="0" y2="2100" stroke-width="9"/>
+<line x1="8000" y1="50" x2="8000" y2="2100" stroke-width="9"/>
 <line x1="-40" y1="2040" x2="40" y2="1960" stroke-width="18"/>
 <line x1="7960" y1="2040" x2="8040" y2="1960" stroke-width="18"/>
 <text x="4000" y="1940" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">800</text>
 </g>
 <g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="9"/>
+<line x1="-50" y1="0" x2="-1300" y2="0" stroke-width="9"/>
+<line x1="-50" y1="-6000" x2="-1300" y2="-6000" stroke-width="9"/>
 <line x1="-1240" y1="-40" x2="-1160" y2="40" stroke-width="18"/>
 <line x1="-1240" y1="-6040" x2="-1160" y2="-5960" stroke-width="18"/>
 <text x="-1260" y="-3000" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none" transform="rotate(-90 -1260 -3000)">600</text>

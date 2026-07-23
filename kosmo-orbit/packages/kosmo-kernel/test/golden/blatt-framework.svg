@@ -19,12 +19,16 @@
 <path d="M 12125 125 L 12125 -8125 L -125 -8125 L -125 125 Z M 125 -7875 L 11875 -7875 L 11875 -125 L 125 -125 Z" fill-rule="evenodd" fill="#c9c9c9" stroke="#111" stroke-width="50"/>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="12000" y2="1200" stroke-width="18"/>
+<line x1="0" y1="100" x2="0" y2="1400" stroke-width="18"/>
+<line x1="12000" y1="100" x2="12000" y2="1400" stroke-width="18"/>
 <line x1="-80" y1="1280" x2="80" y2="1120" stroke-width="36"/>
 <line x1="11920" y1="1280" x2="12080" y2="1120" stroke-width="36"/>
 <text x="6000" y="1080" text-anchor="middle" font-size="260" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">1200</text>
 </g>
 <g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-8000" stroke-width="18"/>
+<line x1="-100" y1="0" x2="-1400" y2="0" stroke-width="18"/>
+<line x1="-100" y1="-8000" x2="-1400" y2="-8000" stroke-width="18"/>
 <line x1="-1280" y1="-80" x2="-1120" y2="80" stroke-width="36"/>
 <line x1="-1280" y1="-8080" x2="-1120" y2="-7920" stroke-width="36"/>
 <text x="-1320" y="-4000" text-anchor="middle" font-size="260" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none" transform="rotate(-90 -1320 -4000)">800</text>

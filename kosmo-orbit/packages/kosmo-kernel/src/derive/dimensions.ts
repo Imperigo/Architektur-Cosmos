@@ -28,6 +28,12 @@ export interface DimensionChain {
 
 export interface DimensionSet {
   chains: DimensionChain[];
+  /** K27 (v0.9.2 «Druckmass»): Zeichnungs-Basiskanten der Aussenketten
+   * (Wand-Bbox-Minima) — der Druckweg (`plansvg.ts`) rückt die Ketten von
+   * hier in PAPIER-Abständen ab und zieht die Hilfslinien ab dieser Kante.
+   * Additiv: Bildschirm (`PlanView`) und DXF lesen weiterhin nur `chains`.
+   * Fehlt genau dann, wenn das Geschoss keine Wände hat (leere Ketten). */
+  basis?: { x: Mm; y: Mm };
 }
 
 const AXIS_TOL = 300; // Wand gilt als achsparallel, wenn Achsabweichung klein
@@ -212,7 +218,7 @@ export function deriveDimensions(doc: KosmoDoc, storeyId: string): DimensionSet 
     }
   }
 
-  return { chains };
+  return { chains, basis: { x: minX, y: minY } };
 }
 
 /** Masszahl zwischen zwei Ticks — Zentimeter-Konvention des Hochbaus (z.B. 361.5). */

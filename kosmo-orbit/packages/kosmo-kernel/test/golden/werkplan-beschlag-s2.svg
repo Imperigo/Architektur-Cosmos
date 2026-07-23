@@ -20,6 +20,12 @@
 <g transform="translate(2700 2295)" color="#111"><rect x="44" y="33" width="66" height="154" fill="none" stroke="currentColor" stroke-width="11"/><circle cx="77" cy="110" r="13.2" fill="currentColor"/><line x1="110" y1="110" x2="171.6" y2="110" stroke="currentColor" stroke-width="15.4"/></g>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="1200" x2="10000" y2="1200" stroke-width="9"/>
+<line x1="0" y1="50" x2="0" y2="1300" stroke-width="9"/>
+<line x1="2000" y1="50" x2="2000" y2="1300" stroke-width="9"/>
+<line x1="3000" y1="50" x2="3000" y2="1300" stroke-width="9"/>
+<line x1="7000" y1="50" x2="7000" y2="1300" stroke-width="9"/>
+<line x1="8000" y1="50" x2="8000" y2="1300" stroke-width="9"/>
+<line x1="10000" y1="50" x2="10000" y2="1300" stroke-width="9"/>
 <line x1="-40" y1="1240" x2="40" y2="1160" stroke-width="18"/>
 <line x1="1960" y1="1240" x2="2040" y2="1160" stroke-width="18"/>
 <line x1="2960" y1="1240" x2="3040" y2="1160" stroke-width="18"/>
@@ -36,12 +42,16 @@
 </g>
 <g stroke="#111" fill="#111">
 <line x1="0" y1="2000" x2="10000" y2="2000" stroke-width="9"/>
+<line x1="0" y1="50" x2="0" y2="2100" stroke-width="9"/>
+<line x1="10000" y1="50" x2="10000" y2="2100" stroke-width="9"/>
 <line x1="-40" y1="2040" x2="40" y2="1960" stroke-width="18"/>
 <line x1="9960" y1="2040" x2="10040" y2="1960" stroke-width="18"/>
 <text x="5000" y="1940" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none">1000</text>
 </g>
 <g stroke="#111" fill="#111">
 <line x1="-1200" y1="0" x2="-1200" y2="-6000" stroke-width="9"/>
+<line x1="-50" y1="0" x2="-1300" y2="0" stroke-width="9"/>
+<line x1="-50" y1="-6000" x2="-1300" y2="-6000" stroke-width="9"/>
 <line x1="-1240" y1="-40" x2="-1160" y2="40" stroke-width="18"/>
 <line x1="-1240" y1="-6040" x2="-1160" y2="-5960" stroke-width="18"/>
 <text x="-1260" y="-3000" text-anchor="middle" font-size="130" font-family="'IBM Plex Mono', ui-monospace, monospace" stroke="none" transform="rotate(-90 -1260 -3000)">600</text>

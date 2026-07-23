@@ -72,6 +72,41 @@ den Nachher-Vergleich — Lehre v0.9.1 §1): sha256-Zeilenliste aller 41
 Dateien gesichert (Scratchpad `k27-aggregat-vorher-roh.txt`); die 21
 still-erwarteten Zeilen (20 SVG + 1 IFC) müssen nachher identisch sein.
 
-## Teil 2 — Ist-Nachweis
+## Teil 2 — Ist-Nachweis (Fable, 23.07.2026, ROADMAP 629)
 
-_(offen — Ist-Zahlen, Aggregat vorher/nachher je Datei, PNG-Sichtung.)_
+**Zug:** `plansvg.ts` dims-Block (Hilfslinien je Messpunkt der Aussenketten:
+Papier-Luft 1 mm an der Basiskante, Papier-Überstand 2 mm über die
+Masslinie, derselbe Stift wie die Masslinie; Verdichtung enger Segmente
+zum Punktsymbol EXAKT nach der Bildschirm-Regel aus E-K27a) +
+`dimensions.ts` additives `DimensionSet.basis` (Wand-Bbox-Minima; Bildschirm
+und DXF lesen weiterhin nur `chains`) + `test/druckmass.test.ts` (4 Tests:
+Linien-Zählung je Kettenrolle, Papier-Geometrie der Hilfslinien,
+Verdichtungs-Zählung == Regel-Erwartung am Fensterband, keine
+Pauschal-Verdichtung).
+
+**Ist == Erwartungsliste, doppelt bewiesen:** (1) `git status --short --
+…/test/golden/` zeigt EXAKT die 20 Dateien aus Teil 1b, 0 Treffer
+ausserhalb; (2) Zeilenlisten-Methode kommandoidentisch (`sha256sum *.svg
+*.ifc` im Golden-Ordner, vorher `k27-aggregat-vorher-roh.txt` / nachher
+`k27-aggregat-nachher-roh.txt` im Scratchpad): der Diff der 41 Zeilen
+betrifft exakt dieselben 20 Dateien, die 21 still-erwarteten Zeilen
+(20 SVG + 1 IFC) sind byte-identisch. Alle 20 Erwartungsdateien haben sich
+bewegt — keine unbewegte Erwartungsdatei zu erklären.
+
+**Gates:** Kernel 1280 (= 1276 + 4 neue), App 1780, Typecheck 8 WS Exit 0,
+svg-qa 40 Goldens / 0 harte Fehler (dieselben 4 weichen
+Baseline-Warnungen). PNG-Sichtung: testhaus, kontext-werkplan,
+gelaender-rampe, masskette, werkplan-beschlag, werkplan-beschlag-s2,
+fensterband (Verdichtungs-Punkte an den engen Leibungssegmenten sichtbar).
+
+**Revidierter Entscheid (ehrlich dokumentiert):** Das feste PAPIER-Abrücken
+der Ketten-LAGEN (8 mm + 7 mm je Kette ab Basiskante) wurde gebaut,
+regeneriert und in der PNG-Sichtung VERWORFEN: auf 1:50 lief die
+Gesamt-Kette (Welt −750) mitten durch die Beschlag-Zeile «BRH 90»
+(Welt −775, `werkplan-beschlag.svg`) — die Werkplan-Annotationszeilen
+(S0-Text, Piktogramme 2200 mm, S2-Text 2700 mm) sind dokumentiert
+«jenseits der Bemassungsketten ~1100–2000 mm» verortet, und der Bildschirm
+(E-K27a) zeigt dieselben Welt-Lagen. Die Ketten-Lagen bleiben darum auf den
+Welt-Offsets der Ableitung; die Papier-Grammatik gilt für Hilfslinien,
+Schrift und Verdichtung (Begründung auch im dims-Block-Kommentar von
+`plansvg.ts`).
