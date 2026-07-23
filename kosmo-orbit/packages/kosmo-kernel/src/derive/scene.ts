@@ -1293,8 +1293,19 @@ function deriveRamp(doc: KosmoDoc, ramp: Rampe): GeometryArtifact | null {
   dnx /= dnl; dny /= dnl; dnz /= dnl;
   if (dnz < 0) { dnx = -dnx; dny = -dny; dnz = -dnz; }
 
-  // Lauffläche (Deck), geneigt von z0 (bei a) auf z1 (bei b)
-  quad(P(0, half, z0), P(laenge, half, z1), P(laenge, -half, z1), P(0, -half, z0), dnx, dny, dnz);
+  // Lauffläche (Deck), geneigt von z0 (bei a) auf z1 (bei b) — Wicklung
+  // (P0,P3,P2,P1 statt P0,P1,P2,P3) bewusst so gedreht, dass die tatsächliche,
+  // aus der Vertex-Reihenfolge folgende Dreiecksnormale (die Three.js für
+  // Front-Face/Beleuchtung tatsächlich benutzt) zur oben berechneten `dnz`
+  // passt: `n.x·along.y − n.y·along.x` ist für JEDE Laufrichtung/-neigung
+  // algebraisch identisch `−laenge` (weil `d` Einheitsvektor ist), die
+  // `if (dnz < 0)`-Korrektur oben griff darum IMMER und drehte die
+  // gespeicherte Normale exakt entgegen der ursprünglichen Wicklung — die
+  // Lauffläche wurde mit invertierter Normale beleuchtet und rendert(e)
+  // schwarz/dunkel (Bild-Beleg P-F5, `rampe-nah-schraeg.png`). Die
+  // umgekehrte Wicklung hier macht die tatsächliche Dreiecksnormale wieder
+  // deckungsgleich mit der schon korrekten `(dnx,dny,dnz)`.
+  quad(P(0, half, z0), P(0, -half, z0), P(laenge, -half, z1), P(laenge, half, z1), dnx, dny, dnz);
   // Unterseite, eben auf Geschossniveau
   quad(P(0, half, z0), P(0, -half, z0), P(laenge, -half, z0), P(laenge, half, z0), 0, 0, -1);
   // Stirnseite am Kopfende (b), senkrecht

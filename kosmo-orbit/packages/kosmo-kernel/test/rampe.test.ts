@@ -4,6 +4,7 @@ import { execute, CommandError } from '../src/commands/core';
 import '../src/commands/design';
 import type { Rampe } from '../src/model/entities';
 import { rampenTeile, rampSteigungProzent } from '../src/derive/rampe';
+import { deriveEntity } from '../src/derive/scene';
 
 /**
  * `design.rampeZeichnen` (v0.9.1 P-A2, `docs/V091-SPEZ.md` §P-A2) —
@@ -414,5 +415,107 @@ describe('design.eigenschaftSetzen — Rampe (width/hoehenDelta/podestLaenge)', 
     expect(res.patches).toHaveLength(1);
     doc.apply(invertPatches(res.patches));
     expect(doc.get<Rampe>(id)!.width).toBe(1200);
+  });
+});
+
+/**
+ * P-F5 (Texturbug-Fix, 3D-Werkzeuge) — Regressionstest für den behobenen
+ * Normalen/Wicklungs-Fehler in `deriveRamp` (`derive/scene.ts`, Lauffläche-
+ * Quad): die dortige „echte Neigungsnormale" wird analytisch berechnet UND
+ * per `if (dnz < 0)`-Korrektur auf eine nach-oben-zeigende Richtung gedreht.
+ * Diese Korrektur griff für JEDE Laufrichtung/-neigung IMMER (algebraisch:
+ * `n.x·along.y − n.y·along.x` ist für jeden Einheitsvektor `d` exakt
+ * `−laenge`, also nie positiv) — die gespeicherte Normale zeigte darum
+ * exakt entgegengesetzt zur tatsächlichen, aus der Vertex-Reihenfolge
+ * folgenden Dreiecksnormale (die three.js für Front-Face/Beleuchtung
+ * tatsächlich benutzt, unabhängig vom `normal`-Attribut). Ergebnis:
+ * Lauffläche rendert(e) schwarz/dunkel (Bild-Beleg
+ * `rampe-nah-schraeg.png`/`dach-nah-schraeg.png`, P-F5-Diagnose).
+ *
+ * Dieser Test prüft die Invariante MATHEMATISCH (nicht nur ein Bild): das
+ * Kreuzprodukt der ersten beiden Kanten des ERSTEN Dreiecks der Lauffläche
+ * (Vertices 0,1,2 — die Lauffläche ist die erste in `deriveRamp` emittierte
+ * Fläche) muss in dieselbe Halbebene zeigen wie die für diese Vertices
+ * gespeicherte Normale (Skalarprodukt > 0) — sonst ist Wicklung und
+ * gespeicherte Normale wieder gegenläufig, und die Fläche würde erneut
+ * falsch beleuchtet.
+ */
+describe('deriveRamp — Lauffläche-Normale ist wicklungskonsistent (P-F5-Regression)', () => {
+  function ersteFlaecheNormaleVsWicklung(ramp: Pick<Rampe, 'a' | 'b' | 'width' | 'hoehenDelta'>) {
+    const doc = new KosmoDoc();
+    const eg = execute(doc, 'design.geschossErstellen', { name: 'EG', index: 0, elevation: 0, height: 3000 });
+    const storeyId = (eg.patches[0] as { id: string }).id;
+    const res = execute(doc, 'design.rampeZeichnen', { storeyId, ...ramp });
+    const id = (res.patches[0] as { id: string }).id;
+    const artifact = deriveEntity(doc, id)!;
+    expect(artifact).not.toBeNull();
+
+    // Erstes Dreieck = Indices 0,1,2 (Lauffläche ist die zuerst emittierte
+    // Fläche in `deriveRamp`).
+    const i0 = artifact.indices[0]!;
+    const i1 = artifact.indices[1]!;
+    const i2 = artifact.indices[2]!;
+    const p = (i: number) => [
+      artifact.positions[i * 3]!,
+      artifact.positions[i * 3 + 1]!,
+      artifact.positions[i * 3 + 2]!,
+    ] as const;
+    const p0 = p(i0);
+    const p1 = p(i1);
+    const p2 = p(i2);
+    const e1 = [p1[0] - p0[0], p1[1] - p0[1], p1[2] - p0[2]] as const;
+    const e2 = [p2[0] - p0[0], p2[1] - p0[1], p2[2] - p0[2]] as const;
+    // Kreuzprodukt e1 × e2 (Rechte-Hand-Regel) — die Normale, die three.js
+    // aus der Vertex-Reihenfolge für Front-Face/Culling tatsächlich sieht.
+    const wicklungsNormale = [
+      e1[1] * e2[2] - e1[2] * e2[1],
+      e1[2] * e2[0] - e1[0] * e2[2],
+      e1[0] * e2[1] - e1[1] * e2[0],
+    ] as const;
+    const gespeicherteNormale = [
+      artifact.normals[i0 * 3]!,
+      artifact.normals[i0 * 3 + 1]!,
+      artifact.normals[i0 * 3 + 2]!,
+    ] as const;
+    const dot =
+      wicklungsNormale[0] * gespeicherteNormale[0] +
+      wicklungsNormale[1] * gespeicherteNormale[1] +
+      wicklungsNormale[2] * gespeicherteNormale[2];
+    return { dot, wicklungsNormale, gespeicherteNormale };
+  }
+
+  it('achsparallele, flache Rampe (+x, leichte Steigung): Wicklung und Normale zeigen in dieselbe Richtung', () => {
+    const { dot } = ersteFlaecheNormaleVsWicklung({
+      a: { x: 0, y: 0 }, b: { x: 4000, y: 0 }, width: 1200, hoehenDelta: 200,
+    });
+    expect(dot).toBeGreaterThan(0);
+  });
+
+  it('achsparallele Rampe entlang +y: Wicklung und Normale stimmen überein', () => {
+    const { dot } = ersteFlaecheNormaleVsWicklung({
+      a: { x: 3000, y: 1000 }, b: { x: 3000, y: 5000 }, width: 1200, hoehenDelta: 500,
+    });
+    expect(dot).toBeGreaterThan(0);
+  });
+
+  it('diagonale Rampe (3-4-5-Dreieck): Wicklung und Normale stimmen überein', () => {
+    const { dot } = ersteFlaecheNormaleVsWicklung({
+      a: { x: 0, y: 0 }, b: { x: 3000, y: 4000 }, width: 1000, hoehenDelta: 250,
+    });
+    expect(dot).toBeGreaterThan(0);
+  });
+
+  it('steile Rampe an der 15 %-Grenze (14.9 %): Wicklung und Normale stimmen überein', () => {
+    const { dot } = ersteFlaecheNormaleVsWicklung({
+      a: { x: 0, y: 0 }, b: { x: -2000, y: 1000 }, width: 1200, hoehenDelta: 300,
+    });
+    expect(dot).toBeGreaterThan(0);
+  });
+
+  it('die gespeicherte Normale zeigt weiterhin „nach oben" (positive z-Komponente, unverändertes Verhalten)', () => {
+    const { gespeicherteNormale } = ersteFlaecheNormaleVsWicklung({
+      a: { x: 0, y: 0 }, b: { x: 4000, y: 0 }, width: 1200, hoehenDelta: 200,
+    });
+    expect(gespeicherteNormale[2]).toBeGreaterThan(0);
   });
 });
