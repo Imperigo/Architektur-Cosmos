@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { KSelect, meldeFehler } from '@kosmo/ui';
 import './plan-view-chrome.css';
-import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Beam, type Furniture, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Roof, type Slab, type Stair, type Wall, type Zone } from '@kosmo/kernel';
+import { BILDSCHIRM_PLAN, DASH, dashWelt, derivePlan, deriveDimensions, dimensionLabel, formatLength, gelaenderTeile, moebelGeometrie, nachbarKontextStufe, pocheEntscheid, projiziereOeffnungCenter, pruefeGrundriss, rampenTeile, raumGraph, regionToPath, UMBAU_FLAECHEN, UMBAU_STIFTE, wandAchsenPunkt, type BauPhase, type Beam, type Furniture, type Gelaender, type Kommentar, type MassBody, type MassKette, type Opening, type PocheModus, type Pt, type Rampe, type Roof, type Slab, type Stair, type Wall, type Zone } from '@kosmo/kernel';
 import { useProject } from '../../state/project-store';
 import { useUiZustand } from '../../state/ui-zustand';
 import { usePlanAnsicht } from '../../state/plan-ansicht';
@@ -669,6 +669,19 @@ export function PlanView({
     }
     if (e.kind === 'masskette') {
       return (e as MassKette).punkte.map((p, i) => ({ id, key: i, p, kind: 'masskette' as const }));
+    }
+    // v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): Geländer-Punkt-Griffe — je
+    // ein Griff pro Polylinien-Punkt, exakt die Masskette-Maschine oben.
+    if (e.kind === 'gelaender') {
+      return (e as Gelaender).punkte.map((p, i) => ({ id, key: i, p, kind: 'gelaender' as const }));
+    }
+    // v0.9.1 P-B1: Rampen-a/b-Griffe — feste Keys wie Wand/Unterzug.
+    if (e.kind === 'ramp') {
+      const r = e as Rampe;
+      return [
+        { id, key: 'a' as const, p: r.a, kind: 'ramp' as const },
+        { id, key: 'b' as const, p: r.b, kind: 'ramp' as const },
+      ];
     }
     if (e.kind === 'zone' || e.kind === 'mass' || e.kind === 'roof') {
       return (e as Zone | MassBody | Roof).outline.map((p, i) => ({ id, key: i, p, kind: e.kind }));
@@ -1761,6 +1774,89 @@ export function PlanView({
                 );
               })}
           </g>
+
+          {/* v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): interaktive Geländer-/
+              Rampen-Darstellung — reines App-Overlay nach dem plan-massketten-
+              Vorbild direkt darüber: geht NICHT durch `derivePlan()`, keine
+              Goldens betroffen (der Druckweg in derive/plan.ts + plansvg ist
+              der EINE deklarierte Golden-Zug P-B3 und bleibt hier unberührt).
+              Die Geometrie kommt aus denselben Zerlegungen wie das 3D
+              (`gelaenderTeile`/`rampenTeile` — eine Wahrheit, kein zweiter
+              Rechenweg): Geländer = Polylinie + Pfosten-Punkte; Rampe =
+              Kontur + Lauflinie + Steigungspfeil mit %-Text. */}
+          <g data-testid="plan-gelaender-overlay">
+            {doc
+              .byKind<Gelaender>('gelaender')
+              .filter((g) => g.storeyId === activeStoreyId)
+              .map((g) => {
+                const teile = gelaenderTeile(g);
+                return (
+                  <g key={g.id} data-testid="plan-gelaender">
+                    <polyline
+                      points={g.punkte.map((p) => `${p.x},${-p.y}`).join(' ')}
+                      fill="none"
+                      stroke="var(--k-ink)"
+                      strokeWidth={BILDSCHIRM_PLAN.linieFein}
+                    />
+                    {teile.pfosten.map((p, i) => (
+                      <circle key={`pf${i}`} cx={p.x} cy={-p.y} r={30} fill="var(--k-ink)" />
+                    ))}
+                  </g>
+                );
+              })}
+          </g>
+          <g data-testid="plan-rampen-overlay">
+            {doc
+              .byKind<Rampe>('ramp')
+              .filter((r) => r.storeyId === activeStoreyId)
+              .map((r) => {
+                // elevation ist für die Plan-Bausteine ohne Belang (nur die
+                // 3D-Platte braucht sie) — 0 genügt der Zerlegung.
+                const teile = rampenTeile(r, 0);
+                const { kontur, lauflinie, pfeil } = teile.plan;
+                const len = Math.hypot(pfeil.spitze.x - pfeil.schaft.x, pfeil.spitze.y - pfeil.schaft.y) || 1;
+                const d = { x: (pfeil.spitze.x - pfeil.schaft.x) / len, y: (pfeil.spitze.y - pfeil.schaft.y) / len };
+                const n = { x: -d.y, y: d.x };
+                const kopf = 180; // mm Pfeilkopf-Schenkel — welt-fix wie die Masskette-Punktkreise
+                const mitte = { x: (lauflinie.a.x + lauflinie.b.x) / 2, y: (lauflinie.a.y + lauflinie.b.y) / 2 };
+                return (
+                  <g key={r.id} data-testid="plan-rampe">
+                    <polygon
+                      points={kontur.map((p) => `${p.x},${-p.y}`).join(' ')}
+                      fill="none"
+                      stroke="var(--k-ink)"
+                      strokeWidth={BILDSCHIRM_PLAN.linieFein}
+                    />
+                    <line
+                      x1={lauflinie.a.x}
+                      y1={-lauflinie.a.y}
+                      x2={lauflinie.b.x}
+                      y2={-lauflinie.b.y}
+                      stroke="var(--k-ink-soft)"
+                      strokeWidth={BILDSCHIRM_PLAN.linieFein}
+                      strokeDasharray={dashWelt(DASH.unterzug, 100)}
+                    />
+                    <path
+                      d={`M ${pfeil.spitze.x - (d.x + n.x) * kopf} ${-(pfeil.spitze.y - (d.y + n.y) * kopf)} L ${pfeil.spitze.x} ${-pfeil.spitze.y} L ${pfeil.spitze.x - (d.x - n.x) * kopf} ${-(pfeil.spitze.y - (d.y - n.y) * kopf)}`}
+                      fill="none"
+                      stroke="var(--k-ink)"
+                      strokeWidth={BILDSCHIRM_PLAN.linieFein}
+                    />
+                    <text
+                      x={mitte.x + n.x * 260}
+                      y={-(mitte.y + n.y * 260)}
+                      textAnchor="middle"
+                      fontSize={11 / view.scale}
+                      fontFamily="var(--k-font-mono)"
+                      fill="var(--k-ink-soft)"
+                      pointerEvents="none"
+                    >
+                      {pfeil.text}
+                    </text>
+                  </g>
+                );
+              })}
+          </g>
           {plan &&
             plan.lines
               // LOD-Feindetail-Filter: Öffnungen (Leibung/Fenster/Tür/Anschlag/
@@ -2104,6 +2200,15 @@ export function PlanView({
               } else if (gezogenesEntity.kind === 'masskette') {
                 const pts = (gezogenesEntity as MassKette).punkte.map((q, i) => (i === vorschau.key ? vorschau.p : q));
                 gummibandD = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')}`;
+              } else if (gezogenesEntity.kind === 'gelaender') {
+                // v0.9.1 P-B1: Polylinien-Gummiband, wortgleich Masskette.
+                const pts = (gezogenesEntity as Gelaender).punkte.map((q, i) => (i === vorschau.key ? vorschau.p : q));
+                gummibandD = `M ${pts.map((q) => `${q.x} ${-q.y}`).join(' L ')}`;
+              } else if (gezogenesEntity.kind === 'ramp') {
+                // v0.9.1 P-B1: Achsen-Gummiband, wortgleich Wand (a↔b).
+                const r = gezogenesEntity as Rampe;
+                const andererPunkt = vorschau.key === 'a' ? r.b : r.a;
+                gummibandD = `M ${andererPunkt.x} ${-andererPunkt.y} L ${vorschau.p.x} ${-vorschau.p.y}`;
               } else if (
                 gezogenesEntity.kind === 'zone' ||
                 gezogenesEntity.kind === 'mass' ||
@@ -2155,13 +2260,17 @@ export function PlanView({
                   const testid =
                     // P-A3 (v0.8.11): beam-a/b sind Endpunkte wie Wand/Treppe;
                     // slab fällt bewusst in den eckpunkt-Zweig (wie zone).
-                    g.kind === 'wall' || g.kind === 'stair' || g.kind === 'beam'
+                    // v0.9.1 P-B1: ramp-a/b ebenfalls Endpunkte; gelaender
+                    // bekommt eigene Punkt-Testids (Muster masskette).
+                    g.kind === 'wall' || g.kind === 'stair' || g.kind === 'beam' || g.kind === 'ramp'
                       ? `griff-endpunkt-${g.key}`
                       : g.kind === 'masskette'
                         ? `griff-massketten-punkt-${g.key}`
-                        : g.kind === 'opening'
-                          ? 'griff-oeffnung'
-                          : `griff-eckpunkt-${g.key}`;
+                        : g.kind === 'gelaender'
+                          ? `griff-gelaender-punkt-${g.key}`
+                          : g.kind === 'opening'
+                            ? 'griff-oeffnung'
+                            : `griff-eckpunkt-${g.key}`;
                   const groesse = 9 / view.scale;
                   return (
                     <rect

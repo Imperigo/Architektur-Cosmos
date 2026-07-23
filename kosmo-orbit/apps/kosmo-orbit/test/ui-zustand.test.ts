@@ -189,9 +189,9 @@ describe('ui-zustand — Härte gegen kaputten Speicher', () => {
   });
 });
 
-describe('TOOL_IDS — v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): 10 → 13', () => {
-  it('umfasst genau 13 Werkzeuge, additiv um oeffnung/messen/kommentar erweitert', () => {
-    expect(TOOL_IDS).toHaveLength(13);
+describe('TOOL_IDS — v0.8.3 E3: 10 → 13 · v0.9.1 P-B1: 13 → 15', () => {
+  it('umfasst genau 15 Werkzeuge, additiv um oeffnung/messen/kommentar (E3) und gelaender/rampe (P-B1) erweitert', () => {
+    expect(TOOL_IDS).toHaveLength(15);
     expect(TOOL_IDS).toEqual([
       'auswahl',
       'wand',
@@ -206,6 +206,8 @@ describe('TOOL_IDS — v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): 10 → 13', () => {
       'oeffnung',
       'messen',
       'kommentar',
+      'gelaender',
+      'rampe',
     ]);
   });
 

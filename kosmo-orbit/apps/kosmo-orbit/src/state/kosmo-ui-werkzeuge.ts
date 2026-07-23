@@ -104,6 +104,9 @@ const TOOL_LABEL: Record<ToolId, string> = {
   oeffnung: 'Öffnung',
   messen: 'Messen',
   kommentar: 'Kommentar',
+  // v0.9.1 P-B1 (docs/V091-SPEZ.md §P-B1): additive Zeilen, TOOL_IDS 13→15.
+  gelaender: 'Geländer',
+  rampe: 'Rampe',
 };
 
 const VIEW_LABEL: Record<ViewMode, string> = {

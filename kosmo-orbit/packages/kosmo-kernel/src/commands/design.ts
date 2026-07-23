@@ -1518,6 +1518,52 @@ export const createRamp = registerCommand({
 });
 
 /**
+ * v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): In-place-Endpunkt-Setter für die
+ * Rampe — Muster `design.treppeGeometrieSetzen` (E1, V087-SPEZ). Identität,
+ * width, hoehenDelta, podestLaenge und storeyId bleiben, NUR a/b ändern
+ * sich. Dieselben EHRLICHEN Wurf-Regeln wie `design.rampeZeichnen` auf der
+ * NEUEN Geometrie: Lauf < 0.5 m und Steigung > 15 % (Tiefgaragen-Grenze)
+ * verhindern jeden Patch (KEINE stille Klemmung, Sanktion 4 V091-SPEZ);
+ * 6–15 % läuft durch und trägt den SIA-500-Hinweis nur im Summary.
+ */
+export const setRampGeometry = registerCommand({
+  id: 'design.rampeGeometrieSetzen',
+  title: 'Rampen-Geometrie setzen',
+  description:
+    'Setzt Fusspunkt (a) und/oder Kopfpunkt (b) einer bestehenden Rampe neu, OHNE sie zu ersetzen: Identität, width, hoehenDelta, podestLaenge und storeyId bleiben erhalten. Mindestens einer der Punkte a/b ist Pflicht. Dieselben Regeln wie design.rampeZeichnen gelten auf der NEUEN Geometrie: Lauf < 0.5 m und Steigung > 15 % (Tiefgaragen-Grenze) verhindern jeden Patch — die Rampe bleibt unangetastet; 6–15 % läuft durch (nicht hindernisfrei, SIA 500). EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    a: PtSchema.optional(),
+    b: PtSchema.optional(),
+  }),
+  summarize: (p, doc) => {
+    const r = doc.get<Rampe>(p.entityId);
+    const a = (p.a ?? r?.a) as Pt | undefined;
+    const b = (p.b ?? r?.b) as Pt | undefined;
+    if (!r || !a || !b) return 'Rampen-Geometrie gesetzt';
+    const steigung = rampSteigungProzent(a, b, r.hoehenDelta, r.podestLaenge);
+    const basis = `Rampe ${formatLength(Math.round(dist(a, b)))} Lauf, ${steigung.toFixed(1)} % Steigung`;
+    return steigung > 6 ? `${basis} — nicht hindernisfrei (SIA 500: >6 %)` : basis;
+  },
+  run: (doc, p) => {
+    if (!p.a && !p.b) {
+      throw new CommandError('design.rampeGeometrieSetzen braucht mindestens einen Punkt (a oder b)');
+    }
+    const rampe = require<Rampe>(doc, p.entityId, 'ramp');
+    const neueA = (p.a ?? rampe.a) as Pt;
+    const neueB = (p.b ?? rampe.b) as Pt;
+    if (dist(neueA, neueB) < 500) throw new CommandError('Rampenlauf zu kurz (< 0.5 m)');
+    const steigung = rampSteigungProzent(neueA, neueB, rampe.hoehenDelta, rampe.podestLaenge);
+    if (steigung > 15) {
+      throw new CommandError(
+        `Rampensteigung ${steigung.toFixed(1)} % übersteigt die 15 %-Grenze (Tiefgarage)`,
+      );
+    }
+    return [{ id: rampe.id, before: rampe, after: { ...rampe, a: neueA, b: neueB } }];
+  },
+});
+
+/**
  * E1 (V087-SPEZ, `docs/V087-SPEZ.md` §3): In-place-Endpunkt-Setter für eine
  * bestehende Treppe, Muster `design.wandGeometrieSetzen` (E1, V086-SPEZ) —
  * Identität/width/form/storeyId bleiben, NUR a/b/ecke ändern sich. Die
@@ -1643,6 +1689,42 @@ export const drawGelaender = registerCommand({
       art: p.art,
     };
     return [added(gelaender)];
+  },
+});
+
+/**
+ * v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): Punkt-Zug IN PLACE — wortgleiches
+ * Muster `design.massKetteGeometrieSetzen` (E8, V089-SPEZ): Identität,
+ * storeyId, hoehe und art bleiben, NUR `punkte[punktIndex]` ändert sich; ein
+ * Index ausserhalb wirft, das Geländer bleibt unangetastet.
+ */
+export const setGelaenderGeometry = registerCommand({
+  id: 'design.gelaenderGeometrieSetzen',
+  title: 'Geländer-Geometrie setzen',
+  description:
+    'Setzt EINEN Punkt eines bestehenden Geländers neu (punktIndex, 0-basiert), OHNE es zu ersetzen: Identität, storeyId, hoehe und art bleiben erhalten. Ein punktIndex ausserhalb der Polylinie wirft — das Geländer bleibt unangetastet. EIN Command = EIN Undo-Schritt.',
+  params: z.object({
+    entityId: z.string(),
+    punktIndex: z.number().int().min(0),
+    punkt: PtSchema,
+  }),
+  summarize: (p, doc) => {
+    const g = doc.get<Gelaender>(p.entityId);
+    const pts = g?.punkte;
+    if (!pts) return 'Geländer-Punkt gesetzt';
+    let gesamt = 0;
+    for (let i = 1; i < pts.length; i++) gesamt += dist(pts[i - 1]!, pts[i]!);
+    return `Geländer ${formatLength(Math.round(gesamt))}`;
+  },
+  run: (doc, p) => {
+    const gelaender = require<Gelaender>(doc, p.entityId, 'gelaender');
+    if (p.punktIndex >= gelaender.punkte.length) {
+      throw new CommandError(
+        `punktIndex ${p.punktIndex} ausserhalb der Polylinie (${gelaender.punkte.length} Punkte)`,
+      );
+    }
+    const punkte = gelaender.punkte.map((q, i) => (i === p.punktIndex ? (p.punkt as Pt) : q));
+    return [{ id: gelaender.id, before: gelaender, after: { ...gelaender, punkte } }];
   },
 });
 

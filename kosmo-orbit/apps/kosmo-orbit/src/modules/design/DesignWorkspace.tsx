@@ -61,7 +61,7 @@ import {
 import { bootstrapProject, useProject } from '../../state/project-store';
 import { verarbeiteUnternehmerplanDatei, useUnternehmerplan } from './unternehmerplan';
 import { VERSCHIEBBAR, istGesperrt, wandTreffer } from './plan-hit-test';
-import { oeffnungVorgabeLesen } from './island/inhalte/zeichnen';
+import { gelaenderVorgabeLesen, oeffnungVorgabeLesen, rampeVorgabeLesen } from './island/inhalte/zeichnen';
 import { masseingabeTaste, punktInRichtung, zeichenSnap, type Fluchtlinie } from './zeichenhilfen';
 import { istEingabefeld, KURZTASTEN, kurztasteFuer } from './kurztasten';
 import { setModulRaster, Viewport3D, type ViewportHandlers } from './Viewport3D';
@@ -200,7 +200,7 @@ import {
 // 'kommentar' ergänzt — 1:1 dieselbe Erweiterung wie `state/ui-zustand.ts`s
 // `ToolId` (TOOL_IDS 10→13), hier lokal dupliziert (Bestand vor diesem
 // Paket, keine Import-Umstellung in diesem additiven Auftrag).
-type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh' | 'oeffnung' | 'messen' | 'kommentar';
+type ToolId = 'auswahl' | 'wand' | 'volumen' | 'zone' | 'dach' | 'treppe' | 'stuetze' | 'schnitt' | 'skizze' | 'mesh' | 'oeffnung' | 'messen' | 'kommentar' | 'gelaender' | 'rampe';
 
 // K16 A6: dasselbe Lernjournal wie `KosmoPanel.tsx` (👍/👎) — EIN Store
 // (`journalStore()`), eine Modul-Instanz. Loggt hier ausschliesslich, welche
@@ -344,6 +344,9 @@ const WERKZEUG_KURZLABEL: Record<ToolId, string> = {
   // v0.8.3 E3 (§3.1, docs/V083-SPEZ.md): additive Zeilen, TOOL_IDS 10→13.
   oeffnung: 'Öffnung',
   messen: 'Messen',
+  // v0.9.1 P-B1 (docs/V091-SPEZ.md §P-B1): additive Zeilen, 13→15.
+  gelaender: 'Geländer',
+  rampe: 'Rampe',
   kommentar: 'Kommentar',
 };
 
@@ -1228,7 +1231,13 @@ export function DesignWorkspace({
         // damit Aussparungen (Decke) bzw. Etiketten (Unterzug) den Zug
         // überleben.
         e.kind === 'slab' ||
-        e.kind === 'beam';
+        e.kind === 'beam' ||
+        // v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): Geländer-Punkt-Griffe
+        // (Muster masskette, Punktindex als Key) und Rampen-a/b-Griffe
+        // (Muster beam/wall, feste Keys) — beide committen IN PLACE, s.
+        // onGriffEnd unten.
+        e.kind === 'gelaender' ||
+        e.kind === 'ramp';
       if (!griffFaehig) return false;
       // v0.8.9 Fable-Nachzug (PA2-Übergabepunkt, E2): gesperrte Elemente
       // haben keine ziehbaren Griffe.
@@ -1285,6 +1294,24 @@ export function DesignWorkspace({
             entityId: e.id,
             punktIndex: key as number,
             punkt: ziel,
+          });
+        } else if (e.kind === 'gelaender') {
+          // v0.9.1 P-B1: Geländer-Punkt IN PLACE — wortgleiches Muster
+          // masskette oben (`design.gelaenderGeometrieSetzen`, E8-Linie);
+          // Identität, hoehe und art bleiben, die Auswahl auch.
+          runCommand('design.gelaenderGeometrieSetzen', {
+            entityId: e.id,
+            punktIndex: key as number,
+            punkt: ziel,
+          });
+        } else if (e.kind === 'ramp') {
+          // v0.9.1 P-B1: Rampen-a/b IN PLACE (`design.rampeGeometrieSetzen`)
+          // — das ehrliche Steigungs-Gate des Kernels wirft bei >15 %
+          // (Tiefgaragen-Grenze) oder Lauf < 0.5 m; der Toast unten meldet
+          // es, die Rampe bleibt unangetastet stehen (keine stille Klemmung).
+          runCommand('design.rampeGeometrieSetzen', {
+            entityId: e.id,
+            ...(key === 'a' ? { a: ziel } : { b: ziel }),
           });
         } else if (e.kind === 'slab') {
           // P-A3 (v0.8.11): Decken-Ecke IN PLACE — Identität, holes und
@@ -1459,6 +1486,14 @@ export function DesignWorkspace({
         massKetteAbschliessen();
         return;
       }
+      // v0.9.1 P-B1: dieselbe Esc-Semantik fürs Geländer — eine Kette mit
+      // mindestens zwei Punkten wird committet statt verworfen (Muster
+      // Messen oben; die Rampe braucht keinen Zweig, ihr zweiter Klick
+      // committet bereits in `punktSetzen`).
+      if (tool === 'gelaender' && points.length >= 2) {
+        gelaenderAbschliessen();
+        return;
+      }
       setPoints([]);
     },
     onGroundClick: (e) => {
@@ -1608,6 +1643,38 @@ export function DesignWorkspace({
         // Wand-Klickmodus oben) — der Abschluss (Doppelklick/Escape) läuft
         // über `massKetteAbschliessen()`, s. `onGroundDoubleClick`/`onEscape`.
         setPoints([...points, p]);
+      } else if (tool === 'gelaender') {
+        // v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): Klickkette nach dem
+        // Messen-Muster oben — jeder Klick hängt einen Punkt an, der
+        // Abschluss (Doppelklick/Enter/Escape, Abschluss-Gesetz C-10) läuft
+        // über `gelaenderAbschliessen()` und committet EIN
+        // `design.gelaenderZeichnen` mit den Insel-Vorgabewerten.
+        setPoints([...points, p]);
+      } else if (tool === 'rampe') {
+        // v0.9.1 P-B1: Zwei-Punkt nach dem Schnitt-Muster oben — erster
+        // Klick Fusspunkt (a, unten), zweiter Klick Kopfpunkt (b, oben);
+        // width/hoehenDelta/podestLaenge kommen aus der Insel-Vorgabe
+        // (`rampeVorgabeLesen`, ZEICHNEN-Insel «Rampe»). Das ehrliche
+        // Steigungs-Gate lebt im Kernel (>15 % CommandError → Toast, die
+        // Rampe entsteht nicht; 6–15 % läuft durch, Hinweis im Journal).
+        if (points.length === 0) {
+          setPoints([p]);
+        } else {
+          const vorgabe = rampeVorgabeLesen();
+          try {
+            runCommand('design.rampeZeichnen', {
+              storeyId: activeStoreyId,
+              a: points[0]!,
+              b: p,
+              width: vorgabe.width,
+              hoehenDelta: vorgabe.hoehenDelta,
+              ...(vorgabe.podestLaenge ? { podestLaenge: vorgabe.podestLaenge } : {}),
+            });
+          } catch (err) {
+            meldeFehler(err);
+          }
+          setPoints([]);
+        }
       } else if (tool === 'kommentar') {
         // E1 (§1.4): ein Klick setzt NUR den Punkt — die PROJEKT-Insel
         // (Kommentare-Stufe2/3, `island/inhalte/projekt.tsx`) liest ihn aus
@@ -1626,6 +1693,27 @@ export function DesignWorkspace({
     if (activeStoreyId && points.length >= 2) {
       try {
         runCommand('design.massKetteSetzen', { storeyId: activeStoreyId, punkte: points });
+      } catch (err) {
+        meldeFehler(err);
+      }
+    }
+    setPoints([]);
+  }
+
+  /** v0.9.1 P-B1: schliesst die laufende Geländer-Klickkette ab — EIN
+   *  `design.gelaenderZeichnen` mit der gesammelten `points`-Liste und den
+   *  Insel-Vorgabewerten (Höhe/Art), wortgleiches Muster
+   *  `massKetteAbschliessen()` oben. Weniger als zwei Punkte: nur leeren. */
+  function gelaenderAbschliessen() {
+    if (activeStoreyId && points.length >= 2) {
+      const vorgabe = gelaenderVorgabeLesen();
+      try {
+        runCommand('design.gelaenderZeichnen', {
+          storeyId: activeStoreyId,
+          punkte: points,
+          hoehe: vorgabe.hoehe,
+          art: vorgabe.art,
+        });
       } catch (err) {
         meldeFehler(err);
       }
@@ -1682,6 +1770,11 @@ export function DesignWorkspace({
       // `history.beginGroup()` nötig (Spez §2.4 letzter Satz).
       massKetteAbschliessen();
       return; // massKetteAbschliessen() leert `points` bereits selbst
+    } else if (tool === 'gelaender') {
+      // v0.9.1 P-B1: dieselbe Abschluss-Geste wie Messen — Doppelklick/Enter
+      // committen die gesammelte Polylinie als EIN Geländer.
+      gelaenderAbschliessen();
+      return; // gelaenderAbschliessen() leert `points` bereits selbst
     }
     // Wand/Treppe/Schnitt: Kette bzw. Antritt/Austritt-Eingabe abschliessen
     setPoints([]);

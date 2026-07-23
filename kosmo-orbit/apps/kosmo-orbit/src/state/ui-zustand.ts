@@ -47,10 +47,11 @@ import { ARBEITSMODI, type Arbeitsmodus } from './arbeitsmodi-kern';
  *  duplizierte (TABU-Datei, `docs/V091-SPEZ.md` Sanktion 3) `ToolId`-
  *  Kopie — deren Aktualisierung ist P-B1s Aufgabe (Cluster B), sobald dort
  *  auch die echte Klickketten-/Zwei-Punkt-Interaktion für die beiden Modi
- *  entsteht. Bis dahin funktioniert das MODUS-SETZEN bereits (der
- *  Assertion-Durchlass ist exakt dafür gebaut), nur die formale
- *  Enum-Mitgliedschaft fehlt noch — ehrlich dokumentierte Zwischenstufe,
- *  keine stille Attrappe. */
+ *  entsteht. NACHTRAG P-B1 (dasselbe Paket-Fenster): genau das ist jetzt
+ *  geschehen — `'gelaender'`/`'rampe'` sind formale Union-Mitglieder (13 →
+ *  15), synchron mit `DesignWorkspace.tsx`s lokaler Kopie, und die echte
+ *  Klickketten- (Geländer, Muster Messen) bzw. Zwei-Punkt-Interaktion
+ *  (Rampe, Muster Schnitt/Wand) lebt in `punktSetzen()` dort. */
 export type ToolId =
   | 'auswahl'
   | 'wand'
@@ -64,10 +65,12 @@ export type ToolId =
   | 'mesh'
   | 'oeffnung'
   | 'messen'
-  | 'kommentar';
+  | 'kommentar'
+  | 'gelaender'
+  | 'rampe';
 
 /** Für Validierung (`ui-befehle.ts` `ui.werkzeugSetzen`) — 1:1 aus `ToolId`. */
-export const TOOL_IDS: readonly ToolId[] = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'schnitt', 'skizze', 'mesh', 'oeffnung', 'messen', 'kommentar'];
+export const TOOL_IDS: readonly ToolId[] = ['auswahl', 'wand', 'volumen', 'zone', 'dach', 'treppe', 'stuetze', 'schnitt', 'skizze', 'mesh', 'oeffnung', 'messen', 'kommentar', 'gelaender', 'rampe'];
 
 export type ViewMode = '3d' | '2d' | 'split' | 'quad';
 

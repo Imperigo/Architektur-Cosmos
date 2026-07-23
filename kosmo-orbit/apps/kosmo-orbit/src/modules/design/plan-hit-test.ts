@@ -10,11 +10,14 @@ import {
   type Column,
   type Etikett,
   type Furniture,
+  type Gelaender,
   type KosmoDoc,
   type Opening,
   type Pt,
+  type Rampe,
   type Stair,
   type Wall,
+  rampenTeile,
 } from '@kosmo/kernel';
 
 /**
@@ -232,6 +235,21 @@ export function pickEntityAt(doc: KosmoDoc, storeyId: string, p: Pt): string | n
     if (s.storeyId !== storeyId) continue;
     if (distToSegment(p, s.a, s.b) <= s.width / 2 + TOLERANZ) return s.id;
   }
+  // v0.9.1 P-B1 (`docs/V091-SPEZ.md` §P-B1): Rampe wie Treppe — Lauflinie
+  // a→b ± halbe Breite + Toleranz (das Overlay in PlanView zeichnet exakt
+  // dieselbe Kontur aus `rampenTeile`).
+  for (const r of doc.byKind<Rampe>('ramp')) {
+    if (r.storeyId !== storeyId) continue;
+    if (distToSegment(p, r.a, r.b) <= r.width / 2 + TOLERANZ) return r.id;
+  }
+  // v0.9.1 P-B1: Geländer — schmale Polylinie, Treffer nahe irgendeinem
+  // Segment (Muster Baugrenze unten, nur als OFFENE Kette ohne Schlusskante).
+  for (const g of doc.byKind<Gelaender>('gelaender')) {
+    if (g.storeyId !== storeyId) continue;
+    for (let i = 1; i < g.punkte.length; i++) {
+      if (distToSegment(p, g.punkte[i - 1]!, g.punkte[i]!) <= TOLERANZ) return g.id;
+    }
+  }
   // Unterzüge wie Treppen (v0.8.10 Z3): Achse ± halbe Breite + Toleranz —
   // VOR den flächigen Elementen, weil ein Unterzug über der Decke liegt und
   // als schmale Linie sonst nie gegen sie gewinnen würde.
@@ -307,6 +325,10 @@ export function outlineOf(doc: KosmoDoc, id: string): Pt[] | null {
       return columnOutline(e);
     case 'stair':
       return stairRect(e);
+    // v0.9.1 P-B1: Rampen-Highlight = Kontur-Rechteck aus der EINEN
+    // Zerlegung (`rampenTeile`, elevation für die Plan-Kontur ohne Belang).
+    case 'ramp':
+      return [...rampenTeile(e, 0).plan.kontur];
     case 'aussparung': {
       const pos = aussparungWeltpos(doc, e);
       return pos ? aussparungRect(doc, e, pos) : null;
