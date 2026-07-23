@@ -9,6 +9,7 @@ import { WerkzeugSetup } from './WerkzeugSetup';
 import { ONBOARDING_SCHRITTE, type OnboardingSchrittId } from './onboarding-schritte';
 import { Fortschrittsbalken } from './Fortschrittsbalken';
 import { diensteZeile, gpuZeile, pingeZentrale, zentralePairingSvg } from './onboarding-pairing';
+import { homeServerEndpunkte, verbindeHomeServer } from '../state/home-server';
 import './onboarding-wizard.css';
 
 /**
@@ -115,6 +116,11 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
   const [bridgeErreichbar, setBridgeErreichbar] = useState<boolean | null>(null);
   const [zentraleHealth, setZentraleHealth] = useState<BridgeHealth | null>(null);
   const [manuelleBridgeUrl, setManuelleBridgeUrl] = useState('');
+  // v0.9.2 Owner-Feedback 23.07.2026 («bridge adresse direkt scannen zum
+  // richtigen server den wir festgesetzt haben»): Host des festgelegten
+  // HomeServers, wenn der Schritt ihn automatisch übernommen hat — treibt
+  // nur die ehrliche Hinweiszeile unten, nie einen erfundenen Status.
+  const [autoGekoppeltHost, setAutoGekoppeltHost] = useState<string | null>(null);
   const [werkzeugStatus, setWerkzeugStatus] = useState<Record<string, PruefStatus>>({});
   const [werkzeugSetupOffen, setWerkzeugSetupOffen] = useState(false);
 
@@ -151,11 +157,39 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
     let lebt = true;
     setBridgeErreichbar(null);
     setZentraleHealth(null);
-    void pingeZentrale(bridgeUrl).then(({ ok, health }) => {
+    void (async () => {
+      const erst = await pingeZentrale(bridgeUrl);
       if (!lebt) return;
-      setBridgeErreichbar(ok);
-      setZentraleHealth(health);
-    });
+      if (erst.ok) {
+        setBridgeErreichbar(true);
+        setZentraleHealth(erst.health);
+        return;
+      }
+      // v0.9.2 Owner-Feedback 23.07.2026: die gespeicherte/Standard-Adresse
+      // (auf frischen Geräten noch `localhost:8600` — die «alte» Adresse)
+      // antwortet nicht → direkt den FESTGELEGTEN HomeServer scannen
+      // (`homeServerHost()`, Default die Owner-Tailnet-Adresse aus
+      // `state/home-server.ts`) und bei Antwort in EINEM Zug übernehmen —
+      // derselbe `verbindeHomeServer`-Weg wie der Einstellungs-Knopf
+      // (schreibt kosmo.bridge/sync/llm konsistent). Antwortet auch der
+      // festgelegte Server nicht, bleibt ehrlich «nicht gefunden» samt
+      // manuellem Feld — nichts wird stillschweigend umgestellt.
+      const fest = homeServerEndpunkte();
+      if (fest.bridgeUrl.replace(/\/$/, '') !== bridgeUrl.replace(/\/$/, '')) {
+        const zweit = await pingeZentrale(fest.bridgeUrl);
+        if (!lebt) return;
+        if (zweit.ok) {
+          await verbindeHomeServer(fest.host);
+          if (!lebt) return;
+          setAutoGekoppeltHost(fest.host);
+          setBridgeErreichbar(true);
+          setZentraleHealth(zweit.health);
+          return;
+        }
+      }
+      setBridgeErreichbar(false);
+      setZentraleHealth(null);
+    })();
     return () => {
       lebt = false;
     };
@@ -383,6 +417,12 @@ export function OnboardingWizard({ onAbschliessen, onOeffneKosmoEinstellungen }:
                           Zentrale» statt einer Attrappe. */}
                       {bridgeErreichbar === true && (
                         <>
+                          {autoGekoppeltHost && (
+                            <div className="ow-hinweis-text" data-testid="onboarding-zentrale-autoscan">
+                              Die gespeicherte Adresse antwortete nicht — dein festgelegter HomeServer{' '}
+                              {autoGekoppeltHost} wurde direkt gefunden und übernommen.
+                            </div>
+                          )}
                           <SchrittZeile label="Version" wert={zentraleHealth?.version ?? 'kommt mit deiner Zentrale'} mono />
                           <SchrittZeile label="Dienste" wert={diensteZeile(zentraleHealth)} />
                           <SchrittZeile label="GPU" wert={gpuZeile(zentraleHealth)} />

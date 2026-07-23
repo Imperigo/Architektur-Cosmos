@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   EIGENCURSOR_EINSTELLUNG_EVENT,
   eigencursorAktiv,
@@ -306,18 +307,21 @@ function ZeichneForm({ zustand, tool }: { zustand: CursorZustand; tool: { art: s
     return <GesperrtSvg />;
   }
   // default: Pfeil (Spec §8, exakter Pfad — Spitze = Hotspot 16,4).
-  // v0.9.1 Owner-Punkte 22.07.2026 («nicht schräg» → Nachbestellung «gleich
-  // schräg wie windows»): FESTE Drehung um 22.25° um den Hotspot — der
-  // Drachen ist symmetrisch mit Kantenwinkel atan(9/22) = 22.25° zur
-  // Vertikalen, nach dieser Drehung steht die LINKE Kante also exakt
-  // senkrecht und die rechte bei ~44.5°: die Windows-Pfeil-Silhouette
-  // (senkrechte linke Kante, Körper nach rechts unten). Statisches
-  // SVG-Attribut, NICHT Laufzeit-Rotation (die bleibt entfernt, s.
-  // Kopf-Notiz v0.9.0). Hotspot (16,4) ist Drehpunkt und damit unverändert
-  // — Klickziel und Zeichnung bleiben deckungsgleich.
+  // v0.9.1 Owner-Punkte 22.07.2026 («gleich schräg wie windows»): FESTE
+  // Drehung um 22.25° um den Hotspot — der Drachen ist symmetrisch mit
+  // Kantenwinkel atan(9/22) = 22.25° zur Vertikalen, nach der Drehung steht
+  // eine Kante exakt senkrecht, die andere bei ~44.5°. v0.9.2 Owner-
+  // Feedback 23.07.2026 («die maus spiegeln»): Vorzeichen der Drehung
+  // GESPIEGELT (−22.25° statt +22.25°) — beim symmetrischen Drachen ist der
+  // Drehsinn-Wechsel exakt die Spiegelung der Silhouette an der Vertikalen
+  // durch den Hotspot: jetzt steht die RECHTE Kante senkrecht, der Körper
+  // lehnt nach links unten. Statisches SVG-Attribut, NICHT Laufzeit-
+  // Rotation (die bleibt entfernt, s. Kopf-Notiz v0.9.0). Hotspot (16,4)
+  // ist Drehpunkt und damit unverändert — Klickziel und Zeichnung bleiben
+  // deckungsgleich.
   return (
     <svg className="cursor-ebene-svg cursor-ebene-pfeil" width={32} height={32} viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M16 4 L25 26 Q16 21.5 7 26 Z" transform="rotate(22.25 16 4)" fill="var(--kcur-fill)" stroke="var(--k-signal)" strokeWidth={1.5} strokeLinejoin="round" />
+      <path d="M16 4 L25 26 Q16 21.5 7 26 Z" transform="rotate(-22.25 16 4)" fill="var(--kcur-fill)" stroke="var(--k-signal)" strokeWidth={1.5} strokeLinejoin="round" />
     </svg>
   );
 }
@@ -490,7 +494,17 @@ export function CursorEbene() {
       zonenPruefungFaellig = true;
     }
 
-    window.addEventListener('pointermove', aufPointerBewegung, { passive: true });
+    // v0.9.2 Owner-Feedback 23.07.2026 («nach wie vor verzögert»): wo der
+    // Browser es kann (Chromium/WebView2 — also genau der Windows-Desktop),
+    // hört die Ebene auf `pointerrawupdate` statt `pointermove`. pointermove
+    // wird auf den Frame-Takt KOALESZIERT — der Style-Write landet damit
+    // strukturell einen Frame hinter dem OS-Zeiger. pointerrawupdate liefert
+    // die Rohposition VOR der Koaleszierung; der letzte Write vor dem Paint
+    // gewinnt, der DOM-Zeiger zeigt im selben Frame die aktuellste Position.
+    // Mehrfach-Aufrufe pro Frame sind billig (ein Style-Write, keine Reads —
+    // getComputedStyle läuft weiterhin nur bei Zielwechsel/Klick-Merker).
+    const bewegungsEvent = 'onpointerrawupdate' in window ? 'pointerrawupdate' : 'pointermove';
+    window.addEventListener(bewegungsEvent, aufPointerBewegung as EventListener, { passive: true });
     window.addEventListener('pointerdown', aufKlick, { passive: true });
     window.addEventListener('pointerup', aufLoslassen, { passive: true });
 
@@ -502,7 +516,7 @@ export function CursorEbene() {
     }
 
     return () => {
-      window.removeEventListener('pointermove', aufPointerBewegung);
+      window.removeEventListener(bewegungsEvent, aufPointerBewegung as EventListener);
       window.removeEventListener('pointerdown', aufKlick);
       window.removeEventListener('pointerup', aufLoslassen);
     };
@@ -520,6 +534,14 @@ export function CursorEbene() {
 
   if (!aktiv) return null;
 
+  // v0.9.2 Owner-Feedback 23.07.2026 («dann verschwindet die maus hinter
+  // einstellungsfenster»): Einstellungen/Meldungen rendern per createPortal
+  // als body-GESCHWISTER hinter dem App-Root — bildet irgendein App-Root-
+  // Vorfahre einen Stacking-Context (transform/filter/isolation), ist der
+  // z-index der Ebene darin GEFANGEN und jedes spätere Portal malt darüber,
+  // egal wie gross die Zahl ist. Darum rendert die Ebene selbst als Portal
+  // direkt an document.body: dort konkurriert ihr z-index 2147483000
+  // (cursor-ebene.css) auf oberster Ebene und gewinnt gegen jedes Fenster.
   const morphKlasse =
     morphPhase === 'kollaps'
       ? 'cursor-ebene-morph cursor-ebene-morph--kollaps'
@@ -527,7 +549,7 @@ export function CursorEbene() {
         ? 'cursor-ebene-morph cursor-ebene-morph--entfalten'
         : 'cursor-ebene-morph';
 
-  return (
+  return createPortal(
     <div
       ref={wrapperRef}
       className={`cursor-ebene-wrapper${versteckt ? ' cursor-ebene--versteckt' : ''}${!sichtbar ? ' cursor-ebene--unsichtbar' : ''}`}
@@ -556,6 +578,7 @@ export function CursorEbene() {
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

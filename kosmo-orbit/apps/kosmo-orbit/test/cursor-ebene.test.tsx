@@ -40,11 +40,29 @@ describe('CursorEbene — Render-Zeit-Gating (vor jedem Effect)', () => {
     expect(renderToStaticMarkup(<CursorEbene />)).toBe('');
   });
 
-  it('rendert den Wrapper, wenn Eigencursor aktiv ist und navigator.webdriver nicht gesetzt ist', async () => {
+  it('rendert den Wrapper (als body-Portal), wenn Eigencursor aktiv ist und navigator.webdriver nicht gesetzt ist', async () => {
+    // v0.9.2 Owner-Feedback («verschwindet hinter einstellungsfenster»):
+    // die Ebene rendert seither per createPortal direkt an document.body —
+    // renderToStaticMarkup kann Portale prinzipiell nicht ausgeben, darum
+    // prüft der Positiv-Fall hier über einen echten jsdom-Render, dass der
+    // Wrapper im BODY landet (genau das ist der Stacking-Fix).
     setzeMatchMedia(true);
     const { CursorEbene } = await import('../src/shell/CursorEbene');
-    const html = renderToStaticMarkup(<CursorEbene />);
-    expect(html).toContain('data-testid="cursor-ebene"');
+    const { createRoot } = await import('react-dom/client');
+    const { act } = await import('react');
+    const halter = document.createElement('div');
+    document.body.appendChild(halter);
+    const root = createRoot(halter);
+    await act(async () => {
+      root.render(<CursorEbene />);
+    });
+    const wrapper = document.querySelector('[data-testid="cursor-ebene"]');
+    expect(wrapper).not.toBeNull();
+    expect(wrapper!.parentElement).toBe(document.body);
+    await act(async () => {
+      root.unmount();
+    });
+    halter.remove();
   });
 
   it('rendert nichts ohne gespeicherten Wert bei pointer:coarse (Touch-only-Default)', async () => {
