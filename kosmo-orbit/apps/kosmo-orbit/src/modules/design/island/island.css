@@ -83,6 +83,25 @@
   color: var(--f-ink);
 }
 
+/* v0.9.2 Nachtrag (Owner-Befund 23.07., «Darstellung»-Menü landet hinter
+   anderen Inseln, s. `IslandShell.tsx`s `offen`-Kopfkommentar für die volle
+   Wurzelursachen-Analyse): jede Insel ist ihr EIGENER Stacking-Kontext
+   (`position:fixed` + `z-index` oben) — ein tief verschachtelter `z-index`
+   wie `KSelect`s `.k-menu` (`z-index:100`, aura.css) bleibt IN diesem
+   Kontext gefangen und kann nie gegen eine andere `.isl-root`-Instanz
+   antreten. `isl-root--offen` (von `IslandShell.tsx` gesetzt, sobald
+   `stufe!=='pill'`) hebt die GESAMTE offene Insel über alle vier
+   Grund-Inseln (40) UND den Bühnenkopf (41/42, s. `.isl-buehnenkopf`/
+   `.isl-kopf-logo-*`/`.isl-einstellungen-kreis` unten) — jeder verschachtelte
+   Inhalt dieser Insel (Popup/Fenster, darin wiederum jedes `KSelect`-Menü)
+   erbt die Anhebung automatisch übers Elternteil, ohne selbst einen
+   `z-index` zu brauchen. Bleibt weit unter der CursorEbene
+   (`shell/cursor-ebene.css`, `z-index:2147483000`) — einzige erlaubte Ebene
+   über allen Inseln. */
+.isl-root--offen {
+  z-index: 100;
+}
+
 [data-theme='orbit'] .isl-root {
   --f-glass: var(--k-glass-fill);
   --f-blur: blur(24px) saturate(1.4);
@@ -500,17 +519,65 @@
   bottom: calc(100% + var(--k-s3));
 }
 
-/* ── Motion (§4.3-Tabelle) ──────────────────────────────────────────────
-   Kurven/Dauern sind, bis auf `--k-motion-fenster` (additiv in aura.css),
-   1:1 bestehende Repo-Tokens — hier nur referenziert, nichts neu erfunden. */
+/* ── Motion (§4.3-Tabelle, v0.9.2 Nachtrag «Island-Öffnungsanimation») ───
+   Owner-Befund 23.07. (wörtlich «dann haben die islands aktuell keine
+   sanfte animation wenn man sie öffnet, da sollte eigendlich vom
+   animationskonzept etwas da sein.. animation dito dynamic island von
+   apple»): Wurzelursache war NICHT ein fehlendes Konzept, sondern ein
+   stiller CSS-Bug — `.isl-anim-islIn`/`.isl-anim-popIn` schrieben bis hier
+   `animation: <keyframe> var(--k-motion-settle|-base) var(--k-ease-*)`.
+   `--k-motion-settle`/`--k-motion-base` sind selbst KOMPONIERTE Werte
+   («320ms cubic-bezier(…)», aura.css) — im `animation`-Kurzschreibweise-
+   Slot eingesetzt UND von einer zweiten, eigenen Kurve gefolgt, entstehen
+   ZWEI `<easing-function>`-Token in einem Slot, der nur eines erlaubt. Das
+   macht die GESAMTE Deklaration ungültig (CSS verwirft eine ungültige
+   Kurzschreibweise komplett, keine Teilanwendung) — beide Animationen
+   liefen darum `animation:none`, live nachgemessen (`getComputedStyle(…)
+   .animationName === 'none'`) UND per Byte-Vergleich gegen den kompilierten
+   Wert bestätigt. `winIn` blieb verschont, weil `--k-motion-fenster`
+   (aura.css) eine REINE Dauer ohne eingebackene Kurve ist. Fix: die beiden
+   betroffenen Deklarationen setzen die Dauer jetzt als eigenen Rohwert
+   (unten je einzeln begründet, warum kein bestehendes Dauer-Token passt)
+   UND referenzieren weiter ausschliesslich bestehende `--k-ease-*`-Kurven —
+   `--k-ease-bounce` (`cubic-bezier(0.34, 1.4, 0.64, 1)`, aura.css) ist
+   bereits exakt die vom Owner beispielhaft genannte «überschwingende
+   Feder»-Kurve (`cubic-bezier(0.34, 1.56, 0.64, 1)`), kein neuer Wert
+   nötig. Alle drei Übergänge (Pille→Leiste, Leiste→Popup, Popup→Fenster)
+   teilen jetzt dieselbe Sprache: Feder-Kurve fürs Wachsen der FORM (scale/
+   opacity/border-radius — kein `width`/`height`, s. Kommentar bei `islIn`
+   unten, warum das hier NICHT erzwungen ist), `--k-ease-entrance` (sanftes
+   Ease-out) fürs leicht verzögerte Content-Einblenden. */
+
+/* Pille → Leiste (§4.1 Stufe 0→1). PB2 hatte hier absichtlich nur `scale`
+   ohne Basis-Transform (`.isl-pill` trägt keine, s. Kommentar bei
+   `islPillBluehen` oben) — das bleibt unverändert richtig. NEU: ein
+   `border-radius`-Morph von der Pillenform (`--k-radius-pill`, 999px) auf
+   den Leisten-Radius (`--f-r-md`) verkauft das «Aufblühen aus der Pille»
+   zusätzlich zur Skalierung (Owner: «Radius morphen aus der Pillenform»)
+   — beide Custom Properties lösen VOR der Interpolation zu echten
+   Längenwerten auf, keine `@property`-Registrierung nötig. `width`/`height`
+   bleiben bewusst UNANGETastet (hartes Auftragsverbot ausser «erzwungen»):
+   Pille und Leiste sind zwei verschiedene DOM-Knoten (React tauscht sie
+   beim Stufenwechsel aus, kein gemeinsamer Kasten), UND die Leisten-Breite
+   ist nicht konstant (variiert mit Werkzeug-Anzahl/-Beschriftung je Insel)
+   — ein `width`-Keyframe bräuchte einen festen Zielwert, den es hier nicht
+   gibt; das `scale`+`border-radius`-Paar liefert dieselbe «wächst aus der
+   Pille»-Lesbarkeit ohne Layout-Thrash. `220ms` ist ein Rohwert (kein
+   bestehendes Dauer-Token trifft: `--k-motion-base`/`-settle` sind wie oben
+   erklärt KOMPONIERT, `--k-motion-fenster` ist semantisch ans Fenster
+   gebunden) — er liegt im Auftrags-Zielband (~180–260ms) UND deckt sich mit
+   dem bereits bestehenden lokalen Präzedenzfall `islPillBluehen` (220ms,
+   oben in dieser Datei), keine neue Zeitfamilie. */
 @keyframes islIn {
   from {
     opacity: 0;
-    transform: scale(0.85);
+    transform: scale(0.86);
+    border-radius: var(--k-radius-pill);
   }
   to {
     opacity: 1;
     transform: scale(1);
+    border-radius: var(--f-r-md);
   }
 }
 /* W2-Quergate-Fund (18.07.2026, ROADMAP 446): `popIn`/`winIn` müssen die
@@ -520,11 +587,15 @@
    liessen Popup/Fenster darum ~200–320ms lang UNZENTRIERT und UNGEKLAMMERT
    aufblitzen (Messen-Fenster der hohen ZEICHNEN-Insel: Unterkante 925px im
    768er-Viewport, live gemessen), bevor sie an die korrekte Position
-   sprangen — sichtbares Nachrücken für Nutzer, Flake für jede Box-Messung. */
+   sprangen — sichtbares Nachrücken für Nutzer, Flake für jede Box-Messung.
+   NEU (v0.9.2): Startskalierung 0.96→0.9 (deutlicheres «Wachsen aus dem
+   Ursprung», Owner Bullet 2) + `transform-origin` unten (`.isl-popup`/
+   `.isl-fenster`-Basisregeln) verankert den Ursprung an der Insel-Kante
+   statt der Boxmitte — «wächst aus dem auslösenden Werkzeug/der Pille». */
 @keyframes popIn {
   from {
     opacity: 0;
-    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(calc(var(--isl-clamp-y) + 4px)) scale(0.96);
+    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(calc(var(--isl-clamp-y) + 4px)) scale(0.9);
   }
   to {
     opacity: 1;
@@ -534,22 +605,151 @@
 @keyframes winIn {
   from {
     opacity: 0;
-    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(calc(var(--isl-clamp-y) + 8px)) scale(0.97);
+    transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(calc(var(--isl-clamp-y) + 8px)) scale(0.92);
   }
   to {
     opacity: 1;
     transform: translateX(calc(-50% + var(--isl-clamp-x))) translateY(var(--isl-clamp-y)) scale(1);
   }
 }
+/* `220ms`/`200ms`: Rohwerte aus demselben Grund wie bei `islIn` oben
+   (`--k-motion-base` ist komponiert, kann nicht mit einer zweiten Kurve
+   kombiniert werden) — `winIn` bleibt tokenisiert (`--k-motion-fenster` ist
+   eine reine Dauer, komponierbar), jetzt aber mit derselben Feder-Kurve wie
+   die beiden anderen Stufen («dieselbe Sprache», Owner Bullet 2) statt der
+   bisherigen `--k-ease-entrance`. */
 .isl-anim-islIn {
-  animation: islIn var(--k-motion-settle) var(--k-ease-bounce);
+  animation: islIn 220ms var(--k-ease-bounce);
 }
 .isl-anim-popIn {
-  animation: popIn var(--k-motion-base) var(--k-ease-entrance);
+  animation: popIn 200ms var(--k-ease-bounce);
 }
 .isl-anim-winIn {
-  animation: winIn var(--k-motion-fenster) var(--k-ease-entrance);
+  animation: winIn var(--k-motion-fenster) var(--k-ease-bounce);
 }
+
+/* Wachstums-Ursprung je Insel-Rand (Owner Bullet 2: «wachsen aus dem
+   Ursprung … an der Pille») — die Leiste teilt sich IMMER die vom
+   `.isl-root`-Elternteil gesetzte Randkante mit der Pille (§2: `left`/
+   `right` fix, die jeweils andere Achse zentriert/`translateY(-50%)`), ein
+   `scale`-Transform ohne passenden `transform-origin` würde optisch von der
+   BOXMITTE statt der geteilten Kante wachsen. Popup/Fenster öffnen stets
+   UNTER (bzw. bei `.isl-rand-unten` ÜBER) ihrer Insel — deren Ursprung ist
+   darum die horizontale Mitte an der oberen (bzw. unteren) Kante, unabhängig
+   von der Insel-Ausrichtung selbst. */
+.isl-rand-links .isl-anim-islIn {
+  transform-origin: left center;
+}
+.isl-rand-rechts .isl-anim-islIn {
+  transform-origin: right center;
+}
+.isl-rand-oben .isl-anim-islIn {
+  transform-origin: center top;
+}
+.isl-rand-unten .isl-anim-islIn {
+  transform-origin: center bottom;
+}
+.isl-anim-popIn,
+.isl-anim-winIn {
+  transform-origin: center top;
+}
+.isl-rand-unten .isl-anim-popIn,
+.isl-rand-unten .isl-anim-winIn {
+  transform-origin: center bottom;
+}
+
+/* Gestaffeltes Content-Einblenden (Owner Bullet 1: «Inhalt … blendet leicht
+   verzögert/gestaffelt ein (opacity + kleiner translate)»). Läuft NUR auf
+   den Werkzeug-Knöpfen selbst (dieser Datei/`IslandShell.tsx` exklusiv
+   gehörend, kein Eingriff in `inhalte/*`) — jeder Knopf wird frisch
+   gemountet, sobald die Leiste öffnet (`sichtbareWerkzeuge.map`, stabile
+   `key={w.id}`), die Animation spielt darum genau einmal pro Öffnung, nicht
+   bei jedem Re-Render (z. B. `aria-pressed`-Wechsel). `animation-fill-mode:
+   backwards` hält den Knopf während seiner individuellen Verzögerung im
+   `from`-Zustand (unsichtbar) — ohne das würde er in der Lücke kurz bei
+   voller Deckkraft aufblitzen (Default-Stil ohne `opacity`), bevor die
+   Animation einsetzt. Verzögerung wächst pro Knopf um 12ms, gedeckelt bei
+   60ms (`:nth-child(n+6)`) — bei ZEICHNENs 14 Werkzeugen bleibt die
+   Gesamtzeit (60ms Versatz + 160ms eigene Dauer = 220ms) im selben Zielband
+   wie die Leisten-Form selbst, statt sich über eine lange Kette
+   aufzusummieren. Reine Zier-Animation (kein Kern-Übergang wie die drei
+   `isl-anim-*`-Container oben) — der globale `prefers-reduced-motion`-Riegel
+   (aura.css) reicht als einzige Absicherung, exakt wie beim bestehenden
+   `.isl-werkzeug-tooltip`-Fade oben (kein zweites `data-reduziert`-Gate
+   nötig für eine reine Komfort-Politur). */
+@keyframes islWerkzeugEin {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.isl-leiste-werkzeuge .isl-werkzeug {
+  animation: islWerkzeugEin 160ms var(--k-ease-entrance) backwards;
+}
+.isl-leiste-werkzeuge .isl-werkzeug:nth-child(1) {
+  animation-delay: 0ms;
+}
+.isl-leiste-werkzeuge .isl-werkzeug:nth-child(2) {
+  animation-delay: 12ms;
+}
+.isl-leiste-werkzeuge .isl-werkzeug:nth-child(3) {
+  animation-delay: 24ms;
+}
+.isl-leiste-werkzeuge .isl-werkzeug:nth-child(4) {
+  animation-delay: 36ms;
+}
+.isl-leiste-werkzeuge .isl-werkzeug:nth-child(5) {
+  animation-delay: 48ms;
+}
+.isl-leiste-werkzeuge .isl-werkzeug:nth-child(n + 6) {
+  animation-delay: 60ms;
+}
+
+/* Popup-/Fenster-INHALT (Owner Bullet 1, dieselbe Staffel-Idee — hier auf
+   Stufe 2/3 übertragen, Bullet 2 «dieselbe Sprache»): der eigentliche Inhalt
+   kommt aus `inhalte/*` (TABU-Dateikreis dieses Pakets), darum kein Wrapper-
+   Element und keine Änderung an jenen Dateien — die Animation sitzt direkt
+   auf den DIREKTEN Kindern von `.isl-popup`/`.isl-fenster` (`:not(.isl-
+   schliessen)` nimmt den ✕-Knopf gezielt aus, der soll sofort da sein).
+   Rendert ein Inhalt einmal mehrere Geschwister-Wurzelknoten (React-
+   Fragment), bekommt jedes einzeln dieselbe Verzögerung — unproblematisch,
+   da alle gleich zeitig einsetzen. Reine `opacity`/`transform`-Zier wie
+   oben, kein Eingriff auf Klick-Zieler (`aufPopupKlick`s `e.target !==
+   e.currentTarget`-Prüfung bleibt unberührt, da kein neuer Wrapper-Knoten
+   entsteht). */
+@keyframes islInhaltEin {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.isl-popup > *:not(.isl-schliessen),
+.isl-fenster > *:not(.isl-schliessen) {
+  animation: islInhaltEin 160ms var(--k-ease-entrance) 40ms backwards;
+}
+
+/* Schliessen (Owner Bullet 2: «gleiche Kurve rückwärts, etwas schneller»):
+   BEWUSST NICHT umgesetzt als echte Austritts-Animation — Popup/Fenster/
+   Leiste werden beim Schliessen synchron aus dem DOM entfernt (`stufe`-
+   Wechsel, `IslandShell.tsx`), das ist Vertragsgegenstand mehrerer E2E-Specs
+   (`island-ui.spec.ts` u. a. prüfen `toHaveCount(0)` DIREKT nach dem
+   Schliessen-Klick, kein Wartefenster). Eine echte CSS-Austrittsanimation
+   bräuchte den Knoten während der Animation WEITERHIN im DOM (entweder
+   dauerhaft gemountet + Klassen-Toggle wie `KMenu`/`.k-menu.offen`,
+   aura.css — oder ein durch `transitionend`/`animationend` verzögertes
+   Unmount) — beides verändert entweder die harte `toHaveCount(0)`-Erwartung
+   oder führt JS-getriebenes Timing für die Animation selbst ein (Hausregel
+   dieses Auftrags: NUR CSS-Transitions/-Keyframes). Ehrlich offen gelassen
+   statt einer Attrappe, die unter `prefers-reduced-motion` ohnehin nicht
+   „einfach sofort" wäre, s. Bauagenten-Bericht. */
 
 /* ── Bühnenkopf (PD2, §1): Stationen-Orb + Ansichts-Info — beide fix
    positioniert, teilen sich die `--f-*`-Token-Familie wie `.isl-root` oben

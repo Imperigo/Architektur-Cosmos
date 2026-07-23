@@ -512,10 +512,40 @@ export function IslandShell({ island, konfig, registry, onWerkzeugAktion }: Isla
    *  bei Stationen ohne Eintrag (Text-Fallback unten, `label.slice(0,2)`). */
   const PillIcon = ISLAND_PILL_GLYPHEN[island];
 
+  /**
+   * v0.9.2 Nachtrag (Owner-Befund 23.07., wörtlich «wenn ich im kosmodesign
+   * oben die ansichtinsel öffne und darstellung klicke kommt menü hinter
+   * allen anderen auf»): JEDE `IslandShell`-Instanz trägt ihren EIGENEN
+   * Stacking-Kontext (`.isl-root` ist `position:fixed` + `z-index:40`,
+   * `island.css`). Ein `z-index` auf einem TIEFER verschachtelten Kind (z. B.
+   * `KSelect`s `.k-menu` bei `z-index:100`, `aura.css`) bleibt darum in DIESEM
+   * Kontext gefangen — er kann nie gegen eine ANDERE Insel antreten, deren
+   * eigener Stacking-Kontext ebenfalls bei `z-index:40` startet. Bei
+   * gleichem `z-index` gewinnt die im DOM SPÄTERE Insel (`ISLAND_REIHENFOLGE`
+   * = zeichnen→ansicht→projekt→austausch, `island-katalog.ts`) jeden
+   * visuellen Übertritt — genau das Owner-Beispiel (ANSICHT vor PROJEKT/
+   * AUSTAUSCH in der Reihenfolge, ihr Darstellung-Dropdown kann darum unter
+   * einer der beiden späteren Inseln verschwinden, sobald sie sich räumlich
+   * überschneiden). Fix (Fable-Vorentscheid «aktive Insel bekommt eigene
+   * Klasse mit dem höchsten z-index der Insel-Schicht», hier umgesetzt statt
+   * eines `createPortal`-Wegs — der Bug ist ein reiner Geschwister-Stacking-
+   * Konflikt zwischen `.isl-root`-Instanzen, kein verschachtelter
+   * `overflow`/Transform-Käfig, den ein Portal zusätzlich lösen müsste):
+   * JEDE Insel, die gerade NICHT `pill` ist (Leiste/Popup/Fenster offen),
+   * bekommt `isl-root--offen` (`island.css`, `z-index:100` > alle übrigen
+   * Inseln UND den Bühnenkopf) — Hover-/Fokus-/Rückklapp-Logik bleibt
+   * unangetastet, nur die CSS-Stapelreihenfolge ändert sich. Sind zufällig
+   * ZWEI Inseln gleichzeitig offen (möglich: Hover auf Insel B, während
+   * Insel A noch ihren 1000ms-Rückklapp-Timer laufen hat), teilen sie sich
+   * denselben erhöhten Wert — die DOM-Reihenfolge entscheidet dann wie
+   * zuvor zwischen den beiden, aber BEIDE liegen sicher über jeder
+   * geschlossenen (Pill-)Insel. */
+  const offen = stufe !== 'pill';
+
   return (
     <div
       ref={wurzelRef}
-      className={`isl-root isl-${orientierung} ${inselKonfig.randKlasse}`}
+      className={`isl-root isl-${orientierung} ${inselKonfig.randKlasse}${offen ? ' isl-root--offen' : ''}`}
       data-testid={`island-${island}-root`}
       data-reduziert={reduziert ? 'true' : 'false'}
       onMouseEnter={aufPointerEnter}
